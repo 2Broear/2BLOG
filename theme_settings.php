@@ -1,0 +1,2065 @@
+<?php
+    /* ------------------------------------------------------------------------ *
+     * 后台设置面板自定义菜单
+     * ------------------------------------------------------------------------ */
+     // 注册自定义文章形式  https://www.xuxiaoke.com/wpfunc/140.html
+    /**
+    * From https://www.wpdaxue.com/custom-single-post-template.html
+    */
+    //https://www.cnblogs.com/huangtailang/p/4265998.html
+    //https://wordpress.stackexchange.com/questions/57647/how-to-create-a-metabox-of-html-content-with-instructions-for-editors-when-editi/59304#59304
+    /* ------------------------------------------------------------------------ *
+     * Custom Category fields (in&out)
+     * https://wpcrumbs.com/how-to-add-custom-fields-to-categories/
+     * ------------------------------------------------------------------------ */
+    function wcr_category_fields($term) {
+        if (current_filter() == 'category_edit_form_fields') {  //分类页详情（修改）
+    ?>
+            <style>input.upload_field{max-width:80%}input.upload_button{margin-left:5px}</style>
+            <tr class="form-field">
+                <th valign="top" scope="row"><label for="term_fields[seo_image]"><?php _e('Category Background'); ?></label></th>
+                <td>
+                    <input type="text" size="40" value="<?php echo esc_attr(get_term_meta($term->term_id, 'seo_image', true)); ?>" id="term_fields[seo_image]" name="term_fields[seo_image]" class="upload_field">
+                    <input id="upload_image_button" type="button" class="button-primary upload_button" value="上传图片" />
+                    <br/>
+                    <span class="image"><?php _e('SEO Background Image Options, upload or edit it.'); ?></span>
+                </td>
+            </tr>
+            <tr class="form-field">
+                <th valign="top" scope="row"><label for="term_fields[seo_template]"><?php _e('Page Templates'); ?></label></th>
+                <td>
+                    <select name="term_fields[seo_template]" id="term_fields[seo_template]" class="page_templates">
+                        <option value="default">默认模板</option>
+                        <?php 
+                            $templates = wp_get_theme()->get_page_templates();
+                            foreach ($templates as $temp => $index){
+                                echo '<option value="'.$temp.'"';
+                                    if(get_term_meta($term->term_id, 'seo_template', true)==$temp) echo('selected="selected"');
+                                echo '>'.$index.'</option>';
+                            }
+                        ?>
+                    </select>
+                    <br/>
+                    <span><?php _e('Page Template, Used in Page..'); ?></span>
+                </td>
+            </tr>
+            <tr class="form-field">
+                <th valign="top" scope="row"><label for="term_fields[seo_order]"><?php _e('Category Order'); ?></label></th>
+                <td>
+                    <input type="number" class="small" size="40" value="<?php 
+                        $seo_order = get_term_meta($term->term_id, 'seo_order', true);
+                        if(!$seo_order){
+                            echo $term->term_id;
+                            update_term_meta($term->term_id, 'seo_order', $term->term_id);
+                        }else{
+                            echo esc_attr($seo_order);
+                        }
+                    ?>" id="term_fields[seo_order]" name="term_fields[seo_order]">
+                    <br/>
+                    <span class="orderby" term_group="<?php echo $term->term_group; ?>"><?php _e('Set <b style="color:red">Lower Number</b> for <b style="color:green">Front Ranking</b><small>（auto orderby term_id: '.$term->term_id.'）</small>'); ?></span>
+                </td>
+            </tr>
+            <tr class="form-field">
+                <th valign="top" scope="row"><label for="term_fields[seo_title]"><?php _e('Page Title'); ?></label></th>
+                <td>
+                    <input type="text" size="40" value="<?php echo esc_attr(get_term_meta($term->term_id, 'seo_title', true)); ?>" id="term_fields[seo_title]" name="term_fields[seo_title]"><br/>
+                    <span class="title"><?php _e('SEO Title Options, edit or leave it.'); ?></span>
+                </td>
+            </tr>
+            <tr class="form-field">
+                <th valign="top" scope="row"><label for="term_fields[seo_keywords]"><?php _e('Page Keywords'); ?></label></th>
+                <td>
+                    <input type="text" size="40" value="<?php echo esc_attr(get_term_meta($term->term_id, 'seo_keywords', true)); ?>" id="term_fields[seo_keywords]" name="term_fields[seo_keywords]"><br/>
+                    <span class="keywords"><?php _e('SEO Keywords Options, edit or leave it.'); ?></span>
+                </td>
+            </tr>
+            <tr class="form-field">
+                <th valign="top" scope="row"><label for="term_fields[seo_description]"><?php _e('Page Description'); ?></label></th>
+                <td>
+                    <textarea class="large-text" cols="50" rows="5" id="term_fields[seo_description]" name="term_fields[seo_description]"><?php echo esc_textarea(get_term_meta($term->term_id, 'seo_description', true)); ?></textarea><br/>
+                    <span class="description"><?php _e('SEO Desc Options, edit or leave it.'); ?></span>
+                </td>
+            </tr>
+	<?php } elseif (current_filter() == 'category_add_form_fields') {  //分类页外部（新增）?>
+            <h1>Page Sync Options</h1>
+            <div class="form-field">
+                <label for="term_fields[seo_image]"><?php _e('Background Images'); ?></label>
+                <input type="text" size="40" value="" id="term_fields[seo_image]" name="term_fields[seo_image]" class="upload_field">
+                <input id="upload_image_button" type="button" class="button-primary upload_button" value="上传图片" style="margin: 20px;float: right;" />
+                <p class="description"><?php _e('SEO Images, Used in metaNav/pageBG somewhere.'); ?></p>
+            </div>
+            <!--<div class="form-field">-->
+            <!--    <label for="term_fields[seo_icons]"><?php _e('Page Icons'); ?></label>-->
+            <!--    <select name="term_fields[seo_icons]" id="term_fields[seo_icons]" class="page_icons">-->
+            <!--        <option value="default">导航图标</option>-->
+            <!--    </select>-->
+            <!--    <p class="description"><?php _e('Page Icons, Used in Navigation Bar.'); ?></p>-->
+            <!--</div>-->
+            <div class="form-field">
+                <label for="term_fields[seo_template]"><?php _e('Page Template'); ?></label>
+                <select name="term_fields[seo_template]" id="term_fields[seo_template]" class="page_templates">
+                    <option value="default">默认模板</option>
+                    <?php 
+                        $templates = wp_get_theme()->get_page_templates();
+                        foreach ($templates as $temp => $index){
+                            echo '<option value="'.$temp.'"';
+                                // if($value==$temp) echo('selected="selected"');
+                            echo '>'.$index.'</option>';
+                        }
+                    ?>
+                </select>
+                <p class="description"><?php _e('Page Template, Used in Page.'); ?></p>
+            </div>
+            <div class="form-field">
+                <label for="term_fields[seo_title]"><?php _e('Page Title'); ?></label>
+                <input type="text" size="40" value="" id="term_fields[seo_title]" name="term_fields[seo_title]">
+                <p class="description"><?php _e('SEO Title Options, edit or leave it.'); ?></p>
+            </div>  
+            <div class="form-field">
+                <label for="term_fields[seo_keywords]"><?php _e('Page Keywords'); ?></label>
+                <input type="text" size="40" value="" id="term_fields[seo_keywords]" name="term_fields[seo_keywords]">
+                <p class="description"><?php _e('SEO Keywords Options, edit or leave it.'); ?></p>
+            </div>  
+            <div class="form-field">
+                <label for="term_fields[seo_description]"><?php _e('Page Description'); ?></label>
+                <textarea cols="40" rows="5" id="term_fields[seo_description]" name="term_fields[seo_description]"></textarea>
+                <p class="description"><?php _e('SEO Desc Options, edit or leave it.'); ?></p>
+            </div>
+    <?php
+        }
+    };
+    // Add the fields, using our callback function  
+    // if you have other taxonomy name, replace category with the name of your taxonomy. ex: book_add_form_fields, book_edit_form_fields
+    add_action('category_add_form_fields', 'wcr_category_fields', 10, 2);
+    add_action('category_edit_form_fields', 'wcr_category_fields', 10, 2);
+    function wcr_save_category_fields($term_id) {
+        if(!get_term_meta($term_id, 'seo_order', true) && !isset($_POST['seo_order'])){
+            update_term_meta($term_id, 'seo_order', $term_id);  // auto upadte seo_order while saving category_fields (use get_term_meta to check to not change the seo_order if already exists)
+        }
+        foreach ($_POST['term_fields'] as $key => $value) {
+            update_term_meta($term_id, $key, sanitize_text_field($value));
+        }
+    }
+    // Save the fields values, using our callback function
+    // if you have other taxonomy name, replace category with the name of your taxonomy. ex: edited_book, create_book
+    add_action('edited_category', 'wcr_save_category_fields', 10, 2);
+    add_action('create_category', 'wcr_save_category_fields', 10, 2);
+    
+    
+    /* ------------------------------------------------------------------------ *
+     * 分类与页面同步更新通信
+     * ------------------------------------------------------------------------ */
+    include_once(TEMPLATEPATH . '/theme_synCats.php');
+    
+    /* ------------------------------------------------------------------------ *
+     * 自定义文章排序 column（编辑、快速、批量编辑文章页）
+     * ------------------------------------------------------------------------ */
+    /* load script to set exists column_value in column_input */
+    if ( ! function_exists('wp_my_admin_enqueue_scripts') ){
+        function wp_my_admin_enqueue_scripts( $hook ) {
+            if ( 'edit.php' === $hook) {
+     	        wp_enqueue_script( 'my_custom_script', get_stylesheet_directory_uri() . '/plugin/custom_column.js',
+                false, null, true );
+            }
+        }
+    }
+    add_action( 'admin_enqueue_scripts', 'wp_my_admin_enqueue_scripts' );
+    
+    // preview custom_column
+    add_filter('manage_posts_columns', 'wpse_3531_add_seo_columns', 10, 2);
+    function wpse_3531_add_seo_columns($posts_columns, $post_type){
+        $posts_columns['post_orderby'] = '排序值';
+        return $posts_columns;
+    }
+    // preview custom_column-value
+    add_action('manage_posts_custom_column', 'wpse_3531_display_seo_columns', 10, 2);
+    function wpse_3531_display_seo_columns($column_name, $post_id){
+        if ('post_orderby' == $column_name) {
+            echo get_post_meta($post_id) ? get_post_meta($post_id, 'post_orderby', true) : 1;
+        }
+    }
+    // Add our text to the quick edit box
+    add_action('quick_edit_custom_box', 'on_quick_edit_custom_box', 10, 2);
+    function on_quick_edit_custom_box($column_name, $post_type){
+        if ('post_orderby' == $column_name) {
+    ?>
+            <fieldset class="inline-edit-col-right">
+                <div class="inline-edit-col">
+                    <label>
+    					<span class="title">排序（列表）</span>
+    				    <input type="number" name="post_orderby" class="small-text">
+    				</label>
+                </div>
+            </fieldset>
+    <?php
+        }
+    }
+    
+    // add to BULK-EDIT
+    add_action('bulk_edit_custom_box', 'on_bulk_edit_custom_box', 10, 2);
+    function on_bulk_edit_custom_box($column_name, $post_type){
+        if ('post_orderby' == $column_name) {
+    ?>
+        <fieldset class="inline-edit-col-right">
+            <div class="inline-edit-col">
+                <label>
+    				<span class="title">排序</span>
+    			    <input type="number" name="post_orderby" class="small-text" value="1">
+    			</label>
+            </div>
+        </fieldset>
+    <?php
+        }
+    }
+    // save bulk-edit 
+    add_action( 'wp_ajax_save_bulk_edit_book', 'save_bulk_edit_book' );
+    function save_bulk_edit_book() {
+        // TODO perform nonce checking
+        // get our variables
+        $post_ids           = ( ! empty( $_POST[ 'post_ids' ] ) ) ? $_POST[ 'post_ids' ] : array();
+        $post_orderby  = ( ! empty( $_POST[ 'post_orderby' ] ) ) ? $_POST[ 'post_orderby' ] : 1;
+        // $inprint = !! empty( $_POST[ 'inprint' ] );
+        // if everything is in order
+        if ( ! empty( $post_ids ) && is_array( $post_ids ) ) {
+            foreach( $post_ids as $post_id ) {
+                update_post_meta( $post_id, 'post_orderby', $post_orderby );
+                // update_post_meta( $post_id, 'inprint', $inprint );
+            }
+        }
+        die();
+    }
+    
+    //https://wordpress.stackexchange.com/questions/8736/add-custom-field-to-category
+    /* ------------------------------------------------------------------------ *
+     * https://www.sitepoint.com/extend-the-quick-edit-actions-in-the-wordpress-dashboard/
+     * https://wordpress.stackexchange.com/questions/3531/how-can-i-add-columns-to-the-post-edit-listing-to-show-my-custom-post-data
+     * Custom Post MetaBox (float dragble)
+     * https://tryvary.com/wordpress-add-meta-box-to-custom-post-type-and-page/
+     * ------------------------------------------------------------------------ */
+     
+    function postmeta_json(){
+        return array(
+            array('title'=>'内容', 'input'=>'post_feeling', 'type'=>'text', 'select'=>false, 'textarea'=>true),
+            array('title'=>'版权', 'input'=>'post_rights', 'type'=>'', 'select'=>true, 'textarea'=>false),
+            array('title'=>'来源', 'input'=>'post_source', 'type'=>'text', 'select'=>false, 'textarea'=>false),
+            array('title'=>'排序', 'input'=>'post_orderby', 'type'=>'number', 'select'=>false, 'textarea'=>false),
+        );
+    }
+    //Register POST Meta box
+    add_action('add_meta_boxes',function (){
+        add_meta_box(
+             'post-field',
+             '文章附加选项',
+             'post_custom_fields_html',
+             ['post'],
+             'side'
+        );
+    });
+    //Meta callback function
+    function post_custom_fields_html($post){
+        $cs_meta_val = get_post_meta($post->ID);
+        function outputHTML($meta,$json){
+            $for = $json['input'];
+            $title = $json['title'];
+            $type = $json['type'];
+            $select = $json['select'];
+            $textarea = $json['textarea'];
+            if(isset($meta[$for])) $value=$meta[$for][0];elseif($for=='post_orderby') $value=1;else $value="";
+            if($select){
+                $selects = ["请选择","原创","转载","二创"];
+                //output each selects
+                echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><select name="'.$for.'" id="'.$for.'">';
+                for($i=0;$i<count($selects);$i++){
+                    $each = $selects[$i];
+                    echo '<option value="'.$each.'"';
+                        if($value==$each)
+                            echo('selected="selected"');
+                    echo '>'.$each.'</option>';
+                };
+                echo '</select></td></tr>';
+            }elseif($textarea){
+                echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><textarea name="'.$for.'" id="'.$for.'" placeholder="文章副标题、文章感想、文章额外内容等信息.." style="width:50%;height:70px">'.$value.'</textarea></td></tr>';
+            }else{
+                $class = $type=='number' ? 'small' : 'regular'; 
+                echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><input type="'.$type.'" name="'.$for.'" id="'.$for.'" class="'.$class.'-text" value="'.$value.'" placeholder="'.$title.'"></td></tr>';
+            }
+        };
+?>
+        <table class="form-table">
+<?php 
+            $meta_json = postmeta_json();
+            foreach ($meta_json as $arr){
+                echo outputHTML($cs_meta_val, $arr);
+            }
+?>
+        </table>
+<?php     
+    }
+    //save meta value with save post hook
+    add_action('save_post', 'post_save_custom_field_value');
+    function post_save_custom_field_value($post_id){
+        $meta_json = postmeta_json();
+        foreach ($meta_json as $arr){
+            $post_input = $arr['input'];
+            if(isset($_POST[$post_input])) update_post_meta($post_id, $post_input, sanitize_text_field($_POST[$post_input]));
+        }
+    };
+    
+    
+    function pagemeta_json(){
+        return array(
+            // array('title'=>'元数据展示', 'input'=>'page_matanav', 'type'=>'checkbox', 'option'=>false),
+            array('title'=>'展示元数据分类', 'input'=>'page_metanav', 'type'=>'', 'option'=>true),
+        );
+    }
+    //Register PAGE Meta box
+    add_action('add_meta_boxes',function (){
+        add_meta_box(
+             'page-field',
+             '页面附加选项',
+             'page_custom_fields_html',
+             ['page'],
+             'side'
+        );
+    });
+    //Meta callback function
+    function page_custom_fields_html($post){
+        $cs_meta_val = get_post_meta($post->ID);
+        function outputHTML($meta,$json){
+            $for = $json['input'];
+            $title = $json['title'];
+            $type = $json['type'];
+            $option = $json['option'];
+            if(isset($meta[$for])) $value=$meta[$for][0];else $value="";
+            if($option){
+                $options = ["none","text","image"];
+                //output each options
+                echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><select name="'.$for.'" id="'.$for.'">';
+                for($i=0;$i<count($options);$i++){
+                    $each = $options[$i];
+                    echo '<option value="'.$each.'"';
+                        if($value==$each)
+                            echo('selected="selected"');
+                    echo '>'.$each.'</option>';
+                };
+                echo '</select></td></tr>';
+            }else{
+                echo '<tr>
+            			<th><label for="'.$for.'">'.$title.'</label></th>
+            			<td><input type="'.$type.'" name="'.$for.'" id="'.$for.'" class="regular-text" value="'.$value.'"></td>
+            		</tr>';
+            }
+        };
+?>
+        <table class="form-table">
+<?php 
+            $meta_json = pagemeta_json();
+            foreach ($meta_json as $arr){
+                echo outputHTML($cs_meta_val, $arr);
+            }
+?>
+        </table>
+<?php     
+    }
+    //save meta value with save post hook
+    add_action('save_post', 'page_save_custom_field_value');
+    function page_save_custom_field_value($post_id){
+        $meta_json = pagemeta_json();
+        foreach ($meta_json as $arr){
+            $post_input = $arr['input'];
+            if(isset($_POST[$post_input])) update_post_meta($post_id, $post_input, sanitize_text_field($_POST[$post_input]));
+        }
+    };
+    
+    
+    /* ------------------------------------------------------------------------ *
+     * WordPress Custom Post Type
+     * Register the Product post type with a Dashicon.
+     * https://developer.wordpress.org/resource/dashicons
+     * @see register_post_type()
+     * ------------------------------------------------------------------------  */
+    function wpdocs_create_post_type() {
+        register_post_type( 'inform',
+            array(
+                'labels' => array(
+                    'name'          => __( '公告', 'textdomain' ),
+                    'singular_name' => __( '新公告', 'textdomain' ),
+                    'add_new' => '新公告',
+                    'add_new_item' => '添加公告（仅显示标题）',
+                    'edit_item' => '编辑公告',
+                    'new_item' => '新公告',
+                    'all_items' => __('所有公告'),
+                    'view_item' => '查看公告',
+                    'search_items' => '搜索公告',
+                    'not_found' =>  '没有找到有关公告',
+                    'not_found_in_trash' => '回收站里面没有相关公告',
+                    'parent_item_colon' => '',
+                    'menu_name' => '公告',
+                ),
+                'public'      => true,
+                'has_archive' => true,
+                'menu_icon'   => 'dashicons-controls-volumeon',
+                // 'description'=> '自定义的内容类型',
+                // 'public' => true,
+                // 'publicly_queryable' => true,
+                // 'show_ui' => true,
+                // 'show_in_menu' => true,
+                // 'query_var' => true,
+                // 'rewrite' => true,
+                // 'capability_type' => 'post',
+                // 'has_archive' => true,
+                // 'hierarchical' => false,
+                'menu_position' => 5,
+                // 'menu_icon' => 'dashicons-admin-post',
+                // 'taxonomies'=> array('post_tag'),
+                // 'supports' => array('title','editor','author','thumbnail','excerpt','comments')
+            )
+        );
+    }
+    add_action( 'init', 'wpdocs_create_post_type', 0 );
+    
+    //  新增（顶级）主菜单/子菜单/图标
+    add_action('admin_menu','add_settings_menu',1);
+    function add_settings_menu() {
+        // add_menu_page(__('自定义菜单标题'), __('测试菜单'), 'administrator',  __FILE__, 'my_function_menu', false, 100);
+        // add_submenu_page(__FILE__,'子菜单1','测试子菜单1', 'administrator', 'your-admin-sub-menu1', 'my_function_submenu1');
+        add_menu_page(__('2BLOG - 主题设置页面'), __('2BLOG 主题设置'), 'read', '2blog-settings', 'add_options_submenu');  // 创建新的顶级菜单
+        add_action( 'admin_init', 'register_mysettings' );  // 调用注册设置函数
+    }
+    // function my_function_menu() {
+    //   echo "<h2>测试菜单设置</h2>";
+    // }
+    // function my_function_submenu1() {
+    //   echo "<h2>测试子菜单设置一</h2>";
+    // }
+    // WordPress后台添加 general 设置子菜单
+    // add_action('admin_menu', 'options_submenu', 1);
+    // function options_submenu() {
+    //     add_options_page(__('2BLOG - 主题设置页面'), __('2BLOG 主题预设'), 'read', '2blog-settings', 'add_options_submenu');  // 创建新的顶级菜单
+    //     add_action( 'admin_init', 'register_mysettings' );  // 调用注册设置函数
+    // }
+    // 注册设置
+    function register_mysettings() {
+        register_setting( 'baw-settings-group', 'site_nick' );
+        register_setting( 'baw-settings-group', 'site_avatar' );
+        register_setting( 'baw-settings-group', 'site_bgimg' );
+        register_setting( 'baw-settings-group', 'site_theme' );
+        register_setting( 'baw-settings-group', 'site_logo_switcher' );
+        if(get_option('site_logo_switcher')){
+            register_setting( 'baw-settings-group', 'site_logo' );
+            register_setting( 'baw-settings-group', 'site_logos' );
+        }
+        register_setting( 'baw-settings-group', 'site_keywords' );
+        register_setting( 'baw-settings-group', 'site_description' );
+        register_setting( 'baw-settings-group', 'site_support' );
+        register_setting( 'baw-settings-group', 'site_inform_switcher' );
+        // if(get_option('site_inform_switcher')){
+        //     register_setting( 'baw-settings-group', 'site_inform_cid' );
+        // }
+        register_setting( 'baw-settings-group', 'site_navicon_switcher' );
+        
+        register_setting( 'baw-settings-group', 'site_remove_category' );
+        register_setting( 'baw-settings-group', 'site_url_slash' );
+        register_setting( 'baw-settings-group', 'site_search_style_switcher' );
+        if(get_option('site_search_style_switcher')){
+            register_setting( 'baw-settings-group', 'site_search_includes' );
+        }
+        
+        register_setting( 'baw-settings-group', 'site_breadcrumb_switcher' );
+        register_setting( 'baw-settings-group', 'site_metanav_switcher' );
+        if(get_option('site_metanav_switcher')){
+            register_setting( 'baw-settings-group', 'site_metanav_array' );
+            register_setting( 'baw-settings-group', 'site_metanav_image' );
+        }
+        register_setting( 'baw-settings-group', 'site_rcmdside_cid' );
+        register_setting( 'baw-settings-group', 'site_cardnav_array' );
+        register_setting( 'baw-settings-group', 'site_techside_switcher' );
+        if(get_option('site_techside_switcher')){
+            register_setting( 'baw-settings-group', 'site_techside_cid' );
+            register_setting( 'baw-settings-group', 'site_techside_bg' );
+        }
+        register_setting( 'baw-settings-group', 'site_acgnside_switcher' );
+        if(get_option('site_acgnside_switcher')){
+            register_setting( 'baw-settings-group', 'site_acgnside_cid' );
+        }
+        
+        // register_setting( 'baw-settings-group', 'site_acgn_bg' );
+        register_setting( 'baw-settings-group', 'site_acgn_video' );
+        // register_setting( 'baw-settings-group', 'site_guestbook_bg' );
+        register_setting( 'baw-settings-group', 'site_guestbook_video' );
+        // register_setting( 'baw-settings-group', 'site_about_bg' );
+        register_setting( 'baw-settings-group', 'site_about_video' );
+        // register_setting( 'baw-settings-group', 'site_privacy_bg' );
+        register_setting( 'baw-settings-group', 'site_privacy_video' );
+        
+        register_setting( 'baw-settings-group', 'site_cdn_switcher' );
+        if(get_option('site_cdn_switcher')){
+            register_setting( 'baw-settings-group', 'site_cdn_img' );
+            register_setting( 'baw-settings-group', 'site_cdn_src' );
+        }
+        register_setting( 'baw-settings-group', 'site_darkmode_switcher' );
+        if(get_option('site_darkmode_switcher')){
+            register_setting( 'baw-settings-group', 'site_darkmode_start' );
+            register_setting( 'baw-settings-group', 'site_darkmode_end' );
+        }
+        register_setting( 'baw-settings-group', 'site_avatar_mirror' );
+        register_setting( 'baw-settings-group', 'site_pixiv_switcher' );
+        if(get_option('site_pixiv_switcher')){
+            register_setting( 'baw-settings-group', 'site_bar_pixiv' );
+        }
+        register_setting( 'baw-settings-group', 'site_mostview_switcher' );
+        if(get_option('site_mostview_switcher')){
+            register_setting( 'baw-settings-group', 'site_mostview_cid' );
+        }      
+        register_setting( 'baw-settings-group', 'site_leancloud_switcher' );
+        register_setting( 'baw-settings-group', 'site_comment_switcher' );
+        if(get_option('site_comment_switcher')){
+            register_setting( 'baw-settings-group', 'site_leancloud_sdk' );
+            register_setting( 'baw-settings-group', 'site_comment_qmsgchan' );
+            register_setting( 'baw-settings-group', 'site_comment_serverchan' );
+            register_setting( 'baw-settings-group', 'site_comment_pushplus' );
+        }else{
+            // site_wpwx_notify_switcher
+        }
+        register_setting( 'baw-settings-group', 'site_wpwx_notify_switcher' );
+        if(get_option('site_wpwx_notify_switcher')){
+            register_setting( 'baw-settings-group', 'site_wpwx_id' );
+            register_setting( 'baw-settings-group', 'site_wpwx_agentid' );
+            register_setting( 'baw-settings-group', 'site_wpwx_secret' );
+            register_setting( 'baw-settings-group', 'site_wpwx_type' );
+        }
+        // enable appid/key/server fields if any of avos actived(incase can not update if anyone of them disabled)
+        if(get_option('site_leancloud_switcher') || get_option('site_comment_switcher')){
+            register_setting( 'baw-settings-group', 'site_leancloud_appid' );
+            register_setting( 'baw-settings-group', 'site_leancloud_appkey' );
+            register_setting( 'baw-settings-group', 'site_leancloud_server' );
+        }
+        
+        register_setting( 'baw-settings-group', 'site_ads_switcher' );
+        if(get_option('site_ads_switcher')){
+            register_setting( 'baw-settings-group', 'site_bar_ads' );
+        }
+        register_setting( 'baw-settings-group', 'site_smtp_switcher' );
+        if(get_option('site_smtp_switcher')){
+            register_setting( 'baw-settings-group', 'site_smtp_mail' );
+            register_setting( 'baw-settings-group', 'site_smtp_host' );
+            register_setting( 'baw-settings-group', 'site_smtp_pswd' );
+        }
+        register_setting( 'baw-settings-group', 'site_wpmail_switcher' );
+        
+        register_setting( 'baw-settings-group', 'site_rss_categories' );
+        register_setting( 'baw-settings-group', 'site_map_switcher' );
+        if(get_option('site_map_switcher')){
+            register_setting( 'baw-settings-group', 'site_map_includes' );
+        }
+        
+        register_setting( 'baw-settings-group', 'site_banner_array' );
+        register_setting( 'baw-settings-group', 'site_bottom_recent_cid' );
+        register_setting( 'baw-settings-group', 'site_bottom_nav' );
+        register_setting( 'baw-settings-group', 'site_monitor_switcher' );
+        if(get_option('site_monitor_switcher')){
+            register_setting( 'baw-settings-group', 'site_monitor' );
+        }
+        register_setting( 'baw-settings-group', 'site_chat_switcher' );
+        if(get_option('site_chat_switcher')){
+            register_setting( 'baw-settings-group', 'site_chat' );
+        }
+        register_setting( 'baw-settings-group', 'site_begain' );
+        register_setting( 'baw-settings-group', 'site_copyright' );
+        register_setting( 'baw-settings-group', 'site_beian_switcher' );
+        if(get_option('site_beian_switcher')){
+            register_setting( 'baw-settings-group', 'site_beian' );
+        }
+        register_setting( 'baw-settings-group', 'site_server' );
+        register_setting( 'baw-settings-group', 'site_foreverblog_switcher' );
+        if(get_option('site_foreverblog_switcher')){
+            register_setting( 'baw-settings-group', 'site_foreverblog' );
+            register_setting( 'baw-settings-group', 'site_foreverblog_wormhole' );
+        }
+        register_setting( 'baw-settings-group', 'site_contact_email' );
+        register_setting( 'baw-settings-group', 'site_contact_wechat' );
+        register_setting( 'baw-settings-group', 'site_contact_weibo' );
+        register_setting( 'baw-settings-group', 'site_contact_music' );
+        register_setting( 'baw-settings-group', 'site_contact_bilibili' );
+        register_setting( 'baw-settings-group', 'site_contact_github' );
+        register_setting( 'baw-settings-group', 'site_contact_twitter' );
+        register_setting( 'baw-settings-group', 'site_contact_steam' );
+    }
+    function add_options_submenu() {
+        $theme_color = get_option('site_theme','#eb6844');
+?>
+    <div class="wrap settings">
+        <style>
+        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(0deg,#f0f0f1 0%, #e9e9e9 100%);background:-webkit-linear-gradient(0deg,#f0f0f1 0%, #fff 100%);}.btn{border: 1px solid;padding: 2px 5px;border-radius: 3px;font-size: smaller;font-weight:bold;background:white;font-weight:900;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:188px;height:18px;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.disabled{opacity:.75}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:<?php echo $theme_color; ?>}.form-table tr:hover > th sup{color:<?php echo $theme_color; ?>}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;}.form-table th sup.dualdata{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 0 1px #2271b1;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:<?php echo $theme_color; ?>}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid <?php echo $theme_color; ?>!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview_list em,/*.upload_preview.bg.video{width:120px;height:60px}*/.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+            .upload_button:focus,.upload_button:hover{background:<?php echo $theme_color; ?>!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px <?php echo $theme_color; ?>!important;border-color:transparent!important;}.upload_button.video{background:purple;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
+            label.upload:before{content: "点击更换";width: 100%;height: 100%;color: white;font-size: smaller;text-align: center;background: rgb(0 0 0 / 52%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius:5px;position:relative;overflow:hidden;}
+            .formtable{display:none;}.formtable.show{display:block;}.switchTab.fixed{position: fixed;width: 100%;background: rgb(255 255 255 / 75%);top: 32px;left:0;z-index: 9;padding:10px 0;padding-left:160px;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}.switchTab{transition: top .35s ease;top: -32px;padding: 0;}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:<?php echo $theme_color; ?>;background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px <?php echo $theme_color; ?>}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 2px #fff, 0 0 0 3px <?php echo $theme_color; ?>;}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:0;border-radius:25px}.switchTab li b{font-size:initial;display:block;text-shadow:1px 1px 0 white;font-style:normal}
+            .smtp{margin-left:10px;vertical-align:middle;}
+            #loading.responsed{-webkit-animation-duration:.35s!important;animation-duration:.35s!important;}
+            #loading.responsing{-webkit-animation:rotateloop .5s infinite linear;animation:rotateloop .5s infinite linear}
+            #loading.responsing.ok:before{border-color:limegreen;}
+            #loading.responsing.err:before{border-color:orangered;}
+            #loading{position: relative;padding: 20px;display: inline-block;vertical-align:middle;}
+            #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:0px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent!important;border-bottom-color:transparent!important;border-radius:50%;}
+            @keyframes rotateloop{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg);}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg);}
+            }
+            .form-table .checkbox{
+                /*margin: 10px auto;*/
+                /*margin: 10px;*/
+                display: inline-block;
+                /*border: 1px solid #ccc;*/
+                padding: 5px 5px 5px 15px;
+                border-radius: 5px;
+            }
+            .form-table .checkbox input[type=checkbox]{margin:auto}
+            .form-table .checkbox label{display: inline-block;padding: 1px 15px 0 5px;font-weight: bold;font-size:smaller;}
+        </style>
+        <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>THEME</b><p style="letter-spacing:normal;margin-bottom:auto;"> 主题部分页面提供 Leancloud 第三方 bass 数据储存服务 </p></h1>
+        <hr/>
+        <div class="switchTab">
+            <ul>
+                <li id="basic" class="active"><b>基本信息</b></li>
+                <li id="common"><b>通用控制</b></li>
+                <li id="index"><b>页面设置</b></li>
+                <li id="sidebar"><b>边栏设置</b></li>
+                <li id="footer"><b>页尾控制</b></li>
+                <!--<li id="contact"><b>联系方式</b></li>-->
+            </ul>
+        </div>
+        <hr/>
+        <form method="post" action="options.php">
+            <?php submit_button('立即提交'); ?>
+            <?php settings_fields( 'baw-settings-group' ); // 设置字段 这个函数取代了 nonce magic, action field, and page_options ?>
+            <?php do_settings_sections( 'baw-settings-group' ); // 这个函数取代了表单字段标记形式本身 ?>
+            <div class="formtable basic">
+                <h1><b class="num" style="border-color:#eb6844;box-shadow:-5px -5px 0 rgb(235 104 68 / 18%);">01</b>基本信息<p class="en">BASICALLY INFOMATION</p></h1>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">博主昵称</th>
+                        <td>
+                            <p class="description" id="site_nick_label">网站标题、底部描述、文章作者、来源等信息均会使用到此信息（默认站点名称）</p>
+                            <?php
+                                $value = get_option( 'site_nick', '' );
+                                $preset = get_bloginfo('name');
+                                if(!$value) update_option( 'site_nick', $preset );else $preset=$value;
+                            ?>
+                            <input type="text" name="site_nick" id="site_nick" class="middle-text" value="<?php echo esc_attr($preset); ?>" placeholder="博主昵称">
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">个人头像</th>
+                        <td>
+                            <?php 
+                                $opt = 'site_avatar';
+                                $value = get_option($opt);
+                                $mail = 'wapuu@wordpress.example';//get_bloginfo('admin_email');
+                                // !$mail ? $mail="wapuu@wordpress.example" : $mail;
+                                $preset = 'https:' . get_option('site_avatar_mirror','//sdn.geekzu.org/') . 'avatar/' . md5($mail) . '?s=300';
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if avatar unset
+                                echo '<p class="description" id="site_avatar_label">个人头像，用于笔记栈、关于等页面（默认管理员邮箱 gravatar 头像</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="border-radius: 100%;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 gravatar 头像" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">背景图片</th>
+                        <td>
+                            <?php
+                                $opt = 'site_bgimg';
+                                $value = get_option($opt);
+                                $preset = get_bloginfo('template_directory').'/images/default.jpg';  
+                                // $preset = 'https:'.get_option('site_avatar_mirror','//sdn.geekzu.org/').'/avatar/?d=identicon&s=300';
+                                $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
+                                echo '<p class="description" id="site_bgimg_label">默认背景图，用于各页面调用背景图（默认随机 gravatar 背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">站点关键词</th>
+                        <td>
+                            <input type="text" name="site_keywords" id="site_keywords" class="regular-text" value="<?php echo esc_attr(get_option('site_keywords')); ?>" placeholder="站点关键词">
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">站点描述</th>
+                        <td>
+                            <textarea name="site_description" id="site_description" placeholder="站点描述"><?php echo esc_attr(get_option('site_description')); ?></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="formtable common">
+                <h1><b class="num" style="border-color:dodgerblue;box-shadow:-5px -5px 0 rgb(30 144 255 / 18%);">02</b>通用控制<p class="en">COMMONLY CONTROLS</p></h1>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">主题颜色</th>
+                        <td>
+                            <?php
+                                $value = get_option('site_theme');
+                                $preset = "#eb6844";
+                                if(!$value) update_option( 'site_theme', $preset );else $preset=$value;
+                                echo '<label for="site_theme"><p class="description" id="site_theme_label">此选项将重写网站主题色及后台高亮色（默认 #eb6844</p><input type="color" name="site_theme" id="site_theme" value="' . $preset . '"/></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">站点LOGO</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_logo_switcher', '' );
+                                // $data = get_option( 'site_logo', '' );
+                                $value ? $status="checked" : $status="closed";
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                // if(!$value&&!$data){
+                                //     update_option( 'site_logo_switcher', "on_default" );
+                                //     $status="checked";
+                                // }else{
+                                //     $value ? $status="checked" : $status="closed";
+                                // };
+                                echo '<label for="site_logo_switcher"><p class="description" id="site_logo_switcher_label">站点 logo 图片（关闭logo将默认显示 xty 矢量 logo网站名称替代</p><input type="checkbox" name="site_logo_switcher" id="site_logo_switcher"'.$status.' /> <span style="color:#2271b1;" class="btn">LOGO</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_logo_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— LOGO图片链接（默认）</th>
+                                <td>
+                                    <?php 
+                                        $opt = 'site_logo';
+                                        $value = get_option($opt);
+                                        $preset = get_bloginfo('template_directory').'/images/svg/XTy_115x35.svg';
+                                        $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
+                                        echo '<p class="description" id="site_logo_label">站点 LOGO 图片链接（应用于全站，留空默认预设LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY 矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— LOGO图片链接（深色）</th>
+                                <td>
+                                    <?php 
+                                        $opt = 'site_logos';
+                                        $value = get_option($opt);
+                                        $preset = get_bloginfo('template_directory').'/images/svg/XTy_115x35_light.svg';
+                                        $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
+                                        echo '<p class="description" id="site_logos_label">站点 LOGO（深色）图片链接（应用于深色模式，留空默认预设LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY（深色）矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">category 分类目录</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_remove_category', '' );
+                                $data = get_option( 'site_url_slash', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option( 'site_remove_category', "on_default" );
+                                    $status="checked";
+                                }else{
+                                    $value ? $status="checked" : $status="closed";
+                                };
+                                echo '<label for="site_remove_category"><p class="description" id="site_remove_category_label">开启后移除 url 中自带的 category 目录（默认开启</p><input type="checkbox" name="site_remove_category" id="site_remove_category"'.$status.' /> <b class="'.$status.'">移除 CATEGORY</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_remove_category')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— URL（隐性）尾部斜杠</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_url_slash', '' );
+                                        $value ? $status="checked" : $status="closed";
+                                        echo '<label for="site_url_slash"><p class="description" id="site_url_slash_label">Permalink链接尾部斜杠（开启后移除站点超链接中的尾部"/"，访问链接“/”需在固定链接中设置</p><input type="checkbox" name="site_url_slash" id="site_url_slash"'.$status.' /> <b class="'.$status.'">去除 URL 斜杠</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top" class="">
+                        <th scope="row">搜索展现样式</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_search_style_switcher', '' );
+                                $data = get_option( 'site_search_includes', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option( 'site_search_style_switcher', "on_default" );
+                                    $status="checked";
+                                }else{
+                                    $value ? $status="checked" : $status="closed";
+                                };
+                                echo '<label for="site_search_style_switcher"><p class="description" id="site_search_style_switcher_label">搜索结果展示列表样式，开启后将使用各页面数据列表样式（默认使用笔记栈列表样式</p><input type="checkbox" name="site_search_style_switcher" id="site_search_style_switcher"'.$status.' /><b>搜索展现样式</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_search_style_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 搜索结果类型（多选项）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_search_includes';  //unique str
+                                        $value = get_option($opt);
+                                        $options = array('post', 'page');
+                                        $preset = $options[0].',';
+                                        if(!$value){
+                                            // $preset_str = implode(' , ',$options).',';
+                                            update_option($opt, $preset);
+                                            $value = $preset;
+                                        }
+                                        echo '<p class="description" id="site_search_includes_label">指定搜索包含内容，使用逗号“ , ”分隔（默认 post 类型，可选 page（页面）及自定义选填类型</p><div class="checkbox">';
+                                        foreach ($options as $option){
+                                            $checking = strpos($value, $option)!==false ? 'checked' : '';
+                                            echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
+                                        }
+                                        echo '<input type="text" name="site_search_includes" id="site_search_includes" class="middle-text array-text" value="' . $value . '"/></div>';;
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php 
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">面包屑导航</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_breadcrumb_switcher', '' );
+                                $value ? $status="checked" : $status="closed";
+                                echo '<label for="site_breadcrumb_switcher"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="site_breadcrumb_switcher" id="site_breadcrumb_switcher"'.$status.' /> <b class="'.$status.'">页面层级导航</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">头部公告<sup class="dualdata" title="“多数据”">BaaS</sup></th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_inform_switcher', '' );
+                                $value ? $status="checked" : $status="closed";
+                                echo '<label for="site_inform_switcher"><p class="description" id="site_inform_switcher_label">部分页面头部公告显示内容（支持第三方数据储存</p><input type="checkbox" name="site_inform_switcher" id="site_inform_switcher"'.$status.' /> <b class="'.$status.'">页面头部公告</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">metaBox 元导航分类</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_metanav_switcher', '' );
+                                $value ? $status="checked" : $status="closed";
+                                echo '<label for="site_metanav_switcher"><p class="description" id="site_metanav_switcher_label">多元化展示分类导航名称、描述及背景（仅可选存在子分类的一级分类</p><input type="checkbox" name="site_metanav_switcher" id="site_metanav_switcher"'.$status.' /> <b class="'.$status.'">多元分类导航</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_metanav_switcher')){
+                            $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+                            $options = array();
+                            foreach($cats as $the_cat){
+                                if(count(get_term_children($the_cat->term_id,$the_cat->taxonomy))>0) array_push($options, $the_cat);  // has-child category only
+                            }
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 基础元分类（多选项）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_metanav_array';  //unique str
+                                        $value = get_option($opt);
+                                        $preset = $options[0]->slug.','; //'notes,acg,';
+                                        if(!$value){
+                                            update_option($opt, $preset);
+                                            $value = $preset;
+                                        }
+                                        echo '<p class="description" id="site_metanav_array_label">需要应用元导航样式的分类别名（使用逗号“ , ”分隔</p><div class="checkbox">';
+                                        foreach ($options as $option){
+                                            $slug = $option->slug;
+                                            $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                            echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$option->name.'</label>';
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 图文元分类（多选项）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_metanav_image';  //unique str
+                                        $value = get_option($opt);
+                                        $enabled_array = explode(',',trim(get_option('site_metanav_array')));
+                                        echo '<p class="description" id="site_metanav_image_label">需要使用背景图片的元分类导航，使用逗号“ , ”分隔（仅可选上方“基础元分类”中已启用分类，注slash“/”需手动写入</p><div class="checkbox">';
+                                        // foreach ($options as $option){
+                                        //     $slug = $option->slug;
+                                        //     $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                        //     echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$option->name.'</label>';
+                                        // }
+                                        for($i=0;$i<count($enabled_array);$i++){
+                                            $slug = trim($enabled_array[$i]);  // NO WhiteSpace
+                                            if($slug){
+                                                $new_category = get_category_by_slug($slug);
+                                                if($new_category){
+                                                    $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                                    echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$new_category->name.'</label>';
+                                                }
+                                            }
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">Gravatar 镜像源<sup class="dualdata" title="“多数据”">BaaS</sup></th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_avatar_mirror', '' );
+                                $preset = '//cravatar.cn/';
+                                $arrobj = array(
+                                    array('name'=>'Gravatar', 'href'=>'//gravatar.com/'),
+                                    array('name'=>'极客族', 'href'=>'//sdn.geekzu.org/'),
+                                    array('name'=>'Cravatar', 'href'=>'//cravatar.cn/'),
+                                    array('name'=>'LOLI', 'href'=>'//gravatar.loli.net/'),
+                                    array('name'=>'V2EX', 'href'=>'//cdn.v2ex.com/'),
+                                    array('name'=>'inwao', 'href'=>'//gravatar.inwao.com/'),
+                                );
+                                if(!$value) update_option( 'site_avatar_mirror', $preset );else $preset=$value;  //auto update option to default if unset
+                                echo '<label for="site_avatar_mirror"><p class="description" id="site_avatar_mirror_label">评论头像 Gravatar 国内镜像源（同时适用于 wordpress/valine 评论头像展示</p><select name="site_avatar_mirror" id="site_avatar_mirror">';
+                                    foreach ($arrobj as $arr){
+                                        echo '<option value="'.$arr['href'].'"';if($preset==$arr['href']) echo('selected="selected"');echo '>'.$arr['name'].'</option>';
+                                    }
+                                echo '</select></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">RSS 订阅分类（多选项）</th>
+                        <td>
+                            <?php
+                                $opt = 'site_rss_categories';  //unique str
+                                $value = get_option($opt);
+                                $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+                                $options = array();
+                                foreach($cats as $the_cat){
+                                    if($the_cat->count>=1) array_push($options, $the_cat);  // has-content category only
+                                }
+                                echo '<p class="description" id="site_rss_categories_label">指定站点 RSS 分类文章，使用逗号“ , ”分隔（默认所有分类，仅可选一级分类内容，feed将在任意文章更新后更新</p><div class="checkbox">';
+                                foreach ($options as $option){
+                                    $slug = $option->slug;
+                                    $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                    echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$option->name.'</label>';
+                                }
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">Sitemap 站点地图</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_map_switcher', '' );
+                                $data = get_option( 'site_map_includes', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option( 'site_map_switcher', "on_default" );
+                                    $status="checked";
+                                }else{
+                                    $value ? $status="checked" : $status="closed";
+                                };
+                                echo '<label for="site_map_switcher"><p class="description" id="site_map_switcher_label">生成全站站点地图（默认启用，开启后可指定生成类型</p><input type="checkbox" name="site_map_switcher" id="site_map_switcher"'.$status.' /> <span style="color:steelblue;" class="btn">SITEMAP</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_map_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">Sitemap 生成类型（多选项）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_map_includes';  //unique str
+                                        $value = get_option($opt);
+                                        $options = array('post','category','tag');
+                                        if(!$value){
+                                            $preset_str = implode(',', $options).',';
+                                            update_option($opt, $preset_str);
+                                            $value = $preset_str;
+                                        }
+                                        echo '<p class="description" id="site_map_includes_label">指定 sitemap 生成内容，使用逗号“ , ”分隔（默认 post（文章）tag（标签）category（分类/<del>即 page（页面）</del>）</p><div class="checkbox">';
+                                        foreach ($options as $option){
+                                            $checking = strpos($value, $option)!==false ? 'checked' : '';
+                                            echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php 
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">Darkmode 暗黑模式</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_darkmode_switcher', '' );
+                                $start = get_option( 'site_darkmode_start', '' );
+                                $end = get_option( 'site_darkmode_end', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$start&&!$end){
+                                    update_option( 'site_darkmode_switcher', "on_default" );
+                                    $status="checked";
+                                }else{
+                                    $value ? $status="checked" : $status="closed";
+                                };
+                                echo '<label for="site_darkmode_switcher"><p class="description" id="site_darkmode_switcher_label">开启后将自动识别时段（晚17至早9）并切换主题为 darkmode 模式</p><input type="checkbox" name="site_darkmode_switcher" id="site_darkmode_switcher"'.$status.' /> <b class="'.$status.'">自动深色模式</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_darkmode_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 开启时间</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_darkmode_start', '' );
+                                        $preset = 17;  //默认开启（时）间
+                                        if(!$value) update_option( 'site_darkmode_start', $preset );else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_darkmode_start_label">darkmode 开启时间（大于13点小于24点</p><input type="number" min="13" max="24" name="site_darkmode_start" id="site_darkmode_start" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 关闭时间</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_darkmode_end', '' );
+                                        $preset = 9;  //默认关闭（时）间
+                                        if(!$value) update_option( 'site_darkmode_end', $preset );else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_darkmode_end_label">darkmode 关闭时间（大于1点小于12点</p><input type="number" min="1" max="12" name="site_darkmode_end" id="site_darkmode_end" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">站点 CDN 加速</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_cdn_switcher', '' );
+                                $img = get_option( 'site_cdn_img', '' );
+                                $src = get_option( 'site_cdn_src', '' );
+                                $value ? $status="checked" : $status="closed";
+                                echo '<label for="site_cdn_switcher"><p class="description" id="site_cdn_switcher_label">开启后可自定义cdn加速域名（图片/文件</p><input type="checkbox" name="site_cdn_switcher" id="site_cdn_switcher"'.$status.' /> <b class="'.$status.'">CDN加速域名</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_cdn_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 文件加速域名</th>
+                                <td>
+                                    <p class="description" id="site_cdn_src_label">可选项，网站cdn（css、js）链接/标头（默认使用当前主题目录</p>
+                                    <input type="text" name="site_cdn_src" id="site_cdn_src" class="middle-text" placeholder="src root path" value="<?php echo get_option( 'site_cdn_src', '' ); ?>"/>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 图片加速域名</th>
+                                <td>
+                                    <p class="description" id="site_cdn_img_label">网站媒体文件（图片/音视频）cdn链接/标头（默认文件夹“images”</p>
+                                    <input type="text" name="site_cdn_img" id="site_cdn_img" class="middle-text" placeholder="img root path" value="<?php echo get_option( 'site_cdn_img', '' ) ?>"/>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">Leancloud<sup class="dualdata" title="“多数据”">BaaS</sup></th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_leancloud_switcher', '' );
+                                $value ? $status="checked" : $status="closed";
+                                echo '<label for="site_leancloud_switcher"><p class="description" id="site_leancloud_switcher_label">使用第三方云数据库（Serverless）接管日记、友链、公告等数据内容（仅提供数据存取，不提供数据分类等。所有设置项均与第三方评论自动同步</p><input type="checkbox" name="site_leancloud_switcher" id="site_leancloud_switcher"'.$status.' /> <span style="color:#2b96e7;" class="btn">LeanCloud</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_leancloud_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— LBMS</th>
+                                <td>
+                                    <p class="description" id="site_leancloud_appid_label">
+                                        <b>LBMS 是基于 leancloud 开发的数据储存容器 <a href="<?php echo bloginfo('url') ?>/lbms" target="_blank">前往 LBMS 管理页面</a></b><br />
+                                    </p>
+                                    <p>需前往<a href="https://console.leancloud.cn/" target="_blank"> Leancloud 控制台 </a>设置对应 serverurl 并创建对应页面 slug 数据表（启用后将自动新建别名为“lbms”及“lbms-login”页面</del></p>
+                                    <?php
+                                        global $wpdb;
+                                        $request_page = new WP_REST_Request( 'POST', '/wp/v2/pages' );
+                                        $init_pages = array(
+                                            array(
+                                                'title' => 'LBMS管理后台', 
+                                                'slug' => 'lbms',
+                                                'template' => 'plugin/lbms.php'
+                                            ),
+                                            array(
+                                                'title' => 'LBMS登陆页面', 
+                                                'slug' => 'lbms-login',
+                                                'template' => 'plugin/lbms-login.php'
+                                            ),
+                                        );
+                                        foreach ($init_pages as $each_page){
+                                            $slug = $each_page['slug'];
+                                            $title = $each_page['title'];
+                                            $check_page = $wpdb->get_var("SELECT * FROM $wpdb->posts WHERE post_name = '$slug' AND post_type = 'page'");
+                                            if(!$check_page){
+                                                // https://developer.wordpress.org/reference/classes/wp_rest_request/set_query_params/
+                                                $request_page->set_query_params(array(
+                                                    'slug' => $slug,
+                                                    'title' => $title,
+                                                    'status' => 'private',
+                                                    'template' => $each_page['template']
+                                                ));
+                                                $response = rest_do_request( $request_page );
+                                                // if ( $response->is_error() ) {
+                                                //     // Convert to a WP_Error object.
+                                                //     $error = $response->as_error();
+                                                //     $message = $response->get_error_message();
+                                                //     $error_data = $response->get_error_data();
+                                                //     $status = isset( $error_data['status'] ) ? $error_data['status'] : 500;
+                                                //     wp_die( sprintf( '<p>An error occurred: %s (%d)</p>', $message, $error_data ) );
+                                                // }
+                                                // $data = $response->get_data();
+                                                // $headers = $response->get_headers();
+                                                // echo "<p>Success! Here's the data:</p>";
+                                                // var_dump( $data );
+                                            }
+                                        }
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— APP ID</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_leancloud_appid', '' );
+                                         echo '<p class="description" id="site_leancloud_appid_label"></p><input type="text" name="site_leancloud_appid" id="site_leancloud_appid" class="regular-text" placeholder="Leancloud App Id" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— APP KEY</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_leancloud_appkey', '' );
+                                         echo '<input type="text" name="site_leancloud_appkey" id="site_leancloud_appkey" class="regular-text" placeholder="Leancloud App Key" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— SERVER URL</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_leancloud_server', '' );
+                                         echo '<!--<p class="description" id="site_leancloud_switcher_label">国内版二级域名可能出现的CORS跨域问题？<a href="#">点我查看</a></p>--><input type="text" name="site_leancloud_server" id="site_leancloud_server" class="regular-text" placeholder="Leancloud Server Url" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">第三方评论插件</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_comment_switcher', '' );
+                                $value ? $status="checked" : $status="closed";
+                                echo '<label for="site_comment_switcher"><p class="description" id="site_comment_switcher_label">第三方评论插件，如评论编辑、评论排行、最新评论、
+                               文章浏览量等内容展示（为防止跨应用多次初始化可能造成的数据调用混乱问题，appid/appkey/server 等数据将与 leancloud 应用同步初始化（每页显示评论数量可在 wp 后台设置 -> 讨论中修改）状态：'.$status.'</p><input type="checkbox" name="site_comment_switcher" id="site_comment_switcher" '.$status.'/> <span style="color:blueviolet;background:;border-color:blueviolet;" class="btn">Valine</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_comment_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option same_data">
+                                <th scope="row">— APP ID</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_leancloud_appid', '' );
+                                         echo '<input type="text" name="site_leancloud_appid" id="site_leancloud_appid" class="regular-text" placeholder="Leancloud App Id" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option same_data">
+                                <th scope="row">— APP KEY</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_leancloud_appkey', '' );
+                                         echo '<input type="text" name="site_leancloud_appkey" id="site_leancloud_appkey" class="regular-text" placeholder="Leancloud App Key" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option same_data">
+                                <th scope="row">— SERVER URL</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_leancloud_server', '' );
+                                         echo '<input type="text" name="site_leancloud_server" id="site_leancloud_server" class="regular-text" placeholder="Leancloud Server Url" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option same_data">
+                                <th scope="row">— AVOS SDK</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_leancloud_sdk', '' );
+                                        $preset = get_bloginfo('template_directory').'/js/leancloud/av-min.js?v=rootdir';//'//cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js';
+                                        if(!$value) update_option( 'site_leancloud_sdk', $preset );else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_comment_serverchan_label">评论 valine 依赖项，默认 jsdelivr（cdn无法使用时可自定义sdk）</p><input type="text" name="site_leancloud_sdk" id="site_leancloud_sdk" class="regular-text" placeholder="Leancloud AVOS Sdk" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— ServerChan SendKey</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_comment_serverchan', '' );
+                                         echo '<p class="description" id="site_comment_serverchan_label">评论微信提醒（server酱提供的评论微信提醒服务（每天 5 条）<a href="https://sct.ftqq.com" target="_blank">相关文档</a></p><input type="text" name="site_comment_serverchan" id="site_comment_serverchan" class="regular-text" placeholder="ServerChan api key" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— QmsgChan Key</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_comment_qmsgchan', '' );
+                                         echo '<p class="description" id="site_comment_qmsgchan_label">Qmsg酱提供的评论QQ提醒服务（每天 40 条）<a href="https://qmsg.zendee.cn/" target="_blank">相关文档</a></p><input type="text" name="site_comment_qmsgchan" id="site_comment_qmsgchan" class="regular-text" placeholder="Qmsg api key" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— PushPlus Token</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_comment_pushplus', '' );
+                                         echo '<p class="description" id="site_comment_pushplus_label">评论微信（公众号）提醒（pushplus提供的公众号推送服务（每天 200 条）<a href="http://www.pushplus.plus/push1.html" target="_blank">相关文档</a></p><input type="text" name="site_comment_pushplus" id="site_comment_pushplus" class="regular-text" placeholder="Pushplus token" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                        <tr valign="top">
+                            <th scope="row">评论微信提醒</th>
+                            <td>
+                                <?php
+                                    $value = get_option( 'site_wpwx_notify_switcher', '' );
+                                    $value ? $status="checked" : $status="closed";
+                                    echo '<label for="site_wpwx_notify_switcher"><p class="description" id="site_wpwx_notify_switcher_label">基于企业微信应用开发的评论推送微信通知，需填写企业ID、企业应用AgentId、企业应用Secret（微信需关注该企业应用才能收到通知<a href="https://www.jishusongshu.com/network-tech/work-weixin-push-website-comment/" target="_blank"> 相关文档 </a> 状态：'.$status.'</p><input type="checkbox" name="site_wpwx_notify_switcher" id="site_wpwx_notify_switcher" '.$status.'/><b>评论微信提醒</b></label>';
+                                ?>
+                            </td>
+                        </tr>
+                    <?php
+                        if(get_option('site_wpwx_notify_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 企业 ID</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_wpwx_id', '' );
+                                         echo '<input type="text" name="site_wpwx_id" id="site_wpwx_id" class="regular-text" placeholder="企业微信 ID" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 应用 AgentId</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_wpwx_agentid', '' );
+                                         echo '<input type="text" name="site_wpwx_agentid" id="site_wpwx_agentid" class="regular-text" placeholder="企业应用 AgentId" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 应用 Secret</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_wpwx_secret', '' );
+                                         echo '<input type="text" name="site_wpwx_secret" id="site_wpwx_secret" class="regular-text" placeholder="企业应用 Secret" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 推送消息类型</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_wpwx_type', '' );
+                                        $preset = 'textcard';
+                                        if(!$value) update_option( 'site_wpwx_type', $preset );else $preset=$value;  //auto update
+                                        $arrobj = array(
+                                            array('name'=>'文本卡片', 'type'=>'textcard'),
+                                            array('name'=>'图文卡片', 'type'=>'news'),
+                                            array('name'=>'模板卡片', 'type'=>'template_card'),
+                                        );
+                                        echo '<label for="site_wpwx_type"><p class="description" id="site_wpwx_type_label">文本卡片为纯文本描述，图文卡片会附一张文章或页面图片，模板则为更丰富的图文消息（注意模板卡片仅支持企业微信提醒，微信端不会收到任何推送信息</p><img src="'.get_bloginfo('template_directory').'/images/settings/'.$preset.'.png" style="vertical-align: middle;max-width: 88px;margin:auto 15px;" /><select name="site_wpwx_type" id="site_wpwx_type" class="select_images">';
+                                            foreach ($arrobj as $arr){
+                                                $type = $arr['type'];
+                                                echo '<option value="'.$type.'" preview="'.get_bloginfo('template_directory').'/images/settings/'.$type.'.png"';if($preset==$type)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
+                                            }
+                                        echo '</select></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">SMTP 发件服务配置</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_smtp_switcher', '' );
+                                // $state = get_option( 'site_smtp_state', '' );
+                                $value ? $status="checked" : $status="closed";
+                                echo '<label for="site_smtp_switcher"><p class="description" id="site_smtp_switcher_label">SMTP 发件服务配置（配置smtp时默认使用常规设置内的管理员邮箱（状态：'.$status;
+                                // if($state) echo '<u style="color:forestgreen">发件测试已通过</u>';else echo '<u style="color:orangered">配置未通过测试</u>';
+                                echo '，如已通过但未收到邮件请检查授权码及服务器是否全部配置正确</p><input type="checkbox" name="site_smtp_switcher" id="site_smtp_switcher" '.$status.'/><b>SMTP 发件配置</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_smtp_switcher')){
+                    ?>
+                        <tr valign="top" class="child_option">
+                            <th scope="row">— 发件邮箱</th>
+                            <td>
+                                <?php
+                                    $value = get_option( 'site_smtp_mail', '' );
+                                    $preset = get_bloginfo('admin_email');
+                                    if(!$value) update_option('site_smtp_mail',$preset);else $preset=$value;
+                                    echo '<p class="description" id="site_smtp_mail_label">SMTP 发件邮箱（此邮箱应用于所有评论提醒发送邮箱，默认为管理员邮箱：'.get_bloginfo('admin_email').'</p><input type="text" name="site_smtp_mail" id="site_smtp_mail" class="middle-text" value="' . $preset . '" placeholder="发件邮箱地址"/>';
+                                ?>
+                            </td>
+                        </tr>
+                        <tr valign="top" class="child_option">
+                            <th scope="row">— 发件授权码</th>
+                            <td>
+                                <?php
+                                    $value = get_option( 'site_smtp_pswd', '' );
+                                    echo '<p class="description" id="site_smtp_pswd_label">SMTP 邮箱授权码（务必匹配发件邮箱</p><input type="text" name="site_smtp_pswd" id="site_smtp_pswd" class="middle-text" value="' . $value . '" placeholder="管理员邮箱授权码"/>';
+                                ?>
+                            </td>
+                        </tr>
+                        <tr valign="top" class="child_option">
+                            <th scope="row">— 发件服务器</th>
+                            <td>
+                                <?php
+                                    $value = get_option( 'site_smtp_host', '' );
+                                    $arrobj = array(
+                                        array('name'=>'腾讯QQ邮箱', 'href'=>'smtp.qq.com'),
+                                        array('name'=>'腾讯企业邮', 'href'=>'smtp.exmail.qq.com'),
+                                        array('name'=>'阿里云邮箱', 'href'=>'smtp.mxhichina.com'),
+                                        array('name'=>'网易163邮箱', 'href'=>'smtp.163.com'),
+                                        array('name'=>'网易企业邮（免费版）', 'href'=>'smtp.ym.163.com'),
+                                    );
+                                    echo '<label for="site_smtp_host"><p class="description" id="site_smtp_host_label">SMTP发件服务器（务必匹配发件邮箱</p><select name="site_smtp_host" id="site_smtp_host"><option value="">请选择</option>';
+                                        foreach ($arrobj as $arr){
+                                            $href = $arr['href'];
+                                            echo '<option value="'.$href.'"';if($value==$href)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
+                                        }
+                                    echo '</select></label>';
+                                ?>
+                            </td>
+                        </tr>
+                        <tr valign="top" class="child_option">
+                            <th scope="row">— 邮箱发件测试</th>
+                            <td>
+                                <span id="my_email_ajax_nonce" data-nonce="<?php echo wp_create_nonce("my_email_ajax_nonce"); ?>"></span>
+                                <p class="description">默认收/发件人均为管理员邮箱（发送后会更新当前配置状态是否成功</p>
+                                <span id="loading"></span>
+                                <input class="smtp sendmail" type="button" value="发送测试邮件" />
+                            </td>
+                        </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top" class="">
+                        <th scope="row">WP评论邮件模板</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_wpmail_switcher', '' );
+                                $value ? $status="checked" : $status="closed";
+                                echo '<label for="site_wpmail_switcher"><p class="description" id="site_wpmail_switcher_label">WP自带评论审核提醒邮件，此选项为定制模板邮件（两者均需上方 SMTP 配置测试通过后才能收到邮件提醒，状态：'.$status.'</p><input type="checkbox" name="site_wpmail_switcher" id="site_wpmail_switcher" '.$status.'/><b>评论邮件提醒</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="formtable index">
+                <h1><b class="num" style="border-color:blueviolet;box-shadow:-5px -5px 0 rgb(138 43 226 / 18%);">03</b>页面设置<p class="en">PAGES SETTINGS</p></h1>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">首页 - banner 图集</th>
+                        <td>
+                            <?php
+                                $opt = 'site_banner_array';
+                                $value = get_option($opt);
+                                $preset = get_bloginfo('template_directory').'/images/fox.jpg,'.get_bloginfo('template_directory').'/images/default.jpg';
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update
+                                $arr = explode(',',trim($preset));
+                            ?>
+                                <p class="description" id="site_banner_array_label">首页 banner 组图数组（使用逗号“ , ”分隔，图库多选项</p>
+                                    <label for="upload_banner_button" class="upload_preview_list">
+                            <?php
+                                        for($i=0;$i<count($arr);$i++){
+                                            if($arr[$i]) echo '<em class="upload_previews" style="background:url('.$arr[$i].') center center /cover;"></em>';
+                                        }
+                            ?>
+                                    </label>
+                                <input type="text" name="<?php echo $opt ?>" placeholder="<?php echo $preset; ?>" class="large-text upload_field" value="<?php echo $preset; ?>" style="max-width:88%" />
+                                <input id="upload_banner_button" type="button" class="button-primary upload_button" value="上传图片" />
+                        </td>
+                    </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">首页 - 推荐栏目</th>
+                        <td>
+                            <?php
+                                $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+                                $temp = array();
+                                foreach($cats as $the_cat){
+                                    if($the_cat->count>=1) array_push($temp,$the_cat);  //push 1st category which has posts
+                                }
+                                $autoload = get_category_by_slug('news')->term_id;  // get id by slug here for some case like "more" category's slug '/' (can not get cid by '/') 
+                                $value = get_option('site_rcmdside_cid','');
+                                if(!$value) update_option( 'site_rcmdside_cid', $autoload );else $autoload=$value;  //auto update option to default if options unset
+                                echo '<label for="site_rcmdside_cid"><p class="description" id="site_rcmdside_cid_label">默认使用“news”分类（应用于首页banner右侧推荐分类文章卡片展示</p><select name="site_rcmdside_cid" id="site_rcmdside_cid"><option value="">请选择</option>';
+                                    foreach($cats as $the_cat){
+                                        $cats_id = $the_cat->term_id;
+                                        if($the_cat->count>=1){
+                                            echo '<option value="'.$cats_id.'"';if(get_option('site_rcmdside_cid')==$cats_id)echo('selected="selected"');echo '>'.$the_cat->name.'</option>';
+                                        }
+                                    }
+                                echo '</select><label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">首页 - 卡片导航</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_cardnav_array', '' );
+                                $preset = 'news/文; notes/筆; weblog/記; 2bfriends/友'; 
+                                if(!$value) update_option( 'site_cardnav_array', $preset );else $preset=$value;  //auto update option to default if unset
+                                echo '<p class="description" id="site_cardnav_array_label">展示在首页的导航卡片，使用分号“ ; ”分隔（使用斜杠“ / ”自定义名称（留空默认分类名称）如 news/文; notes/笔...</p><input type="text" name="site_cardnav_array" id="site_cardnav_array" class="regular-text array-text" value="' . $preset . '"/>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">首页 - 配图分栏<sup class="dualdata" title="“多数据”">BaaS</sup></th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_techside_switcher', '' );
+                                $data = get_option( 'site_techside_cid', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option( 'site_techside_switcher', "on_default" );
+                                    $status="checked";
+                                }else{
+                                    $value ? $status="checked" : $status="closed";
+                                };
+                                echo '<label for="site_techside_switcher"><p class="description" id="site_techside_switcher_label">开启首页科技资讯栏目（支持第三方数据储存及多个分类文章</p><input type="checkbox" name="site_techside_switcher" id="site_techside_switcher"'.$status.' /> <b class="'.$status.'">配图栏目</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_techside_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 图文资讯分类</th>
+                                <td>
+                                    <?php
+                                        $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+                                        $temp = array();
+                                        foreach($cats as $the_cat){
+                                            if($the_cat->count>=1) array_push($temp,$the_cat);  //push 1st category which has posts
+                                        }
+                                        $autoload = get_category_by_slug('weblog')->term_id;  //return cid for recent_posts_query
+                                        $value = get_option('site_techside_cid','');
+                                        if(!$value) update_option( 'site_techside_cid', $autoload );else $autoload=$value;  //auto update option to default if options unset
+                                        echo '<label for="site_techside_cid"><p class="description" id="site_techside_cid_label">默认使用“weblog”分类（使用第三方数据储存适请确保leancloud内存在当前slug表数据</p><select name="site_techside_cid" id="site_techside_cid"><option value="">请选择</option>';
+                                            foreach($cats as $the_cat){
+                                                $cats_id = $the_cat->term_id;
+                                                if($the_cat->count>=1){
+                                                    echo '<option value="'.$cats_id.'"';if(get_option('site_techside_cid')==$cats_id)echo('selected="selected"');echo '>'.$the_cat->name.'</option>';
+                                                }
+                                            }
+                                        echo '</select><label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 分类背景图片</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_techside_bg';
+                                        $value = get_option($opt);
+                                        $preset =  get_bloginfo('template_directory').'/images/Tech-x4.png';
+                                        $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
+                                        echo '<p class="description" id="site_bgimg_label">分类背景图，首页科技资讯侧边调用图片（默认背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">首页 - ACG栏目<sup class="dualdata" title="“多数据”">BaaS</sup></th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_acgnside_switcher', '' );
+                                $data = get_option( 'site_acgnside_cid', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option( 'site_acgnside_switcher', "on_default" );
+                                    $status="checked";
+                                }else{
+                                    $value ? $status="checked" : $status="closed";
+                                };
+                                echo '<label for="site_acgnside_switcher"><p class="description" id="site_acgnside_switcher_label">开启首页科技资讯栏目（支持第三方数据储存及多个分类文章</p><input type="checkbox" name="site_acgnside_switcher" id="site_acgnside_switcher"'.$status.' /> <b class="'.$status.'">ACGN情报</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_acgnside_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— ACGN分类</th>
+                                <td>
+                                    <?php
+                                        $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+                                        $temp = array();
+                                        foreach($cats as $the_cat){
+                                            if($the_cat->count>=1){
+                                                array_push($temp,$the_cat);  //push 1st category which has posts
+                                            }
+                                        }
+                                        $autoload = get_category_by_slug('acg')->term_id;  //return cid for recent_posts_query
+                                        $value = get_option('site_acgnside_cid','');
+                                        if(!$value) update_option( 'site_acgnside_cid', $autoload );else $autoload=$value;  //auto update option to default if options unset
+                                        echo '<label for="site_acgnside_cid"><p class="description" id="site_acgnside_cid_label">默认使用“acg”分类（使用第三方数据储存适请确保leancloud内存在当前slug表数据</p><select name="site_acgnside_cid" id="site_acgnside_cid"><option value="">请选择</option>';
+                                            foreach($cats as $the_cat){
+                                                $cats_id = $the_cat->term_id;
+                                                if($the_cat->count>=1){
+                                                    echo '<option value="'.$cats_id.'"';if(get_option('site_acgnside_cid')==$cats_id)echo('selected="selected"');echo '>'.$the_cat->name.'</option>';
+                                                }
+                                            }
+                                        echo '</select><label>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top" class="">
+                        <th scope="row">漫游影视 - 背景视频</th>
+                        <td>
+                            <?php
+                                $opt = 'site_acgn_video';
+                                $value = get_option($opt);
+                                $preset = 'for_empty_acgn_video';
+                                $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
+                                echo '<p class="description" id="site_acgn_video_label">漫游影视背景视频（开启后背景图片将作为视频的poster展示</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="上传视频" />';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">留言板 - 背景视频</th>
+                        <td>
+                            <?php
+                                $opt = 'site_guestbook_video';
+                                $value = get_option($opt);
+                                $preset = 'for_empty_guestbook_video';
+                                $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
+                                echo '<p class="description" id="site_guestbook_video_label">留言板背景视频</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="上传视频" />';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">关于我 - 背景视频</th>
+                        <td>
+                            <?php
+                                $opt = 'site_about_video';
+                                $value = get_option($opt);
+                                $preset = 'for_empty_about_video';
+                                $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
+                                echo '<p class="description" id="site_about_video_label">关于我背景视频</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="上传视频" />';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">隐私政策 - 背景视频</th>
+                        <td>
+                            <?php
+                                $opt = 'site_privacy_video';
+                                $value = get_option($opt);
+                                $preset = 'for_empty_privacy_video';
+                                $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
+                                echo '<p class="description" id="site_privacy_video_label">隐私政策背景视频</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="上传视频" />';
+                            ?>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="formtable sidebar">
+                <h1><b class="num" style="border-color:hotpink;box-shadow:-5px -5px 0 rgb(255 105 180 / 18%);">04</b>边栏设置<p class="en">SIDEBAR SETTINGS</p></h1>
+                <table class="form-table sidebar">
+                    <tr valign="top">
+                        <th scope="row">Google Adsense 广告</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_ads_switcher', '' );
+                                $value ? $status="checked" : $status="closed";
+                                echo '<label for="site_ads_switcher"><p class="description" id="site_ads_switcher_label">谷歌广告（开启后需填写初始化代码</p><input type="checkbox" name="site_ads_switcher" id="site_ads_switcher"'.$status.' /> <span style="color: orangered;" class="btn">Google Ads</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_ads_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 广告初始化代码块</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_bar_ads', '' );
+                                        $preset = "Initialization Code.";
+                                        if(!$value) update_option( 'site_bar_ads', $preset );else $preset=$value;  //auto update option to default if unset
+                                        echo '<textarea class="codeblock" name="site_bar_ads" id="site_bar_ads">'.$preset.'</textarea>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">侧边栏 Pixiv 挂件</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_pixiv_switcher', '' );
+                                $data = get_option( 'site_bar_pixiv', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option( 'site_pixiv_switcher', "on_default" );
+                                    $status="checked";
+                                }else{
+                                    $value ? $status="checked" : $status="closed";
+                                };
+                                echo '<label for="site_pixiv_switcher"><p class="description" id="site_pixiv_switcher_label">p站挂件（可自定义至多展示50数量</p><input type="checkbox" name="site_pixiv_switcher" id="site_pixiv_switcher"'.$status.' /> <span style="color:green;" class="btn">PIXIV</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_pixiv_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— Pixiv 加载数量</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_bar_pixiv', '' );
+                                        $preset = 10;  //默认填充数据
+                                        if(!$value) update_option( 'site_bar_pixiv', $preset );else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">Pixiv 每日排名数量（最大展示50个，默认开启</p><input type="number" max="50" min="1" name="site_bar_pixiv" id="site_bar_pixiv" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">侧边栏热门文章<sup class="dualdata" title="“多数据”">BaaS</sup></th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_mostview_switcher', '' );
+                                $data = get_option( 'site_mostview_cid', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option( 'site_mostview_switcher', "on_default" );
+                                    $status="checked";
+                                }else{
+                                    $value ? $status="checked" : $status="closed";
+                                };
+                                // $value ? $status="checked" : $status="closed";
+                                echo '<label for="site_mostview_switcher"><p class="description" id="site_mostview_switcher_label">资讯、资讯文章分类页面侧边栏文章热度排行（支持第三方数据储存</p><input type="checkbox" name="site_mostview_switcher" id="site_mostview_switcher"'.$status.' /> <b class="'.$status.'">侧边栏热门文章</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_mostview_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 热门文章分类</th>
+                                <td>
+                                    <?php
+                                        $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+                                        $temp = array();
+                                        foreach($cats as $the_cat){
+                                            if($the_cat->count>=1){
+                                                array_push($temp,$the_cat);  //push 1st category which has posts
+                                            }
+                                        }
+                                        $autoload = $temp[0]->term_id;  //return id rather then slug(get id by slug once)
+                                        $value = get_option('site_mostview_cid','');
+                                        if(!$value) update_option( 'site_mostview_cid', $autoload );else $autoload=$value;  //auto update option to default if options unset
+                                        echo '<label for="site_mostview_cid"><p class="description" id="site_mostview_cid_label">默认使用一级栏目首位“'.$temp[0]->slug.'”分类（亦可选用其他分类文章热度排行</p><select name="site_mostview_cid" id="site_mostview_cid"><option value="">请选择</option>';
+                                            foreach($cats as $the_cat){
+                                                $cats_id = $the_cat->term_id;
+                                                $cats_child = $the_cat->count;
+                                                if($cats_child>=1){
+                                                    echo '<option value="'.$cats_id.'"';if(get_option('site_mostview_cid')==$cats_id)echo('selected="selected"');echo '>'.$the_cat->name.'</option>';
+                                                }
+                                            }
+                                        echo '</select><label>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                </table>
+            </div>
+            <div class="formtable footer">
+                <h1><b class="num" style="border-color:limegreen;box-shadow:-5px -5px 0 rgb(50 205 50 / 18%);">05</b>页尾控制<p class="en">FOOTER CONTROLS</p></h1>
+                <table class="form-table footer">
+                    <tr valign="top">
+                        <th scope="row">底部近期文章</th>
+                        <td>
+                            <?php
+                                $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+                                $temp = array();
+                                foreach($cats as $the_cat){
+                                    if($the_cat->count>=1){
+                                        array_push($temp,$the_cat);  //push 1st category which has posts
+                                    }
+                                }
+                                $autoload = $temp[0]->term_id;  //return id rather then slug(get id by slug once)
+                                $value = get_option('site_bottom_recent_cid','');
+                                if(!$value) update_option( 'site_bottom_recent_cid', $autoload );else $autoload=$value;  //auto update option to default if options unset
+                                echo '<label for="site_bottom_recent_cid"><p class="description" id="site_bottom_recent_cid_label">页面底部最左侧资讯栏目内容（可选所有存在文章的一级分类目录</p><select name="site_bottom_recent_cid" id="site_bottom_recent_cid"><option value="">请选择</option>';
+                                    foreach($cats as $the_cat){
+                                        $cats_id = $the_cat->term_id;
+                                        $cats_child = $the_cat->count;
+                                        if($cats_child>=1){
+                                            echo '<option value="'.$cats_id.'"';if(get_option('site_bottom_recent_cid')==$cats_id)echo('selected="selected"');echo '>'.$the_cat->name.'</option>';
+                                        }
+                                    }
+                                echo '</select><label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">站点启动时间</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_begain', '' );
+                                $year = date('Y');
+                                if(!$value) update_option( 'site_begain', $year );
+                                $options = array();
+                                for(;$year>1999;$year--){
+                                    array_push($options,$year);
+                                }
+                                echo '<label for="site_begain"><p class="description" id="site_begain_label">站点开启时间，单位年</p><select name="site_begain" id="site_begain">';
+                                    for($i=0;$i<count($options);$i++){
+                                        $each = $options[$i];
+                                        echo '<option value="'.$each.'"';if($value==$each)echo('selected="selected"');echo '>'.$each.'</option>';
+                                    };
+                                echo '</select></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">创作共用许可</th>
+                        <td>
+                            <?php
+                                $value = get_option('site_copyright', '');
+                                $options = ["CC-BY","CC-BY-SA","CC-BY-NC","CC-BY-ND","CC-BY-NC-SA","CC-BY-NC-ND","CC-SA","CC-NC","CC-ND","CC-NC-SA","CC-NC-ND"];
+                                if(!$value) update_option('site_copyright',$options[0]);
+                                //output each options
+                                echo '<label for="site_copyright"><p class="description" id="site_copyright_label">创作共用许可协议用于网站底部、文章署名等位置</p><select name="site_copyright" id="site_copyright">';
+                                    for($i=0;$i<count($options);$i++){
+                                        $each = $options[$i];
+                                        echo '<option value="'.$each.'"';if($value==$each)echo('selected="selected"');echo '>'.$each.'</option>';
+                                    };
+                                echo '</select><label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">服务器信息</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_server', '' );
+                                $arrobj = array(
+                                    array('name'=>'阿里云', 'icon'=>get_bloginfo('template_directory').'/images/settings/alicloud.png'),
+                                    array('name'=>'腾讯云', 'icon'=>get_bloginfo('template_directory').'/images/settings/tencentcloud.svg'),
+                                    array('name'=>'华为云', 'icon'=>get_bloginfo('template_directory').'/images/settings/huaweiclouds.svg'),
+                                );
+                                echo '<label for="site_server"><p class="description" id="site_server_label">网站应用服务器（页尾图标</p><img src="'.$value.'" style="vertical-align: middle;max-width: 66px;margin:auto 15px;" /><select name="site_server" id="site_server" class="select_images"><option value="">请选择</option>';
+                                    foreach ($arrobj as $arr){
+                                        $icon = $arr['icon'];
+                                        echo '<option value="'.$icon.'"';if($value==$icon)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
+                                    }
+                                echo '</select></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">网站备案信息</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_beian_switcher', '' );
+                                $value ? $status="checked" : $status="closed";
+                                echo '<label for="site_beian_switcher"><p class="description" id="site_beian_switcher_label">网站备案信息（国外服务器请无视此选项</p><input type="checkbox" name="site_beian_switcher" id="site_beian_switcher"'.$status.' /> <b class="'.$status.'">网站备案号</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_beian_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 备案号</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_beian', '' );
+                                        echo '<input type="text" name="site_beian" id="site_beian" class="middle-text" value="' . $value . '" placeholder="网站备案号"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">底部导航链接（多选项）</th>
+                        <td>
+                            <?php
+                                $opt = 'site_bottom_nav';  //unique str
+                                $value = get_option($opt);
+                                $options = array('privacy');
+                                if(!$value){
+                                    $preset_str = implode(',', $options).',';
+                                    update_option($opt, $preset_str );
+                                    $value = $preset_str;
+                                }
+                                echo '<p class="description" id="site_bottom_nav_label">底部右下角导航链接（使用逗号“ , ”分隔，可选填其他分类 slug 别名</p><div class="checkbox">';
+                                foreach ($options as $option){
+                                    $checking = strpos($value, $option)!==false ? 'checked' : '';
+                                    echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
+                                }
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">十年之约</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_foreverblog_switcher', '' );
+                                $data = get_option( 'site_foreverblog', '' );
+                                if(!$value&&!$data){
+                                    update_option( 'site_foreverblog_switcher', "on_default" );
+                                    $status="checked";
+                                }else{
+                                    $value ? $status="checked" : $status="closed";
+                                };
+                                // $value ? $status="checked" : $status="closed";
+                                echo '<label for="site_foreverblog_switcher"><p class="description" id="site_foreverblog_switcher_label">页面底部展示“十年之约”图标（页尾图标</p><input type="checkbox" name="site_foreverblog_switcher" id="site_foreverblog_switcher"'.$status.' /> <b class="'.$status.'">ForeverBlog 成员</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_foreverblog_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— wormhole 虫洞</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_foreverblog_wormhole', '' );
+                                        $value ? $status="checked" : $status="closed";
+                                        echo '<label for="site_foreverblog_wormhole"><p class="description" id="site_foreverblog_wormhole_label">随机访问十年之约友链博客（页尾图标</p><input type="checkbox" name="site_foreverblog_wormhole" id="site_foreverblog_wormhole"'.$status.' /> <b class="'.$status.'">穿梭虫洞</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— foreverblog 链接</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_foreverblog', '' );
+                                        if(!$value) update_option( 'site_foreverblog', "https://www.foreverblog.cn/blog/2096.html" );
+                                        echo '<p class="description" id="site_foreverblog_label">十年之约链接（foreverblog 图标</p><input type="text" name="site_foreverblog" id="site_foreverblog" class="regular-text" value="' . $value . '" placeholder="foreverblog 链接"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">站点统计插件</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_monitor_switcher', '' );
+                                if($value=="on") $status="checked";else $status="closed";
+                                echo '<label for="site_monitor_switcher"><p class="description" id="site_monitor_switcher_label">站点统计控制（生成 script 链接，状态：'.$status.'</p><input type="checkbox" name="site_monitor_switcher" id="site_monitor_switcher" '.$status.'/> <span style="color:orangered;" class="btn">U.MENG</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_monitor_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 统计链接</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_monitor', '' );
+                                         echo '<input type="text" name="site_monitor" id="site_monitor" class="regular-text" placeholder="CNZZ 统计链接" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">在线沟通插件</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_chat_switcher', '' );
+                                if($value=="on") $status="checked";else $status="closed";
+                                echo '<label for="site_chat_switcher"><p class="description" id="site_chat_switcher_label">在线沟通控制（生成 script 链接和底部图标，状态：'.$status.'</p><input type="checkbox" name="site_chat_switcher" id="site_chat_switcher" '.$status.'/> <span style="color:dodgerblue;" class="btn"> TIDIO </span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_chat_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 沟通链接</th>
+                                <td>
+                                    <?php
+                                        $value = get_option( 'site_chat', '' );
+                                         echo '<input type="text" name="site_chat" id="site_chat" class="regular-text" placeholder="沟通（单页）直链" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">底部文本栏目</th>
+                        <td>
+                            <?php
+                                $value = get_option('site_support');  //默认填充数据
+                                $preset = 'Art Design | Coding | Documents | Social Media | Tech Support';  //默认填充数据
+                                if(!$value) update_option( 'site_support', $preset );else $preset=$value;
+                                echo '<input type="text" name="site_support" id="site_support" class="large-text" value="'.$preset.'">';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Email</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_contact_email', '' );
+                                $preset = get_bloginfo('admin_email');  //默认填充数据
+                                if(!$value) update_option( 'site_contact_email', $preset );else $preset=$value;
+                                echo '<p class="description" id="site_contact_email_label">底部（邮箱）联系方式（默认管理员邮箱</p><input type="text" name="site_contact_email" id="site_contact_email" class="regular-text" value="' . $preset . '"/>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Wechat</th>
+                        <td>
+                            <?php
+                                $opt = 'site_contact_wechat';
+                                $value = get_option( $opt, '' );
+                                $preset = get_option('site_avatar');
+                                $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
+                                echo '<p class="description" id="site_contact_wechat_label">底部（微信）联系方式（图片链接</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" /></label><input type="text" name="'.$opt.'" placeholder="微信二维码" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Github</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_contact_github', '' );
+                                $holder = 'https://github.com/2Broear/';
+                                if(!$value) update_option( 'site_contact_github', $holder );else $holder=$value;  //auto update option
+                                echo '<input type="text" name="site_contact_github" id="site_contact_github" class="regular-text" value="' . $holder . '" placeholder="底部（github）联系方式"/>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Bilibili</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_contact_bilibili', '' );
+                                $holder = 'https://space.bilibili.com/7971779';
+                                if(!$value) update_option( 'site_contact_bilibili', $holder );else $holder=$value;
+                                echo '<input type="text" name="site_contact_bilibili" id="site_contact_bilibili" class="regular-text" value="' . $holder . '" placeholder="底部（bilibili）联系方式"/>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Netease</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_contact_music', '' );
+                                $holder = 'https://music.163.com/#/user/home?id=77750916';
+                                if(!$value) update_option( 'site_contact_music', $holder );else $holder=$value;
+                                echo '<input type="text" name="site_contact_music" id="site_contact_music" class="regular-text" value="' . $value . '" placeholder="底部（网易云）联系方式"/>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Steam</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_contact_steam', '' );
+                                $holder = 'https://steamcommunity.com/profiles/76561198145631868/';
+                                if(!$value) update_option( 'site_contact_steam', $holder );else $holder=$value;
+                                echo '<input type="text" name="site_contact_steam" id="site_contact_steam" class="regular-text" value="' . $holder . '" placeholder="底部（steam）联系方式"/>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Weibo</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_contact_weibo', '' );
+                                echo '<input type="text" name="site_contact_weibo" id="site_contact_weibo" class="regular-text" value="' . $value . '" placeholder="底部（微博）联系方式"/>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Twitter</th>
+                        <td>
+                            <?php
+                                $value = get_option( 'site_contact_twitter', '' );
+                                echo '<input type="text" name="site_contact_twitter" id="site_contact_twitter" class="regular-text" value="' . $value . '" placeholder="底部（twitter）联系方式"/>';
+                            ?>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <?php submit_button(); ?>
+        </form>
+    </div>
+<?php
+    }
+?>
