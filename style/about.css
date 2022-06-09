@@ -1,0 +1,226 @@
+/*.content-all-windows{padding-top:15px;}*/
+.Introduce-core{
+	width: 100%;
+	height: auto;
+}
+.In-core-head{
+	color: var(--preset-f);
+	width: 100%;
+	height: auto;
+}
+.head-inside video{
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	border-radius: var(--radius);
+}
+.head-inside video#edge_fullscreen{
+	height: auto;
+	z-index: 0;
+	filter: blur(15px);
+	-webkit-filter: blur(15px);
+}
+.In-core-head .head-inside::before{
+	content: '';
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.18);
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 2;
+	border-radius:var(--radius);
+}
+.In-core-head .head-inside{
+	width: 100%;
+	height: auto;
+	padding: 10% 0;
+	position: relative;
+	overflow: hidden;
+	background-size: cover;
+	border-radius:var(--radius);
+}
+.In-core-head .head-inside .user_info{
+	opacity: 1;
+	position: relative;
+	top: 0;
+	z-index: 999;
+	transition: all .35s ease;
+}
+.In-core-head span{
+	display: block;
+	position: relative;
+	z-index: 3;
+}
+.In-core-head #head-photo{
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	padding: 5px;
+	margin: 0 auto;
+	background: rgba(255,255,255,0.52);
+	animation: profileLoop 1.8s ease infinite alternate;
+}
+@keyframes profileLoop {
+	0%{
+		background-color: var(--preset-f)
+}
+	100%{
+		background-color: rgba(255,255,255,0.52)
+}
+}
+@keyframes profileScale {
+	0%{
+		transform: scale(0.8);
+		opacity: 1;
+	}
+	100%{
+		transform: scale(1.3);
+		opacity: 0;
+	}
+}
+.In-core-head #head-photo span{
+	width: 100%;
+	height: 100%;
+	border-radius: inherit;
+	background: rgba(255,255,255,0.52);
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: -1;
+	animation: profileScale 1.8s ease infinite normal;
+}
+.In-core-head #head-photo em{
+	width: 100%;
+	height: 100%;
+	border-radius: inherit;
+	display: block;
+	background: url('https://img.2broear.com/private/glitchProfile/profileGlitch1.gif?ver=glitch1');
+	background-size: cover;
+}
+.In-core-head #head-nickname{
+	margin: 15px auto 5px;
+	font-size: 18px;
+}
+.In-core-head #head-sign{
+	font-size: var(--min-size);
+}
+.In-core-body{
+	width: 100%;
+	height: auto;
+	margin: 25px auto;
+}
+.In-core-body .body-basically{
+	width: 100%;
+}
+.In-core-body .body-basically .tables{
+	margin: 35px auto;
+	color: var(--preset-6);
+}
+.body-basically h1{
+	font-weight: 300;
+	margin: 5% auto;
+	padding: 15px;
+}
+/*.body-basically h3,*/
+.body-basically h2{
+	color: inherit;
+	text-align: left;
+	margin: 3rem auto auto;
+}
+
+.body-basically table{
+	width: 100%;
+	border-collapse: collapse;
+}
+.body-basically table td{
+	font-size: 14px;
+	line-height: 23px;
+	color: var(--preset-8);
+}
+.body-basically table lable{
+	width: 50%;
+	display: block;
+	margin: 0 auto;
+	text-align: left;
+}
+.body-basically table th{
+	padding-top: 15px;
+}
+.body-basically table th i{
+	font-size: 12px;
+	font-style: normal;
+	font-weight: normal;
+}
+.body-basically .Introduce{
+	color:var(--preset-6);
+	font-family: var(--font-serif);
+	margin: 35px auto;
+	text-align: left;
+}
+.body-basically .Introduce del{
+	color: var(--preset-9);
+}
+.body-basically .Introduce img{
+	border-radius:var(--radius);
+}
+.body-basically .Introduce p{
+	text-align: left;
+	line-height: 27px;
+	font-size: var(--min-size-rem);
+	font-size: calc(1.1px * var(--size,var(--min-size)));
+}
+.body-basically .Introduce p a:hover{ text-decoration: overline;}
+.body-basically .Introduce p a{
+	color: var(--theme-color);
+}
+.In-core-foot{
+	color: var(--preset-4a);
+	width: 100%;
+	height: auto;
+	border: 1px solid rgba(218, 218, 218, 0.52);
+	box-sizing: border-box;
+	border-radius:var(--radius);
+}
+.In-core-foot .foot-inside{
+	background-color: var(--preset-f);
+	width: 100%;
+	height: 169px;
+	padding: 50px 0;
+}
+.In-core-foot em{
+	width: 230px;
+	height: 93px;
+	display: block;
+	background: url('https://img.2broear.com/private/profileEnder.png') no-repeat;
+	margin: 38px auto 0;
+}
+.In-core-foot img{
+	display: block;
+	width: 100%;
+	height: 269px;
+	border: 1px solid rgba(218, 218, 218, 0.52);
+	box-sizing: border-box;
+}
+#end-introduce-all{
+	letter-spacing: 12px;
+}
+#end-introduce{
+	color:var(--theme-color);
+	display:inline-block;
+	height:auto;
+	width:auto;
+}
+.inside_of_block .logo-area #desBside{
+	display: none;
+}
+.inside_of_block .logo-area #desAside{
+	display: none;
+}
+.inside_of_block .logo-area .HeaderLogo svg{
+	background: url('https://img.2broear.com/svg/v2-115x41-XTY.svg');
+}

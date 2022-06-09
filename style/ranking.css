@@ -1,0 +1,123 @@
+.ranks{
+    max-width: 1102px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+body.dark .ranks .ranking{
+    color: var(--preset-9);
+}
+.ranks .ranking{
+    color: var(--preset-6);
+}
+.ranks .ranking a:hover{
+    color: var(--theme-color);
+}
+.ranks .ranking a{
+    color: inherit;
+}
+.ranks .ranking p{
+    color: var(--preset-9);
+    font-size: 14px;
+}
+body.dark .ranking ul li b,body.dark .ranks .ranking h1,body.dark #comment_txt h2{
+    color: var(--preset-c);
+}
+.ranks .ranking h1:first-child{
+    text-align: center;
+}
+.ranks .ranking h1{
+    font-weight: 100;
+    margin: 55px auto auto;
+}
+.ranks .ranking h1 sup{
+    font-size: 20px;
+}
+.ranking #rankest,.ranking #ranks,.ranking #ranked{
+    margin: 25px auto;
+    padding: 0;
+}
+.ranking #ranked{
+    color: var(--preset-9);
+    /* text-align: left;
+    padding: 0 25px */
+}
+.ranking #ranked li{
+    margin: auto 15px auto auto;
+}
+.ranking #ranked li p b{
+    display: initial;
+}
+.ranking #ranked li p sup{
+    padding-left: 3px;
+}
+.ranking ul li{
+    text-align: center;
+    margin: auto 15px;
+    display: inline-block;
+}
+.ranking ul li p{
+    color: inherit!important;
+    line-height: 10px;
+    margin: 10px auto
+}
+.ranking ul li img,.ranking ul li b{
+    display: block;
+    margin: 0 auto;
+}
+.ranking ul li b{
+    line-height: 25px;
+    max-width: 5em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 15px;
+}
+.ranking #ranks img{
+    max-width: 52px;
+}
+.ranking ul li img{
+    max-width: 72px;
+    border-radius: 50%;
+    padding: 5px;
+    background: var(--preset-s);
+}
+.ranking ul li span#avatar::before{
+    content: attr(data-t);
+    color: var(--preset-2b);
+    font-size: 12px;
+    line-height: 20px;
+    /*padding: 0 3px;*/
+    width: 20px;
+    background: var(--preset-f);
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: inherit;
+    box-shadow: rgba(0,0,0,0.12) 0 1px 3px;
+}
+body.dark .ranking ul li span#range,body.dark .ranking ul li img{
+    background: var(--preset-3a);
+}
+.ranking ul li span{
+    display: block;
+    position: relative;
+    border-radius: 50px;
+}
+.ranking ul li span#range{
+    max-width: 32px;
+    min-height: 172px;
+    overflow: hidden;
+    margin: 15px auto;
+    background: var(--preset-s);
+}
+.ranking ul li span#range em{
+    width: 100%;
+    max-height: 100%;
+    display: inherit;
+    background: var(--theme-color);
+    position: absolute;
+    left: 0;bottom: 0;
+    border-radius: inherit;
+    border-top-left-radius: unset;
+    border-top-right-radius: unset;
+}

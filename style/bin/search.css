@@ -1,0 +1,21 @@
+
+.win-top h5:before{
+    content:none;
+}
+.win-top h5 span:before{
+    content: '';
+    display: inherit;
+    width: 88%;
+    height: 36%;
+    background-color: var(--theme-color);
+    position: absolute;
+    left: 15px;
+    bottom: 1px;
+    z-index: -1;
+}
+.win-top h5 span{
+    position: relative;
+    background: inherit;
+    color: white;
+    font-weight: bolder;
+}

@@ -1,0 +1,362 @@
+
+    /* ::-webkit-scrollbar{width:5px;height:6px;background-color:#f9f9f9}
+    ::-webkit-scrollbar-track{background-color:#e3e3e3}
+    ::-webkit-scrollbar-thumb{background-color:#c0c0c0}
+    ::-webkit-scrollbar-thumb:hover{background:#a7a7a7}
+    ::-webkit-scrollbar-thumb:active{background:#777777} */
+    ::selection {background-color:red;color:white}
+    ::-moz-selection {background-color:red;color:white}
+    body {padding:0; margin:0;}
+    a {color:inherit;}
+    h1 {margin: 15px auto;}
+    h6 {margin: 15px auto auto;}
+    ol,
+    ul {text-align:left;}
+    ol li,
+    ul li {line-height:25px;}
+    table {border-collapse:collapse;}
+    table th,table td {border: 1px solid lightgray;padding: 10px 15px;}
+    .sublog {text-align:center;box-sizing:border-box;}
+    .sublog .require {border:2px dashed red;}
+    .sublog input:focus,
+    .sublog select:focus,
+    .sublog textarea:focus,
+    .sublog button:focus{background:white;border:2px solid black!important;box-shadow:0 0 0 5px rgb(0 0 0 / 10%)!important;}
+    .sublog input,
+    .sublog select,
+    .sublog textarea,
+    .sublog button {border:2px solid transparent;border-radius:5px;box-sizing:border-box;outline:none;}
+    .sublog input,
+    .sublog textarea,
+    .sublog select {width:100%;height:45px;padding:15px;border-color:transparent;background:#fafafa;}
+    .sublog select,
+    .sublog input[type=file] {padding: 10px 15px;}
+    .sublog textarea.disabled {cursor: not-allowed;resize: none;background:whitesmoke;border: 1px solid lightgray;}
+    .sublog textarea.invisible {opacity: 0;visibility: hidden;display: none;}
+    .sublog textarea {resize:vertical;min-height:88px;}
+    .sublog button:hover {color:white;background:black;}
+    .sublog button {line-height:45px;background:white;margin:0 15px;padding:0 35px;border-radius:50px;border:1px solid gray;letter-spacing:3px;cursor:pointer;user-select: none;}
+    .sublog .sup {width:100%;display: inline-block;font-size:14px;background: white;box-shadow: rgb(0 0 0 / 8%) 0px 18px 18px;/*position: fixed;z-index:9;top: 0;left: 0;*/}
+    .sup .supbox{max-width:1102px;margin: 0 auto;}
+    .sup span:hover,
+    .sup span.active {color:white;background:black;}
+    .sup span#markedJs:hover,
+    .sup span#markedJs.active{color:white;background:red;border-color:red;}
+    .sup span#markedJs{color:red;border-color:currentColor;}
+    .sup span {display:inline-block;line-height:35px;margin:15px 5px 20px;padding:0 15px;border:2px solid black;cursor:pointer;user-select: none;-webkit-user-drag: element;border-radius: 2px;}
+    .sublog .sub,
+    .sublog .log {width:52%;margin:25px auto;text-align:left;display:inline-block;}
+    .sublog .log h1{letter-spacing: normal;}
+    .sub .add {white-space:nowrap;}
+    .sub .add.plus .additional {width:32.5%;}
+    .add .additional.switch_off{display: none;}
+    .add .additional {width:49%;display:inline-block;margin-right: 10px;vertical-align: middle;}
+    .add .additional h5 {font-size:1rem;opacity:.88;}
+    .sub .tagbox #box {margin:15px auto auto;font-size:.75rem;}
+    .tagbox #box span:before,
+    .tagbox #box span:after {content:"";width:10px;height:2px;background:currentColor;position:absolute;top:10px;right:10px;}
+    .tagbox #box span:before {transform:rotate(45deg);}
+    .tagbox #box span:after {transform:rotate(-45deg);}
+    .tagbox #box span:hover {color:white;background:black;}
+    .tagbox #box span {line-height:30px;display:inline-block;padding:0 25px 0 15px;margin-right:10px;border-radius:50px;border:2px solid black;position:relative;cursor:pointer;-webkit-user-drag: element;}
+    .sub ul {list-style-type:none;}
+    .sub ul li {margin:15px auto;}
+    .sub .btns {text-align:center;margin:35px auto 15px;}
+    .sublog .log {width:36%;margin:35px 35px 35px auto;font-size:small;max-height:888px;overflow:auto;float:right;}
+    .log ol,ul {list-style-type:square;}
+    .log #list {margin:55px auto;}
+    .log p {font-size:12px;text-align: left;}
+    .log ins {text-align:right;}
+    .log span{/* width: 100%; */display: inline-block;}
+    body.MDFocus {position: fixed;}
+    .sublog .article .mdbox.ondrag::before,
+    .sublog .article .mdbox.ondrag::after {
+        content: "";
+        background: black;
+        position: absolute;
+        top: 32%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        z-index: 1;
+        pointer-events: none;
+    }
+    .sublog .article .mdbox.ondrag::before {
+        width: 4px;
+        height: 50px;
+    }
+    .sublog .article .mdbox {position: relative;}
+    .sublog .article .mdbox.ondrag #markdown {
+        opacity: .55;
+    }
+    .sublog .article .mdbox.ondrag::after {
+        width: 50px;
+        height: 4px;
+    }
+    body.MDFocus .sublog .article .mdbox {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        padding: 4% 5% 2%;
+        box-sizing: border-box;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 999;
+        overflow: auto;
+    }
+    .sublog .article .mdbox #markdown {min-height: 233px;}
+    body.MDFocus .sublog .article .mdbox .mdoutput,
+    body.MDFocus .sublog .article .mdbox #markdown{
+        width: 100%;
+        height: 100%;
+        /* min-height: 38%; */
+        display: block;
+        text-align: left;
+        margin-top:25px!important;
+        position: relative;
+    }
+    .sublog .article .mdbox .mdoutput{
+        margin-top:25px;
+        display: none;
+    }
+    body.MDFocus .sublog .article .mdbox .mdoutput #preview,
+    body.MDFocus .sublog .article .mdbox .mdoutput #htmldom {
+        width:49%;
+        height: 100%;
+        overflow: auto;
+        background: whitesmoke;
+    }
+    body.MDFocus .sublog .article .mdbox .mdoutput #htmldom ul {
+        list-style-type: square;
+    }
+    body.MDFocus .sublog .article .mdbox .mdoutput #htmldom img {
+        max-width: 100%;
+    }
+    body.MDFocus .sublog .article .mdbox .mdoutput #preview {
+        float: right;
+    }
+    body.MDFocus .sublog .article .mdbox .mdoutput,
+    body.MDFocus .sublog .article .mdbox #toolbar,
+    body.MDFocus .sublog .article .mdbox #masker,
+    body.MDFocus .sublog .article .mdbox #tabledit{
+        display: inline-block
+    }
+    .sublog .article .mdbox #toolbar {
+        display: none;
+        padding: 8px;
+        background: white;
+        border-radius: 10px;
+        box-sizing: border-box;
+        text-align: center;
+        box-shadow: 0 0 0 5px rgb(0 0 0 / 3%)!important;
+        position: relative;
+    }
+    .sublog .article .mdbox #toolbar span:hover {
+        color: black;
+        background: linear-gradient(white, whitesmoke);
+        border: 1px solid currentColor;
+        box-shadow: 0 0 0 5px rgb(0 0 0 / 10%);
+    }
+    .sublog .article .mdbox #toolbar span {
+        color: gray;
+        /* font-size: 14px; */
+        padding: 7px 14px;
+        margin: 5px;
+        border: 1px solid lightgray;
+        display: inline-block;
+        border-radius: inherit;
+        cursor: pointer;
+        position: relative;
+        vertical-align: top;
+    }
+    .sublog .article .mdbox #toolbar span#imgfile{
+        overflow: hidden;
+    }
+    .mdbox #toolbar span#imgfile input[type='file'] {
+        opacity: 0;
+        padding: 0;
+        max-height: 100%;
+        border-radius: inherit;
+        position: absolute;
+        top: 0;
+        left: -100%;
+        cursor: inherit;
+        width: auto;
+    }
+    .sublog .article .mdbox #esctip.popup {
+        bottom: 0;
+    }
+    .sublog .article .mdbox #esctip {
+        padding: 15px 35px 15px;
+        box-sizing: border-box;
+        background: white;
+        margin: 0 auto;
+        position: fixed;
+        bottom: -150px;
+        /* right: 10%; */
+        left: 50%;
+        transform: translate(-50%, 0);
+        text-align: center;
+        box-shadow: rgb(0 0 0 / 12%) 0 0 18px;
+        transition: bottom .35s ease;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+    .sublog .article .mdbox #esctip h2 {
+        margin: 0 auto;
+        font-size: 1.25rem;
+    }
+    .sublog .article .mdbox #esctip p {
+        font-size: 14px;
+        margin: 10px auto;
+    }
+    .sublog .article .mdbox #esctip small {
+        color: gray;
+    }
+    .sublog .article .mdbox #masker {
+        content: "";
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgb(0 0 0 / 12%);
+        margin: 0;
+        backdrop-filter: blur(15px);
+        /* z-index: -99;
+        opacity: .32; */
+    }
+    .sublog .article #htmldom::before {
+        /* content: "Marked Html-dom Previews. ( only on focus )"; */
+        text-align: center;
+        font-size: small;
+        display: block;
+    }
+    .sublog .article #htmldom {
+        width: 100%;
+        height: 100%;
+        font-size: 14px;
+        padding: 15px;
+        /* background: whitesmoke; */
+        box-sizing: border-box;
+        border-radius: 5px;
+        float: left;
+    }
+    .sublog .article #htmldom small {opacity: .66;}
+    #upload_progress {content:"";width:100%;height:100%;background:rgb(0 0 0 / 18%);display:block;}
+    #upload_progress {z-index:999;width:100%;height:100%;position:fixed;top:0;left:0;}
+    #upload_progress .tips {width:30%;height:30%;background:white;position:inherit;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;border-radius:10px;transition:box-shadow .35s ease;box-shadow:0 1px 1px rgba(0,0,0,0.3),0 8px 0 -3px whitesmoke,0 9px 1px -3px rgba(0,0,0,0.3),0 16px 0 -6px whitesmoke,0 17px 2px -6px rgba(0,0,0,0.3);}
+    #upload_progress.error .close,
+    #upload_progress.success .close {opacity: unset;}
+    #upload_progress.success .tips {box-shadow:none;}
+    #upload_progress.success .tips .progress #percent {height: 100%;}
+    #upload_progress.success .loader.done{color: limegreen;}
+    #upload_progress.error .loader.done{color: orangered;}
+    .tips h3 {margin:35px auto;letter-spacing: 1px;}
+    .tips p {font-size:14px;}
+    .tips p small{color: gray;}
+    .tips span {display:block;}
+    .tips .progress {width: 100%;height:100%;overflow: hidden;;position:absolute;bottom:0;border-radius: inherit;}
+    .tips .progress #percent {height:0%;width:100%;position:inherit;bottom:0;background:rgb(0 0 0 / 4%);transition:height .5s ease;}
+    .loader.done,
+    .loader.done:before,
+    .loader.done:after{animation: unset;-webkit-animation: unset;}
+    .loader,
+    .loader:before,
+    .loader:after {background:currentColor;-webkit-animation:loading 1s infinite ease-in-out;animation:loading 1s infinite ease-in-out;width:8px;height:8px;border-radius:5px;}
+    .loader:before,
+    .loader:after {position:absolute;top:0;content:'';}
+    .loader:before {left:-18px;}
+    .loader {color:black;text-indent:-9999em;margin:12% auto;position:relative;font-size:10px;-webkit-animation-delay:0.16s;animation-delay:0.16s;}
+    .loader:after {left:18px;-webkit-animation-delay:0.32s;animation-delay:0.32s;}
+    @keyframes loading {0%,80%,100% {box-shadow:0 0 currentColor;height:25px;}40% {box-shadow:0 -2em currentColor;height:45px;}}
+    
+    .tips .close:before {transform:translate(-50%,-50%) rotate(45deg)}
+    .tips .close::after {transform:translate(-50%,-50%) rotate(-45deg)}
+    .tips .close:before,
+    .tips .close:after {
+        content:"";
+        width:58%;
+        height:2px;
+        background:white;
+        position:inherit;
+        top:50%;
+        left:50%
+    }
+    .tips .close:hover {transform:rotate(-90deg);-webkit-transform:rotate(90deg)}
+    .tips .close {opacity: 0;position:absolute;top:-20px;right:-20px;z-index:1;background:black;border:4px solid whitesmoke;border-radius:50%;padding:20px;cursor:pointer;transition:transform .35s ease}
+
+    /* rewrite article textarea */
+
+    body.MDFocus .sublog .article .mdbox {
+        padding: 5%;
+    }
+    body.MDFocus .sublog .article .mdbox #markdown {
+        margin: 0!important;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+    body.MDFocus .sublog .article .mdbox #markdown,
+    body.MDFocus .sublog .article .mdbox .mdoutput {
+        height: 45%;
+        /* min-height: 45%; */
+    }
+    .sublog .article .mdbox #toolbar {
+        width: 100%;
+        text-align: left;
+        box-shadow: none!important;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom: 1px solid whitesmoke;
+    }
+    .sublog .article .mdbox #toolbar span {
+        padding: 8px 12px;
+        border-radius: 5px;
+        border-color: whitesmoke;
+    }
+    .sublog .article .mdbox #toolbar span.func {
+        float: right;
+        border-color: lightgray;
+    }
+
+    
+    .sublog .article .mdbox #tabledit {
+        display: none;
+        width: 58%;
+        height: 58%;
+        padding: 0 25px;
+        background: white;
+        border-radius: 15px;
+        box-sizing: border-box;
+        box-shadow: rgb(0 0 0 / 8%) 0px 18px 18px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+    .sublog .article .mdbox #tabledit .editare {
+        margin-bottom: 15px;
+        resize: none;
+    }
+    .sublog .article .mdbox #tabledit .editare,
+    .sublog .article .mdbox #tabledit .editpre {
+        height: 36%;
+        overflow: auto;
+        /* min-height: 32%; */
+    }
+    .sublog .article .mdbox #tabledit .editpre table{
+        width: 100%;
+    }
+    .sublog .article .mdbox #tabledit .editact {
+        width: 100%;
+        position: inherit;
+        bottom: 0;
+        left: 0;
+        margin: 20px auto;
+    }
+    .sublog .article .mdbox #tabledit .editact button {
+        letter-spacing: normal;
+        display: inline-block;
+        border: 2px solid lightgray;
+    }

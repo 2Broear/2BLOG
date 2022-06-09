@@ -1,0 +1,146 @@
+/*!
+ * Agate by Taufik Nurrohman <https://github.com/tovic>
+ * ----------------------------------------------------
+ *
+ * #ade5fc
+ * #a2fca2
+ * #c6b4f0
+ * #d36363
+ * #fcc28c
+ * #fc9b9b
+ * #ffa
+ * #fff
+ * #333
+ * #62c8f3
+ * #888
+ *
+ */
+
+.hljs:before{
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: #ff5f56;
+    width: 10px;
+    height: 10px;
+    top: 0;
+    left: 15px;
+    margin-top: 15px;
+    -webkit-box-shadow: 20px 0 #ffbd2e, 40px 0 #27c93f;
+    box-shadow: 18px 0 #ffbd2e, 36px 0 #27c93f;
+}
+.hljs {
+  display: block;
+  overflow-x: auto;
+  font-size: var(--min-size-rem);
+  background: #3a3a3a;
+  color: whitesmoke;
+  border-radius: 10px;
+  padding: 35px 0.5em 1em;
+  position: relative;
+}
+.hljs ul {
+  list-style: decimal;
+  background: inherit;
+  margin: 0px 0px 0 40px !important;
+  padding: 0px;
+}
+.hljs ul li:hover{
+  background: rgb(88 88 88 / 0.38);
+}
+.hljs ul li {
+  color: inherit!important;
+  list-style: decimal-leading-zero;
+  border-left: 1px solid #4a4a4a !important;
+  padding: 3px 17px!important;
+  margin: 0 !important;
+  line-height: 14px;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+.hljs ul li:nth-of-type(even) {
+  /* background-color: #303030; */
+}
+
+.hljs-name,
+.hljs-strong {
+  /* font-weight: bold; */
+}
+
+.hljs-code,
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-tag {
+  color: #62c8f3;
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #ade5fc;
+}
+
+.hljs-string,
+.hljs-bullet {
+  color: #a2fca2;
+}
+
+.hljs-type,
+.hljs-title,
+.hljs-section,
+.hljs-attribute,
+.hljs-quote,
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #ffa;
+}
+
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet {
+  color: #d36363;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal {
+  color: #fcc28c;
+}
+
+.hljs-comment,
+.hljs-deletion,
+.hljs-code {
+  color: #888;
+}
+
+.hljs-regexp,
+.hljs-link {
+  color: #c6b4f0;
+}
+
+.hljs-meta {
+  color: #fc9b9b;
+}
+
+.hljs-deletion {
+  background-color: #fc9b9b;
+  color: #333;
+}
+
+.hljs-addition {
+  background-color: #a2fca2;
+  color: #333;
+}
+
+.hljs a {
+  color: inherit;
+}
+
+.hljs a:focus,
+.hljs a:hover {
+  color: inherit;
+  text-decoration: underline;
+}

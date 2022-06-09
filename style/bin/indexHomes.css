@@ -1,0 +1,68 @@
+html,body{width:100%;height:100%;background-color:var(--preset-f);background-size:cover;background-attachment:fixed}
+body:before{content:' ';position:fixed;z-index:0;top:0;right:0;bottom:0;left:0;background-position:50% 5%;background-size:cover}
+.all .FSec{width:inherit;height:inherit}
+.all .FSec .text{width:100%;height:100%;color:var(--preset-f);position:absolute;top:0;left:0;flex-flow:column;justify-content:center;align-items:center}
+.all .FSec .text h1{font-size:2.3rem;font-weight:300;padding:5px}
+.all .FSec .text h1 strong{color:var(--preset-f);background-color:var(--theme-color);font-style:normal;letter-spacing:5px;padding:0 10px 1px 12px;margin:0 10px 0 0}
+.all .FSec .text h1 p{margin:0;box-sizing:border-box;font-style:italic;letter-spacing:1rem;background-color:var(--preset-f);color:var(--theme-color);transition:all .3s ease}
+.all .FSec .text h3{font-weight:100;padding:5%;color:var(--preset-link);box-sizing:border-box;line-height:32px;transition:box-shadow .3s ease;background-color:rgba(255,255,255,.66)}
+.all .FSec .text span#sub-text{width:inherit;text-align:right;padding:0 5%;margin:5% auto;box-sizing:border-box;display:block;font-size:12px}
+.all .FSec .text span#sub-text a:hover{text-decoration:underline}
+.all .FSec .text span#sub-text a{color:var(--preset-f)}
+.SSec{position:relative;width:100%;z-index:1}
+.fullScreen{width:100%;height:auto;position:relative;z-index:1;justify-content:center}
+.fullScreen::before{content:'';width:100%;height:100%;position:absolute;left:0;top:0;z-index:0;background:url('https://img.2broear.com/design/1920x1080-Extasy-livePost-v5-lq.jpg') no-repeat center;background-size:cover}
+.fullScreen div:hover{width:150%;opacity:.55;font-size:1.5rem}
+.fullScreen div:hover span{font-size:1.75rem;font-weight:bold}
+.fullScreen div:hover span a{text-decoration:overline}
+.fullScreen div{width:100%;height:200px;position:relative;transition:all .5s ease;display:flex;justify-content:inherit;align-items:center}
+.fullScreen div span{font-size:1.25rem;position:relative;z-index:2}
+.fullScreen div span a{color:#000}
+.fullScreen img.lazy{width:100%;max-height:100%;object-fit:cover;position:absolute;top:0;left:0}
+.fullScreen div.mikutap em{width:100%;height:100%;position:absolute;z-index:0;background:url('') no-repeat center;background-size:cover}
+.fullScreen div.design em{width:100%;height:100%;position:absolute;z-index:0;background:url('') no-repeat center;background-size:cover}
+.fullScreen div.NaN{background-color:var(--preset-f)}
+.fullScreen div.mikutap:before{content:'';z-index:1;width:100%;height:100%;background:#8cc;opacity:.36;position:absolute;top:0;left:0}
+.fullScreen div.design:before{content:'';z-index:1;width:100%;height:100%;background:#ffb6e0;opacity:.36;position:absolute;top:0;left:0}
+.fullScreen div.mikutap{background:#334668}
+.fullScreen div.me{background:#3897f0}
+.fullScreen div.design{background-color:var(--theme-color)}
+.SSec ul{margin:auto;padding:0;width:inherit;height:inherit}
+.SSec ul li{width:100%;height:inherit;padding:5% 0;background-color:var(--preset-link);flex-flow:row wrap;justify-content:center;align-items:center}
+.SSec ul li a:hover{color:var(--theme-color)}
+.SSec ul li a{color:var(--preset-f);display:inline-block;padding:5%}
+.SSec ul li a span i{font-size:27px}
+.TSec{width:100%;height:100%}
+.mobile-vision .m-logo svg{margin:19px auto;background:url('https://img.2broear.com/svg/XTyNew-44x137.svg')}
+@keyframes valueSetUp{0%{top:0px}
+100%{top:-82px}
+}@keyframes valueSetDown{0%{top:-82px}
+100%{top:0px}
+}.PoweredBy2Broear{flex-flow:column;justify-content:center;width:50%}
+.PoweredBy2Broear div{margin:5px auto;padding:0 15px}
+.all{width:100%;height:100%;position:relative;z-index:1;background-color:var(--theme-color);background:linear-gradient(to top,var(--preset-link) 0%,var(--theme-color) 100%);background:-webkit-linear-gradient(bottom,var(--preset-link) 0%,var(--theme-color) 100%);background:-moz-linear-gradient(bottom,var(--preset-link) 0%,var(--theme-color) 100%);overflow:hidden}
+.all .FSecLoopIn:before{content:'';width:100%;height:100%;background:rgba(0,0,0,0.18);position:absolute;top:0;left:0}
+.all .FSecLoopIn{width:100%;height:100%;position:relative;z-index:0}
+.preLoadBg2killFliker{background:url("https://img.2broear.com/pixel/pixel-1.png") no-repeat center,url("https://img.2broear.com/pixel/pixel-2.jpg") no-repeat center,url("https://img.2broear.com/pixel/pixel-3.png") no-repeat center,url("https://img.2broear.com/pixel/pixel-4.png") no-repeat center;opacity:0;visibility:hidden;z-index:-1;display:none}
+@keyframes loopIn{0%{background:url('https://img.2broear.com/anime/1.jpg') no-repeat center;background-size:cover;background-attachment:fixed}
+10%{background:url('https://img.2broear.com/anime/1.jpg') no-repeat center;background-size:cover;background-attachment:fixed}
+20%{background:url('https://img.2broear.com/anime/1.jpg') no-repeat center;background-size:cover;background-attachment:fixed}
+30%{background:url('https://img.2broear.com/anime/2.jpg') no-repeat center;background-size:cover;background-attachment:fixed}
+40%{background:url('https://img.2broear.com/anime/2.jpg') no-repeat center;background-size:cover;background-attachment:fixed}
+50%{background:url('https://img.2broear.com/anime/2.jpg') no-repeat center;background-size:cover;background-attachment:fixed}
+60%{background:url('https://img.2broear.com/anime/3.jpg') no-repeat center;background-size:cover;background-attachment:fixed}
+70%{background:url('https://img.2broear.com/anime/3.jpg') no-repeat center;background-size:cover;background-attachment:fixed}
+80%{background:url('https://img.2broear.com/anime/3.jpg') no-repeat center;background-size:cover;background-attachment:fixed}
+90%{background:url('https://img.2broear.com/anime/3.jpg') no-repeat center;background-size:cover;background-attachment:fixed}
+100%{background:url('https://img.2broear.com/anime/1.jpg') no-repeat center;background-size:cover;background-attachment:fixed}
+}.typed-cursor{opacity:1;-webkit-animation:blink 0.7s infinite;-moz-animation:blink 0.7s infinite;animation:blink 0.7s infinite}
+@keyframes blink{0%{opacity:1}
+50%{opacity:0}
+100%{opacity:1}
+}@-webkit-keyframes blink{0%{opacity:1}
+50%{opacity:0}
+100%{opacity:1}
+}@-moz-keyframes blink{0%{opacity:1}
+50%{opacity:0}
+100%{opacity:1}
+}

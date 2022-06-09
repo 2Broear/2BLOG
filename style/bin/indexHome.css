@@ -1,0 +1,333 @@
+.container{background: url("https://img.2broear.com/bg3.png") center center!important;}
+/* .inside-functions .box{background: var(--preset-4a);} */
+#footer-copyright ul li{ color: var(--preset-8)!important;}
+#footer-copyright li a{ color: inherit!important;letter-spacing: normal!important;}
+#footer-copyright li p{ margin: 0;}
+#footer-copyright li p.ways{ text-align: right;}
+#footer-copyright li p.links{ text-align: left;}
+#footer-copyright li p.ways a{ padding-left: 5px;}
+#footer-copyright li p.links a{ padding-right: 5px;}
+#footer-copyright li p.ways a:hover{ color: var(--theme-color)!important;}
+#footer-copyright li p.links a:hover{ color: #fcee09!important;}
+
+  html,body{
+    width :100%;height: 100%;
+	background: url("https://img.2broear.com/bg3.png") center center!important;
+    background-color: var(--preset-2b)!important;
+    /*background-size: cover;
+    background-attachment: fixed;*/
+  }
+  body:before {
+    content: ' ';
+    position: fixed;
+    z-index: 0;
+    top: 0;right: 0;
+    bottom: 0;left: 0;
+    background-position: 50% 5%;
+    background-size: cover;
+  }
+  .content-all{ background: url("https://img.2broear.com/bg3.png") center center;}
+
+  .all .FSec{ width: inherit;height: inherit;}
+  .all .FSec .text{
+    width: 100%;height: 100%;
+    color: var(--preset-f);
+    position: absolute;
+    top: 0;left: 0;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .all .FSec .text h1{
+    font-size: 2.3rem;
+    font-weight: 300;
+    padding: 5px;
+  }
+ .all .FSec .text h1 strong{
+   color: #fcee09;background-color: var(--preset-2b);
+   font-style: normal;letter-spacing: 5px;
+   padding: 0 15px;margin-right: 5px;
+   border-radius: inherit;
+  }
+  .all .FSec .text h1 p{
+    margin: 0;box-sizing: border-box;
+    font-style: italic;letter-spacing: 12px;
+    background-color: #fcee09;color: var(--preset-2b);
+    transition: all .3s ease;
+	padding-right: 15px;
+	border-radius: 50px;
+  }
+  .all .FSec .text h3{
+/*    font-weight: 300;*/
+    padding: 10px 3%;
+    color: var(--preset-2b);
+    box-sizing: border-box;
+    line-height: 32px;
+    transition: box-shadow .3s ease;
+    background-color: rgba(255, 255, 255, .66);
+	border-radius: 50px;
+  }
+  .all .FSec .text span#sub-text{
+    width: inherit;text-align: right;
+    padding: 0 5%;margin: 5% auto;
+    box-sizing: border-box;
+    display: block;font-size: 12px;
+  }
+  .all .FSec .text span#sub-text a:hover{ text-decoration: underline;}
+  .all .FSec .text span#sub-text a{ color: var(--preset-f);}
+
+  .SSec{
+    position: relative;
+    width: 100%;z-index: 1;
+	background: inherit;
+  }
+  .cat_eyes{
+    width: 100%;height: auto;
+    position: relative;z-index: 1;
+    justify-content: center;
+	padding: 0 5%;box-sizing: border-box;
+  }
+  .cat_eyes::before{
+/*		content: '';*/
+		width: 100%;height: 100%;
+		position: absolute;
+		left: 0;top: 0;z-index: 0;
+		background:url('https://img.2broear.com/design/1920x1080-Extasy-livePost-v5-lq.jpg') no-repeat center;
+	    background-size: cover;
+	}
+.what_says{ max-width: 100%!important;padding: 55px 20%!important;margin: 15px auto!important;}
+  .cat_eyes div:hover{ width: 50%;/*150%*/}
+  .cat_eyes div:hover a span{ /*color: #fcee09;*/ font-size: 1.75rem;text-decoration: overline;}
+  .cat_eyes div:hover img{ opacity: .66;}
+  .cat_eyes div{
+    width: 32%;/*100%*/
+	height: 200px;
+	position: relative;
+    transition: all .35s ease;
+    display: flex;justify-content: inherit;
+    align-items: center;
+	border-radius: 500px;
+  }
+  .cat_eyes div a{
+	  color: #fcee09;
+	  display: block;
+	  width: 100%;height: 100%;
+	  position: relative;
+	  z-index: 2;
+	  
+  }
+  .cat_eyes div a span{ 
+	  font-size:1.35rem;
+	  font-weight: bold;
+	  position: absolute;
+	  top: 50%;left: 50%;
+	  transform:translate(-50%,-50%);
+	  -webkit-transform:translate(-50%,-50%);
+  }
+
+  .cat_eyes img{
+		width: 100%;
+		max-height: 100%;
+		object-fit: cover;
+		position: absolute;
+		top: 0;left: 0;
+		border-radius: inherit;
+		opacity: .36;
+		transition: inherit;
+  }
+  .cat_eyes div.mikutap em{
+    width: 100%;height: 100%;
+    position: absolute;z-index: 0;
+    background: url('') no-repeat center;
+    background-size: cover;
+  }
+  .cat_eyes div.design em{
+    width: 100%;height: 100%;
+    position: absolute;z-index: 0;
+    background: url('') no-repeat center;
+    background-size: cover;
+  }
+
+  .cat_eyes div.NaN{ background: var(--preset-f);}
+  .cat_eyes div.mikutap:before{
+/*  	content: '';*/
+	z-index: 1;
+	width: 100%;height: 100%;
+	background: #8cc;opacity: .36;
+	position: absolute;top: 0;left: 0;
+  }
+  .cat_eyes div.design:before{
+/*    content: '';*/
+	z-index: 1;
+	width: 100%;height: 100%;
+	background: #ffb6e0;opacity: .36;
+	position: absolute;top: 0;left: 0;
+  }
+  .footer-contact-left ul a{ color: #ccc!important;}
+
+  .cat_eyes div.mikutap{background: var(--theme-color);/*#334668*/}
+  .cat_eyes div.me{/*top: 66px;background: var(--preset-2b);*/}
+  .cat_eyes div.me a{ color: var(--theme-color);/*0*/}
+  .cat_eyes div.me a span{ bottom: -66px;top: auto;}
+  .friend_links li a#check_more_fls{color: #ccc;}
+  #supports-txt{ color: var(--theme-color)!important;}
+ 
+  .cat_eyes div.design{background: #fcee09;}
+  .SSec ul{
+    margin: auto;padding: 0;
+    width: inherit;height: inherit;
+  }
+  .SSec ul li{
+    width: 100%;
+	height: inherit;
+    padding: 5% 0;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+  }
+  .SSec ul li a:hover{ opacity: 1;/*color: #fcee09;*/}
+  .SSec ul li a{
+    color: var(--theme-color);
+	display:inline-block;
+    padding: 5% 4%;opacity: .52;/*58/66*/
+  }
+  .SSec ul li a span i{ font-size: 27px;}
+  .TSec{ width: 100%;height: 100%;}
+
+  .mobile-vision .m-logo svg{ margin: 19px auto;background: url('https://img.2broear.com/svg/XTyNew-44x137.svg');}
+  @keyframes valueSetUp { 0%{ top: 0px;} 100%{ top: -82px;}}
+  @keyframes valueSetDown { 0%{ top: -82px;} 100%{ top: 0px;}}
+  .PoweredBy2Broear{ flex-flow: column;justify-content: center;width: 50%;}
+  .PoweredBy2Broear div{ margin: 5px auto;padding: 0 15px;}
+  .all.eye_l:before{ left: -10%;}
+  .all:before{
+		content: '';
+		width: 50%;height: 100%;
+		background: #fcee09;
+/*		opacity: .66;*/
+		position: absolute;
+		top: 0;left: 0;
+		transform: skewX(35deg);
+		-webkit-transform: skewX(35deg);
+	 	box-shadow: rgba(0, 0, 0, 0.20) -20px -20px 0px 20px;/*rgba(0, 0, 0, 0.12) -20px -20px 0px 20px*/
+		border-radius: 25px;
+	  	border-bottom-right-radius: unset;
+	    transition: all .35s ease;
+	}
+    .all{
+      width: 100%;height: 100%;
+      position: relative;z-index: 1;
+      background: inherit;
+   	  /*background:linear-gradient(to top,var(--preset-2b) 0%,var(--theme-color) 100%);
+   	  background:-webkit-linear-gradient(bottom,var(--preset-2b) 0%,var(--theme-color) 100%);
+   	  background:-moz-linear-gradient(bottom,var(--preset-2b) 0%,var(--theme-color) 100%);*/
+      overflow: hidden;
+    }
+    .all.eye_r:after{ right: -10%;}
+	.all:after{
+		content: '';
+		width: 50%;height: 100%;
+		background: var(--theme-color);
+		opacity: .88;
+		position: absolute;
+		top: 0;right: 0;
+		transform: skewX(-35deg);
+		-webkit-transform: skewX(-35deg);
+		box-shadow: rgba(0, 0, 0, 0.20) 20px -20px 0px 20px;/*rgba(0, 0, 0, 0.12) 20px -20px 0px 20px*/
+		border-radius: 25px;
+	  	border-bottom-left-radius: unset;
+	    transition: all .35s ease;
+	}
+	.all .FSecLoopIn:before{
+/*		content: '';*/
+		width: 100%;height: 100%;
+		background: rgba(0, 0, 0, 0.18);
+		position: absolute;
+		top: 0;left: 0;
+	}
+    .all .FSecLoopIn{
+      width: 100%;height: 100%;
+      position: relative;z-index: 0;
+/*      animation: loopIn 10s linear infinite;*/
+    }
+    .preLoadBg2killFliker{
+      /*background: url("https://img.2broear.com/pixel/pixel-1.png") no-repeat center,
+      url("https://img.2broear.com/pixel/pixel-2.jpg") no-repeat center,
+      url("https://img.2broear.com/pixel/pixel-3.png") no-repeat center,
+      url("https://img.2broear.com/pixel/pixel-4.png") no-repeat center;*/
+      opacity: 0;visibility: hidden;z-index: -1;display: none;
+    }
+
+  /***   background switch   ***/
+
+  @keyframes loopIn {
+    0%{
+      background: url('https://img.2broear.com/anime/1.jpg') no-repeat center;
+      background-size: cover;background-attachment: fixed;
+/*      transform: scale(1.35);*/
+    }
+    10%{
+      background: url('https://img.2broear.com/anime/1.jpg') no-repeat center;
+      background-size: cover;background-attachment: fixed;
+    }
+    20%{
+      background: url('https://img.2broear.com/anime/1.jpg') no-repeat center;
+      background-size: cover;background-attachment: fixed;
+    }
+    30%{
+      background: url('https://img.2broear.com/anime/2.jpg') no-repeat center;
+      background-size: cover;background-attachment: fixed;
+    }
+    40%{
+      background: url('https://img.2broear.com/anime/2.jpg') no-repeat center;
+      background-size: cover;background-attachment: fixed;
+    }
+    50%{
+      background: url('https://img.2broear.com/anime/2.jpg') no-repeat center;
+      background-size: cover;background-attachment: fixed;
+    }
+    60%{
+      background: url('https://img.2broear.com/anime/3.jpg') no-repeat center;
+      background-size: cover;background-attachment: fixed;
+    }
+    70%{
+      background: url('https://img.2broear.com/anime/3.jpg') no-repeat center;
+      background-size: cover;background-attachment: fixed;
+    }
+    80%{
+      background: url('https://img.2broear.com/anime/3.jpg') no-repeat center;
+      background-size: cover;background-attachment: fixed;
+    }
+    90%{
+      background: url('https://img.2broear.com/anime/3.jpg') no-repeat center;
+      background-size: cover;background-attachment: fixed;
+    }
+    100%{
+      background: url('https://img.2broear.com/anime/1.jpg') no-repeat center;
+      background-size: cover;background-attachment: fixed;
+    }
+  }
+
+
+    /***   Typed.js   ***/
+    .typed-cursor{
+      opacity: 1;
+      -webkit-animation: blink 0.7s infinite;
+      -moz-animation: blink 0.7s infinite;
+      animation: blink 0.7s infinite;
+    }
+    @keyframes blink{
+        0% { opacity:1; }
+        50% { opacity:0; }
+        100% { opacity:1; }
+    }
+    @-webkit-keyframes blink{
+        0% { opacity:1; }
+        50% { opacity:0; }
+        100% { opacity:1; }
+    }
+    @-moz-keyframes blink{
+        0% { opacity:1; }
+        50% { opacity:0; }
+        100% { opacity:1; }
+    }
