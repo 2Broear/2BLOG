@@ -191,7 +191,7 @@
                                     <article class="cat-<?php the_ID(); ?>">
                                         <h1>
                                             <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
-                                            <?php $postmeta=get_post_meta($post->ID, "post_rights", true); echo $postmeta ? '<sup>'.$postmeta.'</sup>' : false; ?>
+                                            <?php $postmeta=get_post_meta($post->ID, "post_rights", true); echo $postmeta&&$postmeta!="请选择" ? '<sup>'.$postmeta.'</sup>' : false; ?>
                                         </h1>
                                         <p><?php the_excerpt() ?></p>
                                         <div class="info">

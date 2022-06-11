@@ -179,7 +179,8 @@
         if($comment_sw){
             $welcome="既来之则留之，欢迎在下方留言评论。提交评论后还可以撤销或重新编辑，未发布的留言会被储存在本地以供下次继续编辑（Valine 会自动保存您的评论信息到浏览器）";
         }else{
-            $welcome='欢迎您，'.$user_name.'！您可以在这里畅言您的的观点与见解！<small> ( Logged as <a href="'.wp_login_url(get_permalink()).'" title="登出？">'.$user_name.'</a> ) </small>';//
+            $wp_login = is_user_logged_in() ? '<small> ( Logged as <a href="'.wp_login_url(get_permalink()).'" title="登出？">'.$user_name.'</a> ) </small>' : '';
+            $welcome='欢迎您，'.$user_name.'！您可以在这里畅言您的的观点与见解！'.$wp_login;//
         }
         echo '<div class="main"><span><h2> 评论留言 </h2></span><p>'.$welcome.'</p></div>';
         if($comment_sw){

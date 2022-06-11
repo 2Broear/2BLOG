@@ -119,7 +119,7 @@ jQuery(document).ready(function($){
                     document.querySelectorAll("p.submit")[0].style.right = "-80px";
                 }
             }else{  //up
-                if(scrollTop<=switch_tab.offsetTop*3){
+                if(scrollTop<=switch_tab.offsetTop*4){
                     switch_tab.classList.remove("fixed");
                     document.querySelectorAll("p.submit")[0].style.right = "";
                 }

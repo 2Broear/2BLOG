@@ -229,8 +229,9 @@
             </p>
           </ul>
           <ul style="text-align:right">
+              <li id="feed"><a href="<?php bloginfo('rss2_url'); ?>" target="_blank">RSS</a></li>
               <?php
-                  if(get_option('site_map_switcher')) echo '<li id="feed"><a href="'.get_bloginfo('rss2_url').'" target="_blank">RSS</a></li><li id="sitemap"><a href="'.get_bloginfo('siteurl').'/sitemap.xml" target="_blank">站点地图</a></li>';
+                  if(get_option('site_map_switcher')) echo '<li id="sitemap"><a href="'.get_bloginfo('siteurl').'/sitemap.xml" target="_blank">站点地图</a></li>';
                   $bottom_nav_array = explode(',',get_option('site_bottom_nav'));
                   for($i=0;$i<count($bottom_nav_array);$i++){
                       $cat_slug = trim($bottom_nav_array[$i]);

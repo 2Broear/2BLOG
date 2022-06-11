@@ -211,7 +211,7 @@ i.icomoon,
 .inside_of_block nav.main-nav ul li.sec_level div.links-more a{color:var(--preset-8);padding:0;margin:0;line-height:36px;text-align:left;border-bottom:1px solid var(--preset-s)}
 
 .additional.metabox{
-    width: 450%;
+    width: 360%;
     left: -136px;
     line-height: 0;
     padding: 25px 15px 15px;
@@ -259,10 +259,10 @@ i.icomoon,
     max-width: initial!important;
 }
 .additional.metabox li{
+    max-width: 32%;
     display: inline-block!important;
     line-height: normal!important;
     vertical-align: top;
-    /*max-width: 32%;*/
     /*text-align: left;*/
 }
 .additional.metabox li a{

@@ -8,7 +8,7 @@
               title2 = `
     A wordpress theme Design & Devoloped via 2BROEAR open source in 2022`,
               content = ``;
-        console.log(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2B博客 %c 发布 https://blog.2broear.com/ %c ${content} `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
+        console.log(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2BROEAR %c Release https://blog.2broear.com/ %c ${content} `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
     })();
     
     function dynamicLoad(jsUrl,fn){
@@ -294,7 +294,7 @@
             search = this.parentNode;
         search.classList.contains(cls) ? search.classList.remove(cls) : search.classList.add(cls);
     }
-    menu_btn.onclick = close_menu.onclick = menu_mask.ontouchend = function(e){  //menu_mask.onmouseup
+    menu_btn.onclick = close_menu.onclick = menu_mask.onmouseup = menu_mask.ontouchend = function(e){  //menu_mask.onmouseup
         // console.log(e)
         e.cancelable ? e.preventDefault() : e.stopPropagation();  // prevent penetrate a link
         toggleMenu()

@@ -33,7 +33,7 @@
                                     <em><?php if($fontsize) echo "A-";else echo "A+"; ?></em>
                                 </span>
                                 <!--<span id="s2t2s-switch" title="简繁切换"><em>简</em></span>-->
-                                <?php $rights = get_post_meta($post->ID, "post_rights", true);if($rights!='请选择') echo '<span id="copyright-sign" title="版权声明"><em>' . $rights . '</em></span>'; ?>
+                                <?php $rights = get_post_meta($post->ID, "post_rights", true);if($rights&&$rights!='请选择') echo '<span id="copyright-sign" title="版权声明"><em>' . $rights . '</em></span>'; ?>
                             </div>
                         </div>
                         <h1> <?php the_title(); ?> </h1>

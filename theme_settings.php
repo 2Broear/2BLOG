@@ -458,8 +458,11 @@
         // }
         register_setting( 'baw-settings-group', 'site_navicon_switcher' );
         
-        register_setting( 'baw-settings-group', 'site_remove_category' );
-        register_setting( 'baw-settings-group', 'site_url_slash' );
+        register_setting( 'baw-settings-group', 'site_remove_category_switcher' );
+        if(get_option('site_remove_category_switcher')){
+            register_setting( 'baw-settings-group', 'site_url_slash_sw' );
+            register_setting( 'baw-settings-group', 'site_sync_level_sw' );
+        }
         register_setting( 'baw-settings-group', 'site_search_style_switcher' );
         if(get_option('site_search_style_switcher')){
             register_setting( 'baw-settings-group', 'site_search_includes' );
@@ -587,10 +590,19 @@
     }
     function add_options_submenu() {
         $theme_color = get_option('site_theme','#eb6844');
+        global $cats;
+        $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+        $cats_haschild = array();
+        $cats_seclevel = array();
+        foreach($cats as $the_cat){
+            if(count(get_term_children($the_cat->term_id,$the_cat->taxonomy))>0) array_push($cats_seclevel, $the_cat);  // has-child category only
+            // array_push($cats_toplevel, $the_cat);
+            if($the_cat->count>=1) array_push($cats_haschild, $the_cat);  //push 1st category which has posts
+        }
 ?>
     <div class="wrap settings">
         <style>
-        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(0deg,#f0f0f1 0%, #e9e9e9 100%);background:-webkit-linear-gradient(0deg,#f0f0f1 0%, #fff 100%);}.btn{border: 1px solid;padding: 2px 5px;border-radius: 3px;font-size: smaller;font-weight:bold;background:white;font-weight:900;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:188px;height:18px;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.disabled{opacity:.75}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:<?php echo $theme_color; ?>}.form-table tr:hover > th sup{color:<?php echo $theme_color; ?>}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;}.form-table th sup.dualdata{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 0 1px #2271b1;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:<?php echo $theme_color; ?>}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid <?php echo $theme_color; ?>!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview_list em,/*.upload_preview.bg.video{width:120px;height:60px}*/.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(0deg,#f0f0f1 0%, #e9e9e9 100%);background:-webkit-linear-gradient(0deg,#f0f0f1 0%, #fff 100%);}.btn{border: 1px solid;padding: 2px 5px;border-radius: 3px;font-size: smaller;font-weight:bold;background:white;font-weight:900;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:188px;height:18px;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.disabled{opacity:.75}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:<?php echo $theme_color; ?>}.form-table tr:hover > th sup{color:<?php echo $theme_color; ?>}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 0 1px #2271b1;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:<?php echo $theme_color; ?>}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid <?php echo $theme_color; ?>!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview_list em,/*.upload_preview.bg.video{width:120px;height:60px}*/.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:<?php echo $theme_color; ?>!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px <?php echo $theme_color; ?>!important;border-color:transparent!important;}.upload_button.video{background:purple;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;color: white;font-size: smaller;text-align: center;background: rgb(0 0 0 / 52%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius:5px;position:relative;overflow:hidden;}
             .formtable{display:none;}.formtable.show{display:block;}.switchTab.fixed{position: fixed;width: 100%;background: rgb(255 255 255 / 75%);top: 32px;left:0;z-index: 9;padding:10px 0;padding-left:160px;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}.switchTab{transition: top .35s ease;top: -32px;padding: 0;}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:<?php echo $theme_color; ?>;background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px <?php echo $theme_color; ?>}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 2px #fff, 0 0 0 3px <?php echo $theme_color; ?>;}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:0;border-radius:25px}.switchTab li b{font-size:initial;display:block;text-shadow:1px 1px 0 white;font-style:normal}
@@ -654,7 +666,7 @@
                                 $value = get_option($opt);
                                 $mail = 'wapuu@wordpress.example';//get_bloginfo('admin_email');
                                 // !$mail ? $mail="wapuu@wordpress.example" : $mail;
-                                $preset = 'https:' . get_option('site_avatar_mirror','//sdn.geekzu.org/') . 'avatar/' . md5($mail) . '?s=300';
+                                $preset = 'https:' . get_option('site_avatar_mirror','//cravatar.cn/') . 'avatar/' . md5($mail) . '?s=300';
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if avatar unset
                                 echo '<p class="description" id="site_avatar_label">个人头像，用于笔记栈、关于等页面（默认管理员邮箱 gravatar 头像</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="border-radius: 100%;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 gravatar 头像" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
                             ?>
@@ -750,32 +762,43 @@
                         }
                     ?>
                     <tr valign="top">
-                        <th scope="row">category 分类目录</th>
+                        <th scope="row">Category 目录</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_remove_category', '' );
-                                $data = get_option( 'site_url_slash', '' );
+                                $opt = 'site_remove_category_switcher';
+                                $value = get_option($opt);
+                                $data = get_option('site_url_slash_sw', '' );
                                 //设置默认开启（仅适用存在默认值的checkbox）
                                 if(!$value&&!$data){
-                                    update_option( 'site_remove_category', "on_default" );
+                                    update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="site_remove_category"><p class="description" id="site_remove_category_label">开启后移除 url 中自带的 category 目录（默认开启</p><input type="checkbox" name="site_remove_category" id="site_remove_category"'.$status.' /> <b class="'.$status.'">移除 CATEGORY</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后移除 url 中自带的 category 目录（默认开启，模拟相同 slug 链接 page 页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">移除 CATEGORY</b></label>';
                             ?>
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_remove_category')){
+                        if(get_option('site_remove_category_switcher')){
                     ?>
                             <tr valign="top" class="child_option">
-                                <th scope="row">— URL（隐性）尾部斜杠</th>
+                                <th scope="row">— 链接尾部斜杠</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_url_slash', '' );
-                                        $value ? $status="checked" : $status="closed";
-                                        echo '<label for="site_url_slash"><p class="description" id="site_url_slash_label">Permalink链接尾部斜杠（开启后移除站点超链接中的尾部"/"，访问链接“/”需在固定链接中设置</p><input type="checkbox" name="site_url_slash" id="site_url_slash"'.$status.' /> <b class="'.$status.'">去除 URL 斜杠</b></label>';
+                                        $opt = 'site_url_slash_sw';
+                                        get_option($opt) ? $status="checked" : $status="closed";
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后移除站点 Permalink 超链接中的尾部"/"，URL地址中的“/”需在<a href="/wp-admin/options-permalink.php" target="_blank"> 固定链接 </a>中设置</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">去除 URL 斜杠</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 同步层级关系<sup title="实验性功能">EXP</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_sync_level_sw';
+                                        get_option($opt) ? $status="checked" : $status="closed";
+                                        echo '<label for="'.$opt.'"><p class="description" id="">实验性功能默认关闭，开启可使用自定义关键字“slash”将分类别名重写为“/” 以达到隐藏当前层级，将子级作为同级输出的目的（启用后将自动同步分类层级到页面。启用此项请保证分类中不存在“/”别名分类，如访问错误请检查错误页面父级别名是否为“/”并修改</b></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">同步层级关系</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -820,10 +843,26 @@
                                             $checking = strpos($value, $option)!==false ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
                                         }
-                                        echo '<input type="text" name="site_search_includes" id="site_search_includes" class="middle-text array-text" value="' . $value . '"/></div>';;
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
                                     ?>
                                 </td>
                             </tr>
+                            <!--<tr valign="top" class="child_option">-->
+                            <!--    <th scope="row">— 搜索样式种类（多选项）</th>-->
+                            <!--    <td>-->
+                                    <?php
+                                        // $opt = 'site_search_styles';  //unique str
+                                        // $value = get_option($opt);
+                                        // echo '<p class="description" id="site_search_includes_label">默认样式类型有4类：文章、笔记、日志、漫游影视，其他类型需自定义选填，使用逗号“ , ”分隔（默认仅输出一级分类</p><div class="checkbox">';
+                                        // foreach($cats as $the_cat){
+                                        //     $cats_id = $the_cat->term_id;
+                                        //     $option = $the_cat->slug;
+                                        //     echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
+                                        // }
+                                        // echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
+                                    ?>
+                            <!--    </td>-->
+                            <!--</tr>-->
                     <?php 
                         }
                     ?>
@@ -853,7 +892,7 @@
                             <?php
                                 $value = get_option( 'site_metanav_switcher', '' );
                                 $value ? $status="checked" : $status="closed";
-                                echo '<label for="site_metanav_switcher"><p class="description" id="site_metanav_switcher_label">多元化展示分类导航名称、描述及背景（仅可选存在子分类的一级分类</p><input type="checkbox" name="site_metanav_switcher" id="site_metanav_switcher"'.$status.' /> <b class="'.$status.'">多元分类导航</b></label>';
+                                echo '<label for="site_metanav_switcher"><p class="description" id="site_metanav_switcher_label">多元化展示分类导航名称、描述及背景</p><input type="checkbox" name="site_metanav_switcher" id="site_metanav_switcher"'.$status.' /> <b class="'.$status.'">多元分类导航</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -871,13 +910,13 @@
                                     <?php
                                         $opt = 'site_metanav_array';  //unique str
                                         $value = get_option($opt);
-                                        $preset = $options[0]->slug.','; //'notes,acg,';
-                                        if(!$value){
-                                            update_option($opt, $preset);
-                                            $value = $preset;
-                                        }
-                                        echo '<p class="description" id="site_metanav_array_label">需要应用元导航样式的分类别名（使用逗号“ , ”分隔</p><div class="checkbox">';
-                                        foreach ($options as $option){
+                                        // $preset = $options[0]->slug.','; //'notes,acg,';
+                                        // if(!$value){
+                                        //     update_option($opt, $preset);
+                                        //     $value = $preset;
+                                        // }
+                                        echo '<p class="description" id="site_metanav_array_label">需要应用元导航样式的分类别名，使用逗号“ , ”分隔（仅输出存在子分类的一级分类</p><div class="checkbox">';
+                                        foreach ($cats_seclevel as $option){
                                             $slug = $option->slug;
                                             $checking = strpos($value, $slug)!==false ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$option->name.'</label>';
@@ -894,7 +933,7 @@
                                         $value = get_option($opt);
                                         $enabled_array = explode(',',trim(get_option('site_metanav_array')));
                                         echo '<p class="description" id="site_metanav_image_label">需要使用背景图片的元分类导航，使用逗号“ , ”分隔（仅可选上方“基础元分类”中已启用分类，注slash“/”需手动写入</p><div class="checkbox">';
-                                        // foreach ($options as $option){
+                                        // foreach ($cats_seclevel as $option){
                                         //     $slug = $option->slug;
                                         //     $checking = strpos($value, $slug)!==false ? 'checked' : '';
                                         //     echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$option->name.'</label>';
@@ -950,13 +989,13 @@
                                 foreach($cats as $the_cat){
                                     if($the_cat->count>=1) array_push($options, $the_cat);  // has-content category only
                                 }
-                                echo '<p class="description" id="site_rss_categories_label">指定站点 RSS 分类文章，使用逗号“ , ”分隔（默认所有分类，仅可选一级分类内容，feed将在任意文章更新后更新</p><div class="checkbox">';
+                                echo '<p class="description" id="site_rss_categories_label">指定站点 RSS 分类文章，使用逗号“ , ”分隔（仅可选一级分类内容，feed将在任意文章更新后更新</p><div class="checkbox">';
                                 foreach ($options as $option){
                                     $slug = $option->slug;
                                     $checking = strpos($value, $slug)!==false ? 'checked' : '';
                                     echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$option->name.'</label>';
                                 }
-                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '" placeholder="默认所有分类" /></div>';;
                             ?>
                         </td>
                     </tr>
@@ -1433,20 +1472,16 @@
                         <th scope="row">首页 - 推荐栏目</th>
                         <td>
                             <?php
-                                $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
-                                $temp = array();
-                                foreach($cats as $the_cat){
-                                    if($the_cat->count>=1) array_push($temp,$the_cat);  //push 1st category which has posts
-                                }
-                                $autoload = get_category_by_slug('news')->term_id;  // get id by slug here for some case like "more" category's slug '/' (can not get cid by '/') 
-                                $value = get_option('site_rcmdside_cid','');
-                                if(!$value) update_option( 'site_rcmdside_cid', $autoload );else $autoload=$value;  //auto update option to default if options unset
-                                echo '<label for="site_rcmdside_cid"><p class="description" id="site_rcmdside_cid_label">默认使用“news”分类（应用于首页banner右侧推荐分类文章卡片展示</p><select name="site_rcmdside_cid" id="site_rcmdside_cid"><option value="">请选择</option>';
+                                $opt = 'site_rcmdside_cid';
+                                // $preset = $cats[0]->term_id;//get_category_by_slug('news')->term_id;  // can not get cid by '/') 
+                                $value = get_option($opt);
+                                // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if options unset
+                                echo '<label for="'.$opt.'"><p class="description" id="site_rcmdside_cid_label">默认使用“news”分类（应用于首页右侧推荐分类文章卡片展示</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
                                     foreach($cats as $the_cat){
                                         $cats_id = $the_cat->term_id;
-                                        if($the_cat->count>=1){
-                                            echo '<option value="'.$cats_id.'"';if(get_option('site_rcmdside_cid')==$cats_id)echo('selected="selected"');echo '>'.$the_cat->name.'</option>';
-                                        }
+                                        echo '<option value="'.$cats_id.'"';
+                                            if($value==$cats_id)echo('selected="selected"');
+                                        echo '>'.$the_cat->name.'</option>';
                                     }
                                 echo '</select><label>';
                             ?>
@@ -1487,20 +1522,16 @@
                                 <th scope="row">— 图文资讯分类</th>
                                 <td>
                                     <?php
-                                        $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
-                                        $temp = array();
-                                        foreach($cats as $the_cat){
-                                            if($the_cat->count>=1) array_push($temp,$the_cat);  //push 1st category which has posts
-                                        }
-                                        $autoload = get_category_by_slug('weblog')->term_id;  //return cid for recent_posts_query
-                                        $value = get_option('site_techside_cid','');
-                                        if(!$value) update_option( 'site_techside_cid', $autoload );else $autoload=$value;  //auto update option to default if options unset
-                                        echo '<label for="site_techside_cid"><p class="description" id="site_techside_cid_label">默认使用“weblog”分类（使用第三方数据储存适请确保leancloud内存在当前slug表数据</p><select name="site_techside_cid" id="site_techside_cid"><option value="">请选择</option>';
+                                        $opt = 'site_techside_cid';
+                                        // $preset = $cats_haschild[0]->term_id;//get_category_by_slug('weblog')->term_id;  //return cid for recent_posts_query
+                                        $value = get_option($opt);
+                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if options unset
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_techside_cid_label">默认使用“weblog”分类（使用第三方数据储存适请确保leancloud内存在当前slug表数据</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
                                             foreach($cats as $the_cat){
                                                 $cats_id = $the_cat->term_id;
-                                                if($the_cat->count>=1){
-                                                    echo '<option value="'.$cats_id.'"';if(get_option('site_techside_cid')==$cats_id)echo('selected="selected"');echo '>'.$the_cat->name.'</option>';
-                                                }
+                                                echo '<option value="'.$cats_id.'"';
+                                                    if($value==$cats_id)echo('selected="selected"');
+                                                echo '>'.$the_cat->name.'</option>';
                                             }
                                         echo '</select><label>';
                                     ?>
@@ -1545,22 +1576,16 @@
                                 <th scope="row">— ACGN分类</th>
                                 <td>
                                     <?php
-                                        $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
-                                        $temp = array();
-                                        foreach($cats as $the_cat){
-                                            if($the_cat->count>=1){
-                                                array_push($temp,$the_cat);  //push 1st category which has posts
-                                            }
-                                        }
-                                        $autoload = get_category_by_slug('acg')->term_id;  //return cid for recent_posts_query
-                                        $value = get_option('site_acgnside_cid','');
-                                        if(!$value) update_option( 'site_acgnside_cid', $autoload );else $autoload=$value;  //auto update option to default if options unset
-                                        echo '<label for="site_acgnside_cid"><p class="description" id="site_acgnside_cid_label">默认使用“acg”分类（使用第三方数据储存适请确保leancloud内存在当前slug表数据</p><select name="site_acgnside_cid" id="site_acgnside_cid"><option value="">请选择</option>';
+                                        $opt = 'site_acgnside_cid';
+                                        // $preset = $cats_haschild[0]->term_id;//get_category_by_slug('acg')->term_id;  //return cid for recent_posts_query
+                                        $value = get_option($opt);
+                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if options unset
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_cid_label">默认使用“acg”分类（使用第三方数据储存适请确保leancloud内存在当前slug表数据</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
                                             foreach($cats as $the_cat){
                                                 $cats_id = $the_cat->term_id;
-                                                if($the_cat->count>=1){
-                                                    echo '<option value="'.$cats_id.'"';if(get_option('site_acgnside_cid')==$cats_id)echo('selected="selected"');echo '>'.$the_cat->name.'</option>';
-                                                }
+                                                echo '<option value="'.$cats_id.'"';
+                                                    if($value==$cats_id)echo('selected="selected"');
+                                                echo '>'.$the_cat->name.'</option>';
                                             }
                                         echo '</select><label>';
                                     ?>
@@ -1708,23 +1733,16 @@
                                 <th scope="row">— 热门文章分类</th>
                                 <td>
                                     <?php
-                                        $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
-                                        $temp = array();
-                                        foreach($cats as $the_cat){
-                                            if($the_cat->count>=1){
-                                                array_push($temp,$the_cat);  //push 1st category which has posts
-                                            }
-                                        }
-                                        $autoload = $temp[0]->term_id;  //return id rather then slug(get id by slug once)
-                                        $value = get_option('site_mostview_cid','');
-                                        if(!$value) update_option( 'site_mostview_cid', $autoload );else $autoload=$value;  //auto update option to default if options unset
-                                        echo '<label for="site_mostview_cid"><p class="description" id="site_mostview_cid_label">默认使用一级栏目首位“'.$temp[0]->slug.'”分类（亦可选用其他分类文章热度排行</p><select name="site_mostview_cid" id="site_mostview_cid"><option value="">请选择</option>';
+                                        $opt = 'site_mostview_cid';
+                                        // $preset = $cats_haschild[0]->term_id;  //return id rather then slug(get id by slug once)
+                                        $value = get_option($opt);
+                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if options unset
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_mostview_cid_label">默认使用一级栏目首位“'.$cats_haschild[0]->slug.'”分类（亦可选用其他分类文章热度排行</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
                                             foreach($cats as $the_cat){
                                                 $cats_id = $the_cat->term_id;
-                                                $cats_child = $the_cat->count;
-                                                if($cats_child>=1){
-                                                    echo '<option value="'.$cats_id.'"';if(get_option('site_mostview_cid')==$cats_id)echo('selected="selected"');echo '>'.$the_cat->name.'</option>';
-                                                }
+                                                echo '<option value="'.$cats_id.'"';
+                                                    if($value==$cats_id)echo('selected="selected"');
+                                                echo '>'.$the_cat->name.'</option>';
                                             }
                                         echo '</select><label>';
                                     ?>
@@ -1742,23 +1760,16 @@
                         <th scope="row">底部近期文章</th>
                         <td>
                             <?php
-                                $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
-                                $temp = array();
-                                foreach($cats as $the_cat){
-                                    if($the_cat->count>=1){
-                                        array_push($temp,$the_cat);  //push 1st category which has posts
-                                    }
-                                }
-                                $autoload = $temp[0]->term_id;  //return id rather then slug(get id by slug once)
-                                $value = get_option('site_bottom_recent_cid','');
-                                if(!$value) update_option( 'site_bottom_recent_cid', $autoload );else $autoload=$value;  //auto update option to default if options unset
-                                echo '<label for="site_bottom_recent_cid"><p class="description" id="site_bottom_recent_cid_label">页面底部最左侧资讯栏目内容（可选所有存在文章的一级分类目录</p><select name="site_bottom_recent_cid" id="site_bottom_recent_cid"><option value="">请选择</option>';
+                                $opt = 'site_bottom_recent_cid';
+                                // $preset = $cats_haschild[0]->term_id;  //return id rather then slug(get id by slug once)
+                                $value = get_option($opt);
+                                // if(!$value) update_option($opt , $preset);else $preset=$value;  //auto update option to default if options unset
+                                echo '<label for="'.$opt.'"><p class="description" id="site_bottom_recent_cid_label">页面底部最左侧资讯栏目内容（可选所有存在文章的一级分类目录</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
                                     foreach($cats as $the_cat){
                                         $cats_id = $the_cat->term_id;
-                                        $cats_child = $the_cat->count;
-                                        if($cats_child>=1){
-                                            echo '<option value="'.$cats_id.'"';if(get_option('site_bottom_recent_cid')==$cats_id)echo('selected="selected"');echo '>'.$the_cat->name.'</option>';
-                                        }
+                                        echo '<option value="'.$cats_id.'"';
+                                            if($value==$cats_id)echo('selected="selected"');
+                                        echo '>'.$the_cat->name.'</option>';
                                     }
                                 echo '</select><label>';
                             ?>

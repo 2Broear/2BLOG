@@ -40,16 +40,16 @@
     };
     // include_once(TEMPLATEPATH . '/plugin/nocategory.php');  
     // https://blog.wpjam.com/function_reference/trailingslashit/
-    if(get_option('site_remove_category')){
-        add_filter('user_trailingslashit', 'remove_category', 100, 2);
+    if(get_option('site_remove_category_switcher')){
         function remove_category($string, $type){
             if($type!='single' && $type=='category' && (strpos($string, 'category')!==false)){
                 $url_without_category = str_replace(array("/category"), "", $string);
-                return get_option('site_url_slash') ? untrailingslashit($url_without_category) : trailingslashit($url_without_category); // use untrailingslashit to remove '/' at the end of url
+                return get_option('site_url_slash_sw') ? untrailingslashit($url_without_category) : trailingslashit($url_without_category); // use untrailingslashit to remove '/' at the end of url
                 // return untrailingslashit($url_without_category);
             }
             return $string;
         }
+        add_filter('user_trailingslashit', 'remove_category', 100, 2);
     }
     /* ------------------------------------------------------------------------ *
      * WordPress Comments Setup etc
@@ -648,29 +648,30 @@
             if($term_order==$order){
                 $each_cat = $cats[$i];
                 $cat_name = $each_cat->name;
-                $cid = $each_cat->term_id;
-                $meta_image = get_term_meta($each_cat->term_id, 'seo_image', true );
+                $cat_slug = $each_cat->slug;
+                $cat_id = $each_cat->term_id;
+                $meta_image = get_term_meta($cat_id, 'seo_image', true );
                 if(!$meta_image) $meta_image = get_option('site_bgimg');
 ?>
-				<div class="dld_box <?php echo $cat_name; ?>">
+				<div class="dld_box <?php echo $cat_slug; ?>">
 					<div class="dld_box_wrap">
 						<div class="box_up preCover">
 							<span style="background:url(<?php echo $meta_image; ?>) center center /cover">
-								<a href="javascript:;"><h3> <?php echo $cat_name; ?> </h3><i> <?php echo strtoupper($each_cat->slug) ?></i><em></em></a>
+								<a href="javascript:;"><h3> <?php echo $cat_name; ?> </h3><i> <?php echo strtoupper($cat_slug) ?></i><em></em></a>
 						  	</span>
 						</div>
 						<div class="box_down">
 						    <ul>
 						        <?php 
                                     $left_query = new WP_Query(array_filter(array(
-                                        'cat' => $cat,
+                                        'cat' => $cat_id,
                                         'meta_key' => 'post_orderby',
                                         'orderby' => array(
                                             'meta_value_num' => 'DESC',
                                             'date' => 'DESC',
                                             'modified' => 'DESC'
                                         ),
-                                        'posts_per_page' => get_option('posts_per_page'),  //use left_query counts
+                                        // 'posts_per_page' => get_option('posts_per_page'),  //use left_query counts
                                     )));
                                     while ($left_query->have_posts()):
                                         $left_query->the_post();

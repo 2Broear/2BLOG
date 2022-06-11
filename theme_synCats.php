@@ -1,30 +1,31 @@
 <?php
+    // $sync_cat_page_level = get_option('site_sync_level_sw');
     // CREATE category sync-action to page // https://stackoverflow.com/questions/32314278/how-to-create-a-new-wordpress-page-programmatically
     // BUG：删除页面后自动递增trashed..(已解决，来自wp_update_category)
     add_action('create_category', 'create_category_sync_page', 11, 2);  
     function create_category_sync_page($term_id){
         // create logic
         $create_cat = get_term($term_id);
-        $create_cat_id = $create_cat->term_id;
         $create_cat_slug = $create_cat->slug;
         $create_cat_title = $create_cat->name;
-        // $create_cat_slug=='slash' ? $create_cat_slug="/" : $create_cat_slug;  // not working.
+        // $page_par_id = wpdb_postmeta_query('post_id','meta_value', $create_cat->parent);  // created-cat parent binded page_id
+        // $page_par_id = get_term($create_cat->parent)->slug=='/' ? 0 : $page_par_id;
         $new_page = array(
             'post_name'    => $create_cat_slug,
             'post_title'    => $create_cat_title,
             'post_type' => 'page',
             'post_status'   => 'publish',
             'comment_status' => 'open',
-            'page_template' => get_term_meta($term_id, 'seo_template', true),
             'post_content'  => '',
-            // 'menu_order' => $create_cat_id
+            'page_template' => get_term_meta($term_id, 'seo_template', true),
+            'post_parent' => get_option('site_sync_level_sw') ? wpdb_postmeta_query('post_id','meta_value', $create_cat->parent) : '',//get_post($page_par_id)->post_name=='/' ? 0 : $page_par_id,  // check if page parent slug is '/' slash (incase page parent-slug '/' invalid occured category type, this only works with page level, none infuluence in category)
+            'menu_order' => $term_id
             // 'post_author'   => 1,
         );
         global $wpdb;
         $use_slash = $create_cat_slug==='slash' || strpos($create_cat_slug, '/')!==false;
         if($use_slash) $wpdb->update($wpdb->terms, array('slug' => '/'), array('term_id' => $term_id), array('%s'), array('%d'));  // sync 'slash' to category
-        // wpdb insert row logic
-        wp_insert_post($new_page);
+        wp_insert_post($new_page);  // wpdb insert row logic
         // USE post_title But post_name(slug) INCASE 'slash' slug occured twice.
         $page_cid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_title = '$create_cat_title' AND post_type = 'page'");  // same name(title) with category's name
         update_post_meta($page_cid, 'post_term_id', $term_id);  // bind category id to page(slash err)
@@ -43,12 +44,15 @@
         $use_slash = $edit_cat_slug==='slash' || strpos($edit_cat_slug, '/')!==false;
         if($use_slash) $wpdb->update($wpdb->terms, array('slug' => '/'), array('term_id' => $term_id), array('%s'), array('%d'));  // sync 'slash' to category
         $page_cid = wpdb_postmeta_query('post_id','meta_value', $term_id);
+        // $page_par_id = wpdb_postmeta_query('post_id','meta_value', $edit_cat->parent);
+        // $page_par_id = get_term($edit_cat->parent)->slug=='/' ? 0 : $page_par_id;
         // creat new page with the same name/slug category if page not exists.
         $post_data = array(
             'ID' => $page_cid,  // required page cat-id for update
             'post_name' => $edit_cat_slug,
             'post_title' => $edit_cat->name,
-            'page_template' => get_term_meta($term_id, 'seo_template', true) //sync page_template to page
+            'page_template' => get_term_meta($term_id, 'seo_template', true), //sync page_template to page
+            'post_parent' => get_option('site_sync_level_sw') ? wpdb_postmeta_query('post_id','meta_value', $edit_cat->parent) : '',  // (edited-cat parent binded page_id) update edit-parent cat bind page_id get_post($page_par_id)->post_name=='/'
         );
         wp_update_post(wp_slash($post_data));
         if($use_slash) $wpdb->update($wpdb->posts, array('post_name' => '/'), array('ID' => $page_cid), array('%s'), array('%d'));  // sync 'slash' to page
@@ -66,20 +70,34 @@
     // add_action('post_updated', 'update_page_sync_category', 10, 3);
     add_action('save_post', 'update_page_sync_category', 10, 3);
     function update_page_sync_category($post_id, $post_after, $post_before) {
-        // DO NOT USE wp_insert_category to UPDATE category
         $cat_id = get_post_meta($post_id, "post_term_id", true);  // page bind category id
-        $edit_post_slug = $post_after->post_name;
+        // DO NOT USE wp_insert_category to UPDATE category
         if($cat_id){
+            $edit_post_slug = $post_after->post_name;
+            $edit_post_title = $post_after->post_title;
+            $edit_post_parent = $post_after->post_parent;
+            $edit_post_template = $post_after->page_template;
+            // If this is a revision, get real post ID
+            if($parent_id = wp_is_post_revision($post_id)) $post_id = $parent_id;
             // wp_update_{type} causes an infinite loop inside save_post hook
         	if(!wp_is_post_revision($post_id)){
         		// remove this hook so that it does not create an infinite loop
         		remove_action( 'save_post', 'update_page_sync_category', 10, 3);
         		// update the post when the save_post hook is called again // wp_update_post( $my_args );
-        		wp_update_term($cat_id, 'category', array(
-                    'name' => $post_after->post_title,
-                    'slug' => $edit_post_slug
-                ));
-                update_term_meta($cat_id, 'seo_template', $post_after->page_template);  // sync page_template to category
+        		if(get_option('site_sync_level_sw')){
+            		wp_update_term($cat_id, 'category', array(
+                        'name' => $edit_post_title,
+                        'slug' => $edit_post_slug,
+                        'parent' => get_post_meta($edit_post_parent, "post_term_id", true),  // update edit-post_parent to bind-cat parent
+                    ));
+        		}else{
+            		wp_update_term($cat_id, 'category', array(
+                        'name' => $edit_post_title,
+                        'slug' => $edit_post_slug,
+                    ));
+        		}
+                update_term_meta($cat_id, 'seo_template', $edit_post_template);  // sync page_template to category
+                update_post_meta($post_id, '_wp_page_template', $edit_post_template);  // manual-update page_template via post_meta
                 global $wpdb;
                 if($edit_post_slug==='slash'){// || $edit_post_slug==$edit_post_title
                     $wpdb->update($wpdb->posts, array('post_name' => '/'), array('ID' => $post_id), array('%s'), array('%d'));  // sync 'slash' to post
