@@ -89,7 +89,7 @@
                         </span>
                         <span class="content-tail">
                           <aside class="personal_stand">
-                            <p><?php if($post_feeling) echo $post_feeling;else echo "Nothing feels yet."; ?></p>
+                            <p><?php echo $post_feeling ? $post_feeling : " ...... "; ?></p>
                           </aside>
                         </span>
                       </div>

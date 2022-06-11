@@ -47,7 +47,8 @@
                         <ul class="wp_list_cats">
                         <?php 
                             // 固定 cid // dual check if child template err (current_slug cased a slug not matched).
-                            $cats = get_categories(meta_query_categories(get_category_by_slug("notes")->term_id, 'ASC', 'seo_order'));
+                            $preset = get_template_bind_cat('category-notes.php')->slug;//'notes';
+                            $cats = get_categories(meta_query_categories(get_category_by_slug($preset)->term_id, 'ASC', 'seo_order'));
                             if(!empty($cats)){
                                 foreach($cats as $the_cat){
                                     $the_cat_id = $the_cat->term_id;

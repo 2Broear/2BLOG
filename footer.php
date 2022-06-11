@@ -221,7 +221,10 @@
                     if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online"><img src="'.get_bloginfo('template_directory').'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>';
                     $server = get_option('site_server');
                     if($server&&$server!="已关闭") echo '<a href="javascript:void(0);"><img src="'.$server.'" style="height: 12px;"></a>';
-                    if(get_option('site_foreverblog_wormhole')) echo '<a href="https://www.foreverblog.cn/go.html" target="_blank"> <img src="https://img.foreverblog.cn/wormhole_4_tp.gif" alt="" style="width:auto;height:26px;opacity:.5" title="穿梭虫洞-随机访问十年之约友链博客"></a>';
+                    if(get_option('site_foreverblog_wormhole')){
+                        $warmhole_img = $_COOKIE['theme_mode']=='dark' ? get_bloginfo('template_directory').'/images/wormhole_2_tp.gif' : get_bloginfo('template_directory').'/images/wormhole_4_tp.gif';
+                        echo '<a href="https://www.foreverblog.cn/go.html" target="_blank"> <!--<img src="" alt="" style="width:auto;height:26px;opacity:.5" title="穿梭虫洞-随机访问十年之约友链博客">--><em class="warmhole" style="background:url('.get_bloginfo('template_directory').'/images/wormhole_4_tp.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
+                    }
                     // if(get_option('site_foreverblog_switcher'))
                     echo '<a href="'.get_option('site_foreverblog').'" target="_blank"><img src="'.get_bloginfo('template_directory').'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
                     // if($comment_sw || $leancloud_sw) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
@@ -241,7 +244,7 @@
                       }
                   }
               ?>
-              <p style="margin:auto;opacity:.75;font-size:smaller"> WP Theme <b>2BLOG</b> openSourced via <a href="https://blog.2broear.com/" style="color:inherit;" target="_blank"><ins>2broear</ins></a> </p>
+              <p style="margin:auto;opacity:.75;font-size:smaller;font-style:italic"> WP Theme <b>2BLOG</b> openSourced via <a href="https://blog.2broear.com/" style="color:inherit;" target="_blank"><ins>2broear</ins></a> in 2022 </p>
           </ul>
         </span>
       </div>
@@ -278,6 +281,15 @@
     }
 </script>
 <?php 
+    if(get_option('site_logo_switcher')){
+?>
+        <style>
+            body.dark .logo-area span{
+                background: url(<?php echo get_option('site_logos'); ?>) no-repeat center center /cover!important;
+            }
+        </style>
+<?php
+    };
     $cat = $cat ? $cat : get_page_cat_id(current_slug());  //rewrite cat to cid (var cat for require php)
     require_once(TEMPLATEPATH. '/foot.php');
 ?>

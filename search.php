@@ -85,6 +85,13 @@
 		<div class="win-content main">
 			<div class="notes notes_default" style="max-width: 100%;">
                 <?php
+        	       // global $wpdb;
+                    // $templates = array('category-news.php','category-notes.php','category-weblog.php','category-acg.php');
+                    // foreach ($templates as $template){
+                    //     $template_page_id = $wpdb->get_var("SELECT post_id FROM $wpdb->postmeta WHERE meta_value = '$template'");
+                    //     $template_term_id = get_post_meta($template_page_id, "post_term_id", true);
+                    //     print_r(get_category($template_term_id)->slug);
+                    // }
                     $total_pages = $left_query->max_num_pages;  //total pages
                     if(have_posts()) {
                         // print_r($wp_query);
@@ -104,7 +111,7 @@
                                 </div>
                     <?php
                             }else{
-                                if(in_category('news')){
+                                if(in_category(get_template_bind_cat('category-news.php')->slug)){
                     ?>
                                     <!--<link type="text/css" rel="stylesheet" href="<?php //custom_cdn_src(); ?>/style/news.css" />-->
                                     <article class="news-window wow" data-wow-delay="0.1s">
@@ -136,7 +143,7 @@
                                         </div>
                                     </article>
                     <?php
-                                }elseif(in_category(array("weblog"))){
+                                }elseif(in_category(get_template_bind_cat('category-weblog.php')->slug)){
                     ?>
                                     <article class="weblog-tree-core-record i<?php the_ID() ?>">
                                         <div class="weblog-tree-core-l">
@@ -164,7 +171,7 @@
                                         </div>
                                     </article>
                     <?php  
-                                }elseif(in_category('acg')){
+                                }elseif(in_category(get_template_bind_cat('category-acg.php')->slug)){
                     ?>
                                     <div class="rcmd-boxes flexboxes">
                                         <div class="info anime flexboxes">

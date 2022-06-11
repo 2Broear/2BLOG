@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/acg.css" />
+    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/acg.css?v=" />
     <?php get_head(); ?>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -22,16 +22,17 @@
             <video src="<?php echo get_option('site_acgn_video'); ?>" poster="<?php echo cat_metabg($cat); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video><!-- bf2_240p_main forest -->
             <div class="counter">
                 <?php
+                    $curslug = current_slug();
+                    $preset = get_template_bind_cat('category-acg.php')->slug;//'acg';
                     $baas = get_option('site_leancloud_switcher');  //use post as category is leancloud unset
                     if(!$baas){
-                        $acgn = 'acg';
-                        $cats = get_categories(meta_query_categories(get_category_by_slug($acgn)->term_id, 'ASC', 'seo_order'));
-                        if(!empty($cats)){
+                        $cats = get_categories(meta_query_categories(get_category_by_slug($preset)->term_id, 'ASC', 'seo_order'));
+                        if(!empty($cats) && $curslug==$preset){
                             foreach($cats as $the_cat){
                                 $cat_slug = $the_cat->slug;  // print_r($the_cat);
                 ?>
                                 <div class="<?php echo $cat_slug ?>">
-                                    <a href="#<?php echo $cat_slug ?>" rel="nofollow">
+                                    <a href="<?php echo $cat_slug ?>" rel="nofollow">
                                         <h2><?php echo $the_cat->count; ?><sup>+</sup></h2>
                                         <p><?php echo $the_cat->name.'/'.$cat_slug; ?></p>
                                     </a>
@@ -42,8 +43,8 @@
                             $the_cat = get_category($cat);
                 ?>
                             <div class="">
-                                <a href="#" rel="nofollow">
-                                    <h2><?php echo $the_cat->count; ?><sup>+</sup></h2>
+                                <a href="" rel="nofollow">
+                                    <h2 class="single"><?php echo $the_cat->count; ?><sup>+</sup></h2>
                                     <p><?php echo $the_cat->name.'/'.$the_cat->slug; ?></p>
                                 </a>
                             </div>
@@ -56,14 +57,13 @@
         <div class="content-all-windows">
             <div class="rcmd-boxes flexboxes">
                 <?php
-                    $curslug = current_slug();
                     if(!$baas){
-                        if(!empty($cats) && $curslug==$acgn){
+                        if(!empty($cats) && $curslug==$preset){
                             foreach($cats as $the_cat){
-                                acg_posts_query($the_cat, $acgn); // // if($cat_slug!=$acgn)
+                                acg_posts_query($the_cat, $preset); // // if($cat_slug!=$preset)
                             }
                         }else{
-                            acg_posts_query(get_category($cat), $acgn);  //get_category_by_slug($curslug)
+                            acg_posts_query(get_category($cat), $preset);  //get_category_by_slug($curslug)
                         }
                     }
                 ?>

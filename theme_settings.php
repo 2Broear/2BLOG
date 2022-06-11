@@ -461,8 +461,9 @@
         register_setting( 'baw-settings-group', 'site_remove_category_switcher' );
         if(get_option('site_remove_category_switcher')){
             register_setting( 'baw-settings-group', 'site_url_slash_sw' );
-            register_setting( 'baw-settings-group', 'site_sync_level_sw' );
         }
+        register_setting( 'baw-settings-group', 'site_sync_level_sw' );
+        
         register_setting( 'baw-settings-group', 'site_search_style_switcher' );
         if(get_option('site_search_style_switcher')){
             register_setting( 'baw-settings-group', 'site_search_includes' );
@@ -717,17 +718,18 @@
                         <th scope="row">站点LOGO</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_logo_switcher', '' );
+                                $opt = 'site_logo_switcher';
+                                $value = get_option($opt);
                                 // $data = get_option( 'site_logo', '' );
                                 $value ? $status="checked" : $status="closed";
                                 //设置默认开启（仅适用存在默认值的checkbox）
                                 // if(!$value&&!$data){
-                                //     update_option( 'site_logo_switcher', "on_default" );
+                                //     update_option($opt, "on_default");
                                 //     $status="checked";
                                 // }else{
                                 //     $value ? $status="checked" : $status="closed";
                                 // };
-                                echo '<label for="site_logo_switcher"><p class="description" id="site_logo_switcher_label">站点 logo 图片（关闭logo将默认显示 xty 矢量 logo网站名称替代</p><input type="checkbox" name="site_logo_switcher" id="site_logo_switcher"'.$status.' /> <span style="color:#2271b1;" class="btn">LOGO</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_logo_switcher_label">站点 logo 图片（默认显示文字类型的站点名称</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:#2271b1;" class="btn">LOGO</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -792,19 +794,19 @@
                                     ?>
                                 </td>
                             </tr>
+                    <?php
+                        }
+                    ?>
                             <tr valign="top" class="child_option">
-                                <th scope="row">— 同步层级关系<sup title="实验性功能">EXP</sup></th>
+                                <th scope="row">— 页面层级关系<sup title="实验性功能">EXP</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_sync_level_sw';
                                         get_option($opt) ? $status="checked" : $status="closed";
-                                        echo '<label for="'.$opt.'"><p class="description" id="">实验性功能默认关闭，开启可使用自定义关键字“slash”将分类别名重写为“/” 以达到隐藏当前层级，将子级作为同级输出的目的（启用后将自动同步分类层级到页面。启用此项请保证分类中不存在“/”别名分类，如访问错误请检查错误页面父级别名是否为“/”并修改</b></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">同步层级关系</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">实验性功能默认关闭，开启可使用自定义关键字“slash”将分类别名重写为“/” 以达到隐藏当前层级，将子级作为同级输出的目的（启用后将自动同步分类层级到页面。启用此项请保证分类中不存在“/”别名分类，如访问错误请检查错误页面父级别名是否为“/”并修改</b></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">同步页面层级</b></label>';
                                     ?>
                                 </td>
                             </tr>
-                    <?php
-                        }
-                    ?>
                     <tr valign="top" class="">
                         <th scope="row">搜索展现样式</th>
                         <td>
@@ -1223,7 +1225,7 @@
                                 $value = get_option( 'site_comment_switcher', '' );
                                 $value ? $status="checked" : $status="closed";
                                 echo '<label for="site_comment_switcher"><p class="description" id="site_comment_switcher_label">第三方评论插件，如评论编辑、评论排行、最新评论、
-                               文章浏览量等内容展示（为防止跨应用多次初始化可能造成的数据调用混乱问题，appid/appkey/server 等数据将与 leancloud 应用同步初始化（每页显示评论数量可在 wp 后台设置 -> 讨论中修改）状态：'.$status.'</p><input type="checkbox" name="site_comment_switcher" id="site_comment_switcher" '.$status.'/> <span style="color:blueviolet;background:;border-color:blueviolet;" class="btn">Valine</span></label>';
+                               文章浏览量等内容展示（为防止跨应用多次初始化可能造成的数据调用混乱问题，appid/appkey/server 等数据将与 leancloud 应用同步初始化（每页显示评论数量可在<a href="/wp-admin/options-discussion.php" > 讨论 </a>中修改）状态：'.$status.'</p><input type="checkbox" name="site_comment_switcher" id="site_comment_switcher" '.$status.'/> <span style="color:blueviolet;background:;border-color:blueviolet;" class="btn">Valine</span></label>';
                             ?>
                         </td>
                     </tr>

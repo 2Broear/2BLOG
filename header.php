@@ -1,4 +1,8 @@
-
+<style>
+    body.dark #supports em.warmhole{
+        background: url(<?php custom_cdn_src(); ?>/images/wormhole_2_tp.gif) no-repeat center center /cover!important;
+    }
+</style>
 <div class="nav-wrap">
   <div class="top-bar-tips">
     <div class="tips-switch">
@@ -49,7 +53,7 @@
         </div>
         <nav class="main-nav">
             <ul class="wp_list_cats">
-                <!--<li class="cat_0 top_level"><a href="/"><i class="icom icon-more"></i>首页</a></li>-->
+                <li class="cat_0 top_level"><a href="/"><i class="icom icon-more"></i>首页</a></li>
             <?php 
                 global $cat;  //变量提升
                 $cat = $cat ? $cat : get_page_cat_id(current_slug());  // if is_page() then rewrite cat to cid // echo $cat;

@@ -4,12 +4,14 @@
 .win-top .counter div a:hover{color:var(--preset-f)}
 .win-top .counter div a:hover > p{color:var(--preset-f)}
 .win-top .counter div a{color:inherit;display:inherit}
+.win-top .counter h2.single{font-size:5rem}
 .win-top .counter h2{font-size:3rem;margin:0 auto;}
 .win-top .counter h2 sup{font-size:32px;color:var(--preset-s)}
 .win-top .counter p{color:var(--preset-e);font-size:var(--min-size);margin:3px auto}
 .rcmd-boxes{width:100%;max-width:100%;height:auto;flex-flow:row wrap}
 .rcmd-boxes .inbox-clip.subcat{text-align:center}
 .rcmd-boxes .inbox-clip{width:100%;color:var(--preset-4a);margin:15px auto;text-align:left}
+.rcmd-boxes .inbox-clip h2.single{font-size:2rem}
 .rcmd-boxes .inbox-clip h2{width:100%;margin:0 auto;padding:15px 10px;box-sizing:border-box;font-weight:400;font-family:var(--font-serif)}
 .rcmd-boxes .inbox-clip h2 sup{color:var(--preset-8);font-size:var(--min-size);font-weight:bold;padding-left:3px}
 .rcmd-boxes .info{width:100%;max-width:inherit;flex-wrap:wrap}

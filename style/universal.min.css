@@ -164,10 +164,23 @@ header>nav#tipson .top-bar-tips a{color:var(--theme-color);text-decoration:under
 .symbol-icons{width:0;height:0;opacity:0;visibility:hidden;position:absolute;top:0;left:0}
 .svg-symbols{display:inline-block;vertical-align:top;pointer-events:none}
 .svg-symbols path,.svg-symbols use{fill:currentColor}
-.inside_of_block .logo-area{float:left;/*margin:12px auto;position:absolute;*/}
+.inside_of_block .logo-area{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 10%;
+}
 .inside_of_block .logo-area .HeaderLogo{color:var(--preset-link);display:block;text-align:left;max-width:172px;overflow:hidden;font-family:"Microsoft YaHei",'微软雅黑',sans-serif;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 .inside_of_block .logo-area .HeaderLogo svg{background:url('https://img.2broear.com/svg/cped/BBCDT.svg?freshSvg=true')}
-.inside_of_block .logo-area a{display:block;margin:0 auto}
+.inside_of_block .logo-area a{
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%,-50%);
+}
 .inside_of_block .logo-area .HeaderLogo::before{content:'';width:150px;height:8px;display:block;z-index:999;position:absolute;top:-10px;left:-70px;background:rgba(255,255,255,0.332);transform:rotate(-32deg);-webkit-transform:rotate(-32deg);animation:_flushLogo 1.5s ease-out .4s infinite}
 .inside_of_block .logo-area #desAside{max-width:42%;float:left}
 .inside_of_block .logo-area #desAside span{display:block;position:relative;margin-top:8px;font-size:var(--min-size);letter-spacing:4.5px}
@@ -183,14 +196,12 @@ header>nav#tipson .top-bar-tips a{color:var(--theme-color);text-decoration:under
 .inside_of_block .logo-area #logo-outside::before{content:'';width:150px;height:10px;display:block;z-index:999;position:absolute;top:-10px;left:-70px;background:rgba(255,255,255,0.233);transform:rotate(-32deg);-webkit-transform:rotate(-32deg);animation:flushLogo 1.8s ease-out .4s infinite}
 .inside_of_block .logo-area span#logo-border::after{content:'';width:100px;height:10px;display:block;position:absolute;top:-10px;left:-50px;background:rgba(255,255,255,0.1);transform:rotate(-32deg);-webkit-transform:rotate(-32deg)}
 .inside_of_block .logo-area img{padding:20px 0 13px 0;margin:auto 12px}
-.inside_of_block .logo-area span{
-    margin:35px 10px!important;
-}
+/*.inside_of_block .logo-area span{margin:35px 10px!important;}*/
 .slider-menu_header .slider-logo span{
     color: white!important;
 }
 .slider-menu_header .slider-logo span,
-.inside_of_block .logo-area span,.mobile-vision .m-logo span{color:var(--preset-2b);;font-size:28px;font-weight:800;font-family:"Source Han Serif SC", "Playfair Display", 宋体, serif;display:block;white-space:nowrap;margin:21px 12px;width:115px;height:35px;padding:0}
+.inside_of_block .logo-area span,.mobile-vision .m-logo span{color:var(--preset-2b);;font-size:28px;font-weight:800;font-family:"Source Han Serif SC", "Playfair Display", 宋体, serif;display:block;white-space:nowrap;width:115px;height:35px;padding:0;/*margin:21px 12px;*/}
 .inside_of_block nav.main-nav{margin:0 auto}
 .inside_of_block nav.main-nav ul{list-style-type:none;margin:0;text-align: right;padding:0 ;/*15px;display:flex;flex-flow:row nowrap;position:relative;justify-content:flex-end*/}
 .inside_of_block nav.main-nav ul li{color:var(--preset-6);line-height:102px;display:inline-block;/*margin:15px auto;position:relative;max-height:102px;height:102px;*/}
@@ -720,6 +731,13 @@ i.arrow-down::after{content:'\e908'}
 #supports {margin:0 auto}
 #supports a:hover > img,#supports a:hover > b{filter:grayscale(0);opacity: 1!important;}
 #supports a {display:inline-block;margin:auto 10px auto 0px;}
+#supports a em.warmhole{
+    display: inline-block;
+    width: 95px;
+    height: 26px;
+    vertical-align: middle;
+    opacity: .5;
+}
 #supports a img,#supports a b {height:23px;vertical-align: middle;filter:grayscale(1);opacity:.88}
 #supports-txt b{display:none}
 #supports-txt q em{color:var(--preset-9);}
@@ -902,7 +920,7 @@ audio{width:300px;height:32px}
 #download-head-topic_left i.changeCloud::before{content:'\e918' !important}
 .content-all-windows{max-width:1102px;height:auto;margin:0 auto;padding:15px 15px 0;overflow-y:hidden;transition:all .5s ease;display:flex;position:relative;flex-flow:row nowrap;justify-content:space-between}
 .inform::after{content:'\e901';padding-right:5px}
-.scroll-inform{max-width:1102px;width:100%;padding:0 10px;box-sizing:border-box;color:#999;clear:both;font-size:var(--min-size);text-align:left;margin:0 auto;overflow:hidden;position:relative;top:5px}
+.scroll-inform{max-width:1102px;width:100%;padding:0 10px;box-sizing:border-box;color:#999;clear:both;font-size:var(--min-size);text-align:left;margin:0 auto;overflow:hidden;position:relative;top:2px}
 .scroll-inform div.scroll-block,
 .scroll-inform p{margin:0;display:inline-block;vertical-align:middle}
 .scroll-inform a:hover{color:var(--theme-color)}
@@ -913,7 +931,7 @@ audio{width:300px;height:32px}
 .scroll-inform div.scroll-block span.move{top:-100%}
 .scroll-inform div.scroll-block span.show,
 .scroll-inform div.scroll-block span.move{transition: top .35s ease;}
-.scroll-inform div.scroll-block span{width:100%;display:block;float:inherit;position:absolute;top:100%;overflow:hidden;line-height:20px;white-space:nowrap;text-overflow:ellipsis;will-change:transform,top;}
+.scroll-inform div.scroll-block span{width:100%;display:block;float:inherit;position:absolute;top:100%;overflow:hidden;line-height:22px;white-space:nowrap;text-overflow:ellipsis;will-change:transform,top;}
 .slidebar-menu{width:28.5%;height:100%;text-align:left;padding:152px 15px 15px 15px;position:fixed;top:0;left:0;z-index:9998;background-color:var(--preset-f);border:1px solid var(--preset-s);box-shadow:rgba(0,0,0,0.12) 0 1px 18px;transform:translate(-100%,0);transition:all .35s ease;box-sizing:border-box}
 .slidebar-menu .slidebox{width:100%;height:100%;background-color:var(--preset-f);overflow-y:scroll;position:relative}
 .slidebar-menu .slidebar:hover > i{color:var(--preset-2b)}

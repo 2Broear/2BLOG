@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/download.css" />
+    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/download.css?v=2" />
     <?php get_head(); ?>
     <style>
         #loading:before{top:40px}
@@ -22,17 +22,27 @@
         </header>
         <?php get_inform(); ?>
         <div class="download_boxes">
-			<div class="dld_boxes">
-			    <?php 
-                    $baas = get_option('site_leancloud_switcher');
-                    if(!$baas){
-                        if(current_slug()=='download'){
-                            download_posts_query($cat,1);
-                        }else{
-                            // download_posts_query($cat,1);
-                        }
+		    <?php 
+                $preset = get_template_bind_cat('category-download.php')->slug;//'download';
+                $curslug = current_slug();
+                $baas = get_option('site_leancloud_switcher');
+                $cats = get_categories(meta_query_categories($cat, 'ASC', 'seo_order'));
+                if(!$baas){
+                    // !empty($cats) && $curslug==$preset ? download_posts_query($cats, 1) : download_posts_query(array(get_category($cat)), 1, 'single');
+                    if(!empty($cats) && $curslug==$preset){
+                        echo '<div class="dld_boxes">';
+                        download_posts_query($cats, 1);
+                        echo '</div>';
                     }else{
-                ?>
+                        echo '<div class="dld_boxes single">';
+                        download_posts_query(array(get_category($cat)), 1);
+                        echo '</div>';
+                    }
+                    // print_r($cats);
+                    // print_r(array(get_category($cat)));
+                }else{
+            ?>
+			        <div class="dld_boxes">
         				<div class="dld_box adobe">
         					<div class="dld_box_wrap">
         						<div class="box_up preCover">
@@ -57,17 +67,22 @@
         						</div>
         					</div>
         				</div>
-                <?php
-                    }
-			    ?>
-			</div>
-			
-			<div class="dld_boxes">
-			    <?php 
-                    if(!$baas){
-                        download_posts_query($cat, 2);
+			        </div>
+            <?php
+                };
+                if(!$baas){
+                    if(!empty($cats) && $curslug==$preset){
+                        echo '<div class="dld_boxes">';
+                        download_posts_query($cats, 2);
+                        echo '</div>';
                     }else{
-                ?>
+                        echo '<div class="dld_boxes single">';
+                        download_posts_query(array(get_category($cat)), 2);
+                        echo '</div>';
+                    }
+                }else{
+            ?>
+    		        <div class="dld_boxes">
         				<div class="dld_box p2p">
         					<div class="dld_box_wrap">
         						<div class="box_up preCover">
@@ -104,17 +119,22 @@
         						</div>
         					</div>
         				</div>
-                <?php
-                    }
-			    ?>
-			</div>
-			
-			<div class="dld_boxes">
-			    <?php 
-                    if(!$baas){
-                        download_posts_query($cat, 3);
+    		        </div>
+            <?php
+                };
+                if(!$baas){
+                    if(!empty($cats) && $curslug==$preset){
+                        echo '<div class="dld_boxes">';
+                        download_posts_query($cats, 3);
+                        echo '</div>';
                     }else{
-                ?>
+                        echo '<div class="dld_boxes single">';
+                        download_posts_query(array(get_category($cat)), 3);
+                        echo '</div>';
+                    }
+                }else{
+            ?>
+    		        <div class="dld_boxes">
         				<div class="dld_box tools">
         					<div class="dld_box_wrap">
         						<div class="box_up preCover">
@@ -151,10 +171,10 @@
         						</div>
         					</div>
         				</div>
-                <?php
-                    }
-			    ?>
-			</div>
+    		        </div>
+            <?php
+                }
+		    ?>
 		</div>
 		<div style="max-width:1102px;margin:0 auto">
             <?php 

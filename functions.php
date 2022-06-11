@@ -10,6 +10,7 @@
      */
     if(get_option('site_search_style_switcher')){
         // https://thomasgriffin.com/how-to-include-custom-post-types-in-wordpress-search-results/
+        add_action( 'pre_get_posts', 'tg_include_custom_post_types_in_search_results' );
         function tg_include_custom_post_types_in_search_results($query){
             $res_array = explode(',',trim(get_option('site_search_includes','post')));  // NO "," Array
             $new_array = array();
@@ -21,7 +22,15 @@
                 $query->set('post_type', $new_array);  // implode(',', $new_array) array( 'post', 'page')
             }
         }
-        add_action( 'pre_get_posts', 'tg_include_custom_post_types_in_search_results' );
+    }
+    
+    // get bind category-template cat by specific binded-temp post_id
+    function get_template_bind_cat($template=false){
+        global $wpdb;
+        // $template_page_id = $wpdb->get_var("SELECT post_id FROM $wpdb->postmeta WHERE meta_value = '$template'");
+        // $template_term_id = get_post_meta($template_page_id, "post_term_id", true); //SELECT *
+        $template_term_id = $wpdb->get_var("SELECT term_id FROM $wpdb->termmeta WHERE meta_value = '$template'");
+        return get_category($template_term_id);
     }
     /* ------------------------------------------------------------------------ *
      * Plugin Name: Link Manager
@@ -277,7 +286,8 @@
     // 站点logo
     function site_logo($src=false){
         if(get_option('site_logo_switcher')){
-            echo $_COOKIE['theme_mode']=='dark' ? '<span style="background: url('.get_option('site_logos').') no-repeat center center /cover;"></span>' : '<span style="background: url('.get_option('site_logo').') no-repeat center center /cover;"></span>';
+            // echo $_COOKIE['theme_mode']=='dark' ? '<span style="background: url('.get_option('site_logos').') no-repeat center center /cover;"></span>' : '<span style="background: url('.get_option('site_logo').') no-repeat center center /cover;"></span>';
+            echo '<span style="background: url('.get_option('site_logo').') no-repeat center center /cover;"></span>';
         }else{
             echo '<span>'.get_bloginfo('name').'</span>';
         }
@@ -640,8 +650,7 @@
     }
     
     // wp自定义（含置顶无分页）查询函数
-    function download_posts_query($cat, $order){
-        $cats = get_categories(meta_query_categories($cat, 'ASC', 'seo_order'));
+    function download_posts_query($cats, $order, $single=false){
         for($i=0;$i<count($cats);$i++){
             $term_order = get_term_meta($cats[$i]->term_id, 'seo_order', true);
             // print_r($term_order);
@@ -653,7 +662,7 @@
                 $meta_image = get_term_meta($cat_id, 'seo_image', true );
                 if(!$meta_image) $meta_image = get_option('site_bgimg');
 ?>
-				<div class="dld_box <?php echo $cat_slug; ?>">
+				<div class="dld_box <?php echo $cat_slug.' '.$single ?>">
 					<div class="dld_box_wrap">
 						<div class="box_up preCover">
 							<span style="background:url(<?php echo $meta_image; ?>) center center /cover">
@@ -700,6 +709,7 @@
     }
     
     function acg_posts_query($the_cat, $pre_cat=false){
+        global $post;
         $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
         $cat_slug = $the_cat->slug;
         echo '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> '.$cat_slug.' </sup></h2></div><div class="info flexboxes">';

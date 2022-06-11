@@ -24,6 +24,11 @@ a:hover {
 	height: 0;
 	visibility: hidden;
 }
+.download_boxes .dld_boxes.single{
+    width: 100%;
+    display: block;
+    margin: 0 auto;
+}
 .download_boxes .dld_boxes{
     /*float: none!important;*/
     /*width: calc(100%/3.03)!important;*/
@@ -62,6 +67,7 @@ a:hover {
 .dld_box .box_up span {
 	width: 100%;
 	height: 180px;
+	line-height: 180px;
 	display: block;
 	position: relative;
 	border-radius: inherit;
@@ -69,6 +75,7 @@ a:hover {
 .dld_box .box_up span a {
 	width: 100%;
 	height: inherit;
+	line-height: inherit;
 	color: var(--preset-f);
 	background: rgba(0, 0, 0, .5);
 	position: absolute;
@@ -76,7 +83,9 @@ a:hover {
 	border-radius: inherit;
 }
 .dld_box .box_up span a h3 {
-	margin: 23% auto;
+	/*margin: 23% auto;*/
+	margin: auto;
+	line-height: inherit;
 	font-size: 1.5rem;
 	font-family: var(--font-serif);
 }
