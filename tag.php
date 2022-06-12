@@ -1,6 +1,6 @@
 <?php
 /*
-    Template name: 搜索页面模版
+    Template name: 标签页面模版
     Template Post Type: pages
 */
 ?>
@@ -55,18 +55,12 @@
 		</nav>
 	</header>
     <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
-    <video src="" poster="<?php custom_cdn_src('img'); ?>/images/search.jpg" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+    <video src="" poster="<?php custom_cdn_src('img'); ?>/images/default.jpg" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
 	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s">
 	    <?php 
             global $wp_query;
-            $res_num = $wp_query->found_posts;
-            $searchString=esc_html(get_search_query());
-            // $page_flag = strpos(get_option('site_search_includes'), 'page')!==false ? '/page' : '';
-            $res_array = explode(',',trim(get_option('site_search_includes','post')));  // NO "," Array
-            foreach ($res_array as $each){
-                if(trim($each)=='page') $page_flag='/页面';
-            }
-            echo '<b> '.$res_num.' </b>篇有关“<span>'.$searchString.'</span>”の文章'.$page_flag;//printf(esc_html__('%d条关于“%s”的文章', ''),$res_num,'<span>'.esc_html(get_search_query()).'</span>');
+            $tagString = single_tag_title('',false);
+            echo '<b> '.$wp_query->found_posts.' </b>篇标签“<span>'.$tagString.'</span>”の文章';
         ?>
     </h5>
 </div>
@@ -74,7 +68,7 @@
 	<div class="win-nav-content">
 		<div class="win-content main">
 			<div class="notes notes_default" style="max-width: 100%;">
-                <?php the_posts_with_styles($searchString) ?>
+                <?php the_posts_with_styles($tagString); ?>
 			</div>
 		</div>
 	</div>

@@ -28,6 +28,9 @@
                     case is_search():
                         echo 'Searching..';
                         break;
+                    case is_tag():
+                        echo 'Tags';
+                        break;
                     default:
                         echo "NOT MATCHED";
                         break;

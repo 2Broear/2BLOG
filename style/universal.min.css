@@ -520,7 +520,7 @@ nav .nav-wrap .nav-tools em{font-size:18px;color:var(--preset-link)}
 .mobile-vision i{position:relative;top:-1px}
 .nav-wrap .nav-tools button{width:23px;height:23px;display:block;padding:0;position:absolute;left:5px;top:15px;background:url('https://img.2broear.com/css_sprites.png') -90px -178px no-repeat;cursor:pointer;border-radius:0 2px 2px 0;transition:right .2s ease}
 .nav-tools .m-search i::before{content:'\e919'}
-.nav-wrap .nav-tools .m-search{display:block;font-size:17px;position:absolute;top:15px;left:-2px;}
+.nav-wrap .nav-tools .m-search{display:block;font-size:17px;position:absolute;top:15px;left:-2px;opacity:.75}
 .news-cur-position{width:100%;height:auto;float:left;color:var(--preset-8);position:relative;display:none}
 .news-cur-position ul{height:100%;width:auto;border:1px solid var(--preset-s);background-color:var(--preset-f);border-radius:var(--radius);list-style-type:none;margin:0;padding:0;text-align:left;font-size:var(--min-size);overflow:hidden;display:flex;flex-flow:row nowrap;justify-content:flex-start;flex:0 1 auto;white-space:nowrap;line-height:32px;padding:0 15px}
 .news-cur-position ul li{padding:0 2px;flex-basis:36px;line-height:26px}
@@ -1724,4 +1724,22 @@ p.wp_comment_tip{
 }
 .main p small a{
     color: var(--theme-color);
+}
+
+.pageSwitcher{font-size:14px;margin-top:15px}
+.pageSwitcher a:hover{background: var(--preset-s);/*color:var(--preset-f);border-color:transparent;background-color:var(--theme-color)*/}
+.pageSwitcher span.current{
+    font-weight: bold;
+    margin: auto 5px;
+    /*color: var(--theme-color);*/
+    /*vertical-align: middle;*/
+}
+.pageSwitcher a{
+    line-height: 27px;
+    display: inline-block;
+    color: var(--preset-6);
+    margin-left: 5px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid var(--preset-e);
 }

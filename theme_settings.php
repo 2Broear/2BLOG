@@ -808,7 +808,7 @@
                                 </td>
                             </tr>
                     <tr valign="top" class="">
-                        <th scope="row">搜索展现样式</th>
+                        <th scope="row">搜索/标签样式</th>
                         <td>
                             <?php
                                 $value = get_option( 'site_search_style_switcher', '' );
@@ -820,7 +820,7 @@
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="site_search_style_switcher"><p class="description" id="site_search_style_switcher_label">搜索结果展示列表样式，开启后将使用各页面数据列表样式（默认使用笔记栈列表样式</p><input type="checkbox" name="site_search_style_switcher" id="site_search_style_switcher"'.$status.' /><b>搜索展现样式</b></label>';
+                                echo '<label for="site_search_style_switcher"><p class="description" id="site_search_style_switcher_label">搜索结果及标签内容展示列表样式，开启后将使用各页面数据列表样式（默认使用笔记栈列表样式</p><input type="checkbox" name="site_search_style_switcher" id="site_search_style_switcher"'.$status.' /><b>展示列表样式</b></label>';
                             ?>
                         </td>
                     </tr>

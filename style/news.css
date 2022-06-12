@@ -1,5 +1,5 @@
 
-header{height:154px}
+header{height:154px;margin-bottom:auto}
 @media screen and (max-width:960px){header{height:126px}
 }.news-content-window{height:auto;transition:all .5s ease}
 .news-article-list{width:100%;height:auto;/*float:left*/}
@@ -65,9 +65,6 @@ header{height:154px}
 #news-tail_info #post-date i::before{content:'\e91e'}
 #end-news-all{letter-spacing:14px}
 #end-news{color:var(--theme-color);display:inline-block}
-.pageSwitcher{font-size:14px;margin-top:15px}
-.pageSwitcher a:hover{background: var(--preset-fa);/*color:var(--preset-f);border-color:transparent;background-color:var(--theme-color)*/}
-.pageSwitcher a{line-height:27px;display:inline-block;color:var(--preset-6);padding:0 10px;margin:auto 2px;border-radius:var(--radius);border:1px solid var(--preset-s)}
 .pageSwitcher div:hover{color:var(--preset-f);border-color:transparent;background-color:var(--theme-color)}
 .pageSwitcher div{line-height:27px;cursor:pointer;color:var(--preset-6);padding:0 10px;border-radius:var(--radius);border:1px solid var(--preset-s)}
 .pageSwitcher div.upper{float:left}
