@@ -10,7 +10,7 @@
     <title> LBMS Login - Signup & Etc. </title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="shortcut icon" href="<?php custom_cdn_src(); ?>/images/favicon/lbms.ico"/>
+    <link rel="shortcut icon" href="<?php custom_cdn_src('img'); ?>/images/favicon/lbms.ico"/>
     <style>
     .logedin,.welcome,
     html,body{

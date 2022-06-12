@@ -11,7 +11,7 @@
     background-size: cover;
     margin: 0;;padding: 0;
     overflow: hidden;
-    cursor: url(<?php custom_cdn_src(); ?>/images/404/flashlight.cur),default;
+    cursor: url(<?php custom_cdn_src('img'); ?>/images/404/flashlight.cur),default;
   }
   .items{
     width: 100%;height: auto;
@@ -20,7 +20,7 @@
   .items .itemsInside span{ transition: all .05s ease;}
   .items .itemsInside{
     width: 1920px;height: 1024px;
-    background: url('<?php custom_cdn_src(); ?>/images/404/1920-dark-wall.jpg') no-repeat;
+    background: url('<?php custom_cdn_src('img'); ?>/images/404/1920-dark-wall.jpg') no-repeat;
   }
   .items .itemsInside #fof{
     display: block;
@@ -28,7 +28,7 @@
     margin: 0 auto;
     position: absolute;
     top: 191px;left: 366px;
-    background: url('<?php custom_cdn_src(); ?>/images/404/960-glitch-ez.gif') no-repeat;
+    background: url('<?php custom_cdn_src('img'); ?>/images/404/960-glitch-ez.gif') no-repeat;
   }
   .items .itemsInside #dusts{
     display: block;
@@ -37,7 +37,7 @@
     width: 200px;height: 200px;
     z-index: 1;
     animation: dustsLoop 1.8s linear infinite alternate;
-    background: url('<?php custom_cdn_src(); ?>/images/404/light-dusts.gif') no-repeat;
+    background: url('<?php custom_cdn_src('img'); ?>/images/404/light-dusts.gif') no-repeat;
   }
   @keyframes dustsLoop {
     0%{opacity: 0;}
@@ -49,7 +49,7 @@
     top: 160px;left: 160px;
     z-index: 3;
     width: 512px;height: 512px;
-    background: url('<?php custom_cdn_src(); ?>/images/404/light-break.gif') no-repeat;
+    background: url('<?php custom_cdn_src('img'); ?>/images/404/light-break.gif') no-repeat;
   }
   .items .itemsInside #mask{
     display: block;
@@ -57,7 +57,7 @@
     top: -350px;left: -680px;
     z-index: 2;
     width: 2515px;height: 2009px;
-    background: url('<?php custom_cdn_src(); ?>/images/404/mask-dark-wall.png') no-repeat;
+    background: url('<?php custom_cdn_src('img'); ?>/images/404/mask-dark-wall.png') no-repeat;
   }
   .positions{ opacity: 0;visibility: hidden;display: none;}
   .positions span{

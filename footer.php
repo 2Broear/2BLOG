@@ -173,7 +173,7 @@
                 </li>
                 <li class="PoweredBy2B">
                   <ins> XTyDesign </ins>
-                  <img src="<?php echo get_bloginfo('template_directory') ?>/images/svg/XTy_.svg" alt="XTY Design" /></li>
+                  <img src="<?php custom_cdn_src('img'); ?>/images/svg/XTy_.svg" alt="XTY Design" /></li>
               </ul>
               <ul class="friend_links">
                 <h2>朋友圈</h2>

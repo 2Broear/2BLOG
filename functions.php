@@ -236,9 +236,9 @@
      * 自定义功能函数
      * ------------------------------------------------------------------------ */
     // 分类背景图/视频海报
-    function cat_metabg($cid){
+    function cat_metabg($cid, $preset=false){
         $metaimg = get_term_meta($cid, 'seo_image', true);  //$page_cat->term_id
-        return $metaimg ? $metaimg : get_option('site_bgimg');
+        return $metaimg ? $metaimg : ($preset ? $preset : get_option('site_bgimg'));
     }
     // 更新 sitemap 站点地图
     if(get_option('site_map_switcher')){
@@ -546,22 +546,23 @@
         if($cat_meta) echo($cat_meta);else echo($cat_desc);
     };
     //启用cdn加速(指定src/img)
-    function custom_cdn_src($which=false){
-        if(get_option("site_cdn_switcher")&&$which){
+    function custom_cdn_src($which=false,$var=false){
+        $default_src = get_bloginfo('template_directory');
+        $cdn_img = get_option('site_cdn_img');
+        $cdn_src = get_option('site_cdn_src');
+        if(get_option("site_cdn_switcher")){
             switch ($which) {
-                case 'src':
-                    $cdn_src = get_option('site_cdn_src');
-                    if($cdn_src) $which = $cdn_src;
-                    break;
                 case 'img':
-                    $cdn_img = get_option('site_cdn_img');
-                    if($cdn_img) $which = $cdn_img;
+                    $cdn_img ? $which=$cdn_img : $which=$default_src;
+                    break;
+                default:
+                    $cdn_src ? $which=$cdn_src : $which=$default_src;
                     break;
             };
         }else{
-            $which = get_bloginfo('template_directory');
+            $which = $default_src;
         }
-        echo $which;
+        if($var) return $which;else echo $which;
     };
     //兼容gallery获取post内容指定图片（视频海报）
     function get_postimg($index=0,$postid=false) {

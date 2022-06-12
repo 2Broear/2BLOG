@@ -1,6 +1,6 @@
 <style>
     body.dark #supports em.warmhole{
-        background: url(<?php custom_cdn_src(); ?>/images/wormhole_2_tp.gif) no-repeat center center /cover!important;
+        background: url(<?php custom_cdn_src('img'); ?>/images/wormhole_2_tp.gif) no-repeat center center /cover!important;
     }
 </style>
 <div class="nav-wrap">
@@ -69,7 +69,8 @@
                         if(!empty($catss)) $level="sec_level";else $level="top_level";
                         // 当前选中栏目 || 当前选中栏目下子栏目 || 当前栏目下文章&&文章单页
                         if($the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";  //current category/page detect (bychild) DO NOT USE ID DETECT, because all cat are page(post) type;
-                        echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.get_category_link($the_cat_id).'" class="'.$choosen.'"><i class="icom icon-'.$slug_icon.'"></i>'.$the_cat->name.'</a>';  //liwrapper
+                        $slash_link = get_category_link($the_cat_id)!=get_site_url() ? get_category_link($the_cat_id) : 'javascript:void(0)';  // detect if use $slash_link
+                        echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.$slash_link.'" class="'.$choosen.'"><i class="icom icon-'.$slug_icon.'"></i>'.$the_cat->name.'</a>';  //liwrapper
                         if(!empty($catss)){
                             if(get_option('site_metanav_switcher') && strpos(get_option('site_metanav_array'),$the_cat_slug)!==false){ //https://blog.csdn.net/ArthurBryant/article/details/6581833
                                 if(strpos(get_option('site_metanav_image'), $the_cat_slug)!==false) $metaCls = "metaboxes";else $metaCls="";  // must else for each-loop
@@ -111,7 +112,8 @@
                                     $catsss = get_categories(meta_query_categories($the_cats_id, 'ASC', 'seo_order'));
                                     if(!empty($catsss)) $level="trd_level";else $level="sec_child";
                                     if($the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single()) $choosen = "choosen 2rd";else $choosen="2nd";  // current choosen detect
-                                    echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent." ".$level.'"><a href="'.get_category_link($the_cats_id).'" class="'.$choosen.'">'.$the_cats->name.'</a>';  //liwrapper
+                                    $slash_link = get_category_link($the_cats_id)!=get_site_url() ? get_category_link($the_cats_id) : 'javascript:void(0)';  // detect if use $slash_link
+                                    echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent." ".$level.'"><a href="'.$slash_link.'" class="'.$choosen.'">'.$the_cats->name.'</a>';  //liwrapper
                                     if(!empty($catsss)){
                                         echo '<div class="sub-additional"><ol class="links-more">';
                                         foreach($catsss as $the_catss){

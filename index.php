@@ -122,7 +122,7 @@
         <!-- 左 -->
         <div class="special-display">
             <ul class="flexboxes">
-                <li id="special-img" style="background: url(<?php custom_cdn_src(); ?>/images/google.gif) center /cover;"><a href="javascript:;" style="width:100%;height:100%;position:absolute;top:0;left:0;"></a></li>
+                <li id="special-img" style="background: url(<?php custom_cdn_src('img'); ?>/images/google.gif) center /cover;"><a href="javascript:;" style="width:100%;height:100%;position:absolute;top:0;left:0;"></a></li>
             </ul>
         </div>
         <!-- 右 -->

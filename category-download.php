@@ -178,7 +178,7 @@
 		</div>
 		<div style="max-width:1102px;margin:0 auto">
             <?php 
-                the_content();  // the_page_content(current_slug());
+                // the_content();  // the_page_content(current_slug());
                 dual_data_comments();
             ?>
         </div>

@@ -1,4 +1,4 @@
-<div class="slider-menu" tabindex="1" style="background:url(<?php custom_cdn_src(); ?>/images/bg3.png) repeat center center">
+<div class="slider-menu" tabindex="1" style="background:url(<?php custom_cdn_src('img'); ?>/images/bg3.png) repeat center center">
     <div class="slider-menu-inside">
         <div class="slider-menu_header">
             <span class="slider-tips">

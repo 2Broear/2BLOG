@@ -22,7 +22,7 @@
 <body class="<?php theme_mode(); ?>">
     <div class="content-all">
         <div class="win-top bg" attr-bg="">
-            <em class="digital_mask" style="background: url(<?php custom_cdn_src(); ?>/images/svg/digital_mask.svg)"></em>
+            <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
 			<header>
 				<nav id="tipson" class="ajaxloadon">
                     <?php get_header(); ?>

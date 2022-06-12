@@ -12,7 +12,7 @@
     <meta name="description" content="Weblog Submit System" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="shortcut icon" href="<?php custom_cdn_src(); ?>/images/favicon/lbms.ico"/>
+    <link rel="shortcut icon" href="<?php custom_cdn_src('img'); ?>/images/favicon/lbms.ico"/>
     <link type="text/css" rel="stylesheet" href="https://2broear.com/style/highlight/agate.m.css" />
     <link type="text/css" rel="stylesheet" href="https://2broear.com/style/lbms/editor.css" />
     <script src="<?php custom_cdn_src(); ?>/js/leancloud/av-min.js"></script>

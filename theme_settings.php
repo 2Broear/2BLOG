@@ -679,7 +679,7 @@
                             <?php
                                 $opt = 'site_bgimg';
                                 $value = get_option($opt);
-                                $preset = get_bloginfo('template_directory').'/images/default.jpg';  
+                                $preset = custom_cdn_src('img',true).'/images/default.jpg';  
                                 // $preset = 'https:'.get_option('site_avatar_mirror','//sdn.geekzu.org/').'/avatar/?d=identicon&s=300';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
                                 echo '<p class="description" id="site_bgimg_label">默认背景图，用于各页面调用背景图（默认随机 gravatar 背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
@@ -742,7 +742,7 @@
                                     <?php 
                                         $opt = 'site_logo';
                                         $value = get_option($opt);
-                                        $preset = get_bloginfo('template_directory').'/images/svg/XTy_115x35.svg';
+                                        $preset = custom_cdn_src('img',true).'/images/svg/XTy_115x35.svg';
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
                                         echo '<p class="description" id="site_logo_label">站点 LOGO 图片链接（应用于全站，留空默认预设LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY 矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
                                     ?>
@@ -754,7 +754,7 @@
                                     <?php 
                                         $opt = 'site_logos';
                                         $value = get_option($opt);
-                                        $preset = get_bloginfo('template_directory').'/images/svg/XTy_115x35_light.svg';
+                                        $preset = custom_cdn_src('img',true).'/images/svg/XTy_115x35_light.svg';
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
                                         echo '<p class="description" id="site_logos_label">站点 LOGO（深色）图片链接（应用于深色模式，留空默认预设LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY（深色）矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
                                     ?>
@@ -1110,14 +1110,14 @@
                                 <th scope="row">— 文件加速域名</th>
                                 <td>
                                     <p class="description" id="site_cdn_src_label">可选项，网站cdn（css、js）链接/标头（默认使用当前主题目录</p>
-                                    <input type="text" name="site_cdn_src" id="site_cdn_src" class="middle-text" placeholder="src root path" value="<?php echo get_option( 'site_cdn_src', '' ); ?>"/>
+                                    <input type="text" name="site_cdn_src" id="site_cdn_src" class="middle-text" placeholder="默认wp路径" value="<?php echo get_option( 'site_cdn_src', '' ); ?>"/>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option disabled">
                                 <th scope="row">— 图片加速域名</th>
                                 <td>
                                     <p class="description" id="site_cdn_img_label">网站媒体文件（图片/音视频）cdn链接/标头（默认文件夹“images”</p>
-                                    <input type="text" name="site_cdn_img" id="site_cdn_img" class="middle-text" placeholder="img root path" value="<?php echo get_option( 'site_cdn_img', '' ) ?>"/>
+                                    <input type="text" name="site_cdn_img" id="site_cdn_img" class="middle-text" placeholder="默认wp路径" value="<?php echo get_option( 'site_cdn_img', '' ) ?>"/>
                                 </td>
                             </tr>
                     <?php
@@ -1264,7 +1264,7 @@
                                 <td>
                                     <?php
                                         $value = get_option( 'site_leancloud_sdk', '' );
-                                        $preset = get_bloginfo('template_directory').'/js/leancloud/av-min.js?v=rootdir';//'//cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js';
+                                        $preset = custom_cdn_src('',true).'/js/leancloud/av-min.js?v=rootdir';//'//cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js';
                                         if(!$value) update_option( 'site_leancloud_sdk', $preset );else $preset=$value;  //auto update option to default if unset
                                         echo '<p class="description" id="site_comment_serverchan_label">评论 valine 依赖项，默认 jsdelivr（cdn无法使用时可自定义sdk）</p><input type="text" name="site_leancloud_sdk" id="site_leancloud_sdk" class="regular-text" placeholder="Leancloud AVOS Sdk" value="' . $preset . '"/>';
                                     ?>
@@ -1352,10 +1352,10 @@
                                             array('name'=>'图文卡片', 'type'=>'news'),
                                             array('name'=>'模板卡片', 'type'=>'template_card'),
                                         );
-                                        echo '<label for="site_wpwx_type"><p class="description" id="site_wpwx_type_label">文本卡片为纯文本描述，图文卡片会附一张文章或页面图片，模板则为更丰富的图文消息（注意模板卡片仅支持企业微信提醒，微信端不会收到任何推送信息</p><img src="'.get_bloginfo('template_directory').'/images/settings/'.$preset.'.png" style="vertical-align: middle;max-width: 88px;margin:auto 15px;" /><select name="site_wpwx_type" id="site_wpwx_type" class="select_images">';
+                                        echo '<label for="site_wpwx_type"><p class="description" id="site_wpwx_type_label">文本卡片为纯文本描述，图文卡片会附一张文章或页面图片，模板则为更丰富的图文消息（注意模板卡片仅支持企业微信提醒，微信端不会收到任何推送信息</p><img src="'.custom_cdn_src('img',true).'/images/settings/'.$preset.'.png" style="vertical-align: middle;max-width: 88px;margin:auto 15px;" /><select name="site_wpwx_type" id="site_wpwx_type" class="select_images">';
                                             foreach ($arrobj as $arr){
                                                 $type = $arr['type'];
-                                                echo '<option value="'.$type.'" preview="'.get_bloginfo('template_directory').'/images/settings/'.$type.'.png"';if($preset==$type)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
+                                                echo '<option value="'.$type.'" preview="'.custom_cdn_src('img',true).'/images/settings/'.$type.'.png"';if($preset==$type)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
                                             }
                                         echo '</select></label>';
                                     ?>
@@ -1454,7 +1454,7 @@
                             <?php
                                 $opt = 'site_banner_array';
                                 $value = get_option($opt);
-                                $preset = get_bloginfo('template_directory').'/images/fox.jpg,'.get_bloginfo('template_directory').'/images/default.jpg';
+                                $preset = custom_cdn_src('img',true).'/images/fox.jpg,'.custom_cdn_src('img',true).'/images/default.jpg';
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update
                                 $arr = explode(',',trim($preset));
                             ?>
@@ -1545,7 +1545,7 @@
                                     <?php
                                         $opt = 'site_techside_bg';
                                         $value = get_option($opt);
-                                        $preset =  get_bloginfo('template_directory').'/images/Tech-x4.png';
+                                        $preset =  custom_cdn_src('img',true).'/images/Tech-x4.png';
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
                                         echo '<p class="description" id="site_bgimg_label">分类背景图，首页科技资讯侧边调用图片（默认背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
                                     ?>
@@ -1638,7 +1638,7 @@
                             <?php
                                 $opt = 'site_privacy_video';
                                 $value = get_option($opt);
-                                $preset = 'for_empty_privacy_video';
+                                $preset = custom_cdn_src('img',true).'/media/videos/data.mp4';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
                                 echo '<p class="description" id="site_privacy_video_label">隐私政策背景视频</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="上传视频" />';
                             ?>
@@ -1820,9 +1820,9 @@
                             <?php
                                 $value = get_option( 'site_server', '' );
                                 $arrobj = array(
-                                    array('name'=>'阿里云', 'icon'=>get_bloginfo('template_directory').'/images/settings/alicloud.png'),
-                                    array('name'=>'腾讯云', 'icon'=>get_bloginfo('template_directory').'/images/settings/tencentcloud.svg'),
-                                    array('name'=>'华为云', 'icon'=>get_bloginfo('template_directory').'/images/settings/huaweiclouds.svg'),
+                                    array('name'=>'阿里云', 'icon'=>custom_cdn_src('img',true).'/images/settings/alicloud.png'),
+                                    array('name'=>'腾讯云', 'icon'=>custom_cdn_src('img',true).'/images/settings/tencentcloud.svg'),
+                                    array('name'=>'华为云', 'icon'=>custom_cdn_src('img',true).'/images/settings/huaweiclouds.svg'),
                                 );
                                 echo '<label for="site_server"><p class="description" id="site_server_label">网站应用服务器（页尾图标</p><img src="'.$value.'" style="vertical-align: middle;max-width: 66px;margin:auto 15px;" /><select name="site_server" id="site_server" class="select_images"><option value="">请选择</option>';
                                     foreach ($arrobj as $arr){

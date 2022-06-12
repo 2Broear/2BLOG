@@ -13,13 +13,13 @@
 <body class="<?php theme_mode(); ?>">
     <div class="content-all">
         <div class="win-top bg" style="background:url() center center /cover ">
-            <em class="digital_mask" style="background: url(<?php custom_cdn_src(); ?>/images/svg/digital_mask.svg)"></em>
+            <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
             <header>
                 <nav id="tipson" class="ajaxloadon">
                     <?php get_header(); ?>
                 </nav>
             </header>
-            <video src="<?php echo get_option('site_acgn_video'); ?>" poster="<?php echo cat_metabg($cat); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video><!-- bf2_240p_main forest -->
+            <video src="<?php echo get_option('site_acgn_video'); ?>" poster="<?php echo cat_metabg($cat, custom_cdn_src('img',true).'/images/acg.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video><!-- bf2_240p_main forest -->
             <div class="counter">
                 <?php
                     $curslug = current_slug();

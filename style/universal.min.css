@@ -1586,6 +1586,7 @@ p.wp_comment_tip{
     color: var(--preset-9);
     font-size: 12px;
     text-align: left;
+    font-style: italic;
 }
 .wp_comment_count{
     color: gray;

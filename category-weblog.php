@@ -27,7 +27,7 @@
                 $winbg = get_option('site_weblog_bg');
                 if($winbg){
             ?>
-                    <em class="digital_mask" style="background: url(<?php custom_cdn_src(); ?>/images/svg/digital_mask.svg)"></em>
+                    <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
                     <video src="<?php echo get_option('site_weblog_video'); ?>" poster="<?php echo $winbg; ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
             <?php
                 }
