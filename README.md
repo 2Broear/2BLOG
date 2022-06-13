@@ -87,21 +87,21 @@ lbms 后台页面将在开启 lbms 选项后自动创建 /lbms 及 /lbms-login �
 
 > 需要注意的是其中“ __news__ ”选项卡虽已不再使用，但里面的 markdown 功能仍可以正常使用，支持同步预览。
 
+---
+
 ## 其他事项
 ### 伪静态与固定链接
 如需实现演示站到url层级，需配置以下两项
-___Nginx 伪静态___
+___Nginx 伪静态___ （apache或其他环境请自行转换语法）
 ``` nginx
-location /
-{
-	 try_files $uri $uri/ /index.php?$args;
+location / {
+    try_files $uri $uri/ /index.php?$args;
 }
-
 rewrite /wp-admin$ $scheme://$host$uri/ permanent;
 ```
 ___Wordpress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 CATEGORY___ ）
 ``` plaintext
-/%category%/%postname%_%post_id%
+/%category%/%postname%_%post_id%  // 可删除 %post_id%，但需要保留 %post_name% 后的下划线 “_”
 ```
 ---
 
