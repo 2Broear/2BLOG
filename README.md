@@ -4,7 +4,7 @@ A Simplized Wordpress Blog Theme Design &amp; Developed from [2broear.com](http:
 __Preview Site__ ：[演示站点](http://2blog.2broear.com)
 
 ## 主题简介
-历经半年之久，鸽鸽碰碰的 Wordpress 主题 2BLOG 他来了！也算是可以开启测试了，这里将作为主题开源后续的发布、更新、备份地址。目前主题尚处测试阶段，未上传至 Wordpress。
+历经半年之久，鸽鸽碰碰的 Wordpress 主题 2BLOG 他来了！折腾这么些日子终于算是可以开测了，这里将作为主题开源后续的发布、更新、备份地址。目前主题尚处测试阶段，未上传至 Wordpress。
 
 主题在前静态主题的基础之上做了部分修改及更新，其中主要更新内容包括：
 
