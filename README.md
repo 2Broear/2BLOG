@@ -1,5 +1,5 @@
 # 2BLOG
-A Simplized Wordpress Blog Theme Design &amp; Developed from 2broear.com by 2BROEAR Released &amp; openSourced in 2022.
+A Simplized Wordpress Blog Theme Design &amp; Developed from [2broear.com](http://blog.2broear.com) by 2BROEAR Released &amp; openSourced in 2022.
 
 __Preview Site__ ：[演示站点](http://2blog.2broear.com)
 
