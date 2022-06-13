@@ -92,6 +92,7 @@ lbms 后台页面将在开启 lbms 选项后自动创建 /lbms 及 /lbms-login �
 ## 其他事项
 ### 伪静态与固定链接
 如需实现 [演示站](http://2blog.2broear.com) 的 permalink/url 层级，需配置如下两项：
+
 ___Nginx 伪静态___ （apache或其他环境请自行转换语法）
 ``` nginx
 location / {
@@ -99,10 +100,12 @@ location / {
 }
 rewrite /wp-admin$ $scheme://$host$uri/ permanent;
 ```
+
 ___Wordpress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 CATEGORY___ ）
 ``` plaintext
 /%category%/%postname%_%post_id%  // 可删除 %post_id%，但需要保留 %post_name% 后的下划线 “_”
 ```
+
 ---
 
 ### 主题差异化问题
