@@ -16,7 +16,7 @@ __Preview Site__ ：[演示站点](http://2blog.2broear.com)
 - 部分页面支持 wordpress 与 leancloud 数据切换
 - 重写前端逻辑，移除主要 jquery 依赖
 
-当然了，最重要的还是集成了 __Leancloud 与 Wordpress 之间的数据同步__ ，这个主要是因为之前静态博客使用的是 __valine__ 评论系统（其实之前很少使用 leancloud 数据储存），后面我自己改了很多东西（至于要不要集成到 wp 上只能日后再说了），所以在 wordpress 中仍做了数据切换，然后顺带更新了之前尚未同步数据到 leancloud 的页面。
+当然了，最重要的还是集成了 __Leancloud 与 Wordpress 之间的数据切换__ ，这个主要是因为之前静态博客使用的是 __valine__ 评论系统（其实之前很少使用 leancloud 数据储存），后面我自己改了很多东西（至于要不要集成到 wp 上只能日后再说了），所以在 wordpress 中仍做了数据切换，然后顺带更新了之前尚未同步数据到 leancloud 的页面。
 
 > 在wordpress中除“公告”外所有数据均以文章形式发布，通过后端函数调用数据，而使用leancloud数据的页面将通过 __lbms__ 后台进行数据上传、修改及删除等操作，再通过xhr异步前端调用json数据
 
