@@ -1,7 +1,7 @@
 # 2BLOG
 A Simplized Wordpress Blog Theme Design &amp; Developed from 2broear.com by 2BROEAR Released &amp; openSourced in 2022.
 
-__Preview Site__ ：[演示站](http://2blog.2broear.com)
+__Preview Site__ ：[演示站点](http://2blog.2broear.com)
 
 ## 主题简介
 历经半年之久，鸽鸽碰碰的 Wordpress 主题 2BLOG 他来了！也算是可以开启测试了，这里将作为主题开源后续的发布、更新、备份地址。目前主题尚处测试阶段，未上传至 Wordpress。
@@ -93,7 +93,7 @@ lbms 后台页面将在开启 lbms 选项后自动创建 /lbms 及 /lbms-login �
 ### 伪静态与固定链接
 如需实现 [演示站](http://2blog.2broear.com) 的 permalink/url 层级，需配置如下两项：
 
-___Nginx 伪静态___ （apache或其他环境请自行转换语法，宝塔面板可一键配置）
+___Nginx 伪静态规则___ （apache或其他环境请自行转换语法，宝塔面板可一键配置）
 ``` nginx
 location / {
     try_files $uri $uri/ /index.php?$args;
