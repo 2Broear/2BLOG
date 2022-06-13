@@ -93,7 +93,7 @@ lbms 后台页面将在开启 lbms 选项后自动创建 /lbms 及 /lbms-login �
 ### 伪静态与固定链接
 如需实现 [演示站](http://2blog.2broear.com) 的 permalink/url 层级，需配置如下两项：
 
-___Nginx 伪静态___ （apache或其他环境请自行转换语法）
+___Nginx 伪静态___ （apache或其他环境请自行转换语法，宝塔面板可一键配置）
 ``` nginx
 location / {
     try_files $uri $uri/ /index.php?$args;
