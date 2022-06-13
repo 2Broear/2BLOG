@@ -135,7 +135,11 @@
                 <h3>近期文章</h3>
                 </span>
                 <ul class="news-list" id="mainNews">
-                    <?php recent_posts_query(get_category_by_slug('news')->term_id); ?>
+                    <?php 
+                        $use_temp = get_template_bind_cat('category-news.php')->slug;
+                        $temp_cat = get_category_by_slug($use_temp)->term_id;
+                        recent_posts_query($temp_cat);
+                    ?>
                 </ul>
             </div>
             <div id="download-window">
@@ -146,7 +150,11 @@
                 <h3>笔记栈</h3>
                 </span>
                 <ul class="download-list" id="rcmdNewsHside">
-                    <?php recent_posts_query(get_category_by_slug('notes')->term_id); ?>
+                    <?php 
+                        $use_temp = get_template_bind_cat('category-notes.php')->slug;
+                        $temp_cat = get_category_by_slug($use_temp)->term_id;
+                        recent_posts_query($temp_cat);
+                    ?>
                 </ul>
             </div>
         </div>
@@ -170,19 +178,17 @@
                     <ul class="tech_window-content">
                         <?php 
                             $query_cid = get_option('site_techside_cid');
-                            if(get_option('site_leancloud_switcher')) avos_posts_query($query_cid,".tech_window-content");else recent_posts_query($query_cid,false);
+                            get_option('site_leancloud_switcher') ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid,false);
                         ?>
                     </ul>
                     <div class="newsBox-subText-Description" id="tech_window-bottom">
                         <?php
-                            $query_str='weblog';
-                            echo '<a href="'.get_category_link(get_category_by_slug($query_str)->term_id).'" rel="nofollow"><b>'.strtoupper($query_str).'</b></a>';
+                            // $query_str = get_template_bind_cat('category-weblog.php')->slug;
+                            echo '<a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper(get_category($query_cid)->slug).'</b></a>';
                         ?>
                     </div>
                 </span>
-                <span id="tech_pic" style="background: url(<?php echo get_option('site_techside_bg'); ?>) center /cover;">
-                    <!--<img class="" src="<?php //echo get_option('site_techside_bg') ?>" />-->
-                </span>
+                <span id="tech_pic" style="background: url(<?php echo get_option('site_techside_bg'); ?>) center /cover;"></span>
             </div>
         <?php
             }
@@ -220,7 +226,7 @@
                                             <script>
                                                 new AV.Query("<?php echo $query_slug ?>").addDescending("createdAt")  // .equalTo('type_acg', 'anime')  // 当 query_slug 为 acg 时使用
                                     <?php
-                                                if($query_slug=="acg") echo ".equalTo('type_acg', 'anime')"
+                                                if($query_slug==get_template_bind_cat('category-acg.php')->slug) echo ".equalTo('type_acg', 'anime')"
                                     ?>
                                                 .limit(<?php echo get_option('posts_per_page'); ?>).find().then(result=>{
                                                     console.log(result)
@@ -249,8 +255,8 @@
                     </ul>
                     <div class="newsBox-subText-Description" id="acg_window-bottom">
                         <?php
-                            $query_str='acg';
-                            echo '<a href="'.get_category_link(get_category_by_slug($query_str)->term_id).'" rel="nofollow"><b>'.strtoupper($query_str).'</b></a>';
+                            // $query_cat = get_template_bind_cat('category-acg.php');
+                            echo '<a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper($query_slug).'</b></a>';
                         ?>
                     </div>
                 </div>

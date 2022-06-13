@@ -24,128 +24,6 @@
         }
     }
     
-    function the_posts_with_styles($queryString){
-        if(have_posts()) {
-            while (have_posts()): the_post();
-                if(!get_option('site_search_style_switcher')){
-    ?>
-                    <article class="cat-<?php the_ID(); ?>">
-                        <h1>
-                            <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
-                            <?php $postmeta=get_post_meta($post->ID, "post_rights", true); echo $postmeta&&$postmeta!="请选择" ? '<sup>'.$postmeta.'</sup>' : false; ?>
-                        </h1>
-                        <p><?php the_excerpt() ?></p>
-                        <div class="info">
-                            <span class="classify" id="<?php $cpar = get_the_category()[1]->parent==0 ? get_the_category()[1] : get_the_category()[0];echo $cpar->slug; ?>">
-                                <i class="icom"></i><?php echo $cpar->name; ?>
-                            </span>
-                            <span class="valine-comment-count" data-xid="<?php the_permalink() ?>"><?php echo $post->comment_count; ?></span>
-                            <span class="date"><?php the_time('d-m-Y'); ?></span>
-                            <span id="slider"></span>
-                        </div>
-                    </article>
-        <?php
-                }else{
-                    if(in_category(get_template_bind_cat('category-news.php')->slug)){
-        ?>
-                    	<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/news.css?v=2" />
-                        <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/weblog.css" />
-                        <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/acg.css" />
-                        <article class="news-window wow" data-wow-delay="0.1s">
-                            <div class="news-window-inside">
-                                <span class="news-window-img">
-                                    <a href="<?php the_permalink() ?>" target="_blank">
-                                        <img class="lazy" src="<?php echo get_postimg(); ?>" />
-                                    </a>
-                                </span>
-                                <div class="news-inside-content">
-                                    <h2 class="entry-title">
-                                        <a href="<?php the_permalink() ?>" target="_blank" title="<?php the_title() ?>"><?php the_title() ?></a>
-                                    </h2>
-                                    <span class="news-core_area entry-content"><?php the_excerpt(); ?></span>
-                                    <?php
-                                        $postmeta = get_post_meta($post->ID, "post_feeling", true);
-                                        if($postmeta) echo '<span class="news-personal_stand" unselectable="on"><dd>'.$postmeta.'</dd></span>';
-                                    ?>
-                                    <div id="news-tail_info">
-                                        <ul class="post-info">
-                                            <li class="tags author"><?php $tag = get_the_tag_list();if($tag) echo($tag);else echo '<a href="javascript:;" target="_blank" rel="nofollow">'.get_option('site_nick').'</a>'; ?></li>
-                                            <li title="评论人数"><?php if(!get_option('site_comment_switcher')) $count=$post->comment_count;else $count=0; echo '<span class="valine-comment-count" data-xid="'.get_the_permalink().'">'.$count.'</span>'; ?></li>
-                                            <li id="post-date" class="updated" title="发布日期">
-                                                <i class="icom"></i><?php the_time('d-m-Y'); ?>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-        <?php
-                    }elseif(in_category(get_template_bind_cat('category-weblog.php')->slug)){
-        ?>
-                        <article class="weblog-tree-core-record i<?php the_ID() ?>">
-                            <div class="weblog-tree-core-l">
-                                <span id="weblog-timeline"><?php the_time('d-m-Y'); ?></span>
-                                <span id="weblog-circle"></span>
-                            </div>
-                            <div class="weblog-tree-core-r">
-                                <div class="weblog-tree-box">
-                                    <div class="tree-box-title">
-                                        <a href="<?php //the_permalink() ?>" id="<?php the_title(); ?>" target="_self">
-                                            <h3><?php the_title() ?></h3>
-                                        </a>
-                                    </div>
-                                    <div class="tree-box-content">
-                                        <span id="core-info">
-                                            <p class="excerpt"><?php custom_excerpt(100) ?></p>
-                                        </span>
-                                        <span id="other-info">
-                                            <h4> Ps. </h4>
-                                            <p class="feeling"><?php echo get_post_meta($post->ID, "post_feeling", true); ?></p>
-                                            <p id="sub"><?php the_time('Y-n-j'); ?></p>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-        <?php  
-                    }elseif(in_category(get_template_bind_cat('category-acg.php')->slug)){
-        ?>
-                        <div class="rcmd-boxes flexboxes">
-                            <div class="info anime flexboxes">
-                                <div class="inbox flexboxes">
-                                    <div class="inbox-headside flexboxes">
-                                        <span class="author"><?php echo get_post_meta($post->ID, "post_feeling", true); ?></span>
-                                        <img class="bg" src="<?php echo get_postimg(); ?>">
-                                        <img src="<?php echo get_postimg(); ?>">
-                                    </div>
-                                    <div class="inbox-aside">
-                                        <span class="lowside-title">
-                                            <h4><a href="<?php echo get_post_meta($post->ID, "post_source", true); ?>" target="_blank"><?php the_title(); ?></a></h4>
-                                        </span>
-                                        <span class="lowside-description">
-                                            <p><?php the_content(); ?></p>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-        <?php
-                    }
-                }
-            endwhile;
-                $pages = paginate_links(array(
-                    'prev_text' => __('上一页'),
-                    'next_text' => __('下一页'),
-                    'type' => 'plaintext',
-                    'screen_reader_text' => null,
-                    'total' => $wp_query -> max_num_pages,  //总页数
-                    'current' => max(1, get_query_var('paged')), //当前页数
-                ));
-                if($pages) echo '<div class="pageSwitcher" style="width:100%;display:inline-block;user-select: none;">'.$pages.'</div>';
-        }else{
-            echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.$queryString.' </h1></div>';  //<b>'.current_slug(true).'</b> 
-        }
-    }
     
     // get bind category-template cat by specific binded-temp post_id
     function get_template_bind_cat($template=false){
@@ -480,6 +358,31 @@
         $id = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name = '$slug'");
         echo get_page($id)->post_content;// if(is_page()) echo get_page($id)->post_content;else echo '<p style="color:red">页面 '.current_slug().' 不存在，无法调用该页面内容。</p>';
     }
+    
+    //自定义当前滚动提示
+    function current_tips($nick){
+        if(!is_single()) echo "<b>".$nick."</b> の ";
+        switch (true) {
+            case is_home():
+                echo bloginfo('name');
+                break;
+            case is_category():
+                echo single_cat_title();  // get_cat_title();
+                break;
+            case is_page() || is_single():  // in_category($single):
+                echo the_title();
+                break;
+            case is_search():
+                echo 'Searching..';
+                break;
+            case is_tag():
+                echo single_tag_title('',false).' Tags';
+                break;
+            default:
+                echo "NOT MATCHED";
+                break;
+        }
+    }
     // 获取当前分类、页面、文章slug
     function current_slug($upper=false){
         global $cat, $post;  //变量提升
@@ -523,9 +426,9 @@
                 echo single_cat_title() . $surfix;
                 break;
             case is_search():
-                echo 'Search Results for "' . esc_html(get_search_query()) . '" in '.trim(get_option('site_search_includes')) . $surfix;
+                echo 'Search for "' . esc_html(get_search_query()) . '" in '.trim(get_option('site_search_includes')) . $surfix;
             case is_tag():
-                echo 'Results for Tag'. single_tag_title('',false) . $surfix;
+                echo 'Tags for '. single_tag_title('',false) . $surfix;
                 break;
             case is_page() || is_single()://in_category(array('news')):
                 echo the_title() . $surfix;
@@ -538,7 +441,8 @@
                 break;
         }
     }
-    // 暗黑模式自动切换
+    
+    // 自动主题模式
     function theme_mode(){
         if(get_option('site_darkmode_switcher')) echo $_COOKIE['theme_mode'];
     }
@@ -563,8 +467,7 @@
     
     // 初始化 wordpress 执行函数
     function custom_theme_setup(){
-        // 自定义 cookie 函数 darkmode cookie set
-        $expire = time() + 1209600;
+        $expire = time() + 1209600;  // 自定义 cookie 函数 darkmode cookie set
         if(!isset($_COOKIE['theme_manual'])){  //auto set manual 0 (reactive with javascript manually)
             setcookie('theme_manual', 0, $expire, COOKIEPATH, COOKIE_DOMAIN, false);
         };
@@ -757,7 +660,7 @@
     // wp自定义（含置顶无分页）查询函数
     function recent_posts_query($cid,$link=true){
         if($cid){
-            $query_array = array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('posts_per_page'),
+            $query_array = array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_recent_num'),
                 'orderby' => array(
                     'meta_value_num' => 'DESC',
                     'date' => 'DESC',
@@ -765,18 +668,63 @@
                 )
             );
         }else{
-            $query_array = array('cat' => $cid, 'posts_per_page' => get_option('posts_per_page'), 'order' => 'DESC', 'orderby' => 'data');
+            $query_array = array('cat' => $cid, 'posts_per_page' => get_option('site_recent_num'), 'order' => 'DESC', 'orderby' => 'data');
         }
         $left_query = new WP_Query(array_filter($query_array));
         while ($left_query->have_posts()):
             $left_query->the_post();
             $post_orderby = get_post_meta($post->ID, "post_orderby", true);
             $topset = $post_orderby>1 ? 'topset' : false;
-            $pre_link = $link ? '<a href="'.get_the_permalink().'" target="_blank">' : '<a href="/'.get_category($cid)->slug.'" target="_self">';
-            echo '<li class="'.$topset.'">'.$pre_link . trim(get_the_title()) . '</a></li>';
+            $title = trim(get_the_title());
+            $pre_link = $link ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="/'.get_category($cid)->slug.'" target="_self">';
+            echo '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
         endwhile;
         wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
-    }
+    };
+    
+    // acg post query
+    function acg_posts_query($the_cat, $pre_cat=false){
+        global $post;
+        $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
+        $cat_slug = $the_cat->slug;
+        echo '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> '.$cat_slug.' </sup></h2></div><div class="info flexboxes">';
+        // start acg query
+        $acg_query = new WP_Query(array_filter(array(
+            'cat' => $the_cat->term_id,  //$acg_cat
+            'meta_key' => 'post_orderby',
+            'orderby' => array(
+                'meta_value_num' => 'DESC',
+                'date' => 'DESC',
+                'modified' => 'DESC'
+            ),
+            'posts_per_page' => get_option('site_techside_num', 5),
+        )));
+        while ($acg_query->have_posts()):
+            $acg_query->the_post();
+            $post_feeling = get_post_meta($post->ID, "post_feeling", true);
+            $post_orderby = get_post_meta($post->ID, "post_orderby", true);
+            $post_source = get_post_meta($post->ID, "post_source", true);
+?>
+            <div class="inbox flexboxes">
+                <div class="inbox-headside flexboxes">
+                    <span class="author"><?php echo $post_feeling; ?></span>
+                    <img class="bg" src="<?php echo get_postimg(); ?>">
+                    <img src="<?php echo get_postimg(); ?>">
+                </div>
+                <div class="inbox-aside">
+                    <span class="lowside-title">
+                        <h4><a href="<?php echo $post_source; ?>" target="_blank"><?php the_title(); ?></a></h4>
+                    </span>
+                    <span class="lowside-description">
+                        <p><?php the_content(); ?></p>
+                    </span>
+                </div>
+            </div>
+<?php
+        endwhile;
+        wp_reset_query();  // reset wp query incase following code occured query err
+        echo '<div class="inbox more flexboxes"><div class="inbox-more flexboxes"><a href="mailto:'.get_bloginfo("admin_email").'" title="发送邮件，荐你所见"></a></div></div></div>';
+    };
     
     // wp自定义（含置顶无分页）查询函数
     function download_posts_query($cats, $order, $single=false){
@@ -835,49 +783,173 @@
 <?php
             }
         }
-    }
+    };
     
-    function acg_posts_query($the_cat, $pre_cat=false){
-        global $post;
-        $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
-        $cat_slug = $the_cat->slug;
-        echo '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> '.$cat_slug.' </sup></h2></div><div class="info flexboxes">';
-        // start acg query
-        $acg_query = new WP_Query(array_filter(array(
-            'cat' => $the_cat->term_id,  //$acg_cat
-            'meta_key' => 'post_orderby',
-            'orderby' => array(
-                'meta_value_num' => 'DESC',
-                'date' => 'DESC',
-                'modified' => 'DESC'
-            ),
-            'posts_per_page' => get_option('posts_per_page'),
-        )));
-        while ($acg_query->have_posts()):
-            $acg_query->the_post();
-            $post_feeling = get_post_meta($post->ID, "post_feeling", true);
-            $post_orderby = get_post_meta($post->ID, "post_orderby", true);
-            $post_source = get_post_meta($post->ID, "post_source", true);
-?>
-            <div class="inbox flexboxes">
-                <div class="inbox-headside flexboxes">
-                    <span class="author"><?php echo $post_feeling; ?></span>
-                    <img class="bg" src="<?php echo get_postimg(); ?>">
-                    <img src="<?php echo get_postimg(); ?>">
-                </div>
-                <div class="inbox-aside">
-                    <span class="lowside-title">
-                        <h4><a href="<?php echo $post_source; ?>" target="_blank"><?php the_title(); ?></a></h4>
-                    </span>
-                    <span class="lowside-description">
-                        <p><?php the_content(); ?></p>
-                    </span>
-                </div>
-            </div>
-<?php
-        endwhile;
-        wp_reset_query();  // reset wp query incase following code occured query err
-        echo '<div class="inbox more flexboxes"><div class="inbox-more flexboxes"><a href="mailto:'.get_bloginfo("admin_email").'" title="发送邮件，荐你所见"></a></div></div></div>';
+    // search/tag page posts with styles
+    function the_posts_with_styles($queryString){
+        $post_styles = get_option('site_search_style_switcher');
+        if($post_styles){
+    ?>
+        	<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/news.css?v=2" />
+            <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/weblog.css" />
+            <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/acg.css" />
+    <?php
+        }
+    ?>
+    	<style>
+    	    .win-content.main,
+    	    .news-inside-content .news-core_area p,
+    	    .empty_card{margin:0 auto;}
+    	    .news-inside-content .news-core_area p{padding:0}
+        	.win-content{width:100%;padding:0;display:initial}
+            .win-top h5:before{content:none}
+            .win-top h5{font-size:3rem;color:var(--preset-e)}
+            .win-top h5 span:before{content:'';display:inherit;width:88%;height:36%;background-color:var(--theme-color);position:absolute;left:15px;bottom:1px;z-index:-1}
+            .win-top h5 span{position:relative;background:inherit;color:white;font-weight:bolder}
+            .win-top h5 b{font-family:var(--font-ms);font-weight:bolder;color:var(--preset-f);/*padding:0 10px;vertical-align:text-top;*/}
+            .win-content article{max-width:88%;margin-top:auto}
+            .win-content article.news-window{padding:0;border:1px solid rgb(100 100 100 / 10%);margin-bottom:25px}
+            .win-content article .info span{margin-left:10px}
+            .win-content article .info span#slider{margin:auto}
+    	    .news-window-img{max-width:16%}
+    	    /*.news-window-img img{padding:10px}*/
+    	    .rcmd-boxes{width:21%;display:inline-block}
+    	    .rcmd-boxes .info .inbox{max-width:none}
+    	    /*.win-top h5:first-letter{
+    	        font-size: 8rem;
+                font-weight: bold;
+                margin: var(--pixel-pd);
+                margin-bottom: auto;
+                float: left;
+                opacity: var(--opacity-hi);
+    	    }*/
+    	    .main h2{font-weight: 600};
+            #core-info p{padding:0}
+            @media screen and (max-width:760px){
+                .win-content article{
+                    width: 100%;
+                }
+                .rcmd-boxes{width:49%!important}
+            }
+    	</style>
+    <?php
+        if(have_posts()) {
+            while (have_posts()): the_post();
+                if(!$post_styles){
+    ?>
+                    <article class="cat-<?php the_ID(); ?>">
+                        <h1>
+                            <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
+                            <?php $postmeta=get_post_meta($post->ID, "post_rights", true); echo $postmeta&&$postmeta!="请选择" ? '<sup>'.$postmeta.'</sup>' : false; ?>
+                        </h1>
+                        <p><?php the_excerpt() ?></p>
+                        <div class="info">
+                            <span class="classify" id="<?php $cpar = get_the_category()[1]->parent==0 ? get_the_category()[1] : get_the_category()[0];echo $cpar->slug; ?>">
+                                <i class="icom"></i><?php echo $cpar->name; ?>
+                            </span>
+                            <span class="valine-comment-count" data-xid="<?php the_permalink() ?>"><?php echo $post->comment_count; ?></span>
+                            <span class="date"><?php the_time('d-m-Y'); ?></span>
+                            <span id="slider"></span>
+                        </div>
+                    </article>
+        <?php
+                }else{
+                    if(in_category(get_template_bind_cat('category-news.php')->slug)){
+        ?>
+                    	<article class="news-window wow" data-wow-delay="0.1s">
+                            <div class="news-window-inside">
+                                <span class="news-window-img">
+                                    <a href="<?php the_permalink() ?>" target="_blank">
+                                        <img class="lazy" src="<?php echo get_postimg(); ?>" />
+                                    </a>
+                                </span>
+                                <div class="news-inside-content">
+                                    <h2 class="entry-title">
+                                        <a href="<?php the_permalink() ?>" target="_blank" title="<?php the_title() ?>"><?php the_title() ?></a>
+                                    </h2>
+                                    <span class="news-core_area entry-content"><?php the_excerpt(); ?></span>
+                                    <?php
+                                        $postmeta = get_post_meta($post->ID, "post_feeling", true);
+                                        if($postmeta) echo '<span class="news-personal_stand" unselectable="on"><dd>'.$postmeta.'</dd></span>';
+                                    ?>
+                                    <div id="news-tail_info">
+                                        <ul class="post-info">
+                                            <li class="tags author"><?php $tag = get_the_tag_list();if($tag) echo($tag);else echo '<a href="javascript:;" target="_blank" rel="nofollow">'.get_option('site_nick').'</a>'; ?></li>
+                                            <li title="评论人数"><?php if(!get_option('site_comment_switcher')) $count=$post->comment_count;else $count=0; echo '<span class="valine-comment-count" data-xid="'.get_the_permalink().'">'.$count.'</span>'; ?></li>
+                                            <li id="post-date" class="updated" title="发布日期">
+                                                <i class="icom"></i><?php the_time('d-m-Y'); ?>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+        <?php
+                    }elseif(in_category(get_template_bind_cat('category-weblog.php')->slug)){
+        ?>
+                        <article class="weblog-tree-core-record i<?php the_ID() ?>">
+                            <div class="weblog-tree-core-l">
+                                <span id="weblog-timeline"><?php the_time('d-m-Y'); ?></span>
+                                <span id="weblog-circle"></span>
+                            </div>
+                            <div class="weblog-tree-core-r">
+                                <div class="weblog-tree-box">
+                                    <div class="tree-box-title">
+                                        <a href="<?php //the_permalink() ?>" id="<?php the_title(); ?>" target="_self">
+                                            <h3><?php the_title() ?></h3>
+                                        </a>
+                                    </div>
+                                    <div class="tree-box-content">
+                                        <span id="core-info">
+                                            <p class="excerpt"><?php custom_excerpt(100) ?></p>
+                                        </span>
+                                        <span id="other-info">
+                                            <h4> Ps. </h4>
+                                            <p class="feeling"><?php echo get_post_meta($post->ID, "post_feeling", true); ?></p>
+                                            <p id="sub"><?php the_time('Y-n-j'); ?></p>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+        <?php  
+                    }elseif(in_category(get_template_bind_cat('category-acg.php')->slug)){
+        ?>
+                        <div class="rcmd-boxes flexboxes">
+                            <div class="info anime flexboxes">
+                                <div class="inbox flexboxes">
+                                    <div class="inbox-headside flexboxes">
+                                        <span class="author"><?php echo get_post_meta($post->ID, "post_feeling", true); ?></span>
+                                        <img class="bg" src="<?php echo get_postimg(); ?>">
+                                        <img src="<?php echo get_postimg(); ?>">
+                                    </div>
+                                    <div class="inbox-aside">
+                                        <span class="lowside-title">
+                                            <h4><a href="<?php echo get_post_meta($post->ID, "post_source", true); ?>" target="_blank"><?php the_title(); ?></a></h4>
+                                        </span>
+                                        <span class="lowside-description">
+                                            <p><?php the_content(); ?></p>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+        <?php
+                    }
+                }
+            endwhile;
+                $pages = paginate_links(array(
+                    'prev_text' => __('上一页'),
+                    'next_text' => __('下一页'),
+                    'type' => 'plaintext',
+                    'screen_reader_text' => null,
+                    'total' => $wp_query -> max_num_pages,  //总页数
+                    'current' => max(1, get_query_var('paged')), //当前页数
+                ));
+                if($pages) echo '<div class="pageSwitcher" style="width:100%;display:inline-block;user-select: none;">'.$pages.'</div>';
+        }else{
+            echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.$queryString.' </h1></div>';  //<b>'.current_slug(true).'</b> 
+        }
     }
     
     /* ------------------------------------------------------------------------ *

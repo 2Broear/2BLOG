@@ -13,29 +13,7 @@
                 $nick = get_option('site_nick', get_bloginfo('name'));
                 echo  is_single() ? "<b>".$nick."</b> の ".get_the_category()[0]->name : bloginfo('description');
             ?></p>
-            <p><?php 
-                if(!is_single()) echo "<b>".$nick."</b> の ";
-                switch (true) {
-                    case is_home():
-                        echo bloginfo('name');
-                        break;
-                    case is_category():
-                        echo single_cat_title();  // get_cat_title();
-                        break;
-                    case is_page() || is_single():  // in_category($single):
-                        echo the_title();
-                        break;
-                    case is_search():
-                        echo 'Searching..';
-                        break;
-                    case is_tag():
-                        echo 'Tags';
-                        break;
-                    default:
-                        echo "NOT MATCHED";
-                        break;
-                }
-            ?></p>
+            <p><?php current_tips($nick); ?></p>
         </div>
         <div class="nav-tools">
           <span class="imtl-content-right-inside-search">

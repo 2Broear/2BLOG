@@ -18,7 +18,7 @@
                     <?php
                         $cat_id = get_option('site_bottom_recent_cid');
                         if($cat_id){
-                            $query_array = array('cat' => $cat_id, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('posts_per_page'),
+                            $query_array = array('cat' => $cat_id, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_recent_num',5),
                                 'orderby' => array(
                                     'meta_value_num' => 'DESC',
                                     'date' => 'DESC',
@@ -26,7 +26,7 @@
                                 )
                             );
                         }else{
-                            $query_array = array('cat' => $cat_id, 'posts_per_page' => get_option('posts_per_page'), 'order' => 'DESC', 'orderby' => 'date');
+                            $query_array = array('cat' => $cat_id, 'posts_per_page' => get_option('site_recent_num',5), 'order' => 'DESC', 'orderby' => 'date');
                         }
                         $left_query = new WP_Query(array_filter($query_array));
                         while ($left_query->have_posts()):
@@ -83,7 +83,7 @@
                     }else{
                         $comments = get_comments(
                             array(
-                                'number' => 5, //get_option('posts_per_page')
+                                'number' => get_option('site_recent_num',5), //get_option('posts_per_page')
                                 'orderby' => 'comment_date',
                                 'order' => 'DESC',
                                 'status' => 'approve'  // 仅输出已通过审核的评论数量

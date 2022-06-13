@@ -475,6 +475,8 @@
             register_setting( 'baw-settings-group', 'site_metanav_array' );
             register_setting( 'baw-settings-group', 'site_metanav_image' );
         }
+        register_setting( 'baw-settings-group', 'site_recent_num' );
+        
         register_setting( 'baw-settings-group', 'site_rcmdside_cid' );
         register_setting( 'baw-settings-group', 'site_cardnav_array' );
         register_setting( 'baw-settings-group', 'site_techside_switcher' );
@@ -485,6 +487,7 @@
         register_setting( 'baw-settings-group', 'site_acgnside_switcher' );
         if(get_option('site_acgnside_switcher')){
             register_setting( 'baw-settings-group', 'site_acgnside_cid' );
+            register_setting( 'baw-settings-group', 'site_acgnside_num' );
         }
         
         // register_setting( 'baw-settings-group', 'site_acgn_bg' );
@@ -707,10 +710,11 @@
                         <th scope="row">主题颜色</th>
                         <td>
                             <?php
-                                $value = get_option('site_theme');
+                                $opt = 'site_theme';
+                                $value = get_option($opt);
                                 $preset = "#eb6844";
-                                if(!$value) update_option( 'site_theme', $preset );else $preset=$value;
-                                echo '<label for="site_theme"><p class="description" id="site_theme_label">此选项将重写网站主题色及后台高亮色（默认 #eb6844</p><input type="color" name="site_theme" id="site_theme" value="' . $preset . '"/></label>';
+                                if(!$value) update_option($opt, $preset);else $preset=$value;
+                                echo '<label for="'.$opt.'"><p class="description" id="site_theme_label">此选项将重写网站主题色及后台高亮色（默认 #eb6844</p><input type="color" name="'.$opt.'" id="'.$opt.'" value="' . $preset . '"/></label>';
                             ?>
                         </td>
                     </tr>
@@ -811,16 +815,17 @@
                         <th scope="row">搜索/标签样式</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_search_style_switcher', '' );
+                                $opt = 'site_search_style_switcher';
+                                $value = get_option($opt);
                                 $data = get_option( 'site_search_includes', '' );
                                 //设置默认开启（仅适用存在默认值的checkbox）
                                 if(!$value&&!$data){
-                                    update_option( 'site_search_style_switcher', "on_default" );
+                                    update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="site_search_style_switcher"><p class="description" id="site_search_style_switcher_label">搜索结果及标签内容展示列表样式，开启后将使用各页面数据列表样式（默认使用笔记栈列表样式</p><input type="checkbox" name="site_search_style_switcher" id="site_search_style_switcher"'.$status.' /><b>展示列表样式</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_search_style_switcher_label">搜索结果及标签内容展示列表样式，开启后将使用各页面数据列表样式（默认使用笔记栈列表样式</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>展示列表样式</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -849,22 +854,6 @@
                                     ?>
                                 </td>
                             </tr>
-                            <!--<tr valign="top" class="child_option">-->
-                            <!--    <th scope="row">— 搜索样式种类（多选项）</th>-->
-                            <!--    <td>-->
-                                    <?php
-                                        // $opt = 'site_search_styles';  //unique str
-                                        // $value = get_option($opt);
-                                        // echo '<p class="description" id="site_search_includes_label">默认样式类型有4类：文章、笔记、日志、漫游影视，其他类型需自定义选填，使用逗号“ , ”分隔（默认仅输出一级分类</p><div class="checkbox">';
-                                        // foreach($cats as $the_cat){
-                                        //     $cats_id = $the_cat->term_id;
-                                        //     $option = $the_cat->slug;
-                                        //     echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
-                                        // }
-                                        // echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
-                                    ?>
-                            <!--    </td>-->
-                            <!--</tr>-->
                     <?php 
                         }
                     ?>
@@ -872,9 +861,9 @@
                         <th scope="row">面包屑导航</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_breadcrumb_switcher', '' );
-                                $value ? $status="checked" : $status="closed";
-                                echo '<label for="site_breadcrumb_switcher"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="site_breadcrumb_switcher" id="site_breadcrumb_switcher"'.$status.' /> <b class="'.$status.'">页面层级导航</b></label>';
+                                $opt = 'site_breadcrumb_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">页面层级导航</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -882,9 +871,9 @@
                         <th scope="row">头部公告<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
                             <?php
-                                $value = get_option( 'site_inform_switcher', '' );
-                                $value ? $status="checked" : $status="closed";
-                                echo '<label for="site_inform_switcher"><p class="description" id="site_inform_switcher_label">部分页面头部公告显示内容（支持第三方数据储存</p><input type="checkbox" name="site_inform_switcher" id="site_inform_switcher"'.$status.' /> <b class="'.$status.'">页面头部公告</b></label>';
+                                $opt = 'site_inform_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">部分页面头部公告显示内容（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">页面头部公告</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -892,9 +881,9 @@
                         <th scope="row">metaBox 元导航分类</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_metanav_switcher', '' );
-                                $value ? $status="checked" : $status="closed";
-                                echo '<label for="site_metanav_switcher"><p class="description" id="site_metanav_switcher_label">多元化展示分类导航名称、描述及背景</p><input type="checkbox" name="site_metanav_switcher" id="site_metanav_switcher"'.$status.' /> <b class="'.$status.'">多元分类导航</b></label>';
+                                $opt = 'site_metanav_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_metanav_switcher_label">多元化展示分类导航名称、描述及背景</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">多元分类导航</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -961,7 +950,8 @@
                         <th scope="row">Gravatar 镜像源<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
                             <?php
-                                $value = get_option( 'site_avatar_mirror', '' );
+                                $opt = 'site_avatar_mirror';
+                                $value = get_option($opt);
                                 $preset = '//cravatar.cn/';
                                 $arrobj = array(
                                     array('name'=>'Gravatar', 'href'=>'//gravatar.com/'),
@@ -971,8 +961,8 @@
                                     array('name'=>'V2EX', 'href'=>'//cdn.v2ex.com/'),
                                     array('name'=>'inwao', 'href'=>'//gravatar.inwao.com/'),
                                 );
-                                if(!$value) update_option( 'site_avatar_mirror', $preset );else $preset=$value;  //auto update option to default if unset
-                                echo '<label for="site_avatar_mirror"><p class="description" id="site_avatar_mirror_label">评论头像 Gravatar 国内镜像源（同时适用于 wordpress/valine 评论头像展示</p><select name="site_avatar_mirror" id="site_avatar_mirror">';
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                echo '<label for="'.$opt.'"><p class="description" id="site_avatar_mirror_label">评论头像 Gravatar 国内镜像源（同时适用于 wordpress/valine 评论头像展示</p><select name="'.$opt.'" id="'.$opt.'">';
                                     foreach ($arrobj as $arr){
                                         echo '<option value="'.$arr['href'].'"';if($preset==$arr['href']) echo('selected="selected"');echo '>'.$arr['name'].'</option>';
                                     }
@@ -1005,16 +995,17 @@
                         <th scope="row">Sitemap 站点地图</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_map_switcher', '' );
+                                $opt = 'site_map_switcher';
+                                $value = get_option($opt);
                                 $data = get_option( 'site_map_includes', '' );
                                 //设置默认开启（仅适用存在默认值的checkbox）
                                 if(!$value&&!$data){
-                                    update_option( 'site_map_switcher', "on_default" );
+                                    update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="site_map_switcher"><p class="description" id="site_map_switcher_label">生成全站站点地图（默认启用，开启后可指定生成类型</p><input type="checkbox" name="site_map_switcher" id="site_map_switcher"'.$status.' /> <span style="color:steelblue;" class="btn">SITEMAP</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_map_switcher_label">生成全站站点地图（默认启用，开启后可指定生成类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:steelblue;" class="btn">SITEMAP</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1049,17 +1040,18 @@
                         <th scope="row">Darkmode 暗黑模式</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_darkmode_switcher', '' );
+                                $opt = 'site_darkmode_switcher';
+                                $value = get_option($opt);
                                 $start = get_option( 'site_darkmode_start', '' );
                                 $end = get_option( 'site_darkmode_end', '' );
                                 //设置默认开启（仅适用存在默认值的checkbox）
                                 if(!$value&&!$start&&!$end){
-                                    update_option( 'site_darkmode_switcher', "on_default" );
+                                    update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="site_darkmode_switcher"><p class="description" id="site_darkmode_switcher_label">开启后将自动识别时段（晚17至早9）并切换主题为 darkmode 模式</p><input type="checkbox" name="site_darkmode_switcher" id="site_darkmode_switcher"'.$status.' /> <b class="'.$status.'">自动深色模式</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_switcher_label">开启后将自动识别时段（晚17至早9）并切换主题为 darkmode 模式</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">自动深色模式</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1070,10 +1062,11 @@
                                 <th scope="row">— 开启时间</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_darkmode_start', '' );
+                                        $opt = 'site_darkmode_start';
+                                        $value = get_option($opt);
                                         $preset = 17;  //默认开启（时）间
-                                        if(!$value) update_option( 'site_darkmode_start', $preset );else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_darkmode_start_label">darkmode 开启时间（大于13点小于24点</p><input type="number" min="13" max="24" name="site_darkmode_start" id="site_darkmode_start" class="small-text" value="' . $preset . '"/>';
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_darkmode_start_label">darkmode 开启时间（大于13点小于24点</p><input type="number" min="13" max="24" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1081,10 +1074,11 @@
                                 <th scope="row">— 关闭时间</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_darkmode_end', '' );
+                                        $opt = 'site_darkmode_end';
+                                        $value = get_option($opt);
                                         $preset = 9;  //默认关闭（时）间
-                                        if(!$value) update_option( 'site_darkmode_end', $preset );else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_darkmode_end_label">darkmode 关闭时间（大于1点小于12点</p><input type="number" min="1" max="12" name="site_darkmode_end" id="site_darkmode_end" class="small-text" value="' . $preset . '"/>';
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_darkmode_end_label">darkmode 关闭时间（大于1点小于12点</p><input type="number" min="1" max="12" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1095,11 +1089,11 @@
                         <th scope="row">站点 CDN 加速</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_cdn_switcher', '' );
+                                $opt = 'site_cdn_switcher';
                                 $img = get_option( 'site_cdn_img', '' );
                                 $src = get_option( 'site_cdn_src', '' );
-                                $value ? $status="checked" : $status="closed";
-                                echo '<label for="site_cdn_switcher"><p class="description" id="site_cdn_switcher_label">开启后可自定义cdn加速域名（图片/文件</p><input type="checkbox" name="site_cdn_switcher" id="site_cdn_switcher"'.$status.' /> <b class="'.$status.'">CDN加速域名</b></label>';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_cdn_switcher_label">开启后可自定义cdn加速域名（图片/文件</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">CDN加速域名</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1127,9 +1121,9 @@
                         <th scope="row">Leancloud<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
                             <?php
-                                $value = get_option( 'site_leancloud_switcher', '' );
-                                $value ? $status="checked" : $status="closed";
-                                echo '<label for="site_leancloud_switcher"><p class="description" id="site_leancloud_switcher_label">使用第三方云数据库（Serverless）接管日记、友链、公告等数据内容（仅提供数据存取，不提供数据分类等。所有设置项均与第三方评论自动同步</p><input type="checkbox" name="site_leancloud_switcher" id="site_leancloud_switcher"'.$status.' /> <span style="color:#2b96e7;" class="btn">LeanCloud</span></label>';
+                                $opt = 'site_leancloud_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_leancloud_switcher_label">使用第三方云数据库（Serverless）接管日记、友链、公告等数据内容（需在 leancloud 中新建 category-* 分类模板同名数据表，必填设置项均与第三方评论 valine 自动同步</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:#2b96e7;" class="btn">LeanCloud</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1192,8 +1186,8 @@
                                 <th scope="row">— APP ID</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_leancloud_appid', '' );
-                                         echo '<p class="description" id="site_leancloud_appid_label"></p><input type="text" name="site_leancloud_appid" id="site_leancloud_appid" class="regular-text" placeholder="Leancloud App Id" value="' . $value . '"/>';
+                                        $opt = 'site_leancloud_appid';
+                                        echo '<p class="description" id="site_leancloud_appid_label"></p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Leancloud App Id" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1201,8 +1195,8 @@
                                 <th scope="row">— APP KEY</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_leancloud_appkey', '' );
-                                         echo '<input type="text" name="site_leancloud_appkey" id="site_leancloud_appkey" class="regular-text" placeholder="Leancloud App Key" value="' . $value . '"/>';
+                                        $opt = 'site_leancloud_appkey';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Leancloud App Key" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1210,8 +1204,8 @@
                                 <th scope="row">— SERVER URL</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_leancloud_server', '' );
-                                         echo '<!--<p class="description" id="site_leancloud_switcher_label">国内版二级域名可能出现的CORS跨域问题？<a href="#">点我查看</a></p>--><input type="text" name="site_leancloud_server" id="site_leancloud_server" class="regular-text" placeholder="Leancloud Server Url" value="' . $value . '"/>';
+                                        $opt = 'site_leancloud_server';
+                                        echo '<!--<p class="description" id="site_leancloud_switcher_label">国内版二级域名可能出现的CORS跨域问题？<a href="#">点我查看</a></p>--><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Leancloud Server Url" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1222,10 +1216,11 @@
                         <th scope="row">第三方评论插件</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_comment_switcher', '' );
+                                $opt = 'site_comment_switcher';
+                                $value = get_option($opt);
                                 $value ? $status="checked" : $status="closed";
-                                echo '<label for="site_comment_switcher"><p class="description" id="site_comment_switcher_label">第三方评论插件，如评论编辑、评论排行、最新评论、
-                               文章浏览量等内容展示（为防止跨应用多次初始化可能造成的数据调用混乱问题，appid/appkey/server 等数据将与 leancloud 应用同步初始化（每页显示评论数量可在<a href="/wp-admin/options-discussion.php" > 讨论 </a>中修改）状态：'.$status.'</p><input type="checkbox" name="site_comment_switcher" id="site_comment_switcher" '.$status.'/> <span style="color:blueviolet;background:;border-color:blueviolet;" class="btn">Valine</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_comment_switcher_label">第三方评论插件，如评论编辑、评论排行、最新评论、
+                               文章浏览量等内容展示（为防止跨应用多次初始化可能造成的数据调用混乱问题，appid/appkey/server 等数据将与 leancloud 应用同步初始化（每页显示评论数量可在<a href="/wp-admin/options-discussion.php" > 讨论 </a>中修改）状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <span style="color:blueviolet;background:;border-color:blueviolet;" class="btn">Valine</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1236,8 +1231,8 @@
                                 <th scope="row">— APP ID</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_leancloud_appid', '' );
-                                         echo '<input type="text" name="site_leancloud_appid" id="site_leancloud_appid" class="regular-text" placeholder="Leancloud App Id" value="' . $value . '"/>';
+                                        $opt = 'site_leancloud_appid';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Leancloud App Id" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1245,8 +1240,8 @@
                                 <th scope="row">— APP KEY</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_leancloud_appkey', '' );
-                                         echo '<input type="text" name="site_leancloud_appkey" id="site_leancloud_appkey" class="regular-text" placeholder="Leancloud App Key" value="' . $value . '"/>';
+                                        $opt = 'site_leancloud_appkey';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Leancloud App Key" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1254,8 +1249,8 @@
                                 <th scope="row">— SERVER URL</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_leancloud_server', '' );
-                                         echo '<input type="text" name="site_leancloud_server" id="site_leancloud_server" class="regular-text" placeholder="Leancloud Server Url" value="' . $value . '"/>';
+                                        $opt = 'site_leancloud_server';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Leancloud Server Url" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1263,10 +1258,11 @@
                                 <th scope="row">— AVOS SDK</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_leancloud_sdk', '' );
+                                        $opt = 'site_leancloud_sdk';
+                                        $value = get_option($opt);
                                         $preset = custom_cdn_src('',true).'/js/leancloud/av-min.js?v=rootdir';//'//cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js';
-                                        if(!$value) update_option( 'site_leancloud_sdk', $preset );else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_comment_serverchan_label">评论 valine 依赖项，默认 jsdelivr（cdn无法使用时可自定义sdk）</p><input type="text" name="site_leancloud_sdk" id="site_leancloud_sdk" class="regular-text" placeholder="Leancloud AVOS Sdk" value="' . $preset . '"/>';
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_comment_serverchan_label">评论 valine 依赖项，默认 jsdelivr（cdn无法使用时可自定义sdk）</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Leancloud AVOS Sdk" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1274,8 +1270,8 @@
                                 <th scope="row">— ServerChan SendKey</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_comment_serverchan', '' );
-                                         echo '<p class="description" id="site_comment_serverchan_label">评论微信提醒（server酱提供的评论微信提醒服务（每天 5 条）<a href="https://sct.ftqq.com" target="_blank">相关文档</a></p><input type="text" name="site_comment_serverchan" id="site_comment_serverchan" class="regular-text" placeholder="ServerChan api key" value="' . $value . '"/>';
+                                        $opt = 'site_comment_serverchan';
+                                        echo '<p class="description" id="site_comment_serverchan_label">评论微信提醒（server酱提供的评论微信提醒服务（每天 5 条）<a href="https://sct.ftqq.com" target="_blank">相关文档</a></p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="ServerChan api key" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1283,8 +1279,8 @@
                                 <th scope="row">— QmsgChan Key</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_comment_qmsgchan', '' );
-                                         echo '<p class="description" id="site_comment_qmsgchan_label">Qmsg酱提供的评论QQ提醒服务（每天 40 条）<a href="https://qmsg.zendee.cn/" target="_blank">相关文档</a></p><input type="text" name="site_comment_qmsgchan" id="site_comment_qmsgchan" class="regular-text" placeholder="Qmsg api key" value="' . $value . '"/>';
+                                        $opt = 'site_comment_qmsgchan';
+                                        echo '<p class="description" id="site_comment_qmsgchan_label">Qmsg酱提供的评论QQ提醒服务（每天 40 条）<a href="https://qmsg.zendee.cn/" target="_blank">相关文档</a></p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Qmsg api key" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1292,8 +1288,8 @@
                                 <th scope="row">— PushPlus Token</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_comment_pushplus', '' );
-                                         echo '<p class="description" id="site_comment_pushplus_label">评论微信（公众号）提醒（pushplus提供的公众号推送服务（每天 200 条）<a href="http://www.pushplus.plus/push1.html" target="_blank">相关文档</a></p><input type="text" name="site_comment_pushplus" id="site_comment_pushplus" class="regular-text" placeholder="Pushplus token" value="' . $value . '"/>';
+                                        $opt = 'site_comment_pushplus';
+                                        echo '<p class="description" id="site_comment_pushplus_label">评论微信（公众号）提醒（pushplus提供的公众号推送服务（每天 200 条）<a href="http://www.pushplus.plus/push1.html" target="_blank">相关文档</a></p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Pushplus token" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1304,9 +1300,10 @@
                             <th scope="row">评论微信提醒</th>
                             <td>
                                 <?php
-                                    $value = get_option( 'site_wpwx_notify_switcher', '' );
+                                    $opt = 'site_wpwx_notify_switcher';
+                                    $value = get_option($opt);
                                     $value ? $status="checked" : $status="closed";
-                                    echo '<label for="site_wpwx_notify_switcher"><p class="description" id="site_wpwx_notify_switcher_label">基于企业微信应用开发的评论推送微信通知，需填写企业ID、企业应用AgentId、企业应用Secret（微信需关注该企业应用才能收到通知<a href="https://www.jishusongshu.com/network-tech/work-weixin-push-website-comment/" target="_blank"> 相关文档 </a> 状态：'.$status.'</p><input type="checkbox" name="site_wpwx_notify_switcher" id="site_wpwx_notify_switcher" '.$status.'/><b>评论微信提醒</b></label>';
+                                    echo '<label for="'.$opt.'"><p class="description" id="site_wpwx_notify_switcher_label">基于企业微信应用开发的评论推送微信通知，需填写企业ID、企业应用AgentId、企业应用Secret（微信需关注该企业应用才能收到通知<a href="https://www.jishusongshu.com/network-tech/work-weixin-push-website-comment/" target="_blank"> 相关文档 </a> 状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>评论微信提醒</b></label>';
                                 ?>
                             </td>
                         </tr>
@@ -1317,8 +1314,8 @@
                                 <th scope="row">— 企业 ID</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_wpwx_id', '' );
-                                         echo '<input type="text" name="site_wpwx_id" id="site_wpwx_id" class="regular-text" placeholder="企业微信 ID" value="' . $value . '"/>';
+                                        $opt = 'site_wpwx_id';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="企业微信 ID" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1326,8 +1323,8 @@
                                 <th scope="row">— 应用 AgentId</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_wpwx_agentid', '' );
-                                         echo '<input type="text" name="site_wpwx_agentid" id="site_wpwx_agentid" class="regular-text" placeholder="企业应用 AgentId" value="' . $value . '"/>';
+                                        $opt = 'site_wpwx_agentid';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="企业应用 AgentId" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1335,8 +1332,8 @@
                                 <th scope="row">— 应用 Secret</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_wpwx_secret', '' );
-                                         echo '<input type="text" name="site_wpwx_secret" id="site_wpwx_secret" class="regular-text" placeholder="企业应用 Secret" value="' . $value . '"/>';
+                                        $opt = 'site_wpwx_secret';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="企业应用 Secret" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1344,15 +1341,16 @@
                                 <th scope="row">— 推送消息类型</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_wpwx_type', '' );
+                                        $opt = 'site_wpwx_type';
+                                        $value = get_option($opt);
                                         $preset = 'textcard';
-                                        if(!$value) update_option( 'site_wpwx_type', $preset );else $preset=$value;  //auto update
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update
                                         $arrobj = array(
                                             array('name'=>'文本卡片', 'type'=>'textcard'),
                                             array('name'=>'图文卡片', 'type'=>'news'),
                                             array('name'=>'模板卡片', 'type'=>'template_card'),
                                         );
-                                        echo '<label for="site_wpwx_type"><p class="description" id="site_wpwx_type_label">文本卡片为纯文本描述，图文卡片会附一张文章或页面图片，模板则为更丰富的图文消息（注意模板卡片仅支持企业微信提醒，微信端不会收到任何推送信息</p><img src="'.custom_cdn_src('img',true).'/images/settings/'.$preset.'.png" style="vertical-align: middle;max-width: 88px;margin:auto 15px;" /><select name="site_wpwx_type" id="site_wpwx_type" class="select_images">';
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_wpwx_type_label">文本卡片为纯文本描述，图文卡片会附一张文章或页面图片，模板则为更丰富的图文消息（注意模板卡片仅支持企业微信提醒，微信端不会收到任何推送信息</p><img src="'.custom_cdn_src('img',true).'/images/settings/'.$preset.'.png" style="vertical-align: middle;max-width: 88px;margin:auto 15px;" /><select name="'.$opt.'" id="'.$opt.'" class="select_images">';
                                             foreach ($arrobj as $arr){
                                                 $type = $arr['type'];
                                                 echo '<option value="'.$type.'" preview="'.custom_cdn_src('img',true).'/images/settings/'.$type.'.png"';if($preset==$type)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
@@ -1368,12 +1366,13 @@
                         <th scope="row">SMTP 发件服务配置</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_smtp_switcher', '' );
+                                $opt = 'site_smtp_switcher';
+                                $value = get_option($opt);
                                 // $state = get_option( 'site_smtp_state', '' );
                                 $value ? $status="checked" : $status="closed";
-                                echo '<label for="site_smtp_switcher"><p class="description" id="site_smtp_switcher_label">SMTP 发件服务配置（配置smtp时默认使用常规设置内的管理员邮箱（状态：'.$status;
+                                echo '<label for="'.$opt.'"><p class="description" id="site_smtp_switcher_label">SMTP 发件服务配置（配置smtp时默认使用常规设置内的管理员邮箱（状态：'.$status;
                                 // if($state) echo '<u style="color:forestgreen">发件测试已通过</u>';else echo '<u style="color:orangered">配置未通过测试</u>';
-                                echo '，如已通过但未收到邮件请检查授权码及服务器是否全部配置正确</p><input type="checkbox" name="site_smtp_switcher" id="site_smtp_switcher" '.$status.'/><b>SMTP 发件配置</b></label>';
+                                echo '，如已通过但未收到邮件请检查授权码及服务器是否全部配置正确</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>SMTP 发件配置</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1384,10 +1383,11 @@
                             <th scope="row">— 发件邮箱</th>
                             <td>
                                 <?php
-                                    $value = get_option( 'site_smtp_mail', '' );
+                                    $opt = 'site_smtp_mail';
+                                    $value = get_option($opt);
                                     $preset = get_bloginfo('admin_email');
-                                    if(!$value) update_option('site_smtp_mail',$preset);else $preset=$value;
-                                    echo '<p class="description" id="site_smtp_mail_label">SMTP 发件邮箱（此邮箱应用于所有评论提醒发送邮箱，默认为管理员邮箱：'.get_bloginfo('admin_email').'</p><input type="text" name="site_smtp_mail" id="site_smtp_mail" class="middle-text" value="' . $preset . '" placeholder="发件邮箱地址"/>';
+                                    if(!$value) update_option($opt, $preset);else $preset=$value;
+                                    echo '<p class="description" id="site_smtp_mail_label">SMTP 发件邮箱（此邮箱应用于所有评论提醒发送邮箱，默认为管理员邮箱：'.get_bloginfo('admin_email').'</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text" value="' . $preset . '" placeholder="发件邮箱地址"/>';
                                 ?>
                             </td>
                         </tr>
@@ -1395,8 +1395,8 @@
                             <th scope="row">— 发件授权码</th>
                             <td>
                                 <?php
-                                    $value = get_option( 'site_smtp_pswd', '' );
-                                    echo '<p class="description" id="site_smtp_pswd_label">SMTP 邮箱授权码（务必匹配发件邮箱</p><input type="text" name="site_smtp_pswd" id="site_smtp_pswd" class="middle-text" value="' . $value . '" placeholder="管理员邮箱授权码"/>';
+                                    $opt = 'site_smtp_pswd';
+                                    echo '<p class="description" id="site_smtp_pswd_label">SMTP 邮箱授权码（务必匹配发件邮箱</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text" value="' . get_option($opt) . '" placeholder="管理员邮箱授权码"/>';
                                 ?>
                             </td>
                         </tr>
@@ -1404,7 +1404,7 @@
                             <th scope="row">— 发件服务器</th>
                             <td>
                                 <?php
-                                    $value = get_option( 'site_smtp_host', '' );
+                                    $opt = 'site_smtp_host';
                                     $arrobj = array(
                                         array('name'=>'腾讯QQ邮箱', 'href'=>'smtp.qq.com'),
                                         array('name'=>'腾讯企业邮', 'href'=>'smtp.exmail.qq.com'),
@@ -1412,10 +1412,10 @@
                                         array('name'=>'网易163邮箱', 'href'=>'smtp.163.com'),
                                         array('name'=>'网易企业邮（免费版）', 'href'=>'smtp.ym.163.com'),
                                     );
-                                    echo '<label for="site_smtp_host"><p class="description" id="site_smtp_host_label">SMTP发件服务器（务必匹配发件邮箱</p><select name="site_smtp_host" id="site_smtp_host"><option value="">请选择</option>';
+                                    echo '<label for="'.$opt.'"><p class="description" id="site_smtp_host_label">SMTP发件服务器（务必匹配发件邮箱</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
                                         foreach ($arrobj as $arr){
                                             $href = $arr['href'];
-                                            echo '<option value="'.$href.'"';if($value==$href)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
+                                            echo '<option value="'.$href.'"';if(get_option($opt)==$href)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
                                         }
                                     echo '</select></label>';
                                 ?>
@@ -1437,9 +1437,9 @@
                         <th scope="row">WP评论邮件模板</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_wpmail_switcher', '' );
-                                $value ? $status="checked" : $status="closed";
-                                echo '<label for="site_wpmail_switcher"><p class="description" id="site_wpmail_switcher_label">WP自带评论审核提醒邮件，此选项为定制模板邮件（两者均需上方 SMTP 配置测试通过后才能收到邮件提醒，状态：'.$status.'</p><input type="checkbox" name="site_wpmail_switcher" id="site_wpmail_switcher" '.$status.'/><b>评论邮件提醒</b></label>';
+                                $opt = 'site_wpmail_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_wpmail_switcher_label">WP自带评论审核提醒邮件，此选项为定制模板邮件（两者均需上方 SMTP 配置测试通过后才能收到邮件提醒，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>评论邮件提醒</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1489,14 +1489,27 @@
                             ?>
                         </td>
                     </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">近期内容 展示数量</th>
+                        <td>
+                            <?php
+                                $opt = 'site_recent_num';
+                                $value = get_option($opt);
+                                $preset = 5;  //默认填充数据
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                echo '<p class="description" id="site_bar_pixiv_label">近期文章、笔记、日志、排行、评论等内容展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                            ?>
+                        </td>
+                    </tr>
                     <tr valign="top">
                         <th scope="row">首页 - 卡片导航</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_cardnav_array', '' );
+                                $opt = 'site_cardnav_array';
+                                $value = get_option($opt);
                                 $preset = 'news/文; notes/筆; weblog/記; 2bfriends/友'; 
-                                if(!$value) update_option( 'site_cardnav_array', $preset );else $preset=$value;  //auto update option to default if unset
-                                echo '<p class="description" id="site_cardnav_array_label">展示在首页的导航卡片，使用分号“ ; ”分隔（使用斜杠“ / ”自定义名称（留空默认分类名称）如 news/文; notes/笔...</p><input type="text" name="site_cardnav_array" id="site_cardnav_array" class="regular-text array-text" value="' . $preset . '"/>';
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                echo '<p class="description" id="site_cardnav_array_label">展示在首页的导航卡片，使用分号“ ; ”分隔（使用斜杠“ / ”自定义名称（留空默认分类名称）如 news/文; notes/笔...</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" value="' . $preset . '"/>';
                             ?>
                         </td>
                     </tr>
@@ -1504,16 +1517,17 @@
                         <th scope="row">首页 - 配图分栏<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
                             <?php
-                                $value = get_option( 'site_techside_switcher', '' );
+                                $opt = 'site_techside_switcher';
+                                $value = get_option($opt);
                                 $data = get_option( 'site_techside_cid', '' );
                                 //设置默认开启（仅适用存在默认值的checkbox）
                                 if(!$value&&!$data){
-                                    update_option( 'site_techside_switcher', "on_default" );
+                                    update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="site_techside_switcher"><p class="description" id="site_techside_switcher_label">开启首页科技资讯栏目（支持第三方数据储存及多个分类文章</p><input type="checkbox" name="site_techside_switcher" id="site_techside_switcher"'.$status.' /> <b class="'.$status.'">配图栏目</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_techside_switcher_label">开启首页科技资讯栏目（支持第三方数据储存及多个分类文章</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">配图栏目</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1528,7 +1542,7 @@
                                         // $preset = $cats_haschild[0]->term_id;//get_category_by_slug('weblog')->term_id;  //return cid for recent_posts_query
                                         $value = get_option($opt);
                                         // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if options unset
-                                        echo '<label for="'.$opt.'"><p class="description" id="site_techside_cid_label">默认使用“weblog”分类（使用第三方数据储存适请确保leancloud内存在当前slug表数据</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_techside_cid_label">图文资讯分类（</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
                                             foreach($cats as $the_cat){
                                                 $cats_id = $the_cat->term_id;
                                                 echo '<option value="'.$cats_id.'"';
@@ -1540,7 +1554,7 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option">
-                                <th scope="row">— 分类背景图片</th>
+                                <th scope="row">— 分类侧栏图片</th>
                                 <td>
                                     <?php
                                         $opt = 'site_techside_bg';
@@ -1558,16 +1572,17 @@
                         <th scope="row">首页 - ACG栏目<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
                             <?php
-                                $value = get_option( 'site_acgnside_switcher', '' );
+                                $opt = 'site_acgnside_switcher';
+                                $value = get_option($opt);
                                 $data = get_option( 'site_acgnside_cid', '' );
                                 //设置默认开启（仅适用存在默认值的checkbox）
                                 if(!$value&&!$data){
-                                    update_option( 'site_acgnside_switcher', "on_default" );
+                                    update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="site_acgnside_switcher"><p class="description" id="site_acgnside_switcher_label">开启首页科技资讯栏目（支持第三方数据储存及多个分类文章</p><input type="checkbox" name="site_acgnside_switcher" id="site_acgnside_switcher"'.$status.' /> <b class="'.$status.'">ACGN情报</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_switcher_label">开启首页科技资讯栏目（支持第三方数据储存及多个分类文章</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">ACGN情报</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1582,7 +1597,7 @@
                                         // $preset = $cats_haschild[0]->term_id;//get_category_by_slug('acg')->term_id;  //return cid for recent_posts_query
                                         $value = get_option($opt);
                                         // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if options unset
-                                        echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_cid_label">默认使用“acg”分类（使用第三方数据储存适请确保leancloud内存在当前slug表数据</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_cid_label">默认使用“acg”模板分类</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
                                             foreach($cats as $the_cat){
                                                 $cats_id = $the_cat->term_id;
                                                 echo '<option value="'.$cats_id.'"';
@@ -1590,6 +1605,18 @@
                                                 echo '>'.$the_cat->name.'</option>';
                                             }
                                         echo '</select><label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 分类展示数量</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_acgnside_num';
+                                        $value = get_option($opt);
+                                        $preset = 5;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">分类展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1653,9 +1680,9 @@
                         <th scope="row">Google Adsense 广告</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_ads_switcher', '' );
-                                $value ? $status="checked" : $status="closed";
-                                echo '<label for="site_ads_switcher"><p class="description" id="site_ads_switcher_label">谷歌广告（开启后需填写初始化代码</p><input type="checkbox" name="site_ads_switcher" id="site_ads_switcher"'.$status.' /> <span style="color: orangered;" class="btn">Google Ads</span></label>';
+                                $opt = 'site_ads_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_ads_switcher_label">谷歌广告（开启后需填写初始化代码</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color: orangered;" class="btn">Google Ads</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1666,10 +1693,11 @@
                                 <th scope="row">— 广告初始化代码块</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_bar_ads', '' );
+                                        $opt = 'site_bar_ads';
+                                        $value = get_option($opt);
                                         $preset = "Initialization Code.";
-                                        if(!$value) update_option( 'site_bar_ads', $preset );else $preset=$value;  //auto update option to default if unset
-                                        echo '<textarea class="codeblock" name="site_bar_ads" id="site_bar_ads">'.$preset.'</textarea>';
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<textarea class="codeblock" name="'.$opt.'" id="'.$opt.'">'.$preset.'</textarea>';
                                     ?>
                                 </td>
                             </tr>
@@ -1680,16 +1708,17 @@
                         <th scope="row">侧边栏 Pixiv 挂件</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_pixiv_switcher', '' );
+                                $opt = 'site_pixiv_switcher';
+                                $value = get_option($opt);
                                 $data = get_option( 'site_bar_pixiv', '' );
                                 //设置默认开启（仅适用存在默认值的checkbox）
                                 if(!$value&&!$data){
-                                    update_option( 'site_pixiv_switcher', "on_default" );
+                                    update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="site_pixiv_switcher"><p class="description" id="site_pixiv_switcher_label">p站挂件（可自定义至多展示50数量</p><input type="checkbox" name="site_pixiv_switcher" id="site_pixiv_switcher"'.$status.' /> <span style="color:green;" class="btn">PIXIV</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">p站挂件（可自定义至多展示50数量</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:green;" class="btn">PIXIV</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1700,10 +1729,11 @@
                                 <th scope="row">— Pixiv 加载数量</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_bar_pixiv', '' );
+                                        $opt = 'site_bar_pixiv';
+                                        $value = get_option($opt);
                                         $preset = 10;  //默认填充数据
-                                        if(!$value) update_option( 'site_bar_pixiv', $preset );else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">Pixiv 每日排名数量（最大展示50个，默认开启</p><input type="number" max="50" min="1" name="site_bar_pixiv" id="site_bar_pixiv" class="small-text" value="' . $preset . '"/>';
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">Pixiv 每日排名数量（最大展示50个，默认开启</p><input type="number" max="50" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1714,17 +1744,18 @@
                         <th scope="row">侧边栏热门文章<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
                             <?php
-                                $value = get_option( 'site_mostview_switcher', '' );
+                                $opt = 'site_mostview_switcher';
+                                $value = get_option($opt);
                                 $data = get_option( 'site_mostview_cid', '' );
                                 //设置默认开启（仅适用存在默认值的checkbox）
                                 if(!$value&&!$data){
-                                    update_option( 'site_mostview_switcher', "on_default" );
+                                    update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
                                 // $value ? $status="checked" : $status="closed";
-                                echo '<label for="site_mostview_switcher"><p class="description" id="site_mostview_switcher_label">资讯、资讯文章分类页面侧边栏文章热度排行（支持第三方数据储存</p><input type="checkbox" name="site_mostview_switcher" id="site_mostview_switcher"'.$status.' /> <b class="'.$status.'">侧边栏热门文章</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_mostview_switcher_label">资讯、资讯文章分类页面侧边栏文章热度排行（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">侧边栏热门文章</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1781,14 +1812,15 @@
                         <th scope="row">站点启动时间</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_begain', '' );
+                                $opt = 'site_begain';
+                                $value = get_option($opt);
                                 $year = date('Y');
-                                if(!$value) update_option( 'site_begain', $year );
+                                if(!$value) update_option($opt, $year);
                                 $options = array();
                                 for(;$year>1999;$year--){
                                     array_push($options,$year);
                                 }
-                                echo '<label for="site_begain"><p class="description" id="site_begain_label">站点开启时间，单位年</p><select name="site_begain" id="site_begain">';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_begain_label">站点开启时间，单位年</p><select name="'.$opt.'" id="'.$opt.'">';
                                     for($i=0;$i<count($options);$i++){
                                         $each = $options[$i];
                                         echo '<option value="'.$each.'"';if($value==$each)echo('selected="selected"');echo '>'.$each.'</option>';
@@ -1801,11 +1833,12 @@
                         <th scope="row">创作共用许可</th>
                         <td>
                             <?php
-                                $value = get_option('site_copyright', '');
+                                $opt = 'site_copyright';
+                                $value = get_option($opt);
                                 $options = ["CC-BY","CC-BY-SA","CC-BY-NC","CC-BY-ND","CC-BY-NC-SA","CC-BY-NC-ND","CC-SA","CC-NC","CC-ND","CC-NC-SA","CC-NC-ND"];
-                                if(!$value) update_option('site_copyright',$options[0]);
+                                if(!$value) update_option($opt, $options[0]);
                                 //output each options
-                                echo '<label for="site_copyright"><p class="description" id="site_copyright_label">创作共用许可协议用于网站底部、文章署名等位置</p><select name="site_copyright" id="site_copyright">';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_copyright_label">创作共用许可协议用于网站底部、文章署名等位置</p><select name="'.$opt.'" id="'.$opt.'">';
                                     for($i=0;$i<count($options);$i++){
                                         $each = $options[$i];
                                         echo '<option value="'.$each.'"';if($value==$each)echo('selected="selected"');echo '>'.$each.'</option>';
@@ -1818,13 +1851,14 @@
                         <th scope="row">服务器信息</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_server', '' );
+                                $opt = 'site_server';
+                                $value = get_option($opt);
                                 $arrobj = array(
                                     array('name'=>'阿里云', 'icon'=>custom_cdn_src('img',true).'/images/settings/alicloud.png'),
                                     array('name'=>'腾讯云', 'icon'=>custom_cdn_src('img',true).'/images/settings/tencentcloud.svg'),
                                     array('name'=>'华为云', 'icon'=>custom_cdn_src('img',true).'/images/settings/huaweiclouds.svg'),
                                 );
-                                echo '<label for="site_server"><p class="description" id="site_server_label">网站应用服务器（页尾图标</p><img src="'.$value.'" style="vertical-align: middle;max-width: 66px;margin:auto 15px;" /><select name="site_server" id="site_server" class="select_images"><option value="">请选择</option>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_server_label">网站应用服务器（页尾图标</p><img src="'.$value.'" style="vertical-align: middle;max-width: 66px;margin:auto 15px;" /><select name="'.$opt.'" id="'.$opt.'" class="select_images"><option value="">请选择</option>';
                                     foreach ($arrobj as $arr){
                                         $icon = $arr['icon'];
                                         echo '<option value="'.$icon.'"';if($value==$icon)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
@@ -1837,9 +1871,9 @@
                         <th scope="row">网站备案信息</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_beian_switcher', '' );
-                                $value ? $status="checked" : $status="closed";
-                                echo '<label for="site_beian_switcher"><p class="description" id="site_beian_switcher_label">网站备案信息（国外服务器请无视此选项</p><input type="checkbox" name="site_beian_switcher" id="site_beian_switcher"'.$status.' /> <b class="'.$status.'">网站备案号</b></label>';
+                                $opt = 'site_beian_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_beian_switcher_label">网站备案信息（国外服务器请无视此选项</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">网站备案号</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1850,8 +1884,8 @@
                                 <th scope="row">— 备案号</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_beian', '' );
-                                        echo '<input type="text" name="site_beian" id="site_beian" class="middle-text" value="' . $value . '" placeholder="网站备案号"/>';
+                                        $opt = 'site_beian';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text" value="' . get_option($opt) . '" placeholder="网站备案号"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1883,16 +1917,17 @@
                         <th scope="row">十年之约</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_foreverblog_switcher', '' );
+                                $opt = 'site_foreverblog_switcher';
+                                $value = get_option($opt);
                                 $data = get_option( 'site_foreverblog', '' );
                                 if(!$value&&!$data){
-                                    update_option( 'site_foreverblog_switcher', "on_default" );
+                                    update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
                                 // $value ? $status="checked" : $status="closed";
-                                echo '<label for="site_foreverblog_switcher"><p class="description" id="site_foreverblog_switcher_label">页面底部展示“十年之约”图标（页尾图标</p><input type="checkbox" name="site_foreverblog_switcher" id="site_foreverblog_switcher"'.$status.' /> <b class="'.$status.'">ForeverBlog 成员</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_switcher_label">页面底部展示“十年之约”图标（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">ForeverBlog 成员</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1903,9 +1938,9 @@
                                 <th scope="row">— wormhole 虫洞</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_foreverblog_wormhole', '' );
-                                        $value ? $status="checked" : $status="closed";
-                                        echo '<label for="site_foreverblog_wormhole"><p class="description" id="site_foreverblog_wormhole_label">随机访问十年之约友链博客（页尾图标</p><input type="checkbox" name="site_foreverblog_wormhole" id="site_foreverblog_wormhole"'.$status.' /> <b class="'.$status.'">穿梭虫洞</b></label>';
+                                        $opt = 'site_foreverblog_wormhole';
+                                        get_option($opt) ? $status="checked" : $status="closed";
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_wormhole_label">随机访问十年之约友链博客（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">穿梭虫洞</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -1913,9 +1948,9 @@
                                 <th scope="row">— foreverblog 链接</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_foreverblog', '' );
-                                        if(!$value) update_option( 'site_foreverblog', "https://www.foreverblog.cn/blog/2096.html" );
-                                        echo '<p class="description" id="site_foreverblog_label">十年之约链接（foreverblog 图标</p><input type="text" name="site_foreverblog" id="site_foreverblog" class="regular-text" value="' . $value . '" placeholder="foreverblog 链接"/>';
+                                        $opt = 'site_foreverblog';
+                                        if(!get_option($opt)) update_option($opt, "https://www.foreverblog.cn/blog/2096.html");
+                                        echo '<p class="description" id="site_foreverblog_label">十年之约链接（foreverblog 图标</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $value . '" placeholder="foreverblog 链接"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1926,9 +1961,9 @@
                         <th scope="row">站点统计插件</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_monitor_switcher', '' );
-                                if($value=="on") $status="checked";else $status="closed";
-                                echo '<label for="site_monitor_switcher"><p class="description" id="site_monitor_switcher_label">站点统计控制（生成 script 链接，状态：'.$status.'</p><input type="checkbox" name="site_monitor_switcher" id="site_monitor_switcher" '.$status.'/> <span style="color:orangered;" class="btn">U.MENG</span></label>';
+                                $opt = 'site_monitor_switcher';
+                                if(get_option($opt)=="on") $status="checked";else $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_monitor_switcher_label">站点统计控制（生成 script 链接，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <span style="color:orangered;" class="btn">U.MENG</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1939,8 +1974,8 @@
                                 <th scope="row">— 统计链接</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_monitor', '' );
-                                         echo '<input type="text" name="site_monitor" id="site_monitor" class="regular-text" placeholder="CNZZ 统计链接" value="' . $value . '"/>';
+                                        $opt = 'site_monitor';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="CNZZ 统计链接" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1951,9 +1986,9 @@
                         <th scope="row">在线沟通插件</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_chat_switcher', '' );
-                                if($value=="on") $status="checked";else $status="closed";
-                                echo '<label for="site_chat_switcher"><p class="description" id="site_chat_switcher_label">在线沟通控制（生成 script 链接和底部图标，状态：'.$status.'</p><input type="checkbox" name="site_chat_switcher" id="site_chat_switcher" '.$status.'/> <span style="color:dodgerblue;" class="btn"> TIDIO </span></label>';
+                                $opt = 'site_chat_switcher';
+                                if(get_option($opt)=="on") $status="checked";else $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_chat_switcher_label">在线沟通控制（生成 script 链接和底部图标，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <span style="color:dodgerblue;" class="btn"> TIDIO </span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1964,8 +1999,8 @@
                                 <th scope="row">— 沟通链接</th>
                                 <td>
                                     <?php
-                                        $value = get_option( 'site_chat', '' );
-                                         echo '<input type="text" name="site_chat" id="site_chat" class="regular-text" placeholder="沟通（单页）直链" value="' . $value . '"/>';
+                                        $opt = 'site_chat';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="沟通（单页）直链" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1976,10 +2011,11 @@
                         <th scope="row">底部文本栏目</th>
                         <td>
                             <?php
-                                $value = get_option('site_support');  //默认填充数据
+                                $opt = 'site_support';
+                                $value = get_option($opt);  //默认填充数据
                                 $preset = 'Art Design | Coding | Documents | Social Media | Tech Support';  //默认填充数据
-                                if(!$value) update_option( 'site_support', $preset );else $preset=$value;
-                                echo '<input type="text" name="site_support" id="site_support" class="large-text" value="'.$preset.'">';
+                                if(!$value) update_option($opt, $preset);else $preset=$value;
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="large-text" value="'.$preset.'">';
                             ?>
                         </td>
                     </tr>
@@ -1987,10 +2023,11 @@
                         <th scope="row">Email</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_contact_email', '' );
+                                $opt = 'site_contact_email';
+                                $value = get_option($opt);
                                 $preset = get_bloginfo('admin_email');  //默认填充数据
-                                if(!$value) update_option( 'site_contact_email', $preset );else $preset=$value;
-                                echo '<p class="description" id="site_contact_email_label">底部（邮箱）联系方式（默认管理员邮箱</p><input type="text" name="site_contact_email" id="site_contact_email" class="regular-text" value="' . $preset . '"/>';
+                                if(!$value) update_option($opt, $preset);else $preset=$value;
+                                echo '<p class="description" id="site_contact_email_label">底部（邮箱）联系方式（默认管理员邮箱</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $preset . '"/>';
                             ?>
                         </td>
                     </tr>
@@ -2010,10 +2047,11 @@
                         <th scope="row">Github</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_contact_github', '' );
+                                $opt = 'site_contact_github';
+                                $value = get_option($opt);
                                 $holder = 'https://github.com/2Broear/';
-                                if(!$value) update_option( 'site_contact_github', $holder );else $holder=$value;  //auto update option
-                                echo '<input type="text" name="site_contact_github" id="site_contact_github" class="regular-text" value="' . $holder . '" placeholder="底部（github）联系方式"/>';
+                                if(!$value) update_option($opt, $holder);else $holder=$value;  //auto update option
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $holder . '" placeholder="底部（github）联系方式"/>';
                             ?>
                         </td>
                     </tr>
@@ -2021,10 +2059,11 @@
                         <th scope="row">Bilibili</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_contact_bilibili', '' );
+                                $opt = 'site_contact_bilibili';
+                                $value = get_option($opt);
                                 $holder = 'https://space.bilibili.com/7971779';
-                                if(!$value) update_option( 'site_contact_bilibili', $holder );else $holder=$value;
-                                echo '<input type="text" name="site_contact_bilibili" id="site_contact_bilibili" class="regular-text" value="' . $holder . '" placeholder="底部（bilibili）联系方式"/>';
+                                if(!$value) update_option($value, $holder);else $holder=$value;
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $holder . '" placeholder="底部（bilibili）联系方式"/>';
                             ?>
                         </td>
                     </tr>
@@ -2032,10 +2071,11 @@
                         <th scope="row">Netease</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_contact_music', '' );
+                                $opt = 'site_contact_music';
+                                $value = get_option($opt);
                                 $holder = 'https://music.163.com/#/user/home?id=77750916';
-                                if(!$value) update_option( 'site_contact_music', $holder );else $holder=$value;
-                                echo '<input type="text" name="site_contact_music" id="site_contact_music" class="regular-text" value="' . $value . '" placeholder="底部（网易云）联系方式"/>';
+                                if(!$value) update_option($opt, $holder);else $holder=$value;
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $value . '" placeholder="底部（网易云）联系方式"/>';
                             ?>
                         </td>
                     </tr>
@@ -2043,10 +2083,11 @@
                         <th scope="row">Steam</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_contact_steam', '' );
+                                $opt = 'site_contact_steam';
+                                $value = get_option($opt);
                                 $holder = 'https://steamcommunity.com/profiles/76561198145631868/';
-                                if(!$value) update_option( 'site_contact_steam', $holder );else $holder=$value;
-                                echo '<input type="text" name="site_contact_steam" id="site_contact_steam" class="regular-text" value="' . $holder . '" placeholder="底部（steam）联系方式"/>';
+                                if(!$value) update_option($opt, $holder);else $holder=$value;
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $holder . '" placeholder="底部（steam）联系方式"/>';
                             ?>
                         </td>
                     </tr>
@@ -2054,8 +2095,8 @@
                         <th scope="row">Weibo</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_contact_weibo', '' );
-                                echo '<input type="text" name="site_contact_weibo" id="site_contact_weibo" class="regular-text" value="' . $value . '" placeholder="底部（微博）联系方式"/>';
+                                $opt = 'site_contact_weibo';
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . get_option($opt) . '" placeholder="底部（微博）联系方式"/>';
                             ?>
                         </td>
                     </tr>
@@ -2063,8 +2104,8 @@
                         <th scope="row">Twitter</th>
                         <td>
                             <?php
-                                $value = get_option( 'site_contact_twitter', '' );
-                                echo '<input type="text" name="site_contact_twitter" id="site_contact_twitter" class="regular-text" value="' . $value . '" placeholder="底部（twitter）联系方式"/>';
+                                $opt = 'site_contact_twitter';
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . get_option($opt) . '" placeholder="底部（twitter）联系方式"/>';
                             ?>
                         </td>
                     </tr>
