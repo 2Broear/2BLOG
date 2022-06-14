@@ -59,23 +59,18 @@ lbms 后台页面将在开启 lbms 选项后自动创建 `lbms` 及 `lbms-login`
 ![2blog_lbms_ui](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/edit.png "lbms UI")
 
 - __weblog__ 
-
     对应主题模板中的 __`category-weblog.php`__ 日记日志模板，需创建 __`weblog`__ Class
 
 -  __acg__ 
-
     对应主题模板中的 __`category-acg.php`__ 慢游影视模板，需创建 __`acg`__ Class
 
 -  __link__ 
-
     对应主题模板中的 __`category-2bfriends.php`__ 友情链接模板，需创建 ___`link`___ Class（ __注意此项使用 link__ ）
 
 -  ~~download~~
-
     此栏目已废弃，默认使用 _wordpress_ 原生数据
 
 -  __inform__ 
-
     对应主题模板中的 __`category-weblog.php`__ 公告模板，需创建 __`inform`__ Class
 
 &nbsp;
