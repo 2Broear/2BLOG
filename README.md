@@ -2,7 +2,7 @@
 ====================================================================================================================================================================
 A Simplized Wordpress Blog Theme Design &amp; Developed from [2broear.com](http://blog.2broear.com) by 2BROEAR Released &amp; openSourced in 2022.
 
-__Preview Site__ ：[演示站点](http://2blog.2broear.com)
+__Preview Site__ ：[演示站点](http://wpl.2broear.com)
 
 ![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot.png "theme overview")
 
@@ -106,7 +106,7 @@ ___额外属性：___
 
 伪静态与固定链接
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-如需实现 [演示站](http://2blog.2broear.com) 的 _permalink/url_ 层级，需配置如下两项：
+如需实现 [演示站](http://wpl.2broear.com) 的 _permalink/url_ 层级，需配置如下两项：
 
 ___Nginx 伪静态规则___ （apache或其他环境请自行转换语法，宝塔面板可一键配置）
 ``` nginx
