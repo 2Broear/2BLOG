@@ -6,7 +6,7 @@ __Preview Site__ ：[演示站点](http://2blog.2broear.com)
 ![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot.png "theme overview")
 
 ## 主题简介
-历经半年之久，鸽鸽碰碰的 Wordpress 主题 2BLOG 他来了！折腾这么些日子终于算是可以开测了，这里将作为主题开源后续的发布、更新、备份地址。目前主题尚处测试阶段，未上传至 Wordpress。
+历经半年之久，__鸽鸽碰碰的 Wordpress 主题 2BLOG 他来了！__ 折腾这么些日子终于算是可以开测了，这里将作为主题开源后续的发布、更新、备份地址。目前主题尚处测试阶段，未上传至 Wordpress。
 主题在前静态主题的基础之上做了部分修改及更新，其中主要更新内容包括：
 
 - 页面/首页文章置顶
