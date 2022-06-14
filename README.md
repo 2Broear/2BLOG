@@ -28,7 +28,7 @@ __Preview Site__ ：[演示站点](http://2blog.2broear.com)
 
 wordpress 后台设置分为  __基本信息__ 、 __通用控制__ 、 __页面设置__ 、 __侧栏设置__ 、 __页尾控制__  5 个版面，每个版面对应不同的设置选项，_每个选项下方都有相应的功能使用说明，一般情况下只需要对应其提示操作即可。_（其他操作说明将在下个文档版本中补充，如分类、页面、文章中的设置细节等等）
 
-![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/basic.png "2blog basiclly set")
+![2blog_theme_setting](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/basic.png "2blog basiclly set")
 
 1. ___基本信息___ 只中有 5 个选项，可以修改个人昵称（注意非博客名称）、头像及卡片背景图，包括全站的描述及关键词（单页分类的关键词及各项配置需在 __文章->分类__ 中单独配置）
 
@@ -56,7 +56,7 @@ lbms 后台页面将在开启 lbms 选项后自动创建 `lbms` 及 `lbms-login`
 
 > “ __`news`__ ”选项卡虽已不再使用，但其中的 _markdown_功能仍可以正常使用且支持同步预览。
 
-![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/lbms.png "lbms UI")
+![2blog_lbms_ui](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/lbms.png "lbms UI")
 
 - __weblog__ 
 
@@ -98,7 +98,7 @@ ___Wordpress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 
 ![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/permalink.png "permalink setting")
 
----
+&nbsp;
 
 ### 主题差异化问题
 这款主题和官方在模板设计上有些许不同，通过 _wp_ 默认主题模板文件不难看出一款 _wordpress_ 主题在导航上是通过页面来进行导航的。但是，我之前一直都是用的分类进行页面导航，使用分类页面无法调用评论而百思不得其解的时候到处瞎逛论坛的时候才发现 __wp 根本不支持通过分类调用评论，__ 这也就是说之前写的那套定制导航的逻辑全都不能用，因为主题 __部分页面在调用页面数据的同时需要调用页面评论__ ，这个就很尴尬了，而且通过分类来导航很难控制页面层级关系，再三犹豫期间又跑去写了一个“页面”导航，结果差强人意， __最后还是选择了使用分类作为页面导航__ ，同时在解决调用页面评论这方面的方案则是分类 __固定链接的 url 重写__ ，该方案在伪静态下工作的很好。
