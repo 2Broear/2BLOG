@@ -68,7 +68,7 @@ lbms 后台页面将在开启 lbms 选项后自动创建 `lbms` 及 `lbms-login`
     对应主题模板中的 __`category-acg.php`__ 慢游影视模板，需创建 __`acg`__ Class
 
 -  __link__ 
-    对应主题模板中的 __`category-2bfriends.php`__ 友情链接模板，需创建 ___`link`___ Class（ __注意此项使用 link__ ）
+    对应主题模板中的 __`category-2bfriends.php`__ 友情链接模板，需创建 ___`link`___ Class（ __注意此项使用 `link`__ ）
 
 -  ~~download~~
     此栏目已废弃，默认使用 _wordpress_ 原生数据
@@ -95,7 +95,7 @@ ___Wordpress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 ``` plaintext
 /%category%/%postname%_%post_id%  
 ```
-固定连接可删除 `%post_id%`，但需要保留 `%post_name%` 后的下划线 “__” __如下图所示__（其目的是为了访问多层级分类时正确显示 url 地址栏中的分类/页面层级，属于临时方案）
+固定连接可删除 `%post_id%`，但需要保留 `%post_name%` 后的下划线 “`_`” __如下图所示__（其目的是为了访问多层级分类时正确显示 url 地址栏中的分类/页面层级，属于临时方案）
 
 ![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/permalink.png "permalink setting")
 
