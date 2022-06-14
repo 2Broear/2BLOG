@@ -56,7 +56,7 @@ lbms 后台页面将在开启 lbms 选项后自动创建 `lbms` 及 `lbms-login`
 
 > “ __`news`__ ”选项卡虽已不再使用，但其中的 _markdown_功能仍可以正常使用且支持同步预览。
 
-![2blog_lbms_ui](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/lbms.png "lbms UI")
+![2blog_lbms_ui](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/edit.png "lbms UI")
 
 - __weblog__ 
 
