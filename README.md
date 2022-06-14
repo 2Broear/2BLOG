@@ -2,6 +2,7 @@
 A Simplized Wordpress Blog Theme Design &amp; Developed from [2broear.com](http://blog.2broear.com) by 2BROEAR Released &amp; openSourced in 2022.
 
 __Preview Site__ ：[演示站点](http://2blog.2broear.com)
+
 ![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot.png "theme overview")
 
 ## 主题简介
@@ -36,6 +37,7 @@ wordpress 后台设置分为 5 个版面，每个版面对应不同的设置选�
 __1. 基本信息__ 只中有 5 个选项，可以修改个人昵称（注意非博客名称）、头像及卡片背景图，包括全站的描述及关键词（单页分类的关键词及各项配置需在 __文章->分类__ 中单独配置）
 
 ![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/basic.png "2blog basiclly info")
+
 ---
 
 __2. 通用控制__ 中所拥有控制选项是整个主题最多也是最复杂的，主要包含 __主题颜色__ 、 __LOGO__ 、 __公告__ 、 __元导航__ 、 __面包屑导航__ 、 __Gravatar头像__ 、 __sitemap__ 、 __rss feed__ 、 __搜索结果/样式__ 、 __暗黑模式__ 、 __Leancloud 数据存储__ 、 __第三方 valine 评论__ 、 __评论邮件/微信提醒__ 、 __站点静态文件CDN__ 等等，注意所有涉及邮件收发的选项均需填写 __SMTP 发件服务配置__ 并测试成功之后才能正常使用。
