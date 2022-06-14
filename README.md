@@ -2,6 +2,7 @@
 A Simplized Wordpress Blog Theme Design &amp; Developed from [2broear.com](http://blog.2broear.com) by 2BROEAR Released &amp; openSourced in 2022.
 
 __Preview Site__ ：[演示站点](http://2blog.2broear.com)
+![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot.png "theme overview")
 
 ## 主题简介
 历经半年之久，鸽鸽碰碰的 Wordpress 主题 2BLOG 他来了！折腾这么些日子终于算是可以开测了，这里将作为主题开源后续的发布、更新、备份地址。目前主题尚处测试阶段，未上传至 Wordpress。
@@ -18,8 +19,6 @@ __Preview Site__ ：[演示站点](http://2blog.2broear.com)
 当然了，最重要的还是集成了 __Leancloud 与 Wordpress 之间的数据切换__ ，这个主要是因为之前静态博客使用的是 __valine__ 评论系统（其实之前很少使用 leancloud 数据储存），后面我自己改了很多东西（至于要不要集成到 wp 上只能日后再说了），所以在 wordpress 中仍做了数据切换，然后顺带更新了之前尚未同步数据到 leancloud 的页面。
 
 > 在wordpress中除“公告”外所有数据均以文章形式发布，通过后端函数调用数据，而使用leancloud数据的页面将通过 __lbms__ 后台进行数据上传、修改及删除等操作，再通过xhr异步前端调用json数据
-
-![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot.png "theme overview")
 
 # 主题文档
 简单说明一下，主题也是职业之余开发完成的，其中的部分页面及功能并不适用于所有人（老早之前还鸽了HEXO的主题开发，主要是那个文档有点难找），另外做成cms的主要是因为之前静态博客内容多了之后不好管理（再后来甚至做了个markdown的编辑器，不过没用就是了），开源呢一方面是因为之前受到了部分博友的认可，有意向使用这个主题，另一方面正巧公司的框架去年也搬到wp了所以整个开发流程是相对顺利，写的功能在主题之间都能互通这一点是很友好的。 __以下分为wp及lbms两方面来讲__
