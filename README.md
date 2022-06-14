@@ -116,7 +116,7 @@ location / {
 rewrite /wp-admin$ $scheme://$host$uri/ permanent;
 ```
 
-___Wordpress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 CATEGORY___ 选项）
+___WordPress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 CATEGORY___ 选项）
 ``` plaintext
 /%category%/%postname%_%post_id%  
 ```
