@@ -54,7 +54,7 @@ wordpress 后台设置分为  __基本信息__ 、 __通用控制__ 、 __页面
 
 lbms 后台页面将在开启 lbms 选项后自动创建 `lbms` 及 `lbms-login` 两个页面，之后在 leancloud 创建应用之后，可在 `bms-login` 登录创建账号（若注册账号邮件验证不及时，请前往 leancloud 后台对应应用中的 __数据储存->结构化数据->User__ 表中手动设置账号的 __`emailVerified`__ 为 __`true`__ 即可正常登录）
 
-> “ __`news`__ ”选项卡虽已不再使用，但其中的 _markdown_功能仍可以正常使用且支持同步预览。
+> __`news`__ 选项卡虽已不再使用，但其中的 _markdown_ 功能仍可以正常使用且支持同步预览。
 
 ![2blog_lbms_ui](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/edit.png "lbms UI")
 
