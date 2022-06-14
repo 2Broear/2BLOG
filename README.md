@@ -60,7 +60,7 @@ wordpress 后台设置分为  __基本信息__ 、 __通用控制__ 、 __页面
 - __Page Keywords__ （分类/页面自定义关键词）
 - __Page Description__ （分类描述）
 
-其中 ___分类背景___ 用于后台开启 __元分类导航__ 后所应用的背景图， ___页面模板___ 则为创建分类后所同步的页面模板（创建分类后会自动新建相同名称、别名、模板的页面） _这里隐藏了一个  __Category Order__ 选项，也就是 __页面__ 中的 `menu_order` 用于导航排序。在默认创建分类时会自动将其 `term_id` 同步到所创建应页面的 `menu_order`，__在创建分类后单独编辑分类时可以查看和修改其导航排序（规则默认值越小越靠前，适用于所有层级）__ _
+其中 ___分类背景___ 用于后台开启 __元分类导航__ 后所应用的背景图， ___页面模板___ 则为创建分类后所同步的页面模板（创建分类后会自动新建相同名称、别名、模板的页面） _这里隐藏了一个  __Category Order__ 选项，也就是 __页面__ 中的 `menu_order` 用于导航排序。在默认创建分类时会自动将其 `term_id` 同步到所创建应页面的 `menu_order`，__在分类创建后单独编辑时可查看和修改其 `Category Order` 导航排序（规则默认值越小越靠前，适用于所有层级）__
 
 ![2blog_theme_setting](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/category.png "2blog category set")
 
