@@ -34,7 +34,7 @@ wordpress 后台设置分为 5 个版面，每个版面对应不同的设置选�
 4.  __侧栏设置__ 
 5.  __页尾控制__ 
 
-![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/basic.png "2blog basiclly info")
+![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/basic.png "2blog basiclly set")
 
 __1. 基本信息__ 只中有 5 个选项，可以修改个人昵称（注意非博客名称）、头像及卡片背景图，包括全站的描述及关键词（单页分类的关键词及各项配置需在 __文章->分类__ 中单独配置）
 
@@ -67,7 +67,7 @@ __5. 页尾控制__ 选项，页面底部有一些文章、评论及联系方式
 
 lbms 后台页面将在开启 lbms 选项后自动创建 /lbms 及 /lbms-login 页面，在 leancloud 创建应用之后，可在 lbms-login 页面创建账号（若注册账号邮件验证不及时，请前往 leancloud 后台对应应用中的 __数据储存->结构化数据->User__ 表中手动设置账号的 __emailVerified__ 为 __true__ 即可正常登录）
 
-![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/lbms.png "2blog lbms info")
+![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/lbms.png "lbms UI")
 
 1.  __weblog__ 
 
@@ -110,6 +110,7 @@ ___Wordpress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 ``` plaintext
 /%category%/%postname%_%post_id%  // 可删除 %post_id%，但需要保留 %post_name% 后的下划线 “_”
 ```
+![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/permalink.png "permalink setting")
 
 ---
 
