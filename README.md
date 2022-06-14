@@ -57,7 +57,7 @@ ___！！注意！首次安装主题后需要点击一次 `2BLOG主题设置` �
 
 ### LBMS 后台
 
-lbms 后台页面将在开启 lbms 选项后自动创建 `lbms` 及 `lbms-login` 两个页面，之后在 leancloud 创建应用之后，可在 `bms-login` 登录创建账号（若注册账号邮件验证不及时，请前往 leancloud 后台对应应用中的 __数据储存->结构化数据->User__ 表中手动设置账号的 __`emailVerified`__ 为 __`true`__ 即可正常登录）
+lbms 后台页面将在 _wp_ 后台开启 _leancloud_ 选项后自动创建 `lbms` 、 `lbms-login` 两个页面。在 leancloud 创建应用之后，可通过 _leancloud_ 或 `/bms-login` 页面创建账号（若注册账号邮件验证不及时，请前往 leancloud 后台对应应用中的 __数据储存->结构化数据->User__ 表中手动设置账号的 __`emailVerified`__ 为 __`true`__ 即可正常登录）
 
 -  ~~news~~ 此栏目已废弃，默认原生 _wordpress_ 数据
 - __weblog__ 对应主题模板中的 __`category-weblog.php`__ 日记日志模板，需创建 __`weblog`__ Class
