@@ -67,7 +67,7 @@ __5. 页尾控制__ 选项，页面底部有一些文章、评论及联系方式
 
 lbms 后台页面将在开启 lbms 选项后自动创建 /lbms 及 /lbms-login 页面，在 leancloud 创建应用之后，可在 lbms-login 页面创建账号（若注册账号邮件验证不及时，请前往 leancloud 后台对应应用中的 __数据储存->结构化数据->User__ 表中手动设置账号的 __emailVerified__ 为 __true__ 即可正常登录）
 
-![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/lbms.png "2blog lbms ui")
+![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/lbms.png "2blog lbms info")
 
 1.  __weblog__ 
 
