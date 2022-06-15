@@ -833,6 +833,7 @@
             }
     	</style>
     <?php
+        // global $post;
         if(have_posts()) {
             while (have_posts()): the_post();
                 if(!$post_styles){
@@ -934,6 +935,24 @@
                                 </div>
                             </div>
                         </div>
+        <?php
+                    }else{
+        ?>
+                        <article class="cat-<?php the_ID(); ?>">
+                            <h1>
+                                <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
+                                <?php $postmeta=get_post_meta($post->ID, "post_rights", true); echo $postmeta&&$postmeta!="请选择" ? '<sup>'.$postmeta.'</sup>' : false; ?>
+                            </h1>
+                            <p><?php the_excerpt() ?></p>
+                            <div class="info">
+                                <span class="classify" id="<?php $cpar = get_the_category()[1]->parent==0 ? get_the_category()[1] : get_the_category()[0];echo $cpar->slug; ?>">
+                                    <i class="icom"></i><?php echo $cpar->name; ?>
+                                </span>
+                                <span class="valine-comment-count" data-xid="<?php the_permalink() ?>"><?php echo $post->comment_count; ?></span>
+                                <span class="date"><?php the_time('d-m-Y'); ?></span>
+                                <span id="slider"></span>
+                            </div>
+                        </article>
         <?php
                     }
                 }
