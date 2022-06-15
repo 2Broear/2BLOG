@@ -44,12 +44,12 @@
       <div class="inside_of_block" isBottom="no">
         <div class="logo-area" title="<?php echo get_option('site_nick'); ?> - <?php bloginfo('name') ?>">
           <a href="<?php bloginfo('url') ?>">
-            <?php site_logo(false); ?>
+            <?php site_logo(); ?>
           </a>
         </div>
         <nav class="main-nav">
             <ul class="wp_list_cats">
-                <li class=""><a href="/" class=""><i class="icom icon-more"></i>首页<?php //print_r(get_category_by_slug()) ?></a></li>
+                <li class=""><a href="/" class=""><i class="icom icon-more"></i>首页</a></li>
                 <?php  // https://www.wordpress.la/512.html
                     global $post;
                     $gloPost_id = $post->ID;
@@ -175,27 +175,25 @@
         </span>
         <a href="/" rel="nofollow">
           <div class="m-logo">
-            <?php site_logo(false); ?>
+            <?php site_logo(); ?>
           </div>
         </a>
         <span class="m-search">
           <i class="BBFontIcons"></i>
         </span>
-      </div>
-    </div>
-  </div>
-  <div class="mobile-search">
-    <div class="ms-inside-block">
-      <div class="ms-inside">
-        <div class="ms-inside-searchBox">
-            <form method="get" id="searchform" action="<?php bloginfo('url'); ?>/">
-            	<div>
-            		<input type="text" value="<?php the_search_query(); ?>" name="s" id="s" />
-            		<input type="submit" id="searchsubmit" value="Search" />
-            	</div>
-            </form>
-          <span class="BBFontIcons ms-close-btn">&#xe91e;</span>
-        </div>
+          <div class="mobile-search">
+            <div class="ms-inside-block">
+              <div class="ms-inside">
+                <div class="ms-inside-searchBox">
+                    <form id="searchform" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
+                        <input type="text" class="search-field" name="s" placeholder="Searching.." value="<?php echo get_search_query(); ?>">
+                		<input type="submit" id="searchsubmit" value="Search" />
+                    </form>
+                  <!--<span class="BBFontIcons ms-close-btn">&#xe91d;</span>-->
+                </div>
+              </div>
+            </div>
+          </div>
       </div>
     </div>
   </div>

@@ -158,7 +158,7 @@
 .win-content article h3{
 	margin: 35px auto 15px;
 }
-.win-content article p,.win-content article ul,.win-content article ol{
+.win-content article ul,.win-content article ol{
 	font-size: var(--min-size-rem);
 }
 .win-content article p {

@@ -920,7 +920,7 @@ audio{width:300px;height:32px}
 #download-head-topic_left i.changeCloud::before{content:'\e918' !important}
 .content-all-windows{max-width:1102px;height:auto;margin:0 auto;padding:15px 15px 0;overflow-y:hidden;transition:all .5s ease;display:flex;position:relative;flex-flow:row nowrap;justify-content:space-between}
 .inform::after{content:'\e901';padding-right:5px}
-.scroll-inform{max-width:1102px;width:100%;padding:0 10px;box-sizing:border-box;color:#999;clear:both;font-size:var(--min-size);text-align:left;margin:0 auto;overflow:hidden;position:relative;top:2px}
+.scroll-inform{max-width:1102px;width:100%;padding:0 5px;box-sizing:border-box;color:#999;clear:both;font-size:var(--min-size);text-align:left;margin:0 auto;overflow:hidden;position:relative;top:2px}
 .scroll-inform div.scroll-block,
 .scroll-inform p{margin:0;display:inline-block;vertical-align:middle}
 .scroll-inform a:hover{color:var(--theme-color)}
@@ -1587,6 +1587,7 @@ p.wp_comment_tip{
     font-size: 12px;
     text-align: left;
     font-style: italic;
+    opacity: .75;
 }
 .wp_comment_count{
     color: gray;

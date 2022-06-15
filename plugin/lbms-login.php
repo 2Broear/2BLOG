@@ -62,7 +62,7 @@ body{background: whitesmoke;margin: 0;overflow: overlay;text-align: center;}
 .logedin .welcomed #info{
     width: 100%;
     padding: 55px 0;
-    margin: 25px;
+    margin: 25px 35px 25px 25px;
     max-width: 280px;
     border: 1px solid whitesmoke;
     border-radius: 10px;
