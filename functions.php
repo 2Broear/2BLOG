@@ -937,6 +937,7 @@
                         </div>
         <?php
                     }else{
+                        // results doen't match in_category template, like pages..
         ?>
                         <article class="cat-<?php the_ID(); ?>">
                             <h1>
