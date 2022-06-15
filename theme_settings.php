@@ -1665,9 +1665,9 @@
                             <?php
                                 $opt = 'site_privacy_video';
                                 $value = get_option($opt);
-                                $preset = custom_cdn_src('img',true).'/media/videos/data.mp4';
-                                $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_privacy_video_label">隐私政策背景视频</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="上传视频" />';
+                                // $preset = custom_cdn_src('img',true).'/media/videos/data.mp4';
+                                // $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
+                                echo '<p class="description" id="site_privacy_video_label">隐私政策背景视频</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$value.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="上传视频" />';
                             ?>
                         </td>
                     </tr>
