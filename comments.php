@@ -6,13 +6,14 @@
         <div class="share" style="<?php if(!$comment_sw) echo 'margin-top:15px'; ?>">
             <a id="dislike" title="有点东西（Like）" href="javascript:;" data-action="like" data-id="<?php the_ID(); ?>" class="<?php if(isset($_COOKIE['post_liked_'.$post->ID])) echo 'liked';?>">
                 <span id="like" class="count">
-                    <em id="counter"><?php $like=get_post_meta($post->ID,'post_liked',true);if($like) echo $like;else echo '0'; ?></em>
+                    <i id="counter"><?php $like=get_post_meta($post->ID,'post_liked',true);if($like) echo $like;else echo '0'; ?></i>
+                    <em style="background:url(<?php custom_cdn_src(); ?>/images/shareico.png) no-repeat -478px 4px"></em>
                 </span>
                 <?php if($comment_sw) echo '<div class="user"><small></small><div id="list"></div></div>'; ?>
             </a>
-            <a id="qq" title="分享QQ"><span></span></a>
-            <a id="qzone" title="分享空间（QZone）"><span></span></a>
-            <a id="Poster" title="生成海报（Poster）"><span id="recall"></span></a>
+            <a id="qq" title="分享QQ"><span><em style="background:url(<?php custom_cdn_src(); ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
+            <a id="qzone" title="分享空间（QZone）"><span><em style="background:url(<?php custom_cdn_src(); ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
+            <a id="Poster" title="生成海报（Poster）"><span id="recall"><em style="background:url(<?php custom_cdn_src(); ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
         </div>
         <script type="text/javascript" src="<?php custom_cdn_src("src"); ?>/js/jquery-1.9.1.min.js"></script>
         <script>
