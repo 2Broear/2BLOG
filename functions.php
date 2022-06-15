@@ -444,7 +444,7 @@
     
     // 自动主题模式
     function theme_mode(){
-        if(get_option('site_darkmode_switcher')) echo $_COOKIE['theme_mode'];
+        echo get_option('site_darkmode_switcher') ? $_COOKIE['theme_mode'] : 'theme_mode_disabled';
     }
     
     // 指定分类输出RSS feed  https://www.laobuluo.com/3863.html
