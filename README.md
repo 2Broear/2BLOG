@@ -33,7 +33,7 @@ __以下分为 `wp` 及 `lbms` 两个结构简述__ （其中， __LBMS__ 为测
 
 wordpress 后台设置分为  __基本信息__ 、 __通用控制__ 、 __页面设置__ 、 __侧栏设置__ 、 __页尾控制__  5 个版面，每个版面对应不同的设置选项，_每个选项下方都有相应的功能使用说明，一般情况下只需要对应其提示操作即可。_（其他操作说明将在下方 __文档说明__ 中补充，如分类、页面、文章中的设置细节等等）
 
-![2blog_theme_setting](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/basic.png "2blog basiclly set")
+![2blog_theme_setting](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/basic.png "2blog basiclly set")
 
 1. ___基本信息___ 只中有 5 个选项，可以修改个人昵称（注意非博客名称）、头像及卡片背景图，包括全站的描述及关键词（单页分类的关键词及各项配置需在 __文章->分类__ 中单独配置）
 
@@ -66,7 +66,7 @@ lbms 后台将在 __`通用控制`__ 中的 _leancloud_ 选项开启后自动创
 
 > __`news`__ 选项卡虽已不再使用，但其中的 _markdown_ 功能仍可以正常使用且支持同步预览。
 
-![2blog_lbms_ui](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/edit.png "lbms UI")
+![2blog_lbms_ui](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/edit.png "lbms UI")
 
 文档说明
 ====================================================================================================================================================================
@@ -90,7 +90,7 @@ lbms 后台将在 __`通用控制`__ 中的 _leancloud_ 选项开启后自动创
 
 注意，在后台 __通用控制->页面层级关系__ 中可以控制是否同步分类层级到页面层级（这样更方便查看和编辑页面），此选项因其开启后将会导致无法正常使用 ___`slash`___ 关键字的原因所以  __默认关闭，如果没有使用 `slash` 将子级作为父级输出的需求，则可以开启__
 
-![2blog_theme_setting](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/category.png "2blog category set")
+![2blog_theme_setting](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/category.png "2blog category set")
 
 ### 友情链接
 在 __链接__ 栏目中，所有选项都是官方默认的，所以只需要注意几个单独的点设置即可。首先，需要设置以下几个特殊变量作为友链的分类依据：
@@ -119,7 +119,7 @@ ___WordPress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 ```
 固定连接可删除 `%post_id%`，但需要保留 `%post_name%` 后的下划线 “`_`” __如下图所示__（其目的是为了访问多层级分类时正确显示 url 地址栏中的分类/页面层级，属于临时方案）
 
-![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot/permalink.png "permalink setting")
+![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/permalink.png "permalink setting")
 
 #### 主题差异化问题
 这款主题和官方在模板设计上有些许不同，通过 _wp_ 默认主题模板文件不难看出一款 _wordpress_ 主题在导航上是通过页面来进行导航的。但是，我之前一直都是用的分类进行页面导航，使用分类页面无法调用评论而百思不得其解的时候到处瞎逛论坛的时候才发现 __wp 根本不支持通过分类调用评论，__ 这也就是说之前写的那套定制导航的逻辑全都不能用，因为主题 __部分页面在调用页面数据的同时需要调用页面评论__ ，这个就很尴尬了，而且通过分类来导航很难控制页面层级关系，再三犹豫期间又跑去写了一个“页面”导航，结果差强人意， __最后还是选择了使用分类作为页面导航__ ，同时在解决调用页面评论这方面的方案则是分类 __固定链接的 url 重写__ ，该方案在伪静态下工作的很好。
