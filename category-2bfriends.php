@@ -32,19 +32,19 @@
         	            $rich_links = get_bookmarks(array(
         	                'orderby' => 'date',
         	                'order' => 'ASC',  // 最旧排最前
-        	                'category' => "standard",
+        	                'category_name' => "standard",
         	                'hide_invisible' => 0
     	                ));
         	            $rcmd_links = get_bookmarks(array(
         	                'orderby' => 'date',
         	                'order' => 'DESC',
-        	                'category' => "special",
+        	                'category_name' => "special",
         	                'hide_invisible' => 0
     	                ));
         	            $lost_links = get_bookmarks(array(
         	                'orderby' => 'date',
         	                'order' => 'DESC',  // 最新排最前
-        	                'category' => "missing",
+        	                'category_name' => "missing",
         	                'hide_invisible' => 0
     	                ));
                         if(count($rich_links)>0){
