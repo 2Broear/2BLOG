@@ -30,19 +30,19 @@
                     $baas = get_option('site_leancloud_switcher');
                     if(!$baas){
         	            $rich_links = get_bookmarks(array(
-        	                'orderby' => 'date',
+        	                'orderby' => 'link_id',
         	                'order' => 'ASC',  // 最旧排最前
         	                'category_name' => "standard",
         	                'hide_invisible' => 0
     	                ));
         	            $rcmd_links = get_bookmarks(array(
-        	                'orderby' => 'date',
+        	                'orderby' => 'link_id',
         	                'order' => 'DESC',
         	                'category_name' => "special",
         	                'hide_invisible' => 0
     	                ));
         	            $lost_links = get_bookmarks(array(
-        	                'orderby' => 'date',
+        	                'orderby' => 'link_id',
         	                'order' => 'DESC',  // 最新排最前
         	                'category_name' => "missing",
         	                'hide_invisible' => 0
