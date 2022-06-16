@@ -416,7 +416,8 @@
     function custom_title(){
         global $cat, $post;
         $nick = get_option('site_nick');
-        $surfix = $nick ? " | " . get_option('site_nick') : $nick;
+        $name = !is_home() ? ' - '.get_bloginfo('name') : '';
+        $surfix = $nick ? " | " . get_option('site_nick') . $name : $nick;
         switch (true) {
             case is_home():
                 echo bloginfo('name');
@@ -427,9 +428,10 @@
                 echo single_cat_title() . $surfix;
                 break;
             case is_search():
-                echo 'Search for "' . esc_html(get_search_query()) . '" in '.trim(get_option('site_search_includes')) . $surfix;
+                echo 'Search for "' . esc_html(get_search_query()) .'"'. $surfix;//. '" in '.trim(get_option('site_search_includes')) 
+                break;
             case is_tag():
-                echo 'Tags for '. single_tag_title('',false) . $surfix;
+                echo 'Tags for "'. single_tag_title('',false) .'"'. $surfix;
                 break;
             case is_page() || is_single()://in_category(array('news')):
                 echo the_title() . $surfix;
