@@ -239,7 +239,7 @@
     // 分类背景图/视频海报
     function cat_metabg($cid, $preset=false){
         $metaimg = get_term_meta($cid, 'seo_image', true);  //$page_cat->term_id
-        return $metaimg ? $metaimg : ($preset ? $preset : get_option('site_bgimg'));
+        return $metaimg ? $metaimg : ($preset ? $preset : custom_cdn_src('img',true).'/images/default.jpg');  //get_option('site_bgimg')
     }
     // 更新 sitemap 站点地图
     if(get_option('site_map_switcher')){
@@ -296,11 +296,12 @@
     // 近期公告
     function get_inform(){
         if(get_option('site_inform_switcher')){
+            $inform_max = get_option('site_inform_num');
             echo '<div class="scroll-inform"><p><b>近期公告&nbsp;</b><i class="icom inform"></i>:&nbsp;</p><div class="scroll-block" id="informBox">';
             if(get_option('site_leancloud_switcher')){
     ?>
-                <script type="text/javascript">
-                    new AV.Query("inform").addAscending("createdAt").limit(5).find().then(result=>{
+                <script type="text/javascript">  //addAscending("createdAt")
+                    new AV.Query("inform").addDescending("createdAt").limit(<?php echo $inform_max; ?>).find().then(result=>{
                         for (let i=0; i<result.length;i++) {
                             let res = result[i],
                                 title = res.attributes.title,
@@ -323,7 +324,7 @@
                         'date' => 'DESC',
                         'modified' => 'DESC'
                     ),
-                    'posts_per_page' => get_option('posts_per_page'),  //use left_query counts
+                    'posts_per_page' => $inform_max,  //use left_query counts
                     'post_status' => 'publish, draft'  //including all type but trash
                 ));
                 while(have_posts()) : the_post();

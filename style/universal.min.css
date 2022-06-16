@@ -1742,7 +1742,8 @@ p.wp_comment_tip{
     line-height: 27px;
     display: inline-block;
     color: var(--preset-6);
-    margin-left: 5px;
+    /*margin-left: 5px;*/
+    margin: auto 3px;
     padding: 0 10px;
     border-radius: 8px;
     border: 1px solid var(--preset-e);

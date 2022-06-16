@@ -244,7 +244,7 @@
                       }
                   }
               ?>
-              <p style="margin:auto;opacity:.75;font-size:smaller;font-style:italic"> WP Theme <b>2BLOG</b> openSourced via <a href="https://blog.2broear.com/" style="color:inherit;" target="_blank"><ins>2broear</ins></a> in 2022 </p>
+              <p style="margin:auto;opacity:.75;font-size:smaller;font-style:italic"> WP Theme <a href="https://github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><ins> 2BLOG </ins></a> open source via 2broear </p>
           </ul>
         </span>
       </div>

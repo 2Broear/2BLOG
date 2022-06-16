@@ -682,7 +682,7 @@
                             <?php
                                 $opt = 'site_bgimg';
                                 $value = get_option($opt);
-                                $preset = custom_cdn_src('img',true).'/images/default.jpg';  
+                                $preset = custom_cdn_src('img',true).'/images/fox.jpg';  
                                 // $preset = 'https:'.get_option('site_avatar_mirror','//sdn.geekzu.org/').'/avatar/?d=identicon&s=300';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
                                 echo '<p class="description" id="site_bgimg_label">默认背景图，用于各页面调用背景图（默认随机 gravatar 背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
@@ -877,6 +877,24 @@
                             ?>
                         </td>
                     </tr>
+                    <?php
+                        if(get_option('site_inform_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 公告展示数量</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_inform_num';
+                                        $value = get_option($opt);
+                                        $preset = 3;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">公告展示数量（默认展示 最新发布 的 3 条公告</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php 
+                        } 
+                    ?>
                     <tr valign="top">
                         <th scope="row">metaBox 元导航分类</th>
                         <td>
@@ -1949,7 +1967,8 @@
                                 <td>
                                     <?php
                                         $opt = 'site_foreverblog';
-                                        if(!get_option($opt)) update_option($opt, "https://www.foreverblog.cn/blog/2096.html");
+                                        $value = get_option($opt);
+                                        if(!$value) update_option($opt, "https://www.foreverblog.cn/blog/2096.html");
                                         echo '<p class="description" id="site_foreverblog_label">十年之约链接（foreverblog 图标</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $value . '" placeholder="foreverblog 链接"/>';
                                     ?>
                                 </td>
