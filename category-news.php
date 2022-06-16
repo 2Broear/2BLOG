@@ -62,7 +62,7 @@
                                             <div id="news-tail_info">
                                                 <ul class="post-info">
                                                     <li class="tags author"><?php $tag = get_the_tag_list();if($tag) echo($tag);else echo '<a href="javascript:;" target="" rel="nofollow">'.get_option('site_nick').'</a>'; ?></li>
-                                                    <li title="评论人数"><?php if(!get_option('site_comment_switcher')) $count=$post->comment_count;else $count=0; echo '<span class="valine-comment-count" data-xid="'.get_the_permalink().'">'.$count.'</span>'; ?></li>
+                                                    <li title="评论人数"><?php if(!get_option('site_comment_switcher')) $count=$post->comment_count;else $count=0; echo '<span class="valine-comment-count" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>'; ?></li>
                                                     <li id="post-date" class="updated" title="发布日期">
                                                         <i class="icom"></i><?php the_time('d-m-Y'); ?>
                                                     </li>

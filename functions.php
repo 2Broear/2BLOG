@@ -849,7 +849,7 @@
                             <span class="classify" id="<?php $cpar = get_the_category()[1]->parent==0 ? get_the_category()[1] : get_the_category()[0];echo $cpar->slug; ?>">
                                 <i class="icom"></i><?php echo $cpar->name; ?>
                             </span>
-                            <span class="valine-comment-count" data-xid="<?php the_permalink() ?>"><?php echo $post->comment_count; ?></span>
+                            <span class="valine-comment-count" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
                             <span class="date"><?php the_time('d-m-Y'); ?></span>
                             <span id="slider"></span>
                         </div>
@@ -877,7 +877,7 @@
                                     <div id="news-tail_info">
                                         <ul class="post-info">
                                             <li class="tags author"><?php $tag = get_the_tag_list();if($tag) echo($tag);else echo '<a href="javascript:;" target="_blank" rel="nofollow">'.get_option('site_nick').'</a>'; ?></li>
-                                            <li title="评论人数"><?php if(!get_option('site_comment_switcher')) $count=$post->comment_count;else $count=0; echo '<span class="valine-comment-count" data-xid="'.get_the_permalink().'">'.$count.'</span>'; ?></li>
+                                            <li title="评论人数"><?php if(!get_option('site_comment_switcher')) $count=$post->comment_count;else $count=0; echo '<span class="valine-comment-count" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>'; ?></li>
                                             <li id="post-date" class="updated" title="发布日期">
                                                 <i class="icom"></i><?php the_time('d-m-Y'); ?>
                                             </li>
@@ -950,7 +950,7 @@
                                 <span class="classify" id="<?php $cpar = get_the_category()[1]->parent==0 ? get_the_category()[1] : get_the_category()[0];echo $cpar->slug; ?>">
                                     <i class="icom"></i><?php echo $cpar->name; ?>
                                 </span>
-                                <span class="valine-comment-count" data-xid="<?php the_permalink() ?>"><?php echo $post->comment_count; ?></span>
+                                <span class="valine-comment-count" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
                                 <span class="date"><?php the_time('d-m-Y'); ?></span>
                                 <span id="slider"></span>
                             </div>

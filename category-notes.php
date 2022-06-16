@@ -118,7 +118,7 @@
                                 <span class="classify" id="<?php $cats=get_the_category()[0];echo $cats->slug; ?>">
                                     <i class="icom"></i><?php if($cats->parent) echo $cats->name;else echo '默认分类'; ?>
                                 </span>
-                                <span class="valine-comment-count" data-xid="<?php the_permalink() ?>"><?php echo $post->comment_count; ?></span>
+                                <span class="valine-comment-count" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
                                 <span class="date"><?php the_time('d-m-Y'); ?></span>
                                 <span id="slider"></span>
                             </div>
