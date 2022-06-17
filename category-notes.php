@@ -113,7 +113,7 @@
                                 <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
                                 <?php if($post_rights!="请选择") echo '<sup>'.get_post_meta($post->ID, "post_rights", true).'</sup>'; ?>
                             </h1>
-                            <p><?php the_excerpt() ?></p>
+                            <p><?php custom_excerpt(150); ?></p>
                             <div class="info">
                                 <span class="classify" id="<?php $cats=get_the_category()[0];echo $cats->slug; ?>">
                                     <i class="icom"></i><?php if($cats->parent) echo $cats->name;else echo '默认分类'; ?>

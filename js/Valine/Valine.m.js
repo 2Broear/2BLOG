@@ -3,7 +3,6 @@
  * (c) 2017-2019 xCss
  * Released under the GPL-2.0 License.
  * Last Update: 2019-08-29 10:10:02
- * Last Modify: 2022-02-21 17:16:00
  */
 function setCookie(name,value,path){
     let Days = 30,

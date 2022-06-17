@@ -623,21 +623,17 @@
         return $ret[$index];
     };
     // 自定义文章摘要
-    function custom_excerpt($excerpt_length) {
-        global $post;
-        $content = $post->post_content;
-        $text = strip_shortcodes( $content );
-        $text = str_replace(']]>', ']]>', $text);
-        $text = strip_tags($text);
-        $words = preg_split("/[\n\r\t ]+/", $text, $excerpt_length + 1, PREG_SPLIT_NO_EMPTY);
-        if(count($words)>$excerpt_length){
-            array_pop($words);
-            $text = implode(' ', $words);
-            $text = $text . $excerpt_more;
-        }else{
-            $text = implode(' ', $words);
-        }
-        echo $text . '...';
+    function wpdocs_custom_excerpt_length( $length ) {
+        return 300;
+    }
+    add_filter( 'excerpt_length', 'wpdocs_custom_excerpt_length', 999 );
+    function wpdocs_excerpt_more( $more ) {
+        return '...';
+    }
+    add_filter( 'excerpt_more', 'wpdocs_excerpt_more' );
+    function custom_excerpt($length=99){
+        // global $post;
+        echo wp_trim_words(get_the_excerpt(), $length);
     }
     //计算版权时间，直接在footer使用会引发没有内容的notes子分类无法显示
     function calc_copyright(){
@@ -721,7 +717,7 @@
                         <h4><a href="<?php echo $post_source; ?>" target="_blank"><?php the_title(); ?></a></h4>
                     </span>
                     <span class="lowside-description">
-                        <p><?php the_content(); ?></p>
+                        <p><?php custom_excerpt(99); ?></p>
                     </span>
                 </div>
             </div>
@@ -848,7 +844,7 @@
                             <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
                             <?php $postmeta=get_post_meta($post->ID, "post_rights", true); echo $postmeta&&$postmeta!="请选择" ? '<sup>'.$postmeta.'</sup>' : false; ?>
                         </h1>
-                        <p><?php the_excerpt() ?></p>
+                        <p><?php custom_excerpt(66); ?></p>
                         <div class="info">
                             <span class="classify" id="<?php $cpar = get_the_category()[1]->parent==0 ? get_the_category()[1] : get_the_category()[0];echo $cpar->slug; ?>">
                                 <i class="icom"></i><?php echo $cpar->name; ?>
@@ -873,7 +869,7 @@
                                     <h2 class="entry-title">
                                         <a href="<?php the_permalink() ?>" target="_blank" title="<?php the_title() ?>"><?php the_title() ?></a>
                                     </h2>
-                                    <span class="news-core_area entry-content"><?php the_excerpt(); ?></span>
+                                    <span class="news-core_area entry-content"><?php custom_excerpt(66); ?></span>
                                     <?php
                                         $postmeta = get_post_meta($post->ID, "post_feeling", true);
                                         if($postmeta) echo '<span class="news-personal_stand" unselectable="on"><dd>'.$postmeta.'</dd></span>';
@@ -949,7 +945,7 @@
                                 <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
                                 <?php $postmeta=get_post_meta($post->ID, "post_rights", true); echo $postmeta&&$postmeta!="请选择" ? '<sup>'.$postmeta.'</sup>' : false; ?>
                             </h1>
-                            <p><?php the_excerpt() ?></p>
+                            <p><?php custom_excerpt(66); ?></p>
                             <div class="info">
                                 <span class="classify" id="<?php $cpar = get_the_category()[1]->parent==0 ? get_the_category()[1] : get_the_category()[0];echo $cpar->slug; ?>">
                                     <i class="icom"></i><?php echo $cpar->name; ?>

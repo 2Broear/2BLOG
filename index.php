@@ -85,7 +85,7 @@
                       </div>
                       <div class="recommend-newsContent">
                         <span class="content-core entry-content">
-                            <p><?php custom_excerpt(10); ?></p>
+                            <p><?php custom_excerpt(150); ?></p>
                         </span>
                         <span class="content-tail">
                           <aside class="personal_stand">
