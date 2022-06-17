@@ -32,9 +32,9 @@
                                 $cat_slug = $the_cat->slug;  // print_r($the_cat);
                 ?>
                                 <div class="<?php echo $cat_slug ?>">
-                                    <a href="<?php echo $cat_slug ?>" rel="nofollow">
+                                    <a href="<?php echo get_category_link($the_cat->term_id) ?>" rel="nofollow">
                                         <h2><?php echo $the_cat->count; ?><sup>+</sup></h2>
-                                        <p><?php echo $the_cat->name.'/'.$cat_slug; ?></p>
+                                        <p><?php echo $the_cat->name.'/'.strtoupper($cat_slug); ?></p>
                                     </a>
                                 </div>
                 <?php
@@ -69,7 +69,7 @@
                 ?>
                 <div id="comment_txt" class="wow fadeInUp" data-wow-delay="0.25s">
                     <?php 
-                        the_content();  // the_page_content(current_slug());
+                        the_page_content(current_slug());  //the_content();
                         dual_data_comments();  // query comments from database before include
                     ?>
                 </div>

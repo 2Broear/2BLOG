@@ -449,6 +449,7 @@
             register_setting( 'baw-settings-group', 'site_logo' );
             register_setting( 'baw-settings-group', 'site_logos' );
         }
+        register_setting( 'baw-settings-group', 'site_single_switcher' );
         register_setting( 'baw-settings-group', 'site_icon_switcher' );
         register_setting( 'baw-settings-group', 'site_keywords' );
         register_setting( 'baw-settings-group', 'site_description' );
@@ -776,6 +777,17 @@
                                 $value = get_option($opt);
                                 $value ? $status="checked" : $status="closed";
                                 echo '<label for="'.$opt.'"><p class="description" id="">站点导航字体图标，导航别名默认为图标css类（暂不支持创建时手动选择</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:navy;" class="btn">ICON</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">展示型单页文章</th>
+                        <td>
+                            <?php
+                                $opt = 'site_single_switcher';
+                                $value = get_option($opt);
+                                $value ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="">展示型文章包括日志、漫游影视、资源下载页面（默认仅展示必要数据，开启后将开启对应文章链接并使用默认单页模板</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b>启用展示型单页</b></label>';
                             ?>
                         </td>
                     </tr>

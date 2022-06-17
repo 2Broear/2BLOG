@@ -698,7 +698,7 @@
                 'date' => 'DESC',
                 'modified' => 'DESC'
             ),
-            'posts_per_page' => get_option('site_techside_num', 5),
+            'posts_per_page' => 99//get_option('site_techside_num', 5),
         )));
         while ($acg_query->have_posts()):
             $acg_query->the_post();
@@ -714,7 +714,7 @@
                 </div>
                 <div class="inbox-aside">
                     <span class="lowside-title">
-                        <h4><a href="<?php echo $post_source; ?>" target="_blank"><?php the_title(); ?></a></h4>
+                        <h4><a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : 'javascript:;' ?>" target="_self"><?php the_title(); ?></a></h4>
                     </span>
                     <span class="lowside-description">
                         <p><?php custom_excerpt(99); ?></p>
@@ -758,7 +758,7 @@
                                             'date' => 'DESC',
                                             'modified' => 'DESC'
                                         ),
-                                        // 'posts_per_page' => get_option('posts_per_page'),  //use left_query counts
+                                        'posts_per_page' => 99//get_option('posts_per_page'),  //use left_query counts
                                     )));
                                     while ($left_query->have_posts()):
                                         $left_query->the_post();
@@ -767,8 +767,8 @@
                                             <div class="details">
                                                 <span style="background:url(<?php if(has_post_thumbnail()) the_post_thumbnail_url();else echo get_option('site_bgimg'); ?>) center center no-repeat"></span>
                                                 <div><?php the_title() ?><i>
-                                                    <a href="<?php echo get_post_meta($post->ID, "post_feeling", true); ?>" target="_blank">下载</a>
-                                                    <a href="<?php echo get_post_meta($post->ID, "post_source", true); ?>" target="_blank">查看</a>
+                                                    <a href="<?php echo get_post_meta($post->ID, "post_source", true); ?>" target="_blank">下载</a>
+                                                    <a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : 'javascript:;' ?>" target="_blank">查看</a>
                                                     </i>
                                                 </div>
                                             </div>

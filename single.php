@@ -18,6 +18,6 @@
     }elseif($the_cats_flag){
         get_template_part('single-'.$the_cats_flag);
     }else{
-        get_template_part('single-news');  // default-template
+        get_template_part('single-notes');  // default single-default.php
     }
 ?>
