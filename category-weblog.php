@@ -70,7 +70,7 @@
                                 <div class="weblog-tree-core-r">
                                     <div class="weblog-tree-box">
                                         <div class="tree-box-title">
-                                            <a href="<?php //the_permalink() ?>" id="<?php the_title(); ?>" target="_self">
+                                            <a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : 'javascript:;' ?>" id="<?php the_title(); ?>" target="_self">
                                                 <h3><?php the_title() ?></h3>
                                             </a>
                                         </div>

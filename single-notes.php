@@ -15,12 +15,13 @@
 <body class="<?php theme_mode(); ?>">
     <div class="content-all">
         <div class="win-top bg" style="background: url(<?php echo get_postimg(); ?>) center center /cover;">
-        <header>
-            <nav id="tipson" class="ajaxloadon">
-                <?php get_header(); ?>
-            </nav>
-        </header>
-        <h1><?php the_title() ?><span></span> </h1>
+            <header>
+                <nav id="tipson" class="ajaxloadon">
+                    <?php get_header(); ?>
+                </nav>
+            </header>
+            <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
+            <h1><?php the_title() ?><span></span> </h1>
         </div>
         <div class="content-all-windows">
             <div class="win-nav-content">

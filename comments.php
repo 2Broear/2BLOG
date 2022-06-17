@@ -139,7 +139,7 @@
         					img_true.match("<?php custom_cdn_src(); ?>/emojis") ? img_true=img_false : false;
         					content.length>32?content=content.slice(0,32)+'...':false;
                             //${img_true||img_false} ${content}
-        					div.innerHTML=`<div id="capture"><header><em style="background:url(<?php echo get_postimg(); ?>) center center /cover"></em></header><aside><h3>${title}</h3><?php the_excerpt(); ?><small><span contenteditable="true">${tag||"Posted in"}</span>${date||date_news}</small><span id="qrcode"></span></aside><footer><b> SHARING VIA <?php echo get_option('site_nick'); ?> </b></footer></div><div id="html2img"><div id="html2canvas"><div id="loadbox"><img id="loading" src="<?php custom_cdn_src('img'); ?>/images/loading_3_color_tp.png" /><h3> 正在生成海报，请等待.. </h3><span id="cancel" onclick="hide()"></span><span id="poster"></span></div></div></div><div id="mask"></div>`;
+        					div.innerHTML=`<div id="capture"><header><em style="background:url(<?php echo get_postimg(); ?>) center center /cover"></em></header><aside><h3>${title}</h3><p><?php custom_excerpt(50); ?></p><small><span contenteditable="true">${tag||"Posted in"}</span>${date||date_news}</small><span id="qrcode"></span></aside><footer><b> SHARING VIA <?php echo get_option('site_nick'); ?> </b></footer></div><div id="html2img"><div id="html2canvas"><div id="loadbox"><img id="loading" src="<?php custom_cdn_src('img'); ?>/images/loading_3_color_tp.png" /><h3> 正在生成海报，请等待.. </h3><span id="cancel" onclick="hide()"></span><span id="poster"></span></div></div></div><div id="mask"></div>`;
         					document.body.appendChild(div);
         					var html2img = eID("html2img",d),
         						mask = eID("mask",d);
