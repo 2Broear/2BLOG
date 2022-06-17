@@ -198,7 +198,7 @@
                             'name' => $comment->comment_author,
                             'mail' => $mail,  // 'avatar' => match_mail_avatar($mail),
                             'content' => strip_tags($comment->comment_content),
-                            'title' => '《' . get_the_title($post_id) . '》 上有新评论啦！',
+                            'title' => '《' . get_the_title($post_id) . '》 上有新评论啦~',
                             'url' => get_bloginfo('url')."/?p=$post_id#comments",
                             'image' => get_postimg(0,$post_id),
                             // 'corpid' => get_option('site_wpwx_id'),  // id
@@ -285,10 +285,11 @@
         }
     }
     // 站点logo
-    function site_logo($src=false){
+    function site_logo($dark=false){
         if(get_option('site_logo_switcher')){
             // echo $_COOKIE['theme_mode']=='dark' ? '<span style="background: url('.get_option('site_logos').') no-repeat center center /cover;"></span>' : '<span style="background: url('.get_option('site_logo').') no-repeat center center /cover;"></span>';
-            echo '<span style="background: url('.get_option('site_logo').') no-repeat center center /cover;"></span>';
+            $logo = $dark ? get_option('site_logos') : get_option('site_logo');
+            echo '<span style="background: url('.$logo.') no-repeat center center /cover;"></span>';
         }else{
             echo '<span>'.get_bloginfo('name').'</span>';
         }
@@ -602,23 +603,24 @@
     function get_postimg($index=0,$postid=false) {
         global $post, $posts;
         $postid ? $post = get_post($postid) : $post;
-        preg_match_all('/\<img.*src=("[^"]*")/i', $post->post_content, $image);
-        preg_match_all('/\<video.*poster=("[^"]*")/i', $post->post_content, $video);
-        $video_poster = trim($video[1][0],'"');
         $ret = array();
-        foreach($image[0] as $i => $v) {
-            $ret[] = trim($image[1][$i],'"');
-        };
-        //未匹配到图片或调用值超出图片数量范围则输出（视频海报或）默认图
-        if(count($ret)<=0 || count($ret)<=$index) {
-            if($video_poster){
-                $ret = [$video_poster];
-            }else{
-                if(has_post_thumbnail()) $ret = [get_the_post_thumbnail_url()];else $ret = [get_bloginfo('template_directory') . '/images/default.jpg']; //elseif($avatar) $ret = [get_option('site_avatar')];
+        if(has_post_thumbnail()){
+            $ret = [get_the_post_thumbnail_url()];
+        }else{
+            preg_match_all('/\<img.*src=("[^"]*")/i', $post->post_content, $image);
+            foreach($image[0] as $i => $v) {
+                $ret[] = trim($image[1][$i],'"');
+            };
+            //未匹配到图片或调用值超出图片数量范围则输出（视频海报或）默认图
+            if(count($ret)<=0 || count($ret)<=$index) {
+                preg_match_all('/\<video.*poster=("[^"]*")/i', $post->post_content, $video);
+                $video_poster = trim($video[1][0],'"');
+                $video_poster ? $ret = [$video_poster] : $ret = [custom_cdn_src(false,true) . '/images/default.jpg'];
+                $index = 0;
             }
-            $index = 0;
+            
         }
-        return has_post_thumbnail() ? get_the_post_thumbnail_url() : $ret[$index];
+        return $ret[$index];
     };
     // 自定义文章摘要
     function custom_excerpt($excerpt_length) {

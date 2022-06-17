@@ -201,7 +201,7 @@ header>nav#tipson .top-bar-tips a{color:var(--theme-color);text-decoration:under
     color: white!important;
 }
 .slider-menu_header .slider-logo span,
-.inside_of_block .logo-area span,.mobile-vision .m-logo span{color:var(--preset-2b);;font-size:28px;font-weight:800;font-family:"Source Han Serif SC", "Playfair Display", 宋体, serif;display:block;white-space:nowrap;width:115px;height:35px;padding:0;/*margin:21px 12px;*/}
+.inside_of_block .logo-area span,.mobile-vision .m-logo span{color:var(--preset-2b);;font-size:28px;font-weight:800;font-family:"Source Han Serif SC", "Playfair Display", 宋体, serif;display:block;white-space:nowrap;width:115px;height:35px;padding:0;margin:21px 12px 12px;}
 .inside_of_block nav.main-nav{margin:0 auto}
 .inside_of_block nav.main-nav ul{list-style-type:none;margin:0;text-align: right;padding:0 ;/*15px;display:flex;flex-flow:row nowrap;position:relative;justify-content:flex-end*/}
 .inside_of_block nav.main-nav ul li{color:var(--preset-6);line-height:102px;display:inline-block;/*margin:15px auto;position:relative;max-height:102px;height:102px;*/}
@@ -696,7 +696,7 @@ i.arrow-down::after{content:'\e908'}
 100%{transform:translateZ(0) scale(36)}
 }.slider-menu_body ul li:active>a p{color:var(--theme-color)}
 .slider-menu_body ul li.sec_level{line-height: 45px;padding: 15px 0;}
-.slider-menu_body ul.links-mores{padding-left: 50%;text-align: left}
+.slider-menu_body ul.links-mores{/*padding-left: 50%;text-align: left*/}
 .slider-menu_body ul.links-mores li{line-height: 45px;border: none}
 .slider-menu_body ul.links-mores li a{font-size: 12px;opacity: .75}
 

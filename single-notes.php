@@ -28,10 +28,9 @@
                     <article class="news-article-container">
                         <div class="infos">
                             <span id="classify">
-                                <i class="icom"></i>
                                 <?php 
-                                    $tag = get_the_tag_list();
-                                    if($tag) echo($tag);else echo '<a href="javascript:;" target="_blank" rel="nofollow">'.get_option('site_nick').'</a>';
+                                    $tags = get_the_tag_list('','、','');
+                                    echo $tags ? $tags : '<a href="javascript:;" target="_blank" rel="nofollow">'.get_option('site_nick').'</a>';
                                 ?>
                             </span>
                             <span id="date"><i class="icom"></i> <?php the_time('d-m-Y'); ?> </span>

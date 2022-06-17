@@ -34,8 +34,10 @@
         </div>
         <nav class="main-nav">
             <ul class="wp_list_cats">
-                <li class="cat_0 top_level"><a href="/"><i class="icom icon-more"></i>首页</a></li>
-            <?php 
+            <?php
+                $use_icon = get_option('site_icon_switcher');
+                $site_icon = $use_icon ? '<i class="icom icon-more"></i>' : '';
+                echo '<li class="cat_0 top_level"><a href="/">'.$site_icon.'首页</a></li>';
                 global $cat;  //变量提升
                 $cat = $cat ? $cat : get_page_cat_id(current_slug());  // if is_page() then rewrite cat to cid // echo $cat;
                 // print_r(get_category($cat));
@@ -51,7 +53,8 @@
                         // 当前选中栏目 || 当前选中栏目下子栏目 || 当前栏目下文章&&文章单页
                         if($the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";  //current category/page detect (bychild) DO NOT USE ID DETECT, because all cat are page(post) type;
                         $slash_link = get_category_link($the_cat_id)!=get_site_url() ? get_category_link($the_cat_id) : 'javascript:void(0)';  // detect if use $slash_link
-                        echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.$slash_link.'" class="'.$choosen.'"><i class="icom icon-'.$slug_icon.'"></i>'.$the_cat->name.'</a>';  //liwrapper
+                        $site_icon = $use_icon ? '<i class="icom icon-'.$slug_icon.'"></i>' : '';
+                        echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.$slash_link.'" class="'.$choosen.'">' . $site_icon . $the_cat->name.'</a>';  //liwrapper
                         if(!empty($catss)){
                             if(get_option('site_metanav_switcher') && strpos(get_option('site_metanav_array'),$the_cat_slug)!==false){ //https://blog.csdn.net/ArthurBryant/article/details/6581833
                                 if(strpos(get_option('site_metanav_image'), $the_cat_slug)!==false) $metaCls = "metaboxes";else $metaCls="";  // must else for each-loop

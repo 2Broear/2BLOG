@@ -63,21 +63,28 @@
                             	appId: '<?php echo get_option('site_leancloud_appid') ?>',
                             	appKey: '<?php echo get_option('site_leancloud_appkey') ?>',
                             	serverURLs: '<?php echo get_option('site_leancloud_server') ?>',
-                            	avosSdk: '<?php echo get_option('site_leancloud_sdk') ?>',
-                            	serverChan: '<?php echo get_option('site_comment_serverchan') ?>',
-                            	qmsgChan: '<?php //echo get_option('site_comment_qmsgchan') ?>',
-                            	pushPlus: '<?php echo get_option('site_comment_pushplus') ?>',
                             	pageSize: '<?php echo get_option('comments_per_page',15) ?>',
+                            	avosSdk: '<?php echo get_option('site_leancloud_sdk') ?>',
+                            	// avatar: '<?php //echo get_option('avatar_default','retro') ?>',
                             	notify: false,
-                            	verify: false, 
+                            	verify: false,
                             	visitor: false,
                             	recordIP: false,
-                            	avatar: '<?php echo get_option('avatar_default','retro') ?>',
-                            	avatarCdn: '<?php echo get_option("site_avatar_mirror") ?>avatar/',
-                            	wxNotify: '<?php echo get_option("site_wpwx_notify_switcher") ?>',
+                            	pushPlus: '<?php echo get_option('site_comment_pushplus') ?>',
+                            	serverChan: '<?php echo get_option('site_comment_serverchan') ?>',
+                            	// qmsgChan: '<?php //echo get_option('site_comment_qmsgchan') ?>',
                             	rootPath: '<?php echo get_bloginfo('template_directory') ?>',
+                            	avatarCdn: '<?php echo get_option("site_avatar_mirror") ?>avatar/',
+                            	posterImg: '<?php echo get_postimg(); ?>',
+                            	wxNotify: '<?php echo get_option("site_wpwx_notify_switcher") ?>',
                             	placeholder: '快来玩右下角的“涂鸦画板”！'
                             });
+                            $("#vcomments").on('click','span.vat',function(){
+                                let _t=$(this),
+                                    rp=$("div.vwrap");
+                                _t.attr("id") ? (_t.text("回复").removeAttr("id"),$("div.vinfo").before(rp)) : ($("span.vat").not(_t).text("回复").removeAttr("id"),_t.text("取消回复").attr("id","cancel").parent('div.vmeta').next("div.vcontent").after(rp));
+                                $('textarea#veditor').focus()
+                            })
                         </script>
                 <?php
                     }else{
@@ -194,12 +201,12 @@
                     <?php
                         }else{
                             site_links(get_bookmarks(array(
-            	                'orderby' => 'date',
+            	                'orderby' => 'link_id',
             	                'order' => 'DESC', //ASC
             	                'category_name' => "sitelink",
             	                'hide_invisible' => 0
         	                )));
-        	               // echo '<a id="more" href="/2bfriends" title="更多" target="_blank">  更多 </a>';
+        	                echo '<a id="more" href="/'.get_template_bind_cat('category-2bfriends.php')->slug.'" title="更多" target="_blank">  更多 </a>';
                         }
                     ?>
                 </li>
@@ -284,6 +291,7 @@
     if(get_option('site_logo_switcher')){
 ?>
         <style>
+            body.dark .mobile-vision .m-logo span,
             body.dark .logo-area span{
                 background: url(<?php echo get_option('site_logos'); ?>) no-repeat center center /cover!important;
             }

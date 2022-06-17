@@ -1,4 +1,4 @@
-
+.half-size video{width:720px!important}
 .ibox .iboxes{max-width: 66%;}
 .ImgWrapBox{width:100%;max-width:1102px;display:flex;flex-flow:column nowrap;justify-content:center;position:relative}
 .ImgWrapBox img{max-width:100%;max-height:100%;vertical-align:middle;transition:inherit;position:relative;box-shadow:rgba(0,0,0,0.18) 0 1px 32px}
@@ -43,7 +43,8 @@
 	padding-left: 10px;
 }
 .content-all-windows, .bg h1{
-	font-family: var(--font-serif)
+	font-family: var(--font-serif);
+	max-width: 82%;
 }
 .content-all-windows {
 	overflow-y: inherit;

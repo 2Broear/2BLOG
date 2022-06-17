@@ -9,7 +9,7 @@
             </span>
             <div class="slider-logo">
                 <a href="<?php bloginfo('url') ?>" data-instant style="display: inline-block;" rel="nofollow">
-                    <?php site_logo(); ?><!--<svg class="svg-symbols" width="115px" height="41px" viewBox="0 0 115 41"></svg>-->
+                    <?php site_logo(true); ?><!--<svg class="svg-symbols" width="115px" height="41px" viewBox="0 0 115 41"></svg>-->
                 </a>
             </div>
         </div>
@@ -17,6 +17,7 @@
             <div class="body-main">
                 <ul>
                     <?php
+                        $use_icon = get_option('site_icon_switcher');
                         $cats = get_categories(meta_query_categories(0, 'ASC', 'seo_order'));
                         if(!empty($cats)){
                             foreach($cats as $the_cat){
@@ -27,7 +28,8 @@
                                 $slug_icon = $the_cat->slug!="/" ? $the_cat->slug : "more";
                                 if(!empty($catss)) $level="sec_level";else $level="top_level";
                                 if($the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";  //current category/page detect (bychild) DO NOT USE ID DETECT, because all cat are page(post) type;
-                                echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.get_category_link($the_cat_id).'" class="'.$choosen.'"><i class="icom icon-'.$slug_icon.'"></i>'.$the_cat->name.'</a>';  //liwrapper
+                                $site_icon = $use_icon ? '<i class="icom icon-'.$slug_icon.'"></i>' : '';
+                                echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.get_category_link($the_cat_id).'" class="'.$choosen.'">' . $site_icon . $the_cat->name.'</a>';  //liwrapper
                                 if(!empty($catss)){
                                     echo '<ul class="links-mores">';
                                     foreach($catss as $the_cats){

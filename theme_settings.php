@@ -449,6 +449,7 @@
             register_setting( 'baw-settings-group', 'site_logo' );
             register_setting( 'baw-settings-group', 'site_logos' );
         }
+        register_setting( 'baw-settings-group', 'site_icon_switcher' );
         register_setting( 'baw-settings-group', 'site_keywords' );
         register_setting( 'baw-settings-group', 'site_description' );
         register_setting( 'baw-settings-group', 'site_support' );
@@ -767,6 +768,17 @@
                     <?php
                         }
                     ?>
+                    <tr valign="top">
+                        <th scope="row">导航图标</th>
+                        <td>
+                            <?php
+                                $opt = 'site_icon_switcher';
+                                $value = get_option($opt);
+                                $value ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="">站点导航字体图标，导航别名默认为图标css类（暂不支持创建时手动选择</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:navy;" class="btn">ICON</span></label>';
+                            ?>
+                        </td>
+                    </tr>
                     <tr valign="top">
                         <th scope="row">Category 目录</th>
                         <td>
@@ -1289,7 +1301,7 @@
                                 <td>
                                     <?php
                                         $opt = 'site_comment_serverchan';
-                                        echo '<p class="description" id="site_comment_serverchan_label">评论微信提醒（server酱提供的评论微信提醒服务（每天 5 条）<a href="https://sct.ftqq.com" target="_blank">相关文档</a></p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="ServerChan api key" value="' . get_option($opt) . '"/>';
+                                        echo '<p class="description" id="site_comment_serverchan_label">评论微信公众号提醒（server酱提供的评论微信提醒服务（每天 5 条）<a href="https://sct.ftqq.com" target="_blank">相关文档</a></p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="ServerChan api key" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>

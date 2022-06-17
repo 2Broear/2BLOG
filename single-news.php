@@ -49,7 +49,7 @@
                     </div>
                     <div class="news-article-container<?php if($fontsize) echo " AfontPlus"; ?>">
                         <div class="content">
-                            <?php the_content() ?>
+                            <?php the_content()//echo get_postimg(); ?>
                         </div>
                         <br />
                         <h5> 本文完结 </h5>
