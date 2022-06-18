@@ -58,7 +58,7 @@ wordpress 后台设置分为  __基本信息__ 、 __通用控制__ 、 __页面
 
 ### LBMS 后台（选读）
 
-lbms 后台将在 __`通用控制`__ 中的 _leancloud_ 选项开启后自动创建 `lbms` 及 `lbms-login` 页面（ ___注意默认创建为 `隐私` 类型页面，仅登录 wp 账号后才能访问___ ）。在 leancloud 创建应用之后，可通过 _leancloud_ 或 `/bms-login` 页面创建账号（若注册账号邮件验证不及时，请前往 leancloud 后台对应应用中的 __数据储存->结构化数据->User__ 表中手动设置账号的 __`emailVerified`__ 为 __`true`__ 即可正常登录）
+lbms 后台将在 __`通用控制`__ 中的 _leancloud_ 选项开启后自动创建 `lbms` 及 `lbms-login` 页面（ ___默认创建页面类型为 `私密` ，仅可在已登录 wp 站点账号后的环境下访问___ ）。在 leancloud 创建应用之后，可通过 _leancloud_ 或 `/bms-login` 页面创建账号（若注册账号邮件验证不及时，请前往 leancloud 后台对应应用中的 __数据储存->结构化数据->User__ 表中手动设置账号的 __`emailVerified`__ 为 __`true`__ 即可正常登录）
 
 -  ~~news~~ 此栏目已废弃，默认原生 _wordpress_ 数据
 - __weblog__ 对应主题模板中的 __`category-weblog.php`__ 日记日志模板，需创建 __`weblog`__ Class
