@@ -8,7 +8,7 @@
 <meta name="msapplication-TileColor" content="<?php echo $theme_color; ?>" />
 <meta name="msapplication-TileImage" content="<?php custom_cdn_src(); ?>/favicon/favicon.ico" />
 <link rel="shortcut icon" href="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico"/>
-<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/universal.min.css?v=3.3<?php //echo(mt_rand()); ?>" />
+<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/universal.min.css?v=0.7<?php //echo(mt_rand()); ?>" />
 <style>:root{--theme-color: <?php echo $theme_color; ?>}</style>
 <?php
     if(get_option('site_leancloud_switcher')){

@@ -138,7 +138,7 @@
                     <?php 
                         $use_temp = get_template_bind_cat('category-news.php')->slug;
                         $temp_cat = get_category_by_slug($use_temp)->term_id;
-                        recent_posts_query($temp_cat);
+                        recent_posts_query($temp_cat, true);
                     ?>
                 </ul>
             </div>
@@ -153,7 +153,7 @@
                     <?php 
                         $use_temp = get_template_bind_cat('category-notes.php')->slug;
                         $temp_cat = get_category_by_slug($use_temp)->term_id;
-                        recent_posts_query($temp_cat);
+                        recent_posts_query($temp_cat, true);
                     ?>
                 </ul>
             </div>
@@ -178,7 +178,7 @@
                     <ul class="tech_window-content">
                         <?php 
                             $query_cid = get_option('site_techside_cid');
-                            get_option('site_leancloud_switcher') ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid,false);
+                            get_option('site_leancloud_switcher') ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid);
                         ?>
                     </ul>
                     <div class="newsBox-subText-Description" id="tech_window-bottom">
@@ -242,7 +242,7 @@
                                             </script>
                                     <?php
                                         }else{
-                                            recent_posts_query($query_cid,false);
+                                            recent_posts_query($query_cid);
                                         }
                                     ?>
                         		</ol>

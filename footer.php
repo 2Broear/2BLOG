@@ -36,7 +36,10 @@
                             <li class="<?php if($post_orderby>1) echo 'topset'; ?>" title="<?php the_title() ?>">
                                 <a href="<?php the_permalink() ?>" target="_blank">
                                     <em><?php the_title() ?></em>
-                                    <?php if($post_orderby>1) echo '<sup id="hot">Hot</sup>'; ?>
+                                    <?php 
+                                        if($post_orderby>1) echo '<sup id="new">Top</sup>';
+                                        if($post->comment_count>=10) echo '<sup id="hot">Hot</sup>';
+                                    ?>
                                 </a>
                             </li>
                     <?php

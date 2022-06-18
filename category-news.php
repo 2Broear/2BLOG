@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php echo(custom_cdn_src()); ?>/style/news.css" />
+    <link type="text/css" rel="stylesheet" href="<?php echo(custom_cdn_src()); ?>/style/news.css?v=0.1" />
     <?php get_head(); ?>
 </head>
 <body class="<?php theme_mode(); ?>">

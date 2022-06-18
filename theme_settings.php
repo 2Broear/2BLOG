@@ -489,7 +489,7 @@
         register_setting( 'baw-settings-group', 'site_acgnside_switcher' );
         if(get_option('site_acgnside_switcher')){
             register_setting( 'baw-settings-group', 'site_acgnside_cid' );
-            register_setting( 'baw-settings-group', 'site_acgnside_num' );
+            // register_setting( 'baw-settings-group', 'site_acgnside_num' );
         }
         
         // register_setting( 'baw-settings-group', 'site_acgn_bg' );
@@ -1532,14 +1532,14 @@
                         </td>
                     </tr>
                     <tr valign="top" class="">
-                        <th scope="row">近期内容 展示数量</th>
+                        <th scope="row">近期内容展示数量</th>
                         <td>
                             <?php
                                 $opt = 'site_recent_num';
                                 $value = get_option($opt);
                                 $preset = 5;  //默认填充数据
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                echo '<p class="description" id="site_bar_pixiv_label">近期文章、笔记、日志、排行、评论等内容展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                echo '<p class="description" id="">近期文章、笔记、日志、排行、评论等内容展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                             ?>
                         </td>
                     </tr>
@@ -1650,18 +1650,18 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
-                                <th scope="row">— 分类展示数量</th>
-                                <td>
+                            <!--<tr valign="top" class="child_option">-->
+                            <!--    <th scope="row">— 分类展示数量</th>-->
+                            <!--    <td>-->
                                     <?php
-                                        $opt = 'site_acgnside_num';
-                                        $value = get_option($opt);
-                                        $preset = 5;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">分类展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        // $opt = 'site_acgnside_num';
+                                        // $value = get_option($opt);
+                                        // $preset = 5;  //默认填充数据
+                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        // echo '<p class="description" id="site_bar_pixiv_label">分类展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
-                                </td>
-                            </tr>
+                            <!--    </td>-->
+                            <!--</tr>-->
                     <?php
                         }
                     ?>
