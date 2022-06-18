@@ -152,12 +152,12 @@ ___WordPress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 
 感谢以下产品提供的服务，__2BLOG__ 在这些依赖下完善开发。
 
-- WordPress 提供的CMS程序及主题开发文档支持
-- Leancloud 提供的 BaaS 数据储存服务
-- Valine 提供的无后端评论系统
-- Wechat 提供的微信消息推送服务
+- [WordPress](https://wordpress.org) 提供的CMS程序及主题开发文档支持
+- [Leancloud](https://www.leancloud.cn) 提供的 BaaS 数据储存服务
+- [Valine](https://blog.luvying.com) 提供的无后端评论系统
+- Wechat（企业）提供的微信消息推送服务
 - ...
-- Ying 酱提供的随机动漫图片API
+- [Ying 酱](https://blog.luvying.com) 提供的随机动漫图片API
 
 ### 第三方服务插件列表（前端）
 
