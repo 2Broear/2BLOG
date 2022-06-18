@@ -2,7 +2,7 @@
 ====================================================================================================================================================================
 A Simplized Wordpress Blog Theme Design &amp; Developed from [2broear.com](http://blog.2broear.com) by 2BROEAR Released &amp; openSourced in 2022.
 
-__Preview Site__ ：[演示站点](http://wpl.2broear.com)
+__Preview Site__ ：[演示站点](http://wpl.2broear.com) （演示并不代表最终版本，最新请以 [blog.2broear.com](http://blog.2broear.com) 为准）
 
 ![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot.png "theme overview")
 
