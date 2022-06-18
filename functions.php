@@ -717,7 +717,7 @@
                         <h4><a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : 'javascript:;' ?>" target="_self"><?php the_title(); ?></a></h4>
                     </span>
                     <span class="lowside-description">
-                        <p><?php custom_excerpt(99); ?></p>
+                        <p><?php custom_excerpt(); ?></p>
                     </span>
                 </div>
             </div>
@@ -930,7 +930,7 @@
                                             <h4><a href="<?php echo get_post_meta($post->ID, "post_source", true); ?>" target="_blank"><?php the_title(); ?></a></h4>
                                         </span>
                                         <span class="lowside-description">
-                                            <p><?php the_content(); ?></p>
+                                            <p><?php custom_excerpt(); ?></p>
                                         </span>
                                     </div>
                                 </div>

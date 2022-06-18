@@ -270,7 +270,7 @@
 <footer>
     <?php get_footer(); ?>
 </footer>
-<script src="<?php if(get_option('site_chat_switcher')) echo get_option('site_chat'); ?>"></script>
+<?php if(get_option('site_chat_switcher')) echo '<script src="'.get_option('site_chat').'"></script>'; ?>
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/banner.js"></script>
 <!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/cursor.js"></script>-->

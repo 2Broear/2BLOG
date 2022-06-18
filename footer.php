@@ -64,7 +64,7 @@
                             	appKey: '<?php echo get_option('site_leancloud_appkey') ?>',
                             	serverURLs: '<?php echo get_option('site_leancloud_server') ?>',
                             	pageSize: '<?php echo get_option('comments_per_page',15) ?>',
-                            	avosSdk: '<?php echo get_option('site_leancloud_sdk') ?>',
+                            	// avosSdk: '<?php //echo get_option('site_leancloud_sdk') ?>',
                             	// avatar: '<?php //echo get_option('avatar_default','retro') ?>',
                             	notify: false,
                             	verify: false,
@@ -251,7 +251,7 @@
                       }
                   }
               ?>
-              <p style="margin:auto;opacity:.75;font-size:smaller;font-style:italic"> WP Theme <a href="https://github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><ins> 2BLOG </ins></a> open source via 2broear </p>
+              <p style="margin:auto;opacity:.75;font-size:smaller;font-style:italic"> WP Theme <a href="https://github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><ins> <b>2BLOG</b> </ins></a> openSourced via 2broear </p>
           </ul>
         </span>
       </div>
@@ -274,7 +274,12 @@
         </div>
     </div>
 </div>
+<script src="<?php custom_cdn_src(); ?>/js/nprogress.js"></script>
 <script type="text/javascript">
+	NProgress.start();
+	window.onload=function(){
+		NProgress.done();
+	};
     function automode(){
         getCookie('theme_manual') ? setCookie('theme_manual',0,false) : false;  // disable manual mode
         let date = new Date(),
