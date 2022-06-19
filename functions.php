@@ -806,7 +806,7 @@
             .win-top h5:before{content:none}
             .win-top h5{font-size:3rem;color:var(--preset-e)}
             .win-top h5 span:before{content:'';display:inherit;width:88%;height:36%;background-color:var(--theme-color);position:absolute;left:15px;bottom:1px;z-index:-1}
-            .win-top h5 span{position:relative;background:inherit;color:white;font-weight:bolder}
+            .win-top h5 span{position:relative;background:inherit;color:white;font-weight:bolder;max-width: 10em;overflow: hidden;text-overflow: ellipsis;display: inline-block;vertical-align:middle}
             .win-top h5 b{font-family:var(--font-ms);font-weight:bolder;color:var(--preset-f);/*padding:0 10px;vertical-align:text-top;*/}
             .win-content article{max-width:88%;margin-top:auto}
             .win-content article.news-window{padding:0;border:1px solid rgb(100 100 100 / 10%);margin-bottom:25px}
@@ -824,7 +824,7 @@
                 float: left;
                 opacity: var(--opacity-hi);
     	    }*/
-    	    .main h2{font-weight: 600};
+    	    .main h2{font-weight: 600;font-size:1.25rem};
             #core-info p{padding:0}
             @media screen and (max-width:760px){
                 .win-content article{
@@ -837,17 +837,20 @@
         // global $post;
         if(have_posts()) {
             while (have_posts()): the_post();
+                global $post;
+                $post_feeling = get_post_meta($post->ID, "post_feeling", true);
+                $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                 if(!$post_styles){
     ?>
-                    <article class="cat-<?php the_ID(); ?>">
+                    <article class="<?php if($post_orderby>1) echo 'topset'; ?> cat-<?php echo $post->ID ?>">
                         <h1>
                             <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
-                            <?php $postmeta=get_post_meta($post->ID, "post_rights", true); echo $postmeta&&$postmeta!="请选择" ? '<sup>'.$postmeta.'</sup>' : false; ?>
+                            <?php if($post_rights&&$post_rights!="请选择") echo '<sup>'.get_post_meta($post->ID, "post_rights", true).'</sup>'; ?>
                         </h1>
-                        <p><?php custom_excerpt(66); ?></p>
+                        <p><?php custom_excerpt(150); ?></p>
                         <div class="info">
-                            <span class="classify" id="<?php $cpar = get_the_category()[1]->parent==0 ? get_the_category()[1] : get_the_category()[0];echo $cpar->slug; ?>">
-                                <i class="icom"></i><?php echo $cpar->name; ?>
+                            <span class="classify" id="<?php $cats=get_the_category()[0];echo $cats->slug; ?>">
+                                <i class="icom"></i><?php if($cats->parent) echo $cats->name;else echo '默认分类'; ?>
                             </span>
                             <span class="valine-comment-count" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
                             <span class="date"><?php the_time('d-m-Y'); ?></span>
@@ -858,25 +861,22 @@
                 }else{
                     if(in_category(get_template_bind_cat('category-news.php')->slug)){
         ?>
-                    	<article class="news-window wow" data-wow-delay="0.1s">
+                        <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window icom wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                             <div class="news-window-inside">
                                 <span class="news-window-img">
-                                    <a href="<?php the_permalink() ?>" target="_blank">
+                                    <a href="<?php the_permalink() ?>">
                                         <img class="lazy" src="<?php echo get_postimg(); ?>" />
                                     </a>
                                 </span>
                                 <div class="news-inside-content">
                                     <h2 class="entry-title">
-                                        <a href="<?php the_permalink() ?>" target="_blank" title="<?php the_title() ?>"><?php the_title() ?></a>
+                                        <a href="<?php the_permalink() ?>" title="<?php the_title() ?>"><?php the_title() ?></a>
                                     </h2>
-                                    <span class="news-core_area entry-content"><?php custom_excerpt(66); ?></span>
-                                    <?php
-                                        $postmeta = get_post_meta($post->ID, "post_feeling", true);
-                                        if($postmeta) echo '<span class="news-personal_stand" unselectable="on"><dd>'.$postmeta.'</dd></span>';
-                                    ?>
+                                    <span class="news-core_area entry-content"><p><?php custom_excerpt(66); ?></p></span>
+                                    <?php if($post_feeling) echo '<span class="news-personal_stand" unselectable="on"><dd>'.$post_feeling.'</dd></span>'; ?>
                                     <div id="news-tail_info">
                                         <ul class="post-info">
-                                            <li class="tags author"><?php $tag = get_the_tag_list();if($tag) echo($tag);else echo '<a href="javascript:;" target="_blank" rel="nofollow">'.get_option('site_nick').'</a>'; ?></li>
+                                            <li class="tags author"><?php $tags = get_the_tag_list('','、',''); echo $tags ? $tags : '<a href="javascript:;" target="_blank" rel="nofollow">'.get_option('site_nick').'</a>'; ?></li>
                                             <li title="评论人数"><?php if(!get_option('site_comment_switcher')) $count=$post->comment_count;else $count=0; echo '<span class="valine-comment-count" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>'; ?></li>
                                             <li id="post-date" class="updated" title="发布日期">
                                                 <i class="icom"></i><?php the_time('d-m-Y'); ?>
@@ -940,15 +940,15 @@
                     }else{
                         // results doen't match in_category template, like pages..
         ?>
-                        <article class="cat-<?php the_ID(); ?>">
+                        <article class="<?php if($post_orderby>1) echo 'topset'; ?> cat-<?php echo $post->ID ?>">
                             <h1>
                                 <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
-                                <?php $postmeta=get_post_meta($post->ID, "post_rights", true); echo $postmeta&&$postmeta!="请选择" ? '<sup>'.$postmeta.'</sup>' : false; ?>
+                                <?php if($post_rights&&$post_rights!="请选择") echo '<sup>'.get_post_meta($post->ID, "post_rights", true).'</sup>'; ?>
                             </h1>
-                            <p><?php custom_excerpt(66); ?></p>
+                            <p><?php custom_excerpt(150); ?></p>
                             <div class="info">
-                                <span class="classify" id="<?php $cpar = get_the_category()[1]->parent==0 ? get_the_category()[1] : get_the_category()[0];echo $cpar->slug; ?>">
-                                    <i class="icom"></i><?php echo $cpar->name; ?>
+                                <span class="classify" id="<?php $cats=get_the_category()[0];echo $cats->slug; ?>">
+                                    <i class="icom"></i><?php if($cats->parent) echo $cats->name;else echo '默认分类'; ?>
                                 </span>
                                 <span class="valine-comment-count" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
                                 <span class="date"><?php the_time('d-m-Y'); ?></span>
@@ -959,6 +959,7 @@
                     }
                 }
             endwhile;
+                global $wp_query;  // use global varibal $wp_query
                 $pages = paginate_links(array(
                     'prev_text' => __('上一页'),
                     'next_text' => __('下一页'),
