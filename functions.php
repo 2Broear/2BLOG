@@ -814,7 +814,7 @@
             .win-content article .info span#slider{margin:auto}
     	    .news-window-img{max-width:16%}
     	    /*.news-window-img img{padding:10px}*/
-    	    .rcmd-boxes{width:21%;display:inline-block}
+    	    .rcmd-boxes{width:21%;display:inline-block;vertical-align:middle}
     	    .rcmd-boxes .info .inbox{max-width:none}
     	    /*.win-top h5:first-letter{
     	        font-size: 8rem;
