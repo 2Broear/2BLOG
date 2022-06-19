@@ -228,7 +228,7 @@
                                     <?php
                                                 if($query_slug==get_template_bind_cat('category-acg.php')->slug) echo ".equalTo('type_acg', 'anime')"
                                     ?>
-                                                .limit(<?php echo get_option('posts_per_page'); ?>).find().then(result=>{
+                                                .limit(<?php echo get_option('site_per_posts', get_option('posts_per_page')); ?>).find().then(result=>{
                                                     console.log(result)
                                                     for (let i=0; i<result.length;i++) {
                                                         let res = result[i],
@@ -242,7 +242,7 @@
                                             </script>
                                     <?php
                                         }else{
-                                            recent_posts_query($query_cid);
+                                            recent_posts_query($query_cid, false, true);
                                         }
                                     ?>
                         		</ol>

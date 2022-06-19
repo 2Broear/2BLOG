@@ -195,7 +195,9 @@ header>nav#tipson .top-bar-tips a{color:var(--theme-color);text-decoration:under
 .slider-menu_header .slider-logo span{
     color: white!important;
     /*margin:21px 12px auto;*/
-    margin-top: 5px!important;
+    margin-top: 10px!important;
+    width: 135px;
+    height: 40px;
 }
 .slider-menu_header .slider-logo span,
 .inside_of_block .logo-area span,.mobile-vision .m-logo span{
@@ -504,7 +506,7 @@ nav .nav-wrap .nav-tools em{font-size:18px;color:var(--preset-link)}
 .mobile-search .ms-inside .ms-inside-searchBox input[type=submit]:focus{background:var(--theme-color);color:white}
 .mobile-search .ms-inside .ms-inside-searchBox input{width:100%;height:100%;color:var(--preset-6);padding:0}
 .mobile-vision{width:100%;height:auto;display:none;color:var(--preset-6);flex-flow:row nowrap;justify-content:space-between}
-.mobile-vision span{width:16px;height:16px;margin:16px 0 15px 0;padding:15px 20px;cursor:pointer}
+.mobile-vision span{width:16px;height:16px;margin:16px 0px;padding:15px 20px;cursor:pointer}
 .mobile-vision .m-logo img{margin:22px auto 20px;display:block}
 .mobile-vision a{margin:0 auto;display:block}
 .mobile-vision a:active{color:var(--theme-color)}
@@ -682,7 +684,7 @@ i.arrow-down::after{content:'\e908'}
 }
 .slider-menu{width:70%;height:100%;position:fixed;top:0;left:-1px;transform:translateX(-100%);outline:0;overflow-x:hidden;overflow-y:auto;transition:all .75s cubic-bezier(0.36,0.36,0.1,1.0);display:none;z-index:100001;background:url("https://img.2broear.com/bg3.png") center center}
 .slider-menu-inside{width:100%;height:100%;position:relative;box-shadow:rgba(0,0,0,0.12) 0 1px 12px}
-.slider-menu_header{padding: 40px 0;border-bottom:4px solid var(--theme-color);position:relative}
+.slider-menu_header{padding: 50px 0;border-bottom:4px solid var(--theme-color);position:relative}
 .slider-menu_header .slider-tips{display:block;margin:5px;position:absolute;top:0;left:0}
 .slider-menu_header .slider-tips p{color:var(--preset-6);margin:5px;font-size:var(--min-size);text-align:left;transition:all .5s ease}
 .slider-menu_header .slider-close{display:block;position:absolute;top:0;right:0}

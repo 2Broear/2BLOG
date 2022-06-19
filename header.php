@@ -37,7 +37,8 @@
             <?php
                 $use_icon = get_option('site_icon_switcher');
                 $site_icon = $use_icon ? '<i class="icom icon-more"></i>' : '';
-                echo '<li class="cat_0 top_level"><a href="/">'.$site_icon.'首页</a></li>';
+                $choosen = is_home() ? 'choosen' : '';
+                echo '<li class="cat_0 top_level"><a href="/" class="'.$choosen.'">'.$site_icon.'首页</a></li>';
                 global $cat;  //变量提升
                 $cat = $cat ? $cat : get_page_cat_id(current_slug());  // if is_page() then rewrite cat to cid // echo $cat;
                 // print_r(get_category($cat));

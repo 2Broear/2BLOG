@@ -477,7 +477,7 @@
             register_setting( 'baw-settings-group', 'site_metanav_array' );
             register_setting( 'baw-settings-group', 'site_metanav_image' );
         }
-        register_setting( 'baw-settings-group', 'site_recent_num' );
+        register_setting( 'baw-settings-group', 'site_per_posts' );
         
         register_setting( 'baw-settings-group', 'site_rcmdside_cid' );
         register_setting( 'baw-settings-group', 'site_cardnav_array' );
@@ -1535,7 +1535,7 @@
                         <th scope="row">近期内容展示数量</th>
                         <td>
                             <?php
-                                $opt = 'site_recent_num';
+                                $opt = 'site_per_posts';
                                 $value = get_option($opt);
                                 $preset = 5;  //默认填充数据
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset

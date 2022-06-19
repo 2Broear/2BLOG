@@ -647,7 +647,7 @@
         $slug = get_category($cid)->slug;
 ?>
         <script type="text/javascript">
-            new AV.Query("<?php echo $slug; ?>").addDescending("createdAt").limit(<?php echo get_option('posts_per_page'); ?>).find().then(result=>{
+            new AV.Query("<?php echo $slug; ?>").addDescending("createdAt").limit(<?php echo get_option('site_per_posts', get_option('posts_per_page')); ?>).find().then(result=>{
                 for (let i=0; i<result.length;i++) {
                     let res = result[i],
                         title = res.attributes.title,
@@ -659,9 +659,9 @@
 <?php
     }
     // wp自定义（含置顶无分页）查询函数
-    function recent_posts_query($cid,$link=false){
+    function recent_posts_query($cid,$link=false,$detail=false){
         if($cid){
-            $query_array = array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_recent_num'),
+            $query_array = array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_per_posts'),
                 'orderby' => array(
                     'meta_value_num' => 'DESC',
                     'date' => 'DESC',
@@ -669,14 +669,14 @@
                 )
             );
         }else{
-            $query_array = array('cat' => $cid, 'posts_per_page' => get_option('site_recent_num'), 'order' => 'DESC', 'orderby' => 'data');
+            $query_array = array('cat' => $cid, 'posts_per_page' => get_option('site_per_posts'), 'order' => 'DESC', 'orderby' => 'data');
         }
         $left_query = new WP_Query(array_filter($query_array));
         while ($left_query->have_posts()):
             $left_query->the_post();
-            $post_orderby = get_post_meta($post->ID, "post_orderby", true);
-            $topset = $post_orderby>1 ? 'topset' : false;
-            $title = trim(get_the_title());
+            global $post;
+            $topset = get_post_meta($post->ID, "post_orderby", true)>1 ? 'topset' : false;
+            $title = $detail ? trim(get_the_title()).' -（'.get_post_meta($post->ID, "post_feeling", true).'）<sup>'.$post->post_date.'</sup>' : trim(get_the_title());
             $pre_link = $link||get_option('site_single_switcher') ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="/'.get_category($cid)->slug.'" target="_self">';
             echo '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
         endwhile;
