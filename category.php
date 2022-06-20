@@ -4,13 +4,13 @@
     if(!empty($cats)){
         foreach($cats as $the_cat){
             $the_cat_id = $the_cat->term_id;
-            $the_cat_temp = TEMPLATEPATH . '/category-'.$the_cat->slug.'.php';  // 子分类继承父分类模板
+            $the_cat_temp = TEMPLATEPATH . '/'.get_term_meta($the_cat_id, 'seo_template', true);  // 子分类继承父分类模板（获取分类绑定模板）
             if(cat_is_ancestor_of($the_cat_id, $cat) && file_exists($the_cat_temp)) include_once($the_cat_temp);//else include_once(TEMPLATEPATH . '/category-default.php');  // 二级..
             $catss = get_categories(meta_query_categories($the_cat_id, 'ASC', 'seo_order'));
             if(!empty($catss)){
                 foreach($catss as $the_cats){
                     $the_cats_id = $the_cats->term_id;
-                    $the_cats_temp = TEMPLATEPATH . '/category-'.$the_cats->slug.'.php';
+                    $the_cats_temp = TEMPLATEPATH . '/'.get_term_meta($the_cats_id, 'seo_template', true);
                     if(cat_is_ancestor_of($the_cats_id, $cat) && file_exists($the_cats_temp)) include_once($the_cats_temp);//else include_once(TEMPLATEPATH . '/category-default.php');
                 }
             }

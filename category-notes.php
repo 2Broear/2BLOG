@@ -52,7 +52,7 @@
                             if(!empty($cats)){
                                 foreach($cats as $the_cat){
                                     $the_cat_id = $the_cat->term_id;
-                                    if($the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";
+                                    if($the_cat_id==$cat&&!is_single() || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";
                                     echo '<li class="cat_'.$the_cat_id.' toplevel"><a href="'.get_category_link($the_cat).'" id="'.$the_cat->slug.'" class="'.$choosen.'">'.$the_cat->name.'</a>';
                                     $catss = get_categories(meta_query_categories($the_cat_id, 'ASC', 'seo_order'));
                                     if(!empty($catss)){  //expect category id "notes": &&$the_cat_id!=3
