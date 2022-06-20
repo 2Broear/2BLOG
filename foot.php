@@ -18,6 +18,9 @@
                 <ul>
                     <?php
                         $use_icon = get_option('site_icon_switcher');
+                        $site_icon = $use_icon ? '<i class="icom icon-more"></i>' : '';
+                        $choosen = is_home() ? 'choosen' : '';
+                        echo '<li class="cat_0 top_level"><a href="/" class="'.$choosen.'">'.$site_icon.'首页</a></li>';
                         $cats = get_categories(meta_query_categories(0, 'ASC', 'seo_order'));
                         if(!empty($cats)){
                             foreach($cats as $the_cat){
