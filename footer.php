@@ -82,15 +82,16 @@
                             	wxNotify: '<?php echo get_option("site_wpwx_notify_switcher") ?>',
                             	placeholder: '快来玩右下角的“涂鸦画板”！'
                             });
-                            const valine = document.querySelector('#vcomments');
-                            if(valine){
-                                $("#vcomments").on('click','span.vat',function(){
-                                    let _t=$(this),
-                                        rp=$("div.vwrap");
-                                    _t.attr("id") ? (_t.text("回复").removeAttr("id"),$("div.vinfo").before(rp)) : ($("span.vat").not(_t).text("回复").removeAttr("id"),_t.text("取消回复").attr("id","cancel").parent('div.vmeta').next("div.vcontent").after(rp));
-                                    $('textarea#veditor').focus()
-                                })
-                            }
+                            // window.onload=function(){
+                            //     if(document.querySelector('#vcomments')){
+                                    // $("#vcomments").on('click','span.vat',function(){
+                                    //     let _t=$(this),
+                                    //         rp=$("div.vwrap");
+                                    //     _t.attr("id") ? (_t.text("回复").removeAttr("id"),$("div.vinfo").before(rp)) : ($("span.vat").not(_t).text("回复").removeAttr("id"),_t.text("取消回复").attr("id","cancel").parent('div.vmeta').next("div.vcontent").after(rp));
+                                    //     $('textarea#veditor').focus()
+                                    // })
+                            //     }
+                            // };
                         </script>
                 <?php
                     }else{
