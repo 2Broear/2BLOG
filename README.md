@@ -152,7 +152,7 @@ ___WordPress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 
 ### 开发支持
 
-感谢以下产品提供的服务，__2BLOG__ 主题在这些环境下开发
+感谢以下产品提供的服务，__2BLOG__ 主题在这些服务下完善功能
 
 - [WordPress](https://wordpress.org) 提供的CMS程序及主题开发文档支持
 - [Leancloud](https://www.leancloud.cn) 提供的 BaaS 数据储存服务
@@ -160,6 +160,7 @@ ___WordPress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 - Wechat（企业）提供的微信消息推送服务
 - ...
 - [Ying 酱](https://blog.luvying.com) 提供的随机动漫图片API
+- [mokeyjay 超能小紫](https://blog.luvying.com) 提供的Pixiv每日排行榜小挂件
 
 ### 前端插件
 
