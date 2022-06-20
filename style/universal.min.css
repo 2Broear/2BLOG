@@ -708,9 +708,9 @@ i.arrow-down::after{content:'\e908'}
 }.slider-menu_body ul li:active>a p{color:var(--theme-color)}
 .slider-menu_body ul li.sec_level{line-height: 45px;padding: 15px 0;}
 .slider-menu_body ul.links-mores{
-    width: 65%;
-    float: right;
-    text-align: left;
+    /*width: 65%;*/
+    /*float: right;*/
+    /*text-align: left;*/
 }
 .slider-menu_body ul.links-mores li{line-height: 45px;border: none}
 .slider-menu_body ul.links-mores li a{font-size: 12px;opacity: .75}

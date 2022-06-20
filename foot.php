@@ -27,7 +27,7 @@
                                 $catss = get_categories(meta_query_categories($the_cat_id, 'ASC', 'seo_order'));
                                 $slug_icon = $the_cat->slug!="/" ? $the_cat->slug : "more";
                                 if(!empty($catss)) $level="sec_level";else $level="top_level";
-                                if($the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";  //current category/page detect (bychild) DO NOT USE ID DETECT, because all cat are page(post) type;
+                                if($the_cat_id==$cat&&!is_single() || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";  //current category/page detect (bychild) DO NOT USE ID DETECT, because all cat are page(post) type;
                                 $site_icon = $use_icon ? '<i class="icom icon-'.$slug_icon.'"></i>' : '';
                                 echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.get_category_link($the_cat_id).'" class="'.$choosen.'">' . $site_icon . $the_cat->name.'</a>';  //liwrapper
                                 if(!empty($catss)){

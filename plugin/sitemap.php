@@ -1,5 +1,5 @@
 <?php
-    //if(get_option('site_map_switcher')){
+    // if(get_option('site_map_switcher')){
         // require_once( '../../../../wp-load.php' );  // DO NOT Load WordPress Core!!! Caused E_COMPILE_ERROR while Requiring wp-load.php
         $sitemap_opts = get_option('site_map_includes','');
         $site_url = get_site_url();//get_option("home"); bloginfo('url')
@@ -93,7 +93,7 @@
         ob_end_clean();
         file_put_contents(ABSPATH . '/sitemap.xml', $content);
     // file_put_contents(TEMPLATEPATH . '/sitemap.xml', $content);
-    //}else{
-    //    echo '<h1>Sitemap Disabled in 2blog-settings!</h1>';
-    //}
+    // }else{
+    //     echo '<h1>Sitemap Disabled in 2blog-settings!</h1>';
+    // }
 ?>
