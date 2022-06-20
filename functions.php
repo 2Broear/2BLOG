@@ -247,6 +247,7 @@
             require_once(TEMPLATEPATH . '/plugin/sitemap.php');
         }
         add_action('publish_post','update_sitemap');
+        add_action('after_setup_theme', 'update_sitemap');
     }
     // 站点头部
     function get_head(){
