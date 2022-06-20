@@ -229,7 +229,7 @@ i.icomoon,
 .inside_of_block nav.main-nav ul li.sec_level div.links-more a{color:var(--preset-8);padding:0;margin:0;line-height:36px;text-align:left;border-bottom:1px solid var(--preset-s)}
 
 .additional.metabox{
-    width: 360%;
+    width: 380%;
     left: -136px;
     line-height: 0;
     padding: 25px 15px 15px;
@@ -564,7 +564,7 @@ body.dark .empty_card{
 }
 .empty_card{
     color: rgba(125, 125, 125, 0.88);
-    padding: 10% 0 0%;
+    padding: 8% 0 0%;
     width: 42%;
     max-width: 300px;
     margin: 5% auto;

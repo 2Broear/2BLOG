@@ -111,7 +111,7 @@
                         <article class="<?php if($post_orderby>1) echo 'topset'; ?> cat-<?php echo $post->ID ?>">
                             <h1>
                                 <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
-                                <?php if($post_rights!="请选择") echo '<sup>'.get_post_meta($post->ID, "post_rights", true).'</sup>'; ?>
+                                <?php if($post_rights&&$post_rights!="请选择") echo '<sup>'.get_post_meta($post->ID, "post_rights", true).'</sup>'; ?>
                             </h1>
                             <p><?php custom_excerpt(150); ?></p>
                             <div class="info">
