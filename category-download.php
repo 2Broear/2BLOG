@@ -11,6 +11,7 @@
     <?php get_head(); ?>
     <style>
         #loading:before{top:40px}
+        .main{padding: 0 15px;}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
