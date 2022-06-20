@@ -18,7 +18,7 @@
                     <?php
                         $cat_id = get_option('site_bottom_recent_cid');
                         if($cat_id){
-                            $query_array = array('cat' => $cat_id, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_recent_num',5),
+                            $query_array = array('cat' => $cat_id, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_per_posts', get_option('posts_per_page')),
                                 'orderby' => array(
                                     'meta_value_num' => 'DESC',
                                     'date' => 'DESC',
@@ -26,7 +26,7 @@
                                 )
                             );
                         }else{
-                            $query_array = array('cat' => $cat_id, 'posts_per_page' => get_option('site_recent_num',5), 'order' => 'DESC', 'orderby' => 'date');
+                            $query_array = array('cat' => $cat_id, 'posts_per_page' => get_option('site_per_posts', get_option('posts_per_page')), 'order' => 'DESC', 'orderby' => 'date');
                         }
                         $left_query = new WP_Query(array_filter($query_array));
                         while ($left_query->have_posts()):
@@ -36,7 +36,10 @@
                             <li class="<?php if($post_orderby>1) echo 'topset'; ?>" title="<?php the_title() ?>">
                                 <a href="<?php the_permalink() ?>" target="_blank">
                                     <em><?php the_title() ?></em>
-                                    <?php if($post_orderby>1) echo '<sup id="hot">Hot</sup>'; ?>
+                                    <?php 
+                                        if($post_orderby>1) echo '<sup id="new">Top</sup>';
+                                        if($post->comment_count>=10) echo '<sup id="hot">Hot</sup>';
+                                    ?>
                                 </a>
                             </li>
                     <?php
@@ -64,7 +67,7 @@
                             	appKey: '<?php echo get_option('site_leancloud_appkey') ?>',
                             	serverURLs: '<?php echo get_option('site_leancloud_server') ?>',
                             	pageSize: '<?php echo get_option('comments_per_page',15) ?>',
-                            	avosSdk: '<?php echo get_option('site_leancloud_sdk') ?>',
+                            	// avosSdk: '<?php //echo get_option('site_leancloud_sdk') ?>',
                             	// avatar: '<?php //echo get_option('avatar_default','retro') ?>',
                             	notify: false,
                             	verify: false,
@@ -79,18 +82,21 @@
                             	wxNotify: '<?php echo get_option("site_wpwx_notify_switcher") ?>',
                             	placeholder: '快来玩右下角的“涂鸦画板”！'
                             });
-                            $("#vcomments").on('click','span.vat',function(){
-                                let _t=$(this),
-                                    rp=$("div.vwrap");
-                                _t.attr("id") ? (_t.text("回复").removeAttr("id"),$("div.vinfo").before(rp)) : ($("span.vat").not(_t).text("回复").removeAttr("id"),_t.text("取消回复").attr("id","cancel").parent('div.vmeta').next("div.vcontent").after(rp));
-                                $('textarea#veditor').focus()
-                            })
+                            const valine = document.querySelector('#vcomments');
+                            if(valine){
+                                $("#vcomments").on('click','span.vat',function(){
+                                    let _t=$(this),
+                                        rp=$("div.vwrap");
+                                    _t.attr("id") ? (_t.text("回复").removeAttr("id"),$("div.vinfo").before(rp)) : ($("span.vat").not(_t).text("回复").removeAttr("id"),_t.text("取消回复").attr("id","cancel").parent('div.vmeta').next("div.vcontent").after(rp));
+                                    $('textarea#veditor').focus()
+                                })
+                            }
                         </script>
                 <?php
                     }else{
                         $comments = get_comments(
                             array(
-                                'number' => get_option('site_recent_num',5), //get_option('posts_per_page')
+                                'number' => get_option('site_per_posts', get_option('posts_per_page')), //get_option('posts_per_page')
                                 'orderby' => 'comment_date',
                                 'order' => 'DESC',
                                 'status' => 'approve'  // 仅输出已通过审核的评论数量
@@ -251,7 +257,7 @@
                       }
                   }
               ?>
-              <p style="margin:auto;opacity:.75;font-size:smaller;font-style:italic"> WP Theme <a href="https://github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><ins> 2BLOG </ins></a> open source via 2broear </p>
+              <p style="margin:auto;opacity:.75;font-size:smaller;font-style:italic"> WP Theme <a href="https://github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><ins> <b>2BLOG</b> </ins></a> openSourced via 2broear </p>
           </ul>
         </span>
       </div>
@@ -274,7 +280,12 @@
         </div>
     </div>
 </div>
+<script src="<?php custom_cdn_src(); ?>/js/nprogress.js"></script>
 <script type="text/javascript">
+	NProgress.start();
+	window.onload=function(){
+		NProgress.done();
+	};
     function automode(){
         getCookie('theme_manual') ? setCookie('theme_manual',0,false) : false;  // disable manual mode
         let date = new Date(),

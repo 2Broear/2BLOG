@@ -78,11 +78,11 @@
                                             <span id="core-info">
                                                 <p class="excerpt"><?php custom_excerpt(100) ?></p>
                                             </span>
-                                            <span id="other-info">
-                                                <h4> Ps. </h4>
-                                                <p class="feeling"><?php echo get_post_meta($post->ID, "post_feeling", true); ?></p>
-                                                <p id="sub"><?php the_time('Y-n-j'); ?></p>
-                                            </span>
+                                            <?php
+                                                $ps = get_post_meta($post->ID, "post_feeling", true);
+                                                if($ps) echo '<span id="other-info"><h4> Ps. </h4><p class="feeling">'.$ps.'</p></span>';
+                                            ?>
+                                            <p id="sub"><?php the_time('Y-n-j'); ?></p>
                                         </div>
                                     </div>
                                 </div>

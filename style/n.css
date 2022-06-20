@@ -99,7 +99,7 @@
 	display: inline-block;
 	position: relative;
 	padding: 5px 15px;
-	margin: 6% auto 14%;
+	margin: 6% auto 12%;
 	color: var(--preset-2b);
 	background: rgba(255, 255, 255, 0.88);
 	border-radius:var(--radius);

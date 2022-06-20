@@ -50,14 +50,14 @@ header{height:154px;margin-bottom:auto}
 .article-type{/*width:50%;height:auto;*/white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display: inline-block;vertical-align:middle}
 #news-tail_info ul li.tags a,
 #news-tail_info ul li.author a,
-.article-type a{color:var(--preset-8);padding:0 3px}
+.article-type a{color:inherit;}
 #news-tail_info ul li.tags a:hover,
 .article-type a:hover{text-decoration:underline;color:var(--theme-color)}
 .article-type a address{display:inline-block}
 #news-tail_info{height:20px;color:var(--preset-8);font-size:var(--min-size);padding:10px 0;margin-top:5px;;text-align:right;border-top:1px solid var(--preset-s);white-space: nowrap;opacity:.88}
 #news-tail_info ul.post-info{/*width:50%;text-align: right;*/margin:0 auto;display: inline-block;padding:0;vertical-align: top;}
 #news-tail_info ul .valine-comment-count:before{content: "#";padding-right: 2px;}
-#news-tail_info ul li{line-height:18px;display: inherit;margin-right:15px}
+#news-tail_info ul li{line-height:18px;display: inherit;margin-right:15px;color:var(--preset-9);}
 #news-tail_info ul li i{font-size:var(--min-size);left:-3px;position:relative}
 #news-tail_info #post-level i::before{content:'\e920'}
 #news-tail_info #post-views i::before{content:'\e91f'}

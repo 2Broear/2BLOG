@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php echo(custom_cdn_src()); ?>/style/news.css" />
+    <link type="text/css" rel="stylesheet" href="<?php echo(custom_cdn_src()); ?>/style/news.css?v=0.1" />
     <?php get_head(); ?>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -57,7 +57,7 @@
                                             <h2 class="entry-title">
                                                 <a href="<?php the_permalink() ?>" title="<?php the_title() ?>"><?php the_title() ?></a>
                                             </h2>
-                                            <span class="news-core_area entry-content"><p><?php custom_excerpt(88); ?></p></span>
+                                            <span class="news-core_area entry-content"><p><?php custom_excerpt(66); ?></p></span>
                                             <?php if($post_feeling) echo '<span class="news-personal_stand" unselectable="on"><dd>'.$post_feeling.'</dd></span>'; ?>
                                             <div id="news-tail_info">
                                                 <ul class="post-info">

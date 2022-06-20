@@ -157,7 +157,7 @@
             $admin_mail = get_option('site_smtp_mail', get_bloginfo('admin_email'));
             $user_mail = $comment->comment_author_email;
             $title = ' 「' . get_the_title($comment->comment_post_ID) . '」 收到一条来自 '.$comment->comment_author.' 的留言！';
-            $body = '<style>.box{background-color:white;border-bottom:2px solid #EB6844;border-radius:10px;box-shadow:rgba(0,0,0,0.08) 0 0 18px;line-height:180%;width:500px;margin:50px auto;color:#555555;font-family:"Century Gothic","Trebuchet MS","Hiragino Sans GB",微软雅黑,"Microsoft Yahei",Tahoma,Helvetica,Arial,"SimSun",sans-serif;font-size:12px;}.box .head{border-bottom:1px solid whitesmoke;font-size:14px;font-weight:normal;padding-bottom:15px;margin-bottom:15px;text-align:center;line-height:28px;}.box .head h3{margin-bottom:0;margin:0;}.box .head .title{color:#EB6844;font-weight:bold;}.box .body{padding:0 15px;}.box .body .content{background-color:#f5f5f5;padding:10px 15px;margin:18px 0;word-wrap:break-word;border-radius:5px;}a{text-decoration:none!important;color:#EB6844;}img{max-width:100%;display:block;margin:0 auto;border-radius:inherit;border-bottom-left-radius:unset;border-bottom-right-radius:unset;}.button:hover{background:#EB6844;color:#ffffff;}.button{display:block;margin:0 auto;width:15%;line-height:35px;padding:0 15px;border:1px solid currentColor;border-radius:50px;text-align:center;font-weight:bold;}</style><div class="box"><img src="https://img.2broear.com/google/google_s.gif"><h2 class="head"><span class="title">「'. get_option("blogname") .'」上有一条新评论！</span><p><a class="button"href="' . htmlspecialchars(get_comment_link($parent_id)) . '"target="_blank">点击查看</a></p></h2><div class="body"><p><strong>' . trim($comment->comment_author) . '：</strong></p><div class="content"><p><a class="at"href="#624a75eb1122b910ec549633">' . trim($comment->comment_content) . '</a></p></div></div></div>';
+            $body = '<style>.box{background-color:white;border-bottom:2px solid #EB6844;border-radius:10px;box-shadow:rgba(0,0,0,0.08) 0 0 18px;line-height:180%;width:500px;margin:50px auto;color:#555555;font-family:"Century Gothic","Trebuchet MS","Hiragino Sans GB",微软雅黑,"Microsoft Yahei",Tahoma,Helvetica,Arial,"SimSun",sans-serif;font-size:12px;}.box .head{border-bottom:1px solid whitesmoke;font-size:14px;font-weight:normal;padding-bottom:15px;margin-bottom:15px;text-align:center;line-height:28px;}.box .head h3{margin-bottom:0;margin:0;}.box .head .title{color:#EB6844;font-weight:bold;}.box .body{padding:0 15px;}.box .body .content{background-color:#f5f5f5;padding:10px 15px;margin:18px 0;word-wrap:break-word;border-radius:5px;}a{text-decoration:none!important;color:#EB6844;}img{max-width:100%;display:block;margin:0 auto;border-radius:inherit;border-bottom-left-radius:unset;border-bottom-right-radius:unset;}.button:hover{background:#EB6844;color:#ffffff;}.button{display:block;margin:0 auto;width:15%;line-height:35px;padding:0 15px;border:1px solid currentColor;border-radius:50px;text-align:center;font-weight:bold;}</style><div class="box"><img src="'.custom_cdn_src("img",true).'images/google.gif"><h2 class="head"><span class="title">「'. get_option("blogname") .'」上有一条新评论！</span><p><a class="button"href="' . htmlspecialchars(get_comment_link($parent_id)) . '"target="_blank">点击查看</a></p></h2><div class="body"><p><strong>' . trim($comment->comment_author) . '：</strong></p><div class="content"><p><a class="at"href="#624a75eb1122b910ec549633">' . trim($comment->comment_content) . '</a></p></div></div></div>';
             $header = "\nContent-Type: text/html; charset=" . get_option('blog_charset') . "\n";
             // 当前用户不为博主时发送评论提醒邮件
             if($user_mail!=$admin_mail) wp_mail($admin_mail, $title, $body, $header);
@@ -173,7 +173,7 @@
         if($parent_id!='' && $comment->comment_approved!='spam'){
             $tomail = trim(get_comment($parent_id)->comment_author_email);
             $title = '👉 叮咚！您在 「' . get_option("blogname") . '」 上有一条新回复！';
-            $body = '<style>.box{background-color:white;border-bottom:2px solid #EB6844;border-radius:10px;box-shadow:rgba(0,0,0,0.08) 0 0 18px;line-height:180%;width:500px;margin:50px auto;color:#555555;font-family:"Century Gothic","Trebuchet MS","Hiragino Sans GB",微软雅黑,"Microsoft Yahei",Tahoma,Helvetica,Arial,"SimSun",sans-serif;font-size:12px;}.box .head{border-bottom:1px solid whitesmoke;font-size:14px;font-weight:normal;padding-bottom:15px;margin-bottom:15px;text-align:center;line-height:28px;}.box .head h3{margin-bottom:0;margin:0;}.box .head .title{color:#EB6844;font-weight:bold;}.box .body{padding:0 15px;}.box .body .content{background-color:#f5f5f5;padding:10px 15px;margin:18px 0;word-wrap:break-word;border-radius:5px;}a{text-decoration:none!important;color:#EB6844;}img{max-width:100%;display:block;margin:0 auto;border-radius:inherit;border-bottom-left-radius:unset;border-bottom-right-radius:unset;}.button:hover{background:#EB6844;color:#ffffff;}.button{display:block;margin:0 auto;width:15%;line-height:35px;padding:0 15px;border:1px solid currentColor;border-radius:50px;text-align:center;font-weight:bold;}</style><div class="box"><img src="https://img.2broear.com/google/google_flush.gif"><div class="head"><h2>'. trim(get_comment($parent_id)->comment_author) .'，</h2>有人回复了你在《' . get_the_title($comment->comment_post_ID) . '》上的评论！</div>&nbsp;&nbsp;&nbsp;你评论的：<div class="body"><div class="content"><p>' . trim(get_comment($parent_id)->comment_content) . '</p></div><p>被<strong> ' . trim($comment->comment_author) . ' </strong>回复：</p><div class="content"><p><a class="at" href="#">' . trim($comment->comment_content) . '</a></p></div><p style="margin:20px auto"><a class="button"href="' . htmlspecialchars(get_comment_link($parent_id)) . '"target="_blank"rel="noopener">点击查看</a></p><p><center><b style="opacity:.5">此邮件由系统发送无需回复，</b>欢迎再来<a href="' . get_bloginfo('url') . '"target="_blank"rel="noopener"> '. get_option("blogname") .' </a>游玩！</center></p></div></div>';
+            $body = '<style>.box{background-color:white;border-bottom:2px solid #EB6844;border-radius:10px;box-shadow:rgba(0,0,0,0.08) 0 0 18px;line-height:180%;width:500px;margin:50px auto;color:#555555;font-family:"Century Gothic","Trebuchet MS","Hiragino Sans GB",微软雅黑,"Microsoft Yahei",Tahoma,Helvetica,Arial,"SimSun",sans-serif;font-size:12px;}.box .head{border-bottom:1px solid whitesmoke;font-size:14px;font-weight:normal;padding-bottom:15px;margin-bottom:15px;text-align:center;line-height:28px;}.box .head h3{margin-bottom:0;margin:0;}.box .head .title{color:#EB6844;font-weight:bold;}.box .body{padding:0 15px;}.box .body .content{background-color:#f5f5f5;padding:10px 15px;margin:18px 0;word-wrap:break-word;border-radius:5px;}a{text-decoration:none!important;color:#EB6844;}img{max-width:100%;display:block;margin:0 auto;border-radius:inherit;border-bottom-left-radius:unset;border-bottom-right-radius:unset;}.button:hover{background:#EB6844;color:#ffffff;}.button{display:block;margin:0 auto;width:15%;line-height:35px;padding:0 15px;border:1px solid currentColor;border-radius:50px;text-align:center;font-weight:bold;}</style><div class="box"><img src="'.custom_cdn_src("img",true).'images/google_flush.gif"><div class="head"><h2>'. trim(get_comment($parent_id)->comment_author) .'，</h2>有人回复了你在《' . get_the_title($comment->comment_post_ID) . '》上的评论！</div>&nbsp;&nbsp;&nbsp;你评论的：<div class="body"><div class="content"><p>' . trim(get_comment($parent_id)->comment_content) . '</p></div><p>被<strong> ' . trim($comment->comment_author) . ' </strong>回复：</p><div class="content"><p><a class="at" href="#">' . trim($comment->comment_content) . '</a></p></div><p style="margin:20px auto"><a class="button"href="' . htmlspecialchars(get_comment_link($parent_id)) . '"target="_blank"rel="noopener">点击查看</a></p><p><center><b style="opacity:.5">此邮件由系统发送无需回复，</b>欢迎再来<a href="' . get_bloginfo('url') . '"target="_blank"rel="noopener"> '. get_option("blogname") .' </a>游玩！</center></p></div></div>';
             $headers = "From: \"" . get_option('blogname') . "\" <".$admin_mail.">\nContent-Type: text/html; charset=" . get_option('blog_charset') . "\n";
             // 博主收到评论回复时已收到评论邮件，无需重复通知（访客回复）邮件
             if($tomail!=$admin_mail) wp_mail($tomail, $title, $body, $headers);
@@ -247,6 +247,7 @@
             require_once(TEMPLATEPATH . '/plugin/sitemap.php');
         }
         add_action('publish_post','update_sitemap');
+        add_action('after_setup_theme', 'update_sitemap');
     }
     // 站点头部
     function get_head(){
@@ -647,7 +648,7 @@
         $slug = get_category($cid)->slug;
 ?>
         <script type="text/javascript">
-            new AV.Query("<?php echo $slug; ?>").addDescending("createdAt").limit(<?php echo get_option('posts_per_page'); ?>).find().then(result=>{
+            new AV.Query("<?php echo $slug; ?>").addDescending("createdAt").limit(<?php echo get_option('site_per_posts', get_option('posts_per_page')); ?>).find().then(result=>{
                 for (let i=0; i<result.length;i++) {
                     let res = result[i],
                         title = res.attributes.title,
@@ -659,9 +660,9 @@
 <?php
     }
     // wp自定义（含置顶无分页）查询函数
-    function recent_posts_query($cid,$link=true){
+    function recent_posts_query($cid,$link=false,$detail=false){
         if($cid){
-            $query_array = array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_recent_num'),
+            $query_array = array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_per_posts'),
                 'orderby' => array(
                     'meta_value_num' => 'DESC',
                     'date' => 'DESC',
@@ -669,15 +670,15 @@
                 )
             );
         }else{
-            $query_array = array('cat' => $cid, 'posts_per_page' => get_option('site_recent_num'), 'order' => 'DESC', 'orderby' => 'data');
+            $query_array = array('cat' => $cid, 'posts_per_page' => get_option('site_per_posts'), 'order' => 'DESC', 'orderby' => 'data');
         }
         $left_query = new WP_Query(array_filter($query_array));
         while ($left_query->have_posts()):
             $left_query->the_post();
-            $post_orderby = get_post_meta($post->ID, "post_orderby", true);
-            $topset = $post_orderby>1 ? 'topset' : false;
-            $title = trim(get_the_title());
-            $pre_link = $link ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="/'.get_category($cid)->slug.'" target="_self">';
+            global $post;
+            $topset = get_post_meta($post->ID, "post_orderby", true)>1 ? 'topset' : false;
+            $title = $detail ? trim(get_the_title()).' -（'.get_post_meta($post->ID, "post_feeling", true).'）<sup>'.$post->post_date.'</sup>' : trim(get_the_title());
+            $pre_link = $link||get_option('site_single_switcher') ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="/'.get_category($cid)->slug.'" target="_self">';
             echo '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
         endwhile;
         wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
@@ -717,7 +718,7 @@
                         <h4><a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : 'javascript:;' ?>" target="_self"><?php the_title(); ?></a></h4>
                     </span>
                     <span class="lowside-description">
-                        <p><?php custom_excerpt(99); ?></p>
+                        <p><?php custom_excerpt(66); ?></p>
                     </span>
                 </div>
             </div>
@@ -806,7 +807,7 @@
             .win-top h5:before{content:none}
             .win-top h5{font-size:3rem;color:var(--preset-e)}
             .win-top h5 span:before{content:'';display:inherit;width:88%;height:36%;background-color:var(--theme-color);position:absolute;left:15px;bottom:1px;z-index:-1}
-            .win-top h5 span{position:relative;background:inherit;color:white;font-weight:bolder}
+            .win-top h5 span{position:relative;background:inherit;color:white;font-weight:bolder;max-width: 10em;overflow: hidden;text-overflow: ellipsis;display: inline-block;vertical-align:middle}
             .win-top h5 b{font-family:var(--font-ms);font-weight:bolder;color:var(--preset-f);/*padding:0 10px;vertical-align:text-top;*/}
             .win-content article{max-width:88%;margin-top:auto}
             .win-content article.news-window{padding:0;border:1px solid rgb(100 100 100 / 10%);margin-bottom:25px}
@@ -814,7 +815,8 @@
             .win-content article .info span#slider{margin:auto}
     	    .news-window-img{max-width:16%}
     	    /*.news-window-img img{padding:10px}*/
-    	    .rcmd-boxes{width:21%;display:inline-block}
+    	    .rcmd-boxes{width:21%;display:inline-block;vertical-align:middle}
+    	    .empty_card h1{max-width: 88%;overflow: hidden;text-overflow: ellipsis;display: block;margin: 25px auto;}
     	    .rcmd-boxes .info .inbox{max-width:none}
     	    /*.win-top h5:first-letter{
     	        font-size: 8rem;
@@ -824,7 +826,7 @@
                 float: left;
                 opacity: var(--opacity-hi);
     	    }*/
-    	    .main h2{font-weight: 600};
+    	    .main h2{font-weight: 600;font-size:1.25rem};
             #core-info p{padding:0}
             @media screen and (max-width:760px){
                 .win-content article{
@@ -837,17 +839,20 @@
         // global $post;
         if(have_posts()) {
             while (have_posts()): the_post();
+                global $post;
+                $post_feeling = get_post_meta($post->ID, "post_feeling", true);
+                $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                 if(!$post_styles){
     ?>
-                    <article class="cat-<?php the_ID(); ?>">
+                    <article class="<?php if($post_orderby>1) echo 'topset'; ?> cat-<?php echo $post->ID ?>">
                         <h1>
                             <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
-                            <?php $postmeta=get_post_meta($post->ID, "post_rights", true); echo $postmeta&&$postmeta!="请选择" ? '<sup>'.$postmeta.'</sup>' : false; ?>
+                            <?php if($post_rights&&$post_rights!="请选择") echo '<sup>'.get_post_meta($post->ID, "post_rights", true).'</sup>'; ?>
                         </h1>
-                        <p><?php custom_excerpt(66); ?></p>
+                        <p><?php custom_excerpt(150); ?></p>
                         <div class="info">
-                            <span class="classify" id="<?php $cpar = get_the_category()[1]->parent==0 ? get_the_category()[1] : get_the_category()[0];echo $cpar->slug; ?>">
-                                <i class="icom"></i><?php echo $cpar->name; ?>
+                            <span class="classify" id="<?php $cats=get_the_category()[0];echo $cats->slug; ?>">
+                                <i class="icom"></i><?php if($cats->parent) echo $cats->name;else echo '默认分类'; ?>
                             </span>
                             <span class="valine-comment-count" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
                             <span class="date"><?php the_time('d-m-Y'); ?></span>
@@ -858,25 +863,22 @@
                 }else{
                     if(in_category(get_template_bind_cat('category-news.php')->slug)){
         ?>
-                    	<article class="news-window wow" data-wow-delay="0.1s">
+                        <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window icom wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                             <div class="news-window-inside">
                                 <span class="news-window-img">
-                                    <a href="<?php the_permalink() ?>" target="_blank">
+                                    <a href="<?php the_permalink() ?>">
                                         <img class="lazy" src="<?php echo get_postimg(); ?>" />
                                     </a>
                                 </span>
                                 <div class="news-inside-content">
                                     <h2 class="entry-title">
-                                        <a href="<?php the_permalink() ?>" target="_blank" title="<?php the_title() ?>"><?php the_title() ?></a>
+                                        <a href="<?php the_permalink() ?>" title="<?php the_title() ?>"><?php the_title() ?></a>
                                     </h2>
-                                    <span class="news-core_area entry-content"><?php custom_excerpt(66); ?></span>
-                                    <?php
-                                        $postmeta = get_post_meta($post->ID, "post_feeling", true);
-                                        if($postmeta) echo '<span class="news-personal_stand" unselectable="on"><dd>'.$postmeta.'</dd></span>';
-                                    ?>
+                                    <span class="news-core_area entry-content"><p><?php custom_excerpt(66); ?></p></span>
+                                    <?php if($post_feeling) echo '<span class="news-personal_stand" unselectable="on"><dd>'.$post_feeling.'</dd></span>'; ?>
                                     <div id="news-tail_info">
                                         <ul class="post-info">
-                                            <li class="tags author"><?php $tag = get_the_tag_list();if($tag) echo($tag);else echo '<a href="javascript:;" target="_blank" rel="nofollow">'.get_option('site_nick').'</a>'; ?></li>
+                                            <li class="tags author"><?php $tags = get_the_tag_list('','、',''); echo $tags ? $tags : '<a href="javascript:;" target="_blank" rel="nofollow">'.get_option('site_nick').'</a>'; ?></li>
                                             <li title="评论人数"><?php if(!get_option('site_comment_switcher')) $count=$post->comment_count;else $count=0; echo '<span class="valine-comment-count" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>'; ?></li>
                                             <li id="post-date" class="updated" title="发布日期">
                                                 <i class="icom"></i><?php the_time('d-m-Y'); ?>
@@ -930,7 +932,7 @@
                                             <h4><a href="<?php echo get_post_meta($post->ID, "post_source", true); ?>" target="_blank"><?php the_title(); ?></a></h4>
                                         </span>
                                         <span class="lowside-description">
-                                            <p><?php the_content(); ?></p>
+                                            <p><?php custom_excerpt(66); ?></p>
                                         </span>
                                     </div>
                                 </div>
@@ -940,15 +942,15 @@
                     }else{
                         // results doen't match in_category template, like pages..
         ?>
-                        <article class="cat-<?php the_ID(); ?>">
+                        <article class="<?php if($post_orderby>1) echo 'topset'; ?> cat-<?php echo $post->ID ?>">
                             <h1>
                                 <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
-                                <?php $postmeta=get_post_meta($post->ID, "post_rights", true); echo $postmeta&&$postmeta!="请选择" ? '<sup>'.$postmeta.'</sup>' : false; ?>
+                                <?php if($post_rights&&$post_rights!="请选择") echo '<sup>'.get_post_meta($post->ID, "post_rights", true).'</sup>'; ?>
                             </h1>
-                            <p><?php custom_excerpt(66); ?></p>
+                            <p><?php custom_excerpt(150); ?></p>
                             <div class="info">
-                                <span class="classify" id="<?php $cpar = get_the_category()[1]->parent==0 ? get_the_category()[1] : get_the_category()[0];echo $cpar->slug; ?>">
-                                    <i class="icom"></i><?php echo $cpar->name; ?>
+                                <span class="classify" id="<?php $cats=get_the_category()[0];echo $cats->slug; ?>">
+                                    <i class="icom"></i><?php if($cats->parent) echo $cats->name;else echo '默认分类'; ?>
                                 </span>
                                 <span class="valine-comment-count" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
                                 <span class="date"><?php the_time('d-m-Y'); ?></span>
@@ -959,6 +961,7 @@
                     }
                 }
             endwhile;
+                global $wp_query;  // use global varibal $wp_query
                 $pages = paginate_links(array(
                     'prev_text' => __('上一页'),
                     'next_text' => __('下一页'),

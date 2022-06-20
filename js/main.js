@@ -27,12 +27,12 @@
     }
 
 
-	dynamicLoad('https://src.2broear.com/js/nprogress.js?v=cdnsrc',function(){
-		NProgress.start();
-		window.onload=function(){
-			NProgress.done();
-		};
-	});
+// 	dynamicLoad('https://src.2broear.com/js/nprogress.js?v=cdnsrc',function(){
+// 		NProgress.start();
+// 		window.onload=function(){
+// 			NProgress.done();
+// 		};
+// 	});
 	
     function setCookie(name,value,path){
         let Days = 30,

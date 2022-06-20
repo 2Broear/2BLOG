@@ -9,9 +9,10 @@
 .win-top .counter h2 sup{font-size:32px;color:var(--preset-s)}
 .win-top .counter p{color:var(--preset-e);font-size:var(--min-size);margin:3px auto}
 .rcmd-boxes{width:100%;max-width:100%;height:auto;flex-flow:row wrap}
-.rcmd-boxes .inbox-clip.subcat{text-align:center}
+.rcmd-boxes .inbox-clip.subcat{text-align:center;margin-top:auto}
+.rcmd-boxes .inbox-clip.subcat h2{font-size:2rem;padding-top:0}
 .rcmd-boxes .inbox-clip{width:100%;color:var(--preset-4a);margin:15px auto;text-align:left}
-.rcmd-boxes .inbox-clip h2.single{font-size:2rem}
+/*.rcmd-boxes .inbox-clip h2.single{font-size:2rem}*/
 .rcmd-boxes .inbox-clip h2{width:100%;margin:0 auto;padding:15px 10px;box-sizing:border-box;font-weight:400;font-family:var(--font-serif)}
 .rcmd-boxes .inbox-clip h2 sup{color:var(--preset-8);font-size:var(--min-size);font-weight:bold;padding-left:3px}
 .rcmd-boxes .info{width:100%;max-width:inherit;flex-wrap:wrap}
@@ -73,7 +74,7 @@
 .rcmd-boxes .info .inbox .inbox-headside span.author#unknown{background:#f4222c}
 .rcmd-boxes .info.game .inbox .inbox-headside span.author{display:none}
 .rcmd-boxes .info .inbox .inbox-aside{color:var(--preset-9);width:100%;height:100%;white-space:normal;max-height:145px;max-width:100%;padding:10% 5%;box-sizing:border-box;background:rgba(255,255,255,0.82);position:relative;z-index:3}
-.rcmd-boxes .info .inbox .inbox-aside span{display:block;max-height:83px;overflow-y:hidden}
+.rcmd-boxes .info .inbox .inbox-aside span{display:block;overflow-y:hidden;/*max-height:83px;*/}
 .rcmd-boxes .info .inbox .inbox-aside span.lowside-title h4{color:var(--preset-2b);margin:0;padding-bottom:5px;text-align:left}
 .rcmd-boxes .info .inbox .inbox-aside span.lowside-title h4 sup{color:var(--preset-6);font-size:var(--min-size)}
 .rcmd-boxes .info .inbox .inbox-aside span.lowside-title h4 a{color:inherit;white-space:nowrap}

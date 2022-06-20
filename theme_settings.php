@@ -477,7 +477,7 @@
             register_setting( 'baw-settings-group', 'site_metanav_array' );
             register_setting( 'baw-settings-group', 'site_metanav_image' );
         }
-        register_setting( 'baw-settings-group', 'site_recent_num' );
+        register_setting( 'baw-settings-group', 'site_per_posts' );
         
         register_setting( 'baw-settings-group', 'site_rcmdside_cid' );
         register_setting( 'baw-settings-group', 'site_cardnav_array' );
@@ -489,7 +489,7 @@
         register_setting( 'baw-settings-group', 'site_acgnside_switcher' );
         if(get_option('site_acgnside_switcher')){
             register_setting( 'baw-settings-group', 'site_acgnside_cid' );
-            register_setting( 'baw-settings-group', 'site_acgnside_num' );
+            // register_setting( 'baw-settings-group', 'site_acgnside_num' );
         }
         
         // register_setting( 'baw-settings-group', 'site_acgn_bg' );
@@ -523,8 +523,8 @@
         register_setting( 'baw-settings-group', 'site_leancloud_switcher' );
         register_setting( 'baw-settings-group', 'site_comment_switcher' );
         if(get_option('site_comment_switcher')){
-            register_setting( 'baw-settings-group', 'site_leancloud_sdk' );
-            register_setting( 'baw-settings-group', 'site_comment_qmsgchan' );
+            // register_setting( 'baw-settings-group', 'site_leancloud_sdk' );
+            // register_setting( 'baw-settings-group', 'site_comment_qmsgchan' );
             register_setting( 'baw-settings-group', 'site_comment_serverchan' );
             register_setting( 'baw-settings-group', 'site_comment_pushplus' );
         }else{
@@ -1296,42 +1296,42 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option same_data">
-                                <th scope="row">— AVOS SDK</th>
-                                <td>
+                            <!--<tr valign="top" class="child_option same_data">-->
+                            <!--    <th scope="row">— AVOS SDK</th>-->
+                            <!--    <td>-->
                                     <?php
-                                        $opt = 'site_leancloud_sdk';
-                                        $value = get_option($opt);
-                                        $preset = custom_cdn_src('',true).'/js/leancloud/av-min.js?v=rootdir';//'//cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js';
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_comment_serverchan_label">评论 valine 依赖项，默认 jsdelivr（cdn无法使用时可自定义sdk）</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Leancloud AVOS Sdk" value="' . $preset . '"/>';
+                                        // $opt = 'site_leancloud_sdk';
+                                        // $value = get_option($opt);
+                                        // $preset = custom_cdn_src('',true).'/js/leancloud/av-min.js?v=rootdir';//'//cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js';
+                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        // echo '<p class="description" id="site_comment_serverchan_label">评论 valine 依赖项，默认 jsdelivr（cdn无法使用时可自定义sdk）</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Leancloud AVOS Sdk" value="' . $preset . '"/>';
                                     ?>
-                                </td>
-                            </tr>
+                            <!--    </td>-->
+                            <!--</tr>-->
                             <tr valign="top" class="child_option">
                                 <th scope="row">— ServerChan SendKey</th>
                                 <td>
                                     <?php
                                         $opt = 'site_comment_serverchan';
-                                        echo '<p class="description" id="site_comment_serverchan_label">评论微信公众号提醒（server酱提供的评论微信提醒服务（每天 5 条）<a href="https://sct.ftqq.com" target="_blank">相关文档</a></p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="ServerChan api key" value="' . get_option($opt) . '"/>';
+                                        echo '<p class="description" id="site_comment_serverchan_label">评论微信公众号提醒（server酱提供的评论微信提醒服务（每天 5 条）<a href="https://sct.ftqq.com" target="_blank">相关文档</a></p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="ServerChan SendKey" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
-                                <th scope="row">— QmsgChan Key</th>
-                                <td>
+                            <!--<tr valign="top" class="child_option">-->
+                            <!--    <th scope="row">— QmsgChan Key</th>-->
+                            <!--    <td>-->
                                     <?php
-                                        $opt = 'site_comment_qmsgchan';
-                                        echo '<p class="description" id="site_comment_qmsgchan_label">Qmsg酱提供的评论QQ提醒服务（每天 40 条）<a href="https://qmsg.zendee.cn/" target="_blank">相关文档</a></p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Qmsg api key" value="' . get_option($opt) . '"/>';
+                                        // $opt = 'site_comment_qmsgchan';
+                                        // echo '<p class="description" id="site_comment_qmsgchan_label">Qmsg酱提供的评论QQ提醒服务（每天 40 条）<a href="https://qmsg.zendee.cn/" target="_blank">相关文档</a></p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Qmsg api key" value="' . get_option($opt) . '"/>';
                                     ?>
-                                </td>
-                            </tr>
+                            <!--    </td>-->
+                            <!--</tr>-->
                             <tr valign="top" class="child_option">
                                 <th scope="row">— PushPlus Token</th>
                                 <td>
                                     <?php
                                         $opt = 'site_comment_pushplus';
-                                        echo '<p class="description" id="site_comment_pushplus_label">评论微信（公众号）提醒（pushplus提供的公众号推送服务（每天 200 条）<a href="http://www.pushplus.plus/push1.html" target="_blank">相关文档</a></p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Pushplus token" value="' . get_option($opt) . '"/>';
+                                        echo '<p class="description" id="site_comment_pushplus_label">评论微信（公众号）提醒（pushplus提供的公众号推送服务（每天 200 条）<a href="http://www.pushplus.plus/push1.html" target="_blank">相关文档</a></p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Pushplus Token" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1532,14 +1532,14 @@
                         </td>
                     </tr>
                     <tr valign="top" class="">
-                        <th scope="row">近期内容 展示数量</th>
+                        <th scope="row">近期内容展示数量</th>
                         <td>
                             <?php
-                                $opt = 'site_recent_num';
+                                $opt = 'site_per_posts';
                                 $value = get_option($opt);
                                 $preset = 5;  //默认填充数据
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                echo '<p class="description" id="site_bar_pixiv_label">近期文章、笔记、日志、排行、评论等内容展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                echo '<p class="description" id="">近期文章、笔记、日志、排行、评论等内容展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                             ?>
                         </td>
                     </tr>
@@ -1650,18 +1650,18 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
-                                <th scope="row">— 分类展示数量</th>
-                                <td>
+                            <!--<tr valign="top" class="child_option">-->
+                            <!--    <th scope="row">— 分类展示数量</th>-->
+                            <!--    <td>-->
                                     <?php
-                                        $opt = 'site_acgnside_num';
-                                        $value = get_option($opt);
-                                        $preset = 5;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">分类展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        // $opt = 'site_acgnside_num';
+                                        // $value = get_option($opt);
+                                        // $preset = 5;  //默认填充数据
+                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        // echo '<p class="description" id="site_bar_pixiv_label">分类展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
-                                </td>
-                            </tr>
+                            <!--    </td>-->
+                            <!--</tr>-->
                     <?php
                         }
                     ?>

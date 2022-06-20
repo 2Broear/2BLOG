@@ -138,7 +138,7 @@
                     <?php 
                         $use_temp = get_template_bind_cat('category-news.php')->slug;
                         $temp_cat = get_category_by_slug($use_temp)->term_id;
-                        recent_posts_query($temp_cat);
+                        recent_posts_query($temp_cat, true);
                     ?>
                 </ul>
             </div>
@@ -153,7 +153,7 @@
                     <?php 
                         $use_temp = get_template_bind_cat('category-notes.php')->slug;
                         $temp_cat = get_category_by_slug($use_temp)->term_id;
-                        recent_posts_query($temp_cat);
+                        recent_posts_query($temp_cat, true);
                     ?>
                 </ul>
             </div>
@@ -178,7 +178,7 @@
                     <ul class="tech_window-content">
                         <?php 
                             $query_cid = get_option('site_techside_cid');
-                            get_option('site_leancloud_switcher') ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid,false);
+                            get_option('site_leancloud_switcher') ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid);
                         ?>
                     </ul>
                     <div class="newsBox-subText-Description" id="tech_window-bottom">
@@ -228,7 +228,7 @@
                                     <?php
                                                 if($query_slug==get_template_bind_cat('category-acg.php')->slug) echo ".equalTo('type_acg', 'anime')"
                                     ?>
-                                                .limit(<?php echo get_option('posts_per_page'); ?>).find().then(result=>{
+                                                .limit(<?php echo get_option('site_per_posts', get_option('posts_per_page')); ?>).find().then(result=>{
                                                     console.log(result)
                                                     for (let i=0; i<result.length;i++) {
                                                         let res = result[i],
@@ -242,7 +242,7 @@
                                             </script>
                                     <?php
                                         }else{
-                                            recent_posts_query($query_cid,false);
+                                            recent_posts_query($query_cid, false, true);
                                         }
                                     ?>
                         		</ol>
@@ -270,7 +270,7 @@
 <footer>
     <?php get_footer(); ?>
 </footer>
-<script src="<?php if(get_option('site_chat_switcher')) echo get_option('site_chat'); ?>"></script>
+<?php if(get_option('site_chat_switcher')) echo '<script src="'.get_option('site_chat').'"></script>'; ?>
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/banner.js"></script>
 <!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/cursor.js"></script>-->
