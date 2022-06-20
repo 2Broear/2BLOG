@@ -1170,7 +1170,7 @@ header{height:77px}
     .article-type{display:none}
     #news-tail_info ul.post-info{width:100%;padding:0}
     .news-inside-content{padding:0 5%}
-    .news-window-img{margin:15px;max-width:32%;display:none;}
+    .news-window-img{margin:15px;max-width:32%;display:none!important;}
     .news-article-window div.tags ul li{width:48%}
     /* .article-copyright-notice{display:none} */
     #news-article-head_tail ul{display: none;/*width: 100%;*/}
