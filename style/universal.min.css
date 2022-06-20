@@ -635,6 +635,7 @@ i.icon-about-contact:before{content:"\e908"}
 i.icon-home:before{content:"\e907"}
 
 i.icon-acg:before{content:"\e900"!important;font-size:14px}
+.Fresh-ImgBoxs span:nth-child(4) i:before,
 i.icon-2bfriends:before,
 a.tabbar._2bfriends i:before,
 i.icon-link:before,
@@ -647,14 +648,17 @@ i.icon-bug-news.Isactive-news:before,
 i.icon-download.Isactive-download:before,
 i.icon-about-contact.Isactive-more:before{color:var(--theme-color)}
 
+.Fresh-ImgBoxs span:nth-child(1) i:before,
 a.tabbar._news i:before,
 i.icon-news:before,
 i.icon-bug-news:before{content:"\e92f";}
 a.tabbar._notes i:before,
+.Fresh-ImgBoxs span:nth-child(2) i:before,
 i.icon-notes:before,
 i.icon-note:before{content:"\e905"}
 a.tabbar._download i:before,
 i.icon-download:before{content:"\e904"}
+.Fresh-ImgBoxs span:nth-child(3) i:before,
 a.tabbar._weblog i:before,
 i.icon-weblog:before{content:"\e91e"}/*e920*/
 
