@@ -137,7 +137,7 @@ Valine 评论在 `footer.php` 中 __初始化__ 各项原生配置及自定义�
 > 
 > 部署前请先查看 Valine-Admin 教程：[https://github.com/zhaojun1998/Valine-Admin](https://github.com/zhaojun1998/Valine-Admin/blob/master/README.md)
 > 
-> __注意使用 `https://github.com/2broear-xty/valine-admins.git` 地址进行部署，__ zhaojun1998 的分支尚未更新 `package.json` 中的 `NodeJs` 版本号（leancloud 目前不再支持 node.js 6.* 版本，已 pull request，因为要修改模板中的一些东西所以暂时下载到仓库临时使用） 
+> __注意使用 `https://github.com/2broear-xty/valine-admins.git` 地址进行部署，__ zhaojun1998 的分支尚未更新 `package.json` 中的 `NodeJs` 版本号（leancloud 目前不再支持 node.js 6.* 版本，已 pull request，因为要修改模板中的一些东西所以暂时下载到仓库临时使用，最好自己fork源项目后自定义模板等内容，否则无法不保证可用性） 
 
 伪静态与固定链接
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
