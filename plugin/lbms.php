@@ -13,8 +13,21 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="shortcut icon" href="<?php custom_cdn_src('img'); ?>/images/favicon/lbms.ico"/>
-    <link type="text/css" rel="stylesheet" href="https://2broear.com/style/highlight/agate.m.css" />
-    <link type="text/css" rel="stylesheet" href="https://2broear.com/style/lbms/editor.css" />
+    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/highlight/agate.m.css" />
+    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/lbms/editor.css?v=" />
+    <style>
+        @font-face {
+            font-family: 'icomoon';
+            src:  url('<?php custom_cdn_src(); ?>/fonts/editor/icomoon.eot?ggsu1l');
+            src:  url('<?php custom_cdn_src(); ?>/fonts/editor/icomoon.eot?ggsu1l#iefix') format('embedded-opentype'),
+            url('<?php custom_cdn_src(); ?>/fonts/editor/icomoon.ttf?ggsu1l') format('truetype'),
+            url('<?php custom_cdn_src(); ?>/fonts/editor/icomoon.woff?ggsu1l') format('woff'),
+            url('<?php custom_cdn_src(); ?>/fonts/editor/icomoon.svg?ggsu1l#icomoon') format('svg');
+            font-weight: normal;
+            font-style: normal;
+            font-display: block;
+        }
+    </style>
     <script src="<?php custom_cdn_src(); ?>/js/leancloud/av-min.js"></script>
     <script src="<?php custom_cdn_src(); ?>/js/Marked.js/marked.min.js"></script>
     <script src="<?php custom_cdn_src(); ?>/js/highlight/highlight.pack.js"></script>

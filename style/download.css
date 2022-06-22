@@ -143,7 +143,7 @@ a:hover {
 	transition: background .35s ease;
 }
 .box_down ul li .details span {
-	background: url('https://img.2broear.com/download/minecraft.png') center center;
+	/*background: url('https://img.2broear.com/download/minecraft.png') center center;*/
 	width: 32%;height: 100%;
 	border-radius:var(--radius);
 	background-size: cover!important;

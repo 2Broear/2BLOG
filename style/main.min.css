@@ -125,7 +125,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 .banner:hover span#banner-prev,.banner:hover span#banner-next{margin:0}
 #banner-prev{left:0;margin-left:-25px;background-position: -228px -100px!important;}
 #banner-next{right:0;margin-right:-25px;background-position: -183px -100px!important;}
-#banner-prev,#banner-next{display:block;background:url('https://img.2broear.com/css_sprites.png') no-repeat;opacity:0.3;filter:alpha(opacity=30);width:25px;height:50px;position:absolute;top:42%;z-index:99;transition:margin .3s ease}
+#banner-prev,#banner-next{display:block;/*background:url('https://img.2broear.com/css_sprites.png') no-repeat;*/opacity:0.3;filter:alpha(opacity=30);width:25px;height:50px;position:absolute;top:42%;z-index:99;transition:margin .3s ease}
 #banner-prev:hover,#banner-next:hover{opacity:0.6;filter:alpha(opacity=60)}
 .special-display{width:95%;height:auto;margin-top:15px;position:relative;display:block}
 .special-display ul{width:auto;height:100%;box-sizing:border-box;flex-flow:row nowrap;justify-content:space-between;list-style-type:none;padding:0;margin:0;overflow:hidden;border-radius:var(--radius);position:relative;/*background-color:var(--preset-f);box-shadow:rgba(0,0,0,0.12) -20px 20px 20px;*/}
@@ -137,13 +137,13 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 #icon-special{display:none;position:absolute;right:-45px;top:5px;transform:rotate(42deg);-webkit-transform:rotate(42deg);-ms-transform:rotate(42deg);-moz-transform:rotate(42deg);-o-transform:rotate(42deg);box-shadow:rgba(0,0,0,0.06) 0 1px 6px}
 #icon-special b{display:block;color:var(--preset-f);font-weight:normal;letter-spacing:3px;position:absolute;left:75px;top:13px;cursor:default;z-index:3}
 #icon-special::before{content:"";display:block;margin:0;width:200px;height:47px;background-color:var(--preset-6);z-index:1}
-#special-img{width:36%;/*height:83%;margin:35px 0 35px 66px;*/display:block;border-radius:var(--radius);background:url('https://img.2broear.com/main/pearce.jpg');background-position:center bottom;background-size:cover;transition:all .35s ease;box-shadow:inherit}
+#special-img{width:36%;/*height:83%;margin:35px 0 35px 66px;*/display:block;border-radius:var(--radius);/*background:url('https://img.2broear.com/main/pearce.jpg');background-position:center bottom;background-size:cover;*/transition:all .35s ease;box-shadow:inherit}
 #special-content{text-align:left;width:50%;height:auto;font-weight:normal;letter-spacing:1px;color:#4a5b80;position:relative;padding:30px;transition:all .5s ease;display:none}
 #special-content h3{font-size:inherit;margin:10px 0 0 0;padding:0 18px 0 0;text-align:center}
 #special-content h5{text-align:right;letter-spacing:3px;margin:0}
 #special-content p{font-size:13px;line-height:23px;margin:10px 0 0 0}
 .for3dtransform{height:100%;width:auto;position:relative;transition:all .3s linear;transform-style:preserve-3d;transform:translateZ(0)}
-.for3dtransform::after{display:block;background:url('https://img.2broear.com/xty-logo_shadows.jpg');width:100%;height:100%;position:absolute;top:0;left:0;z-index:-1}
+.for3dtransform::after{display:block;/*background:url('https://img.2broear.com/xty-logo_shadows.jpg');*/width:100%;height:100%;position:absolute;top:0;left:0;z-index:-1}
 .main-top-allpart{width:100%;flex-flow:column nowrap;position:relative;margin:0 auto}
 .main-top-inside_right{position:relative;float:right;width:48.75%;height:auto;display:block}
 .main-top-part:first-child{margin:0}
@@ -216,7 +216,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 #Wanted-Img-Cover.get-to-border-r::after{margin:-116px 0 0 155px}
 .lock-info-border-square{left:-27px !important;border:2px solid var(--preset-8) !important;transform:scale(0.9) !important;-webkit-transform:scale(0.9) !important;-ms-transform:scale(0.9) !important;-moz-transform:scale(0.9) !important;-o-transform:scale(0.9) !important}
 #Wanted-Img-Core{width:100%;height:100%;margin:0;display:block;z-index:36;position:relative;overflow:hidden;cursor:crosshair;transition:all .5s ease}
-#Wanted-Img-Core em{width:100%;height:100%;display:block;background:url("https://img.2broear.com/main/unhackable-250.png"),linear-gradient(purple,red);background-blend-mode:hard-light;background-size:cover;background-repeat:no-repeat;background-position:0 0,0 -150px;transition:transform .1s ease}
+#Wanted-Img-Core em{width:100%;height:100%;display:block;/*background:url("https://img.2broear.com/main/unhackable-250.png"),linear-gradient(purple,red);background-blend-mode:hard-light;background-size:cover;background-repeat:no-repeat;background-position:0 0,0 -150px;*/transition:transform .1s ease}
 .repeatBlendMode{animation:blendMode 1.8s ease-out normal forwards}
 .Wanted-Img-scale{transform:scale(1.23) !important;-webkit-transform:scale(1.23) !important;-ms-transform:scale(1.23) !important;-moz-transform:scale(1.23);-o-transform:scale(1.23)}
 #Wanted-list-more{width:auto;height:auto;border-left:1px solid;border-bottom:1px solid;border-color:var(--preset-d);border-radius:0 2px 0 2px;position:absolute;right:0;top:0;cursor:pointer}
@@ -265,7 +265,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 #middle-poster-content{width:100%;height:auto;position:absolute;bottom:0;left:0;overflow:hidden;background:rgba(255,255,255,0.18)}
 #middle-poster-bg{display:block;width:100%;height:776px;position:relative}
 .addRed{color:var(--preset-s) !important}
-#middle-poster-content.addBlurBg::after{background:url('https://img.2broear.com/main/Xb-1402.png') left bottom}
+/*#middle-poster-content.addBlurBg::after{background:url('https://img.2broear.com/main/Xb-1402.png') left bottom}*/
 #middle-poster-content::before{content:'';width:100%;height:100%;position:absolute;top:0;left:0;z-index:1;background:rgba(255,255,255,.18)}
 #middle-poster-content div{list-style-type:none;position:relative;padding:5% 7%;z-index:2;flex-flow:row nowrap;justify-content:space-between}
 #middle-poster-content span{position:absolute;top:0px;left:0;right:0;bottom:0;-webkit-filter:blur(18px);-ms-filter:blur(18px);-moz-filter:blur(18px);-o-filter:blur(18px);filter:blur(18px);margin:-32px}
@@ -340,7 +340,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 .acg_window-content li.acg_window-content-inside_right{width:50%;height:100%;position:absolute;top:0;right:0;overflow:hidden;border-radius:var(--radius);}
 #acg_window-content-inside_left-tInfo{width:auto;height:52%;display:block;overflow:hidden}
 #acg_window-content-inside_left-pic{width:46.6%;height:92%;border-radius:var(--radius);overflow:hidden;position:relative;float:left}
-#acg_window-content-inside_left-tInfo #acg_window-content-inside_left-in{width:100%;height:100%;background:url('https://img.2broear.com/main/anime-sakura-30.jpg')top right no-repeat;margin:0;display:block}
+#acg_window-content-inside_left-tInfo #acg_window-content-inside_left-in{width:100%;height:100%/*;background:url('https://img.2broear.com/main/anime-sakura-30.jpg')top right no-repeat;*/margin:0;display:block}
 #acg_window-content-inside_left-txt{width:50%;height:100%;float:right;margin:0;border-left:1px solid var(--preset-s);border-right:1px solid var(--preset-s);border-radius:var(--radius) 3px 0 0}
 #acg_window-content-inside_left-txt a{float:left;padding:13px 0 23px 13px;color:var(--theme-color)}
 #acg_window-content-inside_left-txt a:hover{text-decoration:underline;color:var(--theme-color)}
@@ -362,7 +362,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 #acg_window-content-inside_right-in h2{visibility:hidden !important;color:rgba(180,224,12,1);margin:50px 0 0 0;display:block;letter-spacing:7px;text-align:center;position:relative;transition:all .5s ease;z-index:2}
 #acg_window-content-inside_right-bg{position:absolute;z-index:1;width:100%;height:100%}
 .acg_window-content-inside_right span#acg-content-area-txt{display:block;width:100%;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);z-index:2;background-color:rgba(255,255,255,0.65);}
-.acg_window-content-inside_right span#acg-content-area{display:block;position:absolute;margin:0 auto;width:100%;height:100%;background:url('//img.2broear.com/main/CDNO/girl_school.jpg') center center;background-size:cover;transition:all .5s ease}
+.acg_window-content-inside_right span#acg-content-area{display:block;position:absolute;margin:0 auto;width:100%;height:100%;/*background:url('//img.2broear.com/main/CDNO/girl_school.jpg') center center;background-size:cover;*/transition:all .5s ease}
 .acg_window-content-inside_right span p{line-height:25px;padding:5%;font-size: 1rem;}
 .acg_window-content-inside_right-in-p-hover{letter-spacing:1px !important;color:rgba(0,0,0,0.7) !important;background-color:rgba(255,255,255,0.5) !important;text-shadow:1px 1px 18px rgba(0,0,0,0.18)}
 .acg_window-content-inside_right-in-h2-hover{color:green}
@@ -395,7 +395,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 .icon-br-active{border-color:var(--theme-color) !important;width:100% !important}
 #icon-br.br-pseudo-active::before{background-color:var(--theme-color) !important}
 #icon-br.br-pseudo-active::after{background-color:var(--theme-color) !important}
-.acg_window-content-inside_right-bg-hover{background:url('https://img.2broear.com/main/girl_school-blur.jpg') center center !important;background-size:cover!important}
+/*.acg_window-content-inside_right-bg-hover{background:url('https://img.2broear.com/main/girl_school-blur.jpg') center center !important;background-size:cover!important}*/
 .icon-home:before{content:"\e907"}
 .icon-home.Isactive-home:before,.icon-bug-news.Isactive-news:before,.icon-download.Isactive-download:before,.icon-about-contact.Isactive-more:before{color:var(--theme-color)}
 .icon-bug-news:before{content:"\e906"}

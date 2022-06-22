@@ -327,7 +327,7 @@ p#desc{
             iframe.setAttribute("src","/lbms?v=3.0");  //https://lbms.2broear.com/
             if(uverify){
                 console.log('VERIFIED')
-                dynamicLoad('https://src.2broear.com/js/md5.min.js',function(){
+                dynamicLoad('<?php custom_cdn_src(); ?>/js/md5.min.js',function(){
                     welcome.querySelector("#info").innerHTML=`<img src="https://sdn.geekzu.org/avatar/${md5(umail)}?d=retro&s=100" /><p> <b>${uname}</b> <small>(${uid})</small></p><button id="logout"> 登 出 </button>`;
                 });
                 

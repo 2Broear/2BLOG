@@ -180,8 +180,10 @@
 	transition: transform .35s ease;
 	will-change: transform;
 }
+.friends-boxes .deals .inbox.girl em,
 .friends-boxes .deals .inbox.girl::after{
-	content: '';
+    display: block;
+	/*content: '';*/
 	width: 38%;
 	height: 78%;
 	background: url('//img.2broear.com/2bfriends/girl_symbols.png') center no-repeat;

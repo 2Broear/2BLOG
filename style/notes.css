@@ -12,7 +12,7 @@
 .win-top h5:before{content:'';display:inherit;width: 38%;height: 36%;background-color: var(--theme-color);position:absolute;right: 0;bottom: 0;z-index:-1;}
 .win-nav{width:25%;height:auto;float:left;position:relative;top:-98px;z-index:9;}
 .win-nav .nav-fixes{width:100%;height:auto;position:relative;transition:margin .45s cubic-bezier(0,0.84,0.25,1)}
-.win-nav .nav-header{width:100%;height:auto;padding:15px 0 0;box-sizing:border-box;position:relative;background-color:var(--preset-f);background:url('https://img.2broear.com/pixel/4.jpg') center center /cover;box-shadow:rgba(0,0,0,0.08) 20px 20px 20px;border-radius:10px;overflow:hidden;z-index:9}
+.win-nav .nav-header{width:100%;height:auto;padding:15px 0 0;box-sizing:border-box;position:relative;background-color:var(--preset-f);/*background:url('https://img.2broear.com/pixel/4.jpg') center center /cover;*/box-shadow:rgba(0,0,0,0.08) 20px 20px 20px;border-radius:10px;overflow:hidden;z-index:9}
 .win-nav .nav-header div:before{content:'';width:100%;height:18px;position:absolute;top:-18px;left:0;clip-path:ellipse(55% 100% at 50% 100%)}
 .win-nav .nav-header div{position:relative;z-index:3;background-color:var(--preset-f);padding:15% 15px;box-shadow:rgba(0,0,0,0.18) 0px -20px 20px}
 .win-nav .nav-header span{width:88px;height:88px;display:block;padding:5px;margin:0 auto;background-color:var(--preset-f);border-radius:50%;position:relative;top:55px;z-index:99}
