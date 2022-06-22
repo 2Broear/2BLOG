@@ -109,13 +109,13 @@ lbms 后台将在 __`通用控制`__ 中的 _leancloud_ 选项开启后自动创
 除文章、笔记模板外其他页面基本都可以在 __页面__ 中自定义内容，内容将展示在 `commnets` 评论之前（如关于、留言板、隐私等模板的自定义内容均在留言之前展示）
 
 ### 评论设置
-WordPress 评论在后台 __设置->讨论__ 中可设置 ___评论数量、分页、嵌套、限制等___
+WordPress 评论在后台 __设置->讨论__ 中可设置 ___评论数量、分页、嵌套、限制等___ （邮件的收发模板在 `functions.php` 中可修改，收发控制在后台 __2BLOG 主题设置__ 中更改）
 
 Valine 评论在 `footer.php` 中 __初始化__ 各项原生配置及自定义选项（微信评论通知代码在 valine.js 中检索 `custom_initfield_wxnotify` 即可定位修改）
 
-> Valine 邮件收发配置需到 leancloud.cn 控制台使用云引擎部署 `https://github.com/2broear-xty/Valine-Admin.git` ，地址为：https://github.com/2broear-xty/Valine-Admin 其中收发邮件模板在 __template -> default__ 目录下，分别为 `send.ejs` 与 `notice.ejs`  
+> Valine 邮件收发配置需到 leancloud.cn 控制台使用云引擎部署 `https://github.com/2broear-xty/Valine-Admin.git` ，地址为：[fork 地址](https://github.com/2broear-xty/Valine-Admin) 其中收发邮件模板在 __template -> default__ 目录下，分别为 `send.ejs` 与 `notice.ejs`  
 > 
-> Valine-Admin 部署教程：[https://github.com/zhaojun1998/Valine-Admin](https://github.com/zhaojun1998/Valine-Admin/blob/master/README.md)
+> 部署前请先查看 Valine-Admin 教程：[https://github.com/zhaojun1998/Valine-Admin](https://github.com/zhaojun1998/Valine-Admin/blob/master/README.md)
 
 ### 友情链接
 在 __链接__ 栏目中，所有选项都是官方默认的，所以只需要注意几个单独的点设置即可。首先，需要设置以友链分类：
