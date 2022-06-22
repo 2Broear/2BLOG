@@ -171,7 +171,7 @@ ___WordPress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 
 - [WordPress](https://wordpress.org) 提供的CMS程序及主题开发文档支持
 - [Leancloud](https://www.leancloud.cn) 提供的 BaaS 数据储存服务
-- [Valine](https://blog.luvying.com) 提供的无后端评论系统
+- [Valine](https://blog.luvying.com) 提供的无后端评论系统及 [zhaojun1998](https://github.com/zhaojun1998/Valine-Admin) 提供的 valine 评论邮件通知
 - Wechat（企业）提供的微信消息推送服务
 - ...
 - [Ying 酱](https://blog.luvying.com) 及 [橘纸柚](https://lovemen.cc/) 提供的随机动漫图片API
