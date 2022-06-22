@@ -113,6 +113,10 @@ WordPress 评论在后台 __设置->讨论__ 中可设置 ___评论数量、分�
 
 Valine 评论在 `footer.php` 中 __初始化__ 各项原生配置及自定义选项（微信评论通知代码在 valine.js 中检索 `custom_initfield_wxnotify` 即可定位修改）
 
+> Valine 邮件收发配置需到 leancloud.cn 控制台使用云引擎部署 `https://github.com/2broear-xty/Valine-Admin.git` ，地址为：https://github.com/2broear-xty/Valine-Admin 其中收发邮件模板在 __template -> default__ 目录下，分别为 `send.ejs` 与 `notice.ejs`  
+> 
+> Valine-Admin 部署教程：[https://github.com/zhaojun1998/Valine-Admin](https://github.com/zhaojun1998/Valine-Admin/blob/master/README.md)
+
 ### 友情链接
 在 __链接__ 栏目中，所有选项都是官方默认的，所以只需要注意几个单独的点设置即可。首先，需要设置以友链分类：
 
