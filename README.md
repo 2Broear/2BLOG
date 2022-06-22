@@ -116,7 +116,8 @@ Valine 评论在 `footer.php` 中 __初始化__ 各项原生配置及自定义�
 > Valine 邮件收发配置需到 leancloud.cn 控制台使用云引擎部署 `https://github.com/2broear-xty/valine-admins.git` ，[zhaojun1998 分支](https://github.com/zhaojun1998/Valine-Admin)  其中收发邮件模板在 __template -> default__ 目录下，分别为 `send.ejs` 与 `notice.ejs` 
 > 
 > 部署前请先查看 Valine-Admin 教程：[https://github.com/zhaojun1998/Valine-Admin](https://github.com/zhaojun1998/Valine-Admin/blob/master/README.md)
-> __注意使用 `https://github.com/2broear-xty/valine-admins.git` 地址进行部署，__ 源地址 `https://github.com/zhaojun1998/Valine-Admin.git` 尚未更新 `package.json` 中的 `NodeJs` 版本号（leancloud 目前不再支持 node.js 6.* 版本，已 pull request，暂时下载到仓库临时使用） 
+> 
+> __注意使用 `https://github.com/2broear-xty/valine-admins.git` 地址进行部署，__ zhaojun1998 的分支尚未更新 `package.json` 中的 `NodeJs` 版本号（leancloud 目前不再支持 node.js 6.* 版本，已 pull request，因为要修改模板中的一些东西所以暂时下载到仓库临时使用） 
 
 ### 友情链接
 在 __链接__ 栏目中，所有选项都是官方默认的，所以只需要注意几个单独的点设置即可。首先，需要设置以友链分类：
