@@ -4,11 +4,12 @@ A Simplized Wordpress Blog Theme Design &amp; Developed from [2broear.com](http:
 
 __Preview Site__ ：[演示站点](http://wpl.2broear.com) （演示并不代表最终版本，最新请以 [blog.2broear.com](http://blog.2broear.com) 为准）
 
-![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot.png "theme overview")
+![2blog_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/2BLOGs.jpg "theme 2blog")
 
 主题简介
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 历经半年之久，__鸽鸽碰碰的 WordPress 主题 2BLOG 他来了！！__ 折腾这么些日子终于算是可以开测了，这里将作为主题开源后续的发布、更新、备份地址。目前主题尚处测试阶段，未上传至 Wordpress。
+
 主题在前静态主题的功能外观基础之上做了部分取舍，其中主要更新内容包括：
 
 - 页面/首页文章置顶
@@ -26,6 +27,8 @@ __Preview Site__ ：[演示站点](http://wpl.2broear.com) （演示并不代表
 > 
 > 在wordpress中除“公告”外所有数据均以文章形式发布，通过后端函数调用数据，而使用leancloud数据的页面将通过 __`lbms`__ 后台进行数据上传、修改及删除等操作，再通前端过`xhr`异步调用json数据写入。
 
+![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot.png "theme overview")
+
 主题结构
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 主题是职业之余开发完成的，主要是满足个人需求的同时进行开发，其中的部分功能页面可能不适用于所有人（老早之前还鸽了 _HEXO_ 的主题开发，主要是那个文档有点难找），做成 _cms_ 的主要原因是因为之前静态博客的内容多了之后有点不好管理（后面做了个 _markdown_ 的编辑器来发布文章，不过没用就是了），开源呢一方面是因为之前受到了部分博友的认可，都表示有意向这个主题，另一方面正巧公司的框架去年也搬到 _wp_ 了所以整个开发流程是相对顺利，写的功能在主题之间都能互通这一点是很友好的。 
@@ -35,8 +38,6 @@ __以下分为 `wp` 及 `lbms` 两个结构简述__
 ### WordPress 后台（基础）
 
 wordpress 后台设置分为  __基本信息__ 、 __通用控制__ 、 __页面设置__ 、 __侧栏设置__ 、 __页尾控制__  5 个版面，每个版面对应不同的设置选项，_每个选项下方都有相应的功能使用说明，一般情况下只需要对应其提示操作即可。_（其他操作说明将在下方 __文档说明__ 中补充，如分类、页面、文章中的设置细节等等）
-
-![2blog_theme_setting](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/basic.png "2blog basiclly set")
 
 1. ___基本信息___ 只中有 5 个选项，可以修改个人昵称（注意非博客名称）、头像及卡片背景图，包括全站的描述及关键词（单页分类的关键词及各项配置需在 __文章->分类__ 中单独配置）
 
@@ -55,6 +56,8 @@ wordpress 后台设置分为  __基本信息__ 、 __通用控制__ 、 __页面
 4. ___侧栏设置___ 选项，此选项卡所有应用仅应用于 __文章资讯__ 页面的右侧，支持 __Google Adsense__ 广告块，默认开启来自 mokeyjay 超能小紫的 __Pixiv每日排行榜小挂件__ ，及自定义展示 __热门文章__ 分类下拉控制。
 
 5. ___页尾控制___ 选项，页面底部有一些文章、评论及联系方式的展示设置，还包括各支持图标展示设置及站外（沟通）插件控制，左侧主要有 __近期文章 和 近期评论__ 选项卡，_所有选项均按选项下方提示操作即可。_ 
+
+![2blog_theme_setting](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/basic.png "2blog basiclly set")
 
 ### LBMS 后台（选读）
 
