@@ -1,14 +1,4 @@
-@font-face {
-  font-family: 'icomoon';
-  src:  url('https://src.2broear.com/fonts/editor/icomoon.eot?ggsu1l');
-  src:  url('https://src.2broear.com/fonts/editor/icomoon.eot?ggsu1l#iefix') format('embedded-opentype'),
-    url('https://src.2broear.com/fonts/editor/icomoon.ttf?ggsu1l') format('truetype'),
-    url('https://src.2broear.com/fonts/editor/icomoon.woff?ggsu1l') format('woff'),
-    url('https://src.2broear.com/fonts/editor/icomoon.svg?ggsu1l#icomoon') format('svg');
-  font-weight: normal;
-  font-style: normal;
-  font-display: block;
-}
+
 
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */

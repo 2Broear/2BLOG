@@ -99,7 +99,7 @@
 	height: 100%;
 	border-radius: inherit;
 	display: block;
-	background: url('https://img.2broear.com/private/glitchProfile/profileGlitch1.gif?ver=glitch1');
+	/*background: url('https://img.2broear.com/private/glitchProfile/profileGlitch1.gif?ver=glitch1');*/
 	background-size: cover;
 }
 .In-core-head #head-nickname{
@@ -196,7 +196,7 @@
 	width: 230px;
 	height: 93px;
 	display: block;
-	background: url('https://img.2broear.com/private/profileEnder.png') no-repeat;
+	/*background: url('https://img.2broear.com/private/profileEnder.png') no-repeat;*/
 	margin: 38px auto 0;
 }
 .In-core-foot img{
@@ -222,5 +222,5 @@
 	display: none;
 }
 .inside_of_block .logo-area .HeaderLogo svg{
-	background: url('https://img.2broear.com/svg/v2-115x41-XTY.svg');
+	/*background: url('https://img.2broear.com/svg/v2-115x41-XTY.svg');*/
 }

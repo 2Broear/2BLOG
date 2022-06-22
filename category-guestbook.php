@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/guestbook.css" />
+    <!--<link type="text/css" rel="stylesheet" href="<?php //custom_cdn_src(); ?>/style/guestbook.css" />-->
     <?php get_head(); ?>
     <style>
         #reverse_rotate{direction: rtl;unicode-bidi: bidi-override;transform:rotate(180deg);display: inline-block;}

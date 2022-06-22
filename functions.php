@@ -543,10 +543,10 @@
             $avatar = !$link->link_image ? 'https:' . get_option('site_avatar_mirror') . 'avatar/' . md5(mt_rand().'@rand.avatar') . '?s=300' : $avatar = $link->link_image;
             switch ($iframe) {
                 case 'rich':
-                    if($link->link_visible==="Y") echo '<div class="inbox flexboxes standard '.$sex.'"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'"><img class="lazy" data-original="" src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false"><span class="ssl https">https</span></a></div><a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>';
+                    if($link->link_visible==="Y") echo '<div class="inbox flexboxes standard '.$sex.'"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'"><img class="lazy" data-original="" src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false"><span class="ssl https">https</span></a></div><a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span><em></em></a></div>';
                     break;
                 case 'poor':
-                    if($link->link_visible==="Y") echo '<div class="inbox flexboxes standard '.$sex.'"><a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>';
+                    if($link->link_visible==="Y") echo '<div class="inbox flexboxes standard '.$sex.'"><a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span><em></em></a></div>';
                     break;
                 default:
                     echo '<a href="'.$link->link_url.'" title="'.$link->link_name.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$link->link_name.'</a>';  //$link->link_visible=="Y"

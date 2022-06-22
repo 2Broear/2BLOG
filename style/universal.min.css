@@ -147,7 +147,7 @@ header>nav#tipson .top-bar-tips::before{width:100%;height:100%;background-color:
 .tips-switch p{display:block;font-size:14px;width:auto;height:inherit;max-width:88%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:50px;position:relative;top:0;margin:0;}
 header>nav#tipson .top-bar-tips a{color:var(--theme-color);text-decoration:underline;position:relative;z-index:1}
 /*.win-top:before,*/
-.win-top em.digital_mask{content:'';width:100%;height:100%;background:url('https://img.2broear.com/svg/digital_mask.svg') repeat center center /3px 3px;background-size:3px 3px!important;position:absolute;bottom:0;left:0;overflow:hidden;z-index:1}
+.win-top em.digital_mask{content:'';width:100%;height:100%;/*background:url('https://img.2broear.com/svg/digital_mask.svg') repeat center center /3px 3px;*/background-size:3px 3px!important;position:absolute;bottom:0;left:0;overflow:hidden;z-index:1}
 .win-top{width:100%;height:auto;margin-bottom:18px;position:relative;overflow:hidden;}
 .win-top:after{content:'';width:150%;height:2.375rem;background-color:var(--preset-f);left:-25%;bottom:-0.875rem;border-radius:100%;position:absolute;z-index:2}
 .win-top h5{color: var(--preset-f);max-width:88%;height: auto;font-family: var(--font-serif);font-size: 3.2rem;margin: 8% auto 10%;position: relative;display: inline-block;box-sizing: border-box;z-index:1/*padding:0 5%;*/}
@@ -157,7 +157,7 @@ header>nav#tipson .top-bar-tips a{color:var(--theme-color);text-decoration:under
 .content-all{position:relative;backface-visibility:hidden;-webkit-backface-visibility:hidden;-moz-backface-visibility:hidden;-ms-backface-visibility:hidden;-webkit-animation-duration:.75s;-moz-animation-duration:.75s;-o-animation-duration:.75s;-ms-animation-duration:.75s;animation-duration:.75s;-webkit-animation-fill-mode:both;-moz-animation-fill-mode:both;-o-animation-fill-mode:both;-ms-animation-fill-mode:both;animation-fill-mode:both}
 .main-header-all{width:inherit;margin-top:50px;max-height:119px;position:fixed;top:0px;left:0;z-index:9999;background-color:rgba(255,255,255,.88);box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;/*box-shadow:rgba(0,0,0,0.12) 0 1px 3px;*/backface-visibility:hidden;-webkit-animation-duration:15s;animation-duration:.75s;-webkit-animation-fill-mode:both;animation-fill-mode:both;-webkit-animation-timing-function:ease;animation-timing-function:cubic-bezier(0.25,1,0.25,1);/*font-family: var(--font-serif)*/}
 .block_of_down_element{max-width:1102px;height:100%;margin:0 auto}
-.preCover{background:transparent url("https://img.2broear.com/bg2.png") center center;border-radius:var(--radius)}
+.preCover{/*background:transparent url("https://img.2broear.com/bg2.png") center center;*/border-radius:var(--radius)}
 .flexboxes{display:-ms-flexbox;display:-webkit-box;display:-moz-box;display:-webkit-flex;display:flex}
 .inside_of_block{width:100%;height:auto;margin:0 auto;overflow:inherit;position:relative;display:flex;flex-flow:row nowrap;justify-content:space-between;transition:all 1s ease-out}
 .block_of_down_element.rangeDown::before{bottom:0;top:auto}
@@ -172,7 +172,7 @@ header>nav#tipson .top-bar-tips a{color:var(--theme-color);text-decoration:under
     width: 10%;
 }
 .inside_of_block .logo-area .HeaderLogo{color:var(--preset-link);display:block;text-align:left;max-width:172px;overflow:hidden;font-family:"Microsoft YaHei",'微软雅黑',sans-serif;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
-.inside_of_block .logo-area .HeaderLogo svg{background:url('https://img.2broear.com/svg/cped/BBCDT.svg?freshSvg=true')}
+/*.inside_of_block .logo-area .HeaderLogo svg{background:url('https://img.2broear.com/svg/cped/BBCDT.svg?freshSvg=true')}*/
 .inside_of_block .logo-area a{
     display: block;
 }
@@ -230,6 +230,7 @@ i.icomoon,
 
 .additional.metabox{
     width: 380%;
+    min-width: 320px;
     left: -136px;
     line-height: 0;
     padding: 25px 15px 15px;
@@ -350,6 +351,7 @@ i.icomoon,
 .additional.metaboxes{
     white-space: nowrap;
     width: auto;
+    min-width: auto;
     /*left: -50%;*/
     /*right: 0;*/
     /*width: 700px;*/
@@ -471,7 +473,7 @@ input::-webkit-input-placeholder{color:var(--preset-8)}
 .imtl-content-right-inside-search input:focus{width:150px}
 .imtl-content-right-inside-search input:focus+.slider{width:100%}
 .imtl-content-right-inside-search span.slider{width:0%;height:2px;background:var(--theme-color);display:block;position:relative;left:0;top:0;z-index:2;transition:all .35s ease;text-align:center;margin:0 auto}
-.button-active{background:url('https://img.2broear.com/css_sprites.png') -133px -178px no-repeat !important;right:15px !important}
+/*.button-active{background:url('https://img.2broear.com/css_sprites.png') -133px -178px no-repeat !important;right:15px !important}*/
 .imtl-content-right-inside-search button.buttonActive:before{right:15px}
 .imtl-content-right-inside-search button:before{display:block;position:absolute;right:12px;top:8px}
 nav .nav-wrap .nav-tools em{font-size:18px;color:var(--preset-link)}
@@ -511,8 +513,8 @@ nav .nav-wrap .nav-tools em{font-size:18px;color:var(--preset-link)}
 .mobile-vision a{margin:0 auto;display:block}
 .mobile-vision a:active{color:var(--theme-color)}
 .mobile-vision .m-logo{color:var(--preset-link)}
-.mobile-vision .m-logo svg{margin:17px auto;background:url('https://img.2broear.com/svg/cped/2BLogo.svg')}
-.mobile-vision .m-menu svg{background:url('https://img.2broear.com/svg/cped/v2MENU.svg')}
+/*.mobile-vision .m-logo svg{margin:17px auto;background:url('https://img.2broear.com/svg/cped/2BLogo.svg')}*/
+/*.mobile-vision .m-menu svg{background:url('https://img.2broear.com/svg/cped/v2MENU.svg')}*/
 .mobile-vision .m-menu{display:block}
 .mobile-vision .m-search{display:block}
 .mobile-vision.searching .mobile-search{
@@ -525,7 +527,7 @@ nav .nav-wrap .nav-tools em{font-size:18px;color:var(--preset-link)}
 .mobile-vision .m-search i::before{content:'\e919'}
 .mobile-vision .m-menu i::before{content:'\e91c'}
 .mobile-vision i{position:relative;top:-1px}
-.nav-wrap .nav-tools button{width:23px;height:23px;display:block;padding:0;position:absolute;left:5px;top:15px;background:url('https://img.2broear.com/css_sprites.png') -90px -178px no-repeat;cursor:pointer;border-radius:0 2px 2px 0;transition:right .2s ease}
+.nav-wrap .nav-tools button{width:23px;height:23px;display:block;padding:0;position:absolute;left:5px;top:15px;/*background:url('https://img.2broear.com/css_sprites.png') -90px -178px no-repeat;*/cursor:pointer;border-radius:0 2px 2px 0;transition:right .2s ease}
 .nav-tools .m-search i::before{content:'\e919'}
 .nav-wrap .nav-tools .m-search{display:block;font-size:17px;position:absolute;top:15px;left:-2px;opacity:.75}
 .news-cur-position{width:100%;height:auto;float:left;color:var(--preset-8);position:relative;display:none}
@@ -686,7 +688,7 @@ i.arrow-down::after{content:'\e908'}
 .slider-menu.show{
     transform: translateX(0%)!important;
 }
-.slider-menu{width:70%;height:100%;position:fixed;top:0;left:-1px;transform:translateX(-100%);outline:0;overflow-x:hidden;overflow-y:auto;transition:all .75s cubic-bezier(0.36,0.36,0.1,1.0);display:none;z-index:100001;background:url("https://img.2broear.com/bg3.png") center center}
+.slider-menu{width:70%;height:100%;position:fixed;top:0;left:-1px;transform:translateX(-100%);outline:0;overflow-x:hidden;overflow-y:auto;transition:all .75s cubic-bezier(0.36,0.36,0.1,1.0);display:none;z-index:100001;/*background:url("https://img.2broear.com/bg3.png") center center*/}
 .slider-menu-inside{width:100%;height:100%;position:relative;box-shadow:rgba(0,0,0,0.12) 0 1px 12px}
 .slider-menu_header{padding: 50px 0;border-bottom:4px solid var(--theme-color);position:relative}
 .slider-menu_header .slider-tips{display:block;margin:5px;position:absolute;top:0;left:0}
@@ -696,7 +698,7 @@ i.arrow-down::after{content:'\e908'}
 .slider-menu_header .slider-close i{display:block;font-size:18px;padding:18px;cursor:pointer;transition:all .3s ease;color:rgb(250,250,250)}
 .slider-menu_header .slider-logo a,
 .slider-menu_header .slider-logo{color:var(--preset-f);font-size:2rem}
-.slider-menu_header .slider-logo svg{background:url('https://img.2broear.com/svg/v2-115x41-XTY-white.svg')}
+/*.slider-menu_header .slider-logo svg{background:url('https://img.2broear.com/svg/v2-115x41-XTY-white.svg')}*/
 .slider-menu_body{width:auto;height:auto}
 .slider-menu_body .body-main{background-color:var(--preset-f)}
 .slider-menu_body ul{list-style-type:none;padding:0;margin:0}
@@ -783,7 +785,7 @@ i.arrow-down::after{content:'\e908'}
 .friend_links li a:hover{text-decoration:none!important;background-color:var(--preset-s)}
 .friend_links li a{font-size:var(--min-size);font-weight:300;line-height:25px;padding:0 7px;margin:3px;border:1px solid var(--preset-e);border-radius:15px}
 .friend_links li a:first-child{margin-left: 0;}
-.friend_links li a#Travelling{background: url(https://img.2broear.com/svg/Travelling.svg) no-repeat center center /contain;color:transparent;border-style:none;opacity: .88;}
+/*.friend_links li a#Travelling{background: url(https://img.2broear.com/svg/Travelling.svg) no-repeat center center /contain;color:transparent;border-style:none;opacity: .88;}*/
 .friend_links li a#more:hover{text-decoration:underline;background:transparent;color:var(--theme-color)}
 .friend_links li a#more{color:var(--preset-8);border-color:transparent}
 .footer-recommend{width:8em;/*padding:0 8%*/}
@@ -833,7 +835,7 @@ audio{width:300px;height:32px}
 .footer-ul .friends-links .friends-links-right{position:relative;float:right;margin:23px;margin-left:0}
 #qr-code-box{width:auto;height:auto;display:block}
 #qr-code-box span#qr-code{width:128px;height:128px;display:block}
-#qr-code-box span#qr-code em{width:100%;height:100%;background:url('https://img.2broear.com/css_sprites_contact.png') -159px -159px no-repeat;display:block}
+#qr-code-box span#qr-code em{width:100%;height:100%;/*background:url('https://img.2broear.com/css_sprites_contact.png') -159px -159px no-repeat;*/display:block}
 #footer-copyright{width:100%;height:auto;display:block;font-weight:normal;position:relative;z-index:1000;font-size:16px}
 #footer-copyright div{position:relative;margin:0 auto;width:100%;white-space:nowrap;padding:25px 0 0 0}
 #footer-copyright div a{color:rgb(233,233,233);padding:0 5px 0 5px}
@@ -912,13 +914,13 @@ audio{width:300px;height:32px}
 .ppt-tools{width:100%;height:100%;position:absolute;top:0;left:0;overflow:hidden;z-index:2}
 .ppt-tools span{opacity:0;position:absolute;top:80px;transition:margin .2s ease}
 .ppt-tools span:hover{opacity:1}
-.ppt-tools #prev{width:20px;height:40px;display:block;background:url('https://img.2broear.com/css_sprites.png') -50px -178px;left:0;margin:0 0 0 -20px}
-.ppt-tools #next{width:20px;height:40px;display:block;background:url('https://img.2broear.com/css_sprites.png') -10px -178px;right:0;margin:0 -20px 0 0}
+.ppt-tools #prev{width:20px;height:40px;display:block;/*background:url('https://img.2broear.com/css_sprites.png') -50px -178px;*/left:0;margin:0 0 0 -20px}
+.ppt-tools #next{width:20px;height:40px;display:block;/*background:url('https://img.2broear.com/css_sprites.png') -10px -178px;*/right:0;margin:0 -20px 0 0}
 .ppt-blocker:hover>.ppt-tools #prev{margin:-10px 0 0 0}
 .ppt-blocker:hover>.ppt-tools #next{margin:-10px 0 0 0}
 .news-ppt{width:100%;height:auto;border-radius:var(--radius);clear:both;overflow:hidden;/*margin-bottom:15px;*/}
 /*.news-ppt .topic{margin-top:15px;}*/
-.ppt-blocker{width:auto;height:175px;border:1px solid var(--preset-s);border-top-style:none;position:relative;overflow:hidden;border-radius:0 0 5px 5px;background:url('https://img.2broear.com/news/22-05-2019_google-adsense/ads.png') center center/cover}
+.ppt-blocker{width:auto;height:175px;border:1px solid var(--preset-s);border-top-style:none;position:relative;overflow:hidden;border-radius:0 0 5px 5px;/*background:url('https://img.2broear.com/news/22-05-2019_google-adsense/ads.png') center center/cover*/}
 .news-ppt ul{height:100%;width:calc(100%*9);list-style-type:none;position:relative;padding:0;margin:0;clear:both;white-space:nowrap}
 .news-ppt li{height:100%;width:314px;display:block;float:left}
 .news-ppt span{display:block}
@@ -1252,7 +1254,7 @@ body.dark .inside_of_block nav.main-nav ul li.sec_level div.links-more a:hover{b
 
 body.dark .v .vlist .vcard .vimg,body.dark .inside_of_block nav.main-nav ul li.sec_level div.links-more a,body.dark .weblog-tree-box .tree-box-title h3,body.dark .weblog-tree-core-l #weblog-timeline{color:var(--preset-c);border-color:var(--preset-4a)}
 body.dark .mobile-search .ms-inside .ms-inside-searchBox form,body.dark .friend_links li a{border-color:transparent}
-body.dark .friend_links li a#Travelling{background:url(https://img.2broear.com/svg/Travelling_dark.svg) no-repeat center center /contain}
+/*body.dark .friend_links li a#Travelling{background:url(https://img.2broear.com/svg/Travelling_dark.svg) no-repeat center center /contain}*/
 body.dark .inside-functions span,body.dark .friend_links li a:hover{/*color:var(--preset-9)!important;*/border-color:transparent;background-color:var(--preset-3a)}
 body.dark #special-img,body.dark .Fresh-ImgBoxs span,body.dark .friends-boxes .deals .inbox .inbox-headside img,body.dark .box_down ul li .details span,body.dark .banner .banner-inside ul li,body.dark span#lowerbg,body.dark span#acg-content-area,body.dark .news-window-img img,body.dark .news-article-container img,body.dark .win-content article img,body.dark .rcmd-boxes .info .inbox .inbox-headside img,body.dark #tech_pic img,body.dark #acg_window-content-inside_left-pic,body.dark .news-content-right-recommend ul{opacity: .66;}
 body.dark .wp_comments:hover,

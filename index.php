@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/main.min.css?v=<?php echo(mt_rand()) ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/main.min.css?v=0.1<?php //echo(mt_rand()) ?>" />
     <?php include_once(TEMPLATEPATH. '/head.php'); ?>
+    <style>
+        #banner-prev, #banner-next{background:url('<?php custom_cdn_src(); ?>/images/css_sprites.png') no-repeat}
+    </style>
 </head>
 <body class="<?php theme_mode(); ?>">
 <div class="content-all">
@@ -76,7 +79,7 @@
                       <div class="recommend-newsImg">
                         <div>
                           <a href="<?php the_permalink() ?>">
-                            <span id="lowerbg" style="background:url('<?php echo $post_image ? $post_image : get_option('site_bgimg'); ?>') center top no-repeat;background-size:cover;"></span>
+                            <span id="lowerbg" style="background:url('<?php echo $post_image ? $post_image : get_option('site_bgimg'); ?>') center 40% no-repeat;background-size:cover;"></span>
                           </a>
                           <a href="<?php the_permalink() ?>" id="rel" rel="bookmark" target="_blank">
                             <b><?php the_title() ?></b>
@@ -85,7 +88,7 @@
                       </div>
                       <div class="recommend-newsContent">
                         <span class="content-core entry-content">
-                            <p><?php custom_excerpt(150); ?></p>
+                            <p><?php custom_excerpt(170); ?></p>
                         </span>
                         <span class="content-tail">
                           <aside class="personal_stand">
