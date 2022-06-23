@@ -776,7 +776,7 @@ i.arrow-down::after{content:'\e908'}
 .footer-contact-left ul b a{font-size:var(--min-size);line-height:normal}
 .footer-contact-left ul b a#chrome:hover{color:var(--theme-color)}
 .footer-contact-left ul b a#edge:hover{color:#4585f4}
-.PoweredBy2B ins{display:block;font-size:var(--min-size);margin:5px auto 10px;letter-spacing:1px}
+.PoweredBy2B ins{display:block;font-size:var(--min-size);margin:5px auto 10px;/*letter-spacing:1px*/}
 .footer-quickway{max-width:18em;list-style-type:none;overflow:hidden;display:block;}
 .footer-ul a:hover{color:var(--preset-2b);text-decoration:underline}
 .footer-left a{margin:0;display:block;text-align:left;font-weight:300;position:relative;white-space:nowrap}

@@ -39,10 +39,9 @@
                 <?php
                     $baas = get_option('site_leancloud_switcher');  //use post as category is leancloud unset
                     if(!$baas){
-                        $cat_id = get_category_by_slug(current_slug())->term_id;
                         $current_page = max(1, get_query_var('paged')); //current paged
                         $left_query = new WP_Query(array_filter(array(
-                            'cat' => $cat_id,
+                            'cat' => $cat,  //get_template_bind_cat(basename(__FILE__))->term_id;
                             'meta_key' => 'post_orderby',
                             'orderby' => array(
                                 'meta_value_num' => 'DESC',

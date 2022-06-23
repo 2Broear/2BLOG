@@ -24,7 +24,7 @@
         <?php get_inform(); ?>
         <div class="download_boxes">
 		    <?php 
-                $preset = get_template_bind_cat('category-download.php')->slug;//'download';
+                $preset = get_template_bind_cat(basename(__FILE__))->slug;//'download';
                 $curslug = current_slug();
                 $baas = get_option('site_leancloud_switcher');
                 $cats = get_categories(meta_query_categories($cat, 'ASC', 'seo_order'));

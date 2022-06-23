@@ -23,7 +23,7 @@
             <div class="counter">
                 <?php
                     $curslug = current_slug();
-                    $preset = get_template_bind_cat('category-acg.php')->slug;//'acg';
+                    $preset = get_template_bind_cat(basename(__FILE__))->slug;//'acg';
                     $baas = get_option('site_leancloud_switcher');  //use post as category is leancloud unset
                     if(!$baas){
                         $cats = get_categories(meta_query_categories(get_category_by_slug($preset)->term_id, 'ASC', 'seo_order'));
