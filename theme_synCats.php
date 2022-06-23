@@ -17,7 +17,7 @@
             'comment_status' => 'open',
             'post_content'  => '',
             'page_template' => get_term_meta($term_id, 'seo_template', true),
-            'post_parent' => get_option('site_sync_level_sw') ? wpdb_postmeta_query('post_id','meta_value', $create_cat->parent) : '',//get_post($page_par_id)->post_name=='/' ? 0 : $page_par_id,  // check if page parent slug is '/' slash (incase page parent-slug '/' invalid occured category type, this only works with page level, none infuluence in category)
+            // 'post_parent' => get_option('site_sync_level_sw') ? wpdb_postmeta_query('post_id','meta_value', $create_cat->parent) : '',//get_post($page_par_id)->post_name=='/' ? 0 : $page_par_id,  // check if page parent slug is '/' slash (incase page parent-slug '/' invalid occured category type, this only works with page level, none infuluence in category)
             'menu_order' => $term_id
             // 'post_author'   => 1,
         );
@@ -51,7 +51,7 @@
             'post_name' => $edit_cat_slug,
             'post_title' => $edit_cat->name,
             'page_template' => get_term_meta($term_id, 'seo_template', true), //sync page_template to page
-            'post_parent' => get_option('site_sync_level_sw') ? wpdb_postmeta_query('post_id','meta_value', $edit_cat->parent) : '',  // (edited-cat parent binded page_id) update edit-parent cat bind page_id get_post($page_par_id)->post_name=='/'
+            // 'post_parent' => get_option('site_sync_level_sw') ? wpdb_postmeta_query('post_id','meta_value', $edit_cat->parent) : '',  // (edited-cat parent binded page_id) update edit-parent cat bind page_id get_post($page_par_id)->post_name=='/'
         );
         wp_update_post(wp_slash($post_data));
         if($use_slash) $wpdb->update($wpdb->posts, array('post_name' => '/'), array('ID' => $page_cid), array('%s'), array('%d'));  // sync 'slash' to page

@@ -464,7 +464,7 @@
         if(get_option('site_remove_category_switcher')){
             register_setting( 'baw-settings-group', 'site_url_slash_sw' );
         }
-        register_setting( 'baw-settings-group', 'site_sync_level_sw' );
+        // register_setting( 'baw-settings-group', 'site_sync_level_sw' );
         
         register_setting( 'baw-settings-group', 'site_search_style_switcher' );
         if(get_option('site_search_style_switcher')){
@@ -825,16 +825,16 @@
                     <?php
                         }
                     ?>
-                            <tr valign="top" class="child_option">
-                                <th scope="row">— 页面层级关系<sup title="实验性功能">EXP</sup></th>
-                                <td>
+                            <!--<tr valign="top" class="child_option">-->
+                            <!--    <th scope="row">— 页面层级关系<sup title="实验性功能">EXP</sup></th>-->
+                            <!--    <td>-->
                                     <?php
-                                        $opt = 'site_sync_level_sw';
-                                        get_option($opt) ? $status="checked" : $status="closed";
-                                        echo '<label for="'.$opt.'"><p class="description" id="">实验性功能默认关闭，开启可使用自定义关键字“slash”将分类别名重写为“/” 以达到隐藏当前层级，将子级作为同级输出的目的（启用后将自动同步分类层级到页面。启用此项请保证分类中不存在“/”别名分类，如访问错误请检查错误页面父级别名是否为“/”并修改</b></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">同步页面层级</b></label>';
+                                        // $opt = 'site_sync_level_sw';
+                                        // get_option($opt) ? $status="checked" : $status="closed";
+                                        // echo '<label for="'.$opt.'"><p class="description" id="">实验性功能默认关闭，开启可使用自定义关键字“slash”将分类别名重写为“/” 以达到隐藏当前层级，将子级作为同级输出的目的（启用后将自动同步分类层级到页面。启用此项请保证分类中不存在“/”别名分类，如访问错误请检查错误页面父级别名是否为“/”并修改</b></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">同步页面层级</b></label>';
                                     ?>
-                                </td>
-                            </tr>
+                            <!--    </td>-->
+                            <!--</tr>-->
                     <tr valign="top" class="">
                         <th scope="row">搜索/标签样式</th>
                         <td>
