@@ -530,7 +530,7 @@
             "type_news" : ["daily","record","feel","events","tech","share","tutorial","design","hardware"],
             "type_notes" : ["sundries","tech","design","frontend","backend","diary"],
             "type_acg" : ["anime","comic","game","movie","tv"],
-            "type_weblog" : ["weblog","dairy","feeling"],
+            "type_weblog" : ["weblog","diary","feeling"],
             "type_download" : ["soft","p2p","tool","tools","vpn","crack","media","adobe"]
           },
           Switchers = ["rating","source","avatar"],

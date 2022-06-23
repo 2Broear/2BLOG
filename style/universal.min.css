@@ -1086,7 +1086,7 @@ audio{width:300px;height:32px}
 .news-article-window{width:70%}
 .fv-switch-p{width:100%}
 .news-inside-content h2 a{color:var(--preset-6)}
-.news-inside-content h2{margin:5% 0 0 0;font-size:1rem;white-space:nowrap}
+.news-inside-content h2{margin:5% 0 0 0;font-size:1rem;white-space:nowrap;line-height:initial}
 .news-core_area{display:block}
 .news-inside-content .news-personal_stand{display:block}
 .download_boxes .dld_boxes{width:calc(100%/3);display: inline-block;vertical-align: top;/*float:left*/}

@@ -179,11 +179,7 @@
 		</div>
 		<div style="max-width:1102px;margin:0 auto">
             <?php 
-<<<<<<< HEAD
-                the_page_content(current_slug());  //the_content();
-=======
                 the_content();// the_page_content(current_slug());  //
->>>>>>> 9a1e81326eb117962e5fd84a0bf39e39f5db61d2
                 dual_data_comments();
             ?>
         </div>
