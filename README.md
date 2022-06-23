@@ -23,6 +23,7 @@ __Preview Site__ ：[演示站点](http://wpl.2broear.com) （演示并不代表
 - 评论支持邮件（可选模板）、自建微信应用多模版推送提醒（Valine 集成 server酱、pushplus及企业微信应用推送）
 - 部分页面支持使用视频替代 poster 背景
 - ...
+- 取消了当前导航下方 slider 滑块
 
 当然了，最重要的还是集成了 __Leancloud 与 Wordpress 之间的数据切换__ ，这个主要是因为之前静态博客使用的是 _valine_ 评论系统（其实之前很少使用 _leancloud_ 数据储存），后面我自己改了很多东西（至于要不要集成到 wp 上只能日后再说了），所以在 _wordpress_ 中仍做了数据切换，然后顺带更新了之前尚未同步数据到 _leancloud_ 的页面。
 
