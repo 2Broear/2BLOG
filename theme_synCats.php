@@ -1,5 +1,4 @@
 <?php
-    // $sync_cat_page_level = get_option('site_sync_level_sw');
     // CREATE category sync-action to page // https://stackoverflow.com/questions/32314278/how-to-create-a-new-wordpress-page-programmatically
     // BUG：删除页面后自动递增trashed..(已解决，来自wp_update_category)
     add_action('create_category', 'create_category_sync_page', 11, 2);  
@@ -83,19 +82,27 @@
         	if(!wp_is_post_revision($post_id)){
         		// remove this hook so that it does not create an infinite loop
         		remove_action( 'save_post', 'update_page_sync_category', 10, 3);
+                $post_data = array(
+                    'ID' => $post_after->ID,  // required page cat-id for update
+                    'post_name' => $edit_post_slug,
+                    'post_title' => $edit_post_title,
+                    'post_parent' => $edit_post_parent,
+                    'page_template' => $edit_post_template,
+                );
+                wp_update_post(wp_slash($post_data));
         		// update the post when the save_post hook is called again // wp_update_post( $my_args );
-        		if(get_option('site_sync_level_sw')){
+        // 		if(get_option('site_sync_level_sw')){
+        //     		wp_update_term($cat_id, 'category', array(
+        //                 'name' => $edit_post_title,
+        //                 'slug' => $edit_post_slug,
+        //                 'parent' => get_post_meta($edit_post_parent, "post_term_id", true),  // update edit-post_parent to bind-cat parent
+        //             ));
+        // 		}else{
             		wp_update_term($cat_id, 'category', array(
                         'name' => $edit_post_title,
                         'slug' => $edit_post_slug,
-                        'parent' => get_post_meta($edit_post_parent, "post_term_id", true),  // update edit-post_parent to bind-cat parent
                     ));
-        		}else{
-            		wp_update_term($cat_id, 'category', array(
-                        'name' => $edit_post_title,
-                        'slug' => $edit_post_slug,
-                    ));
-        		}
+        // 		}
                 update_term_meta($cat_id, 'seo_template', $edit_post_template);  // sync page_template to category
                 update_post_meta($post_id, '_wp_page_template', $edit_post_template);  // manual-update page_template via post_meta
                 global $wpdb;
