@@ -22,6 +22,7 @@ __Preview Site__ ：[演示站点](http://wpl.2broear.com) （演示并不代表
 - 部分页面支持 _wordpress 与 leancloud_ 数据切换
 - 评论支持邮件（可选模板）、自建微信应用多模版推送提醒（Valine 集成 server酱、pushplus及企业微信应用推送）
 - 部分页面支持使用视频替代 poster 背景
+- 部分页面（weblog、acg、download）支持子页并可选是否开启文章页
 - ...
 - 取消了当前导航下方 slider 滑块
 
