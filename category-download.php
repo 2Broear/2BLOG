@@ -27,7 +27,7 @@
                 $preset = get_template_bind_cat(basename(__FILE__))->slug;//'download';
                 $curslug = current_slug();
                 $baas = get_option('site_leancloud_switcher');
-                $cats = get_categories(meta_query_categories($cat, 'ASC', 'seo_order'));
+                $cats = get_categories(meta_query_categories(get_template_bind_cat(basename(__FILE__))->term_id, 'ASC', 'seo_order'));
                 if(!$baas){
                     // !empty($cats) && $curslug==$preset ? download_posts_query($cats, 1) : download_posts_query(array(get_category($cat)), 1, 'single');
                     if(!empty($cats) && $curslug==$preset){
@@ -199,7 +199,7 @@
     	        serverURLs: "<?php echo get_option('site_leancloud_server') ?>"
             });
             //request AV.Query
-            const query_new = new AV.Query("<?php echo current_slug(); ?>"),
+            const query_new = new AV.Query("<?php echo $preset; ?>"),
                   query_tab = ["soft","p2p","tool","tools","vpn","crack","media","adobe"];
             query_new.addDescending("createdAt").find().then(result=>{ //.equalTo('type_download',loadType)
                 for (let i=0; i<result.length;i++) {
