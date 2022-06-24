@@ -54,7 +54,8 @@
                         // 当前选中栏目 || 当前选中栏目下子栏目 || 当前栏目下文章&&文章单页
                         if($the_cat_id==$cat&&!is_single() || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";
                         // if($the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";  //current category/page detect (bychild) DO NOT USE ID DETECT, because all cat are page(post) type;
-                        $slash_link = get_category_link($the_cat_id)!=get_site_url() ? get_category_link($the_cat_id) : 'javascript:void(0)';  // detect if use $slash_link
+                        $cur_link = get_category_link($the_cat_id);
+                        $slash_link = $cur_link==get_site_url()||$cur_link==get_site_url().'/category/'||$cur_link==get_site_url().'/category' ? 'javascript:void(0)' : $cur_link;  // detect if use $slash_link
                         $site_icon = $use_icon ? '<i class="icom icon-'.$slug_icon.'"></i>' : '';
                         if($the_cat_slug!='uncategorized') echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.$slash_link.'" class="'.$choosen.'">' . $site_icon . $the_cat->name.'</a>';  //liwrapper
                         if(!empty($catss)){
@@ -98,7 +99,8 @@
                                     $catsss = get_categories(meta_query_categories($the_cats_id, 'ASC', 'seo_order'));
                                     if(!empty($catsss)) $level="trd_level";else $level="sec_child";
                                     if($the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single()) $choosen = "choosen 2rd";else $choosen="2nd";  // current choosen detect
-                                    $slash_link = get_category_link($the_cats_id)!=get_site_url() ? get_category_link($the_cats_id) : 'javascript:void(0)';  // detect if use $slash_link
+                                    $cur_link = get_category_link($the_cats_id);
+                                    $slash_link = $cur_link==get_site_url()||$cur_link==get_site_url().'/category/'||$cur_link==get_site_url().'/category' ? 'javascript:void(0)' : $cur_link;  // detect if use $slash_link
                                     echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent." ".$level.'"><a href="'.$slash_link.'" class="'.$choosen.'">'.$the_cats->name.'</a>';  //liwrapper
                                     if(!empty($catsss)){
                                         echo '<div class="sub-additional"><ol class="links-more">';
