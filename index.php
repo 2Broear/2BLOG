@@ -4,7 +4,7 @@
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/main.min.css?v=0.1<?php //echo(mt_rand()) ?>" />
     <?php include_once(TEMPLATEPATH. '/head.php'); ?>
     <style>
-        #banner-prev, #banner-next{background:url('<?php custom_cdn_src(); ?>/images/css_sprites.png') no-repeat}
+        #banner-prev, #banner-next{background:url('<?php custom_cdn_src('img'); ?>/images/css_sprites.png') no-repeat}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -63,10 +63,12 @@
                             'modified' => 'DESC',
                         ),
                         // 'tag' => 'topset',  // topset tag only(exclude none post)
-                        'post__in' => get_option('sticky_posts'),  // topset post(always include post)
+                        // 'post__in' => get_option('sticky_posts'),  // topset post(always include post)
                     );
                 }else{
-                    $query_array = array('cat' => $cat_id, 'posts_per_page' => 1, 'order' => 'DESC', 'orderby' => 'data', 'post__in' => get_option('sticky_posts'));
+                    $query_array = array('cat' => $cat_id, 'posts_per_page' => 1, 'order' => 'DESC', 'orderby' => 'data',
+                        // 'post__in' => get_option('sticky_posts'),
+                    );
                 }
                 $rcmd_query = new WP_Query(array_filter($query_array));
                 while ($rcmd_query->have_posts()):

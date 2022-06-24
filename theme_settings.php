@@ -594,6 +594,44 @@
         register_setting( 'baw-settings-group', 'site_contact_twitter' );
         register_setting( 'baw-settings-group', 'site_contact_steam' );
     }
+    function category_options($value){
+        $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+        if(!empty($cats)){
+            foreach($cats as $the_cat){
+                $cats_id = $the_cat->term_id;
+                echo '<option value="'.$cats_id.'"';
+                    if($value==$cats_id) echo('selected="selected"');
+                echo '>'.$the_cat->name.'</option>';
+                $catss = get_categories(meta_query_categories($cats_id,'ASC','seo_order'));
+                if(!empty($catss)){
+                    foreach($catss as $the_cats){
+                        $catss_id = $the_cats->term_id;
+                        echo '<option value="'.$catss_id.'"';
+                            if($value==$catss_id) echo('selected="selected"');
+                        echo '>— '.$the_cats->name.'</option>';  //&nbsp;&nbsp;
+                        $catsss = get_categories(meta_query_categories($catss_id,'ASC','seo_order'));
+                        if(!empty($catsss)){
+                            foreach($catsss as $the_catss){
+                                $catsss_id = $the_catss->term_id;
+                                echo '<option value="'.$catsss_id.'"';
+                                    if($value==$catsss_id) echo('selected="selected"');
+                                echo '>—— '.$the_catss->name.'</option>';  //&nbsp;&nbsp;&nbsp;&nbsp;
+                                $catssss = get_categories(meta_query_categories($catsss_id,'ASC','seo_order'));
+                                if(!empty($catssss)){
+                                    foreach($catssss as $the_catsss){
+                                        $catssss_id = $the_catsss->term_id;
+                                        echo '<option value="'.$catssss_id.'"';
+                                            if($value==$catssss_id) echo('selected="selected"');
+                                        echo '>——— '.$the_catsss->name.'</option>';  //&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     function add_options_submenu() {
         $theme_color = get_option('site_theme','#eb6844');
         global $cats;
@@ -1521,12 +1559,7 @@
                                 $value = get_option($opt);
                                 // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if options unset
                                 echo '<label for="'.$opt.'"><p class="description" id="site_rcmdside_cid_label">默认使用“news”分类（应用于首页右侧推荐分类文章卡片展示</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
-                                    foreach($cats as $the_cat){
-                                        $cats_id = $the_cat->term_id;
-                                        echo '<option value="'.$cats_id.'"';
-                                            if($value==$cats_id)echo('selected="selected"');
-                                        echo '>'.$the_cat->name.'</option>';
-                                    }
+                                    category_options($value);
                                 echo '</select><label>';
                             ?>
                         </td>
@@ -1585,12 +1618,7 @@
                                         $value = get_option($opt);
                                         // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if options unset
                                         echo '<label for="'.$opt.'"><p class="description" id="site_techside_cid_label">图文资讯分类（</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
-                                            foreach($cats as $the_cat){
-                                                $cats_id = $the_cat->term_id;
-                                                echo '<option value="'.$cats_id.'"';
-                                                    if($value==$cats_id)echo('selected="selected"');
-                                                echo '>'.$the_cat->name.'</option>';
-                                            }
+                                            category_options($value);
                                         echo '</select><label>';
                                     ?>
                                 </td>
@@ -1601,7 +1629,7 @@
                                     <?php
                                         $opt = 'site_techside_bg';
                                         $value = get_option($opt);
-                                        $preset =  custom_cdn_src('img',true).'/images/Tech-x4.png';
+                                        $preset =  custom_cdn_src('img',true).'/images/google_flush.gif';//Tech-x4.png
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
                                         echo '<p class="description" id="site_bgimg_label">分类背景图，首页科技资讯侧边调用图片（默认背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
                                     ?>
@@ -1640,12 +1668,7 @@
                                         $value = get_option($opt);
                                         // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if options unset
                                         echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_cid_label">默认使用“acg”模板分类</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
-                                            foreach($cats as $the_cat){
-                                                $cats_id = $the_cat->term_id;
-                                                echo '<option value="'.$cats_id.'"';
-                                                    if($value==$cats_id)echo('selected="selected"');
-                                                echo '>'.$the_cat->name.'</option>';
-                                            }
+                                            category_options($value);
                                         echo '</select><label>';
                                     ?>
                                 </td>
@@ -1813,12 +1836,7 @@
                                         $value = get_option($opt);
                                         // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if options unset
                                         echo '<label for="'.$opt.'"><p class="description" id="site_mostview_cid_label">默认使用一级栏目首位“'.$cats_haschild[0]->slug.'”分类（亦可选用其他分类文章热度排行</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
-                                            foreach($cats as $the_cat){
-                                                $cats_id = $the_cat->term_id;
-                                                echo '<option value="'.$cats_id.'"';
-                                                    if($value==$cats_id)echo('selected="selected"');
-                                                echo '>'.$the_cat->name.'</option>';
-                                            }
+                                            category_options($value);
                                         echo '</select><label>';
                                     ?>
                                 </td>
@@ -1840,12 +1858,7 @@
                                 $value = get_option($opt);
                                 // if(!$value) update_option($opt , $preset);else $preset=$value;  //auto update option to default if options unset
                                 echo '<label for="'.$opt.'"><p class="description" id="site_bottom_recent_cid_label">页面底部最左侧资讯栏目内容（可选所有存在文章的一级分类目录</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
-                                    foreach($cats as $the_cat){
-                                        $cats_id = $the_cat->term_id;
-                                        echo '<option value="'.$cats_id.'"';
-                                            if($value==$cats_id)echo('selected="selected"');
-                                        echo '>'.$the_cat->name.'</option>';
-                                    }
+                                    category_options($value);
                                 echo '</select><label>';
                             ?>
                         </td>
