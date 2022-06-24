@@ -277,7 +277,7 @@
     function dual_data_comments(){
         if(is_category()){
             if(!get_option('site_comment_switcher')){
-                echo '<div class="main"><span><h2> 评论留言 </h2></span><p>分类（category）页面无法调用 WP 评论，请前往页面指定当前页面父级，<small>亦可前往后台启用第三方评论。</small></p></div>';
+                echo '<div class="main"><span><h2> 评论留言 </h2></span><p>分类页面无法调用 WP 评论，<b> 开启移除 CATEGORY 后 </b>请前往页面指定当前页面父级，<small>亦可前往后台启用第三方评论。</small></p></div>';
             }else{
                 include_once(TEMPLATEPATH . '/comments.php');
             }
