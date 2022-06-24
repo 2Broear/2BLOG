@@ -218,6 +218,7 @@ Futures & bugs
 ### future
 
 - 文章页面标题定位导航
+- 引进 twikoo 评论、集成 valine 评论功能到 wp 评论
 
 ### bug
 
