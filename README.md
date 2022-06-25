@@ -23,6 +23,7 @@ __Preview Site__ ：[演示站点](http://wpl.2broear.com) （演示并不代表
 - 可控的侧栏广告位（Google AdSense）及 Pixiv 排行展示（数量）、最高浏览分类及展示数量
 - 底部各项自定义、各图标等信息开启控制
 - 支持开启 Valine 评论同时调用 Leancloud 应用数据
+- _修复了 Valine 存在的隐私泄漏问题_
 - 支持邮件（可选模板）、自建企业微信应用（多选模版）评论推送提醒（Valine 集成 server酱、pushplus及企业微信应用推送）
 - 部分页面支持 wordpress 与 leancloud 数据切换
 - 部分页面支持使用视频替代 poster 背景
