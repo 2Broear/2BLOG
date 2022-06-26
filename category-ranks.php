@@ -116,7 +116,7 @@
 <?php
     if($comment_sw){
 ?>
-        <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/md5.min.js"></script>
+        <!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/md5.min.js"></script>-->
         <script>
             var query = new AV.Query("Comment"),
                 rankest = document.getElementById("rankest"),
@@ -137,7 +137,7 @@
                     obj = {};
                 for (let i=0;i<res.length;i++) {
                     let nick = res[i].attributes.nick,
-                        mail = res[i].attributes.mail,
+                        mail = res[i].attributes.md5mail,  //use md5 insted of mail
                         link = res[i].attributes.link;
                     comArr.push({nick,mail,link});
                 }
@@ -177,7 +177,7 @@
                 var average = 0;
                 for(var i=0,avg=0,max=3,maxes=10,limit=52;i<limit;i++){
                     let name = temps[i].n,
-                        mail = md5(temps[i].m),
+                        mail = temps[i].m,  //md5(temps[i].m),
                         link = temps[i].l,
                         times = temps[i].t;
                     avg = avg+=temps[i].t;
