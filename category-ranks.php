@@ -177,14 +177,14 @@
                 var average = 0;
                 for(var i=0,avg=0,max=3,maxes=10,limit=52;i<limit;i++){
                     let name = temps[i].n,
-                        mail = temps[i].m,  //md5(temps[i].m),
+                        mail = temps[i].m,//md5(temps[i].m),
                         link = temps[i].l,
                         times = temps[i].t;
                     avg = avg+=temps[i].t;
                     average = avg/max;
                     if(name!="匿名者"&&name!="2broear"){
-                        i<max ? rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img src="https://sdn.geekzu.org/avatar/${mail||'none'}?d=retro&s=100" title="这家伙留了 ${times} 条评论！" /></a></span><span id="range" style="height:${average}px"><em style="height:${times*2}%"></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>` : false;
-                        i>=max && i<maxes ? ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar"><img src="https://sdn.geekzu.org/avatar/${mail||'none'}?d=retro&s=100" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b></a>${times}<sup>+</sup></li>` : false;
+                        i<max ? rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img src="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" title="这家伙留了 ${times} 条评论！" /></a></span><span id="range" style="height:${average}px"><em style="height:${times*2}%"></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>` : false;
+                        i>=max && i<maxes ? ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar"><img src="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b></a>${times}<sup>+</sup></li>` : false;
                         i>maxes ? ranked.innerHTML += `<li><p>${name}<sup>${times}</sup></p></li>` : false;
                     }
                 }
