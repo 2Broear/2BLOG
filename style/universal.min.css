@@ -46,6 +46,15 @@ input[type=button]:focus,button:focus,.friend_links li a:focus,.pageSwitcher.dev
 }
 figure{
     margin: 0 auto;
+    text-align: center;
+}
+figure > figure{
+    width: 32%;
+    display: inline-block;
+    margin: 5px;
+}
+figure figcaption{
+    font-size: var(--min-size-rem);
 }
 figure img{
 	width: auto;

@@ -69,6 +69,7 @@
                             	pageSize: '<?php echo get_option('comments_per_page',15) ?>',
                             	// avosSdk: '<?php //echo get_option('site_leancloud_sdk') ?>',
                             	// avatar: '<?php //echo get_option('avatar_default','retro') ?>',
+                            	// listSize: '<?php //echo get_option('site_per_posts') ?>',
                             	notify: false,
                             	verify: false,
                             	visitor: false,

@@ -128,7 +128,7 @@
       },
       //releaseEvent 拖拽释放（完成）事件处理程序
       releaseEvent = function(target,start,route,offset,max){
-          runTimer();  //timer clear&run for mouseevent [PC]
+        //   runTimer();  //timer clear&run for mouseevent [PC]
           //..
           clearEvent(target);  //解绑所有事件
           // target.style.transform="";
@@ -293,7 +293,7 @@
     box.onmouseup = 
     dots.ontouchend = dots.onmouseleave = 
     prev.onmouseleave = next.onmouseleave = function(){
-        runTimer();
+        // runTimer();
         statu(circle,num,true,0);  //状态点（进度条瞬间完成）重置
     };
     

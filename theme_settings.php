@@ -491,6 +491,7 @@
             register_setting( 'baw-settings-group', 'site_acgnside_cid' );
             // register_setting( 'baw-settings-group', 'site_acgnside_num' );
         }
+        register_setting( 'baw-settings-group', 'site_default_postimg_switcher' );
         
         // register_setting( 'baw-settings-group', 'site_acgn_bg' );
         register_setting( 'baw-settings-group', 'site_acgn_video' );
@@ -1577,6 +1578,16 @@
                         </td>
                     </tr>
                     <tr valign="top">
+                        <th scope="row">文章列表预览图</th>
+                        <td>
+                            <?php
+                                $opt = 'site_default_postimg_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="">默认当文章存在自定义 thumbnail 特色图片时才显示列表预览图，开启后将始终显示（显示优先级：自定义特色图片>文章内图片>默认图片</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">始终显示预览</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
                         <th scope="row">首页 - 卡片导航</th>
                         <td>
                             <?php
@@ -1696,7 +1707,7 @@
                                 $value = get_option($opt);
                                 $preset = 'for_empty_acgn_video';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_acgn_video_label">漫游影视背景视频（开启后背景图片将作为视频的poster展示</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="上传视频" />';
+                                echo '<p class="description" id="">漫游影视背景视频（开启后背景图片将作为视频的poster展示</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="上传视频" />';
                             ?>
                         </td>
                     </tr>

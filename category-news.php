@@ -48,12 +48,10 @@
                         ?>
                                 <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window icom wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                                     <div class="news-window-inside">
-                                        <span class="news-window-img">
-                                            <a href="<?php the_permalink() ?>">
-                                                <img class="lazy" src="<?php echo get_postimg(); ?>" />
-                                            </a>
-                                        </span>
-                                        <div class="news-inside-content">
+                                        <?php
+                                            if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img class="lazy" src="'.get_postimg().'" /></a></span>';
+                                        ?>
+                                        <div class="news-inside-content" style="<?php echo $hasimg_style; ?>">
                                             <h2 class="entry-title">
                                                 <a href="<?php the_permalink() ?>" title="<?php the_title() ?>"><?php the_title() ?></a>
                                             </h2>
