@@ -190,7 +190,7 @@
           banner.onmousedown=function(e){
               e.preventDefault();  //阻止默认行为（拖拽）
               var _this = this,  //prevTrans = preUnit==="%" ? -num*preWidth : num*_getComputedStyle(_this,"transform",4),  //通过单位判断上次偏移量记录;
-                  maxWidth = parseInt(preWidth/9);
+                  maxWidth = parseInt(preWidth/20);
               _this.style.cssText += `transition-duration:0ms`;
               startPoint = parseInt(e.clientX);
               _this.onmousemove=function(e){
@@ -220,7 +220,7 @@
           let startPoint, moveRoute, moveOffset;
           banner.ontouchstart=function(e){
               var _this = this,  //prevTrans = preUnit==="%" ? -num*preWidth : num*_getComputedStyle(_this,"transform",4),  //通过单位判断上次偏移量记录;
-                  maxWidth = parseInt(preWidth/9);
+                  maxWidth = parseInt(preWidth/20);
               _this.style.cssText += `transition-duration:0ms`;
               startPoint = parseInt(e.touches[0].clientX);
               _this.ontouchmove=function(e){
@@ -281,16 +281,16 @@
       };
 
     // runTimer();  // auto start
-    // box.onmouseenter = box.ontouchstart = 
-    box.onmousedown = 
+    // box.onmousedown = 
+    box.ontouchstart = box.onmousedown = 
     dots.onmouseenter = dots.ontouchstart = 
     prev.onmouseenter = prev.ontouchstart = 
     next.onmouseenter = next.ontouchstart = function(){
         clearInterval(timer)//clearTimer();
         statu(circle,num,'stop');  //状态点（进度条）终止（解绑box事件）
     };
-    // box.onmouseleave = box.ontouchend = 
-    box.onmouseup = 
+    // box.onmouseup = 
+    box.ontouchend = box.onmouseup = 
     dots.ontouchend = dots.onmouseleave = 
     prev.onmouseleave = next.onmouseleave = function(){
         // runTimer();
