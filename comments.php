@@ -258,7 +258,7 @@
                 <div class="wp_comments_list">
                     <?php function custom_comment($comment, $args, $depth){
                         $GLOBALS['comment'] = $comment; 
-                        $admin_mail = get_option('site_smtp_mail', get_bloginfo('admin_email'));
+                        $admin_mail = get_bloginfo('admin_email');
                         $approved = $comment->comment_approved;
                         // $user_agent = get_user_agent($comment->comment_agent);
                         $userAgent = get_userAgent_info($comment->comment_agent);

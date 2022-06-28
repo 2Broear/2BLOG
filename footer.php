@@ -78,6 +78,7 @@
                             	serverChan: '<?php echo get_option('site_comment_serverchan') ?>',
                             	// qmsgChan: '<?php //echo get_option('site_comment_qmsgchan') ?>',
                             	rootPath: '<?php echo get_bloginfo('template_directory') ?>',
+                            	adminMd5: '<?php echo md5(get_bloginfo('admin_email')) ?>',
                             	avatarCdn: '<?php echo get_option("site_avatar_mirror") ?>avatar/',
                             	posterImg: '<?php echo get_postimg(); ?>',
                             	wxNotify: '<?php echo get_option("site_wpwx_notify_switcher") ?>',

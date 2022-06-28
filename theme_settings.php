@@ -1868,7 +1868,7 @@
                                 // $preset = $cats_haschild[0]->term_id;  //return id rather then slug(get id by slug once)
                                 $value = get_option($opt);
                                 // if(!$value) update_option($opt , $preset);else $preset=$value;  //auto update option to default if options unset
-                                echo '<label for="'.$opt.'"><p class="description" id="site_bottom_recent_cid_label">页面底部最左侧资讯栏目内容（可选所有存在文章的一级分类目录</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_bottom_recent_cid_label">页面底部最左侧资讯栏目分类</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
                                     category_options($value);
                                 echo '</select><label>';
                             ?>

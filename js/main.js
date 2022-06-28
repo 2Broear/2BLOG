@@ -8,7 +8,7 @@
               title2 = `
     A wordpress theme Design & Devoloped via 2BROEAR open source in 2022`,
               content = ``;
-        console.log(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2BROEAR %c Release https://blog.2broear.com/ %c ${content} `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
+        console.log(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2BROEAR %c Release https://github.com/2Broear/2BLOG %c ${content} `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
     })();
     
     function dynamicLoad(jsUrl,fn){

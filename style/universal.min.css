@@ -209,8 +209,8 @@ header>nav#tipson .top-bar-tips a{color:var(--theme-color);text-decoration:under
     height: 40px;
 }
 .slider-menu_header .slider-logo span,
-.inside_of_block .logo-area span,.mobile-vision .m-logo span{
-    color:var(--preset-2b);;font-size:28px;font-weight:800;font-family:"Source Han Serif SC", "Playfair Display", 宋体, serif;display:block;white-space:nowrap;width:115px;height:35px;padding:0;
+.inside_of_block .logo-area span,.mobile-vision .m-logo span{width:115px;height:34px;
+    color:var(--preset-2b);;font-size:28px;font-weight:800;font-family:"Source Han Serif SC", "Playfair Display", 宋体, serif;display:block;white-space:nowrap;padding:0;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -238,7 +238,7 @@ i.icomoon,
 .inside_of_block nav.main-nav ul li.sec_level div.links-more a{color:var(--preset-8);padding:0;margin:0;line-height:36px;text-align:left;border-bottom:1px solid var(--preset-s)}
 
 .additional.metabox{
-    width: 380%;
+    width: 360%;
     min-width: 320px;
     left: -136px;
     line-height: 0;
@@ -1365,6 +1365,9 @@ body.dark .wp_comments img{
     display: block!important;
     margin: 0 auto!important;
     /* text-align: center!important; */
+}
+mark:hover{
+    background-color: transparent!important;
 }
 #reEdit{position: fixed;top: 0;right: 0;width: 100%;z-index: 99999;background: var(--preset-3a)}
 #reEdit p{color: #ccc;font-size: var(--min-size-rem);line-height: 50px;margin: 0 auto}
