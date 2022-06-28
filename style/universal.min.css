@@ -1375,7 +1375,8 @@ body.dark .wp_comments img{
 .share span:hover {background:currentColor}
 .share span:hover::before{width:100%;height:100%}
 .share span {width:50px;height:50px;display:inherit;border:2px solid;padding:5px;margin:0 auto;border-radius:50%;transition:all .15s ease;position:relative;cursor:pointer;}
-.share #dislike span.zan::after {background-position:-404px 4px}
+.share #dislike span.zan::after,
+.share #dislike span.zan em {background-position:-404px 4px!important}
 body.dark .share #dislike span #counter {color:#303030}
 .share #dislike span #counter {min-width:30%;min-height:32%;padding:0 1px;color:#fff;font-style:normal;font-weight:800;font-family:var(--font-ms);text-align:center;border:2px solid;background:#c0545f;border-radius:50px;position:absolute;top:-15px;right:5px;letter-spacing:-1px;display:block}
 .share #dislike span {color:#c0545f}
