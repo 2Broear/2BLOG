@@ -1,6 +1,6 @@
 <?php
 /*
-    Template name: 留言模板（BaaS）
+    Template name: 留言模板
     Template Post Type: page
 */
 ?>

@@ -24,10 +24,11 @@
         <?php get_inform(); ?>
         <div class="download_boxes">
 		    <?php 
-                $preset = get_template_bind_cat(basename(__FILE__))->slug;//'download';
+		        $basename = basename(__FILE__);
+                $preset = get_template_bind_cat($basename)->slug;//'download';
                 $curslug = current_slug();
-                $baas = get_option('site_leancloud_switcher');
-                $cats = get_categories(meta_query_categories(get_template_bind_cat(basename(__FILE__))->term_id, 'ASC', 'seo_order'));
+                $baas = get_option('site_leancloud_switcher')&&strpos(get_option('site_leancloud_category'), $basename)!==false;
+                $cats = get_categories(meta_query_categories(get_template_bind_cat($basename)->term_id, 'ASC', 'seo_order'));
                 if(!$baas){
                     // !empty($cats) && $curslug==$preset ? download_posts_query($cats, 1) : download_posts_query(array(get_category($cat)), 1, 'single');
                     if(!empty($cats) && $curslug==$preset){

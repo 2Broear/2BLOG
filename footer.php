@@ -51,10 +51,10 @@
               <ul class="footer-quickway" id="comments">
                 <h2>最新评论</h2>
                 <?php
-                    $leancloud_sw = get_option('site_leancloud_switcher');
+                    $baas = get_option('site_leancloud_switcher');
                     $comment_sw = get_option('site_comment_switcher');
                     if($comment_sw){    // 全站加载
-                        if(!$leancloud_sw){
+                        if(!$baas){
                 ?>
                             <script src="<?php custom_cdn_src(); ?>/js/leancloud/av-min.js?v=footcall"></script>
                 <?php
@@ -195,7 +195,7 @@
                 <h2>朋友圈</h2>
                 <li class="friendsBox">
                     <?php 
-                        if($leancloud_sw){
+                        if($baas && strpos(get_option('site_leancloud_category'), 'category-2bfriends.php')!==false){
                     ?>
                             <script type="text/javascript"> //addAscending createdAt
                                 new AV.Query("link").addDescending("updatedAt").equalTo('sitelink', 'true').find().then(result=>{
@@ -243,7 +243,7 @@
                     }
                     // if(get_option('site_foreverblog_switcher'))
                     echo '<a href="'.get_option('site_foreverblog').'" target="_blank"><img src="'.get_bloginfo('template_directory').'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
-                    // if($comment_sw || $leancloud_sw) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
+                    // if($comment_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
                 ?>
             </p>
           </ul>

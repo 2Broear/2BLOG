@@ -300,7 +300,7 @@
         if(get_option('site_inform_switcher')){
             $inform_max = get_option('site_inform_num');
             echo '<div class="scroll-inform"><p><b>近期公告&nbsp;</b><i class="icom inform"></i>:&nbsp;</p><div class="scroll-block" id="informBox">';
-            if(get_option('site_leancloud_switcher')){
+            if(get_option('site_leancloud_switcher')&&strpos(get_option('site_leancloud_category'), 'site_leancloud_inform')!==false){
     ?>
                 <script type="text/javascript">  //addAscending("createdAt")
                     new AV.Query("inform").addDescending("createdAt").limit(<?php echo $inform_max; ?>).find().then(result=>{

@@ -37,7 +37,8 @@
         <div class="weblog-tree-all">
             <div class="weblog-tree-core">
                 <?php
-                    $baas = get_option('site_leancloud_switcher');  //use post as category is leancloud unset
+                    // echo basename(__FILE__);
+                    $baas = get_option('site_leancloud_switcher')&&strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false;  //use post as category is leancloud unset
                     if(!$baas){
                         $current_page = max(1, get_query_var('paged')); //current paged
                         $left_query = new WP_Query(array_filter(array(

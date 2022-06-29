@@ -182,8 +182,9 @@
                     </div>
                     <ul class="tech_window-content">
                         <?php 
+                            $baas = get_option('site_leancloud_switcher');
                             $query_cid = get_option('site_techside_cid');
-                            get_option('site_leancloud_switcher') ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid);
+                            $baas ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid);
                         ?>
                     </ul>
                     <div class="newsBox-subText-Description" id="tech_window-bottom">
@@ -226,7 +227,7 @@
                                     <?php 
                                         $query_cid = get_option('site_acgnside_cid');
                                         $query_slug = get_category($query_cid)->slug;
-                                        if(get_option('site_leancloud_switcher')){
+                                        if($baas&&strpos(get_option('site_leancloud_category'), 'category-acg.php')!==false){
                                     ?>
                                             <script>
                                                 new AV.Query("<?php echo $query_slug ?>").addDescending("createdAt")  // .equalTo('type_acg', 'anime')  // 当 query_slug 为 acg 时使用

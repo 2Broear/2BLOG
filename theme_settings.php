@@ -543,6 +543,7 @@
             register_setting( 'baw-settings-group', 'site_leancloud_appid' );
             register_setting( 'baw-settings-group', 'site_leancloud_appkey' );
             register_setting( 'baw-settings-group', 'site_leancloud_server' );
+            register_setting( 'baw-settings-group', 'site_leancloud_category' );
         }
         
         register_setting( 'baw-settings-group', 'site_ads_switcher' );
@@ -647,7 +648,7 @@
 ?>
     <div class="wrap settings">
         <style>
-        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(0deg,#f0f0f1 0%, #e9e9e9 100%);background:-webkit-linear-gradient(0deg,#f0f0f1 0%, #fff 100%);}.btn{border: 1px solid;padding: 2px 5px;border-radius: 3px;font-size: smaller;font-weight:bold;background:white;font-weight:900;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:188px;height:18px;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.disabled{opacity:.75}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:<?php echo $theme_color; ?>}.form-table tr:hover > th sup{color:<?php echo $theme_color; ?>}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 0 1px #2271b1;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:<?php echo $theme_color; ?>}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid <?php echo $theme_color; ?>!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview_list em,/*.upload_preview.bg.video{width:120px;height:60px}*/.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(0deg,#f0f0f1 0%, #e9e9e9 100%);background:-webkit-linear-gradient(0deg,#f0f0f1 0%, #fff 100%);}.btn{border: 1px solid;padding: 2px 5px;border-radius: 3px;font-size: smaller;font-weight:bold;background:white;font-weight:900;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:188px;height:18px;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.disabled{opacity:.75}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:<?php echo $theme_color; ?>}.form-table tr:hover > th sup{color:<?php echo $theme_color; ?>}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:<?php echo $theme_color; ?>}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid <?php echo $theme_color; ?>!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview_list em,/*.upload_preview.bg.video{width:120px;height:60px}*/.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:<?php echo $theme_color; ?>!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px <?php echo $theme_color; ?>!important;border-color:transparent!important;}.upload_button.video{background:purple;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;color: white;font-size: smaller;text-align: center;background: rgb(0 0 0 / 52%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius:5px;position:relative;overflow:hidden;}
             .formtable{display:none;}.formtable.show{display:block;}.switchTab.fixed{position: fixed;width: 100%;background: rgb(255 255 255 / 75%);top: 32px;left:0;z-index: 9;padding:10px 0;padding-left:160px;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}.switchTab{transition: top .35s ease;top: -32px;padding: 0;}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:<?php echo $theme_color; ?>;background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px <?php echo $theme_color; ?>}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 2px #fff, 0 0 0 3px <?php echo $theme_color; ?>;}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:0;border-radius:25px}.switchTab li b{font-size:initial;display:block;text-shadow:1px 1px 0 white;font-style:normal}
@@ -1062,7 +1063,7 @@
                                 foreach($cats as $the_cat){
                                     if($the_cat->count>=1) array_push($options, $the_cat);  // has-content category only
                                 }
-                                echo '<p class="description" id="site_rss_categories_label">指定站点 RSS 分类文章，使用逗号“ , ”分隔（仅可选一级分类内容，feed将在任意文章更新后更新</p><div class="checkbox">';
+                                echo '<p class="description" id="site_rss_categories_label">指定站点 RSS 分类文章，使用逗号“ , ”分隔（feed将在任意文章更新后更新</p><div class="checkbox">';
                                 foreach ($options as $option){
                                     $slug = $option->slug;
                                     $checking = strpos($value, $slug)!==false ? 'checked' : '';
@@ -1204,7 +1205,7 @@
                             <?php
                                 $opt = 'site_leancloud_switcher';
                                 get_option($opt) ? $status="checked" : $status="closed";
-                                echo '<label for="'.$opt.'"><p class="description" id="site_leancloud_switcher_label">使用第三方云数据库（Serverless）接管日记、友链、公告等数据内容（需在 leancloud 中新建 category-* 分类模板同名数据表，必填设置项均与第三方评论 valine 自动同步</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:#2b96e7;" class="btn">LeanCloud</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_leancloud_switcher_label">使用第三方云数据库（Serverless）接管日记、友链、公告等数据内容（需在 leancloud 中新建 category-* 分类模板同名数据表，必填设置项均与第三方评论 valine 自动同步，开启后可单独控制 BaaS 页面数据开关</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:#2b96e7;" class="btn">LeanCloud</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1287,6 +1288,39 @@
                                     <?php
                                         $opt = 'site_leancloud_server';
                                         echo '<!--<p class="description" id="site_leancloud_switcher_label">国内版二级域名可能出现的CORS跨域问题？<a href="#">点我查看</a></p>--><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Leancloud Server Url" value="' . get_option($opt) . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— BaaS Switcher</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_leancloud_category';  //unique str
+                                        $value = get_option($opt);
+                                        $templates = wp_get_theme()->get_page_templates();
+                                        $baasarray = array();
+                                        $inform = 'site_leancloud_inform';
+                                        $baastring = $inform;  //category-weblog.php
+                                        foreach ($templates as $temp => $index){
+                                            if(strpos($index, 'BaaS')!==false){
+                                                array_push($baasarray, array($index=>$temp));
+                                                $baastring = $temp.','.$baastring;
+                                            }
+                                        }
+                                        if(!$value){
+                                            // $baastring = $inform.','.$baastring;
+                                            update_option($opt, $baastring);
+                                            $value = $baastring;
+                                        }
+                                        $check = strpos($value, $inform)!==false ? 'checked' : '';
+                                        echo '<p class="description" id="">手动指定需要启用 BaaS 的分类页面，使用逗号“ , ”分隔（默认全部开启，开启后将接管全站支持 LBMS 页面的 BaaS 数据来源</p><div class="checkbox"><input id="'.$inform.'" type="checkbox" value="'.$inform.'" '.$check.'><label for="'.$inform.'">站点公告（LBMS）</label>';
+                                        for($i=0;$i<count($baasarray);$i++){
+                                            foreach ($baasarray[$i] as $option => $index){
+                                                $checking = strpos($value, $index)!==false ? 'checked' : '';
+                                                echo '<input id="'.$opt.'_'.$index.'" type="checkbox" value="'.$index.'" '.$checking.' /><label for="'.$opt.'_'.$index.'">'.$option.'</label>';
+                                            }
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" style="margin:15px auto auto" value="' . $value . '"/></div>';;
                                     ?>
                                 </td>
                             </tr>

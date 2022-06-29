@@ -1,6 +1,6 @@
 <?php
 /*
-    Template name: 评论排行（BaaS）
+    Template name: 评论排行
     Template Post Type: page
 */
 ?>
