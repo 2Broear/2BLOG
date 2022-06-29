@@ -76,9 +76,9 @@ lbms 后台将在 __`通用控制`__ 中的 _leancloud_ 选项开启后自动创
 
 -  ~~news 栏目已废弃，~~ 默认原生 _wordpress_ 数据
 - __weblog__ 对应主题模板中的 __`category-weblog.php`__ 日记日志模板，需创建 __`weblog`__ Class
--  __acg__ 对应主题模板中的 __`category-acg.php`__ 慢游影视模板，需创建 __`acg`__ Class
+-  __acg__ 对应主题模板中的 __`category-acg.php`__ 漫游影视模板，需创建 __`acg`__ Class
 -  __link__ 对应主题模板中的 __`category-2bfriends.php`__ 友情链接模板，需创建 ___`link`___ Class（ __注意此项使用 `link`__ ）
--  ~~download 栏目已废弃，~~ 默认原生 _wordpress_ 数据
+-  __download__ 对应主题模板中的 __`category-download.php`__ 资源下载模板，需创建 __`download`__ Class
 -  __inform__ 对应主题模板中的 __`category-weblog.php`__ 公告模板，需创建 __`inform`__ Class
 
 > __`news`__ 选项卡虽已不再使用，但其中的 _markdown_ 功能仍可以正常使用且支持同步预览。
