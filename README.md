@@ -4,7 +4,7 @@ A Simplized Wordpress Blog Theme Design &amp; Developed from [2broear.com](http:
 
 __Preview Site__ ：[演示站点](http://wpl.2broear.com) （演示并不代表最终版本，最新请以 [blog.2broear.com](http://blog.2broear.com) 为准）
 
-![2blog_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/2BLOG.jpg "theme 2blog")
+![2blog_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/2BLOG-remastered1000.jpg "theme 2blog")
 
 主题简介
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -218,8 +218,9 @@ Futures todo & bugs
 
 ### todo
 
+- 归档 Archive 页面
+- 引进 twikoo 评论（集成 valine 评论功能到 wordpress）
 - 文章页面标题定位导航
-- 引进 twikoo 评论、集成 valine 评论功能到 wp 评论
 
 ### bug
 
