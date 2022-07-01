@@ -50,7 +50,7 @@ header{height:154px;margin-bottom:auto}
 .article-type{/*width:50%;height:auto;*/white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display: inline-block;vertical-align:middle}
 #news-tail_info ul li.tags a:before{
     content: '#';
-    padding-right: 2px;
+    /*padding-right: 2px;*/
 }
 #news-tail_info ul li.tags a,
 #news-tail_info ul li.author a,

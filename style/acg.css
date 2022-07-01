@@ -1,13 +1,13 @@
 .content-all-windows{overflow-y:visible!important}
-.win-top .counter{color:var(--preset-s);font-size:14px;position:relative;max-width:520px;margin:6% auto;z-index:1}
+.win-top .counter{color:var(--preset-s);font-size:14px;position:relative;max-width:520px;margin:6% auto 5%;z-index:1}
 .win-top .counter div{display:inline-block;margin:auto 35px;padding:15px 0}
 .win-top .counter div a:hover{color:var(--preset-f)}
-.win-top .counter div a:hover > p{color:var(--preset-f)}
+.win-top .counter div a:hover > p{opacity:unset}
 .win-top .counter div a{color:inherit;display:inherit}
 .win-top .counter h2.single{font-size:5rem}
 .win-top .counter h2{font-size:3rem;margin:0 auto;}
 .win-top .counter h2 sup{font-size:32px;color:var(--preset-s)}
-.win-top .counter p{color:var(--preset-e);font-size:var(--min-size);margin:3px auto}
+.win-top .counter p{color:var(--preset-e);font-size:var(--min-size);margin:3px auto;opacity:.75}
 .rcmd-boxes{width:100%;max-width:100%;height:auto;flex-flow:row wrap}
 .rcmd-boxes .inbox-clip.subcat{text-align:center;margin-top:auto}
 .rcmd-boxes .inbox-clip.subcat h2{font-size:2rem;padding-top:0}
@@ -87,5 +87,5 @@
 .rcmd-boxes .info .inbox .inbox-headside{max-height:115px}
 .rcmd-boxes .info .inbox .inbox-aside{max-height:135px}
 .rcmd-boxes .info .inboxSliderCard .inbox{display:inline-block}
-.win-top .counter div{margin:auto 25px}
+/*.win-top .counter div{margin:auto 25px}*/
 }

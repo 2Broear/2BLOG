@@ -159,7 +159,7 @@ header>nav#tipson .top-bar-tips a{color:var(--theme-color);text-decoration:under
 .win-top em.digital_mask{content:'';width:100%;height:100%;/*background:url('https://img.2broear.com/svg/digital_mask.svg') repeat center center /3px 3px;*/background-size:3px 3px!important;position:absolute;bottom:0;left:0;overflow:hidden;z-index:1}
 .win-top{width:100%;height:auto;margin-bottom:18px;position:relative;overflow:hidden;}
 .win-top:after{content:'';width:150%;height:2.375rem;background-color:var(--preset-f);left:-25%;bottom:-0.875rem;border-radius:100%;position:absolute;z-index:2}
-.win-top h5{color: var(--preset-f);max-width:88%;height: auto;font-family: var(--font-serif);font-size: 3.2rem;margin: 8% auto 10%;position: relative;display: inline-block;box-sizing: border-box;z-index:1/*padding:0 5%;*/}
+.win-top h5{color: var(--preset-f);max-width:88%;height: auto;font-family: var(--font-serif);font-size: 3.6rem;margin: 8% auto 10%;position: relative;display: inline-block;box-sizing: border-box;z-index:1/*padding:0 5%;*/}
 .win-top h5 span{color: var(--preset-2b);;background-color:var(--preset-f);font-weight: lighter;}
 .win-top video{position: absolute;top: 50%;left: 50%;width: 100%;transform:translate(-50%, -50%);-webkit-transform:translate(-50%, -50%);height: 100%;object-fit: cover}
 .win-top video::-webkit-media-controls{display:none !important;}
@@ -176,7 +176,7 @@ header>nav#tipson .top-bar-tips a{color:var(--theme-color);text-decoration:under
 .inside_of_block .logo-area{
     position: absolute;
     top: 0;
-    left: 0;
+    left: 10px;
     height: 100%;
     width: 10%;
 }
@@ -238,7 +238,7 @@ i.icomoon,
 .inside_of_block nav.main-nav ul li.sec_level div.links-more a{color:var(--preset-8);padding:0;margin:0;line-height:36px;text-align:left;border-bottom:1px solid var(--preset-s)}
 
 .additional.metabox{
-    width: 360%;
+    width: 380%;
     min-width: 320px;
     left: -136px;
     line-height: 0;
