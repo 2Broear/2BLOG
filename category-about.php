@@ -30,7 +30,7 @@
                             <span id="head-nickname"><strong><?php echo get_option('site_nick'); ?></strong></span>
                             <span id="head-sign" style="opacity: .75;"> <?php bloginfo('description'); ?> </span>
                         </div>
-                        <video src="<?php echo get_option('site_about_video'); ?>" poster="<?php echo cat_metabg($cat, get_option('site_bgimg')); ?>" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
+                        <video src="<?php echo get_option('site_about_video'); ?>" poster="<?php echo cat_metabg($cat, get_option('site_bgimg')); ?>" controls="" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
                     </div>
                 </div>
                 <div class="In-core-body">
@@ -52,4 +52,10 @@
 </div>
 <!-- siteJs -->
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
+<script>
+    const video = document.querySelector('video'),
+          user_info = document.querySelector('.user_info');
+    video.onplaying=()=>{user_info.classList.remove('pause');user_info.classList.add('playing');}
+    video.onpause=()=>{user_info.classList.remove('playing');user_info.classList.add('pause')}
+</script>
 </body></html>
