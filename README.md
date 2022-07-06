@@ -186,11 +186,11 @@ ___WordPress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 
 - [WordPress](https://wordpress.org) 提供的CMS程序及主题开发文档支持
 - [Leancloud](https://www.leancloud.cn) 提供的 BaaS 数据储存服务
-- [Valine](https://blog.luvying.com) 提供的无后端评论系统及 [zhaojun1998](https://github.com/zhaojun1998/Valine-Admin) 提供的 valine 评论邮件通知
+- [Valine](http://valine.js.org) 提供的无后端评论系统及 [zhaojun1998](https://github.com/zhaojun1998/Valine-Admin) 提供的 valine 评论邮件通知
 - Wechat（企业）提供的微信消息推送服务
 - ...
 - [Ying 酱](https://blog.luvying.com) 及 [橘纸柚](https://lovemen.cc/) 提供的随机动漫图片API
-- [mokeyjay 超能小紫](https://blog.luvying.com) 提供的Pixiv每日排行榜小挂件
+- [mokeyjay 超能小紫](https://www.mokeyjay.com) 提供的Pixiv每日排行榜小挂件
 
 ### 前端插件
 
@@ -227,4 +227,3 @@ Futures todo & bugs
 1. ~~创建 `category` 分类时，本该默认将层级同步到页面，但由于使用 `slash` __“/”__ 默认将所有页面都定位顶级，这导致了存在父级slug不为“/”的分类子级无法访问其页面（即无法调用页面评论），那么此时应该将页面中该子级的父级定位其分类父级。（目前是创建时可以正常同步，修改分类时页面正常同步但其分类父级会出现归为顶级0的错误，暂时无解）~~ 
 
       __暂不打算修复了（3级分类需要评论支持的，请手动在“页面”中指定其父级）__ （当使用 `slash` 即 “/”作为分类别名时，在其分类下发布文章时请勿选择其父级别名为“/”的分类，否则可能导致文章层级404错误）
-
