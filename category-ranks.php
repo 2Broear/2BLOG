@@ -21,7 +21,7 @@
         <div class="ranks">
             <div class="ranking">
                 <?php
-                    echo '<h1>常客 <sup> &lt;3 </sup></h1><p>全时访问较频繁的老铁</p><ul id="rankest">';
+                    echo '<h1>常客 <sup> &lt;3 </sup></h1><p>访问较频繁的老铁</p><ul id="rankest">';
                     // $baas_sw = get_option('site_leancloud_switcher');
                     $comment_sw = get_option('site_comment_switcher');
                     if(!$comment_sw){

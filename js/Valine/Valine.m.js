@@ -174,7 +174,7 @@ if (el_ != null && el_ != undefined) {
                 likedUsers = results[0].attributes.user,
                 likeUser = likedUsers ? likedUsers.reverse() : false;  //倒序（最新点赞用户
 			if(likeUser.length>0){
-			    els_s.innerHTML = '';
+			    els_s.innerHTML = "";
 				let keys = 0;
 				for(let key in likeUser){
 					if(key<3){
@@ -182,7 +182,7 @@ if (el_ != null && el_ != undefined) {
 						let likeName = likeUser[key].nick,
 							//likeMail = likeUser[key].mail,//md5mail
 							likeLink = likeUser[key].link;
-						els_s.innerHTML += `<a href="${likeLink||'javascript:;'}" title="" target="_blank"">${likeName}、</a>`;
+						els_s.innerHTML += `<a href="${likeLink||'javascript:;'}" title="" target="_blank" rel="nofollow">${likeName}、</a>`;
 					}
 				}
 				els_s.innerHTML += `等<strong>${likeNum-keys||''}</strong>人应该觉得这篇文章海星⭐️~`;  //likeUser.length-keys||
@@ -225,7 +225,7 @@ if (el_ != null && el_ != undefined) {
                 list = els_s.children,  //querySelectorAll("a");
                 // userdate = user_info(),
                 last = list.length-2;
-            temp.innerHTML = `<a href="${user_info.link||'javascript:;'}" title="${user_info.mail}" target="_blank"">${user_info.nick}、</a>`;
+            temp.innerHTML = `<a href="${user_info.link||'javascript:;'}" title="${user_info.mail}" target="_blank" rel="nofollow">${user_info.nick}、</a>`;
             console.log(list[last])
             els_s.children.length>els_max ? list[last].remove() : false;  //删除末端（大于3后才执行删除，否则默认新增）
             //执行删除后再执行插入操作

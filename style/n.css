@@ -1,3 +1,5 @@
+figure.wp-block-image{max-width:66%}
+figure.wp-block-table{margin:25px auto}
 .half-size video{width:720px!important}
 .ibox .iboxes{max-width: 66%;}
 .ImgWrapBox{width:100%;max-width:1102px;display:flex;flex-flow:column nowrap;justify-content:center;position:relative}
@@ -170,7 +172,7 @@
 }
 .win-content article p code{
 	color: currentColor;
-    padding: .3em 0;
+    padding: .3em;
     margin: 0 5px;
     background: rgb(102 102 102 / 10%);
     border-radius: 5px;
@@ -264,7 +266,15 @@ article .infos span#slider {
 	border-spacing: 10px;
 	border-collapse: collapse;
 	width: 100%;
-	margin: 15px auto;
+	margin-bottom: 10px;
+}
+.win-content article table td{
+    border: 1px solid;
+    padding: 10px 0;
+}
+.win-content article table tr:first-child{
+    opacity: .75;
+    font-weight: bold;
 }
 table tr.openyear:hover {
 	background-color: var(--preset-2b);

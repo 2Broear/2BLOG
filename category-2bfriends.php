@@ -37,7 +37,7 @@
         	                'hide_invisible' => 0
     	                ));
         	            $rcmd_links = get_bookmarks(array(
-        	                'orderby' => 'link_id',
+        	                'orderby' => 'rand',  // random orderby
         	                'order' => 'DESC',
         	                'category_name' => "special",
         	                'hide_invisible' => 0
@@ -48,6 +48,7 @@
         	                'category_name' => "missing",
         	                'hide_invisible' => 0
     	                ));
+    	               // print_r($rcmd_links);
                         if(count($rich_links)>0){
                 ?>
                             <div class="inbox-clip"><h2 id="exchanged"> 小伙伴们 </h2></div>

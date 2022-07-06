@@ -664,8 +664,8 @@
         if($cid){
             $query_array = array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_per_posts'),
                 'orderby' => array(
-                    'meta_value_num' => 'DESC',
                     'date' => 'DESC',
+                    'meta_value_num' => 'DESC',
                     'modified' => 'DESC',
                 )
             );
@@ -851,11 +851,18 @@
                         </h1>
                         <p><?php custom_excerpt(150); ?></p>
                         <div class="info">
-                            <span class="classify" id="<?php $cats=get_the_category()[0];echo $cats->slug; ?>">
-                                <i class="icom"></i><?php if($cats->parent) echo $cats->name;else echo '默认分类'; ?>
+                            <span class="classify" id="">
+                                <i class="icom"></i>
+                                <?php 
+                                    $slug = get_template_bind_cat(basename(__FILE__))->slug;
+                                    $cats = get_the_category();
+                                    foreach ($cats as $cat){
+                                        if($cat->slug!=$slug) echo count($cats)>1 ? $cat->name.'、' : $cat->name;
+                                    }
+                                ?>
                             </span>
                             <span class="valine-comment-count" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
-                            <span class="date"><?php the_time('d-m-Y'); ?></span>
+                            <span class="date"><?php the_time("d-m-Y"); ?></span>
                             <span id="slider"></span>
                         </div>
                     </article>
@@ -949,11 +956,18 @@
                             </h1>
                             <p><?php custom_excerpt(150); ?></p>
                             <div class="info">
-                                <span class="classify" id="<?php $cats=get_the_category()[0];echo $cats->slug; ?>">
-                                    <i class="icom"></i><?php if($cats->parent) echo $cats->name;else echo '默认分类'; ?>
+                                <span class="classify" id="">
+                                    <i class="icom"></i>
+                                    <?php 
+                                        $slug = get_template_bind_cat(basename(__FILE__))->slug;
+                                        $cats = get_the_category();
+                                        foreach ($cats as $cat){
+                                            if($cat->slug!=$slug) echo count($cats)>1 ? $cat->name.'、' : $cat->name;
+                                        }
+                                    ?>
                                 </span>
                                 <span class="valine-comment-count" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
-                                <span class="date"><?php the_time('d-m-Y'); ?></span>
+                                <span class="date"><?php the_time("d-m-Y"); ?></span>
                                 <span id="slider"></span>
                             </div>
                         </article>

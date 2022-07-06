@@ -63,7 +63,8 @@
 .win-content article:hover > .info::after{background: var(--theme-color);width:36%}
 .win-content article h1 a{color:inherit}
 .win-content article h1 i{display:block;width:30%;height:3px;background-color:var(--theme-color);margin:5px auto}
-.win-content article h1 sup{color:var(--preset-9);font-size:var(--min-size);font-weight:normal;border:1px solid currentColor;padding:1px 7px 2px;border-radius:5px;margin-left:10px}
+.win-content article.topset h1 sup{font-weight:bold;color:var(--theme-color)}
+.win-content article h1 sup{color:var(--preset-9);font-size:var(--min-size);font-weight:normal;border:1px solid currentColor;padding:1px 5px 2px;border-radius:5px;margin-left:5px}
 .win-content article p{color:var(--preset-9);font-size:14px;line-height:23px;padding-left:20px}
 .win-content article p a{color: var(--theme-color);}
 .win-content article .info{color:var(--preset-8);max-width:58%;font-size:var(--min-size);float:right;position:relative;text-align:right;padding-bottom:5px;margin-top:5px;border-bottom:1px solid var(--preset-d);box-sizing:border-box}
