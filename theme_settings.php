@@ -481,6 +481,11 @@
         
         register_setting( 'baw-settings-group', 'site_rcmdside_cid' );
         register_setting( 'baw-settings-group', 'site_cardnav_array' );
+        register_setting( 'baw-settings-group', 'site_tagcloud_switcher' );
+        if(get_option('site_tagcloud_switcher')){
+            register_setting( 'baw-settings-group', 'site_tagcloud_num' );
+            register_setting( 'baw-settings-group', 'site_tagcloud_max' );
+        }
         register_setting( 'baw-settings-group', 'site_techside_switcher' );
         if(get_option('site_techside_switcher')){
             register_setting( 'baw-settings-group', 'site_techside_cid' );
@@ -1563,6 +1568,18 @@
             <div class="formtable index">
                 <h1><b class="num" style="border-color:blueviolet;box-shadow:-5px -5px 0 rgb(138 43 226 / 18%);">03</b>页面设置<p class="en">PAGES SETTINGS</p></h1>
                 <table class="form-table">
+                    <tr valign="top" class="">
+                        <th scope="row">近期内容展示数量</th>
+                        <td>
+                            <?php
+                                $opt = 'site_per_posts';
+                                $value = get_option($opt);
+                                $preset = 5;  //默认填充数据
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                echo '<p class="description" id="">近期文章、笔记、日志、排行、评论等内容展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                            ?>
+                        </td>
+                    </tr>
                     <tr valign="top">
                         <th scope="row">首页 - banner 图集</th>
                         <td>
@@ -1599,18 +1616,6 @@
                             ?>
                         </td>
                     </tr>
-                    <tr valign="top" class="">
-                        <th scope="row">近期内容展示数量</th>
-                        <td>
-                            <?php
-                                $opt = 'site_per_posts';
-                                $value = get_option($opt);
-                                $preset = 5;  //默认填充数据
-                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                echo '<p class="description" id="">近期文章、笔记、日志、排行、评论等内容展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                            ?>
-                        </td>
-                    </tr>
                     <tr valign="top">
                         <th scope="row">文章列表预览图</th>
                         <td>
@@ -1633,6 +1638,54 @@
                             ?>
                         </td>
                     </tr>
+                    <tr valign="top">
+                        <th scope="row">首页 - 标签云</th>
+                        <td>
+                            <?php
+                                $opt = 'site_tagcloud_switcher';
+                                $value = get_option($opt);
+                                $data = get_option( 'site_tagcloud_num', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option($opt, "on_default");
+                                    $status="checked";
+                                }else{
+                                    $value ? $status="checked" : $status="closed";
+                                };
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">首页随机标签云（自带主题色，若检测到无标签将默认展示随机动漫图</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:dodgerblue;" class="btn">Tag Clouds</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_tagcloud_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 标签展示数量</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_tagcloud_num';
+                                        $value = get_option($opt);
+                                        $preset = 36;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">TagClouds 最多显示数量（默认显示 36 个</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 标签最大字体</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_tagcloud_max';
+                                        $value = get_option($opt);
+                                        $preset = 30;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">TagClouds 最大显示字体（默认最大 30px，最小 10px</p><input type="number" min="11" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    ?>
                     <tr valign="top">
                         <th scope="row">首页 - 配图分栏<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
@@ -1676,7 +1729,7 @@
                                         $value = get_option($opt);
                                         $preset =  custom_cdn_src('img',true).'/images/google_flush.gif';//Tech-x4.png
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        echo '<p class="description" id="site_bgimg_label">分类背景图，首页科技资讯侧边调用图片（默认背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                                        echo '<p class="description" id="site_bgimg_label">分类背景图，列表旁调用图片（默认背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
                                     ?>
                                 </td>
                             </tr>

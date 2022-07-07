@@ -121,8 +121,9 @@
                                     <?php 
                                         $slug = get_template_bind_cat(basename(__FILE__))->slug;
                                         $cats = get_the_category();
+                                        $cnum = count($cats);
                                         foreach ($cats as $cat){
-                                            if($cat->slug!=$slug) echo count($cats)>1 ? $cat->name.'、' : $cat->name;
+                                            if($cat->slug!=$slug) echo $cnum>2 ? $cat->name.'、' : $cat->name;
                                         }
                                     ?>
                                 </span>

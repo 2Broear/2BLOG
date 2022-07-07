@@ -236,6 +236,36 @@
     /* ------------------------------------------------------------------------ *
      * 自定义功能函数
      * ------------------------------------------------------------------------ */
+    // 标签云
+    function tag_clouds($before="<li>", $after="</li>"){
+        $tags = get_tags(array(
+            'taxonomy' => 'post_tag',
+            'orderby' => 'name',
+            'hide_empty' => false // for development
+        ));
+        $max_show = get_option('site_tagcloud_num');
+        $min_font = 10;
+        $max_font = get_option('site_tagcloud_max');
+        shuffle($tags);  // random tags
+        if(get_option('site_tagcloud_switcher') && count($tags)>=1){
+            for($i=0;$i<$max_show;$i++){
+                $tag = $tags[$i];
+                $rand_font = mt_rand($min_font, $max_font);
+                if($rand_font>=$max_font/1.25){
+                    $rand_opt = mt_rand(5,10);  // highlight big_font
+                    $bold_font = $rand_opt>9 || $rand_font==$max_font ? 'bold' : 'normal';  // max bold_font
+                    $color_font = $rand_opt==10 && $rand_font==$max_font ? 'var(--theme-color)' : 'inherit';
+                }else{
+                    $rand_opt = mt_rand(2,10);
+                    $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'var(--theme-color)' : 'inherit';
+                }
+                $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
+                echo $before.'<a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';color:'.$color_font.'">'.$tag->name.'</a>'.$after;
+            }
+        }else{
+            echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
+        }
+    }
     // 分类背景图/视频海报
     function cat_metabg($cid, $preset=false){
         $metaimg = get_term_meta($cid, 'seo_image', true);  //$page_cat->term_id
@@ -660,17 +690,16 @@
 <?php
     }
     // wp自定义（含置顶无分页）查询函数
-    function recent_posts_query($cid,$link=false,$detail=false){
-        if($cid){
-            $query_array = array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_per_posts'),
-                'orderby' => array(
+    function recent_posts_query($cid, $link=false, $detail=false, $random=false){
+        $orderby = $random ? 'rand' : array(
                     'date' => 'DESC',
                     'meta_value_num' => 'DESC',
                     'modified' => 'DESC',
-                )
-            );
+                );
+        if($cid){
+            $query_array = array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_per_posts'), 'orderby' => $orderby);
         }else{
-            $query_array = array('cat' => $cid, 'posts_per_page' => get_option('site_per_posts'), 'order' => 'DESC', 'orderby' => 'data');
+            $query_array = array('cat' => $cid, 'posts_per_page' => get_option('site_per_posts'), 'order' => 'DESC', 'orderby' => $orderby);
         }
         $left_query = new WP_Query(array_filter($query_array));
         while ($left_query->have_posts()):
@@ -842,6 +871,7 @@
                 global $post;
                 $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                 $post_orderby = get_post_meta($post->ID, "post_orderby", true);
+                $notes_slug = get_template_bind_cat('category-notes.php')->slug;
                 if(!$post_styles){
     ?>
                     <article class="<?php if($post_orderby>1) echo 'topset'; ?> cat-<?php echo $post->ID ?>">
@@ -854,10 +884,9 @@
                             <span class="classify" id="">
                                 <i class="icom"></i>
                                 <?php 
-                                    $slug = get_template_bind_cat(basename(__FILE__))->slug;
                                     $cats = get_the_category();
                                     foreach ($cats as $cat){
-                                        if($cat->slug!=$slug) echo count($cats)>1 ? $cat->name.'、' : $cat->name;
+                                        if($cat->slug!=$notes_slug) echo count($cats)>2 ? $cat->name.'、' : $cat->name;
                                     }
                                 ?>
                             </span>
@@ -936,7 +965,7 @@
                                     </div>
                                     <div class="inbox-aside">
                                         <span class="lowside-title">
-                                            <h4><a href="<?php echo get_post_meta($post->ID, "post_source", true); ?>" target="_blank"><?php the_title(); ?></a></h4>
+                                            <h4><a href="<?php the_permalink(); ?>" target="_blank"><?php the_title(); ?></a></h4>
                                         </span>
                                         <span class="lowside-description">
                                             <p><?php custom_excerpt(66); ?></p>
@@ -959,10 +988,9 @@
                                 <span class="classify" id="">
                                     <i class="icom"></i>
                                     <?php 
-                                        $slug = get_template_bind_cat(basename(__FILE__))->slug;
                                         $cats = get_the_category();
                                         foreach ($cats as $cat){
-                                            if($cat->slug!=$slug) echo count($cats)>1 ? $cat->name.'、' : $cat->name;
+                                            if($cat->slug!=$notes_slug) echo count($cats)>2 ? $cat->name.'、' : $cat->name;
                                         }
                                     ?>
                                 </span>

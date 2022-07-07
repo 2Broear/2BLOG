@@ -195,6 +195,9 @@
                     </div>
                 </span>
                 <span id="tech_pic" style="background: url(<?php echo get_option('site_techside_bg'); ?>) center /cover;"></span>
+                <!--<ul class="tags">-->
+                <!--    <?php //tag_clouds(); ?>-->
+                <!--</ul>-->
             </div>
         <?php
             }
@@ -207,14 +210,19 @@
                         <span class="newsBox-supTitle-iDescription" id="icon-acg" title="ACG 宅周报">
                             <em>ACG</em><i class="icom hardware"></i>
                         </span>
-                        <h2>「 アニメ、ゲーム、コミックのプッシュ推薦 」</h2>
+                        <h2> ACG·MT はすぐに 推薦 & TagClouds </h2>
                     </div>
                     <ul class="acg_window-content">
                         <!--<div class="ajaxloadMainAcg" ajaxload="ajax/main/ajax-main-acg.html"></div>-->
                         <li class="acg_window-content-inside_left">
                         	<span id="acg_window-content-inside_left-tInfo">
                         		<span id="acg_window-content-inside_left-pic">
-                        			<img src="//api.uuz.bid/random/?image" style="width:100%; height:100%;" />
+                        		    <?php 
+                        			    $query_cid = get_option('site_acgnside_cid');
+                        			    $meta_image = get_term_meta($query_cid, 'seo_image', true) ? get_term_meta($query_cid, 'seo_image', true) : custom_cdn_src('img',true).'/images/default.jpg';
+                        			    // echo '<img src="'.$meta_image.'" style="width:100%; height:100%;" />';
+                        			    echo '<em style="background:url('.$meta_image.') center /cover;width:100%;height:155px;display:block;"></em>';
+                    			    ?>
                         		</span>
                         		<span id="acg_window-content-inside_left-txt">
                     				<h2>pixivトップ50</h2>
@@ -225,7 +233,6 @@
                         	<span id="acg_window-content-inside_left-bList">
                         		<ol class="acg_window-content-inside_left-list">
                                     <?php 
-                                        $query_cid = get_option('site_acgnside_cid');
                                         $query_slug = get_category($query_cid)->slug;
                                         if($baas&&strpos(get_option('site_leancloud_category'), 'category-acg.php')!==false){
                                     ?>
@@ -248,15 +255,18 @@
                                             </script>
                                     <?php
                                         }else{
-                                            recent_posts_query($query_cid, false, true);
+                                            recent_posts_query($query_cid, false, true, true);
                                         }
                                     ?>
                         		</ol>
                         	</span>
                         </li>
                         <li class="acg_window-content-inside_right">
-                        	<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span>
-                        	<span id="acg-content-area-txt"><p id="hitokoto"> ? </p></span>
+                            <div class="tags">
+                                <?php tag_clouds('<span>','</span>'); ?>
+                            </div>
+                        	<!--<span id="acg-content-area" style="background: url(<?php //echo get_option('site_techside_bg'); ?>) center /cover"></span>-->
+                        	<!--<span id="acg-content-area-txt"><p id="hitokoto"> ? </p></span>-->
                         </li>
                     </ul>
                     <div class="newsBox-subText-Description" id="acg_window-bottom">

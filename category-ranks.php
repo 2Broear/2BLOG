@@ -67,9 +67,8 @@
                                             </a>
                                         </span>
                                         <a href="<?php echo $link; ?>" target="_blank">
-                                            <b data-mail="<?php echo $user->mail ?>"><?php echo $user->name ?></b>
+                                            <?php echo '<b data-mail="'.$user->mail.'">'.$user->name.'</b><sup>'.$count.'+</sup>' ?>
                                         </a>
-                                        <?php echo $count ?><sup>+</sup>
                                     </li>
                 <?php
                                 }
@@ -184,7 +183,7 @@
                     average = avg/max;
                     if(name!="匿名者"&&name!="2broear"){
                         i<max ? rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img src="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" title="这家伙留了 ${times} 条评论！" /></a></span><span id="range" style="height:${average}px"><em style="height:${times*2}%"></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>` : false;
-                        i>=max && i<maxes ? ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar"><img src="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b></a>${times}<sup>+</sup></li>` : false;
+                        i>=max && i<maxes ? ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar"><img src="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b><sup>${times}+</sup></a></li>` : false;
                         i>maxes ? ranked.innerHTML += `<li><p>${name}<sup>${times}</sup></p></li>` : false;
                     }
                 }

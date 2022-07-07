@@ -39,7 +39,7 @@ input[type=button]:focus,button:focus,.friend_links li a:focus,.pageSwitcher.dev
     color: var(--theme-color)!important;
     border-color: currentColor!important;
     border: 1px solid;
-    box-shadow: 0 0 0 3px rgba(235, 104, 68, 0.3)!important;
+    box-shadow: 0 0 0 3px rgba(155, 155, 155, 0.15)!important;
     outline: none!important;
     background: transparent;
     transition: border .35s ease;
@@ -1232,6 +1232,7 @@ body.dark::-webkit-scrollbar-thumb:hover,body.dark .v .vwrap .vedit .vemojis::-w
 body.dark::-webkit-scrollbar-thumb:active,body.dark .v .vwrap .vedit .vemojis::-webkit-scrollbar-thumb:active,body.dark .footer-detector::before{background-color:var(--preset-9)}
 
 /* preset-9 color only */
+body.dark .tags,
 body.dark .mobile-vision i,
 body.dark .weBlog-Description .weBlog-Description-inside,body.dark .body-basically .Introduce,body.dark .v .power,body.dark .v .power a,body.dark #supports-txt,body.dark .footer-ul,body.dark .slider-menu_body ul li a,body.dark .Introduce-window,body.dark .main p,body.dark .news-article-window,body.dark #icon-special b,body.dark .resource-windows div ul li a,body.dark .resource-windows,body.dark .tech_window-content li a,body.dark .newsBox-subText-Description a,body.dark #acg_window-top h2,body.dark .tech_window-content li span,body.dark #icon-technology i,body.dark #acg_window-top #icon-acg i,body.dark .pageSwitcher div,body.dark body.dark .news-inside-content .news-core_area p,body.dark .win-content article,body.dark .win-content article li,body.dark .win-nav .nav-header p,body.dark .win-nav .nav-header small,body.dark .main-root ul,body.dark .box_down ul li .details,body.dark .weblog-tree-box .tree-box-content{color:var(--preset-9)}
 /* preset-c color only */
@@ -1778,4 +1779,40 @@ p.wp_comment_tip{
     padding: 0 10px;
     border-radius: 8px;
     border: 1px solid var(--preset-e);
+}
+
+
+.acg_window-content-inside_right .tags{width:100%;padding: 5%}
+.tags{
+    height: 100%;
+    margin:0;
+    padding: 0%;
+    box-sizing: border-box;
+    /*opacity: .75;*/
+    display: flex;
+    justify-content: center;
+    flex-flow: row wrap;
+    align-items: center;
+    align-content: center;
+}
+.tags span,
+.tags li{
+    margin: 5px;
+    display: inline-block;
+    vertical-align: middle;
+}
+/*body.dark .tags li a:hover{*/
+/*    color: black;*/
+/*    background: white;*/
+/*}*/
+.tags span a:hover,
+.tags li a:hover{
+    text-decoration: underline;
+    /*color: white;*/
+    /*background: black;*/
+}
+.tags span a,
+.tags li a{
+    color: inherit;
+    padding: 5px;
 }
