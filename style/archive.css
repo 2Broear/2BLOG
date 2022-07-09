@@ -1,0 +1,92 @@
+.content-all-windows{overflow-y:visible!important}
+.win-top .counter{color:var(--preset-s);font-size:14px;position:relative;max-width:88%;margin: 7% auto 5%;z-index:1}
+.win-top .counter div{display:inline-block;margin:auto 35px;padding:15px 0}
+.win-top .counter div a:hover{color:var(--preset-f)}
+.win-top .counter div a{color:inherit;display:inherit}
+.win-top .counter h1{font-size:3rem;margin:0 auto;}
+.win-top .counter h1 sup{font-size:32px;color:var(--preset-s);font-weight:normal}
+.win-top .counter select{
+    display: block;
+}
+.win-top .counter a:hover > p,
+.win-top .counter a:hover > b{opacity:unset}
+.win-top .counter p,
+.win-top .counter b{
+    opacity:.75;
+}
+.win-top .counter p{color:var(--preset-f);font-size:var(--min-size);margin:3px auto;}
+
+body.dark .archive-tree{
+    color: var(--preset-9);
+}
+body.dark .archive-tree ul li a{
+    border-color: var(--preset-3a);
+}
+.archive-tree{
+    max-width: 1102px;
+    padding: 0 15px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    text-align: left;
+    color: var(--preset-3a);
+}
+.archive-tree select{
+    position: relative;
+    z-index: 9;
+}
+.archive-tree h2{
+    /*opacity: .75;*/
+}
+.archive-tree ul{
+    margin-left: 15px;
+    padding: 0;
+}
+.archive-tree ul li{
+    /*margin-bottom: 5px;*/
+}
+.archive-tree ul li:hover span{
+    /*opacity: 1;*/
+}
+.archive-tree ul li a.link:hover{
+    color: var(--theme-color);
+    border-color: currentColor!important;
+}
+.archive-tree ul li a.link{
+    line-height: 2;
+    padding-left: 15px;
+    margin-left: 15px;
+    border-left: 2px solid var(--preset-d);
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.archive-tree ul li a{
+    color: inherit;
+}
+.archive-tree ul li span{
+    width: 100%;
+    opacity: .75;
+    font-size: var(--min-size);
+    display: inline-block;
+    vertical-align: middle;
+    /*margin-right: 15px;*/
+    float: left;
+}
+.archive-tree ul li em,
+.archive-tree ul li sup{
+    opacity: .5;
+    font-size: var(--min-size);
+    margin: auto 5px;
+}
+.archive-tree ul li sup{
+    float: right;
+}
+.archive-tree ul li em{
+    display: inline-block;
+    float: right;
+}
+    

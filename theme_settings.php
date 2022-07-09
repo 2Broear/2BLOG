@@ -1665,9 +1665,9 @@
                                     <?php
                                         $opt = 'site_tagcloud_num';
                                         $value = get_option($opt);
-                                        $preset = 36;  //默认填充数据
+                                        $preset = 32;  //默认填充数据
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">TagClouds 最多显示数量（默认显示 36 个</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        echo '<p class="description" id="site_bar_pixiv_label">TagClouds 最多显示数量（默认显示 32 个</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>

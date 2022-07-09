@@ -287,8 +287,9 @@ t.semoji={
     // let mailMD5 = AV.Object.createWithoutData('Comment',e.id);
     // mailMD5.set("md5mail", e.get("md5mail"));
     // mailMD5.save();
-    var cachedMail = localStorage.ValineCache ? (JSON.parse(localStorage.ValineCache).mail ? a(JSON.parse(localStorage.ValineCache).mail) : false) : false,
-        md5mail = e.get("md5mail") ? e.get("md5mail") : (e.get("nick")=='匿名者' ? 'd7a973c7dab26985da5f961be7b74480' : cachedMail),//a(e.get("mail"))
+    var VCmail = localStorage.ValineCache ? JSON.parse(localStorage.ValineCache).mail : false,
+        VCmd5 = VCmail ? a(VCmail) : false,
+        md5mail = e.get("md5mail") ? e.get("md5mail") : (e.get("nick")=='匿名者'||e.get("mail")!=VCmail ? a('wapuu@wordpress.example') : VCmd5),//a(e.get("mail"))
         qqavatar = m.cdn + md5mail + m.params;
     // if(emailCache.indexOf("@qq.com")>=0){
     //     var prefix=emailCache.replace(/@.*/,""),

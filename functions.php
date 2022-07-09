@@ -1,4 +1,20 @@
 <?php 
+    // Rename image filename after uploaded.
+    // https://wordpress.stackexchange.com/questions/59168/rename-files-on-upload
+    // function wpa59168_rename_attachment( $post_ID ) {
+    //     $post = get_post( $post_ID );
+    //     $file = get_attached_file( $post_ID );
+    //     $path = pathinfo( $file );
+    //     $count = get_option( 'wpa59168_counter', 1 );
+    //     // change to $new_name = $count; if you want just the count as filename
+    //     $new_name = $path['filename'] . '_' . $count;
+    //     $new_file = $path['dirname'] . '/' . $new_name . '.' . $path['extension'];
+    //     rename( $file, $new_file );    
+    //     update_attached_file( $post_ID, $new_file );
+    //     update_option( 'wpa59168_counter', $count + 1 );
+    // }
+    // add_action( 'add_attachment', 'wpa59168_rename_attachment' );
+    
     //禁用 Gutenberg 编辑器
     // add_filter('use_block_editor_for_post', '__return_false');
     // remove_action( 'wp_enqueue_scripts', 'wp_common_block_scripts_and_styles' );
@@ -236,6 +252,44 @@
     /* ------------------------------------------------------------------------ *
      * 自定义功能函数
      * ------------------------------------------------------------------------ */
+    // 归档
+    function get_post_archives($type="yearly", $post_type="post"){
+        $archives = wp_get_archives(
+            array(
+                'type' => $type,
+                'limit' => '',
+                'echo' => false,
+                'format' => 'custom',
+                'before' => '', 
+                'after' => ',',
+                // 'before' => '<div><a href="" rel="nofollow"><h2>', 
+                // 'after' => '</h2><p></p></a></div>',
+                'post_type' => $post_type,
+                'show_post_count' => true
+            )
+        );
+        $archive_arr = explode(',', $archives);
+        $archive_arr = array_filter($archive_arr, function($i) {
+            return trim($i) !== '';  // Remove empty whitespace item from array
+        });
+        // print_r($archive_arr);
+        $array = array();
+        foreach($archive_arr as $year_item) {
+            $data_row = trim($year_item);
+            // print_r($data_row);
+            preg_match('/href=["\']?([^"\'>]+)["\']>(.+)<\/a>(.*)/', $data_row, $data_vars);
+            // print_r($data_vars);
+            if (!empty($data_vars)) {
+                preg_match('/\((\d+)\)/', $data_vars[3], $count);
+                $array[] = array(
+                    'title' => $data_vars[2], // Ex: January 2020
+                    'link' => $data_vars[1], // Ex: http://demo.com/2020/01/
+                    'count' => $count[1]
+                );
+            }
+        }
+        return $array;
+    };
     // 标签云
     function tag_clouds($before="<li>", $after="</li>"){
         $tags = get_tags(array(
@@ -407,9 +461,11 @@
                 break;
             case is_search():
                 echo 'Searching..';
-                break;
             case is_tag():
-                echo single_tag_title('',false).' Tags';
+                echo single_tag_title('',false) . ' Tag';
+                break;
+            case is_archive():
+                echo 'Archives..';
                 break;
             default:
                 echo "NOT MATCHED";
@@ -428,6 +484,9 @@
                 break;
             case is_tag():
                 $slug = "TAGS";
+                break;
+            case is_archive():
+                $slug = "ARCHIVE";
                 break;
             case is_page():
                 $upper ? $slug=strtoupper($post->post_name) : $slug=$post->post_name;
@@ -460,10 +519,18 @@
                 echo single_cat_title() . $surfix;
                 break;
             case is_search():
-                echo 'Search for "' . esc_html(get_search_query()) .'"'. $surfix;//. '" in '.trim(get_option('site_search_includes')) 
+                global $wp_query;
+                echo $wp_query->found_posts . ' search results for "' . esc_html(get_search_query()) .'"'. $surfix;//. '" in '.trim(get_option('site_search_includes')) 
                 break;
             case is_tag():
-                echo 'Tags for "'. single_tag_title('',false) .'"'. $surfix;
+                global $wp_query;
+                echo $wp_query->found_posts . ' post for tag "'. single_tag_title('',false) .'"'. $surfix;
+                break;
+            case is_archive():
+                global $wp_query;
+                $dates = $wp_query->query;
+                $date_mon = $dates['monthnum'] ? ' - '.$dates['monthnum'].' ' : '';
+                echo $wp_query->found_posts . ' archives in ' . $dates['year'] . $date_mon . $surfix;
                 break;
             case is_page() || is_single()://in_category(array('news')):
                 echo the_title() . $surfix;

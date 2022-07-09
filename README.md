@@ -20,6 +20,7 @@ __Preview Site__ ：[演示站点](http://wpl.2broear.com) （演示并不代表
 - 自定义头像、背景、主题色、Gravatar 镜像源等
 - 自定义 _RSS订阅、SITEMAP地图、站内搜索（可选样式）_ 包含内容
 - 自动深色模式时段控制
+- _全新文章归档页面_
 - _可控的随机标签云_
 - 可控的侧栏广告位（Google AdSense）及 Pixiv 排行展示（数量）、最高浏览分类及展示数量
 - 底部各项自定义、各图标等信息开启控制
@@ -219,7 +220,8 @@ Futures todo & bugs
 
 ### todo
 
-- 归档 Archive 页面
+- ✅ ~~归档 Archive 页面~~
+- ✅ ~~标签云（页面、挂件）~~
 - 引进 twikoo 评论（集成 valine 评论功能到 wordpress）
 - 文章页面标题定位导航
 

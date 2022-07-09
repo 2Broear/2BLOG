@@ -1,6 +1,6 @@
 <?php
 /*
-    Template name: 标签页面
+    Template name: 归档页面
     Template Post Type: pages
 */
 ?>
@@ -19,12 +19,16 @@
 		</nav>
 	</header>
     <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
-    <video src="" poster="<?php custom_cdn_src('img'); ?>/images/tag.png" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+    <video src="" poster="<?php custom_cdn_src('img'); ?>/images/archive.jpg" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
 	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s">
 	    <?php 
             global $wp_query;
-            $tagString = single_tag_title('',false);
-            echo '<b> '.$wp_query->found_posts.' </b>篇标签“<span>'.$tagString.'</span>”の文章';
+            $dates = $wp_query->query;
+            $date_yea = $dates['year'];
+            $date_mon = $dates['monthnum'] ? '<b> '.$dates['monthnum'].' </b>月' : '';
+            echo '<b>'.$date_yea.'</b> 年'.$date_mon.'中找到<b> '.$wp_query->found_posts.' </b>篇记录';
+            // print_r($dates);
+            $string = 'Archives of '.$date_yea;
         ?>
     </h5>
 </div>
@@ -32,7 +36,7 @@
 	<div class="win-nav-content">
 		<div class="win-content main">
 			<div class="notes notes_default" style="max-width: 100%;">
-                <?php the_posts_with_styles($tagString); ?>
+                <?php the_posts_with_styles($string); ?>
 			</div>
 		</div>
 	</div>

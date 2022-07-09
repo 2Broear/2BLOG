@@ -127,7 +127,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 #banner-next{right:0;margin-right:-25px;background-position: -183px -100px!important;}
 #banner-prev,#banner-next{display:block;/*background:url('https://img.2broear.com/css_sprites.png') no-repeat;*/opacity:0.3;filter:alpha(opacity=30);width:25px;height:50px;position:absolute;top:42%;z-index:99;transition:margin .3s ease}
 #banner-prev:hover,#banner-next:hover{opacity:0.6;filter:alpha(opacity=60)}
-.special-display{width:95%;height:auto;margin-top:15px;position:relative;display:block}
+.special-display{width:100%;height:auto;margin-top:15px;position:relative;display:block}
 .special-display ul{width:auto;height:100%;box-sizing:border-box;flex-flow:row nowrap;justify-content:space-between;list-style-type:none;padding:0;margin:0;overflow:hidden;border-radius:var(--radius);position:relative;/*background-color:var(--preset-f);box-shadow:rgba(0,0,0,0.12) -20px 20px 20px;*/}
 .special-display ul::before{content:'';height:100%;width:auto;display:block;border-left:32px solid whitesoke;position:absolute;left:0;top:0;transition:border-width .35s ease}
 .special-display ul.lessBorder::before{border-left-width:0}
