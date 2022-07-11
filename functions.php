@@ -473,20 +473,13 @@
         }
     }
     // 获取当前分类、页面、文章slug
-    function current_slug($upper=false){
+    function current_slug($upper=false, $cats=false, $posts=false){
         global $cat, $post;  //变量提升
+        $cats ? $cat=$cats: $cat;
+        $posts ? $post=$posts: $post;
         switch (true) {
             case is_home():
                 $slug = "INDEX";
-                break;
-            case is_search():
-                $slug = "SEARCH";
-                break;
-            case is_tag():
-                $slug = "TAGS";
-                break;
-            case is_archive():
-                $slug = "ARCHIVE";
                 break;
             case is_page():
                 $upper ? $slug=strtoupper($post->post_name) : $slug=$post->post_name;
@@ -496,6 +489,15 @@
                 break;
             case is_single(): //in_category(array('news','notes')):
                 $slug = "ARTICLE";
+                break;
+            case is_search():
+                $slug = "SEARCH";
+                break;
+            case is_tag():
+                $slug = "TAGS";
+                break;
+            case is_archive():
+                $slug = "ARCHIVE";
                 break;
             default:
                 $slug = "NOT MATCHED";

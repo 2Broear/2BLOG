@@ -9,7 +9,7 @@
 <meta name="msapplication-TileImage" content="<?php custom_cdn_src(); ?>/favicon/favicon.ico" />
 <link rel="shortcut icon" href="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico"/>
 <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/universal.min.css?v=0.9<?php //echo(mt_rand()); ?>" />
-<style>:root{--theme-color: <?php echo $theme_color; ?>}</style>
+<?php echo $theme_color!='#eb6844' ? '<style>:root{--theme-color: '.$theme_color.'}</style>' : false; ?>
 <?php
     if(get_option('site_leancloud_switcher')){
 ?>

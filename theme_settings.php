@@ -1586,7 +1586,7 @@
                             <?php
                                 $opt = 'site_banner_array';
                                 $value = get_option($opt);
-                                $preset = custom_cdn_src('img',true).'/images/fox.jpg,'.custom_cdn_src('img',true).'/images/default.jpg';
+                                $preset = custom_cdn_src('img',true).'/images/fox.jpg,';
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update
                                 $arr = explode(',',trim($preset));
                             ?>

@@ -2,7 +2,7 @@
 <div class="footer-all">
     <div class="footer-detector" id="end-news-all">
         <span id="end-end">END</span>
-        <span id="end-obj"><?php echo(current_slug(true)); ?></span>
+        <span id="end-obj"><?php echo(current_slug(true, $cat, $post)); ?></span>
     </div>
     <div class="container">
       <div id="footer-support-board">

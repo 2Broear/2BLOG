@@ -47,6 +47,9 @@ body.dark .archive-tree ul li a{
 .archive-tree ul li:hover span{
     /*opacity: 1;*/
 }
+.archive-tree ul li a.link:hover > sup{
+    opacity: .75;
+}
 .archive-tree ul li a.link:hover{
     color: var(--theme-color);
     border-color: currentColor!important;
