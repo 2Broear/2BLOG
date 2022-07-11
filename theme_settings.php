@@ -56,7 +56,7 @@
                         }
                     ?>" id="term_fields[seo_order]" name="term_fields[seo_order]">
                     <br/>
-                    <span class="orderby" term_group="<?php echo $term->term_group; ?>"><?php _e('Set <b style="color:red">Lower Number</b> for <b style="color:green">Front Ranking</b><small>（auto orderby term_id: '.$term->term_id.'）</small>'); ?></span>
+                    <span class="orderby" term_group="<?php echo $term->term_group; ?>"><?php _e('Set <b style="color:red">Lower Number</b> for <b style="color:green">Front Ranking</b><small>（auto orderby term_id: '.$term->term_id.'）download-category:1/2/3</small>'); ?></span>
                 </td>
             </tr>
             <tr class="form-field">
@@ -1632,7 +1632,7 @@
                             <?php
                                 $opt = 'site_cardnav_array';
                                 $value = get_option($opt);
-                                $preset = 'news/文; notes/筆; weblog/記; 2bfriends/友'; 
+                                $preset = get_template_bind_cat('category-news.php')->slug.'/文; '.get_template_bind_cat('category-notes.php')->slug.'/筆; '.get_template_bind_cat('category-weblog.php')->slug.'/記; '.get_template_bind_cat('category-2bfriends.php')->slug.'/友'; 
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
                                 echo '<p class="description" id="site_cardnav_array_label">展示在首页的导航卡片，使用分号“ ; ”分隔（使用斜杠“ / ”自定义名称（留空默认分类名称）如 news/文; notes/笔...</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" value="' . $preset . '"/>';
                             ?>

@@ -53,14 +53,14 @@
                     // $unique_arr = array();
                     for($i=0;$i<count($cur_posts);$i++){
                         $each_posts = $cur_posts[$i];
-                        $prev_posts = $i>1 ? $cur_posts[$i-1] : false;
+                        $prev_posts = $cur_posts[$i-1];//$i>1 ? $cur_posts[$i-1] : false;
                     // foreach ($cur_posts as $each_posts) {
                         $this_post = get_post($each_posts->ID);
                         $prev_post = get_post($prev_posts->ID);
                         $this_cats = get_the_category($this_post);
                         preg_match('/\d{2}-\d{2} /', $this_post->post_date, $this_date);
                         preg_match('/\d{2}-\d{2} /', $prev_post->post_date, $prev_date);
-                        $unique_date = $this_date[0]!=$prev_date[0] ? '<span>'.$this_date[0].'</span>' : '';
+                        $unique_date = $this_date[0]!=$prev_date[0] || $each_posts->ID==$cur_posts[0]->ID ? '<span>'.$this_date[0].'</span>' : '';
                         // print_r($this_cats);
                         // array_push($unique_arr, $this_date);
                         // $unique_str = $unique_str.$this_date[0].',';

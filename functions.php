@@ -297,11 +297,12 @@
             'orderby' => 'name',
             'hide_empty' => false // for development
         ));
-        $max_show = get_option('site_tagcloud_num');
+        $tag_count = count($tags);
+        $max_show = $tag_count<=get_option('site_tagcloud_num') ? $tag_count : get_option('site_tagcloud_num');
         $min_font = 10;
         $max_font = get_option('site_tagcloud_max');
         shuffle($tags);  // random tags
-        if(get_option('site_tagcloud_switcher') && count($tags)>=1){
+        if(get_option('site_tagcloud_switcher') && $tag_count>=1){
             for($i=0;$i<$max_show;$i++){
                 $tag = $tags[$i];
                 $rand_font = mt_rand($min_font, $max_font);
@@ -862,6 +863,7 @@
                                     )));
                                     while ($left_query->have_posts()):
                                         $left_query->the_post();
+                                        global $post;
                             ?>
                                         <li class="<?php if(get_post_meta($post->ID, "post_orderby", true)>1) echo 'topset'; ?>">
                                             <div class="details">
@@ -971,11 +973,9 @@
         ?>
                         <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window icom wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                             <div class="news-window-inside">
-                                <span class="news-window-img">
-                                    <a href="<?php the_permalink() ?>">
-                                        <img class="lazy" src="<?php echo get_postimg(); ?>" />
-                                    </a>
-                                </span>
+                                <?php
+                                    if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img class="lazy" src="'.get_postimg().'" /></a></span>';
+                                ?>
                                 <div class="news-inside-content">
                                     <h2 class="entry-title">
                                         <a href="<?php the_permalink() ?>" title="<?php the_title() ?>"><?php the_title() ?></a>
