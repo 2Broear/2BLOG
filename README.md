@@ -40,7 +40,7 @@ __Preview Site__ ：[演示站点](http://wpk.2broear.com) （演示并不代表
 > 
 > 在wordpress中除“公告”外所有数据均以文章形式发布，通过后端函数调用数据，而使用leancloud数据的页面将通过 __`lbms`__ 后台进行数据上传、修改及删除等操作，再通前端过`xhr`异步调用json数据写入。
 
-![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshot.png "theme overview")
+![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/screenshot.png "theme overview")
 
 主题结构
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
