@@ -461,6 +461,7 @@
                 break;
             case is_search():
                 echo 'Searching..';
+                break;
             case is_tag():
                 echo single_tag_title('',false) . ' Tag';
                 break;
