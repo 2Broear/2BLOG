@@ -48,7 +48,7 @@
         // creat new page with the same name/slug category if page not exists.
         $post_data = array(
             'ID' => $page_cid,  // required page cat-id for update
-	    'post_type' => 'page',  // sync post_type page only
+            'post_type' => 'page',  // sync post_type page only
             'post_name' => $edit_cat_slug,
             'post_title' => $edit_cat->name,
             'page_template' => get_term_meta($term_id, 'seo_template', true), //sync page_template to page

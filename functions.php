@@ -252,6 +252,37 @@
     /* ------------------------------------------------------------------------ *
      * 自定义功能函数
      * ------------------------------------------------------------------------ */
+    // 文章目录 https://www.ludou.org/wordpress-content-index-plugin.html/comment-page-3#comment-16566
+    function article_index($content) {
+        if(is_single() && preg_match_all('/<h([2-6]).*?\>(.*?)<\/h[2-6]>/is', $content, $matches) && get_option('site_indexes_switcher')) {
+            $match_h = $matches[1];
+            $match_m = count($match_h);
+            for($i=0;$i<$match_m;$i++){
+                $value = $match_h[$i];
+                $title = trim(strip_tags($matches[2][$i]));
+                $content = str_replace($matches[0][$i], '<h'.$value.' id="title-'.$i.'">'.$title.'</h2>', $content);
+                $value = $match_h[$i];
+                $pre_val = $match_h[$i-1] ? $match_h[$i-1] : 9;
+                // for($j=0;$j<$i;$j++){
+                //     echo 'h'.$match_h[$j-1].' , ';
+                // }
+                $ul_li .= $value>$pre_val || $value>=3 ? '<ol class="child"><li id="t'.$i.'"><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a></li></ol>' : '<li id="t'.$i.'"><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a></li>';
+                // $ul_li .= '<li><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a>'.$child.'</li>';
+            }
+            $auto_fold = !$_COOKIE['article_index'] ? 'fold' : '';
+            $index_array = explode(',', get_option('site_indexes_includes'));
+            for($i=0;$i<count($index_array);$i++){
+                $each_index = trim($index_array[$i]);
+                if($each_index){
+                    if(in_category($each_index)){
+                        $content = '<div class="article_index '.$auto_fold.'" data-index="'.$match_m.'"><div class="in_dex"><p title="折叠目录"><b>文章目录</b><i class="icom"></i></p><ul>' . $ul_li . '</ul></div></div>' . $content;
+                    }
+                }
+            }
+        }
+        return $content;
+    }
+    add_filter( 'the_content', 'article_index' );
     // 归档
     function get_post_archives($type="yearly", $post_type="post"){
         $archives = wp_get_archives(
@@ -291,7 +322,7 @@
         return $array;
     };
     // 标签云
-    function tag_clouds($before="<li>", $after="</li>"){
+    function the_tag_clouds($before="<li>", $after="</li>"){
         $tags = get_tags(array(
             'taxonomy' => 'post_tag',
             'orderby' => 'name',
@@ -644,6 +675,7 @@
             $avatar = !$link->link_image ? 'https:' . get_option('site_avatar_mirror') . 'avatar/' . md5(mt_rand().'@rand.avatar') . '?s=300' : $avatar = $link->link_image;
             switch ($iframe) {
                 case 'rich':
+                    // echo in_category('standby') ? 'standby' : false;
                     if($link->link_visible==="Y") echo '<div class="inbox flexboxes standard '.$sex.'"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'"><img class="lazy" data-original="" src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false"><span class="ssl https">https</span></a></div><a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span><em></em></a></div>';
                     break;
                 case 'poor':
@@ -958,7 +990,7 @@
                                 <?php 
                                     $cats = get_the_category();
                                     foreach ($cats as $cat){
-                                        if($cat->slug!=$notes_slug) echo count($cats)>2 ? $cat->name.'、' : $cat->name;
+                                        if($cat->slug!=$notes_slug) echo '<em>'.$cat->name.'</em> ';  //leave a blank at the end of em
                                     }
                                 ?>
                             </span>
@@ -1060,7 +1092,7 @@
                                     <?php 
                                         $cats = get_the_category();
                                         foreach ($cats as $cat){
-                                            if($cat->slug!=$notes_slug) echo count($cats)>2 ? $cat->name.'、' : $cat->name;
+                                            if($cat->slug!=$notes_slug) echo '<em>'.$cat->name.'</em> ';  //leave a blank at the end of em
                                         }
                                     ?>
                                 </span>

@@ -60,6 +60,9 @@ figure img{
 	width: auto;
 	height: auto;
 }
+del{
+    opacity: .75;
+}
 .pageSwitcher.dev{
     text-align:center;
     padding-top: 30px;
@@ -238,7 +241,7 @@ i.icomoon,
 .inside_of_block nav.main-nav ul li.sec_level div.links-more a{color:var(--preset-8);padding:0;margin:0;line-height:36px;text-align:left;border-bottom:1px solid var(--preset-s)}
 
 .additional.metabox{
-    width: 380%;
+    width: 360%;
     min-width: 320px;
     left: -136px;
     line-height: 0;
@@ -1241,6 +1244,7 @@ body.dark .tags,
 body.dark .mobile-vision i,
 body.dark .weBlog-Description .weBlog-Description-inside,body.dark .body-basically .Introduce,body.dark .v .power,body.dark .v .power a,body.dark #supports-txt,body.dark .footer-ul,body.dark .slider-menu_body ul li a,body.dark .Introduce-window,body.dark .main p,body.dark .news-article-window,body.dark #icon-special b,body.dark .resource-windows div ul li a,body.dark .resource-windows,body.dark .tech_window-content li a,body.dark .newsBox-subText-Description a,body.dark #acg_window-top h2,body.dark .tech_window-content li span,body.dark #icon-technology i,body.dark #acg_window-top #icon-acg i,body.dark .pageSwitcher div,body.dark body.dark .news-inside-content .news-core_area p,body.dark .win-content article,body.dark .win-content article li,body.dark .win-nav .nav-header p,body.dark .win-nav .nav-header small,body.dark .main-root ul,body.dark .box_down ul li .details,body.dark .weblog-tree-box .tree-box-content{color:var(--preset-9)}
 /* preset-c color only */
+body.dark .article_index .in_dex p,
 body.dark .mobile-vision .m-logo span, body.dark .inside_of_block .logo-area span,
 body.dark .footer-contact-left ul h2,body.dark .news-article-container h3,body.dark #news-article-head h1,body.dark .footer-detector #end-end,body.dark .main h2,body.dark .body-basically h2,body.dark .body-basically h1,body.dark .body-basically h3,body.dark .resource-windows div span.resource-windows-top h3,body.dark #tech_window-top h2,body.dark .resource-windows div span.resource-windows-top span.resource-windows-top_inside,body.dark .news-inside-content h2 a,body.dark .topic h2,body.dark .topic-inside i,body.dark .win-nav .nav-header h2,body.dark .win-content article h1,body.dark .imtl-content-right-inside-search form,body.dark .win-content article h2,body.dark .win-content article h3,body.dark .rcmd-boxes .inbox-clip,body.dark .rcmd-boxes .info .inbox .inbox-aside span.lowside-title h4,body.dark .rcmd-boxes .info .inbox:hover > .inbox-aside,body.dark .dld_box .box_up span a h3,body.dark .v .veditor,body.dark .v .vlist .vcard .vhead .vnick,body.dark .inside_of_block nav.main-nav ul li a,body.dark .footer-recommend li sup#new,body.dark .links-more span,body.dark .footer-contact li a:hover,body.dark .footer-ul a:hover{color:var(--preset-c)}
 /* preset-2b background-color only */
@@ -1256,6 +1260,7 @@ body.dark .v .vwrap .vmark .valert,body.dark .slider-menu_body .body-main,body.d
 body.dark .v .vwrap .vedit .vemojis img{opacity:.66;}
 body.dark .load button:active,body.dark .v .vbtn:active,body.dark .win-content .load-more_notes button:active{color:#333333!important;border-color:var(--theme-color)}
 body.dark .inside-functions .box div:hover > span{background-color:var(--theme-color)}
+body.dark .article_index .in_dex,
 body.dark .v code, body.dark .v pre,body.dark .v .vedit,body.dark .v .vlist .vcard .vhead .vsys,body.dark .v .vlist .vcard.true .vhead .vtop,body.dark .links-more,body.dark .resource-windows div ul li:hover,body.dark .tech_window-content li:hover,body.dark .news-article-container h5,body.dark .rcmd-boxes .info .inbox,body.dark .weblog-tree-core-record:hover > .weblog-tree-core-r,body.dark .v .vwrap .vheader .vinput:focus{background-color:var(--preset-3a)!important;}
 body.dark .v .vlist .vcard .vquote,body.dark .v .vlist .vcard .vh{border-style:none}
 body.dark .v .vlist .vcard .vquote .vcard:hover{background:#333333}
@@ -1813,6 +1818,7 @@ p.wp_comment_tip{
 /*}*/
 .tags span a:hover,
 .tags li a:hover{
+    opacity: 1!important;
     text-decoration: underline;
     /*color: white;*/
     /*background: black;*/

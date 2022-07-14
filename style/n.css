@@ -1,4 +1,96 @@
-figure.wp-block-image{max-width:66%}
+
+/*.content{*/
+/*    position: relative;*/
+/*    z-index: 99999;*/
+/*}*/
+.article_index{
+    position: sticky;
+    position: -webkit-sticky;
+    top: 50px;
+    box-sizing: border-box;
+    z-index: 1;
+    float: right;
+}
+.article_index .in_dex{
+    /*position: absolute;*/
+    position: relative;
+    /*top: 15px;*/
+    right: -52px;
+    min-width: 165px;
+    background: rgba(255,255,255,.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 15px 20px;
+    box-shadow: rgb(0 0 0 / 5%) -20px 20px 20px;
+    border-radius: var(--radius);
+    margin: 25px 0 0 0;
+}
+.article_index .in_dex ul{
+    border-top: 1px solid rgb(135 135 135 / 22%);
+    margin-top: 10px!important;
+    padding-top: 5px;
+}
+.article_index .in_dex p{
+    color: var(--preset-2b);
+    margin: auto;
+    cursor: pointer;
+}
+.article_index .in_dex p:hover i{
+    opacity: 1;
+}
+.article_index.fold{
+    /*position: relative;*/
+}
+.article_index.fold .in_dex:hover{
+    opacity: 1;
+}
+.article_index.fold .in_dex{
+    min-width: 100px;
+    opacity: .85;
+}
+.article_index.fold .in_dex ul{
+    display: none;
+}
+.article_index.fold .in_dex p i:before{
+    content: '\e908';
+}
+.article_index .in_dex p i:before{
+    content: '\e909';
+}
+.article_index .in_dex p i{
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 20px;
+    opacity: .5;
+}
+.article_index ol,
+.article_index ul{
+    margin: auto!important;
+    padding: 0;
+    list-style-type: none!important;
+}
+.article_index ol.child{
+    padding-left: 20px;
+    /*display: none;*/
+}
+.article_index li{
+    margin: auto!important;
+    max-width: 15em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+body.dark .article_index a{
+    color: inherit;
+    opacity: .75;
+}
+
+
+figure.wp-block-image{
+    max-width: 66%;
+    display: inline-block;
+}
 figure.wp-block-table{margin:25px auto}
 .half-size video{width:720px!important}
 .ibox .iboxes{max-width: 66%;}
@@ -159,7 +251,7 @@ figure.wp-block-table{margin:25px auto}
 	margin: 25px auto;
 }
 .win-content article h3{
-	margin: 35px auto 15px;
+	margin: 25px auto;
 }
 .win-content article ul,.win-content article ol{
 	font-size: var(--min-size-rem);
@@ -177,8 +269,12 @@ figure.wp-block-table{margin:25px auto}
     background: rgb(102 102 102 / 10%);
     border-radius: 5px;
 }
+article li.current a{
+    color: var(--theme-color)!important;
+    font-weight: bold;
+}
 article a:hover {
-	color: var(--theme-color);
+	color: var(--theme-color)!important;
 	text-decoration: underline;
 }
 article a {

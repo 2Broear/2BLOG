@@ -263,7 +263,7 @@
                         </li>
                         <li class="acg_window-content-inside_right">
                             <div class="tags">
-                                <?php tag_clouds('<span>','</span>'); ?>
+                                <?php the_tag_clouds('<span>','</span>'); ?>
                             </div>
                         	<!--<span id="acg-content-area" style="background: url(<?php //echo get_option('site_techside_bg'); ?>) center /cover"></span>-->
                         	<!--<span id="acg-content-area-txt"><p id="hitokoto"> ? </p></span>-->

@@ -127,7 +127,62 @@
           detect = footer.querySelector(".footer-detector"),
           sidebar = document.querySelector('.news-content-right-window-all'),
           sideAds = document.querySelector(".news-ppt"),
-          inform = document.querySelector('.scroll-inform');
+          inform = document.querySelector('.scroll-inform'),
+          aindex = document.querySelector('.article_index'),
+          share = document.querySelector('.share'),
+          aindex_cl = function(el,cl){
+            for(let i=0;i<el.length;i++){
+                el[i].classList.remove(cl);
+            }
+          },
+          aindex_fn = function(){
+            if(aindex){
+                var aindexOffset = [],
+                    max = aindex.getAttribute('data-index');
+                function Constructor(index,offset){
+                    this.index = index;
+                    this.offset = offset;
+                }
+                for(let i=0;i<max;i++){
+                    const each_index = document.querySelector('#title-'+i),
+                          each_offset = each_index.offsetTop+300;
+                    // each_index.setAttribute('data-offset',each_index.offsetTop);
+                    aindexOffset.push(new Constructor(i, each_offset));
+                }
+                // console.log(aindexOffset);
+                return aindexOffset;
+            }
+          },
+          once_fn = function(fn,rt) {
+            let called = false;
+            return function(){
+                if(!called){
+                    called = true;
+                    if(rt){
+                        return fn.call(this,...arguments);
+                    }else{
+                        fn.call(this,...arguments);
+                    }
+                }
+            };
+          },
+          aindex_once_data = once_fn(aindex_fn,true);
+    // console.log(aindex_once_data());
+    if(aindex){
+        const aindex_icon = aindex.querySelector('p');
+        aindex_icon.onclick=(e)=>{
+            let that = e.target;
+            if(aindex.classList.contains('fold')){
+                that.setAttribute('title','折叠目录');
+                aindex.classList.remove('fold');
+                setCookie('article_index', 1);  // disable fold
+            }else{
+                that.setAttribute('title','展开目录');
+                aindex.classList.add('fold');
+                setCookie('article_index', 0);  // disable fold
+            }
+        };
+    }
     var throttler = function(fn,delay){
             var timer = null;
             return function(e){
@@ -215,6 +270,43 @@
                         sidebar.style.transform = "";
                     }
                 };
+            // console.log(scrollTop);
+            var aindexOffset = aindex_fn();  // always update(do not call aindex_once_data)
+            // console.log(aindexOffset);
+            // if(aindex){
+            //     const max = aindex.getAttribute('data-index'),
+            //           aindex_li = aindex.querySelectorAll('li');
+            //     console.log(max);
+            //     for(let i=0;i<max;i++){
+            //         const each_index = document.querySelector('#title-'+i),
+            //               each_offset = each_index.offsetTop+300;
+            //         if(scrollTop<=document.querySelector('#title-0').offset || scrollTop>=share.offsetTop){
+            //             aindex_cl(aindex_li,'current')
+            //         }else{
+            //             if(scrollTop>=each_offset){
+            //                 aindex_cl(aindex_li,'current');
+            //                 document.querySelector('#t'+i).classList.add('current');
+            //             }
+            //         }
+            //     }
+            // }
+            if(aindex && aindexOffset.length>=1){
+                const aindex_li = aindex.querySelectorAll('li');
+                if(scrollTop<=aindexOffset[0].offset || scrollTop>=share.offsetTop){
+                    aindex_cl(aindex_li,'current')
+                }else{
+                    aindexOffset.forEach(function (item) {
+                        // if(item===3){
+                        //     return;
+                        // }
+                        if(scrollTop>=item.offset){
+                            // location.href='title-'+item.index;
+                            aindex_cl(aindex_li,'current');
+                            document.querySelector('#t'+item.index).classList.add('current');
+                        }
+                    });
+                }
+            }
             // https://stackoverflow.com/questions/31223341/detecting-scroll-direction
             scroll_foward = window.pageYOffset;  // Get scroll Value
             scroll_record-scroll_foward<0 ? roll_down() : roll_up();  // Subtract two and conclude

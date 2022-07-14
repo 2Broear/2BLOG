@@ -470,6 +470,10 @@
         if(get_option('site_search_style_switcher')){
             register_setting( 'baw-settings-group', 'site_search_includes' );
         }
+        register_setting( 'baw-settings-group', 'site_indexes_switcher' );
+        if(get_option('site_indexes_switcher')){
+            register_setting( 'baw-settings-group', 'site_indexes_includes' );
+        }
         
         register_setting( 'baw-settings-group', 'site_breadcrumb_switcher' );
         register_setting( 'baw-settings-group', 'site_metanav_switcher' );
@@ -837,7 +841,7 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">Category 目录</th>
+                        <th scope="row">地址栏 Category 目录</th>
                         <td>
                             <?php
                                 $opt = 'site_remove_category_switcher';
@@ -920,6 +924,75 @@
                                             echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
                                         }
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php 
+                        }
+                    ?>
+                    <tr valign="top" class="">
+                        <th scope="row">文章索引目录</th>
+                        <td>
+                            <?php
+                                $opt = 'site_indexes_switcher';
+                                $value = get_option($opt);
+                                $data = get_option( 'site_indexes_includes', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option($opt, "on_default");
+                                    $status="checked";
+                                }else{
+                                    $value ? $status="checked" : $status="closed";
+                                };
+                                echo '<label for="'.$opt.'"><p class="description" id="">文章页目录索引，开启后在文章页可见（默认 notes 类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>文章目录索引</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        if(get_option('site_indexes_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">索引目录分类（多选项）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_indexes_includes';  //unique str
+                                        $value = get_option($opt);
+                                        echo '<p class="description" id="">选定分类下文章模版将开启目录索引，使用逗号“ , ”分隔（默认 notes 类型</p><div class="checkbox">';
+                                        $notes_cat =  get_template_bind_cat('category-notes.php');
+                                        $news_cat =  get_template_bind_cat('category-news.php');
+                                        $arrobj = array(
+                                            array('name' => $notes_cat->name, 'slug' => $notes_cat->slug),
+                                            array('name' => $news_cat->name, 'slug' => $news_cat->slug),
+                                        );
+                                        $preset = $arrobj[0]['slug'].',';
+                                        if(!$value){
+                                            update_option($opt, $preset);
+                                            $value = $preset;
+                                        }
+                                        foreach ($arrobj as $arr){
+                                            $slug = $arr['slug'];
+                                            $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                            echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$arr['name'].'</label>';
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                        // $opt = 'site_indexes_includes';  //unique str
+                                        // $value = get_option($opt);
+                                        // $options = array(get_template_bind_cat('category-notes.php')->name, get_template_bind_cat('category-news.php')->name);
+                                        // $preset = $options[0].',';
+                                        // if(!$value){
+                                        //     update_option($opt, $preset);
+                                        //     $value = $preset;
+                                        // }
+                                        // echo '<p class="description" id="site_search_includes_label">指定文章页是否包含目录分类，使用逗号“ , ”分隔（默认 notes 类型，可选 news 类型</p><div class="checkbox">';
+                                        // foreach ($options as $option){
+                                        //     $checking = strpos($value, $option)!==false ? 'checked' : '';
+                                        //     echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
+                                        // }
+                                        // echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
                                     ?>
                                 </td>
                             </tr>

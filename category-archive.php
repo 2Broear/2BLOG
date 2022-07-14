@@ -50,6 +50,7 @@
                     $cur_year = $year->year;
                     $cur_posts = $wpdb->get_results( "SELECT DISTINCT ID FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' AND YEAR(post_date) = '" . $cur_year . "' ORDER BY post_date DESC" );
                     echo '<h2>' . $cur_year . '年度发布</h2><ul>';
+                    // print_r($cur_posts[0]->ID);
                     // $unique_arr = array();
                     for($i=0;$i<count($cur_posts);$i++){
                         $each_posts = $cur_posts[$i];
@@ -60,14 +61,15 @@
                         $this_cats = get_the_category($this_post);
                         preg_match('/\d{2}-\d{2} /', $this_post->post_date, $this_date);
                         preg_match('/\d{2}-\d{2} /', $prev_post->post_date, $prev_date);
-                        $unique_date = $this_date[0]!=$prev_date[0] || $each_posts->ID==$cur_posts[0]->ID ? '<span>'.$this_date[0].'</span>' : '';
+                        // print_r($each_posts->ID);
+                        $unique_date = $this_date[0]!=$prev_date[0] || $each_posts->ID==$cur_posts[0]->ID ? '<div class="timeline">'.$this_date[0].'</div>' : '';
                         // print_r($this_cats);
                         // array_push($unique_arr, $this_date);
                         // $unique_str = $unique_str.$this_date[0].',';
                         // $unique_date = strpos($unique_str, $this_date[0])!==false ? '' : $this_date[0];
                         echo '<li>'.$unique_date.'<a class="link" href="'.get_the_permalink($this_post).'" target="_blank">' . $this_post->post_title.'<sup>';
                         foreach ($this_cats as $this_cat){
-                            echo $this_cat->name.'、';  //'<a href="'.get_category_link($this_cat->term_id).'" target="_blank">'.$this_cat->name.'</a>、';
+                            echo '<span>'.$this_cat->name.'</span>';  //'<a href="'.get_category_link($this_cat->term_id).'" target="_blank">'.$this_cat->name.'</a>、';
                         }
                         echo '</sup></a></li>';
                     // }

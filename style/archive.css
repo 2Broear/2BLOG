@@ -48,7 +48,7 @@ body.dark .archive-tree ul li a{
     /*opacity: 1;*/
 }
 .archive-tree ul li a.link:hover > sup{
-    opacity: .75;
+    opacity: 1;
 }
 .archive-tree ul li a.link:hover{
     color: var(--theme-color);
@@ -66,11 +66,12 @@ body.dark .archive-tree ul li a{
     text-overflow: ellipsis;
     white-space: nowrap;
     vertical-align: middle;
+    font-size: var(--min-size-rem);
 }
 .archive-tree ul li a{
     color: inherit;
 }
-.archive-tree ul li span{
+.archive-tree ul li .timeline{
     width: 100%;
     opacity: .75;
     font-size: var(--min-size);
@@ -78,6 +79,16 @@ body.dark .archive-tree ul li a{
     vertical-align: middle;
     /*margin-right: 15px;*/
     float: left;
+}
+.archive-tree ul li span:last-child:after{
+    content: none;
+}
+.archive-tree ul li span:after{
+    content: ' 、';
+}
+.archive-tree ul li span{
+    display: inline-block;
+    margin-left: 2px;
 }
 .archive-tree ul li em,
 .archive-tree ul li sup{

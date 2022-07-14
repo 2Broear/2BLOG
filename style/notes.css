@@ -69,6 +69,12 @@
 .win-content article p a{color: var(--theme-color);}
 .win-content article .info{color:var(--preset-8);max-width:58%;font-size:var(--min-size);float:right;position:relative;text-align:right;padding-bottom:5px;margin-top:5px;border-bottom:1px solid var(--preset-d);box-sizing:border-box}
 .win-content article .info span{margin-left:10px}
+.win-content article .info span em:last-child:after{
+    content: none;
+}
+.win-content article .info span em:after{
+    content: ' 、';
+}
 .win-content article .info span#slider{margin:auto}
 article .info::after{content:'';width:32%;height:2px;background:currentColor;position:absolute;bottom:-1px;right:0;transition:width .15s ease}
 article .info span.valine-comment-count:before{content: "#"}
