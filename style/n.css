@@ -29,6 +29,9 @@
     border-top: 1px solid rgb(135 135 135 / 22%);
     margin-top: 10px!important;
     padding-top: 5px;
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 15px;
 }
 .article_index .in_dex p{
     color: var(--preset-2b);

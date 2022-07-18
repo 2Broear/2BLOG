@@ -69,7 +69,7 @@
                             	pageSize: '<?php echo get_option('comments_per_page',15) ?>',
                             	// avosSdk: '<?php //echo get_option('site_leancloud_sdk') ?>',
                             	// avatar: '<?php //echo get_option('avatar_default','retro') ?>',
-                            	// listSize: '<?php //echo get_option('site_per_posts') ?>',
+                            	listSize: '<?php echo get_option('site_per_posts', 5) ?>',
                             	notify: false,
                             	verify: false,
                             	visitor: false,
@@ -234,15 +234,15 @@
             <p id="supports">
                 <?php 
                     if(get_option('site_monitor_switcher')) echo '<script type="text/javascript" src="'.get_option('site_monitor').'"></script>';
-                    if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online"><img src="'.get_bloginfo('template_directory').'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>';
+                    if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online"><img src="'.custom_cdn_src('img',true).'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>';
                     $server = get_option('site_server');
                     if($server&&$server!="已关闭") echo '<a href="javascript:void(0);"><img src="'.$server.'" style="height: 12px;"></a>';
                     if(get_option('site_foreverblog_wormhole')){
-                        $warmhole_img = $_COOKIE['theme_mode']=='dark' ? get_bloginfo('template_directory').'/images/wormhole_2_tp.gif' : get_bloginfo('template_directory').'/images/wormhole_4_tp.gif';
-                        echo '<a href="https://www.foreverblog.cn/go.html" target="_blank"> <!--<img src="" alt="" style="width:auto;height:26px;opacity:.5" title="穿梭虫洞-随机访问十年之约友链博客">--><em class="warmhole" style="background:url('.get_bloginfo('template_directory').'/images/wormhole_4_tp.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
+                        $warmhole_img = $_COOKIE['theme_mode']=='dark' ? custom_cdn_src('img',true).'/images/wormhole_2_tp.gif' : custom_cdn_src('img',true).'/images/wormhole_4_tp.gif';
+                        echo '<a href="https://www.foreverblog.cn/go.html" target="_blank"><em class="warmhole" style="background:url('.custom_cdn_src('img',true).'/images/wormhole_4_tp.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
                     }
                     // if(get_option('site_foreverblog_switcher'))
-                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank"><img src="'.get_bloginfo('template_directory').'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
+                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank"><img src="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
                     // if($comment_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
                 ?>
             </p>
@@ -260,7 +260,7 @@
                       }
                   }
               ?>
-              <p style="margin:auto;opacity:.75;font-size:smaller;font-style:italic"> WP Theme <a href="https://github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><ins> <b>2BLOG</b> </ins></a> openSourced via 2broear </p>
+              <p style="margin:auto;opacity:.75;font-size:12px;font-style:italic"> WP Theme <a href="https://github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><ins> <b>2BLOG</b> </ins></a> openSourced via 2broear </p>
           </ul>
         </span>
       </div>

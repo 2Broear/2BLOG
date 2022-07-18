@@ -1,4 +1,9 @@
 <?php 
+    //限制上传文件的最大体积值 https://www.cnwper.com/wp-limit-uploads.html
+    // function max_up_size() {
+    //     return 500*1024*1024; //限制500kb
+    // }
+    // add_filter('upload_size_limit', 'max_up_size');
     // Rename image filename after uploaded.
     // https://wordpress.stackexchange.com/questions/59168/rename-files-on-upload
     // function wpa59168_rename_attachment( $post_ID ) {
@@ -355,7 +360,13 @@
     // 分类背景图/视频海报
     function cat_metabg($cid, $preset=false){
         $metaimg = get_term_meta($cid, 'seo_image', true);  //$page_cat->term_id
-        return $metaimg ? $metaimg : ($preset ? $preset : custom_cdn_src('img',true).'/images/default.jpg');  //get_option('site_bgimg')
+        $result = $metaimg ? $metaimg : ($preset ? $preset : custom_cdn_src('img',true).'/images/default.jpg');  //get_option('site_bgimg')
+        if(get_option('site_cdn_switcher')){
+            $upload_url = wp_get_upload_dir()['baseurl'];
+            return str_replace($upload_url, get_option('site_cdn_img', $upload_url), $result);
+        }else{
+            return $result;
+        }
     }
     // 更新 sitemap 站点地图
     if(get_option('site_map_switcher')){
@@ -714,6 +725,21 @@
         $cat_meta = get_term_meta($cat, 'seo_title', true);
         if($cat_meta) echo($cat_meta);else echo($cat_desc);
     };
+    // 过滤 CDN 图片路径
+    if(get_option('site_cdn_switcher')){
+        add_filter('the_content', 'replace_cdnimg_path');
+        function replace_cdnimg_path($content) {
+            $upload_url = wp_get_upload_dir()['baseurl'];
+            $cdnimg_url = get_option('site_cdn_img') ? get_option('site_cdn_img') : $upload_url;
+            return $content = str_replace('src="'.$upload_url, 'src="'.$cdnimg_url, $content);
+            // return str_replace('srcset="'.$upload_url, 'srcset="'.$img_cdn_url, $content);
+        }
+        // disable srcset
+        function remove_max_srcset_image_width( $max_width ) {
+            return 1;
+        }
+        add_filter( 'max_srcset_image_width', 'remove_max_srcset_image_width' );
+    }
     //启用cdn加速(指定src/img)
     function custom_cdn_src($which=false,$var=false){
         $default_src = get_bloginfo('template_directory');
@@ -749,12 +775,18 @@
             if(count($ret)<=0 || count($ret)<=$index) {
                 preg_match_all('/\<video.*poster=("[^"]*")/i', $post->post_content, $video);
                 $video_poster = trim($video[1][0],'"');
-                $video_poster ? $ret = [$video_poster] : $ret = [custom_cdn_src(false,true) . '/images/default.jpg'];
+                $video_poster ? $ret = [$video_poster] : $ret = [custom_cdn_src('img',true) . '/images/default.jpg'];
                 $index = 0;
             }
             
         }
-        return $ret[$index];
+        $result = $ret[$index];
+        if(get_option('site_cdn_switcher')){
+            $upload_url = wp_get_upload_dir()['baseurl'];
+            return str_replace($upload_url, get_option('site_cdn_img', $upload_url), $result);
+        }else{
+            return $result;
+        }
     };
     // 自定义文章摘要
     function wpdocs_custom_excerpt_length( $length ) {

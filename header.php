@@ -72,7 +72,14 @@
                                     if($the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single()) $choosen = "choosen 2rd";else $choosen="2nd";  // current choosen detect
                                     if($metaCls){
                                         $meta_image = get_term_meta($the_cats_id, 'seo_image', true);
-                                        if(!$meta_image) $meta_image = custom_cdn_src('img',true).'/images/default.jpg';//get_option('site_bgimg');
+                                        if($meta_image){
+                                            if(get_option('site_cdn_switcher')){
+                                                $upload_url = wp_get_upload_dir()['baseurl'];
+                                                $meta_image = str_replace($upload_url, get_option('site_cdn_img',$upload_url), $meta_image);
+                                            }
+                                        }else{
+                                            $meta_image = custom_cdn_src('img',true).'/images/default.jpg';
+                                        }
                                         echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats_par." ".$level.'"><a href="'.get_category_link($the_cats_id).'" style="background:url('.$meta_image.') center center /cover;" class="'.$choosen.'"><b>'.$the_cats_name.'</b></a>';
                                     }else{
                                         $cats_desc = $the_cats->description;

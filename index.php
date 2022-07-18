@@ -164,7 +164,7 @@
             </div>
         </div>
     </div>
-    <div class="main-middle-allpart"></div>
+    <!--<div class="main-middle-allpart"></div>-->
     <div class="main-bottom-allpart">
         <!-- 左文窗 ，右图-->
         <div class="main-bottom-ta">
@@ -173,7 +173,7 @@
                 
         ?>
             <div id="tech-acg-inside_tech" class="flexboxes wow fadeInUp" data-wow-delay="0.15s">
-                <span id="tech_window" class="">
+                <span id="tech_window" style="width:100%">
                     <div class="newsBox-supTitle flexboxes" id="tech_window-top">
                         <span class="newsBox-supTitle-iDescription" id="icon-technology" title="Tech | 科技资讯">
                             <em>BLOG</em><i class="icom hardware"></i>
@@ -194,10 +194,7 @@
                         ?>
                     </div>
                 </span>
-                <span id="tech_pic" style="background: url(<?php echo get_option('site_techside_bg'); ?>) center /cover;"></span>
-                <!--<ul class="tags">-->
-                <!--    <?php //tag_clouds(); ?>-->
-                <!--</ul>-->
+                <!--<span id="tech_pic" style="background: url(<?php //echo get_option('site_techside_bg'); ?>) center /cover;"></span>-->
             </div>
         <?php
             }
@@ -219,9 +216,7 @@
                         		<span id="acg_window-content-inside_left-pic">
                         		    <?php 
                         			    $query_cid = get_option('site_acgnside_cid');
-                        			    $meta_image = get_term_meta($query_cid, 'seo_image', true) ? get_term_meta($query_cid, 'seo_image', true) : custom_cdn_src('img',true).'/images/default.jpg';
-                        			    // echo '<img src="'.$meta_image.'" style="width:100%; height:100%;" />';
-                        			    echo '<em style="background:url('.$meta_image.') center /cover;width:100%;height:155px;display:block;"></em>';
+                        			    echo '<em style="background:url('.cat_metabg($query_cid, custom_cdn_src('img',true).'/images/acg.jpg').') center /cover;width:100%;height:155px;display:block;"></em>';
                     			    ?>
                         		</span>
                         		<span id="acg_window-content-inside_left-txt">

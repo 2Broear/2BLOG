@@ -286,7 +286,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 #tech_pic{width:49%;height:auto;display:block;overflow:hidden;perspective:300;-webkit-perspective:300;transform-style:preserve-3d;border-radius:var(--radius)}
 #tech_pic img{max-width:100%;max-height:100%;}
 #tech_pic em{background:url('') no-repeat;background-position:left center;width:auto;height:100%;display:block;transform:scale(0.95) translateZ(0) rotateX(0deg) rotateY(-3deg);-webkit-transform:scale(0.95) translateZ(0) rotateX(0deg) rotateY(-3deg)}
-#tech_window{width:49%;height:auto;position:relative;display:block;border-radius:var(--radius);overflow:hidden;color:var(--preset-6);}
+#tech_window{width:100%;height:auto;position:relative;display:block;border-radius:var(--radius);overflow:hidden;color:var(--preset-6);}
 #tech_window-top{width:100%;border-top:2px solid currentColor;background-color:var(--preset-f);box-shadow:rgba(0,0,0,0.18) 0 1px 6px;flex-flow:row nowrap;justify-content:flex-start}
 .newsBox-supTitle .newsBox-supTitle-iDescription{display:inline-block;border-right:2px solid;position:relative;cursor:help}
 #icon-technology,#icon-acg{border-color:currentColor}
@@ -327,7 +327,11 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 .resource-windows div ul li:nth-last-child(1){border-bottom-style:none;border-radius:inherit}
 .resource-windows div ul li a.hidden{display:none}
 .resource-windows div ul li a{color:var(--preset-8);max-width:19em;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:100%;margin:0 auto;padding:0 10px;border: 1px solid transparent;border-radius:var(--radius);box-sizing:border-box}
-#tech-acg-inside_acg{width:100%;height:auto;display:block;margin-top:3em;position:relative;font-family: var(--font-serif)}
+#tech-acg-inside_tech,
+#tech-acg-inside_acg{
+    margin-top:3em;
+}
+#tech-acg-inside_acg{width:100%;height:auto;display:block;position:relative;font-family: var(--font-serif)}
 #tech-acg-inside_acg-allpart{color:#334768;width:100%;height:auto;display:block;overflow:hidden;border-radius:var(--radius)}
 #acg_window-top{width:100%;height:auto;display:flex;flex-flow:row nowrap;justify-content:flex-start;border-top:2px solid currentColor;background:rgb(253,253,253);box-shadow:rgba(0,0,0,0.18) 0 1px 3px}
 .icons-tech_window-top{width:auto;height:100%;display:block;position:relative;float:right;margin:0;overflow:hidden;cursor:not-allowed;visibility:hidden;transform:scale(0.7);-webkit-transform:scale(0.7);-ms-transform:scale(0.7);-moz-transform:scale(0.7);-o-transform:scale(0.7)}

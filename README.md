@@ -155,6 +155,25 @@ Valine 评论在 `footer.php` 中 __初始化__ 各项原生配置及自定义�
 > 
 > __注意使用 `https://github.com/2broear-xty/valine-admins.git` 地址进行部署，__ zhaojun1998 的分支尚未更新 `package.json` 中的 `NodeJs` 版本号（leancloud 目前不再支持 node.js 6.* 版本，已 pull request，因为要修改模板中的一些东西所以暂时下载到仓库临时使用，最好自己fork源项目后自定义模板等内容，否则无法不保证可用性） 
 
+CDN 静态文件加速
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1：cdn加速依赖于各方平台，此处演示为 __腾讯云__ cdn 静态文件加速，登录控制台并参考对应教程配置好对应的加速域名（如：https://img.example.com）后进行下一步。
+2：在 2blog 后台开启 cdn 并填写上方配置的加速域名后，此时文章内图片将以该域名为链接头替换wp路径（加速文件访问路径取决于 nginx 配置），并自动关闭 wp 原生 srcset 图片属性，如需加速站内 `images` 目录下的预设图片，则将其文件夹复制到 nginx 配置中的路径即可。
+
+___参考 nginx 配置：___（此处设置加速路径为 wp 目录下的 `uploads` 路径）
+``` nginx
+server {
+    listen 80;
+    listen 443;
+    server_name img.example.com;
+    location / {
+      root /www/wwwroot/blog.example.com/wp-content/uploads;
+      #index index.html index.html.htm index.php;
+   }
+}
+```
+配置完成后，访问 子域名+uploads 目录下的文件即可，默认目录储存结构为：`img.example.com/date/to/file.jpg` 
+
 伪静态与固定链接
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 如需实现 [演示站](http://wpk.2broear.com) 的 _permalink/url_ 层级（404等预设页面也需要配置伪静态或在分类层级前加入 `index.php` 后才能访问）如下：
@@ -189,7 +208,8 @@ ___WordPress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 
 - [WordPress](https://wordpress.org) 提供的CMS程序及主题开发文档支持
 - [Leancloud](https://www.leancloud.cn) 提供的 BaaS 数据储存服务
-- [Valine](http://valine.js.org) 提供的无后端评论系统及 [zhaojun1998](https://github.com/zhaojun1998/Valine-Admin) 提供的 valine 评论邮件通知
+- [Valine](http://valine.js.org) 提供的无后端评论系统及
+- [zhaojun1998](https://github.com/zhaojun1998/Valine-Admin) 提供的 valine 评论邮件通知
 - Wechat（企业）提供的微信消息推送服务
 - ...
 - [Ying 酱](https://blog.luvying.com) 及 [橘纸柚](https://lovemen.cc/) 提供的随机动漫图片API

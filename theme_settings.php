@@ -736,7 +736,7 @@
                                 $preset = custom_cdn_src('img',true).'/images/fox.jpg';  
                                 // $preset = 'https:'.get_option('site_avatar_mirror','//sdn.geekzu.org/').'/avatar/?d=identicon&s=300';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_bgimg_label">默认背景图，用于各页面调用背景图（默认随机 gravatar 背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                                echo '<p class="description" id="">默认背景图，用于各页面调用背景图（默认随机 gravatar 背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
                             ?>
                         </td>
                     </tr>
@@ -1253,7 +1253,7 @@
                                 $img = get_option( 'site_cdn_img', '' );
                                 $src = get_option( 'site_cdn_src', '' );
                                 get_option($opt) ? $status="checked" : $status="closed";
-                                echo '<label for="'.$opt.'"><p class="description" id="site_cdn_switcher_label">开启后可自定义cdn加速域名（图片/文件</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">CDN加速域名</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_cdn_switcher_label">开启后可自定义cdn加速域名（需要配置 nginx 指定域名 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">CDN加速域名</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1264,14 +1264,14 @@
                                 <th scope="row">— 文件加速域名</th>
                                 <td>
                                     <p class="description" id="site_cdn_src_label">可选项，网站cdn（css、js）链接/标头（默认使用当前主题目录</p>
-                                    <input type="text" name="site_cdn_src" id="site_cdn_src" class="middle-text" placeholder="默认wp路径" value="<?php echo get_option( 'site_cdn_src', '' ); ?>"/>
+                                    <input type="text" name="site_cdn_src" id="site_cdn_src" class="middle-text" placeholder="site_cdn_src" value="<?php echo get_option( 'site_cdn_src', '' ); ?>"/>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option disabled">
+                            <tr valign="top" class="child_option">
                                 <th scope="row">— 图片加速域名</th>
                                 <td>
-                                    <p class="description" id="site_cdn_img_label">网站媒体文件（图片/音视频）cdn链接/标头（默认文件夹“images”</p>
-                                    <input type="text" name="site_cdn_img" id="site_cdn_img" class="middle-text" placeholder="默认wp路径" value="<?php echo get_option( 'site_cdn_img', '' ) ?>"/>
+                                    <p class="description" id="site_cdn_img_label">网站媒体文件（推荐加速静态文件存放 uploads 路径</p>
+                                    <input type="text" name="site_cdn_img" id="site_cdn_img" class="middle-text" placeholder="site_cdn_img" value="<?php echo get_option( 'site_cdn_img', '' ) ?>"/>
                                 </td>
                             </tr>
                     <?php
