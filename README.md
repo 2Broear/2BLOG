@@ -227,7 +227,7 @@ ___WordPress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 - marked.js（markdown文档解析）
 - md5.js（md5邮件解析）
 - nprogress.js（文档进度条）
-- jquery.js（部分依赖）
+- ~~jquery.js（部分依赖）~~
 - ...
 
 外网有些很棒的 WordPress 主题开发文档教程，这些文档一定程度上提升了开发进度，后续将在此补上相关链接。

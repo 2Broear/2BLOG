@@ -6,7 +6,7 @@
 <meta name="theme-color" content="<?php $theme_color=get_option('site_theme','#eb6844');echo $theme_color; ?>">
 <meta name="renderer" content="webkit">
 <meta name="msapplication-TileColor" content="<?php echo $theme_color; ?>" />
-<meta name="msapplication-TileImage" content="<?php custom_cdn_src(); ?>/favicon/favicon.ico" />
+<meta name="msapplication-TileImage" content="<?php custom_cdn_src('img'); ?>/favicon/favicon.ico" />
 <link rel="shortcut icon" href="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico"/>
 <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/universal.min.css?v=0.9<?php //echo(mt_rand()); ?>" />
 <?php echo $theme_color!='#eb6844' ? '<style>:root{--theme-color: '.$theme_color.'}</style>' : false; ?>

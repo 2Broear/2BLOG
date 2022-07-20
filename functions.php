@@ -1254,8 +1254,8 @@
     add_action('wp_ajax_post_like', 'post_like');
     function post_like(){
         global $wpdb,$post;
-        $id = $_POST["um_id"];
-        $action = $_POST["um_action"];
+        $id = $_GET["um_id"];  //$_POST
+        $action = $_GET["um_action"];  //$_POST
         if($action=='like'){
             $post_liked = get_post_meta($id,'post_liked',true);
             $expire = time() + 99999999;

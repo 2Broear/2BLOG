@@ -1204,7 +1204,7 @@ audio{width:300px;height:32px}
     .archive-tree ul li a.link{max-width:88%;}
     
     /* article index */
-    .article_index .in_dex{right:0!important}
+    /*.article_index .in_dex{right:0!important}*/
 }
 
 @media only screen and (max-width:360px){

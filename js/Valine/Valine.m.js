@@ -18,29 +18,6 @@ function dynamicLoad(jsUrl,fn){
 		script.onload = script.onreadystatechange = null;
 	};
 }
-function setCookie(name,value,path){
-    let Days = 30,
-        exp = new Date();
-    !path ? path=";path=/" : path;
-    exp.setTime(exp.getTime() + Days*24*60*60*1000);
-    document.cookie = name+"="+escape(value)+";expires="+exp.toGMTString()+path;
-}
-function getCookie(cname){
-    var name = cname+"=";
-    var ca = document.cookie.split(';');
-    for(var i=0; i<ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c=c.substring(1);
-        if(c.indexOf(name)!=-1) return c.substring(name.length, c.length);
-    }
-    return "";
-}
-function delCookie(name){
-    var exp = new Date();
-    exp.setTime(exp.getTime() - 1);
-    var cval=getCookie(name);
-    cval!=null ? document.cookie = name+ "="+cval+";expires="+exp.toGMTString()+";path=/" : false;
-}
 function send_ajax_request(method,url,data,callback){
     var ajax = new XMLHttpRequest();
     if(method=='get'){  // GET请求
@@ -60,7 +37,7 @@ function send_ajax_request(method,url,data,callback){
         }
     };
 }
-function ajax_data_parameter(data,decode){
+function parse_ajax_parameter(data,decode){
     let str = "";
     for(let key in data){
         str += `${key}=${data[key]}&`
@@ -186,9 +163,7 @@ if (el_ != null && el_ != undefined) {
 					}
 				}
 				els_s.innerHTML += `等<strong>${likeNum-keys||''}</strong>人应该觉得这篇文章海星⭐️~`;  //likeUser.length-keys||
-			}else{
-				// els_s.innerHTML = "本文海星⭐️不？要不点个赞👍再走，这样还能留个名~";  //此处不加标签用于判断首次点赞
-            };
+			};
             viewNum++;
             el != null && likeNum != undefined ? el.innerHTML = likeNum: el.innerHTML = 0;
             updateAttr(objId, 'view', 'from');
@@ -219,7 +194,7 @@ if (el_ != null && el_ != undefined) {
             likes++;
             //响应dom操作
             el.innerHTML = likes;
-            likes==0||els_s.children.length==0 ? els_s.innerHTML = `等<strong></strong>人应该觉得这篇文章海星⭐️~` : false;/*<strong>${likes||''}</strong>*/
+            likes==0||els_s.children.length==0 ? els_s.innerHTML = `等<strong></strong>人应该觉得这篇文章biu星⭐️~` : false;/*<strong>${likes||''}</strong>*/
             let temp = document.createElement("b"),
                 numb = els_s.querySelector("strong"),
                 list = els_s.children,  //querySelectorAll("a");
@@ -230,7 +205,7 @@ if (el_ != null && el_ != undefined) {
             els_s.children.length>els_max ? list[last].remove() : false;  //删除末端（大于3后才执行删除，否则默认新增）
             //执行删除后再执行插入操作
             els_s.insertBefore(temp,els_s.firstChild);  //新增前端（在text“等”后插入）
-            likes>=els_max ? numb.innerText = likes-(list.length-2) : false;  //计数递增Number(numb.innerText)+1
+            likes>=els_max ? numb.innerText = likes-(list.length-1) : false;  //计数递增Number(numb.innerText)+1 修复 -2/-1 
             //写入数据库
             urlCheck.find().then(results =>{
                 if (results.length >= 1) {
@@ -353,7 +328,7 @@ if(v.comment!=""&&v.nick!="2broear"&&v.mail!="xty@2broear.com"){
     }
     if(custom_initfield_wxnotify){
         send_ajax_request("get", custom_initfield_rootpath+"/plugin/wpwx-notify.php", 
-            ajax_data_parameter({
+            parse_ajax_parameter({
                 'title' : "《"+title+"》上有新评论了！",
                 'content' : comment,
                 'description' : nick+" 在 "+title+" 上回复道: "+comment,

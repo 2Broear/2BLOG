@@ -1,167 +1,84 @@
-
 <?php
     $comment_sw = get_option('site_comment_switcher');
     if(is_single()){
 ?>
         <div class="share" style="<?php if(!$comment_sw) echo 'margin-top:15px'; ?>">
-            <a id="dislike" title="有点东西（Like）" href="javascript:;" data-action="like" data-id="<?php the_ID(); ?>" class="<?php if(isset($_COOKIE['post_liked_'.$post->ID])) echo 'liked';?>">
+            <a id="dislike" title="有点东西（Like）" href="javascript:;" data-action="like" data-id="<?php the_ID(); ?>" class="<?php if(isset($_COOKIE['post_liked_'.$post->ID])) echo 'liked';?>" <?php if(!$comment_sw) echo 'onclick="postLike(this)"'; ?>>
+                <?php if($comment_sw) echo '<div class="user"><small></small><div id="list"></div></div>'; ?>
                 <span id="like" class="count">
                     <i id="counter"><?php $like=get_post_meta($post->ID,'post_liked',true);if($like) echo $like;else echo '0'; ?></i>
-                    <em style="background:url(<?php custom_cdn_src(); ?>/images/shareico.png) no-repeat -478px 4px"></em>
+                    <em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -478px 4px"></em>
                 </span>
-                <?php if($comment_sw) echo '<div class="user"><small></small><div id="list"></div></div>'; ?>
             </a>
-            <a id="qq" title="分享QQ"><span><em style="background:url(<?php custom_cdn_src(); ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
-            <a id="qzone" title="分享空间（QZone）"><span><em style="background:url(<?php custom_cdn_src(); ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
-            <a id="Poster" title="生成海报（Poster）"><span id="recall"><em style="background:url(<?php custom_cdn_src(); ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
+            <a id="qq" title="分享QQ"><span><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
+            <a id="qzone" title="分享空间（QZone）"><span><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
+            <a id="Poster" title="图文海报（Poster）"><span id="recall" onclick="ajaxPoster()"><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
         </div>
-        <script type="text/javascript" src="<?php custom_cdn_src("src"); ?>/js/jquery-1.9.1.min.js"></script>
+        <!--<script type="text/javascript" src="<?php //custom_cdn_src("src"); ?>/js/jquery-1.9.1.min.js"></script>-->
         <script>
-            var api = {
-        			"qq": "https://connect.qq.com/widget/shareqq/index.html",
-        			"qzone": "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey",
-        			"weibo": "https://service.weibo.com/share/share.php"
-        		},
-        		d = document,
-        		eID = (e,d)=>{
-        			let el = d.getElementById(e);
-        			return el
-        		},
-        		eTG = (e,d)=>{
-        			let el = d.getElementsByTagName(e)[0];
-        			return el
-        		},
-        		eCS = (e,d)=>{
-        			let el = document.getElementsByClassName(e)[0];
-        			return el
-        		},
-        		eHide = (e)=>{e.style.display="none"},
-        		eShow = (e)=>{e.style.display="block"},
-        		sQQ=(u,p,t,s,i)=>{
-        			i.match("http") ? i=i : i="https:"+i;
-        			return api.qq+"?url="+u+"?p="+p+"&title="+t+"&summary="+s+"&pics="+i
-        		},
-        		sQZone=(u,p,t,s,i)=>{
-        			i.match("http") ? i=i : i="https:"+i;
-        			return api.qzone+"?url="+u+"?p="+p+"&title="+t+"&summary="+s+"&pics="+i
-        		},
-        		sWeibo=(u,p,t,i)=>{
-        			i.match("http") ? i=i : i="https:"+i;
-        			return api.weibo+"?url="+u+"?p="+p+"&title="+t+"&pic="+i+"&searchPic=true"
-        		},
-        		vaildImgAsync = (imgurl)=>{
-        			return new Promise(function(resolve, reject){
-        				var img = new Image();
-        				img.src = imgurl;
-        				img.onload = function(res){
-        					resolve(res);
-        				};
-        				img.onerror = function(err){
-        					reject(err)
-        				}
-        			})
-        		},
-        		vaildImgCheck = (imgurl)=>{
-        			vaildImgAsync(imgurl).then(()=>{
-        				return true
-        			}).catch(()=>{
-        				return false
-        			})
-        		},
-        		ifLazy = (img,imgs,set)=>{
-        			img==undefined?set=imgs:false;
-        			imgs==undefined?set=img:false;
-        		};
-        	if($(".share").is(":visible")){
-        		var url = location.href+"/",
-        			title = '<?php echo get_the_title(); ?>', //document.title.replace(" | 2BROEAR","").replace(" 笔记栈",""),
-        			content = $(".news-article-container p").first().text(),
-        			img_false = "<?php custom_cdn_src('img'); ?>/images/default.jpg",
-        			img_true;
-        		if($(".win-top").is(":visible")){
-        			var img = $(".win-top").attr("style"),
-        				img2bg = img ? img.split("(")[1].split(")")[0].replaceAll("'","") : img_false,
-        				img_true = img2bg;
-        		}else{
-        			var img_news = $("img").first().attr("data-original"),
-        				img_news_ = $("img").first().attr("src"),
-        				img_true = img_news;
-        		}
-        		ifLazy(img_news,img_news_,img_true)
-        		img_true==undefined ? img_true = img_false : false;
-        		img_true.match("<?php custom_cdn_src(); ?>/emojis") ? img_true=img_false : false;
-        		content.length>32?content=content.slice(0,32)+'...':false;
-        		var shareQQ = sQQ(url,"parameter",title,content,img_true||img_false),
-        			shareQZone = sQZone(url,"parameter",title,content,img_true||img_false),
-        			shareWeibo = sWeibo(url,"parameter",title,img_true||img_false),
-        			sharelist = {
-        				"#qq": shareQQ,
-        				"#qzone": shareQZone,
-        				"#weibo": shareWeibo 
-        			};
-        		for(key in sharelist){
-        			let url = sharelist[key];
-        			$(key).on("click",function(){
-        				window.open(url, 'sharelist', 'height=600, width=800');
-        			})
-        		}
-        	};
-            function callAjax(){
-        		if(!$('#capture').is(':visible')){
-        			$.ajax({
-        				url: "<?php custom_cdn_src(); ?>/plugin/html2canvas.php",
-        				type:'get',
-        				async: 'false',
-        				dataType: '',
-        				success: function(result){
-        					$('body').append(result);
-        				},error: function(xhr){
-        					alert("Error: "+xhr.status+", "+xhr.statusText);
-        				},complete: function(){
-        					var div = document.createElement("DIV"),
-        						title = eTG('h1',d).innerText,
-        						container = eCS('news-article-container',d),
-        						content = eTG('p',container).innerText,
-        						img_false = "<?php custom_cdn_src('img'); ?>/images/default.jpg",
-        						img_true;
-        					if(eCS('win-top',d)!=undefined)
-        						var img = eCS('win-top',d).getAttribute('style'),
-        							date = eID('date',d).innerText,
-        							tag = eID('classify',d).innerText,
-        							img2bg = img ? img.split("(")[1].split(")")[0].replaceAll("'","") : img_false,
-        							img_true = img2bg;
-        					else
-        						var img_news = eTG('img',d).getAttribute("data-original"),
-        							img_news_ = eTG('img',d).getAttribute("src"),
-        							date_news = eID("post-date",d).innerText,
-        							img_true = img_news;
-        					img_true==undefined?img_true=img_news_:false;
-        					img_true.match("<?php custom_cdn_src(); ?>/emojis") ? img_true=img_false : false;
-        					content.length>32?content=content.slice(0,32)+'...':false;
-                            //${img_true||img_false} ${content}
-        					div.innerHTML=`<div id="capture"><header><em style="background:url(<?php echo get_postimg(); ?>) center center /cover"></em></header><aside><h3>${title}</h3><p><?php custom_excerpt(50); ?></p><small><span contenteditable="true">${tag||"Posted in"}</span>${date||date_news}</small><span id="qrcode"></span></aside><footer><b> SHARING VIA <?php echo get_option('site_nick'); ?> </b></footer></div><div id="html2img"><div id="html2canvas"><div id="loadbox"><img id="loading" src="<?php custom_cdn_src('img'); ?>/images/loading_3_color_tp.png" /><h3> 正在生成海报，请等待.. </h3><span id="cancel" onclick="hide()"></span><span id="poster"></span></div></div></div><div id="mask"></div>`;
+            function send_ajax_request(method,url,data,callback){
+                var ajax = new XMLHttpRequest();
+                if(method=='get'){  // GET请求
+                    data ? (url+='?',url+=data) : false;
+                    ajax.open(method,url,true);
+                    ajax.send();
+                }else{  // 非GET请求
+                    ajax.open(method,url,true);
+                    ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded; charset=utf-8");  // https://www.cnblogs.com/dangdanghepingping/p/10167135.html
+                    data ? ajax.send(data) : ajax.send();
+                }
+                ajax.onreadystatechange = function () {
+                    if(ajax.readyState==4 && ajax.status==200){
+                        callback ? callback(ajax.responseText) : false;
+                    }else{
+                        // error ? error(ajax.responseText) : false;
+                    }
+                };
+            }
+            function poster_sw(){
+                const poster = document.querySelector(".poster");
+                poster.classList.contains('active') ? poster.classList.remove('active') : poster.classList.add('active');
+            }
+            function ajaxPoster(){
+                if(!document.querySelector("#capture")){
+                    var div = document.createElement('DIV');
+                    send_ajax_request("get", "<?php custom_cdn_src(); ?>/plugin/html2canvas.php",
+                        'pid=<?php echo $post->ID ?>', 
+                        function(res){
+        					div.innerHTML += res;  //在valine环境直接追加到body会导致点赞元素层级错误
         					document.body.appendChild(div);
-        					var html2img = eID("html2img",d),
-        						mask = eID("mask",d);
-        					eHide(html2img);  //hide blured// clear load-flash-0
-        					var delay = setTimeout(function(){
-        						eShow(html2img);  //show clear// clear load-flash-1
-        						let capture=eID("capture",d),
-        							loadbox=eID("loadbox",d),
-        							clostBtn = eID('cancel',d),
-        							openBtn = eID('recall',d);
-        						loadbox.setAttribute("style","width:"+capture.clientWidth+"px;height:"+capture.clientHeight+"px");
-        						openBtn.onclick=()=>{eShow(html2img);eShow(mask)};
-        						clostBtn.onclick=()=>{eHide(html2img);eHide(mask)};
-        						clearTimeout(delay)
-        					},100);
-        				}
-        			})
-        		}
-        	};
-        	$(".content-all").on("click",".share span#recall",function(){
-        		callAjax()
-        	})
+                        	dynamicLoad('<?php custom_cdn_src(); ?>/js/qrcode/qrcode.min.js',function(){
+                        		let url = location.href;
+                        		var qrcode = new QRCode(document.getElementById("qrcode"), {
+                        			text: url,
+                        			width: 100,
+                        			height: 100,
+                        			colorDark : "#000000",
+                        			colorLight : "#ffffff",
+                        			correctLevel : QRCode.CorrectLevel.L
+                        		});
+                        		dynamicLoad('<?php custom_cdn_src(); ?>/js/html2canvas/html2canvas.min.js',function(){
+                            		html2canvas(document.querySelector('#capture'),{
+                            		    useCORS: true,
+                            		    allowTaint: true,
+                            		    scrollX: 0,
+                            		    scrollY: 0,
+                            		    backgroundColor: null
+                            	    }).then(canvas => {
+                            			let baseUrl = canvas.toDataURL("image/png"),
+                            				newImg = document.createElement("img"),
+                            				imgDom = '<img src="'+baseUrl+'" />';
+                            			newImg.src = baseUrl;
+                            			document.getElementById('poster').innerHTML+=imgDom
+                            		})
+                        		})
+                        	})
+                        }
+                    )
+                }else{
+                    poster_sw();
+                }
+            };
         </script>
 <?php
     }
@@ -192,29 +109,36 @@
             if(is_single()){
 ?>
             <script type="text/javascript">
-                $.fn.postLike = function() {
-                    if ($(this).hasClass('liked')) {
+                function postLike(t){
+                    let _this = t;
+                    // console.log(_this);
+                    if(_this.classList.contains('liked')){
                         alert("您已经点过赞了!");
                         return false;
                     }else{
-                        $(this).addClass('liked');
-                        var id = $(this).data("id"),
-                            action = $(this).data('action'),
-                            rateHolder = $(this).find('.count em');
+                        _this.classList.add('liked');
+                        var id = _this.getAttribute('data-id'),
+                            action =_this.getAttribute('data-action'),
+                            rateHolder = document.querySelector('.count #counter');
                         var ajax_data = {
                                 action: "post_like",
-                                um_id: id,
+                                um_id: parseInt(id),
                                 um_action: action
                             };
-                        $.post("/wp-admin/admin-ajax.php", ajax_data, function(data) {
-                            $(rateHolder).text(data);
-                        });
+                        console.log(ajax_data);
+                        send_ajax_request("get", "/wp-admin/admin-ajax.php", "action=post_like&um_id="+id+"&um_action="+action, function(res){
+                                console.log(res);
+                                rateHolder.innerText = res;
+                        })
+                        // var form_data = 'action=post_like&um_id='+id+'&um_action='+action;
+                        // send_ajax_request("post", "/wp-admin/admin-ajax.php", form_data, function(res){
+                        //         console.log(res);
+                        //         rateHolder.innerText = res;
+                        //     }
+                        // );
                         return false;
                     }
                 };
-                $(document).on("click", "#dislike", function() {
-                    $(this).postLike();
-                });
             </script>
 <?php 
             };
