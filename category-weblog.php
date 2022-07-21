@@ -62,7 +62,7 @@
                             $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                             $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                 ?>
-                            <div class="<?php if($post_orderby>1) echo 'topset'; ?> weblog-tree-core-record i<?php the_ID() ?>">
+                            <div class="<?php if($post_orderby>1) echo 'topset'; ?> weblog-tree-core-record">
                                 <div class="weblog-tree-core-l">
                                     <span id="weblog-timeline"><?php the_time('Y-n-j'); ?></span>
                                     <span id="weblog-circle"></span>
@@ -70,7 +70,7 @@
                                 <div class="weblog-tree-core-r">
                                     <div class="weblog-tree-box">
                                         <div class="tree-box-title">
-                                            <a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : 'javascript:;' ?>" id="<?php the_title(); ?>" target="_self">
+                                            <a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : 'javascript:;' ?>" id="<?php echo 'pid_'.get_the_ID() ?>" target="_self">
                                                 <h3><?php the_title() ?></h3>
                                             </a>
                                         </div>
@@ -151,7 +151,7 @@
                             index = res.attributes.index,
                             dates = res.attributes.dates,
                             today = res.attributes.today;
-                        loadContent.innerHTML += '<div class="weblog-tree-core-record i'+index+'" data-type="'+type+'"><div class="weblog-tree-core-l"><span id="weblog-timeline" data-year="'+today.y+'" data-month="'+today.m+'" data-day="'+today.d+'">'+dates+'</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div class="weblog-tree-box"><div class="tree-box-title"><h3 id="'+title+'">'+title+'</h3></div><div class="tree-box-content"><span id="core-info"><p>'+main+'</p></span><span id="other-info"><h4> Ps. </h4><p>'+ps+'</p><p id="sub">'+dates+'</p></span></div></div></div></div>';
+                        loadContent.innerHTML += '<div class="weblog-tree-core-record i'+index+'" data-type="'+type+'"><div class="weblog-tree-core-l"><span id="weblog-timeline" data-year="'+today.y+'" data-month="'+today.m+'" data-day="'+today.d+'">'+dates+'</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div class="weblog-tree-box"><div class="tree-box-title"><h3 id="'+res.id+'">'+title+'</h3></div><div class="tree-box-content"><span id="core-info"><p>'+main+'</p></span><span id="other-info"><h4> Ps. </h4><p>'+ps+'</p><p id="sub">'+dates+'</p></span></div></div></div></div>';
                         // loadcore.appendChild(loadContent);
                         loadcore.insertBefore(loadContent,loadbox);
                     }

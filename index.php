@@ -207,7 +207,7 @@
                         <span class="newsBox-supTitle-iDescription" id="icon-acg" title="ACG 宅周报">
                             <em>ACG</em><i class="icom hardware"></i>
                         </span>
-                        <h2> ACG·MT はすぐに 推薦 & TagClouds </h2>
+                        <h2> ACG mt はすぐに 推薦 & Tag clouds </h2>
                     </div>
                     <ul class="acg_window-content">
                         <!--<div class="ajaxloadMainAcg" ajaxload="ajax/main/ajax-main-acg.html"></div>-->
@@ -227,24 +227,25 @@
                         	</span>
                         	<span id="acg_window-content-inside_left-bList">
                         		<ol class="acg_window-content-inside_left-list">
-                                    <?php 
+                                    <?php
                                         $query_slug = get_category($query_cid)->slug;
                                         if($baas&&strpos(get_option('site_leancloud_category'), 'category-acg.php')!==false){
                                     ?>
                                             <script>
-                                                new AV.Query("<?php echo $query_slug ?>").addDescending("createdAt")  // .equalTo('type_acg', 'anime')  // 当 query_slug 为 acg 时使用
+                                                new AV.Query("<?php echo 'acg' ?>").addDescending("updatedAt")  // .equalTo('type_acg', 'anime')  // 当 query_slug 为 acg 时使用
                                     <?php
-                                                if($query_slug==get_template_bind_cat('category-acg.php')->slug) echo ".equalTo('type_acg', 'anime')"
+                                                // if($query_slug==get_template_bind_cat('category-acg.php')->slug) echo '.equalTo("type_acg", "anime")'
                                     ?>
                                                 .limit(<?php echo get_option('site_per_posts', get_option('posts_per_page')); ?>).find().then(result=>{
-                                                    console.log(result)
+                                                    // console.log(result)
                                                     for (let i=0; i<result.length;i++) {
                                                         let res = result[i],
-                                                            src = res.attributes.src,
+                                                            // src = res.attributes.src,
+                                                            type = res.attributes.type_acg,
                                                             title = res.attributes.title,
                                                             subtitle = res.attributes.subtitle,
                                                             updated = res.updatedAt;
-                                                        document.querySelector(".acg_window-content-inside_left-list").innerHTML += `<li title="${title}"><a href="${src}" target="_blank" rel="nofollow">${subtitle} - （${title}）<sup>${updated}</sup></a></i>`;
+                                                        document.querySelector(".acg_window-content-inside_left-list").innerHTML += `<li title="${title}"><a href="/<?php $par_cid = get_category($query_cid)->parent;echo $par_cid!=0&&get_category($par_cid)->slug!='/' ? get_category($par_cid)->slug : get_category($query_cid)->slug; ?>#${type}" target="_blank" rel="nofollow">${subtitle} - （${title}）<sup>${updated}</sup></a></i>`;
                                                     };
                                                 })
                                             </script>

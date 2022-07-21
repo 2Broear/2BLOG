@@ -125,7 +125,7 @@ blockquote p#s{font-size:var(--min-size);text-align:right;position:relative}
 blockquote p#s i{position:absolute;top:-18px;right:18px;width:66px;height:66px;opacity:.36;}
 #what_says_inside::selection{background-color:transparent}
 #what_says_inside::-moz-selection{background-color:rgba(0,0,0,0.7);color:#0f0f0f}
-html,body{margin:0;padding:0;text-align:center;background:#fff;font:normal 16px/normal "Microsoft YaHei","微软雅黑","Microsoft JhengHei","Hiragino Sans GB","WenQuanYi Micro Hei",Arial,Helvetica,Lucida Grande,Tahoma,sans-serif;tap-highlight-color:transparent;-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
+html, body{margin:0;padding:0;text-align:center;background:#fff;font:normal 16px/normal "Microsoft YaHei","微软雅黑","Microsoft JhengHei","Hiragino Sans GB","WenQuanYi Micro Hei",Arial,Helvetica,Lucida Grande,Tahoma,sans-serif;tap-highlight-color:transparent;-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
 .windowmask{background:rgba(0,0,0,0.5);width:100%;height:100%;position:fixed;z-index:100000;top:0;left:0;display:none}
 .windowmask-s2{background:rgba(0,0,0,0.35);width:100%;height:100%;position:fixed;z-index:100002;top:0;left:0;display:none;transform:translateZ(0)}
 .windowmaska{background:#000;background:rgba(0,0,0,0.5);width:100%;height:100%;transition:all .5s ease;padding-bottom:18px;overflow:auto;display:flex;justify-content:center;align-items:center;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99998;opacity:0}
@@ -228,7 +228,7 @@ header>nav#tipson .top-bar-tips a{color:var(--theme-color);text-decoration:under
 .choosen{color:var(--theme-color)!important;font-weight:bold}
 .inside_of_block nav.main-nav ul li a.choosen,
 .inside_of_block nav.main-nav ul li a:hover{color:var(--theme-color)!important}
-.inside_of_block nav.main-nav ul li a{color:inherit;display:block;font-size:var(--min-size-rem);padding:0 15px}
+.inside_of_block nav.main-nav ul li a{color:inherit;display:block;font-size:var(--min-size-rem);padding:0 15px;position:relative;}
 i.icomoon,
 .pageSwitcher.dev a i,
 .inside_of_block nav.main-nav ul li a i{font-size:13px;width:14px;height:auto;display:inline-block;position:relative;top:1px;left:-5px}
@@ -391,13 +391,20 @@ i.icomoon,
     position: relative;
     /*font-weight: bold;*/
 }
+.inside_of_block nav.main-nav ul li a.choosen::after{
+    /*width: 66%!important;*/
+    height: 10px!important;
+    opacity: .12!important;
+    background: var(--theme-color)!important;
+}
+.inside_of_block nav.main-nav ul li a.choosen::after,
 .links-more li.th_level::before,
 .links-more li.trd_level::before{
     content: '';
     width: 50%;
-    height: 30%;
+    height: 25%;
     display: block;
-    background: var(--theme-color);
+    background: var(--preset-9);
     opacity: .18;
     position: absolute;
     top: 50%;

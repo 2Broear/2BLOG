@@ -305,7 +305,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 .newsBox-subText-Description a{display:inline-block;position:relative;padding:21px;letter-spacing:1px;font-size:0.9rem;color:currentColor;-webkit-font-smoothing:antialiased}
 .newsBox-subText-Description a:hover{color:var(--theme-color)}
 .tech_window-content{width:100%;height:auto;list-style-type:none;padding:0;position:relative;display:inline-block;margin:0 auto;}
-.tech_window-content li{background-color:var(--preset-s);margin:15px auto;position:relative;opacity:.66;border-radius:50px;transition:opacity .35s ease}
+.tech_window-content li{background-color:var(--preset-s);margin:15px auto;position:relative;opacity:.66;border-radius:50px;/*transition:opacity .35s ease*/}
 .tech_window-content li:hover{opacity: 1;}
 .tech_window-content li.normal-li{border-left:5px solid var(--preset-8)}
 .tech_window-content li.normal-li a::before{padding:0 5px 0 0}

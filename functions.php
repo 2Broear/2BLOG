@@ -797,9 +797,13 @@
         return '...';
     }
     add_filter( 'excerpt_more', 'wpdocs_excerpt_more' );
-    function custom_excerpt($length=99){
-        // global $post;
-        echo wp_trim_words(get_the_excerpt(), $length);
+    function custom_excerpt($length=99, $var=false){
+        $res = wp_trim_words(get_the_excerpt(), $length);
+        if($var){
+            return $res;
+        }else{
+            echo $res;
+        }
     }
     //计算版权时间，直接在footer使用会引发没有内容的notes子分类无法显示
     function calc_copyright(){
@@ -818,7 +822,7 @@
                     let res = result[i],
                         title = res.attributes.title,
                         content = res.attributes.content.replace(/</g,"&lt;").replace(/>/g,"&gt;");
-                    document.querySelector("<?php echo $els ?>").innerHTML += `<li title="${content}"><a href="/<?php echo $slug ?>#${title}" target="_self" rel="nofollow">${title}</a></i>`;
+                    document.querySelector("<?php echo $els ?>").innerHTML += `<li title='${content}'><a href="/<?php echo $slug ?>#${res.id}" target="_self" rel="nofollow">${title}</a></i>`;
                 };
             })
         </script>
@@ -842,7 +846,12 @@
             global $post;
             $topset = get_post_meta($post->ID, "post_orderby", true)>1 ? 'topset' : false;
             $title = $detail ? trim(get_the_title()).' -（'.get_post_meta($post->ID, "post_feeling", true).'）<sup>'.$post->post_date.'</sup>' : trim(get_the_title());
-            $pre_link = $link||get_option('site_single_switcher') ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="/'.get_category($cid)->slug.'" target="_self">';
+            // print_r(get_category($cid)->parent);
+            $par_cid = get_category($cid)->parent;
+            $par_slug = $par_cid!=0&&get_category($par_cid)->slug!='/' ? get_category($par_cid)->slug : get_category($cid)->slug;
+            $post_cat = get_the_category($post->ID);
+            $loc_id = $par_slug==get_template_bind_cat('category-acg.php')->slug ? ($post_cat[0]->parent!=0 ? $post_cat[0]->slug : $post_cat[1]->slug) : 'pid_'.get_the_ID();  // print_r(get_category(wp_get_post_categories($post->ID)[1])->slug);
+            $pre_link = $link||get_option('site_single_switcher') ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="/'.$par_slug.'#'.$loc_id.'" target="_self">';
             echo '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
         endwhile;
         wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
@@ -871,7 +880,7 @@
             $post_orderby = get_post_meta($post->ID, "post_orderby", true);
             $post_source = get_post_meta($post->ID, "post_source", true);
 ?>
-            <div class="inbox flexboxes">
+            <div class="inbox flexboxes" id="<?php echo 'pid_'.get_the_ID() ?>">
                 <div class="inbox-headside flexboxes">
                     <span class="author"><?php echo $post_feeling; ?></span>
                     <img class="bg" src="<?php echo get_postimg(); ?>">
