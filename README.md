@@ -245,7 +245,6 @@ Futures todo & bugs
 - ✅ ~~标签云（页面、挂件）~~
 - ✅ ~~文章目录 Index 索引~~
 - 引进 twikoo 评论（集成 valine 评论功能到 wordpress）
-- 文章页面标题定位导航
 
 ### bug
 
