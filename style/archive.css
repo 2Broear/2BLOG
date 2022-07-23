@@ -1,3 +1,4 @@
+@charset "utf-8";
 .content-all-windows{overflow-y:visible!important}
 .win-top .counter{color:var(--preset-s);font-size:14px;position:relative;max-width:88%;margin: 7% auto 5%;z-index:1}
 .win-top .counter div{display:inline-block;margin:auto 35px;padding:15px 0}

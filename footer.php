@@ -77,7 +77,16 @@
                             	pushPlus: '<?php echo get_option('site_comment_pushplus') ?>',
                             	serverChan: '<?php echo get_option('site_comment_serverchan') ?>',
                             	// qmsgChan: '<?php //echo get_option('site_comment_qmsgchan') ?>',
-                            	rootPath: '<?php echo get_bloginfo('template_directory') ?>',
+                            	<?php
+                            	    $rootPath = get_bloginfo('template_directory');
+                            	    if(get_option('site_cdn_switcher')){
+                                	    $cdn_src = get_option('site_cdn_src');
+                                	    $cdn_img = get_option('site_cdn_img');
+                            	        echo $cdn_img ? "imgCdn: '".$cdn_img."'," : false;
+                            	        $cdn_src ? $rootPath=$cdn_src : $rootPath;
+                            	    }
+                            	?>
+                            	rootPath: '<?php echo $rootPath ?>',
                             	adminMd5: '<?php echo md5(get_bloginfo('admin_email')) ?>',
                             	avatarCdn: '<?php echo get_option("site_avatar_mirror") ?>avatar/',
                             	posterImg: '<?php echo get_postimg(); ?>',

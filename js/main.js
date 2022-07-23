@@ -326,7 +326,8 @@
         progress_bar.style.opacity = 1;
         progress_bar.style.transform = `translateX(${page_percent-100}%)`;
         // 到达顶部（底部）执行
-        if(scrollTop==0 || scrollTop+windowHeight==clientHeight){
+        // console.log(scrollTop+windowHeight+'='+clientHeight). // 0.5 offset
+        if(scrollTop==0 || scrollTop+windowHeight>=clientHeight){
             progress_ball_waves.classList.remove("active");
             progress_bar.classList.remove("active");
         }

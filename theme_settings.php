@@ -2071,7 +2071,7 @@
                                     array('name'=>'腾讯云', 'icon'=>custom_cdn_src('img',true).'/images/settings/tencentcloud.svg'),
                                     array('name'=>'华为云', 'icon'=>custom_cdn_src('img',true).'/images/settings/huaweiclouds.svg'),
                                 );
-                                echo '<label for="'.$opt.'"><p class="description" id="site_server_label">网站应用服务器（页尾图标</p><img src="'.$value.'" style="vertical-align: middle;max-width: 66px;margin:auto 15px;" /><select name="'.$opt.'" id="'.$opt.'" class="select_images"><option value="">请选择</option>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">网站应用服务器（页尾图标</p><img src="'.$value.'" style="vertical-align: middle;max-width: 66px;margin:auto 15px;" /><select name="'.$opt.'" id="'.$opt.'" class="select_images"><option value="">请选择</option>';
                                     foreach ($arrobj as $arr){
                                         $icon = $arr['icon'];
                                         echo '<option value="'.$icon.'"';if($value==$icon)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
@@ -2300,8 +2300,8 @@
                                 $opt = 'site_contact_steam';
                                 $value = get_option($opt);
                                 $holder = 'https://steamcommunity.com/profiles/76561198145631868/';
-                                if(!$value) update_option($opt, $holder);else $holder=$value;
-                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $holder . '" placeholder="底部（steam）联系方式"/>';
+                                if(!$value) update_option($opt, $holder);else $value=$holder;
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $value . '" placeholder="底部（steam）联系方式"/>';
                             ?>
                         </td>
                     </tr>

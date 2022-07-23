@@ -1760,6 +1760,7 @@ p.wp_comment_tip{
     padding-top: 25px!important;
     margin-top: 25px!important;
     font-size: var(--min-size);
+    color: var(--preset-9);
 }
 
 .main{
@@ -1783,12 +1784,12 @@ p.wp_comment_tip{
     color: var(--theme-color);
 }
 
-.pageSwitcher{font-size:14px;margin-top:15px}
+.pageSwitcher{font-size:14px;margin-top:15px;width:100%;display:inline-block;/*user-select: none;*/}
 .pageSwitcher a:hover{background: var(--preset-s);/*color:var(--preset-f);border-color:transparent;background-color:var(--theme-color)*/}
 .pageSwitcher span.current{
     font-weight: bold;
     margin: auto 5px;
-    /*color: var(--theme-color);*/
+    color: var(--theme-color);
     /*vertical-align: middle;*/
 }
 .pageSwitcher a{

@@ -135,7 +135,7 @@
                     endwhile;
                     wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
                 ?>
-                <div class="pageSwitcher" style="width:100%;display:inline-block;user-select: none;">
+                <div class="pageSwitcher">
                     <?php 
                         echo paginate_links(array(
                             'prev_text' => __('上一页'),

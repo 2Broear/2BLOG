@@ -30,7 +30,7 @@
 ?>
                         <url>
                             <loc><?php echo $term_link; ?></loc>
-                            <priority>0.7</priority>
+                            <priority>0.8</priority>
                         </url>
 <?php 
                     }
@@ -48,7 +48,7 @@
                         <url>
                             <loc><?php echo $page_link; ?></loc>
                             <lastmod><?php echo str_replace(" ","T",get_page($page->ID)->post_modified); ?>+00:00</lastmod>
-                            <priority>0.6</priority>
+                            <priority>0.8</priority>
                         </url>
 <?php 
                     }
@@ -65,7 +65,7 @@
                 <url>
                     <loc><?php the_permalink(); ?></loc>
                     <lastmod><?php the_time('c') ?></lastmod>
-                    <priority>0.8</priority>
+                    <priority>0.7</priority>
                 </url>
 <?php 
             endwhile;

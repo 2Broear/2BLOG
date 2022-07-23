@@ -973,6 +973,7 @@
         }
     ?>
     	<style>
+    	    .news-inside-content h2{overflow:hidden}
     	    .win-content.main,
     	    .news-inside-content .news-core_area p,
     	    .empty_card{margin:0 auto;}
@@ -1058,7 +1059,7 @@
                                     <div id="news-tail_info">
                                         <ul class="post-info">
                                             <li class="tags author"><?php $tags = get_the_tag_list('','、',''); echo $tags ? $tags : '<a href="javascript:;" target="_blank" rel="nofollow">'.get_option('site_nick').'</a>'; ?></li>
-                                            <li title="评论人数"><?php if(!get_option('site_comment_switcher')) $count=$post->comment_count;else $count=0; echo '<span class="valine-comment-count" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>'; ?></li>
+                                            <li title="讨论人数"><?php if(!get_option('site_comment_switcher')) $count=$post->comment_count;else $count=0; echo '<span class="valine-comment-count" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>'; ?></li>
                                             <li id="post-date" class="updated" title="发布日期">
                                                 <i class="icom"></i><?php the_time('d-m-Y'); ?>
                                             </li>
@@ -1155,7 +1156,7 @@
                     'total' => $wp_query -> max_num_pages,  //总页数
                     'current' => max(1, get_query_var('paged')), //当前页数
                 ));
-                if($pages) echo '<div class="pageSwitcher" style="width:100%;display:inline-block;user-select: none;">'.$pages.'</div>';
+                if($pages) echo '<div class="pageSwitcher">'.$pages.'</div>';
         }else{
             echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.$queryString.' </h1></div>';  //<b>'.current_slug(true).'</b> 
         }

@@ -162,17 +162,26 @@ CDN 静态文件加速
 
 ___参考 nginx 配置：___（此处设置加速路径为 wp 目录下的 `uploads` 路径）
 ``` nginx
+# 图片资源
 server {
     listen 80;
     listen 443;
-    server_name img.example.com;
+    server_name ***.example.com;
     location / {
       root /www/wwwroot/example.com/wp-content/uploads;
-      #index index.html index.html.htm index.php;
+   }
+}
+# 文件资源
+server {
+    listen 80;
+    listen 443;
+    server_name ***.example.com;
+    location / {
+      root /www/wwwroot/example.com/wp-content/2BLOG-main;  # 注意此处路径
    }
 }
 ```
-配置完成后，访问 子域名+uploads 目录下的文件即可，默认目录储存结构为：`example.com/date/to/file.jpg` 
+配置完成后，访问 子域名+uploads 目录下的文件即可。__图片资源__ 默认目录储存结构为：`***.example.com/date/to/file.jpg` 
 
 伪静态与固定链接
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
