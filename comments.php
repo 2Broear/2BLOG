@@ -42,7 +42,7 @@
             function ajaxPoster(){
                 if(!document.querySelector("#capture")){
                     var div = document.createElement('DIV');
-                    send_ajax_request("get", "<?php custom_cdn_src(); ?>/plugin/html2canvas.php",
+                    send_ajax_request("get", "<?php custom_cdn_src(false); ?>/plugin/html2canvas.php",
                         'pid=<?php echo $post->ID ?>', 
                         function(res){
         					div.innerHTML += res;  //在valine环境直接追加到body会导致点赞元素层级错误
@@ -57,6 +57,7 @@
                         			colorLight : "#ffffff",
                         			correctLevel : QRCode.CorrectLevel.L
                         		});
+                        		// html2canvas CAUSED too many requests.
                         		dynamicLoad('<?php custom_cdn_src(); ?>/js/html2canvas/html2canvas.min.js',function(){
                             		html2canvas(document.querySelector('#capture'),{
                             		    useCORS: true,

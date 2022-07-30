@@ -557,7 +557,8 @@
         
         register_setting( 'baw-settings-group', 'site_ads_switcher' );
         if(get_option('site_ads_switcher')){
-            register_setting( 'baw-settings-group', 'site_bar_ads' );
+            register_setting( 'baw-settings-group', 'site_ads_init' );
+            register_setting( 'baw-settings-group', 'site_ads_arsw' );
         }
         register_setting( 'baw-settings-group', 'site_smtp_switcher' );
         if(get_option('site_smtp_switcher')){
@@ -590,7 +591,7 @@
         if(get_option('site_beian_switcher')){
             register_setting( 'baw-settings-group', 'site_beian' );
         }
-        register_setting( 'baw-settings-group', 'site_server' );
+        register_setting( 'baw-settings-group', 'site_server_side' );
         register_setting( 'baw-settings-group', 'site_foreverblog_switcher' );
         if(get_option('site_foreverblog_switcher')){
             register_setting( 'baw-settings-group', 'site_foreverblog' );
@@ -809,9 +810,9 @@
                                     <?php 
                                         $opt = 'site_logos';
                                         $value = get_option($opt);
-                                        $preset = custom_cdn_src('img',true).'/images/svg/XTy_115x35_light.svg';
+                                        $preset = get_option('site_logo',custom_cdn_src('img',true).'/images/svg/XTy_115x35_light.svg');
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        echo '<p class="description" id="site_logos_label">站点 LOGO（深色）图片链接（应用于深色模式，留空默认预设LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY（深色）矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                                        echo '<p class="description" id="site_logos_label">站点 LOGO（深色）图片链接（应用于深色模式，默认上方LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY（深色）矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
                                     ?>
                                 </td>
                             </tr>
@@ -1916,11 +1917,29 @@
                                 <th scope="row">— 广告初始化代码块</th>
                                 <td>
                                     <?php
-                                        $opt = 'site_bar_ads';
+                                        $opt = 'site_ads_init';
                                         $value = get_option($opt);
                                         $preset = "Initialization Code.";
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
                                         echo '<textarea class="codeblock" name="'.$opt.'" id="'.$opt.'">'.$preset.'</textarea>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 文章页启用</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_ads_arsw';
+                                        $value = get_option($opt);
+                                        $data = get_option('site_ads_init', '' );
+                                        //设置默认开启（仅适用存在默认值的checkbox）
+                                        if(!$value&&!$data){
+                                            update_option($opt, "on_default");
+                                            $status="checked";
+                                        }else{
+                                            $value ? $status="checked" : $status="closed";
+                                        };
+                                        echo '<label for="'.$opt.'"><p class="description" id="">默认开启（在文章内页侧边栏启用谷歌广告位</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">启用文章页广告</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -2064,7 +2083,7 @@
                         <th scope="row">服务器信息</th>
                         <td>
                             <?php
-                                $opt = 'site_server';
+                                $opt = 'site_server_side';
                                 $value = get_option($opt);
                                 $arrobj = array(
                                     array('name'=>'阿里云', 'icon'=>custom_cdn_src('img',true).'/images/settings/alicloud.png'),

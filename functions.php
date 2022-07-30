@@ -709,16 +709,16 @@
         }
     };
     //谷歌 Adsense 广告（默认加载link传参true则加载sidebar广告块）
-    function google_ads_switch($bar){  //$ink,
-        // $disabled = '<h2 style="opacity:.5">Google 广告已关闭</h2>';
-        if(get_option('site_ads_switcher')){
-            // if($ink) echo(get_option('site_ads_link'));
-            if($bar) echo(get_option('site_bar_ads'));else echo '<h2 style="opacity:.5">已手动关闭广告。</h2>';
-            // if($ink&&!$bar) echo '<h2 style="opacity:.5">已停用 Google 广告</h2>';
-        }else{
-            echo '<h2 style="opacity:.75">未启用广告插件！</h2>';
-        }
-    };
+    // function google_ads_switch($bar){  //$ink,
+    //     // $disabled = '<h2 style="opacity:.5">Google 广告已关闭</h2>';
+    //     if(get_option('site_ads_switcher')){
+    //         // if($ink) echo(get_option('site_ads_link'));
+    //         if($bar) echo(get_option('site_ads_init'));else echo '<h2 style="opacity:.5">已手动关闭广告。</h2>';
+    //         // if($ink&&!$bar) echo '<h2 style="opacity:.5">已停用 Google 广告</h2>';
+    //     }else{
+    //         echo '<h2 style="opacity:.75">未启用广告插件！</h2>';
+    //     }
+    // };
     //分类 post metabox 信息
     function get_cat_title(){
         $cat_desc = strip_tags(trim(category_description()),"");
@@ -731,8 +731,9 @@
         function replace_cdnimg_path($content) {
             $upload_url = wp_get_upload_dir()['baseurl'];
             $cdnimg_url = get_option('site_cdn_img') ? get_option('site_cdn_img') : $upload_url;
-            return $content = str_replace('src="'.$upload_url, 'src="'.$cdnimg_url, $content);
+            // return $content = str_replace('src="'.$upload_url, 'src="'.$cdnimg_url, $content);
             // return str_replace('srcset="'.$upload_url, 'srcset="'.$img_cdn_url, $content);
+            return str_replace('="'.$upload_url, '="'.$cdnimg_url, $content);
         }
         // disable srcset
         function remove_max_srcset_image_width( $max_width ) {
@@ -741,23 +742,23 @@
         add_filter( 'max_srcset_image_width', 'remove_max_srcset_image_width' );
     }
     //启用cdn加速(指定src/img)
-    function custom_cdn_src($which=false,$var=false){
+    function custom_cdn_src($holder='src',$var=false){
         $default_src = get_bloginfo('template_directory');
         $cdn_img = get_option('site_cdn_img');
         $cdn_src = get_option('site_cdn_src');
-        if(get_option("site_cdn_switcher")){
-            switch ($which) {
+        if(get_option("site_cdn_switcher")&&$holder){ // set $holder as false for $default_src manually
+            switch ($holder) {
                 case 'img':
-                    $cdn_img ? $which=$cdn_img : $which=$default_src;
+                    $cdn_img ? $holder=$cdn_img : $holder=$default_src;
                     break;
                 default:
-                    $cdn_src ? $which=$cdn_src : $which=$default_src;
+                    $cdn_src ? $holder=$cdn_src : $holder=$default_src;
                     break;
             };
         }else{
-            $which = $default_src;
+            $holder = $default_src;
         }
-        if($var) return $which;else echo $which;
+        if($var) return $holder;else echo $holder;
     };
     //兼容gallery获取post内容指定图片（视频海报）
     function get_postimg($index=0,$postid=false) {
@@ -888,7 +889,7 @@
                 </div>
                 <div class="inbox-aside">
                     <span class="lowside-title">
-                        <h4><a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : 'javascript:;' ?>" target="_self"><?php the_title(); ?></a></h4>
+                        <h4><a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : ($post_source ? $post_source : 'javascript:void(0);'); ?>" target="_blank"><?php the_title(); ?></a></h4>
                     </span>
                     <span class="lowside-description">
                         <p><?php custom_excerpt(66); ?></p>

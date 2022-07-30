@@ -55,6 +55,7 @@ figure > figure{
 }
 figure figcaption{
     font-size: var(--min-size);
+    opacity: .75;
 }
 figure img{
 	width: auto;
@@ -228,7 +229,7 @@ header>nav#tipson .top-bar-tips a{color:var(--theme-color);text-decoration:under
 .choosen{color:var(--theme-color)!important;font-weight:bold}
 .inside_of_block nav.main-nav ul li a.choosen,
 .inside_of_block nav.main-nav ul li a:hover{color:var(--theme-color)!important}
-.inside_of_block nav.main-nav ul li a{color:inherit;display:block;font-size:var(--min-size-rem);padding:0 15px;position:relative;}
+.inside_of_block nav.main-nav ul li a{color:inherit;display:block;font-size:var(--min-size-rem);padding:0 15px;position:relative;z-index:1;}
 i.icomoon,
 .pageSwitcher.dev a i,
 .inside_of_block nav.main-nav ul li a i{font-size:13px;width:14px;height:auto;display:inline-block;position:relative;top:1px;left:-5px}
@@ -462,6 +463,7 @@ i.icomoon,
     margin-left: 0;
     padding-right: 0;
     /*top: 10%;*/
+    z-index: 1;
 }
 .additional .sub-additional{
     right: auto;
@@ -1194,7 +1196,7 @@ audio{width:300px;height:32px}
     .news-window-img{margin:15px;max-width:32%;display:none!important;}
     .news-article-window div.tags ul li{width:48%}
     /* .article-copyright-notice{display:none} */
-    #news-article-head_tail ul{display: none;/*width: 100%;*/}
+    #news-article-head_tail ul{padding:0;/*display: none;width: 100%;*/}
     #news-article-head_tail{justify-content:center}
     .footer-recommend{padding:0 0 0 15px!important;}
     .what_says{font-size:var(--min-size)}

@@ -38,7 +38,11 @@
 					<h2> <?php echo get_option('site_nick'); ?> </h2>
 					<p> <?php bloginfo('description'); ?> </p>
 					<br />
-					<small style="opacity:.75"> <?php echo get_option('site_support'); ?> </small>
+					<small> <?php echo get_option('site_support'); ?> </small>
+					<?php
+                        // $tags = get_tags(array('taxonomy' => 'post_tag'));
+                        // echo '<b>'.count($tags).'<small>TAG</small></b><b>'.count($tags).'<small>POST</small></b><b>'.count($tags).'<small>COMMENTS</small></b>';
+					?>
 				</div>
 			</div>
 			<div class="nav-fixes">
