@@ -90,7 +90,7 @@
                       </div>
                       <div class="recommend-newsContent">
                         <span class="content-core entry-content">
-                            <p><?php custom_excerpt(170); ?></p>
+                            <p><?php custom_excerpt(170);//echo wp_trim_words(get_the_excerpt(), 10); ?></p>
                         </span>
                         <span class="content-tail">
                           <aside class="personal_stand">

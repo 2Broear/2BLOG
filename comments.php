@@ -47,6 +47,7 @@
                         function(res){
         					div.innerHTML += res;  //在valine环境直接追加到body会导致点赞元素层级错误
         					document.body.appendChild(div);
+        					// generate poster QRCode
                         	dynamicLoad('<?php custom_cdn_src(); ?>/js/qrcode/qrcode.min.js',function(){
                         		let url = location.href;
                         		var qrcode = new QRCode(document.getElementById("qrcode"), {
@@ -59,21 +60,26 @@
                         		});
                         		// html2canvas CAUSED too many requests.
                         		dynamicLoad('<?php custom_cdn_src(); ?>/js/html2canvas/html2canvas.min.js',function(){
-                            		html2canvas(document.querySelector('#capture'),{
-                            		    useCORS: true,
-                            		    allowTaint: true,
-                            		    scrollX: 0,
-                            		    scrollY: 0,
-                            		    backgroundColor: null
-                            	    }).then(canvas => {
-                            			let baseUrl = canvas.toDataURL("image/png"),
-                            				newImg = document.createElement("img"),
-                            				imgDom = '<img src="'+baseUrl+'" />';
-                            			newImg.src = baseUrl;
-                            			document.getElementById('poster').innerHTML+=imgDom
-                            		})
-                        		})
-                        	})
+                        		    // delay 300ms wait for QRCode generated incase qrcode not-fit
+                        		    var delay_h2c = setTimeout(function(){
+                                		html2canvas(document.querySelector('#capture'),{
+                                		    useCORS: true,
+                                		    allowTaint: true,
+                                		    scrollX: 0,
+                                		    scrollY: 0,
+                                		    backgroundColor: null
+                                	    }).then(canvas => {
+                                			let baseUrl = canvas.toDataURL("image/png"),
+                                				newImg = document.createElement("img"),
+                                				imgDom = '<img src="'+baseUrl+'" />';
+                                			newImg.src = baseUrl;
+                                			document.getElementById('poster').innerHTML+=imgDom
+                                		});
+                                		clearTimeout(delay_h2c);
+                                        delay_h2c = null;  //消除定时器表示激活
+                                    }, 300);
+                        		});
+                        	});
                         }
                     )
                 }else{

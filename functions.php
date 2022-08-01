@@ -280,7 +280,7 @@
                 $each_index = trim($index_array[$i]);
                 if($each_index){
                     if(in_category($each_index)){
-                        $content = '<div class="article_index '.$auto_fold.'" data-index="'.$match_m.'"><div class="in_dex"><p title="折叠目录"><b>文章目录</b><i class="icom"></i></p><ul>' . $ul_li . '</ul></div></div>' . $content;
+                        $content = '<div class="article_index '.$auto_fold.'" data-index="'.$match_m.'"><div class="in_dex"><p title="折叠/展开"><b>文章目录</b><i class="icom"></i></p><ul>' . $ul_li . '</ul></div></div>' . $content;
                     }
                 }
             }
@@ -790,16 +790,17 @@
         }
     };
     // 自定义文章摘要
-    function wpdocs_custom_excerpt_length( $length ) {
-        return 300;
-    }
-    add_filter( 'excerpt_length', 'wpdocs_custom_excerpt_length', 999 );
-    function wpdocs_excerpt_more( $more ) {
-        return '...';
-    }
-    add_filter( 'excerpt_more', 'wpdocs_excerpt_more' );
+    // function wpdocs_custom_excerpt_length( $length ) {
+    //     return 300;
+    // }
+    // add_filter( 'excerpt_length', 'wpdocs_custom_excerpt_length', 999 );
+    // function wpdocs_excerpt_more( $more ) {
+    //     return '...';
+    // }
+    // add_filter( 'excerpt_more', 'wpdocs_excerpt_more' );
     function custom_excerpt($length=99, $var=false){
-        $res = wp_trim_words(get_the_excerpt(), $length);
+        // $res = wp_trim_words(get_the_excerpt(), $length);
+        $res = mb_substr(get_the_excerpt(), 0, $length).'...';  // chinese only
         if($var){
             return $res;
         }else{

@@ -173,11 +173,11 @@
         aindex_icon.onclick=(e)=>{
             let that = e.target;
             if(aindex.classList.contains('fold')){
-                that.setAttribute('title','折叠目录');
+                // that.setAttribute('title','折叠目录');
                 aindex.classList.remove('fold');
                 setCookie('article_index', 1);  // disable fold
             }else{
-                that.setAttribute('title','展开目录');
+                // that.setAttribute('title','展开目录');
                 aindex.classList.add('fold');
                 setCookie('article_index', 0);  // disable fold
             }

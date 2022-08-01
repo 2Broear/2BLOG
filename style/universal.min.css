@@ -61,7 +61,7 @@ figure img{
 	width: auto;
 	height: auto;
 }
-del{
+del,s{
     opacity: .75;
 }
 .pageSwitcher.dev{
@@ -242,7 +242,7 @@ i.icomoon,
 .inside_of_block nav.main-nav ul li.sec_level div.links-more a{color:var(--preset-8);padding:0;margin:0;line-height:36px;text-align:left;border-bottom:1px solid var(--preset-s)}
 
 .additional.metabox{
-    width: 360%;
+    width: 380%;
     min-width: 320px;
     left: -136px;
     line-height: 0;
@@ -395,7 +395,7 @@ i.icomoon,
 .inside_of_block nav.main-nav ul li a.choosen::after{
     /*width: 66%!important;*/
     height: 10px!important;
-    opacity: .12!important;
+    /*opacity: .12!important;*/
     background: var(--theme-color)!important;
 }
 .inside_of_block nav.main-nav ul li a.choosen::after,
