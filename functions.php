@@ -790,14 +790,14 @@
         }
     };
     // 自定义文章摘要
-    // function wpdocs_custom_excerpt_length( $length ) {
-    //     return 300;
-    // }
-    // add_filter( 'excerpt_length', 'wpdocs_custom_excerpt_length', 999 );
-    // function wpdocs_excerpt_more( $more ) {
-    //     return '...';
-    // }
-    // add_filter( 'excerpt_more', 'wpdocs_excerpt_more' );
+    function wpdocs_custom_excerpt_length( $length ) {
+        return 300;
+    }
+    add_filter( 'excerpt_length', 'wpdocs_custom_excerpt_length', 999 );
+    function wpdocs_excerpt_more( $more ) {
+        return '...';
+    }
+    add_filter( 'excerpt_more', 'wpdocs_excerpt_more' );
     function custom_excerpt($length=99, $var=false){
         // $res = wp_trim_words(get_the_excerpt(), $length);
         $res = mb_substr(get_the_excerpt(), 0, $length).'...';  // chinese only
