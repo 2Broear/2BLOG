@@ -82,8 +82,8 @@
                             	    if(get_option('site_cdn_switcher')){
                                 	    $cdn_src = get_option('site_cdn_src');
                                 	    $cdn_img = get_option('site_cdn_img');
-                            	        echo $cdn_img ? "imgCdn: '".$cdn_img."'," : false;
-                            	        $cdn_src ? $rootPath=$cdn_src : $rootPath;
+                            	        echo $cdn_img ? "imgCdn: '".$cdn_img."', srcCdn: '".$cdn_src."'," : false;
+                            	       // $cdn_src ? $rootPath=$cdn_src : $rootPath;
                             	    }
                             	?>
                             	rootPath: '<?php echo $rootPath ?>',
@@ -246,20 +246,19 @@
                     if(get_option('site_monitor_switcher')) echo '<script type="text/javascript" src="'.get_option('site_monitor').'"></script>';
                     if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online"><img src="'.custom_cdn_src('img',true).'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>';
                     if($server) echo '<a href="javascript:void(0);"><img src="'.$server.'" style="height: 12px;"></a>'; //&&$server!="已关闭"
+                    // if(get_option('site_foreverblog_switcher'))
+                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank"><img src="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
+                    // if($comment_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
                     if(get_option('site_foreverblog_wormhole')){
                         $warmhole_img = $_COOKIE['theme_mode']=='dark' ? custom_cdn_src('img',true).'/images/wormhole_2_tp.gif' : custom_cdn_src('img',true).'/images/wormhole_4_tp.gif';
                         echo '<a href="https://www.foreverblog.cn/go.html" target="_blank"><em class="warmhole" style="background:url('.custom_cdn_src('img',true).'/images/wormhole_4_tp.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
                     }
-                    // if(get_option('site_foreverblog_switcher'))
-                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank"><img src="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
-                    // if($comment_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
                 ?>
             </p>
           </ul>
           <ul style="text-align:right">
               <li id="feed"><a href="<?php bloginfo('rss2_url'); ?>" target="_blank">RSS</a></li>
               <?php
-                  if(get_option('site_map_switcher')) echo '<li id="sitemap"><a href="'.get_bloginfo('siteurl').'/sitemap.xml" target="_blank">站点地图</a></li>';
                   $bottom_nav_array = explode(',',get_option('site_bottom_nav'));
                   for($i=0;$i<count($bottom_nav_array);$i++){
                       $cat_slug = trim($bottom_nav_array[$i]);
@@ -267,7 +266,8 @@
                       if($cat_slug&&$cat_term){
                           echo '<li id="'.$cat_slug.'"><a href="'.get_category_link($cat_term->term_id).'" target="_blank">'.$cat_term->name.'</a></li>';
                       }
-                  }
+                  };
+                  if(get_option('site_map_switcher')) echo '<li id="sitemap"><a href="'.get_bloginfo('siteurl').'/sitemap.xml" target="_blank">站点地图</a></li>';
               ?>
               <p style="margin:auto;opacity:.75;font-size:12px;font-style:italic"> WP Theme <a href="https://github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><ins> <b>2BLOG</b> </ins></a> openSourced via 2broear </p>
           </ul>

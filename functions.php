@@ -230,7 +230,7 @@
                     )
                 )
             );
-            // 评论邮件不为博主邮件时，返回 notify 接口（$postdata）
+            // 评论邮件不为博主邮件时，返回 notify 接口（$postdata）不可使用 cdn，wpwx-notify.php 需调用 wp core
             if($mail!=$admin_mail) return file_get_contents(get_bloginfo('template_directory') . '/plugin/wpwx-notify.php',false,stream_context_create($options));else return false;
         }
         // 挂载 WordPress 评论提交的接口

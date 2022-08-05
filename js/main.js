@@ -130,6 +130,7 @@
           inform = document.querySelector('.scroll-inform'),
           aindex = document.querySelector('.article_index'),
           share = document.querySelector('.share'),
+          npost = document.querySelector('.tips-switch p#np'),
           aindex_cl = function(el,cl){
             for(let i=0;i<el.length;i++){
                 el[i].classList.remove(cl);
@@ -223,6 +224,9 @@
                         scroll_class(progress_ball,null,"pull-up");
                     }else{
                         scroll_class(header,class_down,class_up);
+                    };
+                    if(npost && share && scrollTop<=share.offsetTop){
+                        scroll_class(headbar,null,"next-post");  //show next post
                     }
                     //侧边栏事件
                     if(sidebar_only){
@@ -250,6 +254,9 @@
                         scroll_class(header,class_up,class_down);  //nav bar
                         scroll_class(headbar,"slide-down",null);
                         scroll_class(progress_ball,"pull-up",null);
+                        if(npost && share && scrollTop>=share.offsetTop){
+                            scroll_class(headbar,"next-post",null);  //show next post
+                        }
                     }else{
                         scroll_class(headbar,null,class_up);
                     }

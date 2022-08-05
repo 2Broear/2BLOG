@@ -8,12 +8,35 @@
     <div class="tips-switch">
       <div class="tipsbox">
         <div class="tips">
-            <p>
-            <?php 
+            <?php
+                echo '<p>';
                 $nick = get_option('site_nick', get_bloginfo('name'));
-                echo  is_single() ? "<b>".$nick."</b> の ".get_the_category()[0]->name : bloginfo('description');
-            ?></p>
-            <p><?php current_tips($nick); ?></p>
+                $curcat = get_the_category()[0];
+                echo  is_single() ? "<b>".$nick."</b> の ".$curcat->name : bloginfo('description');
+                echo '</p><p>';
+                    current_tips($nick);
+                echo '</p>';
+                $next_post = get_next_post(true, '', 'category');  // same category posts
+                $next_pid = $next_post->ID;
+                if(is_single()){
+                    if($next_post){
+                        echo '<p id="np"><b>下一篇：</b>';
+                        if(is_a($next_post , 'WP_Post')){
+                            echo '<a href="'.get_permalink($next_pid).'">'.get_the_title($next_pid).'</a>';
+                        }
+                        echo '</p>';
+                    }else{
+                        $prev_post = get_previous_post(true, '', 'category');  // same category posts
+                        $prev_pid = $prev_post->ID;
+                        echo '<p id="np"><b>上一篇：</b>';
+                        if(is_a($prev_post , 'WP_Post')){
+                            echo '<a href="'.get_permalink($prev_pid).'">'.get_the_title($prev_pid).'</a>';
+                        }
+                        echo '</p>';
+                    }
+                }
+            ?>
+            
         </div>
         <div class="nav-tools">
           <span class="imtl-content-right-inside-search">
