@@ -28,11 +28,13 @@
                     }else{
                         $prev_post = get_previous_post(true, '', 'category');  // same category posts
                         $prev_pid = $prev_post->ID;
-                        echo '<p id="np"><b>上一篇：</b>';
-                        if(is_a($prev_post , 'WP_Post')){
-                            echo '<a href="'.get_permalink($prev_pid).'">'.get_the_title($prev_pid).'</a>';
+                        if($prev_post){
+                            echo '<p id="np"><b>上一篇：</b>';
+                            if(is_a($prev_post , 'WP_Post')){
+                                echo '<a href="'.get_permalink($prev_pid).'">'.get_the_title($prev_pid).'</a>';
+                            }
+                            echo '</p>';
                         }
-                        echo '</p>';
                     }
                 }
             ?>
