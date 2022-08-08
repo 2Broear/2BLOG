@@ -22,9 +22,10 @@
             <div class="ranking">
                 <?php
                     echo '<h1>常客 <sup> &lt;3 </sup></h1><p>访问较频繁的老铁</p><ul id="rankest">';
-                    // $baas_sw = get_option('site_leancloud_switcher');
-                    $comment_sw = get_option('site_comment_switcher');
-                    if(!$comment_sw){
+                    $third_cmt = get_option('site_third_comments');
+                    $valine_sw = $third_cmt=='Valine' ? true : false;//get_option('site_valine_switcher');
+                    $twikoo_sw = $third_cmt=='Twikoo' ? true : false;//get_option('site_twikoo_switcher');
+                    if(!$valine_sw){
                         $rankdata = get_comments_ranking();
                         $datalen = count($rankdata);
                         for($i=0;$i<3;$i++){
@@ -51,7 +52,7 @@
                     };
                     echo '</ul>';
                     // top 10
-                    if(!$comment_sw){
+                    if(!$valine_sw){
                         if($datalen>3){
                             echo '<h1>稀客 <sup> &lt;10 </sup></h1><p>偶尔来访的兄弟</p><ul id="ranks">';
                             for($i=3;$i<13;$i++){
@@ -83,7 +84,7 @@
                 <?php
                     };
                     // left 
-                    if(!$comment_sw){
+                    if(!$valine_sw){
                         if($datalen>13){
                             // if($datalen<13) echo '<p>这里暂时没有人哦～</p>';
                             echo '<h1>游客 <sup> &gt;10 </sup></h1><ul id="ranked">';
@@ -113,7 +114,7 @@
 <!-- siteJs -->
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
 <?php
-    if($comment_sw){
+    if($valine_sw){
 ?>
         <!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/md5.min.js"></script>-->
         <script>

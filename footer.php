@@ -16,9 +16,10 @@
                 <h2>近期文章</h2>
                 <div class="recently">
                     <?php
+                        $post_per = get_option('site_per_posts', get_option('posts_per_page'));
                         $cat_id = get_option('site_bottom_recent_cid');
                         if($cat_id){
-                            $query_array = array('cat' => $cat_id, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_per_posts', get_option('posts_per_page')),
+                            $query_array = array('cat' => $cat_id, 'meta_key' => 'post_orderby', 'posts_per_page' => $post_per,
                                 'orderby' => array(
                                     'meta_value_num' => 'DESC',
                                     'date' => 'DESC',
@@ -26,7 +27,7 @@
                                 )
                             );
                         }else{
-                            $query_array = array('cat' => $cat_id, 'posts_per_page' => get_option('site_per_posts', get_option('posts_per_page')), 'order' => 'DESC', 'orderby' => 'date');
+                            $query_array = array('cat' => $cat_id, 'posts_per_page' => $post_per, 'order' => 'DESC', 'orderby' => 'date');
                         }
                         $left_query = new WP_Query(array_filter($query_array));
                         while ($left_query->have_posts()):
@@ -52,8 +53,10 @@
                 <h2>最新评论</h2>
                 <?php
                     $baas = get_option('site_leancloud_switcher');
-                    $comment_sw = get_option('site_comment_switcher');
-                    if($comment_sw){    // 全站加载
+                    $third_cmt = get_option('site_third_comments');
+                    $valine_sw = $third_cmt=='Valine' ? true : false;//get_option('site_valine_switcher');
+                    $twikoo_sw = $third_cmt=='Twikoo' ? true : false;//get_option('site_twikoo_switcher');
+                    if($valine_sw){    // 全站加载
                         if(!$baas){
                 ?>
                             <script src="<?php custom_cdn_src(); ?>/js/leancloud/av-min.js?v=footcall"></script>
@@ -105,10 +108,61 @@
                             // };
                         </script>
                 <?php
+                    }elseif($twikoo_sw){
+                ?>
+                        <script src="https://cdn.staticfile.org/twikoo/1.6.4/twikoo.all.min.js"></script>
+                        <script>
+                            twikoo.init({
+                              envId: '<?php echo $twikoo_envid = get_option('site_twikoo_envid'); ?>',
+                              el: '#tcomment',
+                            });
+                            const comment_count = document.querySelectorAll('.valine-comment-count'),
+                                  comments_list = document.querySelector('#comments');
+                            if(comment_count){
+                                var count_array = [];
+                                for(let i=0;i<comment_count.length;i++){
+                                    count_array.push(comment_count[i].getAttribute('data-xid'));
+                                }
+                                twikoo.getCommentsCount({
+                                        envId: '<?php echo get_option('site_twikoo_envid'); ?>', // 环境 ID
+                                        urls: count_array,
+                                        includeReply: false // 评论数是否包括回复，默认：false
+                                    }).then(function (res) {
+                                        for(let i=0;i<res.length;i++){
+                                            comment_count[i].innerHTML = res[i].count;
+                                        }
+                                    }).catch(function (err) {
+                                        console.error(err);
+                                });
+                            };
+                            if(comments_list){
+                                twikoo.getRecentComments({
+                                    envId: '<?php echo $twikoo_envid; ?>', // 环境 ID
+                                    pageSize: <?php echo $post_per; ?>, // 获取多少条，默认：5，最大：100
+                                    includeReply: true // 是否包括最新回复，默认：true
+                                }).then(function (res) {
+                                    for(let i=0;i<res.length;i++){
+                                        // console.log(res[i]);
+                                        let each = res[i];
+                                        comments_list.innerHTML += `<a href="${each.url}#${each.id}" target="_blank" rel="nofollow"><em title="${each.commentText}">${each.nick}：${each.commentText}</em></a>`;
+                                    }
+                                }).catch(function (err) {
+                                    console.error(err);
+                                });
+                            }
+                        </script>
+                        <style>
+                            .twikoo p{text-align: left!important;}
+                            .twikoo img{margin: auto!important;}
+                            .twikoo span{width: auto!important;margin-top: 0!important;display:inherit}
+                            .twikoo textarea{min-height:125px!important;}
+                            .tk-comments-container{min-height: auto!important;}
+                        </style>
+                <?php
                     }else{
                         $comments = get_comments(
                             array(
-                                'number' => get_option('site_per_posts', get_option('posts_per_page')), //get_option('posts_per_page')
+                                'number' => $post_per, //get_option('posts_per_page')
                                 'orderby' => 'comment_date',
                                 'order' => 'DESC',
                                 'status' => 'approve'  // 仅输出已通过审核的评论数量
@@ -246,7 +300,7 @@
                     if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online"><img src="'.custom_cdn_src('img',true).'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>';
                     // if(get_option('site_foreverblog_switcher'))
                     echo '<a href="'.get_option('site_foreverblog').'" target="_blank"><img src="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
-                    // if($comment_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
+                    // if($valine_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
                     $server = get_option('site_server_side');
                     if($server) echo '<a href="javascript:void(0);"><img src="'.$server.'" style="height: 12px;"></a>'; //&&$server!="已关闭"
                     if(get_option('site_foreverblog_wormhole')){

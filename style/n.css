@@ -252,7 +252,7 @@ figure.wp-block-table{margin:25px auto}
 	color: var(--preset-3a);
 }
 .win-content article h2{
-	margin: 25px auto;
+	margin: 25px auto auto;
 }
 .win-content article h3{
 	margin: 25px auto;

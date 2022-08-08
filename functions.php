@@ -403,7 +403,7 @@
     // 双数据页面类型（分类、页面）切换评论
     function dual_data_comments(){
         if(is_category()){
-            if(!get_option('site_comment_switcher')){
+            if(get_option('site_third_comments')!='Valine'){
                 echo '<div class="main"><span><h2> 评论留言 </h2></span><p>分类页面无法调用 WP 评论，<b> 开启移除 CATEGORY 后 </b>请前往页面指定当前页面父级，<small>亦可前往后台启用第三方评论。</small></p></div>';
             }else{
                 include_once(TEMPLATEPATH . '/comments.php');
@@ -1061,7 +1061,18 @@
                                     <div id="news-tail_info">
                                         <ul class="post-info">
                                             <li class="tags author"><?php $tags = get_the_tag_list('','、',''); echo $tags ? $tags : '<a href="javascript:;" target="_blank" rel="nofollow">'.get_option('site_nick').'</a>'; ?></li>
-                                            <li title="讨论人数"><?php if(!get_option('site_comment_switcher')) $count=$post->comment_count;else $count=0; echo '<span class="valine-comment-count" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>'; ?></li>
+                                            <li title="讨论人数">
+                                                <?php 
+                                                    $third_cmt = get_option('site_third_comments');
+                                                    // $valine_sw = $third_cmt=='Valine' ? true : false;
+                                                    // $twikoo_sw = $third_cmt=='Twikoo' ? true : false;
+                                                    $count = 0;
+                                                    if(!$third_cmt){
+                                                        $count = $post->comment_count;
+                                                    }
+                                                    echo '<span class="valine-comment-count" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>';
+                                                ?>
+                                            </li>
                                             <li id="post-date" class="updated" title="发布日期">
                                                 <i class="icom"></i><?php the_time('d-m-Y'); ?>
                                             </li>

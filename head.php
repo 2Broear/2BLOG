@@ -23,7 +23,7 @@
         </script>
 <?php
     }
-    if(get_option('site_comment_switcher')){  // 全站加载
+    if(get_option('site_third_comments')=='Valine'){  // 全站加载
 ?>
         <script src="<?php custom_cdn_src(); ?>/js/Valine/Valine.m.js"></script>
 <?php

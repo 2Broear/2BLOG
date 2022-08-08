@@ -531,15 +531,19 @@
             register_setting( 'baw-settings-group', 'site_mostview_cid' );
         }      
         register_setting( 'baw-settings-group', 'site_leancloud_switcher' );
-        register_setting( 'baw-settings-group', 'site_comment_switcher' );
-        if(get_option('site_comment_switcher')){
-            // register_setting( 'baw-settings-group', 'site_leancloud_sdk' );
-            // register_setting( 'baw-settings-group', 'site_comment_qmsgchan' );
+        register_setting( 'baw-settings-group', 'site_third_comments' );
+        // register_setting( 'baw-settings-group', 'site_valine_switcher' );
             register_setting( 'baw-settings-group', 'site_comment_serverchan' );
             register_setting( 'baw-settings-group', 'site_comment_pushplus' );
-        }else{
-            // site_wpwx_notify_switcher
-        }
+        // if(get_option('site_valine_switcher')){
+        //     // register_setting( 'baw-settings-group', 'site_leancloud_sdk' );
+        //     // register_setting( 'baw-settings-group', 'site_comment_qmsgchan' );
+        // }else{
+        //     // site_wpwx_notify_switcher
+        // }
+        register_setting( 'baw-settings-group', 'site_twikoo_switcher' );
+            register_setting( 'baw-settings-group', 'site_twikoo_envid' );
+        
         register_setting( 'baw-settings-group', 'site_wpwx_notify_switcher' );
         if(get_option('site_wpwx_notify_switcher')){
             register_setting( 'baw-settings-group', 'site_wpwx_id' );
@@ -548,7 +552,7 @@
             register_setting( 'baw-settings-group', 'site_wpwx_type' );
         }
         // enable appid/key/server fields if any of avos actived(incase can not update if anyone of them disabled)
-        if(get_option('site_leancloud_switcher') || get_option('site_comment_switcher')){
+        if(get_option('site_leancloud_switcher') || get_option('site_third_comments')=='Valine'){
             register_setting( 'baw-settings-group', 'site_leancloud_appid' );
             register_setting( 'baw-settings-group', 'site_leancloud_appkey' );
             register_setting( 'baw-settings-group', 'site_leancloud_server' );
@@ -658,7 +662,7 @@
 ?>
     <div class="wrap settings">
         <style>
-        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(0deg,#f0f0f1 0%, #e9e9e9 100%);background:-webkit-linear-gradient(0deg,#f0f0f1 0%, #fff 100%);}.btn{border: 1px solid;padding: 2px 5px;border-radius: 3px;font-size: smaller;font-weight:bold;background:white;font-weight:900;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:188px;height:18px;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:<?php echo $theme_color; ?>}.form-table tr:hover > th sup{color:<?php echo $theme_color; ?>}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:<?php echo $theme_color; ?>}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid <?php echo $theme_color; ?>!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview_list em,/*.upload_preview.bg.video{width:120px;height:60px}*/.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(0deg,#f0f0f1 0%, #e9e9e9 100%);background:-webkit-linear-gradient(0deg,#f0f0f1 0%, #fff 100%);}.btn{border: 1px solid;padding: 2px 5px;border-radius: 3px;font-size: smaller;font-weight:bold;background:white;font-weight:900;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:188px;height:18px;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:revert!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:<?php echo $theme_color; ?>}.form-table tr:hover > th sup{color:<?php echo $theme_color; ?>}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:<?php echo $theme_color; ?>}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid <?php echo $theme_color; ?>!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview_list em,/*.upload_preview.bg.video{width:120px;height:60px}*/.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:<?php echo $theme_color; ?>!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px <?php echo $theme_color; ?>!important;border-color:transparent!important;}.upload_button.video{background:purple;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;color: white;font-size: smaller;text-align: center;background: rgb(0 0 0 / 52%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius:5px;position:relative;overflow:hidden;}
             .formtable{display:none;}.formtable.show{display:block;}.switchTab.fixed{position: fixed;width: 100%;background: rgb(255 255 255 / 75%);top: 32px;left:0;z-index: 9;padding:10px 0;padding-left:160px;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}.switchTab{transition: top .35s ease;top: -32px;padding: 0;}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:<?php echo $theme_color; ?>;background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px <?php echo $theme_color; ?>}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 2px #fff, 0 0 0 3px <?php echo $theme_color; ?>;}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:0;border-radius:25px}.switchTab li b{font-size:initial;display:block;text-shadow:1px 1px 0 white;font-style:normal}
@@ -1394,21 +1398,41 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">第三方评论插件</th>
+                        <th scope="row">第三方评论系统<sup class="dualdata dynamic_comment"> <?php $third_comment=get_option('site_third_comments');if($third_comment=='Valine'){echo 'Valine';}elseif($third_comment=='Twikoo'){echo 'Twikoo';}else{echo 'BaaS';} ?></sup></th>
                         <td>
                             <?php
-                                $opt = 'site_comment_switcher';
+                                $opt = 'site_third_comments';
                                 $value = get_option($opt);
-                                $value ? $status="checked" : $status="closed";
-                                echo '<label for="'.$opt.'"><p class="description" id="site_comment_switcher_label">第三方评论插件，如评论编辑、评论排行、最新评论、
-                               文章浏览量等内容展示（为防止跨应用多次初始化可能造成的数据调用混乱问题，appid/appkey/server 等数据将与 leancloud 应用同步初始化（每页显示评论数量可在<a href="/wp-admin/options-discussion.php" > 讨论 </a>中修改）状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <span style="color:blueviolet;background:;border-color:blueviolet;" class="btn">Valine</span></label>';
+                                $arrobj = array(
+                                    array('name'=>'Valine'),
+                                    // array('name'=>'Waline', 'icon'=>custom_cdn_src('img',true).'/images/settings/alicloud.png'),
+                                    array('name'=>'Twikoo'),
+                                );
+                                echo '<label for="'.$opt.'"><p class="description" id="">第三方评论系统（开启后需填配置项</p><select name="'.$opt.'" id="'.$opt.'" class="select_options"><option value="">请选择</option>';
+                                    foreach ($arrobj as $arr){
+                                        $name = $arr['name'];
+                                        echo '<option value="'.$name.'"';if($value==$name)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
+                                    }
+                                echo '</select></label>';
                             ?>
                         </td>
                     </tr>
+                    <!--<tr valign="top" class="Valine dynamic_opts <?php //echo get_option('site_third_comments')=='Valine' ? 'Valine dynamic_optshow' : false ?>">-->
+                    <!--    <th scope="row">第三方评论（Valine）</th>-->
+                    <!--    <td>-->
+                            <?php
+                            //     $opt = 'site_valine_switcher';
+                            //     $value = get_option($opt);
+                            //     $value ? $status="checked" : $status="closed";
+                            //     echo '<label for="'.$opt.'"><p class="description" id="site_valine_switcher_label">Valine 评论插件，如评论编辑、评论排行、最新评论、
+                            //   文章浏览量等内容展示（为防止跨应用多次初始化可能造成的数据调用混乱问题，appid/appkey/server 等数据将与 leancloud 应用同步初始化（每页显示评论数量可在<a href="/wp-admin/options-discussion.php" > 讨论 </a>中修改）状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <span style="color:blueviolet;background:;border-color:blueviolet;" class="btn">Valine</span></label>';
+                            ?>
+                    <!--    </td>-->
+                    <!--</tr>-->
                     <?php
-                        if(get_option('site_comment_switcher')){
+                        // if(get_option('site_third_comments') && get_option('site_valine_switcher')){
                     ?>
-                            <tr valign="top" class="child_option same_data">
+                            <tr valign="top" class="child_option sync_data <?php echo $valine_statu = get_option('site_third_comments')=='Valine' ? 'dynamic_opts dynamic_optshow Valine' : 'dynamic_opts Valine'; ?>">
                                 <th scope="row">— APP ID</th>
                                 <td>
                                     <?php
@@ -1417,7 +1441,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option same_data">
+                            <tr valign="top" class="child_option sync_data <?php echo $valine_statu; ?>">
                                 <th scope="row">— APP KEY</th>
                                 <td>
                                     <?php
@@ -1426,7 +1450,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option same_data">
+                            <tr valign="top" class="child_option sync_data <?php echo $valine_statu; ?>">
                                 <th scope="row">— SERVER URL</th>
                                 <td>
                                     <?php
@@ -1435,19 +1459,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <!--<tr valign="top" class="child_option same_data">-->
-                            <!--    <th scope="row">— AVOS SDK</th>-->
-                            <!--    <td>-->
-                                    <?php
-                                        // $opt = 'site_leancloud_sdk';
-                                        // $value = get_option($opt);
-                                        // $preset = custom_cdn_src('',true).'/js/leancloud/av-min.js?v=rootdir';//'//cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js';
-                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        // echo '<p class="description" id="site_comment_serverchan_label">评论 valine 依赖项，默认 jsdelivr（cdn无法使用时可自定义sdk）</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Leancloud AVOS Sdk" value="' . $preset . '"/>';
-                                    ?>
-                            <!--    </td>-->
-                            <!--</tr>-->
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option <?php echo $valine_statu; ?>">
                                 <th scope="row">— ServerChan SendKey</th>
                                 <td>
                                     <?php
@@ -1456,16 +1468,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <!--<tr valign="top" class="child_option">-->
-                            <!--    <th scope="row">— QmsgChan Key</th>-->
-                            <!--    <td>-->
-                                    <?php
-                                        // $opt = 'site_comment_qmsgchan';
-                                        // echo '<p class="description" id="site_comment_qmsgchan_label">Qmsg酱提供的评论QQ提醒服务（每天 40 条）<a href="https://qmsg.zendee.cn/" target="_blank">相关文档</a></p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Qmsg api key" value="' . get_option($opt) . '"/>';
-                                    ?>
-                            <!--    </td>-->
-                            <!--</tr>-->
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option <?php echo $valine_statu; ?>">
                                 <th scope="row">— PushPlus Token</th>
                                 <td>
                                     <?php
@@ -1475,19 +1478,45 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
-                        <tr valign="top">
-                            <th scope="row">评论微信提醒</th>
-                            <td>
-                                <?php
-                                    $opt = 'site_wpwx_notify_switcher';
-                                    $value = get_option($opt);
-                                    $value ? $status="checked" : $status="closed";
-                                    echo '<label for="'.$opt.'"><p class="description" id="site_wpwx_notify_switcher_label">基于企业微信应用开发的评论推送微信通知，需填写企业ID、企业应用AgentId、企业应用Secret（微信需关注该企业应用才能收到通知<a href="https://www.jishusongshu.com/network-tech/work-weixin-push-website-comment/" target="_blank"> 相关文档 </a> 状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>评论微信提醒</b></label>';
-                                ?>
-                            </td>
-                        </tr>
+                    <!--<tr valign="top" class="Twikoo dynamic_opts <?php //echo get_option('site_third_comments')=='Twikoo' ? 'dynamic_optshow' : false ?>">-->
+                    <!--    <th scope="row">第三方评论（Twikoo）</th>-->
+                    <!--    <td>-->
+                            <?php
+                                // $opt = 'site_twikoo_switcher';
+                                // $value = get_option($opt);
+                                // $value ? $status="checked" : $status="closed";
+                                // echo '<label for="'.$opt.'"><p class="description" id="site_valine_switcher_label">Twikoo 评论插件，<a href="https://twikoo.js.org/quick-start.html#vercel-%E9%83%A8%E7%BD%B2" > 设置教程 </a>，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <span style="color:#42b983;background:;border-color:#42b983;" class="btn">Twikoo</span></label>';
+                            ?>
+                    <!--    </td>-->
+                    <!--</tr>-->
+                    <?php
+                        // if(get_option('site_third_comments') && get_option('site_twikoo_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_third_comments')=='Twikoo' ? 'dynamic_optshow Twikoo' : 'dynamic_opts Twikoo' ?>">
+                                <th scope="row">— envId</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_twikoo_envid';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="您的环境id" value="' . get_option($opt) . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        // }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">评论微信提醒</th>
+                        <td>
+                            <?php
+                                $opt = 'site_wpwx_notify_switcher';
+                                $value = get_option($opt);
+                                $value ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_wpwx_notify_switcher_label">基于企业微信应用开发的评论推送微信通知，需填写企业ID、企业应用AgentId、企业应用Secret（微信需关注该企业应用才能收到通知<a href="https://www.jishusongshu.com/network-tech/work-weixin-push-website-comment/" target="_blank"> 相关文档 </a> 状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>评论微信提醒</b></label>';
+                            ?>
+                        </td>
+                    </tr>
                     <?php
                         if(get_option('site_wpwx_notify_switcher')){
                     ?>

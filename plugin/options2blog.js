@@ -86,6 +86,29 @@ jQuery(document).ready(function($){
                 preview ? image.src=preview : image.src=this.value;
             };
         }
+        // 即时更新 select 选项
+        const select_options = document.querySelectorAll(".select_options"),
+              dynamic_opts = document.querySelectorAll(".dynamic_opts"),
+              dynamic_comment = document.querySelector(".dynamic_comment"),
+              dynamic_fn = function(t,c,e){
+                for(let i=0;i<t.length;i++){
+                    t[i].classList.remove(c);
+                }
+                if(e && e!=''){
+                    dynamic_comment.innerHTML = e;
+                    let dynamic_all = document.querySelectorAll('tr.'+e);
+                    for(let j=0;j<dynamic_all.length;j++){
+                        dynamic_all[j].classList.add(c);
+                    }
+                }else{
+                    dynamic_comment.innerHTML = 'BaaS';
+                }
+              };
+        for(let i=0;i<select_options.length;i++){
+            select_options[i].onchange=function(e){
+                dynamic_fn(dynamic_opts, 'dynamic_optshow', this.value);
+            };
+        }
         // send email to client
         $('.sendmail').on('click',function(){
             $("#loading").removeClass();

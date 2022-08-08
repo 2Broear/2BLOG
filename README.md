@@ -23,6 +23,7 @@ __Preview Site__ ：[演示站点](http://wpk.2broear.com) （演示并不代表
 - _全新文章归档页面_
 - _可控的随机标签云_
 - _可选的文章目录索引_
+- _新增 Twikoo 评论支持_
 - 可控的侧栏广告位（Google AdSense）及 Pixiv 排行展示（数量）、最高浏览分类及展示数量
 - 底部各项自定义、各图标等信息开启控制
 - 支持开启 Valine 评论及调用 Leancloud 应用数据（可单独控制分类页面数据来源）
@@ -255,7 +256,8 @@ Futures todo & bugs
 - ✅ ~~归档 Archive 页面~~
 - ✅ ~~标签云（页面、挂件）~~
 - ✅ ~~文章目录 Index 索引~~
-- 引进 twikoo 评论（集成 valine 评论功能到 wordpress）
+- ✅ ~~文引进 Twikoo 评论~
+- 集成 Valine 自定义功能到 WordPress 评论
 
 ### bug
 
