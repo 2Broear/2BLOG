@@ -114,9 +114,8 @@
         echo '<div class="main"><span><h2> 评论留言 </h2></span><p>'.$welcome.'</p></div>';
         if($comment_sw){
             echo '<div id="vcomments" class="v"></div>';
-        }elseif($twikoo_sw){
-            echo '<div id="tcomment"></div>';
         }else{
+            echo $twikoo_sw ? '<div id="tcomment"></div>' : false;
             if(is_single()){
 ?>
             <script type="text/javascript">

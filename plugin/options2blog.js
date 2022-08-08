@@ -90,23 +90,49 @@ jQuery(document).ready(function($){
         const select_options = document.querySelectorAll(".select_options"),
               dynamic_opts = document.querySelectorAll(".dynamic_opts"),
               dynamic_comment = document.querySelector(".dynamic_comment"),
+              dynamic_class = 'dynamic_optshow',
               dynamic_fn = function(t,c,e){
                 for(let i=0;i<t.length;i++){
                     t[i].classList.remove(c);
                 }
                 if(e && e!=''){
-                    dynamic_comment.innerHTML = e;
+                    dynamic_comment ? dynamic_comment.innerHTML = e : false;
                     let dynamic_all = document.querySelectorAll('tr.'+e);
                     for(let j=0;j<dynamic_all.length;j++){
                         dynamic_all[j].classList.add(c);
                     }
                 }else{
-                    dynamic_comment.innerHTML = 'BaaS';
+                    dynamic_comment ? dynamic_comment.innerHTML = 'BaaS' : false;
                 }
               };
         for(let i=0;i<select_options.length;i++){
             select_options[i].onchange=function(e){
-                dynamic_fn(dynamic_opts, 'dynamic_optshow', this.value);
+                dynamic_fn(dynamic_opts, dynamic_class, this.value);
+            };
+        }
+        // 自动同步 checkbox 勾选框关联元素
+        const check_boxes = document.querySelectorAll("input[type=checkbox]"),
+              dynamic_list = document.querySelectorAll(".dynamic_box.logo");
+        for(let i=0;i<check_boxes.length;i++){
+            check_boxes[i].onchange=function(e){
+                let _checked = this.checked;
+                // console.log(this.checked);
+                let tar = this.parentElement.parentElement.parentElement.nextElementSibling;
+                while(tar.nextElementSibling){
+                    if(!tar.classList.contains('child_option')){
+                        // console.log(tar.previousElementSibling);
+                        break;  //跳出循环
+                    }else{
+                        // console.log(tar); //当前元素
+                        if(_checked){
+                            !tar.classList.contains(dynamic_class) ? tar.classList.add(dynamic_class) : false;
+                        }else{
+                            tar.classList.remove(dynamic_class);
+                        }
+                        tar = tar.nextElementSibling;  // 继续查找，直到当前元素不含 child_option 类（即非该 checkbox 子项）
+                        // console.log(tar); //当前元素后一个
+                    }
+                }
             };
         }
         // send email to client

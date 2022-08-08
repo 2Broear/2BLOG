@@ -152,11 +152,14 @@
                             }
                         </script>
                         <style>
-                            .twikoo p{text-align: left!important;}
+                            body.dark .twikoo{color: var(--preset-9)}
+                            .twikoo{text-align: left!important;color: var(--preset-3a)}
+                            .twikoo a{color: inherit;opacity: .75}
                             .twikoo img{margin: auto!important;}
-                            .twikoo span{width: auto!important;margin-top: 0!important;display:inherit}
+                            .twikoo span{width: auto!important;margin-top: 0!important;/*display:inline-block*/}
                             .twikoo textarea{min-height:125px!important;}
                             .tk-comments-container{min-height: auto!important;}
+                            .tk-extras{font-size: 12px}
                         </style>
                 <?php
                     }else{

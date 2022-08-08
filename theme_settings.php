@@ -445,10 +445,10 @@
         register_setting( 'baw-settings-group', 'site_bgimg' );
         register_setting( 'baw-settings-group', 'site_theme' );
         register_setting( 'baw-settings-group', 'site_logo_switcher' );
-        if(get_option('site_logo_switcher')){
+        // if(get_option('site_logo_switcher')){
             register_setting( 'baw-settings-group', 'site_logo' );
             register_setting( 'baw-settings-group', 'site_logos' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_single_switcher' );
         register_setting( 'baw-settings-group', 'site_icon_switcher' );
         register_setting( 'baw-settings-group', 'site_keywords' );
@@ -461,45 +461,45 @@
         register_setting( 'baw-settings-group', 'site_navicon_switcher' );
         
         register_setting( 'baw-settings-group', 'site_remove_category_switcher' );
-        if(get_option('site_remove_category_switcher')){
+        // if(get_option('site_remove_category_switcher')){
             register_setting( 'baw-settings-group', 'site_url_slash_sw' );
-        }
+        // }
         // register_setting( 'baw-settings-group', 'site_sync_level_sw' );
         
         register_setting( 'baw-settings-group', 'site_search_style_switcher' );
-        if(get_option('site_search_style_switcher')){
+        // if(get_option('site_search_style_switcher')){
             register_setting( 'baw-settings-group', 'site_search_includes' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_indexes_switcher' );
-        if(get_option('site_indexes_switcher')){
+        // if(get_option('site_indexes_switcher')){
             register_setting( 'baw-settings-group', 'site_indexes_includes' );
-        }
+        // }
         
         register_setting( 'baw-settings-group', 'site_breadcrumb_switcher' );
         register_setting( 'baw-settings-group', 'site_metanav_switcher' );
-        if(get_option('site_metanav_switcher')){
+        // if(get_option('site_metanav_switcher')){
             register_setting( 'baw-settings-group', 'site_metanav_array' );
             register_setting( 'baw-settings-group', 'site_metanav_image' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_per_posts' );
         
         register_setting( 'baw-settings-group', 'site_rcmdside_cid' );
         register_setting( 'baw-settings-group', 'site_cardnav_array' );
         register_setting( 'baw-settings-group', 'site_tagcloud_switcher' );
-        if(get_option('site_tagcloud_switcher')){
+        // if(get_option('site_tagcloud_switcher')){
             register_setting( 'baw-settings-group', 'site_tagcloud_num' );
             register_setting( 'baw-settings-group', 'site_tagcloud_max' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_techside_switcher' );
-        if(get_option('site_techside_switcher')){
+        // if(get_option('site_techside_switcher')){
             register_setting( 'baw-settings-group', 'site_techside_cid' );
             // register_setting( 'baw-settings-group', 'site_techside_bg' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_acgnside_switcher' );
-        if(get_option('site_acgnside_switcher')){
+        // if(get_option('site_acgnside_switcher')){
             register_setting( 'baw-settings-group', 'site_acgnside_cid' );
             // register_setting( 'baw-settings-group', 'site_acgnside_num' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_default_postimg_switcher' );
         
         // register_setting( 'baw-settings-group', 'site_acgn_bg' );
@@ -512,24 +512,24 @@
         register_setting( 'baw-settings-group', 'site_privacy_video' );
         
         register_setting( 'baw-settings-group', 'site_cdn_switcher' );
-        if(get_option('site_cdn_switcher')){
+        // if(get_option('site_cdn_switcher')){
             register_setting( 'baw-settings-group', 'site_cdn_img' );
             register_setting( 'baw-settings-group', 'site_cdn_src' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_darkmode_switcher' );
-        if(get_option('site_darkmode_switcher')){
+        // if(get_option('site_darkmode_switcher')){
             register_setting( 'baw-settings-group', 'site_darkmode_start' );
             register_setting( 'baw-settings-group', 'site_darkmode_end' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_avatar_mirror' );
         register_setting( 'baw-settings-group', 'site_pixiv_switcher' );
-        if(get_option('site_pixiv_switcher')){
+        // if(get_option('site_pixiv_switcher')){
             register_setting( 'baw-settings-group', 'site_bar_pixiv' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_mostview_switcher' );
-        if(get_option('site_mostview_switcher')){
+        // if(get_option('site_mostview_switcher')){
             register_setting( 'baw-settings-group', 'site_mostview_cid' );
-        }      
+        // }      
         register_setting( 'baw-settings-group', 'site_leancloud_switcher' );
         register_setting( 'baw-settings-group', 'site_third_comments' );
         // register_setting( 'baw-settings-group', 'site_valine_switcher' );
@@ -545,62 +545,62 @@
             register_setting( 'baw-settings-group', 'site_twikoo_envid' );
         
         register_setting( 'baw-settings-group', 'site_wpwx_notify_switcher' );
-        if(get_option('site_wpwx_notify_switcher')){
+        // if(get_option('site_wpwx_notify_switcher')){
             register_setting( 'baw-settings-group', 'site_wpwx_id' );
             register_setting( 'baw-settings-group', 'site_wpwx_agentid' );
             register_setting( 'baw-settings-group', 'site_wpwx_secret' );
             register_setting( 'baw-settings-group', 'site_wpwx_type' );
-        }
+        // }
         // enable appid/key/server fields if any of avos actived(incase can not update if anyone of them disabled)
-        if(get_option('site_leancloud_switcher') || get_option('site_third_comments')=='Valine'){
+        // if(get_option('site_leancloud_switcher') || get_option('site_third_comments')=='Valine'){
             register_setting( 'baw-settings-group', 'site_leancloud_appid' );
             register_setting( 'baw-settings-group', 'site_leancloud_appkey' );
             register_setting( 'baw-settings-group', 'site_leancloud_server' );
             register_setting( 'baw-settings-group', 'site_leancloud_category' );
-        }
+        // }
         
         register_setting( 'baw-settings-group', 'site_ads_switcher' );
-        if(get_option('site_ads_switcher')){
+        // if(get_option('site_ads_switcher')){
             register_setting( 'baw-settings-group', 'site_ads_init' );
             register_setting( 'baw-settings-group', 'site_ads_arsw' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_smtp_switcher' );
-        if(get_option('site_smtp_switcher')){
+        // if(get_option('site_smtp_switcher')){
             register_setting( 'baw-settings-group', 'site_smtp_mail' );
             register_setting( 'baw-settings-group', 'site_smtp_host' );
             register_setting( 'baw-settings-group', 'site_smtp_pswd' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_wpmail_switcher' );
         
         register_setting( 'baw-settings-group', 'site_rss_categories' );
         register_setting( 'baw-settings-group', 'site_map_switcher' );
-        if(get_option('site_map_switcher')){
+        // if(get_option('site_map_switcher')){
             register_setting( 'baw-settings-group', 'site_map_includes' );
-        }
+        // }
         
         register_setting( 'baw-settings-group', 'site_banner_array' );
         register_setting( 'baw-settings-group', 'site_bottom_recent_cid' );
         register_setting( 'baw-settings-group', 'site_bottom_nav' );
         register_setting( 'baw-settings-group', 'site_monitor_switcher' );
-        if(get_option('site_monitor_switcher')){
+        // if(get_option('site_monitor_switcher')){
             register_setting( 'baw-settings-group', 'site_monitor' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_chat_switcher' );
-        if(get_option('site_chat_switcher')){
+        // if(get_option('site_chat_switcher')){
             register_setting( 'baw-settings-group', 'site_chat' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_begain' );
         register_setting( 'baw-settings-group', 'site_copyright' );
         register_setting( 'baw-settings-group', 'site_beian_switcher' );
-        if(get_option('site_beian_switcher')){
+        // if(get_option('site_beian_switcher')){
             register_setting( 'baw-settings-group', 'site_beian' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_server_side' );
         register_setting( 'baw-settings-group', 'site_foreverblog_switcher' );
-        if(get_option('site_foreverblog_switcher')){
+        // if(get_option('site_foreverblog_switcher')){
             register_setting( 'baw-settings-group', 'site_foreverblog' );
             register_setting( 'baw-settings-group', 'site_foreverblog_wormhole' );
-        }
+        // }
         register_setting( 'baw-settings-group', 'site_contact_email' );
         register_setting( 'baw-settings-group', 'site_contact_wechat' );
         register_setting( 'baw-settings-group', 'site_contact_weibo' );
@@ -774,7 +774,7 @@
                             ?>
                         </td>
                     </tr>
-                    <tr valign="top">
+                    <tr valign="top" class="dynamic_box logo">
                         <th scope="row">站点LOGO</th>
                         <td>
                             <?php
@@ -794,9 +794,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_logo_switcher')){
+                        // if(get_option('site_logo_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $logo = get_option('site_logo_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— LOGO图片链接（默认）</th>
                                 <td>
                                     <?php 
@@ -808,7 +808,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $logo; ?>">
                                 <th scope="row">— LOGO图片链接（深色）</th>
                                 <td>
                                     <?php 
@@ -821,7 +821,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">导航图标</th>
@@ -864,9 +864,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_remove_category_switcher')){
+                        // if(get_option('site_remove_category_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_remove_category_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 链接尾部斜杠</th>
                                 <td>
                                     <?php
@@ -877,7 +877,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                             <!--<tr valign="top" class="child_option">-->
                             <!--    <th scope="row">— 页面层级关系<sup title="实验性功能">EXP</sup></th>-->
@@ -908,9 +908,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_search_style_switcher')){
+                        // if(get_option('site_search_style_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_search_style_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 搜索结果类型（多选项）</th>
                                 <td>
                                     <?php
@@ -933,7 +933,7 @@
                                 </td>
                             </tr>
                     <?php 
-                        }
+                        // }
                     ?>
                     <tr valign="top" class="">
                         <th scope="row">文章索引目录</th>
@@ -954,9 +954,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_indexes_switcher')){
+                        // if(get_option('site_indexes_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_indexes_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">索引目录分类（多选项）</th>
                                 <td>
                                     <?php
@@ -1002,7 +1002,7 @@
                                 </td>
                             </tr>
                     <?php 
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">面包屑导航</th>
@@ -1025,9 +1025,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_inform_switcher')){
+                        // if(get_option('site_inform_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_inform_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 公告展示数量</th>
                                 <td>
                                     <?php
@@ -1040,7 +1040,7 @@
                                 </td>
                             </tr>
                     <?php 
-                        } 
+                        // } 
                     ?>
                     <tr valign="top">
                         <th scope="row">metaBox 元导航分类</th>
@@ -1053,14 +1053,14 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_metanav_switcher')){
+                        // if(get_option('site_metanav_switcher')){
                             $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
                             $options = array();
                             foreach($cats as $the_cat){
                                 if(count(get_term_children($the_cat->term_id,$the_cat->taxonomy))>0) array_push($options, $the_cat);  // has-child category only
                             }
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $metacat = get_option('site_metanav_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 基础元分类（多选项）</th>
                                 <td>
                                     <?php
@@ -1081,7 +1081,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $metacat; ?>">
                                 <th scope="row">— 图文元分类（多选项）</th>
                                 <td>
                                     <?php
@@ -1109,7 +1109,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">Gravatar 镜像源<sup class="dualdata" title="“多数据”">BaaS</sup></th>
@@ -1175,9 +1175,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_map_switcher')){
+                        // if(get_option('site_map_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_map_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">Sitemap 生成类型（多选项）</th>
                                 <td>
                                     <?php
@@ -1199,7 +1199,7 @@
                                 </td>
                             </tr>
                     <?php 
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">Darkmode 暗黑模式</th>
@@ -1221,9 +1221,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_darkmode_switcher')){
+                        // if(get_option('site_darkmode_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $darkmode = get_option('site_darkmode_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 开启时间</th>
                                 <td>
                                     <?php
@@ -1235,7 +1235,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $darkmode; ?>">
                                 <th scope="row">— 关闭时间</th>
                                 <td>
                                     <?php
@@ -1248,7 +1248,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">站点 CDN 加速</th>
@@ -1263,16 +1263,16 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_cdn_switcher')){
+                        // if(get_option('site_cdn_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $cdn = get_option('site_cdn_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 文件加速域名</th>
                                 <td>
                                     <p class="description" id="site_cdn_src_label">可选项，网站cdn（css、js）链接/标头（默认使用当前主题目录</p>
                                     <input type="text" name="site_cdn_src" id="site_cdn_src" class="middle-text" placeholder="site_cdn_src" value="<?php echo get_option( 'site_cdn_src', '' ); ?>"/>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $cdn; ?>">
                                 <th scope="row">— 图片加速域名</th>
                                 <td>
                                     <p class="description" id="site_cdn_img_label">网站媒体文件（推荐加速静态文件存放 uploads 路径</p>
@@ -1280,7 +1280,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">Leancloud<sup class="dualdata" title="“多数据”">BaaS</sup></th>
@@ -1293,9 +1293,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_leancloud_switcher')){
+                        // if(get_option('site_leancloud_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $leancloud = get_option('site_leancloud_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— LBMS</th>
                                 <td>
                                     <p class="description" id="site_leancloud_appid_label">
@@ -1335,7 +1335,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $leancloud; ?>">
                                 <th scope="row">— APP ID</th>
                                 <td>
                                     <?php
@@ -1344,7 +1344,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $leancloud; ?>">
                                 <th scope="row">— APP KEY</th>
                                 <td>
                                     <?php
@@ -1353,7 +1353,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $leancloud; ?>">
                                 <th scope="row">— SERVER URL</th>
                                 <td>
                                     <?php
@@ -1363,9 +1363,9 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
-                    <tr valign="top" class="parent_option<?php if(!get_option('site_leancloud_switcher')) echo ' disabled'; ?>">
+                    <tr valign="top" class="child_option dynamic_opts <?php echo $leancloud; ?>">
                         <th scope="row">— BaaS Switcher</th>
                         <td>
                             <?php
@@ -1518,9 +1518,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_wpwx_notify_switcher')){
+                        // if(get_option('site_wpwx_notify_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $wpwx = get_option('site_wpwx_notify_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 企业 ID</th>
                                 <td>
                                     <?php
@@ -1529,7 +1529,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $wpwx; ?>">
                                 <th scope="row">— 应用 AgentId</th>
                                 <td>
                                     <?php
@@ -1538,7 +1538,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $wpwx; ?>">
                                 <th scope="row">— 应用 Secret</th>
                                 <td>
                                     <?php
@@ -1547,7 +1547,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $wpwx; ?>">
                                 <th scope="row">— 推送消息类型</th>
                                 <td>
                                     <?php
@@ -1570,7 +1570,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">SMTP 发件服务配置</th>
@@ -1587,61 +1587,61 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_smtp_switcher')){
+                        // if(get_option('site_smtp_switcher')){
                     ?>
-                        <tr valign="top" class="child_option">
-                            <th scope="row">— 发件邮箱</th>
-                            <td>
-                                <?php
-                                    $opt = 'site_smtp_mail';
-                                    $value = get_option($opt);
-                                    $preset = get_bloginfo('admin_email');
-                                    if(!$value) update_option($opt, $preset);else $preset=$value;
-                                    echo '<p class="description" id="site_smtp_mail_label">SMTP 发件邮箱（此邮箱应用于所有评论提醒发送邮箱，默认为管理员邮箱：'.get_bloginfo('admin_email').'</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text" value="' . $preset . '" placeholder="发件邮箱地址"/>';
-                                ?>
-                            </td>
-                        </tr>
-                        <tr valign="top" class="child_option">
-                            <th scope="row">— 发件授权码</th>
-                            <td>
-                                <?php
-                                    $opt = 'site_smtp_pswd';
-                                    echo '<p class="description" id="site_smtp_pswd_label">SMTP 邮箱授权码（务必匹配发件邮箱</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text" value="' . get_option($opt) . '" placeholder="管理员邮箱授权码"/>';
-                                ?>
-                            </td>
-                        </tr>
-                        <tr valign="top" class="child_option">
-                            <th scope="row">— 发件服务器</th>
-                            <td>
-                                <?php
-                                    $opt = 'site_smtp_host';
-                                    $arrobj = array(
-                                        array('name'=>'腾讯QQ邮箱', 'href'=>'smtp.qq.com'),
-                                        array('name'=>'腾讯企业邮', 'href'=>'smtp.exmail.qq.com'),
-                                        array('name'=>'阿里云邮箱', 'href'=>'smtp.mxhichina.com'),
-                                        array('name'=>'网易163邮箱', 'href'=>'smtp.163.com'),
-                                        array('name'=>'网易企业邮（免费版）', 'href'=>'smtp.ym.163.com'),
-                                    );
-                                    echo '<label for="'.$opt.'"><p class="description" id="site_smtp_host_label">SMTP发件服务器（务必匹配发件邮箱</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
-                                        foreach ($arrobj as $arr){
-                                            $href = $arr['href'];
-                                            echo '<option value="'.$href.'"';if(get_option($opt)==$href)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
-                                        }
-                                    echo '</select></label>';
-                                ?>
-                            </td>
-                        </tr>
-                        <tr valign="top" class="child_option">
-                            <th scope="row">— 邮箱发件测试</th>
-                            <td>
-                                <span id="my_email_ajax_nonce" data-nonce="<?php echo wp_create_nonce("my_email_ajax_nonce"); ?>"></span>
-                                <p class="description">默认收/发件人均为管理员邮箱（发送后会更新当前配置状态是否成功</p>
-                                <span id="loading"></span>
-                                <input class="smtp sendmail" type="button" value="发送测试邮件" />
-                            </td>
-                        </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $smtp = get_option('site_smtp_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 发件邮箱</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_smtp_mail';
+                                        $value = get_option($opt);
+                                        $preset = get_bloginfo('admin_email');
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;
+                                        echo '<p class="description" id="site_smtp_mail_label">SMTP 发件邮箱（此邮箱应用于所有评论提醒发送邮箱，默认为管理员邮箱：'.get_bloginfo('admin_email').'</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text" value="' . $preset . '" placeholder="发件邮箱地址"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $smtp; ?>">
+                                <th scope="row">— 发件授权码</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_smtp_pswd';
+                                        echo '<p class="description" id="site_smtp_pswd_label">SMTP 邮箱授权码（务必匹配发件邮箱</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text" value="' . get_option($opt) . '" placeholder="管理员邮箱授权码"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $smtp; ?>">
+                                <th scope="row">— 发件服务器</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_smtp_host';
+                                        $arrobj = array(
+                                            array('name'=>'腾讯QQ邮箱', 'href'=>'smtp.qq.com'),
+                                            array('name'=>'腾讯企业邮', 'href'=>'smtp.exmail.qq.com'),
+                                            array('name'=>'阿里云邮箱', 'href'=>'smtp.mxhichina.com'),
+                                            array('name'=>'网易163邮箱', 'href'=>'smtp.163.com'),
+                                            array('name'=>'网易企业邮（免费版）', 'href'=>'smtp.ym.163.com'),
+                                        );
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_smtp_host_label">SMTP发件服务器（务必匹配发件邮箱</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
+                                            foreach ($arrobj as $arr){
+                                                $href = $arr['href'];
+                                                echo '<option value="'.$href.'"';if(get_option($opt)==$href)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
+                                            }
+                                        echo '</select></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $smtp; ?>">
+                                <th scope="row">— 邮箱发件测试</th>
+                                <td>
+                                    <span id="my_email_ajax_nonce" data-nonce="<?php echo wp_create_nonce("my_email_ajax_nonce"); ?>"></span>
+                                    <p class="description">默认收/发件人均为管理员邮箱（发送后会更新当前配置状态是否成功</p>
+                                    <span id="loading"></span>
+                                    <input class="smtp sendmail" type="button" value="发送测试邮件" />
+                                </td>
+                            </tr>
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top" class="">
                         <th scope="row">WP评论邮件模板</th>
@@ -1747,9 +1747,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_tagcloud_switcher')){
+                        // if(get_option('site_tagcloud_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags = get_option('site_tagcloud_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 标签展示数量</th>
                                 <td>
                                     <?php
@@ -1761,7 +1761,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags; ?>">
                                 <th scope="row">— 标签最大字体</th>
                                 <td>
                                     <?php
@@ -1774,7 +1774,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">首页 - 日志日记<sup class="dualdata" title="“多数据”">BaaS</sup></th>
@@ -1795,9 +1795,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_techside_switcher')){
+                        // if(get_option('site_techside_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $logs = get_option('site_techside_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 日志日记分类</th>
                                 <td>
                                     <?php
@@ -1824,7 +1824,7 @@
                             <!--    </td>-->
                             <!--</tr>-->
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">首页 - ACG栏目<sup class="dualdata" title="“多数据”">BaaS</sup></th>
@@ -1845,9 +1845,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_acgnside_switcher')){
+                        // if(get_option('site_acgnside_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $acgn = get_option('site_acgnside_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— ACGN分类</th>
                                 <td>
                                     <?php
@@ -1874,7 +1874,7 @@
                             <!--    </td>-->
                             <!--</tr>-->
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top" class="">
                         <th scope="row">漫游影视 - 背景视频</th>
@@ -1940,9 +1940,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_ads_switcher')){
+                        // if(get_option('site_ads_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $ads = get_option('site_ads_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 广告初始化代码块</th>
                                 <td>
                                     <?php
@@ -1954,7 +1954,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $ads; ?>">
                                 <th scope="row">— 文章页启用</th>
                                 <td>
                                     <?php
@@ -1973,7 +1973,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">侧边栏 Pixiv 挂件</th>
@@ -1994,9 +1994,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_pixiv_switcher')){
+                        // if(get_option('site_pixiv_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $pixiv = get_option('site_pixiv_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— Pixiv 加载数量</th>
                                 <td>
                                     <?php
@@ -2009,7 +2009,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">侧边栏热门文章<sup class="dualdata" title="“多数据”">BaaS</sup></th>
@@ -2031,9 +2031,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_mostview_switcher')){
+                        // if(get_option('site_mostview_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_mostview_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 热门文章分类</th>
                                 <td>
                                     <?php
@@ -2048,7 +2048,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                 </table>
             </div>
@@ -2139,9 +2139,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_beian_switcher')){
+                        // if(get_option('site_beian_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_beian_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 备案号</th>
                                 <td>
                                     <?php
@@ -2151,7 +2151,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">底部导航链接（多选项）</th>
@@ -2193,9 +2193,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_foreverblog_switcher')){
+                        // if(get_option('site_foreverblog_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $foreverblog = get_option('site_foreverblog_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— wormhole 虫洞</th>
                                 <td>
                                     <?php
@@ -2205,7 +2205,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $foreverblog; ?>">
                                 <th scope="row">— foreverblog 链接</th>
                                 <td>
                                     <?php
@@ -2217,7 +2217,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">站点统计插件</th>
@@ -2230,9 +2230,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_monitor_switcher')){
+                        // if(get_option('site_monitor_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_monitor_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 统计链接</th>
                                 <td>
                                     <?php
@@ -2242,7 +2242,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">在线沟通插件</th>
@@ -2255,9 +2255,9 @@
                         </td>
                     </tr>
                     <?php
-                        if(get_option('site_chat_switcher')){
+                        // if(get_option('site_chat_switcher')){
                     ?>
-                            <tr valign="top" class="child_option">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_chat_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 沟通链接</th>
                                 <td>
                                     <?php
@@ -2267,7 +2267,7 @@
                                 </td>
                             </tr>
                     <?php
-                        }
+                        // }
                     ?>
                     <tr valign="top">
                         <th scope="row">底部文本栏目</th>

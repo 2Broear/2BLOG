@@ -20,13 +20,13 @@ __Preview Site__ ：[演示站点](http://wpk.2broear.com) （演示并不代表
 - 自定义头像、背景、主题色、Gravatar 镜像源等
 - 自定义 _RSS订阅、SITEMAP地图、站内搜索（可选样式）_ 包含内容
 - 自动深色模式时段控制
+- 可控的侧栏广告位（Google AdSense）及 Pixiv 排行展示（数量）、最高浏览分类及展示数量
+- 底部各项自定义、各图标等信息开启控制
+- 支持开启 Valine 评论及调用 Leancloud 应用数据（可单独控制分类页面数据来源）
 - _全新文章归档页面_
 - _可控的随机标签云_
 - _可选的文章目录索引_
 - _新增 Twikoo 评论支持_
-- 可控的侧栏广告位（Google AdSense）及 Pixiv 排行展示（数量）、最高浏览分类及展示数量
-- 底部各项自定义、各图标等信息开启控制
-- 支持开启 Valine 评论及调用 Leancloud 应用数据（可单独控制分类页面数据来源）
 - _修复了 Valine 存在的隐私泄漏问题_
 - 支持邮件（可选模板）、自建企业微信应用（多选模版）评论推送提醒（Valine 集成 server酱、pushplus及企业微信应用推送）
 - 部分页面支持 wordpress 与 leancloud 数据切换
@@ -256,7 +256,7 @@ Futures todo & bugs
 - ✅ ~~归档 Archive 页面~~
 - ✅ ~~标签云（页面、挂件）~~
 - ✅ ~~文章目录 Index 索引~~
-- ✅ ~~文引进 Twikoo 评论~
+- ✅ ~~引进 Twikoo 评论~
 - 集成 Valine 自定义功能到 WordPress 评论
 
 ### bug

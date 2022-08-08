@@ -1775,7 +1775,7 @@ p.wp_comment_tip{
 
 .main{
     color: var(--preset-6);
-    margin: 15px auto;
+    margin: 15px auto 20px;
     text-align: left;
     /*padding: 0 5px;*/
     width: 100%;
@@ -1783,6 +1783,7 @@ p.wp_comment_tip{
 .main h2{
     /*font-size: 1rem;*/
     font-weight: 500;
+    margin-bottom: auto;
 }
 .main p{
     font-size: .75rem;
