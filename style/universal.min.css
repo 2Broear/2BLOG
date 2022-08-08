@@ -239,7 +239,7 @@ header>nav#tipson .top-bar-tips a{color: inherit;font-size: small;text-decoratio
 .inside_of_block nav.main-nav ul li a{color:inherit;display:block;font-size:var(--min-size-rem);padding:0 15px;position:relative;z-index:1;}
 i.icomoon,
 .pageSwitcher.dev a i,
-.inside_of_block nav.main-nav ul li a i{font-size:13px;width:14px;height:auto;display:inline-block;position:relative;top:1px;left:-5px}
+.inside_of_block nav.main-nav ul li a i{font-size:13px;width:14px;height:auto;display:inline-block;position:relative;top:1px;left:-3px}
 .inside_of_block nav.main-nav ul li a em{font-style:normal;letter-spacing:2px}
 .choosen-n{color:rgb(235,235,235) !important}
 .ischoose{color:rgb(235,235,235) !important}
@@ -339,7 +339,7 @@ i.icomoon,
     opacity: .36;
     transition: opacity .15s ease;
 }
-.additional.metaboxes li a.choosen b,
+/*.additional.metaboxes li a.choosen b,*/
 .additional.metaboxes li a:hover b{
     border-color: rgb(235 102 66 / 66%);
     font-weight: bold;
@@ -1398,6 +1398,7 @@ body.dark .wp_comments img{
     /* text-align: center!important; */
 }
 mark:hover{
+    color: var(--theme-color);
     background-color: transparent!important;
 }
 #reEdit{position: fixed;top: 0;right: 0;width: 100%;z-index: 99999;background: var(--preset-3a)}

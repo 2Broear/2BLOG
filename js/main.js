@@ -123,6 +123,7 @@
     }
     const header = document.querySelector('.main-header-all'),
           headbar = document.querySelector('.top-bar-tips .tipsbox .tips'),
+          headbar_np = headbar.querySelector('p#np'),
           footer = document.querySelector('.footer-all'),
           detect = footer.querySelector(".footer-detector"),
           sidebar = document.querySelector('.news-content-right-window-all'),
@@ -215,7 +216,8 @@
                 class_fixed = 'window-all-get-fixed';
             var scrollTop = document.documentElement.scrollTop || document.body.scrollTop,
                 fixedSidebar = sidebar_only ? header.offsetHeight+(sideAds ? sideAds.offsetHeight+marginOffset : 0) : false,
-                footerDetect = sidebar_only ? detect.offsetTop-(headbar.offsetHeight+sidebar.offsetHeight) : false,  //-marginOffset
+                headbar_oh = headbar_np ? 100 : headbar.offsetHeight,
+                footerDetect = sidebar_only ? detect.offsetTop-(headbar_oh+sidebar.offsetHeight) : false,  //-marginOffset
                 roll_up = function(){  //上滚操作
                     //上滑至导航栏执行
                     if(scrollTop<=header.offsetHeight*2){

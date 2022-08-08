@@ -90,6 +90,9 @@ lbms 后台将在 __`通用控制`__ 中的 _leancloud_ 选项开启后自动创
 
 文档说明
 ====================================================================================================================================================================
+### 视频流程
+[主题设置流程](https://www.bilibili.com/video/BV1ig411C7FH)
+
 ### 安装说明
 所有步骤和普通 _wordpress_ 主题安装无异（测试环境为最新版的 __WordPress 6.0__ ），在 __外观->主题->上传主题->选择.zip压缩包__ 启用即可。
 
@@ -217,8 +220,7 @@ ___WordPress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 
 - [WordPress](https://wordpress.org) 提供的CMS程序及主题开发文档支持
 - [Leancloud](https://www.leancloud.cn) 提供的 BaaS 数据储存服务
-- [Valine](http://valine.js.org) 提供的无后端评论系统及
-- [zhaojun1998](https://github.com/zhaojun1998/Valine-Admin) 提供的 valine 评论邮件通知
+- [Valine](http://valine.js.org) 提供的无后端评论系统及 [zhaojun1998](https://github.com/zhaojun1998/Valine-Admin) 提供的 valine 评论邮件通知
 - Wechat（企业）提供的微信消息推送服务
 - ...
 - [Ying 酱](https://blog.luvying.com) 及 [橘纸柚](https://lovemen.cc/) 提供的随机动漫图片API
