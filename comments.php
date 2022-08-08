@@ -112,10 +112,47 @@
             $welcome='欢迎您，'.$user_name.'！您可以在这里畅言您的的观点与见解！'.$wp_login;//
         }
         echo '<div class="main"><span><h2> 评论留言 </h2></span><p>'.$welcome.'</p></div>';
+        if(is_single()){
+?>
+            <script type="text/javascript">
+                function postLike(t){
+                    let _this = t;
+                    // console.log(_this);
+                    if(_this.classList.contains('liked')){
+                        alert("您已经点过赞了!");
+                        return false;
+                    }else{
+                        _this.classList.add('liked');
+                        var id = _this.getAttribute('data-id'),
+                            action =_this.getAttribute('data-action'),
+                            rateHolder = document.querySelector('.count #counter');
+                        var ajax_data = {
+                                action: "post_like",
+                                um_id: parseInt(id),
+                                um_action: action
+                            };
+                        console.log(ajax_data);
+                        send_ajax_request("get", "/wp-admin/admin-ajax.php", "action=post_like&um_id="+id+"&um_action="+action, function(res){
+                                console.log(res);
+                                rateHolder.innerText = res;
+                        })
+                        // var form_data = 'action=post_like&um_id='+id+'&um_action='+action;
+                        // send_ajax_request("post", "/wp-admin/admin-ajax.php", form_data, function(res){
+                        //         console.log(res);
+                        //         rateHolder.innerText = res;
+                        //     }
+                        // );
+                        return false;
+                    }
+                };
+            </script>
+<?php 
+        };
         if($comment_sw){
             echo '<div id="vcomments" class="v"></div>';
+        }elseif($twikoo_sw){
+                echo '<div id="tcomment"></div>';
         }else{
-            echo $twikoo_sw ? '<div id="tcomment"></div>' : false;
             if(is_single()){
 ?>
             <script type="text/javascript">
