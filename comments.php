@@ -153,42 +153,6 @@
         }elseif($twikoo_sw){
                 echo '<div id="tcomment"></div>';
         }else{
-            if(is_single()){
-?>
-            <script type="text/javascript">
-                function postLike(t){
-                    let _this = t;
-                    // console.log(_this);
-                    if(_this.classList.contains('liked')){
-                        alert("您已经点过赞了!");
-                        return false;
-                    }else{
-                        _this.classList.add('liked');
-                        var id = _this.getAttribute('data-id'),
-                            action =_this.getAttribute('data-action'),
-                            rateHolder = document.querySelector('.count #counter');
-                        var ajax_data = {
-                                action: "post_like",
-                                um_id: parseInt(id),
-                                um_action: action
-                            };
-                        console.log(ajax_data);
-                        send_ajax_request("get", "/wp-admin/admin-ajax.php", "action=post_like&um_id="+id+"&um_action="+action, function(res){
-                                console.log(res);
-                                rateHolder.innerText = res;
-                        })
-                        // var form_data = 'action=post_like&um_id='+id+'&um_action='+action;
-                        // send_ajax_request("post", "/wp-admin/admin-ajax.php", form_data, function(res){
-                        //         console.log(res);
-                        //         rateHolder.innerText = res;
-                        //     }
-                        // );
-                        return false;
-                    }
-                };
-            </script>
-<?php 
-            };
             $avatar_src = match_mail_avatar($user_mail);
             parse_str($_SERVER['QUERY_STRING'], $parameters);
             $replytocom = $parameters['replytocom'];

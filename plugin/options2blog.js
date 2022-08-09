@@ -107,18 +107,40 @@ jQuery(document).ready(function($){
               };
         for(let i=0;i<select_options.length;i++){
             select_options[i].onchange=function(e){
-                dynamic_fn(dynamic_opts, dynamic_class, this.value);
+                let tar = this.parentElement.parentElement.parentElement.nextElementSibling;
+                while(tar){
+                    if(!tar.classList.contains('child_option')){
+                        // console.log(tar.previousElementSibling);
+                        break;  //跳出循环
+                    }else{
+                        tar.classList.remove(dynamic_class);  // remove all optshow
+                        // console.log(tar)
+                        let optsval = this.value;
+                        if(optsval && optsval!=''){
+                            dynamic_comment ? dynamic_comment.innerHTML = optsval : false;
+                            let dynamic_lock = document.querySelectorAll('tr.'+optsval);
+                            for(let j=0;j<dynamic_lock.length;j++){
+                                dynamic_lock[j].classList.add(dynamic_class);
+                            }
+                        }else{
+                            dynamic_comment ? dynamic_comment.innerHTML = 'BaaS' : false;
+                        }
+                        // dynamic_fn(optshow, dynamic_class, optsval);
+                        tar = tar.nextElementSibling;  // 继续查找，直到当前元素不含 child_option 类（即非该 checkbox 子项）
+                    }
+                }
             };
         }
         // 自动同步 checkbox 勾选框关联元素
-        const check_boxes = document.querySelectorAll("input[type=checkbox]"),
+        const check_boxes = document.querySelectorAll("label input[type=checkbox]"),  // inside label only
               dynamic_list = document.querySelectorAll(".dynamic_box.logo");
         for(let i=0;i<check_boxes.length;i++){
             check_boxes[i].onchange=function(e){
                 let _checked = this.checked;
                 // console.log(this.checked);
                 let tar = this.parentElement.parentElement.parentElement.nextElementSibling;
-                while(tar.nextElementSibling){
+                        // console.log(tar);
+                while(tar){
                     if(!tar.classList.contains('child_option')){
                         // console.log(tar.previousElementSibling);
                         break;  //跳出循环

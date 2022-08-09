@@ -127,7 +127,7 @@ body.dark .wp_comments:hover{background:var(--preset-3a)!important}
 #news-article-head_tail #post-views i::before{content:'\e91f'}
 #news-article-head_tail #post-date i::before{content:'\e91e'}
 .news-article-container{padding:15px;font-size:var(--min-size-rem);font-weight:normal}
-.news-article-container span{text-align:left;display:inline-block;width:100%;margin-top:15px;position:relative}
+.news-article-container span{text-align:left;display:inline-block;margin-top:15px;position:relative;/*width:100%;*/}
 .news-article-container span#normal{width:100%;border-left:3px solid;border-color:var(--preset-6);background-color:var(--preset-s);margin:15px auto;box-sizing:border-box}
 .news-article-container span#normal p{font-size:small;margin:0}
 .news-article-container span#normal h3{padding:10px;font-size:1rem}

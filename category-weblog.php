@@ -13,6 +13,52 @@
         @keyframes spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}
         #loading{position:relative;padding:20px;display:block;height:80px}
         #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:20px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%;-webkit-animation:spin 1s infinite linear;animation:spin 1s infinite linear}
+        .weblog-tree-box .tree-box-title h3:hover::before{
+            color: inherit;
+            opacity: 1;
+            text-decoration: overline;
+        }
+        .weblog-tree-box .tree-box-title h3:before{
+            content: "回复片段";
+            float: right;
+            font-size: var(--min-size);
+            padding: 0 5px;
+            text-decoration: underline;
+            opacity: .32;
+            color: initial;
+        }
+        .weblog-tree-box .tree-box-title h3{cursor: pointer;}
+        .vcontent blockquote {
+            margin-bottom: 15px;
+            position: relative;
+            display: block;
+            max-width: 95%;
+        }
+        .vcontent blockquote:first-letter {
+            font-size: unset;
+            margin: auto;
+            padding: 0;
+            float: none;
+        }
+        .vcontent blockquote:after{
+            content: "\e910";
+            font-size: 88px;
+            position: absolute;
+            top: -35px;
+            right: 15px;
+            opacity: .12;
+            font-family: 'icomoon';
+        }
+        .vcontent blockquote p {
+            font-size: 12px;
+            display: inline-block!important;
+            margin: auto!important;
+        }
+        .vcontent blockquote p b,
+        .vcontent blockquote p strong{
+            opacity: .75;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -153,9 +199,26 @@
                             today = res.attributes.today;
                         loadContent.innerHTML += '<div class="weblog-tree-core-record i'+index+'" data-type="'+type+'"><div class="weblog-tree-core-l"><span id="weblog-timeline" data-year="'+today.y+'" data-month="'+today.m+'" data-day="'+today.d+'">'+dates+'</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div class="weblog-tree-box"><div class="tree-box-title"><h3 id="'+res.id+'">'+title+'</h3></div><div class="tree-box-content"><span id="core-info"><p>'+main+'</p></span><span id="other-info"><h4> Ps. </h4><p>'+ps+'</p><p id="sub">'+dates+'</p></span></div></div></div></div>';
                         // loadcore.appendChild(loadContent);
-                        loadcore.insertBefore(loadContent,loadbox);
+                        loadcore.insertBefore(loadContent, loadbox);
                     }
                     loading.remove();
+                    // BLOCKQUOTE Reply support
+                    const replier = document.querySelectorAll('.weblog-tree-box .tree-box-title h3'),
+                          editor = document.querySelector('textarea#veditor');
+                    for(let i=0;i<replier.length;i++){
+                        replier[i].onclick=function(e){
+                            let _this = this,
+                                content = _this.parentElement.parentElement.querySelector('#core-info p');
+                            editor.focus();
+                            editor.value = '';
+                            editor.setAttribute('placeholder', '回复片段：'+_this.innerText);
+                            var delay = setTimeout(function(){
+                                editor.style.minHeight = '150px';
+                                editor.value = `> __${_this.innerText}__ \n> ${content.innerText.substr(0,88)}...\n\n`;//this.id;
+                                clearTimeout(delay);
+                            }, 1000)
+                        }
+                    }
                 })
             }
             QUERY(curTab,curSkip,limiter);  //QUERY(curTab,curSkip,preSkip);

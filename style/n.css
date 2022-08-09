@@ -265,6 +265,7 @@ figure.wp-block-table{margin:25px auto}
 	line-height: 27px;
 	word-break: break-all;
 	/*margin: 0 auto;*/
+	font-size: var(--min-size-rem);
 }
 .win-content article p code{
 	color: currentColor;
