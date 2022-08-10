@@ -13,52 +13,6 @@
         @keyframes spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}
         #loading{position:relative;padding:20px;display:block;height:80px}
         #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:20px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%;-webkit-animation:spin 1s infinite linear;animation:spin 1s infinite linear}
-        .weblog-tree-box .tree-box-title h3:hover::before{
-            color: inherit;
-            opacity: 1;
-            text-decoration: overline;
-        }
-        .weblog-tree-box .tree-box-title h3:before{
-            content: "回复片段";
-            float: right;
-            font-size: var(--min-size);
-            padding: 0 5px;
-            text-decoration: underline;
-            opacity: .32;
-            color: initial;
-        }
-        .weblog-tree-box .tree-box-title h3{cursor: pointer;}
-        .vcontent blockquote {
-            margin-bottom: 15px;
-            position: relative;
-            display: block;
-            max-width: 95%;
-        }
-        .vcontent blockquote:first-letter {
-            font-size: unset;
-            margin: auto;
-            padding: 0;
-            float: none;
-        }
-        .vcontent blockquote:after{
-            content: "\e910";
-            font-size: 88px;
-            position: absolute;
-            top: -35px;
-            right: 15px;
-            opacity: .12;
-            font-family: 'icomoon';
-        }
-        .vcontent blockquote p {
-            font-size: 12px;
-            display: inline-block!important;
-            margin: auto!important;
-        }
-        .vcontent blockquote p b,
-        .vcontent blockquote p strong{
-            opacity: .75;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -212,11 +166,16 @@
                             editor.focus();
                             editor.value = '';
                             editor.setAttribute('placeholder', '回复片段：'+_this.innerText);
-                            var delay = setTimeout(function(){
-                                editor.style.minHeight = '150px';
-                                editor.value = `> __${_this.innerText}__ \n> ${content.innerText.substr(0,88)}...\n\n`;//this.id;
-                                clearTimeout(delay);
-                            }, 1000)
+                            var quote = `> __${_this.innerText}__ \n> ${content.innerText.substr(0,88)}...\n\n`,
+                                delay = setTimeout(function(){
+                                    editor.style.cssText="min-height:150px;opacity:.75;";//editor.style.minHeight = '150px';
+                                    editor.value = quote;//this.id;
+                                    clearTimeout(delay);
+                                }, 1000);
+                            editor.oninput=function(){
+                                // console.log(this.value.match(quote));
+                                this.value = !this.value.match(quote) ? quote : this.value;//this.value=quote+this.value.replace(quote);
+                            }
                         }
                     }
                 })

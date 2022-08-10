@@ -5,7 +5,7 @@
     text-decoration: overline;
 }
 .weblog-tree-box .tree-box-title h3:before{
-    content: "回复片段";
+    content: "回复此片段";
     float: right;
     font-size: var(--min-size);
     padding: 0 5px;

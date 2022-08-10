@@ -2204,16 +2204,6 @@
                     <?php
                         // if(get_option('site_foreverblog_switcher')){
                     ?>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $foreverblog = get_option('site_foreverblog_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— wormhole 虫洞</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_foreverblog_wormhole';
-                                        get_option($opt) ? $status="checked" : $status="closed";
-                                        echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_wormhole_label">随机访问十年之约友链博客（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">穿梭虫洞</b></label>';
-                                    ?>
-                                </td>
-                            </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $foreverblog; ?>">
                                 <th scope="row">— foreverblog 链接</th>
                                 <td>
@@ -2225,6 +2215,17 @@
                                     ?>
                                 </td>
                             </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $foreverblog = get_option('site_foreverblog_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— wormhole 虫洞</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_foreverblog_wormhole';
+                                        get_option($opt) ? $status="checked" : $status="closed";
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_wormhole_label">随机访问十年之约友链博客（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">穿梭虫洞</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <!--<tr></tr>-->
                     <?php
                         // }
                     ?>

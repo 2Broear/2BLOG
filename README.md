@@ -256,7 +256,7 @@ Futures todo & bugs
 - ✅ ~~归档 Archive 页面~~
 - ✅ ~~标签云（页面、挂件）~~
 - ✅ ~~文章目录 Index 索引~~
-- ✅ ~~引进 Twikoo 评论~
+- ✅ ~~引进 Twikoo 评论~~
 - 集成 Valine 自定义功能到 WordPress 评论
 
 ### bug
