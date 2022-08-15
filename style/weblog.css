@@ -1,31 +1,33 @@
 
-.weblog-tree-box .tree-box-title h3:hover::before{
+.weblog-tree-core.reply .tree-box-title h3:hover::before{
     color: inherit;
     opacity: 1;
     text-decoration: overline;
 }
-.weblog-tree-box .tree-box-title h3:before{
+.weblog-tree-core.reply .tree-box-title h3:before{
     content: "回复此片段";
     float: right;
     font-size: var(--min-size);
     padding: 0 5px;
     text-decoration: underline;
     opacity: .32;
-    color: initial;
 }
-.weblog-tree-box .tree-box-title h3{cursor: pointer;}
+.weblog-tree-core.reply .tree-box-title h3{cursor: pointer;}
+.tk-content blockquote,
 .vcontent blockquote {
     margin-bottom: 15px!important;
     position: relative;
     display: block;
     max-width: 95%;
 }
+.tk-content blockquote:first-letter,
 .vcontent blockquote:first-letter {
     font-size: unset;
     margin: auto;
     padding: 0;
     float: none;
 }
+.tk-content blockquote:after,
 .vcontent blockquote:after{
     content: "\e910";
     font-size: 88px;
@@ -35,11 +37,14 @@
     opacity: .12;
     font-family: 'icomoon';
 }
+.tk-content blockquote p,
 .vcontent blockquote p {
     font-size: 12px;
     display: inline-block!important;
     margin: auto!important;
 }
+.tk-content blockquotep b,
+.tk-content blockquote p strong,
 .vcontent blockquote p b,
 .vcontent blockquote p strong{
     opacity: .75;

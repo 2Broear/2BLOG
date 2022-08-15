@@ -15,7 +15,8 @@
         #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:20px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%;-webkit-animation:spin 1s infinite linear;animation:spin 1s infinite linear}
         .weblog-tree-box .tree-box-title h3:before{color:inherit;opacity:.5;text-decoration:none;}
         .vquote{border-left:none!important;}
-        .vcontent blockquote{margin:10px 0 auto!important};
+        blockquote{margin:10px 0 auto!important};
+        .tk-content{overflow: hidden;}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -38,7 +39,7 @@
         </div>
         <?php get_inform(); ?>
         <div class="weblog-tree-all">
-            <div class="weblog-tree-core">
+            <div class="weblog-tree-core <?php $third_cmt = get_option('site_third_comments');echo $third_cmt&&$third_cmt!='' ? 'reply' : false; ?>">
                 <?php
                     // echo basename(__FILE__);
                     $baas = get_option('site_leancloud_switcher')&&strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false;  //use post as category is leancloud unset
@@ -159,38 +160,50 @@
                         loadcore.insertBefore(loadContent, loadbox);
                     }
                     loading.remove();
-                    // BLOCKQUOTE Reply support
-                    const replier = document.querySelectorAll('.weblog-tree-box .tree-box-title h3'),
-                          editor = document.querySelector('textarea#veditor');
-                    for(let i=0;i<replier.length;i++){
-                        replier[i].onclick=function(e){
-                            let _this = this,
-                                content = _this.parentElement.parentElement.querySelector('#core-info p');
-                            editor.focus();
-                            editor.value = '';
-                            editor.setAttribute('placeholder', '回复片段：'+_this.innerText);
-                            var quote = `\n> __${_this.innerText}__ \n> ${content.innerText.substr(0,88)}...`;
-                                // delay = setTimeout(function(){
-                                    editor.style.cssText="min-height:150px;opacity:.75;";//editor.style.minHeight = '150px';
-                                    editor.value = '\n'+quote;//this.id;
-                                    editor.setSelectionRange(0,0);
-                                    // clearTimeout(delay);
-                                // }, 1000);
-                            editor.oninput=function(){
-                                // this.value = !this.value.match(quote) || this.value.substr(0,2)!='> ' ? quote : this.value;
-                                if(!this.value.match(quote) || this.value.substr(this.value.length-3,this.value.length)!='...'){
-                                    this.value = quote;
-                                    editor.setSelectionRange(0,0);
-                                }
-                            }
-                        }
-                    }
                 })
             }
             QUERY(curTab,curSkip,limiter);  //QUERY(curTab,curSkip,preSkip);
             loadbtn.onclick = function(){
                 curSkip+=limiter;  // preSkip++;
                 QUERY(curTab,curSkip,limiter);  //QUERY(curTab,curSkip,preSkip);
+            }
+        </script>
+<?php
+    };
+    if($third_cmt && $third_cmt!=''){
+?>
+        <script>
+            // BLOCKQUOTE Reply support
+            const weblog = document.querySelector(".weblog-tree-core"),
+                  replier = weblog.querySelectorAll('.weblog-tree-box .tree-box-title h3'),
+                  editor = document.querySelector('textarea');
+            weblog.onclick=(e)=>{
+                var e = e || window.event,
+                    t = e.target || e.srcElement;
+                while(t!=weblog){
+                    if(t.nodeName.toLowerCase()=="h3"){
+                        let content = t.parentElement.parentElement.parentElement.querySelector('#core-info p');
+                        editor.focus();
+                        editor.value = '';
+                        editor.setAttribute('placeholder', '回复片段：'+t.innerText);
+                        var quote = `\n> __${t.innerText}__ \n> ${content.innerText.substr(0,88)}...`;
+                            // delay = setTimeout(function(){
+                                editor.style.cssText="min-height:150px;opacity:.75;";//editor.style.minHeight = '150px';
+                                editor.value = '\n'+quote;//this.id;
+                                editor.setSelectionRange(0,0);
+                                // clearTimeout(delay);
+                            // }, 1000);
+                        editor.oninput=function(){
+                            if(!this.value.match(quote) || this.value.substr(this.value.length-3,this.value.length)!='...'){
+                                this.value = quote;
+                                editor.setSelectionRange(0,0);
+                            }
+                        }
+                        break;
+                    }else{
+                        t = t.parentNode;
+                    }
+                }
             }
         </script>
 <?php
