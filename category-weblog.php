@@ -13,6 +13,9 @@
         @keyframes spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}
         #loading{position:relative;padding:20px;display:block;height:80px}
         #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:20px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%;-webkit-animation:spin 1s infinite linear;animation:spin 1s infinite linear}
+        .weblog-tree-box .tree-box-title h3:before{color:inherit;opacity:.5;text-decoration:none;}
+        .vquote{border-left:none!important;}
+        .vcontent blockquote{margin:10px 0 auto!important};
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -166,15 +169,19 @@
                             editor.focus();
                             editor.value = '';
                             editor.setAttribute('placeholder', '回复片段：'+_this.innerText);
-                            var quote = `> __${_this.innerText}__ \n> ${content.innerText.substr(0,88)}...\n\n`,
-                                delay = setTimeout(function(){
+                            var quote = `\n> __${_this.innerText}__ \n> ${content.innerText.substr(0,88)}...`;
+                                // delay = setTimeout(function(){
                                     editor.style.cssText="min-height:150px;opacity:.75;";//editor.style.minHeight = '150px';
-                                    editor.value = quote;//this.id;
-                                    clearTimeout(delay);
-                                }, 1000);
+                                    editor.value = '\n'+quote;//this.id;
+                                    editor.setSelectionRange(0,0);
+                                    // clearTimeout(delay);
+                                // }, 1000);
                             editor.oninput=function(){
-                                // console.log(this.value.match(quote));
-                                this.value = !this.value.match(quote) ? quote : this.value;//this.value=quote+this.value.replace(quote);
+                                // this.value = !this.value.match(quote) || this.value.substr(0,2)!='> ' ? quote : this.value;
+                                if(!this.value.match(quote) || this.value.substr(this.value.length-3,this.value.length)!='...'){
+                                    this.value = quote;
+                                    editor.setSelectionRange(0,0);
+                                }
                             }
                         }
                     }

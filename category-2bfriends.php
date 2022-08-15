@@ -52,7 +52,7 @@
                         if(count($rich_links)>0){
                 ?>
                             <div class="inbox-clip"><h2 id="exchanged"> 小伙伴们 </h2></div>
-                            <div class="deals exchanged flexboxes"><?php site_links($rich_links,"rich"); ?></div>
+                            <div class="deals exchanged flexboxes"><?php site_links($rich_links, 'rich'); ?></div>
 				<?php 
                         }else{
                             echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';
@@ -60,14 +60,14 @@
                         if(count($rcmd_links)>0){
                 ?>
                             <div class="inbox-clip"><h2 id="rcmded"> 荐亦有见 </h2></div>
-                            <div class="deals rcmd flexboxes"><?php site_links($rcmd_links,"poor"); ?></div>
+                            <div class="deals rcmd flexboxes"><?php site_links($rcmd_links, 'poor'); ?></div>
 				<?php 
                         };
                         if(count($lost_links)>0){
                 ?>
                             <div class="deals oldest">
             					<div class="inboxSliderCard">
-                                    <div class="slideBox flexboxes"><?php site_links($lost_links); ?></div>
+                                    <div class="slideBox flexboxes"><?php site_links($lost_links, 'miss'); ?></div>
             					</div>
             				</div>
 				<?php 

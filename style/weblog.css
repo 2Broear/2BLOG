@@ -15,7 +15,7 @@
 }
 .weblog-tree-box .tree-box-title h3{cursor: pointer;}
 .vcontent blockquote {
-    margin-bottom: 15px;
+    margin-bottom: 15px!important;
     position: relative;
     display: block;
     max-width: 95%;

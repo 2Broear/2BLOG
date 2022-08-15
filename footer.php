@@ -106,6 +106,39 @@
                                     // })
                             //     }
                             // };
+                            const vcomments = document.querySelector("#vcomments"),
+                                  vinfo = vcomments.querySelector(".vinfo");
+                            vcomments.onclick=(e)=>{
+                                var e = e || window.event,
+                                    t = e.target || e.srcElement;
+                                while(t!=vcomments){
+                                    if(t.classList[0]=="vat"){
+                                        let vwraps = vcomments.querySelectorAll(".vwrap"),
+                                            origin_wrap = vwraps[0],
+                                            vats = vcomments.querySelectorAll(".vat"),
+                                            adopt_node = document.adoptNode(origin_wrap),  // adopt(clone)node
+                                            adopt_area = adopt_node.querySelector("textarea");
+                                        if(!t.classList.contains('reply')){
+                                            for(let i=0;i<vats.length;i++){
+                                                vats[i].classList.remove('reply');
+                                                vats[i].innerText = "回复";
+                                            }
+                                            t.classList.add('reply');
+                                            t.innerText = "取消回复";
+                                            t.parentElement.parentElement.appendChild(adopt_node);  // append adopt node
+                                            adopt_area.focus();
+                                        }else{
+                                            t.classList.remove('reply');
+                                            t.innerText = "回复";
+                                            vcomments.insertBefore(adopt_node, vinfo);  // reverse adopt
+                                            adopt_area.focus();
+                                        }
+                                        break;
+                                    }else{
+                                        t = t.parentNode;
+                                    }
+                                }
+                            }
                         </script>
                 <?php
                     }elseif($twikoo_sw){
@@ -294,7 +327,7 @@
         <span class="what_says">
           <ul style="text-align:left">
             <li id="copy"> ©<?php calc_copyright(); ?> </li>
-            <?php $rights=get_option('site_copyright');if($rights) echo '<li id="cc"><a href="https://creativecommons.org/" style="opacity:.88" > '.$rights.' </a></li>'; ?>
+            <?php $rights=get_option('site_copyright');if($rights) echo '<li id="cc"><a href="https://creativecommons.org/" style="opacity:.88" target="_blank"> '.$rights.' </a></li>'; ?>
             <li id="rights"><?php echo get_option('site_nick', get_bloginfo('name')); ?> 版权所有</li>
             <?php if(get_option('site_beian_switcher')) echo '<li id="etc">'.get_option('site_beian').'</li>'; ?>
             <p id="supports">

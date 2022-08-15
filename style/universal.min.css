@@ -360,12 +360,12 @@ i.icomoon,
     transition: top .35s ease;
 }
 .additional.metaboxes li a b{
-    /*font-size: 15px;*/
     padding: 2px 3px;
     border: 1px dashed transparent;
     position: relative;
     letter-spacing: 1px;
-    font-weight: normal;
+    /*font-weight: normal;*/
+    font-size: var(--min-size-rem);
 }
 /***   1x5   ***/
 .additional.metaboxes{
