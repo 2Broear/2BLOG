@@ -134,11 +134,20 @@
 .friends-boxes .deals.rcmd .inbox:hover > .inbox-aside{
     text-align: inherit!important;
 }
+.friends-boxes .deals.rcmd .inbox:hover > .inbox-aside h4{
+    margin: auto!important;
+}
 .friends-boxes .deals .inbox:hover > .inbox-aside h4{
-    margin-top: 15px!important;
+    /*margin-top: 15px!important;*/
 }
 .friends-boxes .deals .inbox:hover > .inbox-aside {
     color: var(--theme-color)!important;
+}
+.friends-boxes .deals.rcmd .inbox:hover > .inbox-aside .lowside-description{
+    display: none;
+}
+.friends-boxes .deals.rcmd .inbox:hover > .inbox-aside{
+	font-size: 25px;
 }
 .friends-boxes .deals .inbox:hover > .inbox-aside {
 	font-size: 20px;
@@ -169,6 +178,9 @@
     opacity: 0;
     transition: opacity .35s ease;
 }
+/*.friends-boxes .deals.rcmd .inbox:hover{*/
+/*    margin: 0px!important;*/
+/*}*/
 .friends-boxes .deals .inbox:hover{
 	margin: 3px;
 	/*border: 2px dashed var(--theme-color);*/
