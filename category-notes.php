@@ -8,7 +8,7 @@
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-	<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/notes.css?v=<?php echo(mt_rand()) ?>" />
+	<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/notes.css?v=<?php //echo(mt_rand()) ?>" />
 	<style> .win-top h5{font-weight: 800;} </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -37,7 +37,6 @@
 				<div>
 					<h2> <?php echo get_option('site_nick'); ?> </h2>
 					<p> <?php bloginfo('description'); ?> </p>
-					<br />
 					<small> <?php echo get_option('site_support'); ?> </small>
 					<?php
                         // $tags = get_tags(array('taxonomy' => 'post_tag'));

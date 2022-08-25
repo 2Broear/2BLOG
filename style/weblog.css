@@ -1,16 +1,16 @@
 
-.weblog-tree-core.reply .tree-box-title h3:hover::before{
+.weblog-tree-core.reply .tree-box-title h3:hover::after{
     color: inherit;
-    opacity: 1;
+    opacity: .75;
     text-decoration: overline;
 }
-.weblog-tree-core.reply .tree-box-title h3:before{
+.weblog-tree-core.reply .tree-box-title h3:after{
     content: "回复此片段";
-    float: right;
     font-size: var(--min-size);
     padding: 0 5px;
     text-decoration: underline;
     opacity: .32;
+    /*float: right;*/
 }
 .weblog-tree-core.reply .tree-box-title h3{cursor: pointer;}
 .tk-content blockquote,

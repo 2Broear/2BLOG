@@ -96,46 +96,38 @@
                             	wxNotify: '<?php echo get_option("site_wpwx_notify_switcher") ?>',
                             	placeholder: '快来玩右下角的“涂鸦画板”！'
                             });
-                            // window.onload=function(){
-                            //     if(document.querySelector('#vcomments')){
-                                    // $("#vcomments").on('click','span.vat',function(){
-                                    //     let _t=$(this),
-                                    //         rp=$("div.vwrap");
-                                    //     _t.attr("id") ? (_t.text("回复").removeAttr("id"),$("div.vinfo").before(rp)) : ($("span.vat").not(_t).text("回复").removeAttr("id"),_t.text("取消回复").attr("id","cancel").parent('div.vmeta').next("div.vcontent").after(rp));
-                                    //     $('textarea#veditor').focus()
-                                    // })
-                            //     }
-                            // };
-                            const vcomments = document.querySelector("#vcomments"),
-                                  vinfo = vcomments.querySelector(".vinfo");
-                            vcomments.onclick=(e)=>{
-                                var e = e || window.event,
-                                    t = e.target || e.srcElement;
-                                while(t!=vcomments){
-                                    if(t.classList[0]=="vat"){
-                                        let vwraps = vcomments.querySelectorAll(".vwrap"),
-                                            origin_wrap = vwraps[0],
-                                            vats = vcomments.querySelectorAll(".vat"),
-                                            adopt_node = document.adoptNode(origin_wrap),  // adopt(clone)node
-                                            adopt_area = adopt_node.querySelector("textarea");
-                                        if(!t.classList.contains('reply')){
-                                            for(let i=0;i<vats.length;i++){
-                                                vats[i].classList.remove('reply');
-                                                vats[i].innerText = "回复";
+                            // reply at current floor
+                            const vcomments = document.querySelector("#vcomments");
+                            if(vcomments){
+                                vcomments.onclick=(e)=>{
+                                    var e = e || window.event,
+                                        t = e.target || e.srcElement;
+                                    while(t!=vcomments){
+                                        if(t.classList[0]=="vat"){
+                                            let vwraps = vcomments.querySelectorAll(".vwrap"),
+                                                origin_wrap = vwraps[0],
+                                                vats = vcomments.querySelectorAll(".vat"),
+                                                adopt_node = document.adoptNode(origin_wrap),  // adopt(clone)node
+                                                adopt_area = adopt_node.querySelector("textarea");
+                                            if(!t.classList.contains('reply')){
+                                                for(let i=0;i<vats.length;i++){
+                                                    vats[i].classList.remove('reply');
+                                                    vats[i].innerText = "回复";
+                                                }
+                                                t.classList.add('reply');
+                                                t.innerText = "取消回复";
+                                                t.parentElement.parentElement.appendChild(adopt_node);  // append adopt node
+                                                adopt_area.focus();
+                                            }else{
+                                                t.classList.remove('reply');
+                                                t.innerText = "回复";
+                                                vcomments.insertBefore(adopt_node, vcomments.querySelector(".vinfo"));  // reverse adopt
+                                                adopt_area.focus();
                                             }
-                                            t.classList.add('reply');
-                                            t.innerText = "取消回复";
-                                            t.parentElement.parentElement.appendChild(adopt_node);  // append adopt node
-                                            adopt_area.focus();
+                                            break;
                                         }else{
-                                            t.classList.remove('reply');
-                                            t.innerText = "回复";
-                                            vcomments.insertBefore(adopt_node, vinfo);  // reverse adopt
-                                            adopt_area.focus();
+                                            t = t.parentNode;
                                         }
-                                        break;
-                                    }else{
-                                        t = t.parentNode;
                                     }
                                 }
                             }
@@ -314,7 +306,7 @@
             	                'category_name' => "sitelink",
             	                'hide_invisible' => 0
         	                )));
-        	                echo '<a id="more" href="/'.get_template_bind_cat('category-2bfriends.php')->slug.'" title="更多" target="_blank">  更多 </a>';
+        	                echo '<a id="more" href="'.get_category_link(get_template_bind_cat('category-2bfriends.php')->term_id).'" title="更多" target="_blank">  更多 </a>';
                         }
                     ?>
                 </li>

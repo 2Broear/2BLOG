@@ -37,6 +37,7 @@
     font-size: var(--min-size);
     display: block;
     opacity: .75;
+    line-height: 23px;
 }
 .win-nav .nav-header a:hover{text-decoration:overline}
 .win-nav .nav-header a{color:var(--theme-color);font-size:smaller}
