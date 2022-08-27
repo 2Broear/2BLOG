@@ -11,7 +11,7 @@
             <?php
                 echo '<p>';
                 $nick = get_option('site_nick', get_bloginfo('name'));
-                $curcat = get_the_category()[0];
+                $curcat = get_the_category() ? get_the_category()[0] : false;
                 echo  is_single() ? "<b>".$nick."</b> の ".$curcat->name : bloginfo('description');
                 echo '</p><p>';
                     current_tips($nick);

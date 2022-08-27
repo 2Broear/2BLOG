@@ -54,34 +54,23 @@
         <!-- 右 -->
         <div class="recommendation wow fadeInUp hfeed" data-wow-delay="0.2s">
             <?php
-                $cat_id = get_option('site_rcmdside_cid');
-                if($cat_id){
-                    $query_array = array('cat' => $cat_id, 'meta_key' => 'post_orderby', 'posts_per_page' => 1,
-                        'orderby' => array(
-                            'meta_value_num' => 'DESC',
-                            'date' => 'DESC',
-                            'modified' => 'DESC',
-                        ),
-                        // 'tag' => 'topset',  // topset tag only(exclude none post)
-                        // 'post__in' => get_option('sticky_posts'),  // topset post(always include post)
-                    );
-                }else{
-                    $query_array = array('cat' => $cat_id, 'posts_per_page' => 1, 'order' => 'DESC', 'orderby' => 'data',
-                        // 'post__in' => get_option('sticky_posts'),
-                    );
-                }
-                $rcmd_query = new WP_Query(array_filter($query_array));
+                $rcmd_query = new WP_Query(array_filter(array('cat' => get_option('site_rcmdside_cid'), 'meta_key' => 'post_orderby', 'posts_per_page' => 1,
+                    'orderby' => array(
+                        'meta_value_num' => 'DESC',
+                        'date' => 'DESC',
+                        'modified' => 'DESC',
+                    )
+                )));
                 while ($rcmd_query->have_posts()):
                     $rcmd_query->the_post();
                     $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                     $post_orderby = get_post_meta($post->ID, "post_orderby", true);
-                    $post_image = get_postimg();
             ?>
                     <article class="<?php if($post_orderby>1) echo 'topset'; ?> article" id="recommend-inside">
                       <div class="recommend-newsImg">
                         <div>
                           <a href="<?php the_permalink() ?>">
-                            <span id="lowerbg" style="background:url('<?php echo $post_image ? $post_image : get_option('site_bgimg'); ?>') center 40% no-repeat;background-size:cover;"></span>
+                            <span id="lowerbg" style="background:url('<?php echo get_postimg(0,$post->ID,true); ?>') center 40% no-repeat;background-size:cover;"></span>
                           </a>
                           <a href="<?php the_permalink() ?>" id="rel" rel="bookmark" target="_blank">
                             <b><?php the_title() ?></b>
@@ -112,12 +101,14 @@
               $cardnav_array = explode(';',get_option('site_cardnav_array'));
               for($i=0;$i<count($cardnav_array);$i++){
                   $each_card = explode('/',$cardnav_array[$i]);
-                  $card_slug = trim($each_card[0]);
-                  $card_nick = trim($each_card[1]);
-                  $card_term = get_category_by_slug($card_slug);
-                  if(!$card_nick) $card_nick=get_category_by_slug($card_slug)->name;  //incase non diy nick
-                  if($card_slug){  //incase end with ";"
-                    echo '<span class="'.$card_slug.'"><a href="'.get_category_link($card_term->term_id).'"> '.$card_nick.'<i class="icom icon-'.$card_slug.'"></i></a></span>';
+                  if($each_card[0]){
+                      $card_slug = trim($each_card[0]);
+                      $card_nick = trim($each_card[1]);
+                      $card_term = get_category_by_slug($card_slug) ? get_category_by_slug($card_slug) : get_category(1);  // 1 for UNCATEGORIZED
+                      if(!$card_nick) $card_nick=get_category_by_slug($card_slug)->name;  //incase non diy nick
+                      if($card_slug){  //incase end with ";"
+                        echo '<span class="'.$card_slug.'"><a href="'.get_category_link($card_term->term_id).'"> '.$card_nick.'<i class="icom icon-'.$card_slug.'"></i></a></span>';
+                      }
                   }
               }
           ?>
@@ -141,9 +132,8 @@
                 </span>
                 <ul class="news-list" id="mainNews">
                     <?php 
-                        $use_temp = get_template_bind_cat('category-news.php')->slug;
-                        $temp_cat = get_category_by_slug($use_temp)->term_id;
-                        recent_posts_query($temp_cat, true);
+                        $use_temp = !get_template_bind_cat('category-news.php')->errors ? get_template_bind_cat('category-news.php')->term_id : false;  // set 'fasle' to judge in recent_posts_query
+                        recent_posts_query($use_temp, true);
                     ?>
                 </ul>
             </div>
@@ -156,9 +146,8 @@
                 </span>
                 <ul class="download-list" id="rcmdNewsHside">
                     <?php 
-                        $use_temp = get_template_bind_cat('category-notes.php')->slug;
-                        $temp_cat = get_category_by_slug($use_temp)->term_id;
-                        recent_posts_query($temp_cat, true);
+                        $use_temp = !get_template_bind_cat('category-notes.php')->errors ? get_template_bind_cat('category-notes.php')->term_id : false;  // set 'fasle' to judge in recent_posts_query
+                        recent_posts_query($use_temp, true);
                     ?>
                 </ul>
             </div>
@@ -169,6 +158,7 @@
         <!-- 左文窗 ，右图-->
         <div class="main-bottom-ta">
         <?php
+            $baas = get_option('site_leancloud_switcher');
             if(get_option('site_techside_switcher')){
                 
         ?>
@@ -182,7 +172,6 @@
                     </div>
                     <ul class="tech_window-content">
                         <?php 
-                            $baas = get_option('site_leancloud_switcher');
                             $query_cid = get_option('site_techside_cid');
                             $baas ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid);
                         ?>
@@ -190,7 +179,8 @@
                     <div class="newsBox-subText-Description" id="tech_window-bottom">
                         <?php
                             // $query_str = get_template_bind_cat('category-weblog.php')->slug;
-                            echo '<a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper(get_category($query_cid)->slug).'</b></a>';
+                            $query_slug = !get_category($query_cid)->errors ? get_category($query_cid)->slug : get_category(1)->slug;
+                            echo '<a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper($query_slug).'</b></a>';
                         ?>
                     </div>
                 </span>
@@ -228,7 +218,7 @@
                         	<span id="acg_window-content-inside_left-bList">
                         		<ol class="acg_window-content-inside_left-list">
                                     <?php
-                                        $query_slug = get_category($query_cid)->slug;
+                                        $query_slug = !get_category($query_cid)->errors ? get_category($query_cid)->slug : get_category(1)->slug;
                                         if($baas&&strpos(get_option('site_leancloud_category'), 'category-acg.php')!==false){
                                     ?>
                                             <script>

@@ -5,6 +5,8 @@
         return mb_substr($str, $b, $e);
     }
     $cats = get_categories(meta_query_categories(0, 'ASC', 'seo_order'));  // 一级分类slug文章模板
+    $the_cat_flag = null;  // php 8
+    $the_cats_flag = null;  // php 8
     if(!empty($cats)){
         foreach($cats as $the_cat){
             $the_cat_slug = $the_cat->slug;

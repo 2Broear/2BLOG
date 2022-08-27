@@ -29,10 +29,12 @@
                         $rankdata = get_comments_ranking();
                         $datalen = count($rankdata);
                         for($i=0;$i<3;$i++){
-                            $user = $rankdata[$i];
-                            $count = $user->count ? $user->count : 0;
-                            $link = $user->link;
-                            $name = $user->name ? $user->name : '???';
+                            if(array_key_exists($i,$rankdata)){
+                                $user = $rankdata[$i];
+                                $count = $user->count ? $user->count : 0;
+                                $link = $user->link;
+                                $name = $user->name ? $user->name : '???';
+                            }
                 ?>
                             <li>
                                 <span id="avatar" data-t="<?php echo $count ?>">

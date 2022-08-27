@@ -341,7 +341,7 @@ i.icomoon,
 }
 /*.additional.metaboxes li a.choosen b,*/
 .additional.metaboxes li a:hover b{
-    border-color: rgb(235 102 66 / 66%);
+    /*border-color: rgb(235 102 66 / 66%);*/
     font-weight: bold;
 }
 .additional.metaboxes li a.choosen,

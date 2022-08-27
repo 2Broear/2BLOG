@@ -52,6 +52,7 @@
         // $template_page_id = $wpdb->get_var("SELECT post_id FROM $wpdb->postmeta WHERE meta_value = '$template'");
         // $template_term_id = get_post_meta($template_page_id, "post_term_id", true); //SELECT *
         $template_term_id = $wpdb->get_var("SELECT term_id FROM $wpdb->termmeta WHERE meta_value = '$template'");
+        // return !get_category($template_term_id)->errors ? get_category($template_term_id) : get_category(1);
         return get_category($template_term_id);
     }
     /* ------------------------------------------------------------------------ *
@@ -221,7 +222,7 @@
                             'content' => strip_tags($comment->comment_content),
                             'title' => '《' . get_the_title($post_id) . '》 上有新评论啦~',
                             'url' => get_bloginfo('url')."/?p=$post_id#comments",
-                            'image' => get_postimg(0,$post_id),
+                            'image' => get_postimg(0,$post_id,true),
                             // 'corpid' => get_option('site_wpwx_id'),  // id
                             // 'corpsecret' => get_option('site_wpwx_secret'),  // secret
                             // 'msgtype' => get_option('site_wpwx_type'),  //type
@@ -262,12 +263,13 @@
         if(is_single() && preg_match_all('/<h([2-6]).*?\>(.*?)<\/h[2-6]>/is', $content, $matches) && get_option('site_indexes_switcher')) {
             $match_h = $matches[1];
             $match_m = count($match_h);
+            global $ul_li;
             for($i=0;$i<$match_m;$i++){
                 $value = $match_h[$i];
                 $title = trim(strip_tags($matches[2][$i]));
                 $content = str_replace($matches[0][$i], '<h'.$value.' id="title-'.$i.'">'.$title.'</h2>', $content);
                 $value = $match_h[$i];
-                $pre_val = $match_h[$i-1] ? $match_h[$i-1] : 9;
+                $pre_val = array_key_exists($i-1,$match_h) ? $match_h[$i-1] : 9;
                 // for($j=0;$j<$i;$j++){
                 //     echo 'h'.$match_h[$j-1].' , ';
                 // }
@@ -339,6 +341,7 @@
         $max_font = get_option('site_tagcloud_max');
         shuffle($tags);  // random tags
         if(get_option('site_tagcloud_switcher') && $tag_count>=1){
+            global $bold_font;
             for($i=0;$i<$max_show;$i++){
                 $tag = $tags[$i];
                 $rand_font = mt_rand($min_font, $max_font);
@@ -575,7 +578,7 @@
             case is_archive():
                 global $wp_query;
                 $dates = $wp_query->query;
-                $date_mon = $dates['monthnum'] ? ' - '.$dates['monthnum'].' ' : '';
+                $date_mon = array_key_exists('monthnum',$dates) ? ' - '.$dates['monthnum'].' ' : '';
                 echo $wp_query->found_posts . ' archives in ' . $dates['year'] . $date_mon . $surfix;
                 break;
             case is_page() || is_single()://in_category(array('news')):
@@ -764,7 +767,7 @@
         if($var) return $holder;else echo $holder;
     };
     //兼容gallery获取post内容指定图片（视频海报）
-    function get_postimg($index=0,$postid=false) {
+    function get_postimg($index=0,$postid=false,$default=false) {
         global $post, $posts;
         $postid ? $post = get_post($postid) : $post;
         $ret = array();
@@ -778,13 +781,17 @@
             //未匹配到图片或调用值超出图片数量范围则输出（视频海报或）默认图
             if(count($ret)<=0 || count($ret)<=$index) {
                 preg_match_all('/\<video.*poster=("[^"]*")/i', $post->post_content, $video);
-                $video_poster = trim($video[1][0],'"');
-                $video_poster ? $ret = [$video_poster] : $ret = [custom_cdn_src('img',true) . '/images/default.jpg'];
+                $video_poster = $video[1] ? trim($video[1][0],'"') : false;
+                if($video_poster){
+                    $ret = [$video_poster];
+                }else{
+                    $ret = get_option('site_default_postimg_switcher') || $default ? [custom_cdn_src('img',true) . '/images/default.jpg'] : $ret;
+                }
                 $index = 0;
             }
             
         }
-        $result = $ret[$index];
+        $result = $ret ? $ret[$index] : false;
         if(get_option('site_cdn_switcher')){
             $upload_url = wp_get_upload_dir()['baseurl'];
             return str_replace($upload_url, get_option('site_cdn_img', $upload_url), $result);
@@ -834,17 +841,13 @@
 <?php
     }
     // wp自定义（含置顶无分页）查询函数
-    function recent_posts_query($cid, $link=false, $detail=false, $random=false){
+    function recent_posts_query($cid=0, $link=false, $detail=false, $random=false){
         $orderby = $random ? 'rand' : array(
                     'date' => 'DESC',
                     'meta_value_num' => 'DESC',
                     'modified' => 'DESC',
                 );
-        if($cid){
-            $query_array = array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_per_posts'), 'orderby' => $orderby);
-        }else{
-            $query_array = array('cat' => $cid, 'posts_per_page' => get_option('site_per_posts'), 'order' => 'DESC', 'orderby' => $orderby);
-        }
+        $query_array = $cid ? array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_per_posts'), 'orderby' => $orderby) : array('cat' => $cid, 'posts_per_page' => get_option('site_per_posts'), 'order' => 'DESC', 'orderby' => $orderby);
         $left_query = new WP_Query(array_filter($query_array));
         while ($left_query->have_posts()):
             $left_query->the_post();
@@ -852,11 +855,13 @@
             $topset = get_post_meta($post->ID, "post_orderby", true)>1 ? 'topset' : false;
             $title = $detail ? trim(get_the_title()).' -（'.get_post_meta($post->ID, "post_feeling", true).'）<sup>'.$post->post_date.'</sup>' : trim(get_the_title());
             // print_r(get_category($cid)->parent);
+            $cid = !get_category($cid)->errors ? $cid : 1; //php8
             $par_cid = get_category($cid)->parent;
             $par_slug = $par_cid!=0&&get_category($par_cid)->slug!='/' ? get_category($par_cid)->slug : get_category($cid)->slug;
             $post_cat = get_the_category($post->ID);
-            $loc_id = $par_slug==get_template_bind_cat('category-acg.php')->slug ? ($post_cat[0]->parent!=0 ? $post_cat[0]->slug : $post_cat[1]->slug) : 'pid_'.get_the_ID();  // print_r(get_category(wp_get_post_categories($post->ID)[1])->slug);
-            $pre_link = $link||get_option('site_single_switcher') ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="/'.$par_slug.'#'.$loc_id.'" target="_self">';
+            $bind_slug = !get_template_bind_cat('category-acg.php')->errors ? get_template_bind_cat('category-acg.php')->slug : false;
+            $loc_id = $par_slug==$bind_slug ? ($post_cat[0]->parent!=0 ? $post_cat[0]->slug : $post_cat[1]->slug) : 'pid_'.get_the_ID();  // print_r(get_category(wp_get_post_categories($post->ID)[1])->slug);
+            $pre_link = $link||get_option('site_single_switcher') ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="'.get_category_link($cid).'#'.$loc_id.'" target="_self">';
             echo '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
         endwhile;
         wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
@@ -888,8 +893,8 @@
             <div class="inbox flexboxes" id="<?php echo 'pid_'.get_the_ID() ?>">
                 <div class="inbox-headside flexboxes">
                     <span class="author"><?php echo $post_feeling; ?></span>
-                    <img class="bg" src="<?php echo get_postimg(); ?>">
-                    <img src="<?php echo get_postimg(); ?>">
+                    <img class="bg" src="<?php echo $postimg = get_postimg(0,$post->ID,true); ?>">
+                    <img src="<?php echo $postimg; ?>">
                 </div>
                 <div class="inbox-aside">
                     <span class="lowside-title">
@@ -1022,7 +1027,11 @@
                 global $post;
                 $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                 $post_orderby = get_post_meta($post->ID, "post_orderby", true);
-                $notes_slug = get_template_bind_cat('category-notes.php')->slug;
+                $post_rights = get_post_meta($post->ID, "post_rights", true);
+                $notes_slug = !get_template_bind_cat('category-notes.php')->errors ? get_template_bind_cat('category-notes.php')->slug : false;
+                $news_slug = !get_template_bind_cat('category-news.php')->errors ? get_template_bind_cat('category-news.php')->slug : false;
+                $weblog_slug = !get_template_bind_cat('category-weblog.php')->errors ? get_template_bind_cat('category-weblog.php')->slug : false;
+                $acg_slug = !get_template_bind_cat('category-acg.php')->errors ? get_template_bind_cat('category-acg.php')->slug : false;
                 if(!$post_styles){
     ?>
                     <article class="<?php if($post_orderby>1) echo 'topset'; ?> cat-<?php echo $post->ID ?>">
@@ -1048,7 +1057,7 @@
                     </article>
         <?php
                 }else{
-                    if(in_category(get_template_bind_cat('category-news.php')->slug)){
+                    if(in_category($news_slug)){
         ?>
                         <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window icom wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                             <div class="news-window-inside">
@@ -1085,7 +1094,7 @@
                             </div>
                         </article>
         <?php
-                    }elseif(in_category(get_template_bind_cat('category-weblog.php')->slug)){
+                    }elseif(in_category($weblog_slug)){
         ?>
                         <article class="weblog-tree-core-record i<?php the_ID() ?>">
                             <div class="weblog-tree-core-l">
@@ -1113,7 +1122,7 @@
                             </div>
                         </article>
         <?php  
-                    }elseif(in_category(get_template_bind_cat('category-acg.php')->slug)){
+                    }elseif(in_category($acg_slug)){
         ?>
                         <div class="rcmd-boxes flexboxes">
                             <div class="info anime flexboxes">

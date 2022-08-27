@@ -22,7 +22,7 @@
     <video src="" poster="<?php custom_cdn_src('img'); ?>/images/search.jpg" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
 	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s">
 	    <?php 
-            global $wp_query;
+            global $wp_query, $page_flag;
             $res_num = $wp_query->found_posts;
             $searchString=esc_html(get_search_query());
             // $page_flag = strpos(get_option('site_search_includes'), 'page')!==false ? '/page' : '';

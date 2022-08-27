@@ -464,6 +464,7 @@
         register_setting( 'baw-settings-group', 'site_description' );
         register_setting( 'baw-settings-group', 'site_support' );
         register_setting( 'baw-settings-group', 'site_inform_switcher' );
+        register_setting( 'baw-settings-group', 'site_inform_num' );
         // if(get_option('site_inform_switcher')){
         //     register_setting( 'baw-settings-group', 'site_inform_cid' );
         // }
@@ -958,7 +959,7 @@
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="">文章页目录索引，开启后在文章页可见（默认 notes 类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>文章目录索引</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">文章页目录索引，开启后在文章页可见（建议 notes 类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>文章目录索引</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -972,23 +973,32 @@
                                         $opt = 'site_indexes_includes';  //unique str
                                         $value = get_option($opt);
                                         echo '<p class="description" id="">选定分类下文章模版将开启目录索引，使用逗号“ , ”分隔（默认 notes 类型</p><div class="checkbox">';
-                                        $notes_cat =  get_template_bind_cat('category-notes.php');
-                                        $news_cat =  get_template_bind_cat('category-news.php');
-                                        $arrobj = array(
-                                            array('name' => $notes_cat->name, 'slug' => $notes_cat->slug),
-                                            array('name' => $news_cat->name, 'slug' => $news_cat->slug),
-                                        );
-                                        $preset = $arrobj[0]['slug'].',';
-                                        if(!$value){
-                                            update_option($opt, $preset);
-                                            $value = $preset;
+                                        $notes_cat =  !get_template_bind_cat('category-notes.php')->errors ? get_template_bind_cat('category-notes.php') : false;
+                                        $news_cat =  !get_template_bind_cat('category-news.php')->errors ? get_template_bind_cat('category-news.php') : false;
+                                        $arrobj = array();
+                                        if($notes_cat && $news_cat){
+                                            array_push($arrobj, array('name' => $notes_cat->name, 'slug' => $notes_cat->slug));
+                                            array_push($arrobj, array('name' => $news_cat->name, 'slug' => $news_cat->slug));
+                                        }elseif($notes_cat){
+                                            array_push($arrobj, array('name' => $notes_cat->name, 'slug' => $notes_cat->slug));
+                                        }elseif($news_cat){
+                                            array_push($arrobj, array('name' => $news_cat->name, 'slug' => $news_cat->slug));
                                         }
-                                        foreach ($arrobj as $arr){
-                                            $slug = $arr['slug'];
-                                            $checking = strpos($value, $slug)!==false ? 'checked' : '';
-                                            echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$arr['name'].'</label>';
+                                        if($arrobj){
+                                            $preset = $arrobj[0]['slug'].',';
+                                            if(!$value){
+                                                update_option($opt, $preset);
+                                                $value = $preset;
+                                            }
+                                            foreach ($arrobj as $arr){
+                                                $slug = $arr['slug'];
+                                                $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                                echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$arr['name'].'</label>';
+                                            }
+                                            echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
+                                        }else{
+                                            echo '<b> Empty Index </b>';
                                         }
-                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
                                     ?>
                                 </td>
                                 <!--<td>-->
@@ -1731,7 +1741,7 @@
                             <?php
                                 $opt = 'site_cardnav_array';
                                 $value = get_option($opt);
-                                $preset = get_template_bind_cat('category-news.php')->slug.'/文; '.get_template_bind_cat('category-notes.php')->slug.'/筆; '.get_template_bind_cat('category-weblog.php')->slug.'/記; '.get_template_bind_cat('category-2bfriends.php')->slug.'/友'; 
+                                $preset = 'news/文; notes/筆; weblog/記; links/友'; 
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
                                 echo '<p class="description" id="site_cardnav_array_label">展示在首页的导航卡片，使用分号“ ; ”分隔（使用斜杠“ / ”自定义名称（留空默认分类名称）如 news/文; notes/笔...</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" value="' . $preset . '"/>';
                             ?>
@@ -1799,7 +1809,7 @@
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_techside_switcher_label">开启首页科技资讯栏目（支持第三方数据储存及多个分类文章</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">日志栏目</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_techside_switcher_label">开启首页科技资讯栏目（默认开启，选择任意项后可手动关闭，支持多分类及baas数据</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">日志栏目</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1849,7 +1859,7 @@
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_switcher_label">开启首页科技资讯栏目（支持第三方数据储存及多个分类文章</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">ACGN栏目</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_switcher_label">开启首页科技资讯栏目（默认开启，选择任意项后可手动关闭，支持多分类及baas数据</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">ACGN栏目</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2050,7 +2060,7 @@
                                         // $preset = $cats_haschild[0]->term_id;  //return id rather then slug(get id by slug once)
                                         $value = get_option($opt);
                                         // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if options unset
-                                        echo '<label for="'.$opt.'"><p class="description" id="site_mostview_cid_label">默认使用一级栏目首位“'.$cats_haschild[0]->slug.'”分类（亦可选用其他分类文章热度排行</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_mostview_cid_label">默认使用一级栏目首位“$cats_haschild[0]->slug”分类（亦可选用其他分类文章热度排行</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
                                             category_options($value);
                                         echo '</select><label>';
                                     ?>

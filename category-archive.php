@@ -54,7 +54,7 @@
                     // $unique_arr = array();
                     for($i=0;$i<count($cur_posts);$i++){
                         $each_posts = $cur_posts[$i];
-                        $prev_posts = $cur_posts[$i-1];//$i>1 ? $cur_posts[$i-1] : false;
+                        $prev_posts = $i>0 ? $cur_posts[$i-1] : $cur_posts[$i];//$i>1 ? $cur_posts[$i-1] : false;
                     // foreach ($cur_posts as $each_posts) {
                         $this_post = get_post($each_posts->ID);
                         $prev_post = get_post($prev_posts->ID);

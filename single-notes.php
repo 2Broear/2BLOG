@@ -14,7 +14,7 @@
 </head>
 <body class="<?php theme_mode(); ?>">
     <div class="content-all">
-        <div class="win-top bg" style="background: url(<?php echo get_postimg(); ?>) center center /cover;">
+        <div class="win-top bg" style="background: url(<?php echo get_postimg(0,$post->ID,true); ?>) center center /cover;">
             <header>
                 <nav id="tipson" class="ajaxloadon">
                     <?php get_header(); ?>

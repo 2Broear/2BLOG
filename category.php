@@ -1,7 +1,7 @@
 <?php
     $cat = $cat ? $cat : get_page_cat_id(current_slug(false));  // if is_page() then rewrite cat to cid
     $cur_template = get_term_meta($cat, 'seo_template', true);
-    $cur_template=='default' ? include_once(TEMPLATEPATH . '/index.php') : include_once(TEMPLATEPATH . '/'.$cur_template);//use category as folder
+    !$cur_template || $cur_template=='default' ? include_once(TEMPLATEPATH . '/index.php') : include_once(TEMPLATEPATH . '/'.$cur_template);//use category as folder
     $cats = get_categories(meta_query_categories(0, 'ASC', 'seo_order'));
     if(!empty($cats)){
         foreach($cats as $the_cat){

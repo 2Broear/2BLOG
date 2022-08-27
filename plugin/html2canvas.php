@@ -3,9 +3,10 @@
     require_once( '../../../../wp-load.php' );  // Load WordPress Core 
     parse_str($_SERVER['QUERY_STRING'], $parameters);
     global $post;
-    $post = get_post($parameters['pid']);
+    $pid = array_key_exists('pid',$parameters) ? $parameters['pid'] : 1;
+    $post = get_post($pid);  // global varible
 ?>
-<div id="capture"><header><em style="background:url(<?php echo get_postimg().'?fixed_cors_str'; ?>) center center /cover"></em></header><aside><h3><?php the_title(); ?></h3><p><?php custom_excerpt(50); ?></p><small><span contenteditable="true"><?php echo get_the_tag_list('','、',''); ?></span><?php the_time("d-m-Y"); ?></small><span id="qrcode"></span></aside><footer><b> SHARING VIA <?php echo get_option('site_nick'); ?> </b></footer></div><div class="poster active"><div id="html2img"><div id="html2canvas"><div id="loadbox"><img id="loading" src="<?php custom_cdn_src('img'); ?>/images/loading_3_color_tp.png" /><h3> 正在生成海报，请等待.. </h3><span id="cancel" onclick="poster_sw()"></span><span id="poster"></span></div></div></div><div id="mask"></div></div>
+<div id="capture"><header><em style="background:url(<?php echo get_postimg(0,$pid,true).'?fixed_cors_str'; ?>) center center /cover"></em></header><aside><h3><?php the_title(); ?></h3><p><?php custom_excerpt(50); ?></p><small><span contenteditable="true"><?php echo get_the_tag_list('','、',''); ?></span><?php the_time("d-m-Y"); ?></small><span id="qrcode"></span></aside><footer><b> SHARING VIA <?php echo get_option('site_nick'); ?> </b></footer></div><div class="poster active"><div id="html2img"><div id="html2canvas"><div id="loadbox"><img id="loading" src="<?php custom_cdn_src('img'); ?>/images/loading_3_color_tp.png" /><h3> 正在生成海报，请等待.. </h3><span id="cancel" onclick="poster_sw()"></span><span id="poster"></span></div></div></div><div id="mask"></div></div>
 <style>
 body{position: relative;}
 :root{--color-fa:#fafafa;--color-e:#eee;--color-d:#ddd;--color-c:#ccc;--color-9:#949494;--color-8:#888;--color-6:#666;--color-4a:#4a4a4a;--color-3a:#3a3a3a;--color-2b:#2b2b2b;--padding-num:15px;--radius:10px}

@@ -25,7 +25,7 @@
             global $wp_query;
             $dates = $wp_query->query;
             $date_yea = $dates['year'];
-            $date_mon = $dates['monthnum'] ? '<b> '.$dates['monthnum'].' </b>月' : '';
+            $date_mon = array_key_exists('monthnum',$dates) ? '<b> '.$dates['monthnum'].' </b>月' : '';
             echo '<b>'.$date_yea.'</b> 年'.$date_mon.'中找到<b> '.$wp_query->found_posts.' </b>篇记录';
             // print_r($dates);
             $string = 'Archives of '.$date_yea;
