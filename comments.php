@@ -99,9 +99,9 @@
             $user_mail = $wp_user->user_email; // $_COOKIE["comment_author_email_" . COOKIEHASH];
             $user_link = $wp_user->user_url; // $_COOKIE["comment_author_url_" . COOKIEHASH];
         }else{
-            $user_name = isset($_COOKIE["comment_author_" . COOKIEHASH]) ? $_COOKIE["comment_author_" . COOKIEHASH] : false;
-            $user_mail = isset($_COOKIE["comment_author_email_" . COOKIEHASH]) ? $_COOKIE["comment_author_email_" . COOKIEHASH] : false;
-            $user_link = isset($_COOKIE["comment_author_url_" . COOKIEHASH]) ? $_COOKIE["comment_author_url_" . COOKIEHASH] : false;
+            $user_name = array_key_exists("comment_author_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_" . COOKIEHASH] : false;
+            $user_name = array_key_exists("comment_author_email_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_email_" . COOKIEHASH] : false;
+            $user_name = array_key_exists("comment_author_url_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_url_" . COOKIEHASH] : false;
         };
         if($comment_sw){
             $welcome="既来之则留之，欢迎在下方留言评论。提交评论后还可以撤销或重新编辑，未发布的留言会被储存在本地以供下次继续编辑（Valine 会自动保存您的评论信息到浏览器）";
@@ -155,7 +155,7 @@
         }else{
             $avatar_src = match_mail_avatar($user_mail);
             parse_str($_SERVER['QUERY_STRING'], $parameters);
-            $replytocom = $parameters&&$parameters['replytocom'] ? $parameters['replytocom'] : false;  // php8
+            $replytocom = array_key_exists('replytocom',$parameters) ? $parameters['replytocom'] : false;  // php8
 ?>
             <div class="wp_comment_box">
                 <form action="<?php echo esc_url(home_url('/')); ?>wp-comments-post.php" method="post">

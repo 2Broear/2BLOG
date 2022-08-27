@@ -19,7 +19,11 @@
         </nav>
     </header>
     <div class="content-all-windows">
-        <div class="news-article-window<?php $fullview = $_COOKIE['article_fullview'];$fontsize = $_COOKIE['article_fontsize'];if($fullview) echo " fullview";else echo ""; ?>">
+        <div class="news-article-window<?php 
+            $fullview = array_key_exists('article_fullview',$_COOKIE) ? $_COOKIE['article_fullview'] : false;
+            $fontsize = array_key_exists('article_fontsize',$_COOKIE) ? $_COOKIE['article_fontsize'] : false;
+            echo $fullview ? " fullview" : ""; 
+        ?>">
             <?php breadcrumb_switch(false,true); ?>
             <div class="news-article-core">
                 <div class="news-article-inside">

@@ -276,7 +276,8 @@
                 $ul_li .= $value>$pre_val || $value>=3 ? '<ol class="child"><li id="t'.$i.'"><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a></li></ol>' : '<li id="t'.$i.'"><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a></li>';
                 // $ul_li .= '<li><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a>'.$child.'</li>';
             }
-            $auto_fold = !$_COOKIE['article_index'] ? 'fold' : '';
+            $article_index = array_key_exists('article_index',$_COOKIE) ? $_COOKIE['article_index'] : false;
+            $auto_fold = !$article_index ? 'fold' : '';
             $index_array = explode(',', get_option('site_indexes_includes'));
             for($i=0;$i<count($index_array);$i++){
                 $each_index = trim($index_array[$i]);
@@ -595,7 +596,8 @@
     
     // 自动主题模式
     function theme_mode(){
-        echo get_option('site_darkmode_switcher') ? $_COOKIE['theme_mode'] : 'theme_mode_disabled';
+        $theme = array_key_exists('theme_mode',$_COOKIE) ? $_COOKIE['theme_mode'] : false;
+        echo get_option('site_darkmode_switcher') ? $theme : 'theme_mode_disabled';
     }
     
     // 指定分类输出RSS feed  https://www.laobuluo.com/3863.html
@@ -619,10 +621,11 @@
     // 初始化 wordpress 执行函数
     function custom_theme_setup(){
         $expire = time() + 1209600;  // 自定义 cookie 函数 darkmode cookie set
-        if(!isset($_COOKIE['theme_manual'])){  //auto set manual 0 (reactive with javascript manually)
+        $theme_manual = array_key_exists('theme_manual',$_COOKIE) ? $_COOKIE['theme_manual'] : false;
+        if(!isset($theme_manual)){  //auto set manual 0 (reactive with javascript manually)
             setcookie('theme_manual', 0, $expire, COOKIEPATH, COOKIE_DOMAIN, false);
         };
-        if(!$_COOKIE['theme_manual']){  //if theme_manual actived
+        if(!$theme_manual){  //if theme_manual actived
             $hour = current_time('G');
             $start = get_option('site_darkmode_start');
             $end = get_option('site_darkmode_end');
@@ -1062,7 +1065,7 @@
                         <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window icom wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                             <div class="news-window-inside">
                                 <?php
-                                    if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img class="lazy" src="'.get_postimg().'" /></a></span>';
+                                    if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img class="lazy" src="'.get_postimg(0,$post->ID,true).'" /></a></span>';
                                 ?>
                                 <div class="news-inside-content">
                                     <h2 class="entry-title">
@@ -1129,8 +1132,8 @@
                                 <div class="inbox flexboxes">
                                     <div class="inbox-headside flexboxes">
                                         <span class="author"><?php echo get_post_meta($post->ID, "post_feeling", true); ?></span>
-                                        <img class="bg" src="<?php echo get_postimg(); ?>">
-                                        <img src="<?php echo get_postimg(); ?>">
+                                        <img class="bg" src="<?php echo get_postimg(0,$post->ID,true); ?>">
+                                        <img src="<?php echo get_postimg(0,$post->ID,true); ?>">
                                     </div>
                                     <div class="inbox-aside">
                                         <span class="lowside-title">
