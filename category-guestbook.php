@@ -28,7 +28,7 @@
                     <?php get_header(); ?>
 				</nav>
 			</header>
-            <video src="<?php echo get_option('site_guestbook_video'); ?>" poster="<?php echo cat_metabg($cat); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+            <video src="<?php echo get_option('site_guestbook_video'); ?>" poster="<?php echo cat_metabg($cat, custom_cdn_src('img',true).'/images/guestbook.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
             <h5> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? '<span>'.$cat_desc.'</span>' : '畅所<b style="font-family:sans-serif;">，</b><span>你の欲言。</span>'; ?> </h5>
         </div>
 		<div class="content-all-windows" style="padding-top:0;">

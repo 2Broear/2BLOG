@@ -128,13 +128,10 @@
                 <span class='resource-windows-top_inside'>
                     <span id="icon-resource"></span>
                 </span>
-                <h3>近期文章</h3>
+                <h3><?php $news_temp = !get_template_bind_cat('category-news.php')->errors ? get_template_bind_cat('category-news.php') : false;echo $news_temp ? $news_temp->name : '近期文章'; ?></h3>
                 </span>
                 <ul class="news-list" id="mainNews">
-                    <?php 
-                        $use_temp = !get_template_bind_cat('category-news.php')->errors ? get_template_bind_cat('category-news.php')->term_id : false;  // set 'fasle' to judge in recent_posts_query
-                        recent_posts_query($use_temp, true);
-                    ?>
+                    <?php recent_posts_query($news_temp->term_id, true); ?>
                 </ul>
             </div>
             <div id="download-window">
@@ -142,13 +139,10 @@
                 <span class='resource-windows-top_inside'>
                     <span id="icon-download"></span>
                 </span>
-                <h3>笔记栈</h3>
+                <h3><?php $note_temp = !get_template_bind_cat('category-notes.php')->errors ? get_template_bind_cat('category-notes.php') : false;echo $note_temp ? $note_temp->name : '笔记栈'; ?></h3>
                 </span>
                 <ul class="download-list" id="rcmdNewsHside">
-                    <?php 
-                        $use_temp = !get_template_bind_cat('category-notes.php')->errors ? get_template_bind_cat('category-notes.php')->term_id : false;  // set 'fasle' to judge in recent_posts_query
-                        recent_posts_query($use_temp, true);
-                    ?>
+                    <?php recent_posts_query($note_temp->term_id, true); ?>
                 </ul>
             </div>
         </div>
@@ -166,9 +160,9 @@
                 <span id="tech_window" style="width:100%">
                     <div class="newsBox-supTitle flexboxes" id="tech_window-top">
                         <span class="newsBox-supTitle-iDescription" id="icon-technology" title="Tech | 科技资讯">
-                            <em>BLOG</em><i class="icom hardware"></i>
+                            <em>BLOG</em><i class="icom icon-weblog"></i>
                         </span>
-                        <h2>WARE - 「站点日志」</h2>
+                        <h2><?php $blog_temp = !get_template_bind_cat('category-weblog.php')->errors ? get_template_bind_cat('category-weblog.php') : false;echo strtoupper($blog_temp->slug).'「'.$blog_temp->name.'」'; ?></h2>
                     </div>
                     <ul class="tech_window-content">
                         <?php 
@@ -195,24 +189,23 @@
                 <div id="tech-acg-inside_acg-allpart">
                     <div class="newsBox-supTitle flexboxes" id="acg_window-top">
                         <span class="newsBox-supTitle-iDescription" id="icon-acg" title="ACG 宅周报">
-                            <em>ACG</em><i class="icom hardware"></i>
+                            <em>ACG</em><i class="icom icon-acg"></i>
                         </span>
-                        <h2> ACG mt はすぐに 推薦 & Tag clouds </h2>
+                        <h2> ACG はすぐに TAG CLOUDS </h2>
                     </div>
                     <ul class="acg_window-content">
                         <!--<div class="ajaxloadMainAcg" ajaxload="ajax/main/ajax-main-acg.html"></div>-->
                         <li class="acg_window-content-inside_left">
                         	<span id="acg_window-content-inside_left-tInfo">
-                        		<span id="acg_window-content-inside_left-pic">
+                        		<!--<span id="acg_window-content-inside_left-pic">-->
                         		    <?php 
                         			    $query_cid = get_option('site_acgnside_cid');
-                        			    echo '<em style="background:url('.cat_metabg($query_cid, custom_cdn_src('img',true).'/images/acg.jpg').') center /cover;width:100%;height:155px;display:block;"></em>';
+                        			    ///echo '<em style="background:url('.cat_metabg($query_cid, custom_cdn_src('img',true).'/images/acg.jpg').') center /cover;width:100%;height:155px;display:block;"></em>';
                     			    ?>
-                        		</span>
+                        		<!--</span>-->
                         		<span id="acg_window-content-inside_left-txt">
-                    				<h2>pixivトップ50</h2>
-                    				<p>pixivで最もホットな2Dクリエイティブドローイングコレクショントップ<span id="acg_window-content-inside_left-txt_hidden" unselectable="on"> 10 </span> &nbsp;以上.</p>
-                        		<a href="javascript:;"> Pixiv 每日排行列表（前5） </a>
+                    				<!--<h2>pixivトップ50</h2>-->
+                    				<p>pixivで最もホットな2Dクリエイティブドローイングコレクショントップ<span id="acg_window-content-inside_left-txt_hidden" unselectable="on"> 10 </span> &nbsp;以上.<a href="javascript:;"> 漫游影视近期动态 </a></p>
                         		</span>
                         	</span>
                         	<span id="acg_window-content-inside_left-bList">
@@ -241,7 +234,7 @@
                                             </script>
                                     <?php
                                         }else{
-                                            recent_posts_query($query_cid, false, true, true);
+                                            recent_posts_query($query_cid, false, true, false);
                                         }
                                     ?>
                         		</ol>
@@ -249,7 +242,7 @@
                         </li>
                         <li class="acg_window-content-inside_right">
                             <div class="tags">
-                                <?php the_tag_clouds('<span>','</span>'); ?>
+                                <?php the_tag_clouds('span'); ?>
                             </div>
                         	<!--<span id="acg-content-area" style="background: url(<?php //echo get_option('site_techside_bg'); ?>) center /cover"></span>-->
                         	<!--<span id="acg-content-area-txt"><p id="hitokoto"> ? </p></span>-->

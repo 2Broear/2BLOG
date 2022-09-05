@@ -330,11 +330,13 @@
         return $array;
     };
     // 标签云
-    function the_tag_clouds($before="<li>", $after="</li>"){
+    function the_tag_clouds($html_tag="li"){
+        // $max_show = get_option('site_tagcloud_num');
         $tags = get_tags(array(
             'taxonomy' => 'post_tag',
             'orderby' => 'name',
-            'hide_empty' => false // for development
+            // 'hide_empty' => false // for development,
+            // 'number' => $max_show
         ));
         $tag_count = count($tags);
         $max_show = $tag_count<=get_option('site_tagcloud_num') ? $tag_count : get_option('site_tagcloud_num');
@@ -355,7 +357,7 @@
                     $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'var(--theme-color)' : 'inherit';
                 }
                 $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
-                echo $before.'<a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';color:'.$color_font.'">'.$tag->name.'</a>'.$after;
+                echo '<'.$html_tag.'><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';color:'.$color_font.'">'.$tag->name.'</a></'.$html_tag.'>';
             }
         }else{
             echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
@@ -1022,6 +1024,7 @@
                 }
                 .rcmd-boxes{width:49%!important}
             }
+            .main h2{margin-bottom: 0}
     	</style>
     <?php
         // global $post;

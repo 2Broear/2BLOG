@@ -120,6 +120,7 @@
     color: var(--preset-8);
     margin: auto 25px 15px 0;
     font-size: var(--min-size-rem);
+    opacity: .75;
 }
 /*设置 行内元素*/
 /*.friends-boxes .deals .inboxSliderCard .inbox{
@@ -185,7 +186,6 @@
 	margin: 3px;
 	/*border: 2px dashed var(--theme-color);*/
 	border: 2px solid rgb(255 255 255 / 5%);
-	border-radius:var(--radius);
 	transform: scale(.9);
 	-webkit-transform: scale(.9);
 	/* background-color: #fffafa;
@@ -210,6 +210,7 @@
 	box-shadow: rgba(0,0,0,0.08) 0 0 12px;
 	transition: transform .35s ease;
 	will-change: transform;
+	border-radius:var(--radius);
 }
 .friends-boxes .deals .inbox.girl em,
 .friends-boxes .deals .inbox.girl::after{
@@ -279,7 +280,7 @@
 	vertical-align: middle;
 	-webkit-user-drag: none;
 	border-radius: 50%;
-	border-top-left-radius: unset;
+	border-top-left-radius: var(--radius);
 	transition: border-radius .15s ease;
 }
 .friends-boxes .deals .inbox .inbox-headside span.ssl{
@@ -320,6 +321,7 @@
 }
 .friends-boxes .deals .inbox .inbox-aside span.lowside-title h4{
 	margin: 20px auto auto;
+	/*color: var(--preset-6);*/
 }
 .friends-boxes .deals .inbox .inbox-aside span.lowside-title h4 a{
 	color: inherit;
@@ -330,7 +332,7 @@
 }
 .friends-boxes .deals .inbox .inbox-aside span.lowside-description p{
 	/*color: var(--preset-9);*/
-	opacity: .75;
+	opacity: .65;
 	font-size: 12px;
 	margin-bottom: 0;
 	max-height: inherit;

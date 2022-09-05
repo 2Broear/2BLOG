@@ -17,6 +17,7 @@
         .vquote{border-left:none!important;}
         blockquote{margin:10px 0 auto!important};
         .tk-content{overflow: hidden;}
+        .pageSwitcher span{color: var(--preset-9);}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -99,7 +100,7 @@
                         echo '<div class="weblog-tree-etc load"><button>加载更多</button></div>';
                     }
                 ?>
-                <div class="pageSwitcher" style="width:100%;display:inline-block;user-select: none;">
+                <div class="pageSwitcher">
                     <?php 
                         echo paginate_links(array(
                             'prev_text' => __('上一页'),
@@ -113,7 +114,7 @@
                 </div>
                 <div id="comment_txt" class="wow fadeInUp" data-wow-delay="0.25s">
                     <?php 
-                        the_content();  // the_page_content(current_slug());
+                        // the_content();  // cancel for hidding sub-cat content
                         dual_data_comments();  // query comments from database before include
                     ?>
                 </div>
@@ -194,7 +195,7 @@
                                 // clearTimeout(delay);
                             // }, 1000);
                         editor.oninput=function(){
-                            if(!this.value.match(quote) || this.value.substr(this.value.length-3,this.value.length)!='...'){
+                            if(this.value.indexOf(quote)==-1 || this.value.substr(this.value.length-3,this.value.length)!='...'){  //
                                 this.value = quote;
                                 editor.setSelectionRange(0,0);
                             }
