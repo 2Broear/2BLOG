@@ -32,7 +32,7 @@
                     if(!$baas){
         	            $rich_links = get_bookmarks(array(
         	                'orderby' => 'link_id',
-        	                'order' => 'ASC',  // 最旧排最前
+        	                'order' => 'ASC',  // 最新排最后
         	                'category_name' => "standard",
         	                'hide_invisible' => 0
     	                ));
@@ -43,7 +43,7 @@
         	                'hide_invisible' => 0
     	                ));
         	            $lost_links = get_bookmarks(array(
-        	                'orderby' => 'link_id',
+        	                'orderby' => 'updated',  //link_updated
         	                'order' => 'DESC',  // 最新排最前
         	                'category_name' => "missing",
         	                'hide_invisible' => 0
@@ -52,7 +52,7 @@
                         if(count($rich_links)>0){
                 ?>
                             <div class="inbox-clip"><h2 id="exchanged"> 小伙伴们 </h2></div>
-                            <div class="deals exchanged flexboxes"><?php site_links($rich_links, 'rich'); ?></div>
+                            <div class="deals exchanged flexboxes"><?php site_links($rich_links, 'full'); ?></div>
 				<?php 
                         }else{
                             echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';
@@ -60,14 +60,14 @@
                         if(count($rcmd_links)>0){
                 ?>
                             <div class="inbox-clip"><h2 id="rcmded"> 荐亦有见 </h2></div>
-                            <div class="deals rcmd flexboxes"><?php site_links($rcmd_links, 'poor'); ?></div>
+                            <div class="deals rcmd flexboxes"><?php site_links($rcmd_links, 'half'); ?></div>
 				<?php 
                         };
                         if(count($lost_links)>0){
                 ?>
                             <div class="deals oldest">
             					<div class="inboxSliderCard">
-                                    <div class="slideBox flexboxes"><?php site_links($lost_links, 'miss'); ?></div>
+                                    <div class="slideBox flexboxes"><?php site_links($lost_links, 'none'); ?></div>
             					</div>
             				</div>
 				<?php 

@@ -48,6 +48,11 @@
 	top: 0;
 	right: -15px;
 }
+.friends-boxes .inbox-clip p{
+    margin-top: auto;
+    opacity: .5;
+    font-size: small;
+}
 .friends-boxes h3{
 	color: var(--preset-6);
 	font-weight: 400;
@@ -243,6 +248,9 @@
 	background: var(--preset-f);
 	opacity: .66;
 }
+.friends-boxes .deals .inbox.standby:hover > .inbox-aside span{
+    color: #f9ac1d;
+}
 .friends-boxes .deals .inbox.standby:hover{
 	border: 2px dashed #f9ac1d;
 	background: #fffbeb;
@@ -283,23 +291,26 @@
 	border-top-left-radius: var(--radius);
 	transition: border-radius .15s ease;
 }
-.friends-boxes .deals .inbox .inbox-headside span.ssl{
+.friends-boxes .deals .inbox span.ssl{
 	color: var(--preset-f);
-	font-size: 0.8rem;
-	line-height: 22px;
-	padding: 0 8px;
-	border-top-right-radius: 15px;
-	border-bottom-right-radius: 15px;
+	font-size: 12px;
+	line-height: 25px;
+	padding: 0 10px;
+	/*border-top-right-radius: 15px;*/
+	border-bottom-right-radius: var(--radius);
+	border-top-left-radius: var(--radius);
 	position: absolute;
 	background: var(--preset-3a);
-	top: 0;left: 0;
+	top: 0;
+	left: 0;
 	opacity: .88;
+	z-index: 9;
 }
-.friends-boxes .deals .inbox .inbox-headside span.ssl.https{
+.friends-boxes .deals .inbox span.ssl.https{
 	background: #4fc323;
-	opacity: 0;
+	/*opacity: 0;*/
 }
-.friends-boxes .deals .inbox .inbox-headside span.ssl.http{
+.friends-boxes .deals .inbox span.ssl.http{
 	background: #f4222c;
 }
 .friends-boxes .deals.rcmd .inbox .inbox-aside{

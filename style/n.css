@@ -91,6 +91,7 @@ body.dark .article_index a{
 }
 
 
+figure.wp-block-video,
 figure.wp-block-image{
     max-width: 66%;
     display: inline-block;

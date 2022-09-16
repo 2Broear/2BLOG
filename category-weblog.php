@@ -81,7 +81,7 @@
                                         </div>
                                         <div class="tree-box-content">
                                             <span id="core-info">
-                                                <p class="excerpt"><?php custom_excerpt(100) ?></p>
+                                                <p class="excerpt"><?php the_content();//custom_excerpt(200); ?></p>
                                             </span>
                                             <?php
                                                 $ps = get_post_meta($post->ID, "post_feeling", true);

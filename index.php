@@ -167,7 +167,7 @@
                     <ul class="tech_window-content">
                         <?php 
                             $query_cid = get_option('site_techside_cid');
-                            $baas ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid);
+                            $baas&&strpos(get_option('site_leancloud_category'), 'category-weblog.php')!==false ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid);
                         ?>
                     </ul>
                     <div class="newsBox-subText-Description" id="tech_window-bottom">

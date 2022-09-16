@@ -684,23 +684,31 @@
         }
     }
     //友情链接函数
-    function site_links($links,$iframe=false){
+    function site_links($links,$frame=false){
         // if(!$orderby) $orderby='id';  //默认id排序
     	//$links = get_bookmarks(array('orderby'=>'date','order'=>'DESC','category_name'=>$category,'hide_invisible'=>0));
         foreach ($links as $link){
             $target = $link->link_target;
             if(!$target) $target="_blank";
-            $link->link_rating>=1 ? $sex="girl" : $sex="boy";
+            $sex = $link->link_rating==1 ? 'girl' : 'boy';
+            $rcmd = $link->link_rating==10 ? '<span class="ssl https"> NICE ONE </span>' : '';
+            $status = $link->link_visible!='Y' ? 'standby' : 'standard';
+            // print_r($link);
+            // global $wpdb;
+            // print_r($wpdb->get_var("SELECT ID FROM $wpdb->links WHERE post_name = '$slug'"));
             $avatar = !$link->link_image ? 'https:' . get_option('site_avatar_mirror') . 'avatar/' . md5(mt_rand().'@rand.avatar') . '?s=300' : $avatar = $link->link_image;
-            switch ($iframe) {
-                case 'rich':
+            switch ($frame) {
+                case 'full':
                     // echo in_category('standby') ? 'standby' : false;
-                    if($link->link_visible==="Y") echo '<div class="inbox flexboxes standard '.$sex.'"><img class="blur" src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'"><img class="lazy" data-original="" src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false"><span class="ssl https">https</span></a></div><a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span><em></em></a></div>';
+                    // if($link->link_visible==="Y") 
+                    $avatar_status = $status=='standby' ? '<img class="lazy" data-original="" src="" alt="近期访问出现问题" draggable="false">' : '<img class="lazy" data-original="" src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
+                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'"><img class="blur" src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$rcmd.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span><em></em></a></div>';
                     break;
-                case 'poor':
-                    if($link->link_visible==="Y") echo '<div class="inbox flexboxes standard '.$sex.'"><a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span><em></em></a></div>';
+                case 'half':
+                    // if($link->link_visible==="Y") 
+                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'">'.$rcmd.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span><em></em></a></div>';
                     break;
-                case 'miss':
+                case 'none':
                     echo '<a href="'.$link->link_url.'" title="'.$link->link_name.'" target="'.$target.'" rel="nofollow">'.$link->link_name.'</a>';
                     break;
                 default:
