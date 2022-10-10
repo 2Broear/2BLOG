@@ -178,9 +178,9 @@
 .body-basically .Introduce del{
 	color: var(--preset-9);
 }
-.body-basically .Introduce img{
-	border-radius:var(--radius);
-}
+/*.body-basically .Introduce img{*/
+/*	border-radius:var(--radius);*/
+/*}*/
 .body-basically .Introduce p{
 	text-align: left;
 	line-height: 27px;

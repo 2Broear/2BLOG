@@ -78,12 +78,21 @@ jQuery(document).ready(function($){
             }
         }
         // 即时更新 select 图片
-        const select_images = document.querySelectorAll(".select_images");
+        const select_images = document.querySelectorAll(".select_images"),
+              select_mirror = document.querySelectorAll(".select_mirror");
         for(let i=0;i<select_images.length;i++){
             select_images[i].onchange=function(e){
                 let image = this.parentNode.querySelector("img"),
                     preview = this.childNodes[this.selectedIndex].getAttribute("preview");
                 preview ? image.src=preview : image.src=this.value;
+            };
+        }
+        for(let i=0;i<select_mirror.length;i++){
+            select_mirror[i].onchange=function(e){
+                let image = this.parentNode.querySelector("img"),
+                    value = this.getAttribute("parm");
+                image.src = "";  // clear last-mirror cache https://img.2broear.com/images/loading_3.png
+                value ? image.src=this.value+value : image.src=this.value;
             };
         }
         // 即时更新 select 选项

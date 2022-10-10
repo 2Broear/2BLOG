@@ -24,7 +24,7 @@
 	    <?php 
             global $wp_query;
             $tagString = single_tag_title('',false);
-            echo '<b> '.$wp_query->found_posts.' </b>篇标签“<span>'.$tagString.'</span>”の文章';
+            echo '<b> '.$wp_query->found_posts.' </b>篇标签“<span>'.$tagString.'</span>”の内容';
         ?>
     </h5>
 </div>

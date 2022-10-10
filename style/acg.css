@@ -4,7 +4,7 @@
 .win-top .counter div a:hover{color:var(--preset-f)}
 .win-top .counter div a:hover > p{opacity:unset}
 .win-top .counter div a{color:inherit;display:inherit}
-.win-top .counter h2.single{font-size:5rem}
+.win-top .counter h2.single{font-size:5rem;line-height:88px}
 .win-top .counter h2{font-size:3rem;margin:0 auto;}
 .win-top .counter h2 sup{font-size:32px;color:var(--preset-s)}
 .win-top .counter p{color:var(--preset-e);font-size:var(--min-size);margin:3px auto;opacity:.75}

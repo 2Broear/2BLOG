@@ -9,7 +9,9 @@
 <head>
     <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/about.css?v=2" />
-    <style> .player{ box-shadow: none!important;}</style>
+    <style> 
+        .player{ box-shadow: none!important;}
+    </style>
 </head>
 <body class="<?php theme_mode(); ?>">
 <div class="content-all">

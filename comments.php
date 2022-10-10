@@ -12,7 +12,7 @@
                     <em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -478px 4px"></em>
                 </span>
             </a>
-            <a id="qq" title="分享QQ" href="https://connect.qq.com/widget/shareqq/index.html?<?php echo $para_str = 'url='.get_permalink().'&p='.custom_excerpt(50,true).'&title='.get_the_title().'&summary='.custom_excerpt(100,true).'&pics='.get_postimg(); ?>" target="_blank"><span><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
+            <a id="qq" style="opacity: .35;pointer-events: none;" title="分享QQ" href="https://connect.qq.com/widget/shareqq/index.html?<?php echo $para_str = 'url='.get_permalink().'&p='.custom_excerpt(50,true).'&title='.get_the_title().'&summary='.custom_excerpt(100,true).'&pics='.get_postimg(); ?>" target="_blank"><span><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
             <a id="qzone" title="分享空间（QZone）" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?<?php echo $para_str; ?>" target="_blank"><span><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
             <a id="Poster" title="图文海报（Poster）"><span id="recall" onclick="ajaxPoster()"><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
         </div>

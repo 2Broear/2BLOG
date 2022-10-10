@@ -192,6 +192,7 @@ body.dark .wp_comments:hover{background:var(--preset-3a)!important}
 .news-article-container ul{list-style-type:square;margin:18px auto;}
 .news-article-container li{text-align:left;margin-left:5px;line-height:36px}
 ul li>ol li,ol li>ul li{font-size: var(--min-size)}
+.news-article-container ol.child{margin: auto;}
 .news-article-container ol{margin:18px auto/*letter-spacing:1px;*/}
 .news-article-container table{border-spacing:10px;border-collapse:collapse;width:100%}
 .news-article-container table,caption{padding:10px 0}

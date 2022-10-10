@@ -21,6 +21,7 @@
     display: block;
     max-width: 90%;
     border-left: 2px solid rgba(150, 150, 150, 0.36)!important;
+    opacity: .75;
 }
 .tk-content blockquote:first-letter,
 .vcontent blockquote:first-letter {
@@ -223,9 +224,15 @@ option{
 	color: var(--preset-8);
 	font-size: var(--min-size);
 	line-height: 25px;
+	border-bottom: 1px dashed var(--preset-d);
 	padding: 0 15px;
 	/* letter-spacing: 1px; */
-	border-bottom: 1px dashed var(--preset-d);
+}
+.weblog-tree-box .tree-box-content p#sub a,
+.weblog-tree-core-l #weblog-timeline a{
+    color: inherit;
+    padding-left: 5px;
+    opacity: .75;
 }
 .weblog-tree-core-l .disabled{
 	color: #ccc;
@@ -248,7 +255,8 @@ option{
 	border-radius: 50%;
 	position: absolute;
 	top: 15px;
-	left: 50%;
+	right: 15%;
+	/*left: 50%;*/
 }
 .weblog-tree-core-l #weblog-circle::after{
 	content: '';
@@ -259,6 +267,7 @@ option{
 	position: absolute;
 	top: 3px;
 	left: 3px;
+	opacity: .75;
 }
 .weblog-tree-box:hover{
 	/* background: var(--preset-fa);
@@ -342,7 +351,7 @@ option{
 .weblog-tree-box .tree-box-content p#sub{
 	display: none;
 	text-align: right;
-	margin: 15px auto;
+	margin: 15px auto auto;
 }
 #end-weblog-all{
 	letter-spacing:14px;
@@ -356,7 +365,7 @@ option{
 @media screen and (max-width:760px){
 	.weblog-tree-core-l{display:none}
 	.weblog-tree-core-r{max-width:100%;width:100%}
-	.weblog-tree-box .tree-box-content p#sub{display: block;margin:auto}
+	.weblog-tree-box .tree-box-content p#sub{display: block;}
 	.weblog-tree-box .tree-box-title h3{text-align: center;}
 	.weblog-tree-box:hover{ left: 0;}
 }

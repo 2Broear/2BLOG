@@ -445,7 +445,7 @@
                         }
                         const informs = document.querySelectorAll('.scroll-inform div.scroll-block span');
                         informs[0].classList.add("showes");  //init first show(no trans)
-                        informs.length>1 ? flusher(informs,0,3000) : false;  //scroll inform
+                        informs.length>1&&flusher ? flusher(informs,0,3000) : false;  //scroll inform
                     });
                 </script>
     <?php
@@ -691,7 +691,7 @@
             $target = $link->link_target;
             if(!$target) $target="_blank";
             $sex = $link->link_rating==1 ? 'girl' : 'boy';
-            $rcmd = $link->link_rating==10 ? '<span class="ssl https"> NICE ONE </span>' : '';
+            $rcmd = $link->link_rating==10 ? '<span class="ssl https"> NICE BRO </span>' : '';
             $status = $link->link_visible!='Y' ? 'standby' : 'standard';
             // print_r($link);
             // global $wpdb;
@@ -856,10 +856,10 @@
     // wp自定义（含置顶无分页）查询函数
     function recent_posts_query($cid=0, $link=false, $detail=false, $random=false){
         $orderby = $random ? 'rand' : array(
-                    'date' => 'DESC',
-                    'meta_value_num' => 'DESC',
-                    'modified' => 'DESC',
-                );
+            'date' => 'DESC',
+            'meta_value_num' => 'DESC',
+            'modified' => 'DESC',
+        );
         $query_array = $cid ? array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_per_posts'), 'orderby' => $orderby) : array('cat' => $cid, 'posts_per_page' => get_option('site_per_posts'), 'order' => 'DESC', 'orderby' => $orderby);
         $left_query = new WP_Query(array_filter($query_array));
         while ($left_query->have_posts()):
@@ -1112,7 +1112,7 @@
         ?>
                         <article class="weblog-tree-core-record i<?php the_ID() ?>">
                             <div class="weblog-tree-core-l">
-                                <span id="weblog-timeline"><?php the_time('d-m-Y'); ?></span>
+                                <span id="weblog-timeline"><?php echo $rich_date = get_the_tag_list() ? get_the_time('Y年n月j日').' - '.get_the_tag_list('','&nbsp;','') : get_the_time('Y年n月j日'); ?></span>
                                 <span id="weblog-circle"></span>
                             </div>
                             <div class="weblog-tree-core-r">
@@ -1129,7 +1129,7 @@
                                         <span id="other-info">
                                             <h4> Ps. </h4>
                                             <p class="feeling"><?php echo get_post_meta($post->ID, "post_feeling", true); ?></p>
-                                            <p id="sub"><?php the_time('Y-n-j'); ?></p>
+                                            <p id="sub"><?php echo $rich_date; ?></p>
                                         </span>
                                     </div>
                                 </div>

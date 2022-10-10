@@ -43,10 +43,10 @@
                             $the_cat = get_category($cat);
                 ?>
                             <div class="">
-                                <a href="" rel="nofollow">
+                                <!--<a href="javascript:;" rel="nofollow">-->
                                     <h2 class="single"><?php echo $the_cat->count; ?><sup>+</sup></h2>
                                     <p><?php echo $the_cat->name.'/'.$the_cat->slug; ?></p>
-                                </a>
+                                <!--</a>-->
                             </div>
                 <?php
                         }

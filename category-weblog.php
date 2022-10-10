@@ -18,6 +18,8 @@
         blockquote{margin:10px 0 auto!important};
         .tk-content{overflow: hidden;}
         .pageSwitcher span{color: var(--preset-9);}
+        .vcontent blockquote{opacity:.75}
+        body.dark #comment_txt h2{color:var(--preset-c)}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -69,7 +71,7 @@
                 ?>
                             <div class="<?php if($post_orderby>1) echo 'topset'; ?> weblog-tree-core-record">
                                 <div class="weblog-tree-core-l">
-                                    <span id="weblog-timeline"><?php the_time('Y-n-j'); ?></span>
+                                    <span id="weblog-timeline"><?php echo $rich_date = get_the_tag_list() ? get_the_time('Y年n月j日').' - '.get_the_tag_list('','&nbsp;','') : get_the_time('Y年n月j日');//the_time('Y年n月j日');//the_time('Y-n-j') ?></span>
                                     <span id="weblog-circle"></span>
                                 </div>
                                 <div class="weblog-tree-core-r">
@@ -81,13 +83,14 @@
                                         </div>
                                         <div class="tree-box-content">
                                             <span id="core-info">
-                                                <p class="excerpt"><?php the_content();//custom_excerpt(200); ?></p>
+                                                <!--<p class="excerpt"></p>-->
+                                                <?php echo get_the_content();//custom_excerpt(200); ?>
                                             </span>
                                             <?php
                                                 $ps = get_post_meta($post->ID, "post_feeling", true);
                                                 if($ps) echo '<span id="other-info"><h4> Ps. </h4><p class="feeling">'.$ps.'</p></span>';
                                             ?>
-                                            <p id="sub"><?php the_time('Y-n-j'); ?></p>
+                                            <p id="sub"><?php echo $rich_date;//the_time('Y年n月j日'); ?></p>
                                         </div>
                                     </div>
                                 </div>

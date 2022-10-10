@@ -321,21 +321,21 @@
         <span class="what_says">
           <ul style="text-align:left">
             <li id="copy"> ©<?php calc_copyright(); ?> </li>
-            <?php $rights=get_option('site_copyright');if($rights) echo '<li id="cc"><a href="https://creativecommons.org/" style="opacity:.88" target="_blank"> '.$rights.' </a></li>'; ?>
+            <?php $rights=get_option('site_copyright');if($rights) echo '<li id="cc"><a href="https://creativecommons.org/licenses/'.strtolower(substr($rights,strpos($rights,"-")+1)).'/4.0/" style="opacity:.88" target="_blank" rel="nofollow"> '.$rights.' </a></li>'; ?>
             <li id="rights"><?php echo get_option('site_nick', get_bloginfo('name')); ?> 版权所有</li>
             <?php if(get_option('site_beian_switcher')) echo '<li id="etc">'.get_option('site_beian').'</li>'; ?>
             <p id="supports">
                 <?php 
                     if(get_option('site_monitor_switcher')) echo '<script type="text/javascript" src="'.get_option('site_monitor').'"></script>';
-                    if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online"><img src="'.custom_cdn_src('img',true).'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>';
+                    if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online" rel="nofollow"><img src="'.custom_cdn_src('img',true).'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>';
                     // if(get_option('site_foreverblog_switcher'))
-                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank"><img src="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
+                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank" rel="nofollow"><img src="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
                     // if($valine_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
                     $server = get_option('site_server_side');
-                    if($server) echo '<a href="javascript:void(0);"><img src="'.$server.'" style="height: 12px;"></a>'; //&&$server!="已关闭"
+                    if($server) echo '<a href="javascript:void(0);" rel="nofollow"><img src="'.$server.'" style="height: 12px;"></a>'; //&&$server!="已关闭"
                     if(get_option('site_foreverblog_wormhole')){
                         $warmhole_img = $_COOKIE['theme_mode']=='dark' ? custom_cdn_src('img',true).'/images/wormhole_2_tp.gif' : custom_cdn_src('img',true).'/images/wormhole_4_tp.gif';
-                        echo '<a href="https://www.foreverblog.cn/go.html" target="_blank"><em class="warmhole" style="background:url('.custom_cdn_src('img',true).'/images/wormhole_4_tp.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
+                        echo '<a href="https://www.foreverblog.cn/go.html" target="_blank" rel="nofollow"><em class="warmhole" style="background:url('.custom_cdn_src('img',true).'/images/wormhole_4_tp.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
                     }
                 ?>
             </p>

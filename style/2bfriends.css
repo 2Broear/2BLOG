@@ -36,10 +36,29 @@
 	position: relative;
 	/*border-bottom: 1px solid var(--preset-d);*/
 }
+.friends-boxes .inbox-clip h2:before,
+.friends-boxes .inbox-clip h2:after{
+    content: "";
+    width: 3px;
+    height: 12px;
+    background: transparent;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) skewX(-15deg);
+    opacity: .35;
+}
+.friends-boxes .inbox-clip h2:before{
+    box-shadow: -78px 0 #27c93f, 78px 0 #ffbd2e;
+}
+.friends-boxes .inbox-clip h2:after{
+    height: 18px!important;
+    box-shadow: -88px 0 #ffbd2e, 88px 0 #27c93f;
+}
 .friends-boxes .inbox-clip h2{
-	font-family: var(--font-serif);
 	font-size: 2rem;
-	font-weight: 500;
+	font-weight: 300;
+	/*font-family: var(--font-serif);*/
 }
 .friends-boxes .inbox-clip h2 sup{
 	color: var(--preset-9);
@@ -55,13 +74,16 @@
 }
 .friends-boxes h3{
 	color: var(--preset-6);
-	font-weight: 400;
 	width: 100%;
 	max-width: 100%;
 	text-align: left;
 	border-style: none;
 	padding: 0;
 	margin: 0 auto;
+	/*font-weight: 400;*/
+}
+.friends-boxes .deals.oldest{
+    margin-bottom: 5%;
 }
 .friends-boxes .deals.oldest .inbox,
 .friends-boxes .deals.lost .inbox{
@@ -307,6 +329,7 @@
 	z-index: 9;
 }
 .friends-boxes .deals .inbox span.ssl.https{
+    font-weight: bold;
 	background: #4fc323;
 	/*opacity: 0;*/
 }

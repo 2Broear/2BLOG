@@ -498,7 +498,7 @@ input,button{border:none;outline:none;z-index:1}
 input::-webkit-input-placeholder{color:rgba(0,0,0,.03)}
 .imtl-content-right-inside-search input{width:66px;height:100%;color:inherit;float:right;transition:all .35s ease;padding:0 0 0 25px;background:transparent}
 input::-webkit-input-placeholder{color:var(--preset-8)}
-.imtl-content-right-inside-search input:focus{width:150px}
+.imtl-content-right-inside-search input:focus{width:150px;font-size:var(--min-size-rem);}
 .imtl-content-right-inside-search input:focus+.slider{width:100%}
 .imtl-content-right-inside-search span.slider{width:0%;height:2px;background:var(--theme-color);display:block;position:relative;left:0;top:0;z-index:2;transition:all .35s ease;text-align:center;margin:0 auto}
 /*.button-active{background:url('https://img.2broear.com/css_sprites.png') -133px -178px no-repeat !important;right:15px !important}*/
@@ -1377,12 +1377,12 @@ body.dark .wp_comments img{
     display: inherit;
     background: rgba(158, 158, 158, 0.12);
     border-radius:var(--radius);
+    padding: 15px 15px 0;
 }
 .ibox img{
     border-radius: inherit;
-    padding: 15px 15px 0;
-    /* padding: 0 15px 15px; */
     box-sizing: border-box;
+    /*padding: 15px 15px 0;*/
 }
 .ibox mark{
     width: 100%;
@@ -1836,6 +1836,11 @@ p.wp_comment_tip{
     margin: 5px;
     display: inline-block;
     vertical-align: middle;
+    animation: fromto .35s ease-out infinite alternate;
+}
+@keyframes fromto{
+	from {top:5px;}
+	to {top:-5px;}
 }
 /*body.dark .tags li a:hover{*/
 /*    color: black;*/
@@ -1852,4 +1857,7 @@ p.wp_comment_tip{
 .tags li a{
     color: inherit;
     padding: 5px;
+    position: relative;
+    top: 0;
+    display: block;
 }

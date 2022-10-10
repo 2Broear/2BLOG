@@ -34,6 +34,7 @@
             <div class="banner">
                 <div class="banner-inside">
                     <ul>
+                        <li style="background: url('https://api.luvying.com/acgimg') no-repeat center center /cover;"></li>
                         <?php
                             $banner_array = explode(',',get_option('site_banner_array',''));
                             for($i=0;$i<count($banner_array);$i++){
@@ -41,7 +42,6 @@
                                 if($image_url) echo '<li style="background: url('.$image_url.') no-repeat center center /cover;"></li>';
                             }
                         ?>
-                        <li style="background: url('https://api.luvying.com/acgimg') no-repeat center center /cover;"></li>
                     </ul>
                     <div class="switcher">
                         <span id="banner-prev"></span>
@@ -79,7 +79,7 @@
                       </div>
                       <div class="recommend-newsContent">
                         <span class="content-core entry-content">
-                            <p><?php custom_excerpt(170);//echo wp_trim_words(get_the_excerpt(), 10); ?></p>
+                            <p><?php custom_excerpt(170);  //echo wp_trim_words(get_the_excerpt(), 10); ?></p>
                         </span>
                         <span class="content-tail">
                           <aside class="personal_stand">

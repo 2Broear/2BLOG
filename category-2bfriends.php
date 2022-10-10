@@ -15,6 +15,13 @@
         #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:20px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%;-webkit-animation:spin 1s infinite linear;animation:spin 1s infinite linear}
         .main{margin-bottom:auto}
         .friends-boxes .deals .inbox.girl em{background: url('<?php custom_cdn_src('img'); ?>/images/girl_symbols.png') no-repeat center center /contain;width: 80px;height: 100px;bottom:-10px}
+        .friends-boxes .inbox-clip h2:before{
+            box-shadow: -78px 0 #27c93f, 78px 0 #ffbd2e;
+        }
+        .friends-boxes .inbox-clip h2:after{
+            height: 18px!important;
+            box-shadow: -88px 0 #ffbd2e, 88px 0 #27c93f;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -88,9 +95,10 @@
 		        <?php
 				    }
 				?>
-                <div class="inbox-clip">
-                    <h2 id="rcmded"> 友链说明 </h2>
-                </div>
+                <!--<div class="inbox-clip">-->
+                <!--    <h2 id="rcmded"> 友链说明 </h2>-->
+                <!--</div>-->
+                <br />
                 <?php
                     the_content();  // the_page_content(current_slug());
                     dual_data_comments();
