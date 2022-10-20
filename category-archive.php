@@ -26,6 +26,10 @@
             font-size: smaller;
             vertical-align: text-top;
         }
+        .archive-tree ul{
+            position: relative;
+            scroll-behavior: smooth;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -96,29 +100,10 @@
                         }
                         echo '</sup></a></li>';
                     }
-                    echo '<div class="ajax"></div></ul>';
+                    echo '</ul>'; //<div class="ajax"></div>
                 }
             ?>
             <script>
-                function send_ajax_request(method,url,data,callback){
-                    var ajax = new XMLHttpRequest();
-                    if(method=='get'){  // GET请求
-                        data ? (url+='?',url+=data) : false;
-                        ajax.open(method,url);
-                        ajax.send();
-                    }else{  // 非GET请求
-                        ajax.open(method,url);
-                        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");  // 设置请求报文
-                        data ? ajax.send(data) : ajax.send();
-                    };
-                    ajax.onreadystatechange = function () {
-                        if(ajax.readyState==4 && ajax.status==200){
-                            callback ? callback(ajax.responseText) : false;
-                        }else{
-                            // error ? error(ajax.responseText) : false;
-                        }
-                    }
-                };
                 const archive_tree = document.querySelector(".archive-tree"),
                       preset_loads = <?php echo $preset_loads; ?>;
                 archive_tree.onclick=(e)=>{
@@ -129,7 +114,10 @@
                             let _this = t,
                                 years = _this.getAttribute("data-year"),
                                 loads = parseInt(_this.getAttribute("data-load")),
-                                click_count = parseInt(_this.getAttribute('data-count'));
+                                click_count = parseInt(_this.getAttribute('data-count')),
+                                // load_ajax = load_box.querySelector(".ajax"),
+                                load_box = _this.parentNode.nextSibling,
+                                last_load = load_box.lastChild.offsetTop;  // preset lastChild offsetTop record
                             click_count++;
                             _this.innerText="加载中..";
                             _this.setAttribute('data-count', click_count);
@@ -144,14 +132,17 @@
                                     // console.log(res);  //response
                                     var posts_array = JSON.parse(res),
                                         posts_count = posts_array.length,
-                                        posts_loads = _this.parentNode.nextSibling.querySelector(".ajax");
+                                        lasts_loads = load_box.lastChild.offsetTop;  // same as preset, define last_load before insert
+                                    // console.log(load_box.lastChild.offsetTop);
                                     posts_count<=0 ? (_this.classList.add("disabled"), _this.innerText="已全部加载！") : (_this.setAttribute('data-load', loads+posts_count), _this.innerText="加载更多");
-                                    console.log(posts_array);
+                                    // console.log(posts_array);
                                     for(let i=0;i<posts_count;i++){
                                         let each_post = posts_array[i];
                                         // console.log(each_post)
-                                        posts_loads.innerHTML += `<li>${each_post.date}<a class="link" href="${each_post.link}" target="_blank">${each_post.title}<sup>${each_post.cat}</sup></a></li>`;
-                                    }
+                                        load_box.innerHTML += `<li>${each_post.date}<a class="link" href="${each_post.link}" target="_blank">${each_post.title}<sup>${each_post.cat}</sup></a></li>`;
+                                    };
+                                    // console.log(load_box.lastChild.offsetTop);  // offsetTop = 0
+                                    load_box.scrollTo(0, lasts_loads); //+load_box.lastChild.offsetHeight
                                 }
                             );
                             break;
