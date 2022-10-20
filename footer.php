@@ -383,14 +383,14 @@
 		NProgress.done();
 	};
     function automode(){
-        getCookie('theme_manual') ? setCookie('theme_manual',0,false) : false;  // disable manual mode
+        getCookie('theme_manual') ? setCookie('theme_manual',0,0,1) : false;  // disable manual mode
         let date = new Date(),
             hour = date.getHours(),
             min = date.getMinutes(),
             sec = date.getSeconds(),
             start = <?php echo get_option('site_darkmode_start',17); ?>,
             end = <?php echo get_option('site_darkmode_end',9); ?>;
-        hour>=end&&hour<start || hour==end&&min>=0&&sec>=0 ? setCookie('theme_mode','light') : setCookie('theme_mode','dark');
+        hour>=end&&hour<start || hour==end&&min>=0&&sec>=0 ? setCookie('theme_mode','light',0,1) : setCookie('theme_mode','dark',0,1);
         document.body.className = getCookie('theme_mode');  //change apperance after cookie updated
     }
 </script>

@@ -44,24 +44,30 @@
 .nav-body{padding:5px 0;font-size:14px}
 .nav-body .main-root{margin:0;border-radius:10px;text-align:left;border-radius:10px}
 .main-root ul{color:var(--preset-6);padding:0;margin:inherit;box-sizing:border-box}
-.main-root ul li{width:100%;height:auto;position:relative;border-radius:10px}
+.main-root ul li{width:100%;height:auto;position:relative;border-radius:10px;overflow:hidden;padding: 5px;box-sizing: border-box;}
 .main-root ul li:nth-child(even) a:hover{background-color:var(--preset-s)}
 .main-root ul li:nth-child(even){background-color:var(--preset-fa)}
 .main-root ul li a.choosen,
 .main-root ul li a:hover{color:var(--theme-color)}
 .main-root ul li:last-child a{border-style:none}
 .main-root ul li a.disable{pointer-events:none}
-.main-root ul li a{color:inherit;display:block;padding:0 35px;line-height:52px;position:relative;border-radius:inherit;}
+.main-root ul li a{color:inherit;display:block;padding:0 25px;line-height:52px;position:relative;border-radius:inherit;}
 .selected{color:var(--theme-color) !important;font-weight:bold;background-color:var(--preset-s)}
 .main-root ul li a#root.cc::before{border-bottom-color:var(--theme-color)}
 .main-root ul li a#root::before{content:'';width:0;height:0;display:block;position:absolute;bottom:0;right:0;border-bottom:7px solid var(--preset-d);border-left:7px solid transparent}
 .main-root ul li a#roots.cc::before{border-bottom-color:var(--theme-color)}
 .main-root ul li a#roots::before{width:0;height:0;display:block;position:absolute;bottom:0;right:0;border-bottom:7px solid #a7a7a7;border-left:7px solid transparent}
-.main-root ul li a:hvoer + .sub-root{display:block!important}
-.main-root ul li div.sub-root{width:100%;height:auto;/*display:none;*/}
+.main-root ul li a.choosen + .sub-root .sub-root,
+.main-root ul li a.choosen + .sub-root,
+.main-root ul li:hover .sub-root{
+    display: block;
+}
+/*.main-root ul li a:hover + .sub-root{height:auto;}*/
+.main-root ul li div.sub-root{width:100%;padding-left: 15px;box-sizing: border-box;display:none;/*height:0;*/}
+
 .sub-root ol{padding:0}
 .sub-root ol li{display:block;padding:0}
-.sub-root ol li a{color:var(--preset-8);padding:0 55px;font-size:var(--min-size)}
+.sub-root ol li a{color:var(--preset-8);padding:0 15px;font-size:var(--min-size)}
 .sub-root ol li a:hover{background-color:var(--preset-d)}
 .sub-root ol li.roots .sub-root ol a{padding:0 75px}
 .win-content.main{background:transparent!important;/*margin-bottom:10%;*/}

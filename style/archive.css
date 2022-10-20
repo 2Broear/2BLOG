@@ -39,10 +39,14 @@ body.dark .archive-tree ul li a{
     /*opacity: .75;*/
 }
 .archive-tree ul{
-    margin-left: 15px;
     padding: 0;
+    max-height: 500px;
+    overflow: auto;
+    /*margin-left: 15px;*/
 }
 .archive-tree ul li{
+    max-width: 95%;
+    margin: 0 auto;
     /*margin-bottom: 5px;*/
 }
 .archive-tree ul li:hover span{

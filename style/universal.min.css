@@ -234,6 +234,9 @@ header>nav#tipson .top-bar-tips a{color: inherit;text-decoration: underline;posi
 .inside_of_block nav.main-nav ul li{color:var(--preset-6);line-height:102px;display:inline-block;/*margin:15px auto;position:relative;max-height:102px;height:102px;*/}
 .inside_of_block nav.main-nav ul li:hover>a{color:var(--theme-color)}
 .choosen{color:var(--theme-color)!important;font-weight:bold}
+.tags span a:hover:after{
+    /*background: var(--theme-color)!important;*/
+}
 .inside_of_block nav.main-nav ul li a.choosen,
 .inside_of_block nav.main-nav ul li a:hover{color:var(--theme-color)!important}
 .inside_of_block nav.main-nav ul li a{color:inherit;display:block;font-size:var(--min-size-rem);padding:0 15px;position:relative;z-index:1;}
@@ -405,6 +408,7 @@ i.icomoon,
     /*opacity: .12!important;*/
     background: var(--theme-color)!important;
 }
+.tags span a:after,
 .inside_of_block nav.main-nav ul li a.choosen::after,
 .links-more li.th_level::before,
 .links-more li.trd_level::before{

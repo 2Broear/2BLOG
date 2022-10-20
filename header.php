@@ -141,9 +141,8 @@
                         $the_cat_par = get_category($the_cat->category_parent);
                         $catss = get_categories(meta_query_categories($the_cat_id, 'ASC', 'seo_order'));
                         $slug_icon = $the_cat_slug!="/" ? $the_cat_slug : "more";
-                        if(!empty($catss)) $level="sec_level";else $level="top_level";
-                        // 当前选中栏目 || 当前选中栏目下子栏目 || 当前栏目下文章&&文章单页
-                        if($the_cat_id==$cat&&!is_single() || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";
+                        $level = !empty($catss) ? "sec_level" : "top_level";
+                        $choosen = $the_cat_id==$cat&&!is_single() || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single() ? "choosen" : "";  // 当前选中栏目 || 当前选中栏目下子栏目 || 当前栏目下文章&&文章单页
                         // if($the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";  //current category/page detect (bychild) DO NOT USE ID DETECT, because all cat are page(post) type;
                         $cur_link = get_category_link($the_cat_id);
                         $slash_link = $cur_link==get_site_url()||$cur_link==get_site_url().'/category/'||$cur_link==get_site_url().'/category' ? 'javascript:void(0)' : $cur_link;  // detect if use $slash_link
@@ -159,8 +158,8 @@
                                     $the_cats_par = $the_cats->category_parent;
                                     $the_cats_name = $the_cats->name;
                                     $catsss = get_categories(meta_query_categories($the_cats_id, 'ASC', 'seo_order'));
-                                    if(!empty($catsss)) $level="trd_level";else $level="sec_child";  // check level before sub-additionaln
-                                    if($the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single()) $choosen = "choosen 2rd";else $choosen="2nd";  // current choosen detect
+                                    $level = !empty($catsss) ? "trd_level" : "sec_child";  // check level before sub-additionaln
+                                    $choosen = $the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single() ? "choosen 3rd" : "2nd";  // current choosen detect
                                     if($metaCls){
                                         $meta_image = get_term_meta($the_cats_id, 'seo_image', true);
                                         if($meta_image){
@@ -182,8 +181,8 @@
                                         foreach($catsss as $the_catss){
                                             $the_catss_id = $the_catss->term_id;
                                             $catssss = get_categories(meta_query_categories($the_catss_id, 'ASC', 'seo_order'));
-                                            if(!empty($catssss)) $level="th_level";else $level="trd_child";
-                                            if($the_catss_id==$cat || cat_is_ancestor_of($the_catss_id, $cat) || in_category($the_catss_id)&&is_single()) $choosen = "choosen 3rd";else $choosen="3rd";  // current choosen detect
+                                            $level = !empty($catssss) ? "th_level" : "trd_child";  // check level before sub-additionaln
+                                            $choosen = $the_catss_id==$cat || cat_is_ancestor_of($the_catss_id, $cat) || in_category($the_catss_id)&&is_single() ? "choosen 3rd" : "3rd";  // current choosen detect
                                             echo '<li class="cat_'.$the_catss_id.' par_'.$the_catss->category_parent." ".$level.'"><a href="'.get_category_link($the_catss_id).'" class="'.$choosen.'"><b>'.$the_catss->name.'</b></a>';  //$catss_desc
                                         };
                                         echo "</ol></div>";
@@ -195,8 +194,8 @@
                                 foreach($catss as $the_cats){
                                     $the_cats_id = $the_cats->term_id;
                                     $catsss = get_categories(meta_query_categories($the_cats_id, 'ASC', 'seo_order'));
-                                    if(!empty($catsss)) $level="trd_level";else $level="sec_child";
-                                    if($the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single()) $choosen = "choosen 2rd";else $choosen="2nd";  // current choosen detect
+                                    $level = !empty($catsss) ? "trd_level" : "sec_child";  // check level before sub-additionaln
+                                    $choosen = $the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single() ? "choosen 2nd" : "2nd";  // current choosen detect
                                     $cur_link = get_category_link($the_cats_id);
                                     $slash_link = $cur_link==get_site_url()||$cur_link==get_site_url().'/category/'||$cur_link==get_site_url().'/category' ? 'javascript:void(0)' : $cur_link;  // detect if use $slash_link
                                     echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent." ".$level.'"><a href="'.$slash_link.'" class="'.$choosen.'">'.$the_cats->name.'</a>';  //liwrapper
@@ -205,8 +204,8 @@
                                         foreach($catsss as $the_catss){
                                             $the_catss_id = $the_catss->term_id;
                                             $catssss = get_categories(meta_query_categories($the_catss_id, 'ASC', 'seo_order'));
-                                            if(!empty($catssss)) $level="th_level";else $level="trd_child";
-                                            if($the_catss_id==$cat || cat_is_ancestor_of($the_catss_id, $cat) || in_category($the_catss_id)&&is_single()) $choosen = "choosen 3rd";else $choosen="3rd";  // current choosen detect
+                                            $level = !empty($catssss) ? "th_level" : "trd_child";  // check level before sub-additionaln
+                                            $choosen = $the_catss_id==$cat || cat_is_ancestor_of($the_catss_id, $cat) || in_category($the_catss_id)&&is_single() ? "choosen 3rd" : "3rd";  // current choosen detect
                                             echo '<li class="cat_'.$the_catss_id.' par_'.$the_catss->category_parent." ".$level.'"><a href="'.get_category_link($the_catss_id).'" class="'.$choosen.'">'.$the_catss->name.'</a>';  //liwrapper
                                             if(!empty($catssss)){
                                                 echo '<div class="sub-additional"><ol class="links-more">';

@@ -34,7 +34,7 @@
             <div class="banner">
                 <div class="banner-inside">
                     <ul>
-                        <li style="background: url('https://api.luvying.com/acgimg') no-repeat center center /cover;"></li>
+                        <!--<li style="background: url('https://api.luvying.com/acgimg') no-repeat center center /cover;"></li>-->
                         <?php
                             $banner_array = explode(',',get_option('site_banner_array',''));
                             for($i=0;$i<count($banner_array);$i++){

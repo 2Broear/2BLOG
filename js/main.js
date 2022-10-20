@@ -34,11 +34,11 @@
 // 		};
 // 	});
 	
-    function setCookie(name,value,path){
-        let Days = 30,
-            exp = new Date();
-        !path ? path=";path=/" : path;
-        exp.setTime(exp.getTime() + Days*24*60*60*1000);
+    function setCookie(name,value,path,days){
+        let exp = new Date();
+        days = !days ? 30 : days;
+        path = !path ? ";path=/" : path;
+        exp.setTime(exp.getTime() + days*24*60*60);
         document.cookie = name+"="+escape(value)+";expires="+exp.toGMTString()+path;
     }
     function getCookie(cname){

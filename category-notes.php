@@ -9,7 +9,9 @@
 <head>
     <?php get_head(); ?>
 	<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/notes.css?v=<?php //echo(mt_rand()) ?>" />
-	<style> .win-top h5{font-weight: 800;} </style>
+	<style> 
+	    .win-top h5{font-weight: 800;}
+    </style>
 </head>
 <body class="<?php theme_mode(); ?>">
 <div class="content-all">
@@ -53,22 +55,26 @@
                             if(!empty($cats)){
                                 foreach($cats as $the_cat){
                                     $the_cat_id = $the_cat->term_id;
-                                    if($the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";
-                                    echo '<li class="cat_'.$the_cat_id.' toplevel"><a href="'.get_category_link($the_cat).'" id="'.$the_cat->slug.'" class="'.$choosen.'">'.$the_cat->name.'</a>';
                                     $catss = get_categories(meta_query_categories($the_cat_id, 'ASC', 'seo_order'));
+                                    $level = !empty($catss) ? "seclevel" : "toplevel";
+                                    $choosen = $the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single() ? "choosen" : "";  // current choosen detect
+                                    echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.get_category_link($the_cat).'" id="'.$the_cat->slug.'" class="'.$choosen.'">'.$the_cat->name.'</a>';
                                     if(!empty($catss)){  //expect category id "notes": &&$the_cat_id!=3
                                         echo '<div class="sub-root"><ol>';
                                         foreach($catss as $the_cats){
                                             $the_cats_id = $the_cats->term_id;
-                                            if($the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single()) $choosen = "choosen 2rd";else $choosen="2nd";  // current choosen detect
-                                            echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent.'"><a href="'.get_category_link($the_cats).'" id="'.$the_cats->slug.'" class="'.$choosen.'">'.$the_cats->name.'</a></li>';
-                                            // $catsss = get_categories(meta_query_categories($the_cats_id, 'ASC', 'seo_order'));
+                                            $catsss = get_categories(meta_query_categories($the_cats_id, 'ASC', 'seo_order'));
+                                            $level = !empty($catsss) ? "trdlevel" : "seclevel";
+                                            $choosen = $the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single() ? "choosen 2nd" : "2nd";  // current choosen detect
+                                            echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent.' '.$level.'"><a href="'.get_category_link($the_cats).'" id="'.$the_cats->slug.'" class="'.$choosen.'"> — '.$the_cats->name.'</a></li>';
+                                            // DISABLED 4 LEVLE.
                                             // if(!empty($catsss)){
                                             //     echo '<div class="sub-root"><ol>';
                                             //     foreach($catsss as $the_catss){
                                             //         $the_catss_id = $the_catss->term_id;
-                                            //         if($the_catss_id==$cat || cat_is_ancestor_of($the_catss_id, $cat) || in_category($the_catss_id)&&is_single()) $choosen = "choosen 3rd";else $choosen="3rd";  // current choosen detect
-                                            //         echo '<li class="cat_'.$the_catss_id.' par_'.$the_catss->category_parent.'"><a href="'.get_category_link($the_catss).'" id="'.$the_catss->slug.'" class="'.$choosen.'">'.$the_catss->name.'</a></li>';
+                                            //         $level = !empty($catsss) ? "th_level" : "trdlevel";
+                                            //         $choosen = $the_catss_id==$cat || cat_is_ancestor_of($the_catss_id, $cat) || in_category($the_catss_id)&&is_single() ? "choosen 3rd" : "3rd";  // current choosen detect
+                                            //         echo '<li class="cat_'.$the_catss_id.' par_'.$the_catss->category_parent.'"><a href="'.get_category_link($the_catss).'" id="'.$the_catss->slug.'" class="'.$choosen.'"> — '.$the_catss->name.'</a></li>';
                                             //     };
                                             //     echo "</ol></div>";
                                             // }

@@ -51,7 +51,7 @@
                 $post_ids.push( $( this ).attr( 'id' ).replace( /^(ttle)/i, '' ) );
             });
         }
-        console.log($post_ids) 
+        console.log($post_ids)
         //wp_version_check()
         // get the data
         var $post_orderby = $bulk_row.find( 'input[name="post_orderby"]' ).val();
