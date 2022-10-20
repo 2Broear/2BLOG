@@ -38,6 +38,22 @@ body.dark .archive-tree ul li a{
 .archive-tree h2{
     /*opacity: .75;*/
 }
+h2 sup.disabled{
+    pointer-events: none;
+    opacity: .32;
+}
+h2 sup{
+    font-size: small;
+    opacity: .88;
+    margin-left: 5px;
+    cursor: pointer;
+}
+h2 sup:after{
+    content: '['attr(data-load)']';
+    opacity: .75;
+    font-size: smaller;
+    vertical-align: text-top;
+}
 .archive-tree ul{
     padding: 0;
     max-height: 500px;

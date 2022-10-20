@@ -235,7 +235,8 @@ header>nav#tipson .top-bar-tips a{color: inherit;text-decoration: underline;posi
 .inside_of_block nav.main-nav ul li:hover>a{color:var(--theme-color)}
 .choosen{color:var(--theme-color)!important;font-weight:bold}
 .tags span a:hover:after{
-    /*background: var(--theme-color)!important;*/
+    background: var(--theme-color)!important;
+    width: 88%;
 }
 .inside_of_block nav.main-nav ul li a.choosen,
 .inside_of_block nav.main-nav ul li a:hover{color:var(--theme-color)!important}

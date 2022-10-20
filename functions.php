@@ -1,5 +1,5 @@
 <?php 
-    // response wpdb data from jquery ajax calls
+    // response wpdb data from ajax calls
     function updateCont(){
         $key = $_POST['key'];
         $limit = $_POST['limit'];

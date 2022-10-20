@@ -20,6 +20,12 @@
             margin-left: 5px;
             cursor: pointer;
         }
+        h2 sup:after{
+            content: '['attr(data-load)']';
+            opacity: .75;
+            font-size: smaller;
+            vertical-align: text-top;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -50,7 +56,7 @@
             </div>
         </div>
         <div class="archive-tree">
-            <select name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;" style="float:right;">
+            <select name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;" style="/*float:right;*/">
                 <option value=""><?php esc_attr( _e( 'Select Month', 'textdomain' ) ); ?></option> 
                 <?php 
                     wp_get_archives(array(
@@ -63,16 +69,16 @@
             </select>
             <?php
                 global $wpdb;
+                $preset_loads = 99;
                 // get years that have posts
                 $years = $wpdb->get_results( "SELECT YEAR(post_date) AS year FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' GROUP BY year DESC" );
                 // get posts for each year
                 foreach ( $years as $year ) {
                     $cur_year = $year->year;
-                    $cur_posts = get_wpdb_posts($cur_year, 99, 0);  //$wpdb->get_results("SELECT DISTINCT ID FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' AND YEAR(post_date) = '" . $cur_year . "' ORDER BY post_date DESC LIMIT 99 OFFSET 99");
+                    $cur_posts = get_wpdb_posts($cur_year, $preset_loads, 0);
                     $posts_count = count($cur_posts);
-                    echo '<h2>' . $cur_year . '年度发布<sup id="call" data-year="'.$cur_year.'" data-count="0"> 加载更多 ['.$posts_count.'] </sup></h2><ul>';
+                    echo '<h2>' . $cur_year . '年度发布<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'"> 加载更多 </sup></h2><ul>'; // ['.$posts_count.']
                     // print_r($cur_posts[0]->ID);
-                    // $unique_arr = array();
                     for($i=0;$i<$posts_count;$i++){
                         $each_posts = $cur_posts[$i];
                         $prev_posts = $i>0 ? $cur_posts[$i-1] : $cur_posts[$i]; //$i>1 ? $cur_posts[$i-1] : false;
@@ -84,48 +90,76 @@
                         // print_r($each_posts->ID);
                         $unique_date = $this_date[0]!=$prev_date[0] || $each_posts->ID==$cur_posts[0]->ID ? '<div class="timeline">'.$this_date[0].'</div>' : '';
                         // print_r($this_cats);
-                        // array_push($unique_arr, $this_date);
                         echo '<li>'.$unique_date.'<a class="link" href="'.get_the_permalink($this_post).'" target="_blank">' . $this_post->post_title.'<sup>';
                         foreach ($this_cats as $this_cat){
-                            echo '<span>'.$this_cat->name.'</span>';  //'<a href="'.get_category_link($this_cat->term_id).'" target="_blank">'.$this_cat->name.'</a>、';
+                            echo '<span>'.$this_cat->name.'</span>';
                         }
                         echo '</sup></a></li>';
                     }
                     echo '<div class="ajax"></div></ul>';
                 }
             ?>
-            <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/jquery-1.9.1.min.js"></script>
             <script>
-                const preset_loads = 99;
-                $(".archive-tree h2 sup#call").click(function(){
-                    let _this = $(this),
-                        years = _this.attr("data-year"),
-                        click_count = parseInt(_this.attr('data-count'));
-                    click_count++;
-                    _this.attr('data-count', click_count);
-                    jQuery.ajax({
-                        type:"POST",
-                        url: "<?php echo admin_url('admin-ajax.php'); ?>",
-                        data: {
-                            "action": "updateCont",
-                            "key": years, 
-                            "limit": preset_loads,
-                            "offset": preset_loads*click_count,
-                        },
-                        success:function(data){
-                            // console.log(data);// is 0
-                            var posts_array = JSON.parse(data),
-                                posts_count = posts_array.length;
-                            posts_count<=0 ? (_this.addClass("disabled"),_this.text("已全部加载！")) : false;
-                            console.log(posts_array);
-                            for(let i=0;i<posts_count;i++){
-                                let each_post = posts_array[i];
-                                console.log(each_post)
-                                _this.parent().next().find(".ajax").append(`<li>${each_post.date}<a class="link" href="${each_post.link}" target="_blank">${each_post.title}<sup>${each_post.cat}</sup></a></li>`);
-                            }
+                function send_ajax_request(method,url,data,callback){
+                    var ajax = new XMLHttpRequest();
+                    if(method=='get'){  // GET请求
+                        data ? (url+='?',url+=data) : false;
+                        ajax.open(method,url);
+                        ajax.send();
+                    }else{  // 非GET请求
+                        ajax.open(method,url);
+                        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");  // 设置请求报文
+                        data ? ajax.send(data) : ajax.send();
+                    };
+                    ajax.onreadystatechange = function () {
+                        if(ajax.readyState==4 && ajax.status==200){
+                            callback ? callback(ajax.responseText) : false;
+                        }else{
+                            // error ? error(ajax.responseText) : false;
                         }
-                    });
-                })
+                    }
+                };
+                const archive_tree = document.querySelector(".archive-tree"),
+                      preset_loads = <?php echo $preset_loads; ?>;
+                archive_tree.onclick=(e)=>{
+                    var e = e || window.event,
+                        t = e.target || e.srcElement;
+                    while(t!=archive_tree){
+                        if(t.id=="call" && t.nodeName.toLowerCase()=="sup"){
+                            let _this = t,
+                                years = _this.getAttribute("data-year"),
+                                loads = parseInt(_this.getAttribute("data-load")),
+                                click_count = parseInt(_this.getAttribute('data-count'));
+                            click_count++;
+                            _this.innerText="加载中..";
+                            _this.setAttribute('data-count', click_count);
+                            // console.log(click_count)
+                            send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", 
+                                parse_ajax_parameter({
+                                    "action": "updateCont",
+                                    "key": years, 
+                                    "limit": preset_loads,
+                                    "offset": preset_loads*click_count,
+                                }, true), function(res){
+                                    // console.log(res);  //response
+                                    var posts_array = JSON.parse(res),
+                                        posts_count = posts_array.length,
+                                        posts_loads = _this.parentNode.nextSibling.querySelector(".ajax");
+                                    posts_count<=0 ? (_this.classList.add("disabled"), _this.innerText="已全部加载！") : (_this.setAttribute('data-load', loads+posts_count), _this.innerText="加载更多");
+                                    console.log(posts_array);
+                                    for(let i=0;i<posts_count;i++){
+                                        let each_post = posts_array[i];
+                                        // console.log(each_post)
+                                        posts_loads.innerHTML += `<li>${each_post.date}<a class="link" href="${each_post.link}" target="_blank">${each_post.title}<sup>${each_post.cat}</sup></a></li>`;
+                                    }
+                                }
+                            );
+                            break;
+                        }else{
+                            t = t.parentNode;
+                        }
+                    }
+                }
             </script>
             <div id="comment_txt" class="wow fadeInUp" data-wow-delay="0.25s">
                 <?php 

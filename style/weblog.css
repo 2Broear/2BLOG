@@ -1,4 +1,4 @@
-
+@charset "utf-8";
 .weblog-tree-core.reply .tree-box-title h3:hover::after{
     color: inherit;
     opacity: .75;
@@ -181,6 +181,11 @@ option{
 .weblog-tree-core-record:hover #weblog-circle,
 .weblog-tree-core-record.topset #weblog-circle{
 	color: var(--theme-color);
+	right: 10%;
+}
+.weblog-tree-core-record:hover #weblog-circle::after{
+    width: 50%;
+    height: 50%;
 }
 .weblog-tree-core-record.topset .tree-box-title::after{
 	content: '';
@@ -192,6 +197,7 @@ option{
 	bottom: 0;
 	left: 0;
 }
+/*.weblog-tree-core-record:hover #weblog-timeline,*/
 .weblog-tree-core-record:hover > .weblog-tree-core-r h3{
     color: var(--theme-color)!important;
 }
@@ -257,17 +263,20 @@ option{
 	top: 15px;
 	right: 15%;
 	/*left: 50%;*/
+	transition: right .5s ease;
 }
 .weblog-tree-core-l #weblog-circle::after{
 	content: '';
 	width: 70%;
 	height: 70%;
-	background: currentColor;
-	border-radius: 50%;
-	position: absolute;
-	top: 3px;
-	left: 3px;
-	opacity: .75;
+    background: currentColor;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    opacity: .75;
+    transition: all .35s ease;
 }
 .weblog-tree-box:hover{
 	/* background: var(--preset-fa);
