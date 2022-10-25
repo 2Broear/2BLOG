@@ -424,6 +424,7 @@ i.icomoon,
     left: 50%;
     transform: translate(-50%,-50%);
     margin-top: 5px;
+    z-index: -1;
 }
 .inside_of_block nav.main-nav ul li.trd_level:hover>.sub-additional.metabox{
     right: 0;

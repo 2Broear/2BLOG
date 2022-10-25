@@ -9,28 +9,6 @@
 <head>
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/archive.css" />
     <?php get_head(); ?>
-    <style>
-        h2 sup.disabled{
-            pointer-events: none;
-            opacity: .32;
-        }
-        h2 sup{
-            font-size: small;
-            opacity: .88;
-            margin-left: 5px;
-            cursor: pointer;
-        }
-        h2 sup:after{
-            content: '['attr(data-load)']';
-            opacity: .75;
-            font-size: smaller;
-            vertical-align: text-top;
-        }
-        .archive-tree ul{
-            position: relative;
-            scroll-behavior: smooth;
-        }
-    </style>
 </head>
 <body class="<?php theme_mode(); ?>">
     <div class="content-all">
@@ -73,15 +51,16 @@
             </select>
             <?php
                 global $wpdb;
-                $preset_loads = 99;
+                $async_loads = get_option("site_async_archive", 99);
                 // get years that have posts
                 $years = $wpdb->get_results( "SELECT YEAR(post_date) AS year FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' GROUP BY year DESC" );
                 // get posts for each year
                 foreach ( $years as $year ) {
                     $cur_year = $year->year;
-                    $cur_posts = get_wpdb_posts($cur_year, $preset_loads, 0);
-                    $posts_count = count($cur_posts);
-                    echo '<h2>' . $cur_year . '年度发布<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'"> 加载更多 </sup></h2><ul>'; // ['.$posts_count.']
+                    $cur_posts = get_wpdb_yearly_pids($cur_year, $async_loads, 0);
+                    $posts_count = count($cur_posts);  
+                    // SAME COMPARE AS $found $limit
+                    echo $posts_count>=$async_loads ? '<h2>' . $cur_year . '年度发布<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'"> 加载更多 </sup></h2><ul>' : '<h2>' . $cur_year . '年度发布<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'" class="disabled"> 已全部载入 </sup></h2><ul>';
                     // print_r($cur_posts[0]->ID);
                     for($i=0;$i<$posts_count;$i++){
                         $each_posts = $cur_posts[$i];
@@ -105,7 +84,7 @@
             ?>
             <script>
                 const archive_tree = document.querySelector(".archive-tree"),
-                      preset_loads = <?php echo $preset_loads; ?>;
+                      preset_loads = <?php echo $async_loads; ?>;
                 archive_tree.onclick=(e)=>{
                     var e = e || window.event,
                         t = e.target || e.srcElement;
@@ -119,7 +98,7 @@
                                 load_box = _this.parentNode.nextSibling,
                                 last_load = load_box.lastChild.offsetTop;  // preset lastChild offsetTop record
                             click_count++;
-                            _this.innerText="加载中..";
+                            _this.innerText=" 加载中.. ";
                             _this.setAttribute('data-count', click_count);
                             // console.log(click_count)
                             send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", 
@@ -134,7 +113,7 @@
                                         posts_count = posts_array.length,
                                         lasts_loads = load_box.lastChild.offsetTop;  // same as preset, define last_load before insert
                                     // console.log(load_box.lastChild.offsetTop);
-                                    posts_count<=0 ? (_this.classList.add("disabled"), _this.innerText="已全部加载！") : (_this.setAttribute('data-load', loads+posts_count), _this.innerText="加载更多");
+                                    posts_count<=0 ? (_this.classList.add("disabled"), _this.innerText=" 已完成加载！ ") : (_this.setAttribute('data-load', loads+posts_count), _this.innerText = " 加载更多 ");
                                     // console.log(posts_array);
                                     for(let i=0;i<posts_count;i++){
                                         let each_post = posts_array[i];

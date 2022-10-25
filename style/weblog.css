@@ -267,8 +267,8 @@ option{
 }
 .weblog-tree-core-l #weblog-circle::after{
 	content: '';
-	width: 70%;
-	height: 70%;
+	width: 60%;
+	height: 60%;
     background: currentColor;
     border-radius: 50%;
     position: absolute;

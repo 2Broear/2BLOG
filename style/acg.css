@@ -38,7 +38,7 @@
 .rcmd-boxes .info .inbox.more{background:none;box-shadow:none}
 .rcmd-boxes .info .inbox{max-width:calc(100%/5.5);width:100%;background-color:var(--preset-f);margin:10px;transition:.3s ease;transition-property:transform;flex-flow:column nowrap;position:relative;border-radius:var(--radius);overflow:hidden;will-change:transform;}
 .rcmd-boxes .info .inbox .inbox-more:before{content:'';width:5px;height:50px;background:currentColor;position:absolute}
-.rcmd-boxes .info .inbox .inbox-more{color:#eaeaea;width:100%;height:100%;min-height:250px;border:2px dashed currentColor;align-content:center;justify-content:center;align-items:center;box-sizing:border-box;text-align:center;vertical-align:middle;border-radius:inherit}
+.rcmd-boxes .info .inbox .inbox-more{color:#eaeaea;width:100%;height:100%;min-height:275px;border:2px dashed currentColor;align-content:center;justify-content:center;align-items:center;box-sizing:border-box;text-align:center;vertical-align:middle;border-radius:inherit}
 .rcmd-boxes .info .inbox .inbox-more:after{content:'';width:50px;height:5px;background:currentColor;position:absolute}
 .rcmd-boxes .info .inbox .inbox-more a{display:block;width:100%;height:100%;position:relative;z-index:9}
 .rcmd-boxes .info .inbox .inbox-more h3{color:currentColor;display:none}
@@ -88,4 +88,43 @@
 .rcmd-boxes .info .inbox .inbox-aside{max-height:135px}
 .rcmd-boxes .info .inboxSliderCard .inbox{display:inline-block}
 /*.win-top .counter div{margin:auto 25px}*/
+}
+
+
+.rcmd-boxes .info .inbox .inbox-more.disabled:before,
+.rcmd-boxes .info .inbox .inbox-more.disabled:after{
+    content: none;
+}
+.rcmd-boxes .info .inbox .inbox-more.disabled{
+    /*opacity: .75;*/
+    border-width: 1px;
+}
+.rcmd-boxes .info .inbox .inbox-more.disabled a:before,
+.rcmd-boxes .info .inbox .inbox-more.disabled a:after{
+    content: attr(data-load)' 'attr(data-cat)'S';
+    /*content: 'LOAD 'attr(data-cat);*/
+    /*content: "LOADS";*/
+    font-size: 3rem;
+    font-weight: bold;
+    color: inherit;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+.rcmd-boxes .info .inbox .inbox-more.disabled a:before{
+    top: 40%;
+    font-size: 1rem;
+}
+.rcmd-boxes .info .inbox .inbox-more.disabled a:after{
+    content: "LOAD";
+    letter-spacing: 5px;
+    top: 55%;
+    /*bottom: 0;*/
+}
+.rcmd-boxes .info .inbox .inbox-more.disabled a{
+    pointer-events: none;
+    /*opacity: .5;*/
+    color: inherit;
 }

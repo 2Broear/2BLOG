@@ -169,15 +169,19 @@
     /*margin-top: 15px!important;*/
 }
 .friends-boxes .deals .inbox:hover > .inbox-aside {
-    color: var(--theme-color)!important;
+    /*color: var(--theme-color)!important;*/
 }
 .friends-boxes .deals.rcmd .inbox:hover > .inbox-aside .lowside-description{
     display: none;
 }
 .friends-boxes .deals.rcmd .inbox:hover > .inbox-aside{
-	font-size: 25px;
+	/*font-size: 25px;*/
+}
+.friends-boxes .deals.rcmd .inbox:hover > .inbox-aside{
+    padding: 25px;
 }
 .friends-boxes .deals .inbox:hover > .inbox-aside {
+    color: var(--theme-color)!important;
 	font-size: 20px;
 	margin-left: auto;
 	text-align: left;
@@ -209,6 +213,9 @@
 /*.friends-boxes .deals.rcmd .inbox:hover{*/
 /*    margin: 0px!important;*/
 /*}*/
+.friends-boxes .deals.rcmd .inbox{
+    max-width: calc(100%/5.8);
+}
 .friends-boxes .deals .inbox:hover{
 	margin: 3px;
 	/*border: 2px dashed var(--theme-color);*/
@@ -250,7 +257,7 @@
 	position: absolute;
 	top: auto;
 	bottom: 0;
-	right: -18px;
+	right: -10px;
 	z-index: 0;
 	opacity: .18;
 	transform: rotate(-45deg);
@@ -340,13 +347,13 @@
     margin: auto;
 }
 .friends-boxes .deals .inbox .inbox-aside{
-	position: relative;
 	width: 100%;
 	max-width: 100%;
 	margin-left: 5%;
 	box-sizing: border-box;
 	z-index: 1;
 	color: inherit;
+	/*position: relative;*/
 	/* padding: 0 0 0 5%; */
 }
 .friends-boxes .deals .inbox .inbox-aside span{
@@ -377,7 +384,7 @@
 	/* text-align: justify; */
 }
 @media screen and (max-width: 1115px) {
-	.friends-boxes .deals .inbox{ max-width: calc(100%/3.43);}
+	.friends-boxes .deals .inbox{ max-width: calc(100%/3.43)!important;}
 	.friends-boxes .deals .inbox .inbox-headside{ width: 100%;}
 	.friends-boxes .deals{ justify-content: center;}
 	.friends-boxes .deals.exchanged{ /*flex-flow: row-reverse wrap-reverse;*/}
@@ -386,7 +393,7 @@
 @media only screen and (max-width: 760px) {
 	.friends-boxes .deals .inbox.girl::after{width: 100%;right: -8px;opacity:.12}
 	.friends-boxes .deals .inboxSliderCard .inbox{ display: inline-block;}
-	.friends-boxes .deals .inbox{flex-flow:column;max-width:calc(100%/2.55)}
+	.friends-boxes .deals .inbox{flex-flow:column;max-width:calc(100%/2.55)!important;}
 	.friends-boxes .deals .inbox .inbox-lowside span.lowside-description p{text-align:inherit}
 	.friends-boxes .deals .inboxSliderCard .slideBox{ width: 335%;/*235*/}
 }

@@ -15,7 +15,7 @@
 .win-top .counter b{
     opacity:.75;
 }
-.win-top .counter p{color:var(--preset-f);font-size:var(--min-size);margin:3px auto;}
+.win-top .counter p{color:var(--preset-f);font-size:var(--min-size);margin: auto;}
 
 body.dark .archive-tree{
     color: var(--preset-9);
@@ -58,6 +58,8 @@ h2 sup:after{
     padding: 0;
     max-height: 500px;
     overflow: auto;
+    position: relative;
+    scroll-behavior: smooth;
     /*margin-left: 15px;*/
 }
 .archive-tree ul li{

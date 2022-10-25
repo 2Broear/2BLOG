@@ -144,7 +144,9 @@ a:hover {
 }
 .box_down ul li .details span {
 	/*background: url('https://img.2broear.com/download/minecraft.png') center center;*/
-	width: 32%;height: 100%;
+	width: 32%;
+	height: 100%;
+	max-width: 100px;
 	border-radius:var(--radius);
 	background-size: cover!important;
 }

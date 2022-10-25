@@ -11,6 +11,22 @@
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/n.css?v=" />
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/highlight/agate.m.css" />
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/fancybox.css" />
+    <style>
+        .child{
+            padding-left: 20px;
+        }
+        .bg h1:hover{
+            background-size: 88% 32%;
+        }
+        .bg h1{
+            background: linear-gradient(var(--theme-color), var(--theme-color)) no-repeat center 100%/0 50%;
+            background-size: 88% 12%;
+            color: white;
+            padding: 5px;
+            border-radius: initial;
+            transition: background-size .35s ease;
+        }
+    </style>
 </head>
 <body class="<?php theme_mode(); ?>">
     <div class="content-all">

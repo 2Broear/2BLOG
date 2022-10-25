@@ -1,10 +1,39 @@
 <?php 
+    function ajaxCallAcg(){
+        $cid = $_POST['cid'];
+        $limit = $_POST['limit'];
+        $offset = $_POST['offset'];
+        $cur_posts = get_wpdb_pids_by_cid($cid, $limit, $offset);
+        $res_array = array();
+        for($i=0;$i<count($cur_posts);$i++){
+            $each_posts = $cur_posts[$i];
+            $this_post = get_post($each_posts->ID);
+            $pid = $this_post->ID;
+            $post_class = new stdClass();
+            $post_class->id = $pid;
+            $post_class->title = $this_post->post_title;
+            $post_class->subtitle = get_post_meta($pid, "post_feeling", true);
+            $post_class->excerpt = get_the_excerpt($this_post);
+            $post_class->link = get_the_permalink($pid);
+            $post_class->poster = get_postimg(0, $pid, true);
+            array_push($res_array, $post_class);
+        }
+        print_r(json_encode($res_array));
+        die();
+    }
+    add_action('wp_ajax_ajaxCallAcg', 'ajaxCallAcg');
+    add_action('wp_ajax_nopriv_ajaxCallAcg', 'ajaxCallAcg');
+    function get_wpdb_pids_by_cid($cid=0, $limit=99, $offset=0){
+        global $wpdb;
+        // https://www.likecs.com/show-306636263.html#sc=304
+        return $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts,wp_term_relationships WHERE ID = object_id AND post_type = 'post' AND post_status = 'publish' AND wp_term_relationships.term_taxonomy_id = $cid ORDER BY post_date DESC LIMIT $limit OFFSET $offset ");
+    }
     // response wpdb data from ajax calls
     function updateCont(){
         $key = $_POST['key'];
         $limit = $_POST['limit'];
         $offset = $_POST['offset'];
-        $cur_posts = get_wpdb_posts($key, $limit, $offset);
+        $cur_posts = get_wpdb_yearly_pids($key, $limit, $offset);
         $res_array = array();
         for($i=0;$i<count($cur_posts);$i++){
             $each_posts = $cur_posts[$i];
@@ -33,11 +62,11 @@
     }
     add_action('wp_ajax_updateCont', 'updateCont');
     add_action('wp_ajax_nopriv_updateCont', 'updateCont');
-    function get_wpdb_posts($year=false, $limit=99, $offset=0){
+    function get_wpdb_yearly_pids($year=false, $limit=99, $offset=0){
         global $wpdb;
         $year = $year ? $year : date('Y');
         // !!!LIMIT & OFFSET must type of NUMBER!!!
-        return $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' AND YEAR(post_date) = '" . $year . "' ORDER BY post_date DESC LIMIT " . $limit . " OFFSET " . $offset . " ");
+        return $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' AND YEAR(post_date) = $year ORDER BY post_date DESC LIMIT $limit OFFSET $offset ");
     }
     //限制上传文件的最大体积值 https://www.cnwper.com/wp-limit-uploads.html
     // function max_up_size() {
@@ -313,7 +342,7 @@
                 // for($j=0;$j<$i;$j++){
                 //     echo 'h'.$match_h[$j-1].' , ';
                 // }
-                $ul_li .= $value>$pre_val || $value>=3 ? '<ol class="child"><li id="t'.$i.'"><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a></li></ol>' : '<li id="t'.$i.'"><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a></li>';
+                $ul_li .= $value>$pre_val || $value>=3 ? '<li class="child" id="t'.$i.'"><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a></li>' : '<li id="t'.$i.'"><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a></li>';
                 // $ul_li .= '<li><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a>'.$child.'</li>';
             }
             $article_index = array_key_exists('article_index',$_COOKIE) ? $_COOKIE['article_index'] : false;
@@ -923,7 +952,7 @@
     };
     
     // acg post query
-    function acg_posts_query($the_cat, $pre_cat=false){
+    function acg_posts_query($the_cat, $pre_cat=false, $limit=99){
         global $post;
         $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
         $cat_slug = $the_cat->slug;
@@ -937,8 +966,10 @@
                 'date' => 'DESC',
                 'modified' => 'DESC'
             ),
-            'posts_per_page' => 99//get_option('site_techside_num', 5),
+            'posts_per_page' => $limit//get_option('site_techside_num', 5),
         )));
+        // $acg_count = $acg_query->post_count; //count($acg_query->posts); //$acg_query->found_posts
+        // print_r($acg_query);
         while ($acg_query->have_posts()):
             $acg_query->the_post();
             $post_feeling = get_post_meta($post->ID, "post_feeling", true);
@@ -980,7 +1011,11 @@
 <?php
         endwhile;
         wp_reset_query();  // reset wp query incase following code occured query err
-        echo '<div class="inbox more flexboxes"><div class="inbox-more flexboxes"><a href="mailto:'.get_bloginfo("admin_email").'" title="发送邮件，荐你所见"></a></div></div></div>';
+        // 单独判断当前查询文章数量
+        // $found = $acg_query->found_posts;
+        // $loaded = $found<$limit ? $found : $limit;
+        $posts_count = $acg_query->post_count;  //count($acg_query->posts)
+        echo '<div class="inbox more flexboxes"><div class="inbox-more flexboxes"><a id="more" href="javascript:;" data-load="'.$posts_count.'" data-count="0" data-cid="'.$acg_query->query['cat'].'" data-cat="'.strtoupper($acg_query->query_vars['category_name']).'" title="加载更多数据"></a></div></div></div>'; //mailto:'.get_bloginfo("admin_email").' 发送邮件，荐你所见
     };
     
     // wp自定义（含置顶无分页）查询函数
@@ -1071,18 +1106,9 @@
             .win-content article .info span{margin-left:10px}
             .win-content article .info span#slider{margin:auto}
     	    .news-window-img{max-width:16%}
-    	    /*.news-window-img img{padding:10px}*/
     	    .rcmd-boxes{width:21%;display:inline-block;vertical-align:middle}
     	    .empty_card h1{max-width: 88%;overflow: hidden;text-overflow: ellipsis;display: block;margin: 25px auto;}
     	    .rcmd-boxes .info .inbox{max-width:none}
-    	    /*.win-top h5:first-letter{
-    	        font-size: 8rem;
-                font-weight: bold;
-                margin: var(--pixel-pd);
-                margin-bottom: auto;
-                float: left;
-                opacity: var(--opacity-hi);
-    	    }*/
     	    .main h2{font-weight: 600;font-size:1.25rem};
             #core-info p{padding:0}
             @media screen and (max-width:760px){

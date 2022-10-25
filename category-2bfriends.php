@@ -22,6 +22,9 @@
             height: 18px!important;
             box-shadow: -88px 0 #ffbd2e, 88px 0 #27c93f;
         }
+        .friends-boxes .deals.rcmd .inbox{
+            max-width: calc(100%/5.8);
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

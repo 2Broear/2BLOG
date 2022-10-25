@@ -500,6 +500,10 @@
             register_setting( 'baw-settings-group', 'site_tagcloud_num' );
             register_setting( 'baw-settings-group', 'site_tagcloud_max' );
         // }
+        register_setting( 'baw-settings-group', 'site_async_switcher' );
+            register_setting( 'baw-settings-group', 'site_async_archive' );
+            register_setting( 'baw-settings-group', 'site_async_acg' );
+        
         register_setting( 'baw-settings-group', 'site_techside_switcher' );
         // if(get_option('site_techside_switcher')){
             register_setting( 'baw-settings-group', 'site_techside_cid' );
@@ -1894,6 +1898,54 @@
                                     ?>
                             <!--    </td>-->
                             <!--</tr>-->
+                    <?php
+                        // }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">归档/漫游影视 - 异步加载</th>
+                        <td>
+                            <?php
+                                $opt = 'site_async_switcher';
+                                $value = get_option($opt);
+                                $data = get_option( 'site_async_archive', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option($opt, "on_default");
+                                    $status="checked";
+                                }else{
+                                    $value ? $status="checked" : $status="closed";
+                                };
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">部分页面使用 ajax 异步加载数据（默认开启，目前支持归档及漫游影视页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:purple;" class="btn">异步加载</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        // if(get_option('site_async_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags = get_option('site_async_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 归档加载数量</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_async_archive';
+                                        $value = get_option($opt);
+                                        $preset = 99;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">归档默认/手动加载数量（默认 99</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags; ?>">
+                                <th scope="row">— 漫游影视加载数量</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_async_acg';
+                                        $value = get_option($opt);
+                                        $preset = 14;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">漫游影视默认/手动加载数量（默认 14 即三行</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
                     <?php
                         // }
                     ?>
