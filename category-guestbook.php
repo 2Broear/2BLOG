@@ -7,7 +7,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <!--<link type="text/css" rel="stylesheet" href="<?php //custom_cdn_src(); ?>/style/guestbook.css" />-->
     <?php get_head(); ?>
     <style>
         #reverse_rotate{direction: rtl;unicode-bidi: bidi-override;transform:rotate(180deg);display: inline-block;}
@@ -42,6 +41,6 @@
 		</footer>
 	</div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <!-- pluginJs -->
 </body></html>

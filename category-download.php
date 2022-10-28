@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/download.css?v=2" />
+    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/download.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
         #loading:before{top:40px}
@@ -189,7 +189,7 @@
         </footer>
     </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
     if($baas){
 ?>

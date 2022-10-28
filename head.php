@@ -8,7 +8,7 @@
 <meta name="msapplication-TileColor" content="<?php echo $theme_color; ?>" />
 <meta name="msapplication-TileImage" content="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico" />
 <link rel="shortcut icon" href="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico"/>
-<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/universal.min.css?v=<?php //echo(mt_rand()); ?>" />
+<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/universal.min.css?v=<?php echo get_theme_info('Version'); ?>" />
 <?php echo $theme_color!='#eb6844' ? '<style>:root{--theme-color: '.$theme_color.'}</style>' : false; ?>
 <?php
     if(get_option('site_leancloud_switcher')){
@@ -25,7 +25,7 @@
     }
     if(get_option('site_third_comments')=='Valine'){  // 全站加载
 ?>
-        <script src="<?php custom_cdn_src(); ?>/js/Valine/Valine.m.js"></script>
+        <script src="<?php custom_cdn_src(); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
     }
 ?>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/main.min.css?v=0.1<?php //echo(mt_rand()) ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/main.min.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php include_once(TEMPLATEPATH. '/head.php'); ?>
     <style>
         #banner-prev, #banner-next{background:url('<?php custom_cdn_src('img'); ?>/images/css_sprites.png') no-repeat}
@@ -98,9 +98,9 @@
     <div class="main-top-part pixiv flexboxes wow fadeInUp" data-wow-delay="0.2s">
         <div class="Fresh-ImgBoxs flexboxes">
           <?php
-              $cardnav_array = explode(';',get_option('site_cardnav_array'));
+              $cardnav_array = explode(';', get_option('site_cardnav_array'));
               for($i=0;$i<count($cardnav_array);$i++){
-                  $each_card = explode('/',$cardnav_array[$i]);
+                  $each_card = explode('/', $cardnav_array[$i]);
                   if($each_card[0]){
                       $card_slug = trim($each_card[0]);
                       $card_nick = trim($each_card[1]);
@@ -266,7 +266,7 @@
     <?php get_footer(); ?>
 </footer>
 <?php if(get_option('site_chat_switcher')) echo '<script src="'.get_option('site_chat').'"></script>'; ?>
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/banner.js"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/banner.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/cursor.js"></script>-->
 </body></html>

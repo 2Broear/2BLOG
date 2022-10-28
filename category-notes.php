@@ -8,7 +8,7 @@
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-	<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/notes.css?v=<?php //echo(mt_rand()) ?>" />
+	<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/notes.css?v=<?php echo get_theme_info('Version'); ?>" />
 	<style> 
 	    .win-top h5{font-weight: 800;}
     </style>
@@ -166,6 +166,6 @@
 <!--<div class="ajaxloadmvision" ajaxload="ajax/ajax-mvisionloader.html"></div>-->
 </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <!-- inHtmlJs -->
 </body></html>

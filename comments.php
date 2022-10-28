@@ -12,9 +12,9 @@
                     <em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -478px 4px"></em>
                 </span>
             </a>
-            <a id="qq" style="opacity: .35;pointer-events: none;" title="分享QQ" href="https://connect.qq.com/widget/shareqq/index.html?<?php echo $para_str = 'url='.get_permalink().'&p='.custom_excerpt(50,true).'&title='.get_the_title().'&summary='.custom_excerpt(100,true).'&pics='.get_postimg(); ?>" target="_blank"><span><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
+            <a id="qq" class="disabled" title="分享QQ" href="https://connect.qq.com/widget/shareqq/index.html?<?php echo $para_str = 'url='.get_permalink().'&p='.custom_excerpt(50,true).'&title='.get_the_title().'&summary='.custom_excerpt(100,true).'&pics='.get_postimg(); ?>" target="_blank"><span><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
             <a id="qzone" title="分享空间（QZone）" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?<?php echo $para_str; ?>" target="_blank"><span><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
-            <a id="Poster" title="图文海报（Poster）"><span id="recall" onclick="ajaxPoster()"><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
+            <a id="Poster" title="图文海报（Poster）"><span id="recall" onclick="ajaxPoster(this)"><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
         </div>
         <!--<script type="text/javascript" src="<?php //custom_cdn_src("src"); ?>/js/jquery-1.9.1.min.js"></script>-->
         <script>
@@ -41,8 +41,10 @@
                 const poster = document.querySelector(".poster");
                 poster.classList.contains('active') ? poster.classList.remove('active') : poster.classList.add('active');
             }
-            function ajaxPoster(){
+            function ajaxPoster(t){
                 if(!document.querySelector("#capture")){
+                    let _tp = t.parentNode;
+                    _tp.classList.add("disabled");  // incase multi click (first generating only)
                     var div = document.createElement('DIV');
                     send_ajax_request("get", "<?php custom_cdn_src(false); ?>/plugin/html2canvas.php",
                         'pid=<?php echo $post->ID ?>', 
@@ -75,7 +77,8 @@
                                 				newImg = document.createElement("img"),
                                 				imgDom = '<img src="'+baseUrl+'" />';
                                 			newImg.src = baseUrl;
-                                			document.getElementById('poster').innerHTML+=imgDom
+                                			document.getElementById('poster').innerHTML+=imgDom;
+                                            _tp.classList.remove("disabled");  // remove click restrict
                                 		});
                                 		clearTimeout(delay_h2c);
                                         delay_h2c = null;  //消除定时器表示激活

@@ -26,7 +26,48 @@
     	};
     }
 
-
+    function dynamicLoad(jsUrl,fn){
+    	var _doc = document.getElementsByTagName('head')[0],
+    		script = document.createElement('script');
+    		script.setAttribute('type','text/javascript');
+    		script.setAttribute('async',true);
+    		script.setAttribute('src',jsUrl);
+    		_doc.appendChild(script);
+    	script.onload = script.onreadystatechange = function(){
+    		if(!this.readyState || this.readyState=='loaded' || this.readyState=='complete'){
+    			fn ? fn() : false;
+    		}
+    		script.onload = script.onreadystatechange = null;
+    	};
+    }
+    function send_ajax_request(method,url,data,callback){
+        var ajax = new XMLHttpRequest();
+        if(method=='get'){  // GET请求
+            data ? (url+='?',url+=data) : false;
+            ajax.open(method,url);
+            ajax.send();
+        }else{  // 非GET请求
+            ajax.open(method,url);
+            ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");  // 设置请求报文
+            data ? ajax.send(data) : ajax.send();
+        }
+        ajax.onreadystatechange = function () {
+            if(ajax.readyState==4 && ajax.status==200){
+                callback ? callback(ajax.responseText) : false;
+            }else{
+                // error ? error(ajax.responseText) : false;
+            }
+        };
+    }
+    function parse_ajax_parameter(data,decode){
+        let str = "";
+        for(let key in data){
+            str += `${key}=${data[key]}&`
+        }
+        str = str.substr(0,str.lastIndexOf("&"));
+        return decode ? decodeURI(str) : str;
+    }
+    
 // 	dynamicLoad('https://src.2broear.com/js/nprogress.js?v=cdnsrc',function(){
 // 		NProgress.start();
 // 		window.onload=function(){

@@ -184,8 +184,8 @@ option{
 	right: 10%;
 }
 .weblog-tree-core-record:hover #weblog-circle::after{
-    width: 50%;
-    height: 50%;
+    width: 80%;
+    height: 80%;
 }
 .weblog-tree-core-record.topset .tree-box-title::after{
 	content: '';
@@ -276,7 +276,7 @@ option{
     left: 50%;
     transform: translate(-50%,-50%);
     opacity: .75;
-    transition: all .35s ease;
+    transition: all .15s ease;
 }
 .weblog-tree-box:hover{
 	/* background: var(--preset-fa);

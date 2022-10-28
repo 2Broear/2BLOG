@@ -500,6 +500,9 @@
             register_setting( 'baw-settings-group', 'site_tagcloud_num' );
             register_setting( 'baw-settings-group', 'site_tagcloud_max' );
         // }
+        register_setting( 'baw-settings-group', 'site_mbit_array' );
+        register_setting( 'baw-settings-group', 'site_mbit_result_array' );
+        
         register_setting( 'baw-settings-group', 'site_async_switcher' );
             register_setting( 'baw-settings-group', 'site_async_archive' );
             register_setting( 'baw-settings-group', 'site_async_acg' );
@@ -1902,6 +1905,30 @@
                         // }
                     ?>
                     <tr valign="top">
+                        <th scope="row">关于 - MBIT测试数据</th>
+                        <td>
+                            <?php
+                                $opt = 'site_mbit_array';
+                                $value = get_option($opt);
+                                $preset = 'after/64; before/67; after/69; after/71; before/53;'; 
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                echo '<p class="description" id="site_cardnav_array_label">展示在关于页面的MBIT图表数据，使用分号“ ; ”分隔（使用斜杠“ / ”分隔类型和占比，如 before/64; after/67;...</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" value="' . $preset . '"/>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top" class="child_option">
+                        <th scope="row">MBIT测试结果</th>
+                        <td>
+                            <?php
+                                $opt = 'site_mbit_result_array';
+                                $value = get_option($opt);
+                                $preset = 'infp-a/mediator;'; 
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                echo '<p class="description" id="site_cardnav_array_label">MBIT测试人格类型，使用分号“ ; ”分隔（规则同上</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $preset . '"/>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
                         <th scope="row">归档/漫游影视 - 异步加载</th>
                         <td>
                             <?php
@@ -1942,7 +1969,7 @@
                                         $value = get_option($opt);
                                         $preset = 14;  //默认填充数据
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">漫游影视默认/手动加载数量（默认 14 即三行</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        echo '<p class="description" id="site_bar_pixiv_label">漫游影视默认/手动加载数量（默认 14</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>

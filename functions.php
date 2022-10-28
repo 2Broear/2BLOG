@@ -98,6 +98,24 @@
      *
      * @param object $query The main WordPress query.
      */
+    function get_theme_info($type='Name'){
+        $my_theme = wp_get_theme();
+        // [Name] => 2BLOG
+        // [ThemeURI] => https://github.com/2Broear/2BLOG
+        // [Description]
+        // [Author] => 2BROEAR
+        // [AuthorURI] => https://blog.2broear.com
+        // [Version] => 1.3.3.4
+        // [Template] => 
+        // [Status] => 
+        // [Tags] => article-topset
+        // [TextDomain] => 
+        // [DomainPath] => 
+        // [RequiresWP] => 3.0
+        // [RequiresPHP] => 5.3
+        return $my_theme->get($type);
+    }
+     
     if(get_option('site_search_style_switcher')){
         // https://thomasgriffin.com/how-to-include-custom-post-types-in-wordpress-search-results/
         add_action( 'pre_get_posts', 'tg_include_custom_post_types_in_search_results' );

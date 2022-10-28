@@ -8,7 +8,7 @@
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/about.css" />
+    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/about.css?v=<?php echo get_theme_info('Version'); ?>" />
 </head>
 <body class="<?php theme_mode(); ?>">
 <div class="content-all">
@@ -43,5 +43,5 @@
     </footer>
 </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 </body></html>

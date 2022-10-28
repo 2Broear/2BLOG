@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php echo(custom_cdn_src()); ?>/style/news.css?v=0.11" />
+    <link type="text/css" rel="stylesheet" href="<?php echo(custom_cdn_src()); ?>/style/news.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -108,5 +108,5 @@
         </footer>
     </div>
     <!-- asyncLoadJs -->
-    <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
+    <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 </body></html>

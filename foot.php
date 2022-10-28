@@ -42,7 +42,7 @@
                                         if(!empty($catsss)) $level="trd_level";else $level="sec_child";
                                         if($the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single()) $choosen = "choosen 2rd";else $choosen="2nd";  // current choosen detect
                                         $slash_link = get_category_link($the_cats_id)!=get_site_url() ? get_category_link($the_cats_id) : 'javascript:void(0)';  // detect if use $slash_link
-                                        echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent." ".$level.'"><a href="'.$slash_link.'" class="'.$choosen.'">— '.$the_cats->name.'</a></li>';  //liwrapper
+                                        echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent." ".$level.'"><a href="'.$slash_link.'" class="'.$choosen.'">&nbsp; '.$the_cats->name.'</a></li>';  //liwrapper
                                     }
                                     echo "</ul>";
                                 }

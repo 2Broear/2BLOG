@@ -8,7 +8,7 @@
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/n.css?v=" />
+    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/n.css?v=<?php echo get_theme_info('Version'); ?>" />
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/highlight/agate.m.css" />
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/fancybox.css" />
     <style>
@@ -67,7 +67,7 @@
             <?php get_footer(); ?>
         </footer>
     </div>
-    <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
+    <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
     <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/highlight/highlight.pack.js"></script>
     <!-- plugins -->
     <script>hljs.initHighlightingOnLoad();</script>
