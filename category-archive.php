@@ -100,6 +100,23 @@
 	</div>
 <!-- siteJs -->
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script>
+    const counterList = document.querySelectorAll('.win-top .counter div');
+    function insideLoop(counter,init,limit,i){
+        let times = -10;
+        var noOrder = setInterval(function(){
+            times = limit<20 ? 1200 : times;
+            init<=limit ? counter.innerHTML = init++ : clearInterval(noOrder);
+            // console.log(init);
+        }, times*i);
+    };
+    for(let i=0;i<counterList.length;i++){
+        let count = parseInt(counterList[i].getAttribute('data-res')),
+            counter = counterList[i].querySelector('h1'),
+            limit = parseInt(counter.innerText);
+        insideLoop(counter,0,limit,i);
+    }
+</script>
 <?php
     if($async_sw){
 ?>
@@ -134,7 +151,7 @@
                                     posts_count = posts_array.length,
                                     lasts_loads = load_box.lastChild.offsetTop;  // same as preset, define last_load before insert
                                 // console.log(load_box.lastChild.offsetTop);
-                                posts_count<=0 ? (_this.classList.add("disabled"), _this.innerText=" 已完成加载！ ") : (_this.setAttribute('data-load', loads+posts_count), _this.innerText = " 加载更多 ");
+                                posts_count<=0 ? (_this.classList.add("disabled"), _this.innerText=" 已加载全部 ") : (_this.setAttribute('data-load', loads+posts_count), _this.innerText = " 加载更多 ");
                                 // console.log(posts_array);
                                 for(let i=0;i<posts_count;i++){
                                     let each_post = posts_array[i];

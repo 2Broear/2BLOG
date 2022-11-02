@@ -374,7 +374,10 @@
     font-size: 12px;
     font-style: italic;
 }
-.about_blocks li.intro_right .mbit .mbit_intro span{
+.about_blocks li.intro_right .mbit .mbit_intro a:hover{
+    background: rgb(51 164 116 / 18%);
+}
+.about_blocks li.intro_right .mbit .mbit_intro a{
     display: inline-block;
     border-radius: var(--radius);
     padding: 5px 15px;
@@ -385,7 +388,7 @@
     margin: 15px auto 5px;
     border: 2px solid;
 }
-.about_blocks li.intro_right .mbit .mbit_intro span b{
+.about_blocks li.intro_right .mbit .mbit_intro a b{
     /*opacity: .5;*/
     font-size: 1rem;
 }
@@ -398,8 +401,8 @@
     margin: 15px auto;
     padding: 5px 0;
 }
-.about_blocks li.intro_right .mbit .mbit_range li.before span#data-type:before,
-.about_blocks li.intro_right .mbit .mbit_range li.after span#data-type:after,
+/*.about_blocks li.intro_right .mbit .mbit_range li.before span#data-type:before,*/
+/*.about_blocks li.intro_right .mbit .mbit_range li.after span#data-type:after,*/
 .about_blocks li.intro_right .mbit .mbit_range li span:before,
 .about_blocks li.intro_right .mbit .mbit_range li span:after{
     opacity: .5;
@@ -420,16 +423,19 @@
 .about_blocks li.intro_right .mbit .mbit_range li span#data-range:after{
     top: -3px;
 }
-.about_blocks li.intro_right .mbit .mbit_range li.before span:before,
-.about_blocks li.intro_right .mbit .mbit_range li.after span:after{
-    opacity: 1!important;
-}
+/*.about_blocks li.intro_right .mbit .mbit_range li.before span:before,*/
+/*.about_blocks li.intro_right .mbit .mbit_range li.after span:after{*/
+/*    opacity: 1!important;*/
+/*}*/
 
-.about_blocks li.intro_right .mbit .mbit_range li.before span#data-type:before,
-.about_blocks li.intro_right .mbit .mbit_range li.after span#data-type:after,
-.about_blocks li.intro_right .mbit .mbit_range li span#data-range:before,
-.about_blocks li.intro_right .mbit .mbit_range li span#data-range:after{
+/*.about_blocks li.intro_right .mbit .mbit_range li.before span#data-type:before,*/
+/*.about_blocks li.intro_right .mbit .mbit_range li.after span#data-type:after,*/
+/*.about_blocks li.intro_right .mbit .mbit_range li span#data-range:before,*/
+/*.about_blocks li.intro_right .mbit .mbit_range li span#data-range:after,*/
+.about_blocks li.intro_right .mbit .mbit_range li.before span::before,
+.about_blocks li.intro_right .mbit .mbit_range li.after span::after{
     font-weight: bold;
+    opacity: 1;
 }
 .about_blocks li.intro_right .mbit .mbit_range li span#data-range:before{
     content: attr(data-before)'%';

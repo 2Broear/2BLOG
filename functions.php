@@ -470,7 +470,8 @@
         // add_action('after_setup_theme', 'update_sitemap');
     }
     // 站点头部
-    function get_head(){
+    function get_head($cat=false){
+        // global $cat;
         require_once(TEMPLATEPATH. '/head.php');
     }
     // WP评论统计排行 https://www.seo628.com/2685.html

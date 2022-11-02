@@ -26,6 +26,9 @@
             border-radius: initial;
             transition: background-size .35s ease;
         }
+        .win-top em.digital_mask:before{
+            content: "";
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

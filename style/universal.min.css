@@ -168,7 +168,7 @@ header>nav#tipson .top-bar-tips a:hover{color:var(--theme-color);}
 header>nav#tipson .top-bar-tips a{color: inherit;text-decoration: underline;position:relative;z-index:1;/*font-size: small;*/}
 /*.win-top:before,*/
 .win-top em.digital_mask:before{
-    content: "";
+    content: none;
     width: 100%;
     height: 100%;
     background: rgb(0 0 0 / 18%);

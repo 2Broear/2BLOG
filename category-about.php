@@ -10,7 +10,10 @@
     <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/about.css?v=<?php echo get_theme_info('Version'); ?>" />
     <style>
-        .about_blocks li.intro_right .mbit .mbit_intro span{
+        .head-inside video{
+            /*height: auto;*/
+        }
+        .about_blocks li.intro_right .mbit .mbit_intro a{
             box-shadow: 0px 0 0px 3px rgb(51 164 116 / 12%);
             background: rgb(51 164 116 / 6%);
         }
@@ -46,15 +49,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="head-inside wow fadeInUp" data-wow-delay="0.15s">
-                                    <video src="<?php $video=get_option('site_about_video');echo $video; ?>" poster="<?php echo cat_metabg($cat, get_option('site_bgimg')); ?>" <?php echo $video ? 'controls=""' : false; ?> preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
+                                <div class="head-inside wow fadeInUp" data-wow-delay="0.15s" style="background:url(<?php echo $catbg=cat_metabg($cat, get_option('site_bgimg')); ?>) center center /cover;">
+                                    <video src="<?php $video=get_option('site_about_video');echo $video; ?>" poster="<?php echo $catbg; ?>" <?php echo $video ? 'controls=""' : false; ?> preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
                                 </div>
                             </li>
                             <li class="intro_right">
                                 <div class="mbit" data-mbit="<?php $mbit_result_array = explode(';', get_option('site_mbit_result_array'));$mbit_array_result = explode('/', $mbit_result_array[0]);echo strtoupper($mbit_array_result[1]);; ?>">
                                     <div class="mbit_intro">
                                         <p> MBIT 16 Personalities recent results<!--<sup> (Oct 21, 2022) </sup>--> </p>
-                                        <span style="color:#33a474;"><b><?php echo strtoupper($mbit_array_result[0]); ?></b></span>
+                                        <a href="https://www.16personalities.com/ch/infp-人格" style="color:#33a474;" target="_blank" title="Check more details for <?php echo $res_type=strtoupper($mbit_array_result[0]); ?>"><b><?php echo $res_type; ?></b></a>
                                     </div>
                                     <ol class="mbit_range">
                                         <?php

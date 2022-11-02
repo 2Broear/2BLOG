@@ -1,6 +1,6 @@
-<title><?php custom_title(); ?></title>
-<meta name="keywords" content="<?php echo is_home() ? get_option('site_keywords') : get_option('seo_keywords'); ?>">
-<meta name="description" content="<?php global $cat;echo is_home() ? get_option('site_description') : get_term_meta($cat, 'seo_description', true); ?>">
+<title><?php $cat = $cat ? $cat : get_page_cat_id(current_slug()); $set=get_term_meta($cat, 'seo_title', true);if($set){echo $set;}else{custom_title();}; ?></title>
+<meta name="keywords" content="<?php echo is_home() ? get_option('site_keywords') : get_term_meta($cat, 'seo_keywords', true); ?>">
+<meta name="description" content="<?php echo is_home() ? get_option('site_description') : get_term_meta($cat, 'seo_description', true); ?>">
 <meta http-equiv="Content-Type" content="text/html; charset=<?php bloginfo('charset') ?>">
 <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="<?php $theme_color=get_option('site_theme','#eb6844');echo $theme_color; ?>">

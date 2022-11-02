@@ -72,7 +72,7 @@
                 <th valign="top" scope="row"><label for="term_fields[seo_title]"><?php _e('Page Title'); ?></label></th>
                 <td>
                     <input type="text" size="40" value="<?php echo esc_attr(get_term_meta($term->term_id, 'seo_title', true)); ?>" id="term_fields[seo_title]" name="term_fields[seo_title]"><br/>
-                    <span class="title"><?php _e('SEO Title Options, edit or leave it.'); ?></span>
+                    <span class="title"><?php _e('SEO Title Options, edit or leave it. (note that this will override the whole "title")'); ?></span>
                 </td>
             </tr>
             <tr class="form-field">
