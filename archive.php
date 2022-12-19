@@ -19,14 +19,14 @@
 		</nav>
 	</header>
     <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
-    <video src="" poster="<?php custom_cdn_src('img'); ?>/images/archive.jpg" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+    <video src="" poster="<?php custom_cdn_src('img'); ?>/images/archives.jpg" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
 	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s">
 	    <?php 
             global $wp_query;
             $dates = $wp_query->query;
             $date_yea = $dates['year'];
             $date_mon = array_key_exists('monthnum',$dates) ? '<b> '.$dates['monthnum'].' </b>月' : '';
-            echo '<b>'.$date_yea.'</b> 年'.$date_mon.'中找到<b> '.$wp_query->found_posts.' </b>篇记录';
+            echo '<b>'.$date_yea.'</b> 年'.$date_mon.'中有<b> '.$wp_query->found_posts.' </b>篇记录';
             // print_r($dates);
             $string = 'Archives of '.$date_yea;
         ?>
@@ -36,7 +36,10 @@
 	<div class="win-nav-content">
 		<div class="win-content main">
 			<div class="notes notes_default" style="max-width: 100%;">
-                <?php the_posts_with_styles($string); ?>
+                <?php 
+                    // print_r($wp_query->posts[0]->ID);
+                    the_posts_with_styles($string);
+                ?>
 			</div>
 		</div>
 	</div>

@@ -11,6 +11,7 @@
 	<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/notes.css?v=<?php echo get_theme_info('Version'); ?>" />
 	<style> 
 	    .win-top h5{font-weight: 800;}
+	    article .info span.valine-comment-count:before{margin-right: 3px;opacity: .75}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -100,6 +101,7 @@
                         'meta_key' => 'post_orderby',
                         'orderby' => array(
                             'meta_value_num' => 'DESC',
+                            // 'modified' => 'DESC',
                             'date' => 'DESC'
                         ),
                         'paged' => $current_page,  //current paged
@@ -135,7 +137,7 @@
                                         }
                                     ?>
                                 </span>
-                                <span class="valine-comment-count" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
+                                <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
                                 <span class="date"><?php the_time("d-m-Y"); ?></span>
                                 <span id="slider"></span>
                             </div>

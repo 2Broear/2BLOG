@@ -25,21 +25,7 @@
     		script.onload = script.onreadystatechange = null;
     	};
     }
-
-    function dynamicLoad(jsUrl,fn){
-    	var _doc = document.getElementsByTagName('head')[0],
-    		script = document.createElement('script');
-    		script.setAttribute('type','text/javascript');
-    		script.setAttribute('async',true);
-    		script.setAttribute('src',jsUrl);
-    		_doc.appendChild(script);
-    	script.onload = script.onreadystatechange = function(){
-    		if(!this.readyState || this.readyState=='loaded' || this.readyState=='complete'){
-    			fn ? fn() : false;
-    		}
-    		script.onload = script.onreadystatechange = null;
-    	};
-    }
+    
     function send_ajax_request(method,url,data,callback){
         var ajax = new XMLHttpRequest();
         if(method=='get'){  // GET请求
@@ -59,10 +45,11 @@
             }
         };
     }
+    
     function parse_ajax_parameter(data,decode){
         let str = "";
         for(let key in data){
-            str += `${key}=${data[key]}&`
+            str += `${key}=${data[key]}&`;
         }
         str = str.substr(0,str.lastIndexOf("&"));
         return decode ? decodeURI(str) : str;
@@ -181,11 +168,11 @@
           aindex_fn = function(){
             if(aindex){
                 var aindexOffset = [],
-                    max = aindex.getAttribute('data-index');
-                function Constructor(index,offset){
+                    max = aindex.getAttribute('data-index'),
+                    Constructor = function(index,offset){
                     this.index = index;
                     this.offset = offset;
-                }
+                };
                 for(let i=0;i<max;i++){
                     const each_index = document.querySelector('#title-'+i),
                           each_offset = each_index.offsetTop+300;
@@ -342,7 +329,7 @@
             // }
             if(aindex && aindexOffset.length>=1){
                 const aindex_li = aindex.querySelectorAll('li');
-                if(scrollTop<=aindexOffset[0].offset || scrollTop>=share.offsetTop){
+                if(scrollTop<=aindexOffset[0].offset || scrollTop>=share.offsetTop){ //-100
                     aindex_cl(aindex_li,'current')
                 }else{
                     aindexOffset.forEach(function (item) {

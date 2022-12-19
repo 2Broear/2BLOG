@@ -196,7 +196,7 @@
                 <div class="inline-edit-col">
                     <label>
     					<span class="title">排序（列表）</span>
-    				    <input type="number" name="post_orderby" class="small-text">
+    				    <input type="number" name="post_orderby" class="small-text" min="0">
     				</label>
                 </div>
             </fieldset>
@@ -213,7 +213,7 @@
             <div class="inline-edit-col">
                 <label>
     				<span class="title">排序</span>
-    			    <input type="number" name="post_orderby" class="small-text" value="1">
+    			    <input type="number" name="post_orderby" class="small-text" value="1" min="0">
     			</label>
             </div>
         </fieldset>

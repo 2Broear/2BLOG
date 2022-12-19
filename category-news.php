@@ -63,12 +63,7 @@
                                                     <li title="讨论人数">
                                                         <?php 
                                                             $third_cmt = get_option('site_third_comments');
-                                                            // $valine_sw = $third_cmt=='Valine' ? true : false;
-                                                            // $twikoo_sw = $third_cmt=='Twikoo' ? true : false;
-                                                            $count = 0;
-                                                            if(!$third_cmt){
-                                                                $count = $post->comment_count;
-                                                            }
+                                                            $count = $third_cmt ? 0 : $post->comment_count;
                                                             echo '<span class="valine-comment-count" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>';
                                                         ?>
                                                     </li>

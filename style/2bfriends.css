@@ -332,13 +332,13 @@
 	background: var(--preset-3a);
 	top: 0;
 	left: 0;
-	opacity: .88;
+	opacity: .75;
 	z-index: 9;
 }
 .friends-boxes .deals .inbox span.ssl.https{
     font-weight: bold;
 	background: #4fc323;
-	/*opacity: 0;*/
+	opacity: .88;
 }
 .friends-boxes .deals .inbox span.ssl.http{
 	background: #f4222c;
@@ -396,4 +396,5 @@
 	.friends-boxes .deals .inbox{flex-flow:column;max-width:calc(100%/2.55)!important;}
 	.friends-boxes .deals .inbox .inbox-lowside span.lowside-description p{text-align:inherit}
 	.friends-boxes .deals .inboxSliderCard .slideBox{ width: 335%;/*235*/}
+	.friends-boxes .deals .inbox .inbox-aside{margin: auto}
 }

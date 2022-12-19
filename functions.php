@@ -1,4 +1,5 @@
 <?php 
+    // Ajax Data Loads
     function ajaxCallAcg(){
         $cid = $_POST['cid'];
         $limit = $_POST['limit'];
@@ -23,6 +24,7 @@
     }
     add_action('wp_ajax_ajaxCallAcg', 'ajaxCallAcg');
     add_action('wp_ajax_nopriv_ajaxCallAcg', 'ajaxCallAcg');
+    
     function get_wpdb_pids_by_cid($cid=0, $limit=99, $offset=0){
         global $wpdb;
         // https://www.likecs.com/show-306636263.html#sc=304
@@ -62,6 +64,7 @@
     }
     add_action('wp_ajax_updateCont', 'updateCont');
     add_action('wp_ajax_nopriv_updateCont', 'updateCont');
+    
     function get_wpdb_yearly_pids($year=false, $limit=99, $offset=0){
         global $wpdb;
         $year = $year ? $year : date('Y');
@@ -88,7 +91,20 @@
     //     update_option( 'wpa59168_counter', $count + 1 );
     // }
     // add_action( 'add_attachment', 'wpa59168_rename_attachment' );
+    function replace_gravatar($avatar) {
+    	$avatar = str_replace(array("//gravatar.com/avatar/", "//secure.gravatar.com/avatar/", "//www.gravatar.com/avatar/", "//0.gravatar.com/avatar/", 
+    	"//1.gravatar.com/avatar/", "//2.gravatar.com/avatar/", "//cn.gravatar.com/avatar/"), get_option('site_avatar_mirror')."avatar/", $avatar);
+    	return $avatar;
+    }
+    add_filter( 'get_avatar', 'replace_gravatar' );
     
+    // 通过文章别名模糊匹配文章id
+    function get_post_like_slug($post_slug) {
+        global $wpdb;
+        $post_slug = '%' . $post_slug . '%';
+        $pid = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name LIKE %s", $post_slug));
+        return get_post($pid);
+    }
     //禁用 Gutenberg 编辑器
     // add_filter('use_block_editor_for_post', '__return_false');
     // remove_action( 'wp_enqueue_scripts', 'wp_common_block_scripts_and_styles' );
@@ -154,9 +170,14 @@
     if(function_exists('add_theme_support')) {
         add_theme_support('post-thumbnails');
     };
-    if(function_exists('add_image_size')){
-        add_image_size('customized-post-thumb',300,300);
-    };
+    // 关闭 wordpress 自动压缩上传图片
+    // add_filter( 'post_thumbnail_html', 'remove_width_attribute', 10 );
+    // add_filter( 'image_send_to_editor', 'remove_width_attribute', 10 );
+     
+    // function remove_width_attribute( $html ) {
+    //   $html = preg_replace( '/(width|height)="\d*"\s/', "", $html );
+    //   return $html;
+    // }
     // include_once(TEMPLATEPATH . '/plugin/nocategory.php');  
     // https://blog.wpjam.com/function_reference/trailingslashit/
     if(get_option('site_remove_category_switcher')){
@@ -354,7 +375,7 @@
             for($i=0;$i<$match_m;$i++){
                 $value = $match_h[$i];
                 $title = trim(strip_tags($matches[2][$i]));
-                $content = str_replace($matches[0][$i], '<h'.$value.' id="title-'.$i.'">'.$title.'</h2>', $content);
+                $content = str_replace($matches[0][$i], '<a href="javascript:;" id="title-'.$i.'" class="index_anchor"></a><h'.$value.' id="title_'.$i.'">'.$title.'</h2>', $content);
                 $value = $match_h[$i];
                 $pre_val = array_key_exists($i-1,$match_h) ? $match_h[$i-1] : 9;
                 // for($j=0;$j<$i;$j++){
@@ -444,7 +465,7 @@
                     $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'var(--theme-color)' : 'inherit';
                 }
                 $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
-                echo '<'.$html_tag.'><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';color:'.$color_font.'">'.$tag->name.'</a></'.$html_tag.'>';
+                echo '<'.$html_tag.'><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';color:'.$color_font.'">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
             }
         }else{
             echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
@@ -648,7 +669,7 @@
         global $cat, $post;
         $nick = get_option('site_nick');
         $name = !is_home() ? ' - '.get_bloginfo('name') : '';
-        $surfix = $nick ? " | " . get_option('site_nick') . $name : $nick;
+        $surfix = $nick ? " | " . get_option('site_nick') . $name : $nick; //
         switch (true) {
             case is_home():
                 echo bloginfo('name');
@@ -778,12 +799,12 @@
         foreach ($links as $link){
             $link_notes = $link->link_notes;
             $link_target = $link->link_target;
-            $sex = $link->link_rating==1 ? 'girl' : 'boy';
+            $link_rating = $link->link_rating;
+            $sex = $link_rating==1 ? 'girl' : 'boy';
             $target = !$link_target ? '_blank' : $link_target;
             $status = $link->link_visible!='Y' ? 'standby' : 'standard';
-            $impress = $link_notes&&$link_notes!='' ? '<span class="ssl https"> '.$link_notes.' </span>' : false;
-            // $rcmd = $link->link_rating==10 ? '<span class="ssl https"> NICE BRO </span>' : '';
-            // print_r($link);
+            $ssl = $link_rating==10 ? 'httpd' : 'https';
+            $impress = $link_notes&&$link_notes!='' ? '<span class="ssl '.$ssl.'"> '.$link_notes.' </span>' : false;
             // global $wpdb;
             // print_r($wpdb->get_var("SELECT ID FROM $wpdb->links WHERE post_name = '$slug'"));
             $avatar = !$link->link_image ? 'https:' . get_option('site_avatar_mirror') . 'avatar/' . md5(mt_rand().'@rand.avatar') . '?s=300' : $avatar = $link->link_image;
@@ -1168,7 +1189,7 @@
                                     }
                                 ?>
                             </span>
-                            <span class="valine-comment-count" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
+                            <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
                             <span class="date"><?php the_time("d-m-Y"); ?></span>
                             <span id="slider"></span>
                         </div>
@@ -1200,7 +1221,7 @@
                                                     if(!$third_cmt){
                                                         $count = $post->comment_count;
                                                     }
-                                                    echo '<span class="valine-comment-count" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>';
+                                                    echo '<span class="valine-comment-count icom" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>';
                                                 ?>
                                             </li>
                                             <li id="post-date" class="updated" title="发布日期">
@@ -1228,7 +1249,7 @@
                                     </div>
                                     <div class="tree-box-content">
                                         <span id="core-info">
-                                            <p class="excerpt"><?php custom_excerpt(100) ?></p>
+                                            <p class="excerpt"><?php echo get_the_content();//custom_excerpt(100) ?></p>
                                         </span>
                                         <span id="other-info">
                                             <h4> Ps. </h4>
@@ -1281,7 +1302,7 @@
                                         }
                                     ?>
                                 </span>
-                                <span class="valine-comment-count" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
+                                <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
                                 <span class="date"><?php the_time("d-m-Y"); ?></span>
                                 <span id="slider"></span>
                             </div>

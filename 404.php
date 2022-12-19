@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<title>404 NOT FOUND | <?php $nick=get_option('site_nick', get_bloginfo('name'));echo $nick; ?></title>
+<title> 404 NOT FOUND <?php $nick = get_option('site_nick');echo $nick ? " | " . $nick . ' - ' . get_bloginfo('name') : $nick; ?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="msapplication-TileColor" content="<?php echo $theme_color; ?>" />
 <meta name="msapplication-TileImage" content="<?php custom_cdn_src('img'); ?>/favicon/favicon.ico" />
@@ -20,7 +20,10 @@
     width: 100%;height: auto;
     position: absolute;
   }
-  .items .itemsInside span{ transition: all .05s ease;}
+  .items .itemsInside span{
+      transition: transform .05s ease;
+      will-change: transform;
+  }
   .items .itemsInside{
     width: 1920px;height: 1024px;
     background: url('<?php custom_cdn_src('img'); ?>/images/404/1920-dark-wall.jpg') no-repeat;

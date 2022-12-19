@@ -60,16 +60,3 @@
 </div>
 <div class="windowmask"></div>
 <div class="windowmask-s2"></div>
-<!--<div class="slider-menu-s" tabindex="1">-->
-<!--    <div class="slider-menu-inside-s">-->
-<!--        <div class="slider-menu_body">-->
-<!--            <div class="body-main">-->
-<!--                <ul>-->
-<!--                    <li><a href="//googled.top" rel="nofollow" data-instant> Googled </a></li>-->
-<!--                    <li><a href="//app.2broear.com/mikutap" rel="nofollow" data-instant> Mikutap </a></li>-->
-<!--                    <li><a href="//design.2broear.com" rel="nofollow" data-instant> Design </a></li>-->
-<!--                </ul>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->

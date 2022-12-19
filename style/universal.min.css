@@ -52,6 +52,7 @@ figure > figure{
     width: 32%;
     display: inline-block;
     margin: 5px;
+    vertical-align: middle;
 }
 figure figcaption{
     font-size: var(--min-size);
@@ -920,7 +921,11 @@ audio{width:300px;height:32px}
 .inside-functions .box .pagePer i{width:100%;height:auto;background:currentColor;display:block;position:inherit;bottom:0;left:0;transition:transform .15s ease}
 .inside-functions .box div.pagePer:hover{background:currentColor!important}
 .inside-functions .box div:hover{background-color:var(--theme-color)}
-.inside-functions .box div{cursor:pointer;font-size:14px;width:72%;height:72%;background:currentColor;border-radius:50%;margin:0 auto;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);transition:transform .35s ease}
+.inside-functions .box div{cursor:pointer;font-size:14px;width:72%;height:72%;background:currentColor;border-radius:50%;margin:0 auto;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);transition:transform .35s ease;}
+.inside-functions .box div,
+.inside-functions .box .pagePer i{
+    will-change: transform;
+}
 .inside-functions .box div em,.inside-functions .box div strong{color:var(--preset-s);font-style:normal;display:inline-block;padding:7px 0;margin:0 auto;user-select: none;-webkit-user-select: none;}
 .inside-functions .box div.dark.disabled{cursor:not-allowed;pointer-events:none}
 .inside-functions .box div.dark i{color:var(--preset-s);font-size:18px;padding:9px 0}
@@ -1236,6 +1241,7 @@ audio{width:300px;height:32px}
     
     /* article index */
     /*.article_index .in_dex{right:0!important}*/
+    .vheader #avatar{border-radius:var(--radius)!important;margin-top:15px!important}
 }
 
 @media only screen and (max-width:360px){
@@ -1529,6 +1535,7 @@ body.dark .share #dislike span #counter {color:#303030}
     width: 100%;
     margin: 25px auto auto;
     color: var(--preset-6);
+    overflow: hidden;
 }
 .wp_comments:hover .comment-reply-link,
 .wp_comments:hover .vat{
@@ -1542,8 +1549,8 @@ body.dark .share #dislike span #counter {color:#303030}
 /*}*/
 .news-article-container ul.children{
     margin-left: 85px;
-    border-left: 1px solid #eee;
-    padding-left: 15px;
+    border-left: 1px solid whitesmoke;
+    /*padding-left: 15px;*/
 }
 .wp_comments_list .children ul{
     border: none!important;
@@ -1591,7 +1598,7 @@ body.dark .share #dislike span #counter {color:#303030}
     color: inherit;
 }
 .wp_comments p a{
-    color: var(--preset-link);
+    /*color: var(--preset-link);*/
 }
 .wp_comments a b{
     /*font-weight: normal;*/
@@ -1638,9 +1645,9 @@ body.dark .share #dislike span #counter {color:#303030}
     position: relative;
 }
 .wp_comments .vtime{
-    opacity: .75;
+    color: #b3b3b3;
     font-size: smaller;
-    margin-top: auto!important;
+    margin-top: 1px!important;
     display: block;
 }
 .wp_comments .vinfo{
@@ -1879,4 +1886,26 @@ p.wp_comment_tip{
     position: relative;
     top: 0;
     display: block;
+}
+.wp_comments .vcontent a{
+    vertical-align: baseline;
+}
+.wp_comments .vcontent img#draw{max-width:36%!important}
+.wp_comments .vcontent img#diy{max-width:125px!important;border-radius:5px!important;cursor:auto!important}
+.wp_comments .vcontent img{
+    max-width: 52px;
+    vertical-align: middle;
+    display: inline-block;
+    margin: 0 auto auto 5px!important;
+    border: none;
+    padding: 0;
+    overflow: inherit;
+    border-radius: 0!important;
+}
+
+.content .index_anchor{
+    position: relative;
+    top: -50px;
+    visibility: hidden;
+    opacity: 0;
 }

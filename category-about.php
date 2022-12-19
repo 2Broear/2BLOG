@@ -13,13 +13,62 @@
         .head-inside video{
             /*height: auto;*/
         }
+        .about_blocks li.intro_right .mbit .mbit_intro{
+            margin-left: 25px;
+        }
         .about_blocks li.intro_right .mbit .mbit_intro a{
             box-shadow: 0px 0 0px 3px rgb(51 164 116 / 12%);
             background: rgb(51 164 116 / 6%);
         }
+        .about_blocks li.intro_right .mbit:before{
+            right: 2%;
+        }
+        .about_blocks{
+            margin-top: 15px;
+        }
+        .In-core-head #head-nickname{
+            font-size: 1.35rem;
+        }
+        
+        @keyframes loader{
+            0%{transform:translateX(-100%);}
+            100%{transform:translateX(360%);}
+        }
+        @keyframes loader-reverse{
+            0%{transform:translateX(100%);}
+            100%{transform:translateX(-360%);}
+        }
+        /*.about_blocks li.intro_right .mbit .mbit_range li.after span em:after,*/
+        .about_blocks li.intro_right .mbit .mbit_range li.after span em:before{
+            background: -webkit-linear-gradient(left,var(--preset-fa) 0%,transparent 100%);
+            -webkit-background: -webkit-linear-gradient(left,var(--preset-fa) 0%,transparent 100%);
+            animation: loader-reverse ease-out 3.6s 1.2s infinite;
+            -webkit-animation: loader-reverse ease-out 3.6s 1.2s infinite;
+            left: auto;
+            right: 0;
+            transform: translateX(100%);
+        }
+        /*.about_blocks li.intro_right .mbit .mbit_range li span em:after,*/
+        .about_blocks li.intro_right .mbit .mbit_range li span em:before{
+            content: '';
+            width: 66%;
+            height: 100%;
+            background-color: currentColor;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translateX(-100%);
+            background: -webkit-linear-gradient(left,transparent 0%,var(--preset-fa) 100%);
+            -webkit-background: -webkit-linear-gradient(left,transparent 0%,var(--preset-fa) 100%);
+            animation: loader ease-out 3.6s 1.2s infinite;
+            -webkit-animation: loader ease-out 3.6s 1.2s infinite;
+            opacity: .75;
+        }
         .about_blocks li.intro_right .mbit .mbit_range li span em{
             width: 0%;
             transition: width 1s ease;
+            will-change: width;
+            overflow: hidden;
         }
     </style>
 </head>
@@ -54,15 +103,15 @@
                                 </div>
                             </li>
                             <li class="intro_right">
-                                <div class="mbit" data-mbit="<?php $mbit_result_array = explode(';', get_option('site_mbit_result_array'));$mbit_array_result = explode('/', $mbit_result_array[0]);echo strtoupper($mbit_array_result[1]);; ?>">
+                                <div class="mbit" data-mbit="<?php $mbit_result_array = explode(';', get_option('site_mbit_result_array'));$mbit_array_result = explode('/', $mbit_result_array[0]);echo strtoupper($mbit_array_result[1]); ?>">
                                     <div class="mbit_intro">
-                                        <p> MBIT 16 Personalities recent results<!--<sup> (Oct 21, 2022) </sup>--> </p>
-                                        <a href="https://www.16personalities.com/ch/infp-人格" style="color:#33a474;" target="_blank" title="Check more details for <?php echo $res_type=strtoupper($mbit_array_result[0]); ?>"><b><?php echo $res_type; ?></b></a>
+                                        <p> MBIT 16 Personalities result<!--<sup> (Oct 21, 2022) </sup>--> </p>
+                                        <a href="https://www.16personalities.com/ch/<?php $mbit_abbr=$mbit_array_result[0];echo strpos($mbit_abbr,'-')!==false ? substr($mbit_abbr,0,4) : $mbit_abbr; ?>-人格" style="color:#33a474;" target="_blank" title="Check more details for <?php echo $res_type=strtoupper($mbit_abbr); ?>"><b><?php echo $res_type; ?></b></a>
                                     </div>
                                     <ol class="mbit_range">
                                         <?php
                                             $mbit_array = explode(';', get_option('site_mbit_array'));
-                                            $init_array = array(
+                                            $mbit_inits = array(
                                                 array('before' => 'EXTRAVERTED', 'after' => 'INTROVERTED'),
                                                 array('before' => 'INTUITIVE', 'after' => 'OBSERVANT'),
                                                 array('before' => 'THINKING', 'after' => 'FEELING'),
@@ -71,16 +120,17 @@
                                             );
                                             for($i=0;$i<count($mbit_array);$i++){
                                                 $each_data = explode('/', $mbit_array[$i]);
-                                                array_push($each_data, $init_array[$i]);
+                                                array_push($each_data, $mbit_inits[$i]);
                                                 //   print_r($each_data);
                                                 if($each_data[0]){
                                                     $data_type = trim($each_data[0]);
                                                     $data_percent = trim($each_data[1]);
+                                                    $data_calculate = 100-$data_percent;
                                                     if($data_type=='before' && $data_percent>50){
                                                         $data_before = $data_percent;
-                                                        $data_after = 100-$data_percent;
+                                                        $data_after = $data_calculate;
                                                     }else{
-                                                        $data_before = 100-$data_percent;
+                                                        $data_before = $data_calculate;
                                                         $data_after = $data_percent;
                                                     };
                                                     $init_before = trim($each_data[2]['before']);
@@ -129,12 +179,13 @@
         for(let i=0;i<list.length;i++){
             let count = parseInt(list[i].getAttribute('data-res')),
                 counter = list[i].querySelector('em');
+            // counter.style.width = count+"%";
             if(order){
                 var inOrder = setTimeout(function(){
-                    counter.style.width = count+"%";
-                    inOrder = null;
-                    clearTimeout(inOrder);
-                }, i*100);
+                        counter.style.width = count+"%";
+                        inOrder = null;
+                        clearTimeout(inOrder);
+                    }, i*100);
             }else{
                 counter.style.width = count+"%";
             }

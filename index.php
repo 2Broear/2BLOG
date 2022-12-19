@@ -5,6 +5,10 @@
     <?php include_once(TEMPLATEPATH. '/head.php'); ?>
     <style>
         #banner-prev, #banner-next{background:url('<?php custom_cdn_src('img'); ?>/images/css_sprites.png') no-repeat}
+        .resource-windows div span.resource-windows-top span.resource-windows-top_inside{display:none}
+        @media screen and (max-width:600px){
+            .Fresh-ImgBoxs{display:none}
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -79,7 +83,7 @@
                       </div>
                       <div class="recommend-newsContent">
                         <span class="content-core entry-content">
-                            <p><?php custom_excerpt(170);  //echo wp_trim_words(get_the_excerpt(), 10); ?></p>
+                            <p><?php custom_excerpt(150);  //echo wp_trim_words(get_the_excerpt(), 10); ?></p>
                         </span>
                         <span class="content-tail">
                           <aside class="personal_stand">
@@ -118,7 +122,38 @@
         <!-- 左 -->
         <div class="special-display">
             <ul class="flexboxes">
-                <li id="special-img" style="background: url(<?php custom_cdn_src('img'); ?>/images/google.gif) center /cover;"><a href="javascript:;" style="width:100%;height:100%;position:absolute;top:0;left:0;"></a></li>
+                <!--<style>
+                    @keyframes dancing{
+                        0%{
+                            left: 0;
+                            right: auto;
+                        }
+                        33%{
+                            left: 25px;
+                            right: auto;
+                        }
+                        66%{
+                            left: auto;
+                            right: 0;
+                        }
+                        100%{
+                            left: auto;
+                            right: 25px;
+                        }
+                    }
+                    #special-img{
+                        position: absolute;
+                        top: 0;
+                        left: 15px;
+                        right: auto;
+                        height: 100%;
+                        animation: dancing ease-in-out 2.5s 0s infinite;
+                        animation-fill-mode: both;
+                    }
+                </style>
+                <li id="special-img" style="background: url(<?php custom_cdn_src('img'); ?>/images/dance.gif) center /cover;">-->
+                    <!--<a href="javascript:;" style="width:100%;height:100%;position:absolute;top:0;left:0;"></a>-->
+                <!--</li>-->
             </ul>
         </div>
         <!-- 右 -->

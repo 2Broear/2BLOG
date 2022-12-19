@@ -10,6 +10,10 @@
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/articles.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/fancybox.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <style>
+        .news-article-container figure{margin:5px}
+        figure > figure{width:30%;vertical-align:middle}
+    </style>
 </head>
 <body class="<?php theme_mode(); ?>">
 <div class="content-all">

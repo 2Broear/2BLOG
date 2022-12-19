@@ -9,6 +9,45 @@
 <head>
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/archive.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
+    <style>
+        .win-top .counter{
+            margin: 8% auto 7%;
+        }
+        .archive-tree h2{
+            margin: 35px auto 10px;
+        }
+        @keyframes dot {
+            33.33% {
+                content: ".";
+            }
+            66.67% {
+                content: "..";
+            }
+            100% {
+                content: "...";
+            }
+        }
+        h2 sup.loading:after{
+            animation: dot .5s infinite steps(2, start);
+            -webkit-animation: dot .5s infinite steps(2, start);
+        }
+        #stats{
+            font-weight: bold;
+            border: 1px solid rgb(100 100 100 / 30%);
+            padding: 5px 15px;
+            /* margin-top: 5px; */
+            border-radius: 50px;
+            font-size: 12px;
+            /* float: right; */
+            border-top-left-radius: unset;
+            background: rgb(200 200 200 / 10%);
+            display: inline-block;
+        }
+        #stats b{
+            opacity: .75;
+            font-weight: normal;
+        }
+    </style>
 </head>
 <body class="<?php theme_mode(); ?>">
     <div class="content-all">
@@ -19,7 +58,7 @@
                     <?php get_header(); ?>
                 </nav>
             </header>
-            <video src="<?php echo get_option('site_acgn_video'); ?>" poster="<?php echo cat_metabg($cat, custom_cdn_src('img',true).'/images/archives.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+            <video src="<?php echo get_option('site_acgn_video'); ?>" poster="<?php echo cat_metabg($cat, custom_cdn_src('img',true).'/images/archive.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
             <div class="counter">
                 <?php
                     $archive_array = get_post_archives('yearly');
@@ -50,22 +89,44 @@
                 ?>
             </select>
             <?php
-                global $wpdb;
+                $news_temp = !get_template_bind_cat('category-news.php')->errors ? get_template_bind_cat('category-news.php') : false;
+                $note_temp = !get_template_bind_cat('category-notes.php')->errors ? get_template_bind_cat('category-notes.php') : false;
+                $blog_temp = !get_template_bind_cat('category-weblog.php')->errors ? get_template_bind_cat('category-weblog.php') : false;
                 $async_sw = get_option('site_async_switcher');
                 $async_loads = $async_sw ? get_option("site_async_archive", 99) : 999;
                 // get years that have posts
+                global $wpdb;
                 $years = $wpdb->get_results( "SELECT YEAR(post_date) AS year FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' GROUP BY year DESC" );
                 // get posts for each year
                 foreach ( $years as $year ) {
                     $cur_year = $year->year;
                     $cur_posts = get_wpdb_yearly_pids($cur_year, $async_loads, 0);
                     $posts_count = count($cur_posts);
+                    // $news_records = 0;
+                    $all_posts = get_wpdb_yearly_pids($cur_year, 9999, 0);
+                    $all_count = count($all_posts);
+                    $news_array = array();
+                    $note_array = array();
+                    $blog_array = array();
+                    // detect if post in category
+                    for($i=0;$i<$all_count;$i++){
+                        $pid = $all_posts[$i]->ID;
+                        // in_category($news_temp->term_id, $pid) ? $news_records++ : false;
+                        in_category($news_temp->term_id, $pid) ? array_push($news_array, $pid) : false; //get_post($pid)->post_title
+                        in_category($note_temp->term_id, $pid) ? array_push($note_array, $pid) : false;
+                        in_category($blog_temp->term_id, $pid) ? array_push($blog_array, $pid) : false;
+                    };
+                    $news_count = count($news_array);
+                    $note_count = count($note_array);
+                    $blog_count = count($blog_array);
+                    $etc_count = $all_count-($news_count+$note_count+$blog_count);
+                    $output_count = '<span id="stats"><b>'.$news_temp->name.'</b> *'.$news_count.'，<b>'.$note_temp->name.'</b> *'.$note_count.'，<b>'.$blog_temp->name.'</b> *'.$blog_count.'、<b>其他</b> *'.$etc_count.'</span>';
                     // SAME COMPARE AS $found $limit
                     if($posts_count>=$async_loads){
-                        echo $async_sw ? '<h2>' . $cur_year . '年度发布<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'"> 加载更多 </sup></h2><ul>' : '<h2>' . $cur_year . '年度发布</h2><ul>';
+                        echo $async_sw ? '<h2>' . $cur_year . '年度发布<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'"> 加载更多 </sup></h2>'.$output_count.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . '年度发布</h2><ul class="call_'.$cur_year.'">';
                     }else{
-                        echo $async_sw ? '<h2>' . $cur_year . '年度发布<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'" class="disabled"> 已全部载入 </sup></h2><ul>' : '<h2>' . $cur_year . '年度发布</h2><ul>';
-                    }
+                        echo $async_sw ? '<h2>' . $cur_year . '年度发布<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'" class="disabled"> 已全部载入 </sup></h2>'.$output_count.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . '年度发布</h2><ul> class="call_'.$cur_year.'"';
+                    };
                     // print_r($cur_posts[0]->ID);
                     for($i=0;$i<$posts_count;$i++){
                         $each_posts = $cur_posts[$i];
@@ -78,12 +139,15 @@
                         // print_r($each_posts->ID);
                         $unique_date = $this_date[0]!=$prev_date[0] || $each_posts->ID==$cur_posts[0]->ID ? '<div class="timeline">'.$this_date[0].'</div>' : '';
                         // print_r($this_cats);
-                        echo '<li>'.$unique_date.'<a class="link" href="'.get_the_permalink($this_post).'" target="_blank">' . $this_post->post_title.'<sup>';
-                        foreach ($this_cats as $this_cat){
-                            echo '<span>'.$this_cat->name.'</span>';
-                        }
+                        $this_title = $this_post->post_title;
+                        echo '<li>'.$unique_date.'<a class="link" href="'.get_the_permalink($this_post).'" target="_blank">'; //$this_cats[0]->slug
+                        echo $this_cats[0]->slug==$news_temp->slug ? '<u>'.$this_title.'</u>' : $this_title;
+                        echo '<sup>';
+                            foreach ($this_cats as $this_cat){
+                                echo '<span id="'.$this_cat->term_id.'">'.$this_cat->name.'</span>';
+                            }
                         echo '</sup></a></li>';
-                    }
+                    };
                     echo '</ul>'; //<div class="ajax"></div>
                 }
             ?>
@@ -133,10 +197,11 @@
                             loads = parseInt(_this.getAttribute("data-load")),
                             click_count = parseInt(_this.getAttribute('data-count')),
                             // load_ajax = load_box.querySelector(".ajax"),
-                            load_box = _this.parentNode.nextSibling,
+                            load_box = archive_tree.querySelector('.call_'+years),//_this.parentNodenextSibling,
                             last_load = load_box.lastChild.offsetTop;  // preset lastChild offsetTop record
                         click_count++;
-                        _this.innerText=" 加载中.. ";
+                        _this.innerText=" 加载中 ";
+                        _this.classList.add('loading','disabled');
                         _this.setAttribute('data-count', click_count);
                         // console.log(click_count)
                         send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", 
@@ -151,8 +216,15 @@
                                     posts_count = posts_array.length,
                                     lasts_loads = load_box.lastChild.offsetTop;  // same as preset, define last_load before insert
                                 // console.log(load_box.lastChild.offsetTop);
-                                posts_count<=0 ? (_this.classList.add("disabled"), _this.innerText=" 已加载全部 ") : (_this.setAttribute('data-load', loads+posts_count), _this.innerText = " 加载更多 ");
-                                // console.log(posts_array);
+                                if(posts_count<=0){
+                                    _this.classList.add("disabled");
+                                    _this.innerText=" 已加载全部 ";
+                                }else{
+                                    _this.classList.remove('disabled');
+                                    _this.setAttribute('data-load', loads+posts_count);
+                                    _this.innerText = " 加载更多 ";
+                                };
+                                _this.classList.remove('loading');
                                 for(let i=0;i<posts_count;i++){
                                     let each_post = posts_array[i];
                                     // console.log(each_post)

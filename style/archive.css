@@ -54,9 +54,30 @@ h2 sup:after{
     font-size: smaller;
     vertical-align: text-top;
 }
+@keyframes dot {
+    33.33% {
+        content: ".";
+    }
+    66.67% {
+        content: "..";
+    }
+    100% {
+        content: "...";
+    }
+}
+/*h2 sup:before{*/
+/*    content: '';*/
+/*    opacity: .75;*/
+/*    font-size: smaller;*/
+/*    vertical-align: text-top;*/
+/*}*/
+h2 sup.loading:after{
+    animation: dot .5s infinite steps(2, start);
+    -webkit-animation: dot .35s infinite steps(2, start);
+}
 .archive-tree ul{
     padding: 0;
-    max-height: 500px;
+    max-height: 588px;
     overflow: auto;
     position: relative;
     scroll-behavior: smooth;

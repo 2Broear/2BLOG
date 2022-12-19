@@ -29,6 +29,15 @@
         .win-top em.digital_mask:before{
             content: "";
         }
+        figure > figure{
+            vertical-align: bottom;
+        }
+        .content .index_anchor{
+            position: relative;
+            top: -65px;
+            visibility: hidden;
+            opacity: 0;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -53,6 +62,7 @@
                                     echo $tags ? $tags : '<a href="javascript:;" target="_blank" rel="nofollow">'.get_option('site_nick').'</a>';
                                 ?>
                             </span>
+                            <span id="view"><?php $cat=get_the_ID();setPostViews($cat);echo getPostViews($cat); ?>°C </span>
                             <span id="date"><i class="icom"></i> <?php the_time('d-m-Y'); ?> </span>
                             <span id="slider"></span>
                         </div>

@@ -16,31 +16,12 @@
             <a id="qzone" title="分享空间（QZone）" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?<?php echo $para_str; ?>" target="_blank"><span><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
             <a id="Poster" title="图文海报（Poster）"><span id="recall" onclick="ajaxPoster(this)"><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
         </div>
-        <!--<script type="text/javascript" src="<?php //custom_cdn_src("src"); ?>/js/jquery-1.9.1.min.js"></script>-->
+        <!--<script type="text/javascript" src="<?php custom_cdn_src("src"); ?>/js/jquery-1.9.1.min.js"></script>-->
         <script>
-            function send_ajax_request(method,url,data,callback){
-                var ajax = new XMLHttpRequest();
-                if(method=='get'){  // GET请求
-                    data ? (url+='?',url+=data) : false;
-                    ajax.open(method,url,true);
-                    ajax.send();
-                }else{  // 非GET请求
-                    ajax.open(method,url,true);
-                    ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded; charset=utf-8");  // https://www.cnblogs.com/dangdanghepingping/p/10167135.html
-                    data ? ajax.send(data) : ajax.send();
-                }
-                ajax.onreadystatechange = function () {
-                    if(ajax.readyState==4 && ajax.status==200){
-                        callback ? callback(ajax.responseText) : false;
-                    }else{
-                        // error ? error(ajax.responseText) : false;
-                    }
-                };
-            }
             function poster_sw(){
                 const poster = document.querySelector(".poster");
                 poster.classList.contains('active') ? poster.classList.remove('active') : poster.classList.add('active');
-            }
+            };
             function ajaxPoster(t){
                 if(!document.querySelector("#capture")){
                     let _tp = t.parentNode;
@@ -90,11 +71,12 @@
                 }else{
                     poster_sw();
                 }
-            };
+            }
         </script>
 <?php
     }
-    global $post,$posts;
+    global $post,
+           $posts;
     if($post->comment_status=="open" || is_category()){
         if(is_user_logged_in()){
             $wp_user = get_currentuserinfo();// global $current_user;// print_r($wp_user);
@@ -107,13 +89,13 @@
             $user_link = array_key_exists("comment_author_url_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_url_" . COOKIEHASH] : false;
         };
         if($comment_sw){
-            $welcome="既来之则留之，欢迎在下方留言评论。提交评论后还可以撤销或重新编辑，未发布的留言会被储存在本地以供下次继续编辑（Valine 会自动保存您的评论信息到浏览器）";
+            $welcome="既来之则留之~ 欢迎在下方留言评论，提交评论后还可以撤销或重新编辑。（Valine 会自动保存您的评论信息到浏览器）";
         }elseif($twikoo_sw){
-            $welcome="既来之则留之，欢迎在下方留言评论";
+            $welcome="既来之则留之~ 欢迎在下方留言评论";
         }else{
             $wp_login = is_user_logged_in() ? '<small> ( Logged as <a href="'.wp_login_url(get_permalink()).'" title="登出？">'.$user_name.'</a> ) </small>' : '';
             $welcome='欢迎您，'.$user_name.'！您可以在这里畅言您的的观点与见解！'.$wp_login;//
-        }
+        };
         echo '<div class="main"><span><h2> 评论留言 </h2></span><p>'.$welcome.'</p></div>';
         if(is_single()){
 ?>

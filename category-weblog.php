@@ -20,6 +20,10 @@
         .pageSwitcher span{color: var(--preset-9);}
         .vcontent blockquote{opacity:.75}
         body.dark #comment_txt h2{color:var(--preset-c)}
+        .weblog-tree-core.reply .tree-box-title h3:after{
+            content: "回复此片段";
+        }
+        .wp_comments_list .children{border:none;}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

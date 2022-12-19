@@ -45,6 +45,7 @@
 .nav-body .main-root{margin:0;border-radius:10px;text-align:left;border-radius:10px}
 .main-root ul{color:var(--preset-6);padding:0;margin:inherit;box-sizing:border-box}
 .main-root ul li{width:100%;height:auto;position:relative;border-radius:10px;overflow:hidden;padding: 5px;box-sizing: border-box;}
+/*.main-root ul li a.choosen,*/
 .main-root ul li:nth-child(even) a:hover{background-color:var(--preset-s)}
 .main-root ul li:nth-child(even){background-color:var(--preset-fa)}
 .main-root ul li a.choosen,
@@ -96,8 +97,8 @@
     content: ' 、';
 }
 .win-content article .info span#slider{margin:auto}
-article .info::after{content:'';width:32%;height:2px;background:currentColor;position:absolute;bottom:-1px;right:0;transition:width .15s ease}
-article .info span.valine-comment-count:before{content: "#"}
+article .info::after{content:'';width:18%;height:2px;background:currentColor;position:absolute;bottom:-1px;right:0;transition:width .15s ease}
+article .info span.valine-comment-count:before{content: "\e96f"}
 article .info span.classify{color:var(--preset-9)}
 article .info span#keywords{color:var(--preset-8)}
 .win-content .load-more_notes{width:100%;height:auto;display:block;margin:0 auto 15px}

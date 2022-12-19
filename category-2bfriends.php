@@ -14,7 +14,7 @@
         #loading{position:relative;padding:20px;display:block;height:80px;margin: 0 auto;}
         #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:20px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%;-webkit-animation:spin 1s infinite linear;animation:spin 1s infinite linear}
         .main{margin-bottom:auto}
-        .friends-boxes .deals .inbox.girl em{background: url('<?php custom_cdn_src('img'); ?>/images/girl_symbols.png') no-repeat center center /contain;width: 80px;height: 100px;bottom:-10px}
+        .friends-boxes .deals .inbox.girl em{background: url('<?php custom_cdn_src('img'); ?>/images/girl_symbols.png') no-repeat center center /contain;width: 80px;height: 100px;}
         .friends-boxes .inbox-clip h2:before{
             box-shadow: -78px 0 #27c93f, 78px 0 #ffbd2e;
         }
@@ -53,10 +53,11 @@
         	                'hide_invisible' => 0
     	                ));
         	            $lost_links = get_bookmarks(array(
-        	                'orderby' => 'updated',  //link_updated
+        	                'orderby' => 'link_id',  //updated link_updated
         	                'order' => 'DESC',  // 最新排最前
         	                'category_name' => "missing",
-        	                'hide_invisible' => 0
+        	                'hide_invisible' => 0,
+        	               // 'show_updated' => 1
     	                ));
     	               // print_r($rcmd_links);
                         if(count($rich_links)>0){

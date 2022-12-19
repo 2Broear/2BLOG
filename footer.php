@@ -38,8 +38,11 @@
                                 <a href="<?php the_permalink() ?>" target="_blank">
                                     <em><?php the_title() ?></em>
                                     <?php 
-                                        if($post_orderby>1) echo '<sup id="new">Top</sup>';
-                                        if($post->comment_count>=10) echo '<sup id="hot">Hot</sup>';
+                                        if($post->comment_count>=50){
+                                            echo '<sup id="hot">Hot</sup>';
+                                        }else{
+                                            if($post_orderby>1) echo '<sup id="new">new</sup>';
+                                        }
                                     ?>
                                 </a>
                             </li>
@@ -334,7 +337,8 @@
                     $server = get_option('site_server_side');
                     if($server) echo '<a href="javascript:void(0);" rel="nofollow"><img src="'.$server.'" style="height: 12px;"></a>'; //&&$server!="已关闭"
                     if(get_option('site_foreverblog_wormhole')){
-                        $warmhole_img = $_COOKIE['theme_mode']=='dark' ? custom_cdn_src('img',true).'/images/wormhole_2_tp.gif' : custom_cdn_src('img',true).'/images/wormhole_4_tp.gif';
+                        $theme = array_key_exists('theme_mode',$_COOKIE) ? $_COOKIE['theme_mode'] : false;
+                        $warmhole_img = $theme ? custom_cdn_src('img',true).'/images/wormhole_2_tp.gif' : custom_cdn_src('img',true).'/images/wormhole_4_tp.gif';
                         echo '<a href="https://www.foreverblog.cn/go.html" target="_blank" rel="nofollow"><em class="warmhole" style="background:url('.custom_cdn_src('img',true).'/images/wormhole_4_tp.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
                     }
                 ?>

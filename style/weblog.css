@@ -334,7 +334,7 @@ option{
 	display: block;
 }
 .weblog-tree-box .tree-box-content{
-	color: var(--preset-9);
+	color: var(--preset-8);
 	overflow: hidden;
 	padding: 15px;
 }
