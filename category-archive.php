@@ -14,7 +14,11 @@
             margin: 8% auto 7%;
         }
         .archive-tree h2{
-            margin: 35px auto 10px;
+            margin: 35px auto 5px;
+        }
+        .archive-tree ul{
+            max-height: 518px;
+            /*max-height: 368px;*/
         }
         @keyframes dot {
             33.33% {
@@ -31,19 +35,25 @@
             animation: dot .5s infinite steps(2, start);
             -webkit-animation: dot .5s infinite steps(2, start);
         }
-        #stats{
+        h2 sup{
+            font-size: 12px;
+            text-decoration: underline;
+        }
+        .stats{
             font-weight: bold;
-            border: 1px solid rgb(100 100 100 / 30%);
-            padding: 5px 15px;
+            border-top: 1px dashed rgb(100 100 100 / 30%);
+            /*padding: 5px 15px;*/
+            padding: 10px 2px;
             /* margin-top: 5px; */
-            border-radius: 50px;
+            /*border-radius: 50px;*/
             font-size: 12px;
             /* float: right; */
-            border-top-left-radius: unset;
-            background: rgb(200 200 200 / 10%);
-            display: inline-block;
+            border-top-left-radius: 0;
+            /*display: inline-block;*/
+            display: block;
+            /*background: rgb(200 200 200 / 10%);*/
         }
-        #stats b{
+        .stats b{
             opacity: .75;
             font-weight: normal;
         }
@@ -77,14 +87,18 @@
             </div>
         </div>
         <div class="archive-tree">
-            <select name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;" style="/*float:right;*/">
-                <option value=""><?php esc_attr( _e( 'Select Month', 'textdomain' ) ); ?></option> 
+            <select name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;" style="float:right;">
+                <option value=""><?php esc_attr( _e( 'Monthly Overview', 'textdomain' ) ); ?></option> 
                 <?php 
                     wp_get_archives(array(
                         'type' => 'monthly',
                         'format' => 'option',
                         'show_post_count' => 1,
-                        'limit' => ''
+                        'limit' => '',
+                //         'year' => '2018',
+                // 		'monthnum' => '',
+                // 		'day' => '',
+                // 		'w' => '',
                     )); 
                 ?>
             </select>
@@ -94,6 +108,7 @@
                 $blog_temp = !get_template_bind_cat('category-weblog.php')->errors ? get_template_bind_cat('category-weblog.php') : false;
                 $async_sw = get_option('site_async_switcher');
                 $async_loads = $async_sw ? get_option("site_async_archive", 99) : 999;
+                // https://wordpress.stackexchange.com/questions/46136/archive-by-year
                 // get years that have posts
                 global $wpdb;
                 $years = $wpdb->get_results( "SELECT YEAR(post_date) AS year FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' GROUP BY year DESC" );
@@ -119,13 +134,15 @@
                     $news_count = count($news_array);
                     $note_count = count($note_array);
                     $blog_count = count($blog_array);
-                    $etc_count = $all_count-($news_count+$note_count+$blog_count);
-                    $output_count = '<span id="stats"><b>'.$news_temp->name.'</b> *'.$news_count.'，<b>'.$note_temp->name.'</b> *'.$note_count.'，<b>'.$blog_temp->name.'</b> *'.$blog_count.'、<b>其他</b> *'.$etc_count.'</span>';
+                    $rest_count = $all_count-($news_count+$note_count+$blog_count);
+                    $output_stats = '<span class="stat_'.$cur_year.' stats">📈📉统计：<b>'.$news_temp->name.'</b> '.$news_count.'篇、 <b>'.$note_temp->name.'</b> '.$note_count.'篇、 <b>'.$blog_temp->name.'</b> '.$blog_count.'篇、 <b>其他类型</b> '.$rest_count.'篇。</span>';
+                    $head_emoji = date('Y')===$cur_year ? '🚀' : '📁';
                     // SAME COMPARE AS $found $limit
                     if($posts_count>=$async_loads){
-                        echo $async_sw ? '<h2>' . $cur_year . '年度发布<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'"> 加载更多 </sup></h2>'.$output_count.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . '年度发布</h2><ul class="call_'.$cur_year.'">';
+                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'">加载更多</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2><ul class="call_'.$cur_year.'">';
                     }else{
-                        echo $async_sw ? '<h2>' . $cur_year . '年度发布<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'" class="disabled"> 已全部载入 </sup></h2>'.$output_count.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . '年度发布</h2><ul> class="call_'.$cur_year.'"';
+                        $head_emoji = '📂';
+                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'" class="disabled">已全部载入</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2><ul class="call_'.$cur_year.'">';
                     };
                     // print_r($cur_posts[0]->ID);
                     for($i=0;$i<$posts_count;$i++){
@@ -141,7 +158,7 @@
                         // print_r($this_cats);
                         $this_title = $this_post->post_title;
                         echo '<li>'.$unique_date.'<a class="link" href="'.get_the_permalink($this_post).'" target="_blank">'; //$this_cats[0]->slug
-                        echo $this_cats[0]->slug==$news_temp->slug ? '<u>'.$this_title.'</u>' : $this_title;
+                        echo $this_cats[0]->slug==$news_temp->slug ? '<b>'.$this_title.'</b>' : $this_title;
                         echo '<sup>';
                             foreach ($this_cats as $this_cat){
                                 echo '<span id="'.$this_cat->term_id.'">'.$this_cat->name.'</span>';
@@ -169,10 +186,10 @@
     function insideLoop(counter,init,limit,i){
         let times = -10;
         var noOrder = setInterval(function(){
-            times = limit<20 ? 1200 : times;
-            init<=limit ? counter.innerHTML = init++ : clearInterval(noOrder);
-            // console.log(init);
-        }, times*i);
+                times = limit<20 ? 1200 : times;
+                init<=limit ? counter.innerHTML = init++ : clearInterval(noOrder);
+                // console.log(init);
+            }, times*i);
     };
     for(let i=0;i<counterList.length;i++){
         let count = parseInt(counterList[i].getAttribute('data-res')),
@@ -200,7 +217,7 @@
                             load_box = archive_tree.querySelector('.call_'+years),//_this.parentNodenextSibling,
                             last_load = load_box.lastChild.offsetTop;  // preset lastChild offsetTop record
                         click_count++;
-                        _this.innerText=" 加载中 ";
+                        _this.innerText="加载中";
                         _this.classList.add('loading','disabled');
                         _this.setAttribute('data-count', click_count);
                         // console.log(click_count)
@@ -218,11 +235,11 @@
                                 // console.log(load_box.lastChild.offsetTop);
                                 if(posts_count<=0){
                                     _this.classList.add("disabled");
-                                    _this.innerText=" 已加载全部 ";
+                                    _this.innerText="已加载全部";
                                 }else{
                                     _this.classList.remove('disabled');
                                     _this.setAttribute('data-load', loads+posts_count);
-                                    _this.innerText = " 加载更多 ";
+                                    _this.innerText = "加载更多";
                                 };
                                 _this.classList.remove('loading');
                                 for(let i=0;i<posts_count;i++){

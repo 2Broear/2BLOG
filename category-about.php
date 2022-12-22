@@ -70,6 +70,11 @@
             will-change: width;
             overflow: hidden;
         }
+        .In-core-head .head-inside::before{
+            /*background: url(https://img.2broear.com/images/svg/digital_mask.svg);*/
+            background-size: 3px 3px!important;
+            max-height: 100%;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -106,7 +111,7 @@
                                 <div class="mbit" data-mbit="<?php $mbit_result_array = explode(';', get_option('site_mbit_result_array'));$mbit_array_result = explode('/', $mbit_result_array[0]);echo strtoupper($mbit_array_result[1]); ?>">
                                     <div class="mbit_intro">
                                         <p> MBIT 16 Personalities result<!--<sup> (Oct 21, 2022) </sup>--> </p>
-                                        <a href="https://www.16personalities.com/ch/<?php $mbit_abbr=$mbit_array_result[0];echo strpos($mbit_abbr,'-')!==false ? substr($mbit_abbr,0,4) : $mbit_abbr; ?>-人格" style="color:#33a474;" target="_blank" title="Check more details for <?php echo $res_type=strtoupper($mbit_abbr); ?>"><b><?php echo $res_type; ?></b></a>
+                                        <a href="https://www.16personalities.com/<?php $mbit_abbr=$mbit_array_result[0];echo strpos($mbit_abbr,'-')!==false ? substr($mbit_abbr,0,4) : $mbit_abbr; ?>-personality" style="color:#33a474;" target="_blank" title="Check more details for <?php echo $res_type=strtoupper($mbit_abbr); ?>"><b><?php echo $res_type; ?></b></a>
                                     </div>
                                     <ol class="mbit_range">
                                         <?php

@@ -91,6 +91,11 @@
     //     update_option( 'wpa59168_counter', $count + 1 );
     // }
     // add_action( 'add_attachment', 'wpa59168_rename_attachment' );
+    //禁用远程管理文件 xmlrpc.php 防爆破
+    if(get_option('site_xmlrpc_switcher')){
+        add_filter('xmlrpc_enabled', '__return_false');
+    }
+    //替换所有后台镜像源
     function replace_gravatar($avatar) {
     	$avatar = str_replace(array("//gravatar.com/avatar/", "//secure.gravatar.com/avatar/", "//www.gravatar.com/avatar/", "//0.gravatar.com/avatar/", 
     	"//1.gravatar.com/avatar/", "//2.gravatar.com/avatar/", "//cn.gravatar.com/avatar/"), get_option('site_avatar_mirror')."avatar/", $avatar);

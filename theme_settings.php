@@ -163,12 +163,17 @@
     /* ------------------------------------------------------------------------ *
      * 自定义文章排序 column（编辑、快速、批量编辑文章页）
      * ------------------------------------------------------------------------ */
-    /* load script to set exists column_value in column_input */
+    /*  
+     https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
+     load script/style to set exists column_value in column_input
+    */
     if ( ! function_exists('wp_my_admin_enqueue_scripts') ){
         function wp_my_admin_enqueue_scripts( $hook ) {
             if ( 'edit.php' === $hook) {
-     	        wp_enqueue_script( 'my_custom_script', get_stylesheet_directory_uri() . '/plugin/custom_column.js',
-                false, null, true );
+     	        wp_enqueue_script( 'my_custom_script', get_stylesheet_directory_uri() . '/plugin/custom_column.js', false, null, true );
+            }elseif('edit-comments.php'===$hook){
+                wp_enqueue_style( 'custom_wp_admin_css', get_template_directory_uri() . '/plugin/custom_style.css', false, '1.0.0' );
+                // wp_enqueue_style( 'custom_wp_admin_css' );
             }
         }
     }
@@ -588,6 +593,7 @@
             register_setting( 'baw-settings-group', 'site_smtp_pswd' );
         // }
         register_setting( 'baw-settings-group', 'site_wpmail_switcher' );
+        register_setting( 'baw-settings-group', 'site_xmlrpc_switcher' );
         
         register_setting( 'baw-settings-group', 'site_rss_categories' );
         register_setting( 'baw-settings-group', 'site_map_switcher' );
@@ -1678,6 +1684,16 @@
                                 $opt = 'site_wpmail_switcher';
                                 get_option($opt) ? $status="checked" : $status="closed";
                                 echo '<label for="'.$opt.'"><p class="description" id="site_wpmail_switcher_label">WP自带评论审核提醒邮件，此选项为定制模板邮件（两者均需上方 SMTP 配置测试通过后才能收到邮件提醒，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>评论邮件提醒</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">禁用 XML-RPC 服务（防爆破）</th>
+                        <td>
+                            <?php
+                                $opt = 'site_xmlrpc_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="">防止攻击者绕过 wordpress 登录限制消耗系统资源（禁用后将无法使用 wp 官方APP及相关接口</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">NO XML-RPC</b></label>';
                             ?>
                         </td>
                     </tr>
