@@ -31,12 +31,13 @@
         return $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts,wp_term_relationships WHERE ID = object_id AND post_type = 'post' AND post_status = 'publish' AND wp_term_relationships.term_taxonomy_id = $cid ORDER BY post_date DESC LIMIT $limit OFFSET $offset ");
     }
     // response wpdb data from ajax calls
-    function updateCont(){
+    function updateArchive(){
         $key = $_POST['key'];
         $limit = $_POST['limit'];
         $offset = $_POST['offset'];
         $cur_posts = get_wpdb_yearly_pids($key, $limit, $offset);
         $res_array = array();
+        $news_temp = !get_template_bind_cat('category-news.php')->errors ? get_template_bind_cat('category-news.php') : false;
         for($i=0;$i<count($cur_posts);$i++){
             $each_posts = $cur_posts[$i];
             $prev_posts = $i>0 ? $cur_posts[$i-1] : $cur_posts[$i];
@@ -49,10 +50,11 @@
             $cat_str = '';
             foreach ($this_cats as $cat){
                 $cat_str .= '<span>'.$cat->name.'</span>';
-            }
+            };
+            $this_title = $this_post->post_title;
             // array_push($res_array, $this_post);
             $post_class = new stdClass();
-            $post_class->title = $this_post->post_title;
+            $post_class->title = $this_cats[0]->slug==$news_temp->slug ? '<b>'.$this_title.'</b>' : $this_title;;
             $post_class->link = get_the_permalink($this_post);
             $post_class->date = $unique_date;
             $post_class->cat = $cat_str;
@@ -62,8 +64,8 @@
         // print_r($res_array);
         die();
     }
-    add_action('wp_ajax_updateCont', 'updateCont');
-    add_action('wp_ajax_nopriv_updateCont', 'updateCont');
+    add_action('wp_ajax_updateArchive', 'updateArchive');
+    add_action('wp_ajax_nopriv_updateArchive', 'updateArchive');
     
     function get_wpdb_yearly_pids($year=false, $limit=99, $offset=0){
         global $wpdb;
@@ -405,11 +407,11 @@
     }
     add_filter( 'the_content', 'article_index' );
     // 归档
-    function get_post_archives($type="yearly", $post_type="post"){
+    function get_post_archives($type="yearly", $post_type="post", $limit=""){
         $archives = wp_get_archives(
             array(
                 'type' => $type,
-                'limit' => '',
+                'limit' => $limit,
                 'echo' => false,
                 'format' => 'custom',
                 'before' => '', 
@@ -447,7 +449,7 @@
         // $max_show = get_option('site_tagcloud_num');
         $tags = get_tags(array(
             'taxonomy' => 'post_tag',
-            'orderby' => 'name',
+            'orderby' => 'count', //name
             // 'hide_empty' => false // for development,
             // 'number' => $max_show
         ));

@@ -57,6 +57,139 @@
             opacity: .75;
             font-weight: normal;
         }
+        
+        .cs-tree{
+            margin: 15px auto;
+            text-align: left;
+        }
+        .cs-tree .contributions{
+            display: inline-block;
+        }
+        body.dark .cs-tree span{
+            color: var(--preset-3a);
+            border: 1px solid var(--preset-3a);
+            /*border-color: var(--preset-4a);*/
+        }
+        body.dark .cs-tree span:before{
+            border-color: var(--preset-2b);
+            /*color: #9be9a8;*/
+        }
+        /*.cs-tree .today:hover::before,*/
+        .cs-tree span#edit:hover::before{
+            content: attr(data-count)' posted on 'attr(data-dates);
+        }
+        .cs-tree span.today:hover::before{
+            content: "today's comtribution";
+        }
+        .cs-tree span.dayto:hover::before{
+            content: "future comtributions";
+        }
+        .cs-tree span:before{
+            content: none;
+            color: white;
+            background: var(--preset-3a);
+            position: absolute;
+            top: 100%;
+            left: 100%;
+            z-index: 9;
+            font-size: 12px;
+            padding: 8px 12px;
+            border-radius: 50px;
+            text-align: center;
+            white-space: nowrap;
+            border: 3px solid currentColor;
+            font-weight: bold;
+            /*-webkit-backdrop-filter: blur(10px);*/
+            /*backdrop-filter: blur(10px);*/
+        }
+        .cs-tree .dayto,
+        .cs-tree .today,
+        .cs-tree span:hover{
+            /*border-color: transparent;*/
+            border-radius: 50%;
+            z-index: 9;
+        }
+        .cs-tree span{
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            color: var(--preset-s);
+            background: currentColor;
+            border: 1px solid var(--preset-e);
+            margin: 2px;
+            border-radius: 2px;
+            position: relative;
+        }
+        .cs-tree span#edit{
+            border-color: currentColor;
+        }
+        .cs-tree .today{
+            color: var(--theme-color)!important;
+            /*border-color: currentColor!important;*/
+        }
+        .cs-tree .dayto{
+            opacity: .75;
+            color: var(--preset-e);
+            z-index: 0;
+        }
+        /*.cs-tree span:last-child{*/
+        /*    margin-right: auto;*/
+        /*}*/
+        /*.cs-tree span{*/
+        /*    margin: 2px 24px 2px 0;*/
+        /*}*/
+        .cs_tips::before{
+            content: 'Less';
+        }
+        .cs_tips::after{
+            content: 'More';
+        }
+        .cs_tips::before,
+        .cs_tips::after{
+            font-size: 12px;
+            /*font-weight: bold;*/
+            opacity: .5;
+        }
+        .cs_tips{
+            margin: auto;
+            padding: 0;
+            float: right;
+        }
+        body.dark .cs_tips li{
+            color: var(--preset-3a);
+            /*border-color: currentColor!important;*/
+        }
+        body.dark .cs_tips li:first-child{
+            border-color: var(--preset-6);
+        }
+        .cs_tips li{
+            width: 10px;
+            height: 10px;
+            margin: -2px 3px!important;
+            /*width: 3px;*/
+            /*height: 12px;*/
+            /*margin: -3px 1px!important;*/
+            display: inline-block;
+            color: var(--preset-s);
+            background: currentColor;
+            border: 1px solid var(--preset-e);
+            border-radius: 2px;
+        }
+        .cs_tips li:not(:first-child){
+            border-color: currentColor!important;
+        }
+        .cs_tips li:nth-child(2){
+            color: #9be9a8!important;
+        }
+        .cs_tips li:nth-child(3){
+            color: #40c463!important;
+        }
+        .cs_tips li:nth-child(4){
+            color: #30a14e!important;
+        }
+        .cs_tips li:last-child{
+            color: #216e39!important;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -71,8 +204,8 @@
             <video src="<?php echo get_option('site_acgn_video'); ?>" poster="<?php echo cat_metabg($cat, custom_cdn_src('img',true).'/images/archive.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
             <div class="counter">
                 <?php
-                    $archive_array = get_post_archives('yearly');
-                    foreach ($archive_array as $archive){
+                    $archive_yearly = get_post_archives('yearly');
+                    foreach ($archive_yearly as $archive){
                 ?>
                         <div>
                             <a href="<?php echo $archive['link']; ?>" rel="nofollow">
@@ -87,6 +220,71 @@
             </div>
         </div>
         <div class="archive-tree">
+            <div class="cs-tree">
+                <h5>
+                    <strong><?php echo $toyea = date('Y'); ?> Contributions..</strong>
+                    <ul class="cs_tips">
+                        <li></li><li></li><li></li><li></li><li></li>
+                    </ul>
+                </h5>
+                <?php
+                    // $res = cal_days_in_month(CAL_GREGORIAN, 3, 2018);
+                    function days_in_month($month, $year){
+                        // calculate number of days in a month
+                        return $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
+                    };
+                    // foreach ($archive_array as $archive){
+                    //     $year = $archive['title'];
+                    //     for($i=1;$i<13;$i++){
+                    //         echo days_in_month($i,$year).' , ';
+                    //     }
+                    //     echo '<br/>';
+                    // };
+                    $today = date('md'); 
+                    $archive_daily = get_post_archives('daily','post',9999);
+                    // foreach ($archive_daily as $archive){
+                    //     preg_match("/$toyea/", $archive['title'], $res);
+                    //     // print_r($res[0]);
+                    //     echo $archive['title'].' : '.$archive['count'].' , ';
+                    // }
+                    for($i=1;$i<13;$i++){
+                        $m = days_in_month($i, $toyea);
+                        // echo '<div class="m'.$i.'_'.$m.'d contributions">';
+                        for($j=1;$j<$m;$j++){
+                            $days = $j<10 ? $i.'0'.$j : $i.$j;
+                            $compare_date = $toyea.'年'.$i.'月'.$j.'日';
+                            $the_day = $days==$today ? 'today' : ($days>$today ? 'dayto' : false);
+                            echo '<span class="'.$the_day.'" data-dates="'.$compare_date.'" data-date="'.$days.'"';
+                                foreach ($archive_daily as $archive){
+                                    $archive_date = $archive['title'];
+                                    preg_match("/$toyea/", $archive_date, $res);
+                                    if($res[0] && $archive_date==$compare_date){
+                                        $counts = $archive['count'];
+                                        echo ' id="edit" data-count="'.$counts.'" style="color:';
+                                        switch ($counts) {
+                                            case 1:
+                                                $color = '#9be9a8';
+                                                break;
+                                            case 2:
+                                                $color = '#40c463';
+                                                break;
+                                            case 3:
+                                                $color = '#30a14e';
+                                                break;
+                                            default:
+                                                $color = '';
+                                                break;
+                                        };
+                                        if($counts>=4) $color='#216e39';
+                                        echo $color.'"';
+                                    }
+                                }
+                            echo '></span>';
+                        }
+                        // echo '</div>';
+                    }
+                ?>
+            </div>
             <select name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;" style="float:right;">
                 <option value=""><?php esc_attr( _e( 'Monthly Overview', 'textdomain' ) ); ?></option> 
                 <?php 
@@ -136,7 +334,7 @@
                     $blog_count = count($blog_array);
                     $rest_count = $all_count-($news_count+$note_count+$blog_count);
                     $output_stats = '<span class="stat_'.$cur_year.' stats">📈📉统计：<b>'.$news_temp->name.'</b> '.$news_count.'篇、 <b>'.$note_temp->name.'</b> '.$note_count.'篇、 <b>'.$blog_temp->name.'</b> '.$blog_count.'篇、 <b>其他类型</b> '.$rest_count.'篇。</span>';
-                    $head_emoji = date('Y')===$cur_year ? '🚀' : '📁';
+                    $head_emoji = $toyea===$cur_year ? '🚀' : '📁';
                     // SAME COMPARE AS $found $limit
                     if($posts_count>=$async_loads){
                         echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'">加载更多</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2><ul class="call_'.$cur_year.'">';
@@ -223,7 +421,7 @@
                         // console.log(click_count)
                         send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", 
                             parse_ajax_parameter({
-                                "action": "updateCont",
+                                "action": "updateArchive",
                                 "key": years, 
                                 "limit": preset_loads,
                                 "offset": preset_loads*click_count,

@@ -75,6 +75,11 @@
             background-size: 3px 3px!important;
             max-height: 100%;
         }
+        
+        .cs-tree{
+            margin: 35px auto auto;
+            text-align: left;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -153,6 +158,7 @@
                                 </div>
                             </li>
                         </ul>
+                        <!--<div class="cs-tree"></div>-->
                     </div>
                 </div>
                 <div class="In-core-body">
