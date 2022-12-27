@@ -97,8 +97,8 @@
             border-radius: 50px;
             text-align: center;
             white-space: nowrap;
-            border: 3px solid currentColor;
-            font-weight: bold;
+            border: 2px solid currentColor;
+            /*font-weight: bold;*/
             /*-webkit-backdrop-filter: blur(10px);*/
             /*backdrop-filter: blur(10px);*/
         }
@@ -124,7 +124,8 @@
             border-color: currentColor;
         }
         .cs-tree .today{
-            color: var(--theme-color)!important;
+            color: var(--theme-color);
+            /*color: var(--theme-color)!important;*/
             /*border-color: currentColor!important;*/
         }
         .cs-tree .dayto{
@@ -178,18 +179,18 @@
         .cs_tips li:not(:first-child){
             border-color: currentColor!important;
         }
-        .cs_tips li:nth-child(2){
-            color: #9be9a8!important;
-        }
-        .cs_tips li:nth-child(3){
-            color: #40c463!important;
-        }
-        .cs_tips li:nth-child(4){
-            color: #30a14e!important;
-        }
-        .cs_tips li:last-child{
-            color: #216e39!important;
-        }
+        /*.cs_tips li:nth-child(2){*/
+        /*    color: #9be9a8!important;*/
+        /*}*/
+        /*.cs_tips li:nth-child(3){*/
+        /*    color: #40c463!important;*/
+        /*}*/
+        /*.cs_tips li:nth-child(4){*/
+        /*    color: #30a14e!important;*/
+        /*}*/
+        /*.cs_tips li:last-child{*/
+        /*    color: #216e39!important;*/
+        /*}*/
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -222,13 +223,18 @@
         <div class="archive-tree">
             <div class="cs-tree">
                 <h5>
-                    <strong><?php echo $toyea = date('Y'); ?> Contributions..</strong>
+                    <strong><?php echo $toyea = date('Y'); ?> CONTRIBUTIONS </strong>
                     <ul class="cs_tips">
-                        <li></li><li></li><li></li><li></li><li></li>
+                        <?php
+                            $color_light = '#9be9a8';$color_middle = '#40c463';
+                            $color_heavy = '#30a14e';$color_more = '#216e39';
+                            echo '<li></li><li style="color:'.$color_light.'"></li><li style="color:'.$color_middle.'"></li><li style="color:'.$color_heavy.'"></li><li style="color:'.$color_more.'"></li>';
+                        ?>
                     </ul>
                 </h5>
                 <?php
                     // $res = cal_days_in_month(CAL_GREGORIAN, 3, 2018);
+                    // https://stackoverflow.com/questions/49612838/call-to-undefined-function-cal-days-in-month-error-while-running-from-server
                     function days_in_month($month, $year){
                         // calculate number of days in a month
                         return $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
@@ -257,25 +263,28 @@
                             echo '<span class="'.$the_day.'" data-dates="'.$compare_date.'" data-date="'.$days.'"';
                                 foreach ($archive_daily as $archive){
                                     $archive_date = $archive['title'];
-                                    preg_match("/$toyea/", $archive_date, $res);
+                                    preg_match("/$toyea/", $archive_date, $res);  //cur year only
                                     if($res[0] && $archive_date==$compare_date){
                                         $counts = $archive['count'];
                                         echo ' id="edit" data-count="'.$counts.'" style="color:';
-                                        switch ($counts) {
-                                            case 1:
-                                                $color = '#9be9a8';
-                                                break;
-                                            case 2:
-                                                $color = '#40c463';
-                                                break;
-                                            case 3:
-                                                $color = '#30a14e';
-                                                break;
-                                            default:
-                                                $color = '';
-                                                break;
+                                        if($counts>=4){
+                                            $color = $color_more;
+                                        }else{
+                                            switch ($counts) {
+                                                case 1:
+                                                    $color = $color_light;
+                                                    break;
+                                                case 2:
+                                                    $color = $color_middle;
+                                                    break;
+                                                case 3:
+                                                    $color = $color_heavy;
+                                                    break;
+                                                default:
+                                                    $color = '';
+                                                    break;
+                                            };
                                         };
-                                        if($counts>=4) $color='#216e39';
                                         echo $color.'"';
                                     }
                                 }
@@ -382,18 +391,22 @@
 <script>
     const counterList = document.querySelectorAll('.win-top .counter div');
     function insideLoop(counter,init,limit,i){
-        let times = -10;
-        var noOrder = setInterval(function(){
-                times = limit<20 ? 1200 : times;
-                init<=limit ? counter.innerHTML = init++ : clearInterval(noOrder);
-                // console.log(init);
-            }, times*i);
+        let times = -limit-200;
+        var inOrder = function(){
+                clearInterval(noOrder);
+                init<=limit ? counter.innerHTML=init++ : clearInterval(noOrder);
+                times>=0 ? times=0 : times++;
+                console.log(init+times);
+                noOrder = setInterval(inOrder, init+times);
+            };
+        var noOrder = setInterval(inOrder, 0);
     };
-    for(let i=0;i<counterList.length;i++){
+    for(let i=0;i<counterList.length;i++){ //counterList.length
         let count = parseInt(counterList[i].getAttribute('data-res')),
             counter = counterList[i].querySelector('h1'),
             limit = parseInt(counter.innerText);
         insideLoop(counter,0,limit,i);
+        // console.log(i);
     }
 </script>
 <?php

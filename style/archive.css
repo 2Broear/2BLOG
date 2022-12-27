@@ -187,8 +187,8 @@ h2 sup.loading:after{
             border-radius: 50px;
             text-align: center;
             white-space: nowrap;
-            border: 3px solid currentColor;
-            font-weight: bold;
+            border: 2px solid currentColor;
+            /*font-weight: bold;*/
             /*-webkit-backdrop-filter: blur(10px);*/
             /*backdrop-filter: blur(10px);*/
         }
@@ -214,7 +214,8 @@ h2 sup.loading:after{
             border-color: currentColor;
         }
         .cs-tree .today{
-            color: var(--theme-color)!important;
+            color: var(--theme-color);
+            /*color: var(--theme-color)!important;*/
             /*border-color: currentColor!important;*/
         }
         .cs-tree .dayto{
@@ -238,7 +239,7 @@ h2 sup.loading:after{
         .cs_tips::after{
             font-size: 12px;
             /*font-weight: bold;*/
-            opacity: .75;
+            opacity: .5;
         }
         .cs_tips{
             margin: auto;
@@ -255,7 +256,7 @@ h2 sup.loading:after{
         .cs_tips li{
             width: 10px;
             height: 10px;
-            margin: -2px 0px!important;
+            margin: -2px 3px!important;
             /*width: 3px;*/
             /*height: 12px;*/
             /*margin: -3px 1px!important;*/
@@ -268,15 +269,15 @@ h2 sup.loading:after{
         .cs_tips li:not(:first-child){
             border-color: currentColor!important;
         }
-        .cs_tips li:nth-child(2){
-            color: #9be9a8!important;
-        }
-        .cs_tips li:nth-child(3){
-            color: #40c463!important;
-        }
-        .cs_tips li:nth-child(4){
-            color: #30a14e!important;
-        }
-        .cs_tips li:last-child{
-            color: #216e39!important;
-        }
+        /*.cs_tips li:nth-child(2){*/
+        /*    color: #9be9a8!important;*/
+        /*}*/
+        /*.cs_tips li:nth-child(3){*/
+        /*    color: #40c463!important;*/
+        /*}*/
+        /*.cs_tips li:nth-child(4){*/
+        /*    color: #30a14e!important;*/
+        /*}*/
+        /*.cs_tips li:last-child{*/
+        /*    color: #216e39!important;*/
+        /*}*/

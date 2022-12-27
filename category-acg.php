@@ -109,12 +109,15 @@
 <script>
     const counterList = document.querySelectorAll('.win-top .counter div');
     function insideLoop(counter,init,limit,i){
-        let times = -10;
-        var noOrder = setInterval(function(){
-            times = limit<20 ? 1200 : times;
-            init<=limit ? counter.innerHTML = `${init++}<sup>+</sup>` : clearInterval(noOrder);
-            // console.log(init);
-        }, times*i);
+        let times = -limit;
+        var inOrder = function(){
+                clearInterval(noOrder);
+                init<=limit ? counter.innerHTML=`${init++}<sup>+</sup>` : clearInterval(noOrder);
+                times>=0 ? times=0 : times++;
+                console.log(init+times);
+                noOrder = setInterval(inOrder, init+times);
+            };
+        var noOrder = setInterval(inOrder, 0);
     };
     for(let i=0;i<counterList.length;i++){
         let count = parseInt(counterList[i].getAttribute('data-res')),
