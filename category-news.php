@@ -59,7 +59,9 @@
                                             <?php if($post_feeling) echo '<span class="news-personal_stand" unselectable="on"><dd>'.$post_feeling.'</dd></span>'; ?>
                                             <div id="news-tail_info">
                                                 <ul class="post-info">
-                                                    <li class="tags author"><?php echo get_the_tag_list('','、',''); ?></li>
+                                                    <li class="tags author">
+                                                        <?php the_tag_list($post->ID); ?>
+                                                    </li>
                                                     <li title="讨论人数">
                                                         <?php 
                                                             $third_cmt = get_option('site_third_comments');

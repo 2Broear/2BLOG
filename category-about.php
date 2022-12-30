@@ -113,7 +113,7 @@
                                 </div>
                             </li>
                             <li class="intro_right">
-                                <div class="mbit" data-mbit="<?php $mbit_result_array = explode(';', get_option('site_mbit_result_array'));$mbit_array_result = explode('/', $mbit_result_array[0]);echo strtoupper($mbit_array_result[1]); ?>">
+                                <div class="mbit" data-mbit="<?php $mbit_array_result = explode('/', get_option('site_mbit_result_array'));echo strtoupper($mbit_array_result[1]); ?>">
                                     <div class="mbit_intro">
                                         <p> MBIT 16 Personalities result<!--<sup> (Oct 21, 2022) </sup>--> </p>
                                         <a href="https://www.16personalities.com/<?php $mbit_abbr=$mbit_array_result[0];echo strpos($mbit_abbr,'-')!==false ? substr($mbit_abbr,0,4) : $mbit_abbr; ?>-personality" style="color:#33a474;" target="_blank" title="Check more details for <?php echo $res_type=strtoupper($mbit_abbr); ?>"><b><?php echo $res_type; ?></b></a>
@@ -122,11 +122,11 @@
                                         <?php
                                             $mbit_array = explode(';', get_option('site_mbit_array'));
                                             $mbit_inits = array(
-                                                array('before' => 'EXTRAVERTED', 'after' => 'INTROVERTED'),
-                                                array('before' => 'INTUITIVE', 'after' => 'OBSERVANT'),
-                                                array('before' => 'THINKING', 'after' => 'FEELING'),
-                                                array('before' => 'JUDGING', 'after' => 'PROSPECTING'),
-                                                array('before' => 'ASSERTIVE', 'after' => 'TURBULENT'),
+                                                array('before' => 'Extraverted', 'after' => 'Introverted'),
+                                                array('before' => 'Intuitive', 'after' => 'Observant'),
+                                                array('before' => 'Thinking', 'after' => 'Feeling'),
+                                                array('before' => 'Judging', 'after' => 'Prospecting'),
+                                                array('before' => 'Assertive', 'after' => 'Turbulent'),
                                             );
                                             for($i=0;$i<count($mbit_array);$i++){
                                                 $each_data = explode('/', $mbit_array[$i]);
@@ -143,8 +143,8 @@
                                                         $data_before = $data_calculate;
                                                         $data_after = $data_percent;
                                                     };
-                                                    $init_before = trim($each_data[2]['before']);
-                                                    $init_after = trim($each_data[2]['after']);
+                                                    $init_before = strtoupper(trim($each_data[2]['before']));
+                                                    $init_after = strtoupper(trim($each_data[2]['after']));
                                                     if($data_type){  //incase end with ";"
                                                         echo '<li class="'.$data_type.'" data-res="'.$data_percent.'"><span id="data-range" data-before="'.$data_before.'" data-after="'.$data_after.'"><em style="width:0%;"></em></span><span id="data-type" data-before="'.$init_before.'" data-after="'.$init_after.'"></span></li>'; //'.$data_percent.'%;
                                                     }

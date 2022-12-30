@@ -75,7 +75,17 @@
                 ?>
                             <div class="<?php if($post_orderby>1) echo 'topset'; ?> weblog-tree-core-record">
                                 <div class="weblog-tree-core-l">
-                                    <span id="weblog-timeline"><?php echo $rich_date = get_the_tag_list() ? get_the_time('Y年n月j日').' - '.get_the_tag_list('','&nbsp;','') : get_the_time('Y年n月j日');//the_time('Y年n月j日');//the_time('Y-n-j') ?></span>
+                                    <span id="weblog-timeline">
+                                        <?php 
+                                            echo $rich_date = get_the_tag_list() ? get_the_time('Y年n月j日').' - '.get_the_tag_list('','&nbsp;','') : get_the_time('Y年n月j日');//the_time('Y年n月j日');//the_time('Y-n-j') 
+                                            // if(get_the_tag_list()){
+                                            //     echo get_the_time('Y年n月j日').' - ';
+                                            //     the_tag_list($post->ID, 2, "&nbsp;");
+                                            // }else{
+                                            //     echo get_the_time('Y年n月j日');
+                                            // }
+                                        ?>
+                                    </span>
                                     <span id="weblog-circle"></span>
                                 </div>
                                 <div class="weblog-tree-core-r">

@@ -1938,9 +1938,9 @@
                             <?php
                                 $opt = 'site_mbit_result_array';
                                 $value = get_option($opt);
-                                $preset = 'infp-a/mediator;'; 
+                                $preset = 'infp-a/mediator'; 
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                echo '<p class="description" id="site_cardnav_array_label">MBIT测试人格类型，使用分号“ ; ”分隔（规则同上</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $preset . '"/>';
+                                echo '<p class="description" id="site_cardnav_array_label">MBIT测试人格类型，使用斜杠“ / ”分隔（规则同上</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $preset . '"/>';
                             ?>
                         </td>
                     </tr>

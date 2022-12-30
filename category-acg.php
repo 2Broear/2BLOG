@@ -113,8 +113,8 @@
         var inOrder = function(){
                 clearInterval(noOrder);
                 init<=limit ? counter.innerHTML=`${init++}<sup>+</sup>` : clearInterval(noOrder);
-                times>=0 ? times=0 : times++;
-                console.log(init+times);
+                times>=0 ? (times=0,clearInterval(noOrder)) : times++;
+                // console.log(init+times);
                 noOrder = setInterval(inOrder, init+times);
             };
         var noOrder = setInterval(inOrder, 0);

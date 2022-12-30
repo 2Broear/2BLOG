@@ -54,10 +54,11 @@
             $this_title = $this_post->post_title;
             // array_push($res_array, $this_post);
             $post_class = new stdClass();
-            $post_class->title = $this_cats[0]->slug==$news_temp->slug ? '<b>'.$this_title.'</b>' : $this_title;;
+            $post_class->title = $this_cats[0]->slug==$news_temp->slug ? '<b>'.$this_title.'</b>' : $this_title;
             $post_class->link = get_the_permalink($this_post);
             $post_class->date = $unique_date;
             $post_class->cat = $cat_str;
+            $post_class->mark = $this_cats[0]->slug==$news_temp->slug ? " article" : "";
             array_push($res_array, $post_class);
         }
         print_r(json_encode($res_array));
@@ -444,13 +445,30 @@
         }
         return $array;
     };
-    // 标签云
+    // 自定义文章标签
+    function the_tag_list($pid, $max=3, $dot="、"){
+        // echo get_the_tag_list('','、','');
+        $tags_list = get_the_tags($pid);
+        $tags_count = count($tags_list);
+        // print_r($tags_list);
+        for($i=0;$i<$max;$i++){
+            $tag = $tags_list[$i];
+            $dots = $max<$tags_count ? ($i<$max-1 ? $dot : false) : ($i<$tags_count-1 ? $dot : false);
+            if($tag){
+                $tag_name = $tag->name;
+                echo '<a href="'.get_bloginfo("url").'/tag/'.$tag_name.'" data-count="'.$tag->count.'" rel="tag">'.$tag_name.'</a>'.$dots;
+            }else{
+                // echo '<a href="javascript:;" rel="nofollow">'.get_option('site_nick').'</a>';
+            }
+        }
+    }
+    // 自定义标签云
     function the_tag_clouds($html_tag="li"){
         // $max_show = get_option('site_tagcloud_num');
         $tags = get_tags(array(
             'taxonomy' => 'post_tag',
             'orderby' => 'count', //name
-            // 'hide_empty' => false // for development,
+            'hide_empty' => true // for development,
             // 'number' => $max_show
         ));
         $tag_count = count($tags);
@@ -1218,7 +1236,7 @@
                                     <?php if($post_feeling) echo '<span class="news-personal_stand" unselectable="on"><dd>'.$post_feeling.'</dd></span>'; ?>
                                     <div id="news-tail_info">
                                         <ul class="post-info">
-                                            <li class="tags author"><?php $tags = get_the_tag_list('','、',''); echo $tags ? $tags : '<a href="javascript:;" target="_blank" rel="nofollow">'.get_option('site_nick').'</a>'; ?></li>
+                                            <li class="tags author"><?php the_tag_list($post->ID); ?></li>
                                             <li title="讨论人数">
                                                 <?php 
                                                     $third_cmt = get_option('site_third_comments');

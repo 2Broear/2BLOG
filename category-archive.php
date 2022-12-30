@@ -20,6 +20,16 @@
             max-height: 518px;
             /*max-height: 368px;*/
         }
+        .archive-tree ul li a:hover{
+            padding-left: 10px;
+        }
+        .archive-tree ul li a.link{
+            transition: padding .35s ease;
+        }
+        .archive-tree ul li .article + a,
+        .archive-tree ul li a.article{
+            font-weight: bold;
+        }
         @keyframes dot {
             33.33% {
                 content: ".";
@@ -79,10 +89,10 @@
             content: attr(data-count)' posted on 'attr(data-dates);
         }
         .cs-tree span.today:hover::before{
-            content: "today's comtribution";
+            content: "today's contribution";
         }
         .cs-tree span.dayto:hover::before{
-            content: "future comtributions";
+            content: "future contributions";
         }
         .cs-tree span:before{
             content: none;
@@ -123,6 +133,7 @@
         .cs-tree span#edit{
             border-color: currentColor;
         }
+        body.dark .cs-tree span.today,
         .cs-tree .today{
             color: var(--theme-color);
             /*color: var(--theme-color)!important;*/
@@ -361,12 +372,11 @@
                         preg_match('/\d{2}-\d{2} /', $this_post->post_date, $this_date);
                         preg_match('/\d{2}-\d{2} /', $prev_post->post_date, $prev_date);
                         // print_r($each_posts->ID);
+                        $this_article = $this_cats[0]->slug==$news_temp->slug ? " article" : false;
                         $unique_date = $this_date[0]!=$prev_date[0] || $each_posts->ID==$cur_posts[0]->ID ? '<div class="timeline">'.$this_date[0].'</div>' : '';
                         // print_r($this_cats);
                         $this_title = $this_post->post_title;
-                        echo '<li>'.$unique_date.'<a class="link" href="'.get_the_permalink($this_post).'" target="_blank">'; //$this_cats[0]->slug
-                        echo $this_cats[0]->slug==$news_temp->slug ? '<b>'.$this_title.'</b>' : $this_title;
-                        echo '<sup>';
+                        echo '<li>'.$unique_date.'<a class="link'.$this_article.'" href="'.get_the_permalink($this_post).'" target="_blank">'.$this_title.'<sup>';
                             foreach ($this_cats as $this_cat){
                                 echo '<span id="'.$this_cat->term_id.'">'.$this_cat->name.'</span>';
                             }
@@ -395,8 +405,8 @@
         var inOrder = function(){
                 clearInterval(noOrder);
                 init<=limit ? counter.innerHTML=init++ : clearInterval(noOrder);
-                times>=0 ? times=0 : times++;
-                console.log(init+times);
+                times>=0 ? (times=0,clearInterval(noOrder)) : times++;
+                // console.log(init+times);
                 noOrder = setInterval(inOrder, init+times);
             };
         var noOrder = setInterval(inOrder, 0);
@@ -456,7 +466,7 @@
                                 for(let i=0;i<posts_count;i++){
                                     let each_post = posts_array[i];
                                     // console.log(each_post)
-                                    load_box.innerHTML += `<li>${each_post.date}<a class="link" href="${each_post.link}" target="_blank">${each_post.title}<sup>${each_post.cat}</sup></a></li>`;
+                                    load_box.innerHTML += `<li>${each_post.date}<a class="link${each_post.mark}" href="${each_post.link}" target="_blank">${each_post.title}<sup>${each_post.cat}</sup></a></li>`;
                                 };
                                 // console.log(load_box.lastChild.offsetTop);  // offsetTop = 0
                                 load_box.scrollTo(0, lasts_loads); //+load_box.lastChild.offsetHeight
