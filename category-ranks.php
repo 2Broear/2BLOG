@@ -58,10 +58,10 @@
                         if($datalen>3){
                             echo '<h1>稀客 <sup> &lt;10 </sup></h1><p>偶尔来访的兄弟</p><ul id="ranks">';
                             for($i=3;$i<13;$i++){
-                                $user = $rankdata[$i];
-                                $count = $user->count;
-                                $link = $user->link;
+                                $user = array_key_exists($i,$rankdata) ? $rankdata[$i] : false;
                                 if($user){
+                                    $count = $user->count;
+                                    $link = $user->link;
                 ?>
                                     <li title="TA 在本站已有 <?php echo $count ?> 条评论">
                                         <span id="avatar">

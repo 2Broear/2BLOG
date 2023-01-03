@@ -234,7 +234,7 @@
         <div class="archive-tree">
             <div class="cs-tree">
                 <h5>
-                    <strong><?php echo $toyea = date('Y'); ?> CONTRIBUTIONS </strong>
+                    <strong><?php echo $toyea = gmdate('Y', time() + 3600*8);//date('Y'); ?> CONTRIBUTIONS </strong>
                     <ul class="cs_tips">
                         <?php
                             $color_light = '#9be9a8';$color_middle = '#40c463';
@@ -257,7 +257,7 @@
                     //     }
                     //     echo '<br/>';
                     // };
-                    $today = date('md'); 
+                    $today = gmdate('md', time() + 3600*8);//date('md'); 
                     $archive_daily = get_post_archives('daily','post',9999);
                     // foreach ($archive_daily as $archive){
                     //     preg_match("/$toyea/", $archive['title'], $res);
@@ -275,7 +275,7 @@
                                 foreach ($archive_daily as $archive){
                                     $archive_date = $archive['title'];
                                     preg_match("/$toyea/", $archive_date, $res);  //cur year only
-                                    if($res[0] && $archive_date==$compare_date){
+                                    if(array_key_exists(0,$res) && $archive_date==$compare_date){
                                         $counts = $archive['count'];
                                         echo ' id="edit" data-count="'.$counts.'" style="color:';
                                         if($counts>=4){
@@ -354,12 +354,12 @@
                     $blog_count = count($blog_array);
                     $rest_count = $all_count-($news_count+$note_count+$blog_count);
                     $output_stats = '<span class="stat_'.$cur_year.' stats">📈📉统计：<b>'.$news_temp->name.'</b> '.$news_count.'篇、 <b>'.$note_temp->name.'</b> '.$note_count.'篇、 <b>'.$blog_temp->name.'</b> '.$blog_count.'篇、 <b>其他类型</b> '.$rest_count.'篇。</span>';
-                    $head_emoji = $toyea===$cur_year ? '🚀' : '📁';
+                    $head_emoji = $toyea==$cur_year ? '🚀' : '📁';
                     // SAME COMPARE AS $found $limit
                     if($posts_count>=$async_loads){
                         echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'">加载更多</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2><ul class="call_'.$cur_year.'">';
                     }else{
-                        $head_emoji = '📂';
+                        // $head_emoji = '📂';
                         echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'" class="disabled">已全部载入</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2><ul class="call_'.$cur_year.'">';
                     };
                     // print_r($cur_posts[0]->ID);

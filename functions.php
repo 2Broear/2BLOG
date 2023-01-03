@@ -70,7 +70,7 @@
     
     function get_wpdb_yearly_pids($year=false, $limit=99, $offset=0){
         global $wpdb;
-        $year = $year ? $year : date('Y');
+        $year = $year ? $year : gmdate('Y', time() + 3600*8);//date('Y');
         // !!!LIMIT & OFFSET must type of NUMBER!!!
         return $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' AND YEAR(post_date) = $year ORDER BY post_date DESC LIMIT $limit OFFSET $offset ");
     }
@@ -407,7 +407,7 @@
         return $content;
     }
     add_filter( 'the_content', 'article_index' );
-    // 归档
+    // 自定义文章归档
     function get_post_archives($type="yearly", $post_type="post", $limit=""){
         $archives = wp_get_archives(
             array(
@@ -449,22 +449,23 @@
     function the_tag_list($pid, $max=3, $dot="、"){
         // echo get_the_tag_list('','、','');
         $tags_list = get_the_tags($pid);
-        $tags_count = count($tags_list);
-        // print_r($tags_list);
-        for($i=0;$i<$max;$i++){
-            $tag = $tags_list[$i];
-            $dots = $max<$tags_count ? ($i<$max-1 ? $dot : false) : ($i<$tags_count-1 ? $dot : false);
-            if($tag){
-                $tag_name = $tag->name;
-                echo '<a href="'.get_bloginfo("url").'/tag/'.$tag_name.'" data-count="'.$tag->count.'" rel="tag">'.$tag_name.'</a>'.$dots;
-            }else{
-                // echo '<a href="javascript:;" rel="nofollow">'.get_option('site_nick').'</a>';
+        if($tags_list){
+            $tags_count = count($tags_list);
+            for($i=0;$i<$max;$i++){
+                $tag = array_key_exists($i,$tags_list) ? $tags_list[$i] : false;
+                $dots = $max<$tags_count ? ($i<$max-1 ? $dot : false) : ($i<$tags_count-1 ? $dot : false);
+                if($tag){
+                    $tag_name = $tag->name;
+                    echo '<a href="'.get_bloginfo("url").'/tag/'.$tag_name.'" data-count="'.$tag->count.'" rel="tag">'.$tag_name.'</a>'.$dots;
+                }else{
+                    // echo '<a href="javascript:;" rel="nofollow">'.get_option('site_nick').'</a>';
+                }
             }
         }
     }
     // 自定义标签云
     function the_tag_clouds($html_tag="li"){
-        // $max_show = get_option('site_tagcloud_num');
+        $num = get_option('site_tagcloud_num');
         $tags = get_tags(array(
             'taxonomy' => 'post_tag',
             'orderby' => 'count', //name
@@ -472,7 +473,7 @@
             // 'number' => $max_show
         ));
         $tag_count = count($tags);
-        $max_show = $tag_count<=get_option('site_tagcloud_num') ? $tag_count : get_option('site_tagcloud_num');
+        $max_show = $tag_count<=$num ? $tag_count : $num;
         $min_font = 10;
         $max_font = get_option('site_tagcloud_max');
         shuffle($tags);  // random tags
@@ -490,7 +491,7 @@
                     $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'var(--theme-color)' : 'inherit';
                 }
                 $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
-                echo '<'.$html_tag.'><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';color:'.$color_font.'">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
+                echo '<'.$html_tag.' data-count="'.$tag->count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';color:'.$color_font.'">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
             }
         }else{
             echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
@@ -968,7 +969,7 @@
     }
     //计算版权时间，直接在footer使用会引发没有内容的notes子分类无法显示
     function calc_copyright(){
-        $year = date('Y');
+        $year = gmdate('Y', time() + 3600*8);//date('Y');
         $begain = get_option('site_begain');
         if($begain&&$begain<$year) echo $begain."-";
         echo $year;
@@ -1262,7 +1263,12 @@
         ?>
                         <article class="weblog-tree-core-record i<?php the_ID() ?>">
                             <div class="weblog-tree-core-l">
-                                <span id="weblog-timeline"><?php echo $rich_date = get_the_tag_list() ? get_the_time('Y年n月j日').' - '.get_the_tag_list('','&nbsp;','') : get_the_time('Y年n月j日'); ?></span>
+                                <span id="weblog-timeline">
+                                    <?php 
+                                        echo $rich_date = get_the_tag_list() ? get_the_time('Y年n月j日').' - ' : get_the_time('Y年n月j日');
+                                        the_tag_list($post->ID,2,'&nbsp;');
+                                    ?>
+                                </span>
                                 <span id="weblog-circle"></span>
                             </div>
                             <div class="weblog-tree-core-r">
@@ -1279,7 +1285,7 @@
                                         <span id="other-info">
                                             <h4> Ps. </h4>
                                             <p class="feeling"><?php echo get_post_meta($post->ID, "post_feeling", true); ?></p>
-                                            <p id="sub"><?php echo $rich_date; ?></p>
+                                            <p id="sub"><?php echo $rich_date;the_tag_list($post->ID,2,'&nbsp;'); ?></p>
                                         </span>
                                     </div>
                                 </div>

@@ -77,13 +77,8 @@
                                 <div class="weblog-tree-core-l">
                                     <span id="weblog-timeline">
                                         <?php 
-                                            echo $rich_date = get_the_tag_list() ? get_the_time('Y年n月j日').' - '.get_the_tag_list('','&nbsp;','') : get_the_time('Y年n月j日');//the_time('Y年n月j日');//the_time('Y-n-j') 
-                                            // if(get_the_tag_list()){
-                                            //     echo get_the_time('Y年n月j日').' - ';
-                                            //     the_tag_list($post->ID, 2, "&nbsp;");
-                                            // }else{
-                                            //     echo get_the_time('Y年n月j日');
-                                            // }
+                                            echo $rich_date = get_the_tag_list() ? get_the_time('Y年n月j日').' - ' : get_the_time('Y年n月j日');
+                                            the_tag_list($post->ID,2,'&nbsp;');
                                         ?>
                                     </span>
                                     <span id="weblog-circle"></span>
@@ -104,7 +99,7 @@
                                                 $ps = get_post_meta($post->ID, "post_feeling", true);
                                                 if($ps) echo '<span id="other-info"><h4> Ps. </h4><p class="feeling">'.$ps.'</p></span>';
                                             ?>
-                                            <p id="sub"><?php echo $rich_date;//the_time('Y年n月j日'); ?></p>
+                                            <p id="sub"><?php echo $rich_date;the_tag_list($post->ID,2,'&nbsp;'); ?></p>
                                         </div>
                                     </div>
                                 </div>

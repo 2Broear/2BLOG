@@ -130,7 +130,7 @@
                                             );
                                             for($i=0;$i<count($mbit_array);$i++){
                                                 $each_data = explode('/', $mbit_array[$i]);
-                                                array_push($each_data, $mbit_inits[$i]);
+                                                array_key_exists($i,$mbit_inits) ? array_push($each_data, $mbit_inits[$i]) : false;
                                                 //   print_r($each_data);
                                                 if($each_data[0]){
                                                     $data_type = trim($each_data[0]);
