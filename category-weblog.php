@@ -24,6 +24,7 @@
             content: "回复此片段";
         }
         .wp_comments_list .children{border:none;}
+        figure img,figure video{border-radius:var(--radius)}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -73,12 +74,12 @@
                             $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                             $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                 ?>
-                            <div class="<?php if($post_orderby>1) echo 'topset'; ?> weblog-tree-core-record">
+                            <div class="<?php if($post_orderby>1) echo 'topset '; ?>weblog-tree-core-record">
                                 <div class="weblog-tree-core-l">
                                     <span id="weblog-timeline">
                                         <?php 
                                             echo $rich_date = get_the_tag_list() ? get_the_time('Y年n月j日').' - ' : get_the_time('Y年n月j日');
-                                            the_tag_list($post->ID,2,'&nbsp;');
+                                            the_tag_list($post->ID,2,'');
                                         ?>
                                     </span>
                                     <span id="weblog-circle"></span>
@@ -92,14 +93,16 @@
                                         </div>
                                         <div class="tree-box-content">
                                             <span id="core-info">
-                                                <!--<p class="excerpt"></p>-->
-                                                <?php echo get_the_content();//custom_excerpt(200); ?>
+                                                <?php 
+                                                    // echo get_the_content();//custom_excerpt(200); 
+                                                    echo apply_filters('the_content', get_the_content());
+                                                ?>
                                             </span>
                                             <?php
                                                 $ps = get_post_meta($post->ID, "post_feeling", true);
                                                 if($ps) echo '<span id="other-info"><h4> Ps. </h4><p class="feeling">'.$ps.'</p></span>';
                                             ?>
-                                            <p id="sub"><?php echo $rich_date;the_tag_list($post->ID,2,'&nbsp;'); ?></p>
+                                            <p id="sub"><?php echo $rich_date;the_tag_list($post->ID,2,''); ?></p>
                                         </div>
                                     </div>
                                 </div>

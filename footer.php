@@ -84,13 +84,14 @@
                             	serverChan: '<?php echo get_option('site_comment_serverchan') ?>',
                             	// qmsgChan: '<?php //echo get_option('site_comment_qmsgchan') ?>',
                             	<?php
+                            	    echo get_option('site_lazyload_switcher') ? 'lazyLoad: true,' : 'lazyLoad: false,';
                             	    $rootPath = get_bloginfo('template_directory');
                             	    if(get_option('site_cdn_switcher')){
                                 	    $cdn_src = get_option('site_cdn_src');
                                 	    $cdn_img = get_option('site_cdn_img');
                             	        echo $cdn_img ? "imgCdn: '".$cdn_img."', srcCdn: '".$cdn_src."'," : false;
                             	       // $cdn_src ? $rootPath=$cdn_src : $rootPath;
-                            	    }
+                            	    };
                             	?>
                             	rootPath: '<?php echo $rootPath ?>',
                             	adminMd5: '<?php echo md5(get_bloginfo('admin_email')) ?>',
@@ -149,7 +150,7 @@
                             if(comment_count){
                                 var count_array = [];
                                 for(let i=0;i<comment_count.length;i++){
-                                    count_array.push(comment_count[i].getAttribute('data-xid'));
+                                    count_array.push(comment_count[i].dataset.xid);//getAttribute('data-xid'));
                                 }
                                 twikoo.getCommentsCount({
                                         envId: '<?php echo get_option('site_twikoo_envid'); ?>', // 环境 ID
@@ -237,7 +238,10 @@
                       <i class="icom"></i>
                     </span>
                     <span class="preview">
-                        <img src="<?php echo get_option('site_contact_wechat') ?>" />
+                        <?php
+                            $lazyload = get_option('site_lazyload_switcher') ? 'data-src' : 'src';
+                            echo '<img '.$lazyload.'="'.get_option('site_contact_wechat').'" />';
+                        ?>
                     </span>
                   </a>
                   <a href="mailto:<?php echo get_option('site_contact_email') ?>" target="_blank" rel="nofollow">
@@ -283,7 +287,8 @@
                 </li>
                 <li class="PoweredBy2B">
                   <ins> XTyDesign </ins>
-                  <img src="<?php custom_cdn_src('img'); ?>/images/svg/XTy_.svg" alt="XTY Design" /></li>
+                  <?php echo '<img '.$lazyload.'="'.custom_cdn_src('img',true).'/images/svg/XTy_.svg" alt="XTY Design" />'; ?>
+              </li>
               </ul>
               <ul class="friend_links">
                 <h2>朋友圈</h2>
@@ -330,12 +335,12 @@
             <p id="supports">
                 <?php 
                     if(get_option('site_monitor_switcher')) echo '<script type="text/javascript" src="'.get_option('site_monitor').'"></script>';
-                    if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online" rel="nofollow"><img src="'.custom_cdn_src('img',true).'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>';
+                    if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online" rel="nofollow"><img '.$lazyload.'="'.custom_cdn_src('img',true).'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>';
                     // if(get_option('site_foreverblog_switcher'))
-                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank" rel="nofollow"><img src="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
+                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank" rel="nofollow"><img '.$lazyload.'="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
                     // if($valine_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
                     $server = get_option('site_server_side');
-                    if($server) echo '<a href="javascript:void(0);" rel="nofollow"><img src="'.$server.'" style="height: 12px;"></a>'; //&&$server!="已关闭"
+                    if($server) echo '<a href="javascript:void(0);" rel="nofollow"><img '.$lazyload.'="'.$server.'" style="height: 12px;"></a>'; //&&$server!="已关闭"
                     if(get_option('site_foreverblog_wormhole')){
                         $theme = array_key_exists('theme_mode',$_COOKIE) ? $_COOKIE['theme_mode'] : false;
                         $warmhole_img = $theme ? custom_cdn_src('img',true).'/images/wormhole_2_tp.gif' : custom_cdn_src('img',true).'/images/wormhole_4_tp.gif';
@@ -382,10 +387,45 @@
 </div>
 <script src="<?php custom_cdn_src(); ?>/js/nprogress.js"></script>
 <script type="text/javascript">
+    <?php
+        // lazyLoad images
+        if(get_option('site_lazyload_switcher')){
+    ?>
+            const bodyimg = document.querySelectorAll("body img");
+            if(bodyimg.length>=1){
+                for(let i=0;i<bodyimg.length;i++){
+                    let eachimg = bodyimg[i],
+                        datasrc = eachimg.dataset.src;
+                    if(datasrc){
+                        // var timer = null;
+                        // (function(e){
+                        //     if(timer==null){
+                        //         timer = setTimeout(function(){
+                        eachimg.getBoundingClientRect().top < window.innerHeight ? eachimg.src = datasrc : false;
+                        window.addEventListener('scroll', function(){
+                            if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight
+                                eachimg.src = eachimg.dataset.src; // 即时更新 eachimg.dataset.src 替代 datasrc
+                                eachimg.onerror=function(){ //!this.complete
+                                    let loadimg = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png";
+                                    this.src = loadimg;
+                                    this.dataset.src = loadimg;
+                                }
+                            }
+                        });
+                                    // timer = null;  //消除定时器表示激活
+                        //         }, 1000);
+                        //     }
+                        // })();
+                    }
+                }
+            }
+    <?php
+        }
+    ?>
 	NProgress.start();
-	window.onload=function(){
+	window.addEventListener('load', function(){
 		NProgress.done();
-	};
+    });
     function automode(){
         getCookie('theme_manual') ? setCookie('theme_manual',0,0,1) : false;  // disable manual mode
         let date = new Date(),

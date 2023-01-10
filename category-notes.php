@@ -33,7 +33,7 @@
 			<div class="nav-header workRange wow fadeInUp" style="background: url(<?php echo get_option('site_bgimg'); ?>) center center / cover">
 				<span>
 					<a href="/" target="_blank" style="border-radius: inherit;display: block">
-						<img src="<?php echo get_option('site_avatar'); ?>" alt="2broear" />
+					    <?php echo '<img '.$lazyload.'="'.get_option('site_avatar').'" alt="'.get_bloginfo('name').'" />'; ?>
 					</a>
 					<em></em>
 				</span>

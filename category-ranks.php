@@ -39,7 +39,7 @@
                             <li>
                                 <span id="avatar" data-t="<?php echo $count ?>">
                                     <a href="<?php echo $link; ?>" target="_blank">
-                                        <img src="<?php echo get_option('site_avatar_mirror').'avatar/'.md5($user->mail).'?d=retro&s=100' ?>" title="这家伙留了 <?php echo $count ?> 条评论！">
+                                        <?php echo '<img '.$lazyload.'="'.get_option('site_avatar_mirror').'avatar/'.md5($user->mail).'?d=retro&s=100" title="这家伙留了 '.$count.' 条评论！">'; ?>
                                     </a>
                                 </span>
                                 <span id="range" style="">
@@ -66,7 +66,7 @@
                                     <li title="TA 在本站已有 <?php echo $count ?> 条评论">
                                         <span id="avatar">
                                             <a href="<?php echo $link; ?>" target="_blank">
-                                            <img src="<?php echo get_option('site_avatar_mirror').'avatar/'.md5($user->mail).'?d=retro&s=100' ?>">
+                                                <?php echo '<img '.$lazyload.'="'.get_option('site_avatar_mirror').'avatar/'.md5($user->mail).'?d=retro&s=100" title="这家伙留了 '.$count.' 条评论！">'; ?>
                                             </a>
                                         </span>
                                         <a href="<?php echo $link; ?>" target="_blank">
@@ -185,9 +185,11 @@
                     avg = avg+=temps[i].t;
                     average = avg/max;
                     if(name!="匿名者"&&name!="2broear"){
-                        i<max ? rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img src="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" title="这家伙留了 ${times} 条评论！" /></a></span><span id="range" style="height:${average}px"><em style="height:${times*2}%"></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>` : false;
-                        i>=max && i<maxes ? ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar"><img src="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b><sup>${times}+</sup></a></li>` : false;
+                        i<max ? rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img <?php echo $lazyload; ?>="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" title="这家伙留了 ${times} 条评论！" /></a></span><span id="range" style="height:${average}px"><em style="height:${times*2}%"></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>` : false;
+                        i>=max && i<maxes ? ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar"><img <?php echo $lazyload; ?>="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b><sup>${times}+</sup></a></li>` : false;
                         i>maxes ? ranked.innerHTML += `<li><p>${name}<sup>${times}</sup></p></li>` : false;
+                        // recall lazyload
+                        lazyload("body img");
                     }
                 }
             })

@@ -853,7 +853,7 @@ i.arrow-down::after{content:'\e908'}
 /*#qrcode-netease em{display:block;width:129px;height:129px;background:url('https://img.2broear.com/css_sprites_contact.png') -10px -10px no-repeat}*/
 /*#qrcode-mail a{padding:0;display:block}*/
 /*#qrcode-mail em{color:var(--preset-8);display:block;letter-spacing:0;font-style:normal;font-size:0.88rem;margin:3px auto;padding:5px 8px;line-height:normal}*/
-.what_says{color:var(--preset-9);;width:100%;max-width:1102px;margin:5px auto;padding:15px;box-sizing:border-box;font-size:var(--min-size);display:inline-block;background-color:transparent}
+.what_says{color:var(--preset-8);;width:100%;max-width:1102px;margin:5px auto;padding:15px;box-sizing:border-box;font-size:var(--min-size);display:inline-block;background-color:transparent}
 .what_says #what_says_inside{font-size:1rem;letter-spacing:7px;display:block;position:relative;padding:5px 0;transition:color .5s ease;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
 .what_says span::before{content:'\e903';font-family:'icomoon2' !important;font-size:20px;position:relative;top:2px;left:-7px}
 .what_says span::after{content:'\f18c';font-family:'FontAwesome' !important;font-size:20px;position:relative;top:2px;left:7px}

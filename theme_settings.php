@@ -533,6 +533,7 @@
         // register_setting( 'baw-settings-group', 'site_privacy_bg' );
         register_setting( 'baw-settings-group', 'site_privacy_video' );
         
+        register_setting( 'baw-settings-group', 'site_lazyload_switcher' );
         register_setting( 'baw-settings-group', 'site_cdn_switcher' );
         // if(get_option('site_cdn_switcher')){
             register_setting( 'baw-settings-group', 'site_cdn_img' );
@@ -1285,12 +1286,20 @@
                         // }
                     ?>
                     <tr valign="top">
+                        <th scope="row">Lazyload 懒加载</th>
+                        <td>
+                            <?php
+                                $opt = 'site_lazyload_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">开启文章/部分页面图片使用懒加载（默认关闭 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">图片懒加载</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
                         <th scope="row">站点 CDN 加速</th>
                         <td>
                             <?php
                                 $opt = 'site_cdn_switcher';
-                                $img = get_option( 'site_cdn_img', '' );
-                                $src = get_option( 'site_cdn_src', '' );
                                 get_option($opt) ? $status="checked" : $status="closed";
                                 echo '<label for="'.$opt.'"><p class="description" id="site_cdn_switcher_label">开启后可自定义cdn加速域名（需要配置 nginx 指定域名 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">CDN加速域名</b></label>';
                             ?>

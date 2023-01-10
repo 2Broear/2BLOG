@@ -412,7 +412,7 @@
         var noOrder = setInterval(inOrder, 0);
     };
     for(let i=0;i<counterList.length;i++){ //counterList.length
-        let count = parseInt(counterList[i].getAttribute('data-res')),
+        let count = parseInt(counterList[i].dataset.res), //getAttribute('data-res')
             counter = counterList[i].querySelector('h1'),
             limit = parseInt(counter.innerText);
         insideLoop(counter,0,limit,i);
@@ -431,10 +431,9 @@
                 while(t!=archive_tree){
                     if(t.id=="call" && t.nodeName.toLowerCase()=="sup"){
                         let _this = t,
-                            years = _this.getAttribute("data-year"),
-                            loads = parseInt(_this.getAttribute("data-load")),
-                            click_count = parseInt(_this.getAttribute('data-count')),
-                            // load_ajax = load_box.querySelector(".ajax"),
+                            years = _this.dataset.year, //.getAttribute("data-year"),
+                            loads = parseInt(_this.dataset.load), //.getAttribute("data-load")
+                            click_count = parseInt(_this.dataset.count), //.getAttribute('data-count')
                             load_box = archive_tree.querySelector('.call_'+years),//_this.parentNodenextSibling,
                             last_load = load_box.lastChild.offsetTop;  // preset lastChild offsetTop record
                         click_count++;

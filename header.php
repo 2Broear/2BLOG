@@ -9,6 +9,7 @@
       <div class="tipsbox">
         <div class="tips">
             <?php
+                $lazyload = get_option('site_lazyload_switcher') ? 'data-src' : 'src';
                 echo '<p>';
                 $nick = get_option('site_nick', get_bloginfo('name'));
                 $curcat = get_the_category() ? get_the_category()[0] : false;

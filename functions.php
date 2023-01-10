@@ -447,7 +447,6 @@
     };
     // 自定义文章标签
     function the_tag_list($pid, $max=3, $dot="、"){
-        // echo get_the_tag_list('','、','');
         $tags_list = get_the_tags($pid);
         if($tags_list){
             $tags_count = count($tags_list);
@@ -803,24 +802,22 @@
             )
         );
     }
-    function echo_postrank($max){
-        $args = array('cat'=>$cat, 'posts_per_page'=>$max, 'caller_get_posts'=>1, 'orderby' => getPostViews(get_the_ID()), 'order' => 'DESC');
-        if(!$post_show) $post_show=5;  //default $show 5
-        if(count(query_posts($args))>=1) {
-            query_posts($args);
-            while(have_posts()) : the_post();
-                echo '<li data-view="'.getPostViews(get_the_ID()).'" data-comment="'.get_comment_count($cat).'">';
-                echo '<a href="'.the_permalink().'" target="_blank" title="'.the_title().'">';
-                echo the_title();
-                echo '</a>';
-                echo '</li>';
-            endwhile;
-            wp_reset_query();  // 重置 wp 查询
+    
+    //lazyload 图片<img>懒加载
+    $lazyload = 'src';
+    if(get_option('site_lazyload_switcher')){
+        $lazyload = 'data-src';
+        add_filter('the_content', 'lazyload_images');
+        function lazyload_images($content){
+            // return $content = str_replace('src="', 'data-src="', $content);
+            return preg_replace('/\<img(.*)src=("[^"]*")/i', '<img $1 data-src=$2', $content);
         }
     }
+    
     //友情链接函数
     function site_links($links,$frame=false){
         // if(!$orderby) $orderby='id';  //默认id排序
+        global $lazyload;
     	//$links = get_bookmarks(array('orderby'=>'date','order'=>'DESC','category_name'=>$category,'hide_invisible'=>0));
         foreach ($links as $link){
             $link_notes = $link->link_notes;
@@ -838,8 +835,8 @@
                 case 'full':
                     // echo in_category('standby') ? 'standby' : false;
                     // if($link->link_visible==="Y") 
-                    $avatar_status = $status=='standby' ? '<img class="lazy" data-original="" src="" alt="近期访问出现问题" draggable="false">' : '<img class="lazy" data-original="" src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
-                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'"><img class="blur" src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span><em></em></a></div>';
+                    $avatar_status = $status=='standby' ? '<img class="lazy" src="" alt="近期访问出现问题" draggable="false">' : '<img class="lazy" data-original="" '.$lazyload.'="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
+                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'"><img class="blur" '.$lazyload.'="'.$avatar.'" alt="'.$link->link_name.'" draggable="false"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span><em></em></a></div>';
                     break;
                 case 'half':
                     // if($link->link_visible==="Y") 
@@ -881,22 +878,22 @@
         $cat_meta = get_term_meta($cat, 'seo_title', true);
         if($cat_meta) echo($cat_meta);else echo($cat_desc);
     };
+    
     // 过滤 CDN 图片路径
     if(get_option('site_cdn_switcher')){
         add_filter('the_content', 'replace_cdnimg_path');
         function replace_cdnimg_path($content) {
             $upload_url = wp_get_upload_dir()['baseurl'];
             $cdnimg_url = get_option('site_cdn_img') ? get_option('site_cdn_img') : $upload_url;
-            // return $content = str_replace('src="'.$upload_url, 'src="'.$cdnimg_url, $content);
             // return str_replace('srcset="'.$upload_url, 'srcset="'.$img_cdn_url, $content);
             return str_replace('="'.$upload_url, '="'.$cdnimg_url, $content);
         }
-        // disable srcset
-        function remove_max_srcset_image_width( $max_width ) {
-            return 1;
-        }
-        add_filter( 'max_srcset_image_width', 'remove_max_srcset_image_width' );
     }
+    // disable srcset
+    function remove_max_srcset_image_width( $max_width ) {
+        return 1;
+    }
+    add_filter( 'max_srcset_image_width', 'remove_max_srcset_image_width' );
     //启用cdn加速(指定src/img)
     function custom_cdn_src($holder='src',$var=false){
         $default_src = get_bloginfo('template_directory');
@@ -944,7 +941,7 @@
         $result = $ret ? $ret[$index] : false;
         if(get_option('site_cdn_switcher')){
             $upload_url = wp_get_upload_dir()['baseurl'];
-            return str_replace($upload_url, get_option('site_cdn_img', $upload_url), $result);
+            return str_replace($upload_url, get_option('site_cdn_img'), $result);
         }else{
             return $result;
         }
@@ -1019,7 +1016,7 @@
     
     // acg post query
     function acg_posts_query($the_cat, $pre_cat=false, $limit=99){
-        global $post;
+        global $post,$lazyload;
         $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
         $cat_slug = $the_cat->slug;
         echo '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> '.$cat_slug.' </sup></h2></div><div class="info flexboxes">';
@@ -1045,8 +1042,10 @@
             <div class="inbox flexboxes" id="<?php echo 'pid_'.get_the_ID() ?>">
                 <div class="inbox-headside flexboxes">
                     <span class="author"><?php echo $post_feeling; ?></span>
-                    <img class="bg" src="<?php echo $postimg = get_postimg(0,$post->ID,true); ?>">
-                    <img src="<?php echo $postimg; ?>">
+                    <?php
+                        $postimg = get_postimg(0,$post->ID,true);
+                        echo '<img class="bg" '.$lazyload.'="'.$postimg.'"><img '.$lazyload.'="'.$postimg.'">';
+                    ?>
                 </div>
                 <div class="inbox-aside">
                     <span class="lowside-title">
@@ -1266,7 +1265,7 @@
                                 <span id="weblog-timeline">
                                     <?php 
                                         echo $rich_date = get_the_tag_list() ? get_the_time('Y年n月j日').' - ' : get_the_time('Y年n月j日');
-                                        the_tag_list($post->ID,2,'&nbsp;');
+                                        the_tag_list($post->ID,2,'');
                                     ?>
                                 </span>
                                 <span id="weblog-circle"></span>
@@ -1280,13 +1279,16 @@
                                     </div>
                                     <div class="tree-box-content">
                                         <span id="core-info">
-                                            <p class="excerpt"><?php echo get_the_content();//custom_excerpt(100) ?></p>
+                                            <?php 
+                                                // echo get_the_content();//custom_excerpt(200); 
+                                                echo apply_filters('the_content', get_the_content());
+                                            ?>
                                         </span>
-                                        <span id="other-info">
-                                            <h4> Ps. </h4>
-                                            <p class="feeling"><?php echo get_post_meta($post->ID, "post_feeling", true); ?></p>
-                                            <p id="sub"><?php echo $rich_date;the_tag_list($post->ID,2,'&nbsp;'); ?></p>
-                                        </span>
+                                        <?php
+                                            $ps = get_post_meta($post->ID, "post_feeling", true);
+                                            if($ps) echo '<span id="other-info"><h4> Ps. </h4><p class="feeling">'.$ps.'</p></span>';
+                                        ?>
+                                        <p id="sub"><?php echo $rich_date;the_tag_list($post->ID,2,''); ?></p>
                                     </div>
                                 </div>
                             </div>

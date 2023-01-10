@@ -120,7 +120,7 @@
         var noOrder = setInterval(inOrder, 0);
     };
     for(let i=0;i<counterList.length;i++){
-        let count = parseInt(counterList[i].getAttribute('data-res')),
+        let count = parseInt(counterList[i].dataset.res),//getAttribute('data-res')),
             counter = counterList[i].querySelector('h2'),
             limit = parseInt(counter.innerText);
         insideLoop(counter,0,limit,i);
@@ -141,9 +141,9 @@
                 while(t!=rcmd_loadbox){
                     if(t.id=="more"){
                         let _this = t,
-                            cid = parseInt(_this.getAttribute('data-cid')),
-                            loads = parseInt(_this.getAttribute("data-load")),  // $posts_count in acg_posts_query() function
-                            click_count = parseInt(_this.getAttribute('data-count')),
+                            cid = parseInt(_this.dataset.cid),//getAttribute('data-cid')),
+                            loads = parseInt(_this.dataset.load),//getAttribute("data-load")),  // $posts_count in acg_posts_query() function
+                            click_count = parseInt(_this.dataset.count),//getAttribute('data-count')),
                             load_box = _this.parentNode.parentNode.parentNode;
                         click_count++;
                         // console.log(load_box);
@@ -186,6 +186,6 @@
         <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/jquery-1.9.1.min.js"></script>
         <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/acgn.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
-    }
+    };
 ?>
 </body></html>

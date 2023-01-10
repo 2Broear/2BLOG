@@ -108,8 +108,8 @@
                         return false;
                     }else{
                         _this.classList.add('liked');
-                        var id = _this.getAttribute('data-id'),
-                            action =_this.getAttribute('data-action'),
+                        var id = _this.dataset.id,//getAttribute('data-id'),
+                            action =_this.dataset.action,//getAttribute('data-action'),
                             rateHolder = document.querySelector('.count #counter');
                         var ajax_data = {
                                 action: "post_like",

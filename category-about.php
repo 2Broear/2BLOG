@@ -100,7 +100,11 @@
                                 <div class="profile">
                                     <div class="user_info">
                                         <span id="head-photo">
-                                            <img src="<?php echo get_option('site_avatar'); ?>" style="" />
+                                            <?php
+                                                $lazyload = get_option('site_lazyload_switcher');
+                                                $avatar = get_option('site_avatar');
+                                                echo $lazyload ? '<img data-src="'.$avatar.'" />' : '<img src="'.$avatar.'" />';
+                                            ?>
                                         </span>
                                         <div class="intro_info">
                                             <span id="head-nickname"><strong><?php echo get_option('site_nick'); ?></strong></span>
@@ -188,7 +192,7 @@
     const counterList = document.querySelectorAll('.about_blocks li.intro_right .mbit .mbit_range li');
     function countAnimation(list,order){
         for(let i=0;i<list.length;i++){
-            let count = parseInt(list[i].getAttribute('data-res')),
+            let count = parseInt(list[i].dataset.res),//getAttribute('data-res')),
                 counter = list[i].querySelector('em');
             // counter.style.width = count+"%";
             if(order){
@@ -202,6 +206,6 @@
             }
         }
     };
-    countAnimation(counterList,true)
+    countAnimation(counterList,true);
 </script>
 </body></html>

@@ -55,13 +55,26 @@
         return decode ? decodeURI(str) : str;
     }
     
-// 	dynamicLoad('https://src.2broear.com/js/nprogress.js?v=cdnsrc',function(){
-// 		NProgress.start();
-// 		window.onload=function(){
-// 			NProgress.done();
-// 		};
-// 	});
-	
+    function lazyload(imgs){
+        const bodyimg = document.querySelectorAll(imgs);
+        if(bodyimg.length>=1){
+            for(let i=0;i<bodyimg.length;i++){
+                let eachimg = bodyimg[i],
+                    datasrc = eachimg.dataset.src;
+                if(datasrc){
+                    eachimg.getBoundingClientRect().top < window.innerHeight ? eachimg.src = datasrc : false;
+                    window.addEventListener('scroll', function(){
+                        // console.log(eachimg);
+                        if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight 判断图片是否将要出现
+                            eachimg.src = datasrc; // 出现后将自定义地址转为真实地址
+                        }
+                    });
+                }
+            }
+        }
+    };
+    // lazyload("body img");
+    
     function setCookie(name,value,path,days){
         let exp = new Date();
         days = !days ? 30 : days;
@@ -168,7 +181,7 @@
           aindex_fn = function(){
             if(aindex){
                 var aindexOffset = [],
-                    max = aindex.getAttribute('data-index'),
+                    max = aindex.dataset.index, //getAttribute('data-index'),
                     Constructor = function(index,offset){
                     this.index = index;
                     this.offset = offset;
@@ -310,23 +323,6 @@
             // console.log(scrollTop);
             var aindexOffset = aindex_fn();  // always update(do not call aindex_once_data)
             // console.log(aindexOffset);
-            // if(aindex){
-            //     const max = aindex.getAttribute('data-index'),
-            //           aindex_li = aindex.querySelectorAll('li');
-            //     console.log(max);
-            //     for(let i=0;i<max;i++){
-            //         const each_index = document.querySelector('#title-'+i),
-            //               each_offset = each_index.offsetTop+300;
-            //         if(scrollTop<=document.querySelector('#title-0').offset || scrollTop>=share.offsetTop){
-            //             aindex_cl(aindex_li,'current')
-            //         }else{
-            //             if(scrollTop>=each_offset){
-            //                 aindex_cl(aindex_li,'current');
-            //                 document.querySelector('#t'+i).classList.add('current');
-            //             }
-            //         }
-            //     }
-            // }
             if(aindex && aindexOffset.length>=1){
                 const aindex_li = aindex.querySelectorAll('li');
                 if(scrollTop<=aindexOffset[0].offset || scrollTop>=share.offsetTop){ //-100
@@ -429,11 +425,4 @@
         e.cancelable ? e.preventDefault() : e.stopPropagation();  // prevent penetrate a link
         toggleMenu()
     }
-    // document.body.ontouchmove = function(e){
-    //     console.log(e.target)
-    //     document.body.ontouchend = function(e){
-    //         console.log(e.target)
-    //     }
-    // }
-    
     
