@@ -223,33 +223,33 @@
               <ul class="footer-contact">
                 <h2>找到我</h2>
                 <li class="contactBox">
-                  <a href="<?php echo get_option('site_contact_weibo') ?>" target="_blank" rel="nofollow">
+                  <a href="<?php echo get_option('site_contact_weibo') ?>" target="_blank" rel="nofollow" aria-label="weibo">
                     <span class="contact-icons" id="icon-weibo">
                       <i class="icom"></i>
                     </span>
                   </a>
-                  <a href="<?php echo get_option('site_contact_music') ?>" target="_blank" rel="nofollow">
+                  <a href="<?php echo get_option('site_contact_music') ?>" target="_blank" rel="nofollow" aria-label="music">
                     <span class="contact-icons" id="icon-netease">
                       <i class="BBFontIcons"></i>
                     </span>
                   </a>
-                  <a href="javascript:void(0)" target="_blank" rel="nofollow">
+                  <a href="javascript:void(0)" target="_blank" rel="nofollow" aria-label="wechat">
                     <span class="contact-icons" id="icon-wechat">
                       <i class="icom"></i>
                     </span>
                     <span class="preview">
                         <?php
                             $lazyload = get_option('site_lazyload_switcher') ? 'data-src' : 'src';
-                            echo '<img '.$lazyload.'="'.get_option('site_contact_wechat').'" />';
+                            echo '<img '.$lazyload.'="'.get_option('site_contact_wechat').'" alt="wechat" />';
                         ?>
                     </span>
                   </a>
-                  <a href="mailto:<?php echo get_option('site_contact_email') ?>" target="_blank" rel="nofollow">
+                  <a href="mailto:<?php echo get_option('site_contact_email') ?>" target="_blank" rel="nofollow" aria-label="email">
                     <span class="contact-icons" id="icon-mail">
                       <i class="icom"></i>
                     </span>
                   </a>
-                  <a href="<?php echo get_option('site_contact_bilibili') ?>" target="_blank" rel="nofollow">
+                  <a href="<?php echo get_option('site_contact_bilibili') ?>" target="_blank" rel="nofollow" aria-label="bilibili">
                     <span class="contact-icons" id="icon-bilibili">
                       <i class="BBFontIcons"></i>
                     </span>
@@ -259,19 +259,19 @@
                     $steam = get_option('site_contact_steam');
                     $twitter = get_option('site_contact_twitter');
                     if($github){ ?>
-                      <a href="<?php echo $github ?>" target="_blank" rel="nofollow">
+                      <a href="<?php echo $github ?>" target="_blank" rel="nofollow" aria-label="github">
                         <span class="contact-icons" id="icon-github">
                           <i class="icom"></i>
                         </span>
                       </a>
                 <?php }if($twitter){ ?>
-                      <a href="<?php echo $twitter ?>" target="_blank" rel="nofollow">
+                      <a href="<?php echo $twitter ?>" target="_blank" rel="nofollow" aria-label="twitter">
                         <span class="contact-icons" id="icon-twitter">
                           <i class="icom"></i>
                         </span>
                       </a>
                 <?php };if($steam){ ?>
-                      <a href="<?php echo $steam ?>" target="_blank" rel="nofollow">
+                      <a href="<?php echo $steam ?>" target="_blank" rel="nofollow" aria-label="steam">
                         <span class="contact-icons" id="icon-steam">
                           <i class="icom"></i>
                         </span>
@@ -282,12 +282,12 @@
                   <p>最佳浏览体验
                     <br/>推荐浏览器：</p>
                   <b>
-                    <a id="chrome" href="https://www.google.cn/chrome/" target="_blank" rel="nofollow" title="Chrome大法好！">Chrome</a>/
-                    <a id="edge" href="https://www.microsoft.com/zh-cn/edge" target="_blank" rel="nofollow" title="新版Edge也不错~">Edge</a></b>
+                    <a id="chrome" href="https://www.google.cn/chrome/" target="_blank" rel="nofollow" title="Chrome大法好！" aria-label="chrome">Chrome</a>/
+                    <a id="edge" href="https://www.microsoft.com/zh-cn/edge" target="_blank" rel="nofollow" title="新版Edge也不错~" aria-label="edge">Edge</a></b>
                 </li>
                 <li class="PoweredBy2B">
                   <ins> XTyDesign </ins>
-                  <?php echo '<img '.$lazyload.'="'.custom_cdn_src('img',true).'/images/svg/XTy_.svg" alt="XTY Design" />'; ?>
+                  <?php echo '<img '.$lazyload.'="'.custom_cdn_src('img',true).'/images/svg/XTy_.svg" style="max-width:66px" alt="XTY Design" />'; ?>
               </li>
               </ul>
               <ul class="friend_links">
@@ -340,11 +340,11 @@
                     echo '<a href="'.get_option('site_foreverblog').'" target="_blank" rel="nofollow"><img '.$lazyload.'="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
                     // if($valine_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
                     $server = get_option('site_server_side');
-                    if($server) echo '<a href="javascript:void(0);" rel="nofollow"><img '.$lazyload.'="'.$server.'" style="height: 12px;"></a>'; //&&$server!="已关闭"
+                    if($server) echo '<a href="javascript:void(0);" rel="nofollow"><img '.$lazyload.'="'.$server.'" style="height: 12px;" alt="server"></a>'; //&&$server!="已关闭"
                     if(get_option('site_foreverblog_wormhole')){
                         $theme = array_key_exists('theme_mode',$_COOKIE) ? $_COOKIE['theme_mode'] : false;
-                        $warmhole_img = $theme ? custom_cdn_src('img',true).'/images/wormhole_2_tp.gif' : custom_cdn_src('img',true).'/images/wormhole_4_tp.gif';
-                        echo '<a href="https://www.foreverblog.cn/go.html" target="_blank" rel="nofollow"><em class="warmhole" style="background:url('.custom_cdn_src('img',true).'/images/wormhole_4_tp.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
+                        // $warmhole_img = $theme ? custom_cdn_src('img',true).'/images/wormhole_2_tp.gif' : custom_cdn_src('img',true).'/images/wormhole_4_tp.gif';
+                        echo '<a href="https://www.foreverblog.cn/go.html" target="_blank" rel="nofollow"><em class="warmhole" style="background:url('.custom_cdn_src('img',true).'/images/wormhole_4_tp_ez.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
                     }
                 ?>
             </p>
@@ -391,31 +391,38 @@
         // lazyLoad images
         if(get_option('site_lazyload_switcher')){
     ?>
-            const bodyimg = document.querySelectorAll("body img");
+            const bodyimg = document.querySelectorAll("body img"),
+                  loadimg = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png";
+            var timer = null,
+                array = [];
             if(bodyimg.length>=1){
                 for(let i=0;i<bodyimg.length;i++){
                     let eachimg = bodyimg[i],
                         datasrc = eachimg.dataset.src;
                     if(datasrc){
-                        // var timer = null;
-                        // (function(e){
-                        //     if(timer==null){
-                        //         timer = setTimeout(function(){
+                        eachimg.src = loadimg; //pre-holder
+                        array.push(eachimg); //for-closure
                         eachimg.getBoundingClientRect().top < window.innerHeight ? eachimg.src = datasrc : false;
                         window.addEventListener('scroll', function(){
-                            if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight
-                                eachimg.src = eachimg.dataset.src; // 即时更新 eachimg.dataset.src 替代 datasrc
-                                eachimg.onerror=function(){ //!this.complete
-                                    let loadimg = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png";
-                                    this.src = loadimg;
-                                    this.dataset.src = loadimg;
+                            return (function(){
+                                if(timer==null){
+                                    timer = setTimeout(function(){
+                                        // console.log(eachimg); //需传入array重新（单次）循环，否则无法正常访问外部参数
+                                        for(let i=0;i<array.length;i++){
+                                            let eachimg = array[i];
+                                            if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight
+                                                eachimg.src = eachimg.dataset.src; // 即时更新 eachimg.dataset.src 替代 datasrc
+                                                eachimg.onerror=function(){ //!this.complete
+                                                    this.src = loadimg;
+                                                    this.dataset.src = loadimg;
+                                                }
+                                            }
+                                        }
+                                        timer = null;  //消除定时器
+                                    }, 100, array);
                                 }
-                            }
+                            })();
                         });
-                                    // timer = null;  //消除定时器表示激活
-                        //         }, 1000);
-                        //     }
-                        // })();
                     }
                 }
             }

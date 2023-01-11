@@ -54,7 +54,7 @@
         str = str.substr(0,str.lastIndexOf("&"));
         return decode ? decodeURI(str) : str;
     }
-    
+    //https://www.jb51.net/article/216692.htm
     function lazyload(imgs){
         const bodyimg = document.querySelectorAll(imgs);
         if(bodyimg.length>=1){
@@ -64,9 +64,13 @@
                 if(datasrc){
                     eachimg.getBoundingClientRect().top < window.innerHeight ? eachimg.src = datasrc : false;
                     window.addEventListener('scroll', function(){
-                        // console.log(eachimg);
-                        if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight 判断图片是否将要出现
-                            eachimg.src = datasrc; // 出现后将自定义地址转为真实地址
+                        if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight
+                            eachimg.src = eachimg.dataset.src; // 即时更新 eachimg.dataset.src 替代 datasrc
+                            eachimg.onerror=function(){ //!this.complete
+                                let loadimg = "https://img.2broear.com/images/loading_3_color_tp.png";
+                                this.src = loadimg;
+                                this.dataset.src = loadimg;
+                            }
                         }
                     });
                 }

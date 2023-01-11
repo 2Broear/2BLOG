@@ -83,33 +83,17 @@
     <script>hljs.initHighlightingOnLoad();</script>
     <script src="<?php custom_cdn_src(); ?>/js/fancybox.umd.js"></script>
     <script>
-        // gallery js(lazyload included)
-        const bodyimg = document.querySelectorAll(".news-article-container .content img");
-        if(bodyimg.length>=1){
-            for(let i=0;i<bodyimg.length;i++){
-                let eachimg = bodyimg[i],
+        // gallery js initiate 'bodyimg' already exists in footer lazyload, use contimg insted.
+        const contimg = document.querySelectorAll(".news-article-container .content img");
+        if(contimg.length>=1){
+            for(let i=0;i<contimg.length;i++){
+                let eachimg = contimg[i],
                     datasrc = eachimg.dataset.src,
                     imgbox = document.createElement("a");
                 imgbox.setAttribute("data-fancybox","gallery");
                 imgbox.setAttribute("href", datasrc);
                 eachimg.parentNode.insertBefore(imgbox, eachimg);
                 imgbox.appendChild(eachimg);
-                <?php
-                    // if(get_option('site_lazyload_switcher')){
-                ?>
-                        // lazyload image https://www.jb51.net/article/216692.htm
-                        // eachimg.getBoundingClientRect().top < window.innerHeight ? eachimg.src = datasrc : false;
-                        // window.addEventListener('scroll', function(){
-                        //     let height = eachimg.offsetTop, // 图片的距顶部的高度
-                        //         wheight = window.innerHeight, // 浏览器可视区的高度
-                        //         sheight = document.documentElement.scrollTop; // 页面被卷去的高度
-                        //     if(eachimg.getBoundingClientRect().top < wheight){ // height-sheight<=wheight 判断图片是否将要出现
-                        //         eachimg.src = datasrc; // 出现后将自定义地址转为真实地址
-                        //     }
-                        // })
-                <?php
-                    // }
-                ?>
             }
         }
     </script>

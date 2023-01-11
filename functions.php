@@ -830,13 +830,17 @@
             $impress = $link_notes&&$link_notes!='' ? '<span class="ssl '.$ssl.'"> '.$link_notes.' </span>' : false;
             // global $wpdb;
             // print_r($wpdb->get_var("SELECT ID FROM $wpdb->links WHERE post_name = '$slug'"));
-            $avatar = !$link->link_image ? 'https:' . get_option('site_avatar_mirror') . 'avatar/' . md5(mt_rand().'@rand.avatar') . '?s=300' : $avatar = $link->link_image;
+            $avatar = !$link->link_image ? 'https:' . get_option('site_avatar_mirror') . 'avatar/' . md5(mt_rand().'@rand.avatar') . '?s=300' : $link->link_image;
+            if($lazyload=='data-src'){
+                $holder = 'data-src="'.$avatar.'"';
+                $avatar = custom_cdn_src('img',true).'/images/loading_3_color_tp.png';
+            }
             switch ($frame) {
                 case 'full':
                     // echo in_category('standby') ? 'standby' : false;
                     // if($link->link_visible==="Y") 
-                    $avatar_status = $status=='standby' ? '<img class="lazy" src="" alt="近期访问出现问题" draggable="false">' : '<img class="lazy" data-original="" '.$lazyload.'="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
-                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'"><img class="blur" '.$lazyload.'="'.$avatar.'" alt="'.$link->link_name.'" draggable="false"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span><em></em></a></div>';
+                    $avatar_status = $status=='standby' ? '<img class="lazy" src="" alt="近期访问出现问题" draggable="false">' : '<img class="lazy" '.$holder.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
+                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'"><img class="blur" '.$holder.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span><em></em></a></div>';
                     break;
                 case 'half':
                     // if($link->link_visible==="Y") 

@@ -25,6 +25,9 @@
         .friends-boxes .deals.rcmd .inbox{
             max-width: calc(100%/5.8);
         }
+        .friends-boxes .deals .inbox.standby .inbox-headside img{
+            border-radius: 0;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -120,6 +123,19 @@
 <!--<script src="//cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js"></script>-->
 <!-- inHtmlJs -->
 <?php
+    // declear lazyLoad standby-avatar(fix alt tips)
+    if(get_option('site_lazyload_switcher')){
+?>
+        <script>
+            const standbyimg = document.querySelectorAll(".friends-boxes .deals .inbox.standby img");
+            if(standbyimg.length>=1){
+                for(let i=0;i<standbyimg.length;i++){
+                    standbyimg[i].src = "";
+                }
+            }
+        </script>
+<?php
+    };
     if($baas){
 ?>
     <script type="text/javascript">
