@@ -754,6 +754,7 @@
     }
     add_filter('pre_get_posts', 'rss_category');
     
+    
     // 初始化 wordpress 执行函数
     function custom_theme_setup(){
         $expire = time() + 1209600;  // 自定义 cookie 函数 darkmode cookie set
@@ -768,15 +769,27 @@
             $hour>=$end&&$hour<$start || $hour==$end&&current_time('i')>=0&&current_time('s')>=0 ? setcookie('theme_mode', 'light', $expire, COOKIEPATH, COOKIE_DOMAIN, false) : setcookie('theme_mode', 'dark', $expire, COOKIEPATH, COOKIE_DOMAIN, false);
         };
         // ARTICLE FULL-VIEW SET
-        if(!isset($_COOKIE['article_fullview'])){
-            setcookie('article_fullview', 0, $expire, COOKIEPATH, COOKIE_DOMAIN, false);
-        };
+        // if(!isset($_COOKIE['article_fullview'])){
+        //     setcookie('article_fullview', 0, $expire, COOKIEPATH, COOKIE_DOMAIN, false);
+        // };
         // ARTICLE FONT-PLUS SET
         if(!isset($_COOKIE['article_fontsize'])){
             setcookie('article_fontsize', 0, $expire, COOKIEPATH, COOKIE_DOMAIN, false);
         };
+        
+        // SETUP sidebar FULL-VIEW status(default 1 enabled)
+        if(!isset($_COOKIE['sidebar_status'])){
+            setcookie('sidebar_status', 1, $expire, COOKIEPATH, COOKIE_DOMAIN, false);
+        };
+        $sidebar_status = array_key_exists('sidebar_status',$_COOKIE) ? $_COOKIE['sidebar_status'] : false;
+        if(!get_option('site_ads_switcher')&&!get_option('site_countdown_switcher')&&!get_option('site_pixiv_switcher')&&!get_option('site_mostview_switcher')){
+            setcookie('sidebar_status', 0, $expire, COOKIEPATH, COOKIE_DOMAIN, false);
+        }else{
+            setcookie('sidebar_status', 1, $expire, COOKIEPATH, COOKIE_DOMAIN, false);
+        }
     };
     add_action('after_setup_theme', 'custom_theme_setup');
+    
     
     //通过邮箱匹配（gravatar/qq）头像（默认获取后台gravatar镜像源）
     function match_mail_avatar($user_mail){

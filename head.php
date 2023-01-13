@@ -25,7 +25,7 @@
     }
     if(get_option('site_third_comments')=='Valine'){  // 全站加载
 ?>
-        <script src="<?php custom_cdn_src(); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+        <script src="<?php custom_cdn_src(false); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
     }
 ?>

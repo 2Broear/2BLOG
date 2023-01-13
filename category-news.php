@@ -97,9 +97,7 @@
                     ?>
                 </div>
             </div>
-            <div class="news-slidebar-window">
-                <?php get_sidebar(); ?>
-            </div>
+            <?php get_sidebar(); ?>
         </div>
         <footer>
             <?php get_footer(); ?>

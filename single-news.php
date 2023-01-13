@@ -24,9 +24,9 @@
     </header>
     <div class="content-all-windows">
         <div class="news-article-window<?php 
-            $fullview = array_key_exists('article_fullview',$_COOKIE) ? $_COOKIE['article_fullview'] : false;
+            $sidebar = array_key_exists('sidebar_status',$_COOKIE) ? $_COOKIE['sidebar_status'] : false;
             $fontsize = array_key_exists('article_fontsize',$_COOKIE) ? $_COOKIE['article_fontsize'] : false;
-            echo $fullview ? " fullview" : ""; 
+            echo !$sidebar ? " fullview" : ""; 
         ?>">
             <?php breadcrumb_switch(false,true); ?>
             <div class="news-article-core">
@@ -34,8 +34,8 @@
                     <div id="news-article-head">
                         <div class="news-article-head-tools">
                             <div class="tools-inside-block">
-                                <span id="full-view" title="满屏切换">
-                                    <em><?php if($fullview) echo "Sideview";else echo "Overview";?></em>
+                                <span id="full-view" title="满屏切换" style="<?php echo !$sidebar ? 'pointer-events:none;opacity:.5;' : false; ?>">
+                                    <em><?php echo $sidebar  ? "全屏阅读" : "展开边栏"; ?></em>
                                 </span>
                                 <span id="font-plus" title="字体大小">
                                     <em><?php if($fontsize) echo "A-";else echo "A+"; ?></em>
@@ -71,9 +71,7 @@
                 </div>
             </div>
         </div>
-        <div class="news-slidebar-window<?php if($fullview) echo " fv-switch"; ?>">
-            <?php get_sidebar(); ?>
-        </div>
+        <?php get_sidebar(); ?>
     </div>
     <footer>
         <?php get_footer(); ?>

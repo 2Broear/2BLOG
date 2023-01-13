@@ -158,12 +158,12 @@
         // tool_lang.onclick=(e)=>{switcher(e,article_container,"s2t_active","繁","简")};
         tool_font.onclick=(e)=>{switcher(e,article_container,"AfontPlus","A-","A+",false,false,'article_fontsize')};
         tool_view.onclick=(e)=>{
-            switcher(e,article_sidebar,"fv-switch","Sideview","Overview",function(){
+            switcher(e,article_sidebar,"fv-switch","展开边栏","全屏阅读",function(){
                 article_window.classList.add("fullview");
             },
             function(){
                 article_window.classList.remove("fullview");
-            },"article_fullview");
+            },false); //"article_fullview"
         };
     }
     const header = document.querySelector('.main-header-all'),

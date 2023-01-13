@@ -163,7 +163,7 @@
                       loading = document.createElement("span");
                 var loadContent = document.createElement("div");
                 loading.id="loading";
-                loadbox.insertBefore(loading,loadbox.firstChild)
+                loadbox.insertBefore(loading,loadbox.firstChild);
                 // console.log("cur: "+dateLimit(date,skipStart)+", pre: "+dateLimit(date,-skipEnd));
                 query_log.addDescending("index").addDescending("createdAt").skip(curSkip).limit(limiter).find().then(result=>{
                     for (let i=0; i<result.length;i++) {

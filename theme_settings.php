@@ -2172,7 +2172,7 @@
                                         $value = get_option($opt);
                                         $preset = gmdate('Y', time() + 3600*8).' 春节倒计时/新年快乐';
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="'.$preset.'" placeholder="'.$preset.'">';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" value="'.$preset.'" placeholder="'.$preset.'">';
                                     ?>
                                 </td>
                             </tr>

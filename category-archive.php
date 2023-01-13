@@ -86,13 +86,15 @@
         }
         /*.cs-tree .today:hover::before,*/
         .cs-tree span#edit:hover::before{
-            content: attr(data-count)' posted on 'attr(data-dates);
+            content: attr(data-count)' spot on 'attr(data-dates);
         }
         .cs-tree span.today:hover::before{
             content: "today's contribution";
         }
+        .cs-tree span:hover::before,
         .cs-tree span.dayto:hover::before{
-            content: "future contributions";
+            content: attr(data-dates);
+            /*content: "future contributions";*/
         }
         .cs-tree span:before{
             content: none;
@@ -140,7 +142,7 @@
             /*border-color: currentColor!important;*/
         }
         .cs-tree .dayto:hover{
-            opacity: 1;
+            opacity: .75;
         }
         .cs-tree .dayto{
             opacity: .5;

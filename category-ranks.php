@@ -21,7 +21,7 @@
         <div class="ranks">
             <div class="ranking">
                 <?php
-                    echo '<h1>常客 <sup> &lt;3 </sup></h1><p>访问较频繁的老铁</p><ul id="rankest">';
+                    echo '<h1>常客 <sup> &lt;3 </sup></h1><p>访问较频繁的老铁</p><ul id="rankest"><span id="loading"></span>';
                     $third_cmt = get_option('site_third_comments');
                     $valine_sw = $third_cmt=='Valine' ? true : false;//get_option('site_valine_switcher');
                     $twikoo_sw = $third_cmt=='Twikoo' ? true : false;//get_option('site_twikoo_switcher');
@@ -59,7 +59,7 @@
                     // top 10
                     if(!$valine_sw){
                         if($datalen>3){
-                            echo '<h1>稀客 <sup> &lt;10 </sup></h1><p>偶尔来访的兄弟</p><ul id="ranks">';
+                            echo '<h1>稀客 <sup> &lt;10 </sup></h1><p>偶尔来访的兄弟</p><ul id="ranks"></span>';
                             for($i=3;$i<13;$i++){
                                 $user = array_key_exists($i,$rankdata) ? $rankdata[$i] : false;
                                 if($user){
@@ -85,7 +85,7 @@
                 ?>
                         <h1>稀客 <sup> &lt;10th </sup></h1>
                         <p>偶尔来访的兄弟</p>
-                        <ul id="ranks"></ul>
+                        <ul id="ranks"><span id="loading"></ul>
                 <?php
                     };
                     // left 
@@ -102,7 +102,7 @@
                     }else{
                 ?>
                         <h1>游客 <sup> &gt;10th </sup></h1>
-                        <ul id="ranked"></ul>
+                        <ul id="ranked"><span id="loading"></span></ul>
                 <?php
                     };
                 ?>
@@ -135,7 +135,13 @@
                         var b = b[reply];
                         return b - a;
                     }
+                },
+                remove_load=(el)=>{
+                    el.querySelector("#loading") ? el.querySelector("#loading").remove() : false;
                 };
+            // loading = document.createElement("span")
+            // loading.id="loading";
+            // rankest.insertBefore(loading,rankest.firstChild);
             query.addDescending("createdAt").limit(max).find().then(res => {
                 var temp = [],
                     temps = [],
@@ -188,9 +194,18 @@
                     avg = avg+=temps[i].t;
                     average = avg/max;
                     if(name!="匿名者"&&name!="2broear"){
-                        i<max ? rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img <?php echo $lazysrc; ?>="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" title="这家伙留了 ${times} 条评论！" alt="${name}" /></a></span><span id="range" style="height:${average}px"><em style="height:${times*2}%"></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>` : false;
-                        i>=max && i<maxes ? ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar"><img <?php echo $lazysrc; ?>="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" alt="${name}" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b><sup>${times}+</sup></a></li>` : false;
-                        i>maxes ? ranked.innerHTML += `<li><p>${name}<sup>${times}</sup></p></li>` : false;
+                        if(i<max){
+                            remove_load(rankest);
+                            rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img <?php echo $lazysrc; ?>="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" title="这家伙留了 ${times} 条评论！" alt="${name}" /></a></span><span id="range" style="height:${average}px"><em style="height:${times*2}%"></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>`;
+                        }
+                        if(i>=max && i<maxes){
+                            remove_load(ranks);
+                            ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar"><img <?php echo $lazysrc; ?>="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" alt="${name}" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b><sup>${times}+</sup></a></li>`;
+                        }
+                        if(i>maxes){
+                            remove_load(ranked);
+                            ranked.innerHTML += `<li><p>${name}<sup>${times}</sup></p></li>`;
+                        }
                         // recall lazyload
                         lazyload("body img");
                     }
