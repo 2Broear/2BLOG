@@ -25,6 +25,10 @@
         }
         .wp_comments_list .children{border:none;}
         figure img,figure video{border-radius:var(--radius)}
+        figure{text-align:left}
+        .weblog-tree-box .tree-box-content p{
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

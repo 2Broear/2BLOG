@@ -95,6 +95,7 @@
                 imgbox = document.createElement("a");
             imgbox.setAttribute("data-fancybox","gallery");
             imgbox.setAttribute("href", datasrc);
+            imgbox.setAttribute("aria-label", "gallery_images");
             eachimg.parentNode.insertBefore(imgbox, eachimg);
             imgbox.appendChild(eachimg);
         }

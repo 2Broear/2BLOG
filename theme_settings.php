@@ -29,7 +29,7 @@
                 <th valign="top" scope="row"><label for="term_fields[seo_image]"><?php _e('Category Background'); ?></label></th>
                 <td>
                     <input type="text" size="40" value="<?php echo esc_attr(get_term_meta($term->term_id, 'seo_image', true)); ?>" id="term_fields[seo_image]" name="term_fields[seo_image]" class="upload_field">
-                    <input id="upload_image_button" type="button" class="button-primary upload_button" value="上传图片" />
+                    <input id="upload_image_button" type="button" class="button-primary upload_button" value="选择图片" />
                     <br/>
                     <span class="image"><?php _e('SEO Background Image Options, upload or edit it.'); ?></span>
                 </td>
@@ -94,7 +94,7 @@
             <div class="form-field">
                 <label for="term_fields[seo_image]"><?php _e('Background Images'); ?></label>
                 <input type="text" size="40" value="" id="term_fields[seo_image]" name="term_fields[seo_image]" class="upload_field">
-                <input id="upload_image_button" type="button" class="button-primary upload_button" value="上传图片" style="margin: 20px;float: right;" />
+                <input id="upload_image_button" type="button" class="button-primary upload_button" value="选择图片" style="margin: 20px;float: right;" />
                 <p class="description"><?php _e('SEO Images, Used in metaNav/pageBG somewhere.'); ?></p>
             </div>
             <!--<div class="form-field">-->
@@ -512,6 +512,11 @@
             register_setting( 'baw-settings-group', 'site_async_archive' );
             register_setting( 'baw-settings-group', 'site_async_acg' );
         
+        register_setting( 'baw-settings-group', 'site_countdown_switcher' );
+            register_setting( 'baw-settings-group', 'site_countdown_date' );
+            register_setting( 'baw-settings-group', 'site_countdown_title' );
+            register_setting( 'baw-settings-group', 'site_countdown_bgimg' );
+            
         register_setting( 'baw-settings-group', 'site_techside_switcher' );
         // if(get_option('site_techside_switcher')){
             register_setting( 'baw-settings-group', 'site_techside_cid' );
@@ -752,7 +757,7 @@
                                 // !$mail ? $mail="wapuu@wordpress.example" : $mail;
                                 $preset = 'https:' . get_option('site_avatar_mirror','//cravatar.cn/') . 'avatar/' . md5($mail) . '?s=300';
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_avatar_label">个人头像，用于笔记栈、关于等页面（默认管理员邮箱 gravatar 头像</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="border-radius: 100%;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 gravatar 头像" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                                echo '<p class="description" id="site_avatar_label">个人头像，用于笔记栈、关于等页面（默认管理员邮箱 gravatar 头像</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="border-radius: 100%;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 gravatar 头像" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="选择图片" />';
                             ?>
                         </td>
                     </tr>
@@ -765,7 +770,7 @@
                                 $preset = custom_cdn_src('img',true).'/images/fox.jpg';  
                                 // $preset = 'https:'.get_option('site_avatar_mirror','//sdn.geekzu.org/').'/avatar/?d=identicon&s=300';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="">默认背景图，用于各页面调用背景图（默认随机 gravatar 背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                                echo '<p class="description" id="">默认背景图，用于各页面调用背景图（默认随机 gravatar 背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="选择图片" />';
                             ?>
                         </td>
                     </tr>
@@ -828,7 +833,7 @@
                                         $value = get_option($opt);
                                         $preset = custom_cdn_src('img',true).'/images/svg/XTy_115x35.svg';
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        echo '<p class="description" id="site_logo_label">站点 LOGO 图片链接（应用于全站，留空默认预设LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY 矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                                        echo '<p class="description" id="site_logo_label">站点 LOGO 图片链接（应用于全站，留空默认预设LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY 矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="选择图片" />';
                                     ?>
                                 </td>
                             </tr>
@@ -840,7 +845,7 @@
                                         $value = get_option($opt);
                                         $preset = get_option('site_logo',custom_cdn_src('img',true).'/images/svg/XTy_115x35_light.svg');
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        echo '<p class="description" id="site_logos_label">站点 LOGO（深色）图片链接（应用于深色模式，默认上方LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY（深色）矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                                        echo '<p class="description" id="site_logos_label">站点 LOGO（深色）图片链接（应用于深色模式，默认上方LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY（深色）矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="选择图片" />';
                                     ?>
                                 </td>
                             </tr>
@@ -1162,7 +1167,7 @@
                                 // $md5mail = md5("wapuu@wordpress.example"); //get_bloginfo('admin_email')
                                 $mirror_parm = 'avatar/'.md5("wapuu@wordpress.example").'?s=100';
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                echo '<label for="'.$opt.'"><p class="description" id="site_avatar_mirror_label">评论头像 Gravatar 国内镜像源（同时适用于 wordpress/valine 评论头像展示</p><img src="'.$preset.$mirror_parm.'" style="vertical-align: middle;max-width: 50px;margin:auto 15px;border-radius:100%;" alt="镜像加载中.." /><select name="'.$opt.'" id="'.$opt.'" class="select_mirror" parm="'.$mirror_parm.'">';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_avatar_mirror_label">评论头像 Gravatar 国内镜像源（同时适用于 wordpress/valine 评论头像展示</p><img src="'.$preset.$mirror_parm.'" style="vertical-align: middle;max-width: 50px;margin:auto 15px;border-radius:100%;" alt="镜像已失效.." /><select name="'.$opt.'" id="'.$opt.'" class="select_mirror" parm="'.$mirror_parm.'">';
                                     foreach ($arrobj as $arr){
                                         echo '<option value="'.$arr['href'].'"';if($preset==$arr['href']) echo('selected="selected"');echo '>'.$arr['name'].'</option>';
                                     }
@@ -1702,7 +1707,7 @@
                             <?php
                                 $opt = 'site_xmlrpc_switcher';
                                 get_option($opt) ? $status="checked" : $status="closed";
-                                echo '<label for="'.$opt.'"><p class="description" id="">防止攻击者绕过 wordpress 登录限制消耗系统资源（禁用后将无法使用 wp 官方APP及相关接口</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">NO XML-RPC</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">防止攻击者绕过 wordpress 登录限制消耗系统资源（禁用后将无法使用 wp 官方APP及相关接口</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Disable XML-RPC</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1742,7 +1747,7 @@
                             ?>
                                     </label>
                                 <input type="text" name="<?php echo $opt ?>" placeholder="<?php echo $preset; ?>" class="large-text upload_field" value="<?php echo $preset; ?>" style="max-width:88%" />
-                                <input id="upload_banner_button" type="button" class="button-primary upload_button" value="上传图片" />
+                                <input id="upload_banner_button" type="button" class="button-primary upload_button" value="选择图片" />
                         </td>
                     </tr>
                     <tr valign="top" class="">
@@ -1872,7 +1877,7 @@
                                         // $value = get_option($opt);
                                         // $preset =  custom_cdn_src('img',true).'/images/google_flush.gif';//Tech-x4.png
                                         // $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        // echo '<p class="description" id="site_bgimg_label">分类背景图，列表旁调用图片（默认背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                                        // echo '<p class="description" id="site_bgimg_label">分类背景图，列表旁调用图片（默认背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="选择图片" />';
                                     ?>
                             <!--    </td>-->
                             <!--</tr>-->
@@ -2009,7 +2014,7 @@
                                 $value = get_option($opt);
                                 $preset = '';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="">漫游影视背景视频（开启后背景图片将作为视频的poster展示</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="for_empty_acgn_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="上传视频" />';
+                                echo '<p class="description" id="">漫游影视背景视频（开启后背景图片将作为视频的poster展示</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="for_empty_acgn_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2021,7 +2026,7 @@
                                 $value = get_option($opt);
                                 $preset = '';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_guestbook_video_label">留言板背景视频</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="for_empty_guestbook_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="上传视频" />';
+                                echo '<p class="description" id="site_guestbook_video_label">留言板背景视频</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="for_empty_guestbook_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2033,7 +2038,7 @@
                                 $value = get_option($opt);
                                 $preset = '';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_about_video_label">关于我背景视频</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="for_empty_about_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="上传视频" />';
+                                echo '<p class="description" id="site_about_video_label">关于我背景视频</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="for_empty_about_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2045,7 +2050,7 @@
                                 $value = get_option($opt);
                                 // $preset = custom_cdn_src('img',true).'/media/videos/data.mp4';
                                 // $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_privacy_video_label">隐私政策背景视频</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$value.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="for_empty_privacy_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="上传视频" />';
+                                echo '<p class="description" id="site_privacy_video_label">隐私政策背景视频</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg video" style="background:url('.$value.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="for_empty_privacy_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2136,6 +2141,53 @@
                     <?php
                         // }
                     ?>
+                    <tr valign="top">
+                        <th scope="row">倒计时（挂件）</th>
+                        <td>
+                            <?php
+                                $opt = 'site_countdown_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="">文章列表及内页侧边栏倒计时挂件（如需在其他页面自定义定时器，只需在调用 the_countdown_widget() 函数时新增下列三个子选项作为参数即可</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'"><span style="color:black;" class="btn">CountDown</span></b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags = get_option('site_countdown_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 定时日期</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_countdown_date';
+                                        $value = get_option($opt);
+                                        $preset = date("Y/m/d,H:i:s"); //gmdate('Y/m/d,H:i:s', time() + 3600*8);
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_countdown_date_label">倒计时日期（日期格式为“YYYY/MM/DD,HH:MM:SS”，上午12点表示当日凌晨00:00</p><input type="datetime-local" name="'.$opt.'" id="'.$opt.'" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags = get_option('site_countdown_title') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 标题 / 结语</th>
+                                <td>
+                                    <p class="description" id="site_countdown_title_label">倒计时左上角显示名称，及倒计时结束标语（默认当年春节倒计时，使用“/”分隔</p>
+                                    <?php
+                                        $opt = 'site_countdown_title';
+                                        $value = get_option($opt);
+                                        $preset = gmdate('Y', time() + 3600*8).' 春节倒计时/新年快乐';
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="'.$preset.'" placeholder="'.$preset.'">';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags = get_option('site_countdown_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 背景图片</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_countdown_bgimg';
+                                        $value = get_option($opt);
+                                        $preset = custom_cdn_src('img',true).'/images/newyear.gif';
+                                        $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
+                                        echo '<p class="description" id="">倒计时背景图片（默认新年 gif </p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="选择图片" />';
+                                    ?>
+                                </td>
+                            </tr>
                     <tr valign="top">
                         <th scope="row">侧边栏热门文章<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
@@ -2427,7 +2479,7 @@
                                 $value = get_option( $opt, '' );
                                 $preset = get_option('site_avatar');
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_contact_wechat_label">底部（微信）联系方式（图片链接</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" /></label><input type="text" name="'.$opt.'" placeholder="微信二维码" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="上传图片" />';
+                                echo '<p class="description" id="site_contact_wechat_label">底部（微信）联系方式（图片链接</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" /></label><input type="text" name="'.$opt.'" placeholder="微信二维码" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="选择图片" />';
                             ?>
                         </td>
                     </tr>

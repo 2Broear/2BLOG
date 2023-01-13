@@ -9,7 +9,7 @@
       <div class="tipsbox">
         <div class="tips">
             <?php
-                $lazyload = get_option('site_lazyload_switcher') ? 'data-src' : 'src';
+                // global $lazysrc;// $lazyload = get_option('site_lazyload_switcher') ? 'data-src' : 'src';
                 echo '<p>';
                 $nick = get_option('site_nick', get_bloginfo('name'));
                 $curcat = get_the_category() ? get_the_category()[0] : false;
@@ -55,78 +55,13 @@
     <div class="block_of_down_element">
       <div class="inside_of_block" isBottom="no">
         <div class="logo-area" title="<?php echo get_option('site_nick', get_bloginfo('name')); ?> - <?php bloginfo('name') ?>">
-          <a href="<?php bloginfo('url') ?>">
+          <a href="<?php bloginfo('url') ?>" aria-label="logo">
             <?php site_logo(); ?>
           </a>
         </div>
         <nav class="main-nav">
             <ul class="wp_list_cats">
             <?php
-                // wp_nav_menu( array(
-                //     'menu'   => 'top_menu',
-                //     'walker' => new WPDocs_Walker_Nav_Menu()
-                // ) );
-                 
-                // /**
-                //  * Custom walker class.
-                //  * https://developer.wordpress.org/reference/functions/wp_nav_menu/
-                //  */
-                // class WPDocs_Walker_Nav_Menu extends Walker_Nav_Menu {
-                //     function start_lvl( &$output, $depth = 0, $args = array() ) {
-                //         // Depth-dependent classes.
-                //         $indent = ( $depth > 0  ? str_repeat( "\t", $depth ) : '' ); // code indent
-                //         $display_depth = ( $depth + 1); // because it counts the first submenu as 0
-                //         $classes = array(
-                //             'sub-menu',
-                //             ( $display_depth % 2  ? 'menu-odd additional' : 'menu-even' ),
-                //             ( $display_depth >=2 ? 'sub-sub-menu sub-additional' : '' ),
-                //             'menu-depth-' . $display_depth
-                //         );
-                //         $class_names = implode( ' ', $classes );
-                 
-                //         // Build HTML for output.
-                //         $output .= "\n" . $indent . '<ul class="' . $class_names . '"><ol class="links-more">' . "\n";
-                //     }
-                    
-                //     function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
-                //         global $wp_query;
-                //         $indent = ( $depth > 0 ? str_repeat( "\t", $depth ) : '' ); // code indent
-                 
-                //         // Depth-dependent classes.
-                //         $depth_classes = array(
-                //             ( $depth == 0 ? 'main-menu-item' : 'sub-menu-item' ),
-                //             ( $depth >=2 ? 'sub-sub-menu-item' : '' ),
-                //             ( $depth % 2 ? 'menu-item-odd' : 'menu-item-even' ),
-                //             'menu-item-depth-' . $depth
-                //         );
-                //         $depth_class_names = esc_attr( implode( ' ', $depth_classes ) );
-                 
-                //         // Passed classes.
-                //         $classes = empty( $item->classes ) ? array() : (array) $item->classes;
-                //         $class_names = esc_attr( implode( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item ) ) );
-                 
-                //         // Build HTML.
-                //         $output .= $indent . '<li id="nav-menu-item-'. $item->ID . '" class="' . $depth_class_names . ' ' . $class_names . '">';
-                 
-                //         // Link attributes.
-                //         $attributes  = ! empty( $item->attr_title ) ? ' title="'  . esc_attr( $item->attr_title ) .'"' : '';
-                //         $attributes .= ! empty( $item->target )     ? ' target="' . esc_attr( $item->target     ) .'"' : '';
-                //         $attributes .= ! empty( $item->xfn )        ? ' rel="'    . esc_attr( $item->xfn        ) .'"' : '';
-                //         $attributes .= ! empty( $item->url )        ? ' href="'   . esc_attr( $item->url        ) .'"' : '';
-                //         $attributes .= ' class="menu-link ' . ( $depth > 0 ? 'sub-menu-link' : 'main-menu-link' ) . '"';
-                 
-                //         // Build HTML output and pass through the proper filter.
-                //         $item_output = sprintf( '%1$s<a%2$s>%3$s%4$s%5$s</a>%6$s',
-                //             $args->before,
-                //             $attributes,
-                //             $args->link_before,
-                //             apply_filters( 'the_title', $item->title, $item->ID ),
-                //             $args->link_after,
-                //             $args->after
-                //         );
-                //         $output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
-                //     }
-                // }
                 $use_icon = get_option('site_icon_switcher');
                 $site_icon = $use_icon ? '<i class="icom icon-more"></i>' : '';
                 $choosen = is_home() ? 'choosen' : '';
@@ -148,7 +83,7 @@
                         $cur_link = get_category_link($the_cat_id);
                         $slash_link = $cur_link==get_site_url()||$cur_link==get_site_url().'/category/'||$cur_link==get_site_url().'/category' ? 'javascript:void(0)' : $cur_link;  // detect if use $slash_link
                         $site_icon = $use_icon ? '<i class="icom icon-'.$slug_icon.'"></i>' : '';
-                        if($the_cat_slug!='uncategorized') echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.$slash_link.'" class="'.$choosen.'">' . $site_icon . $the_cat->name.'</a>';  //liwrapper
+                        if($the_cat_slug!='uncategorized') echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.$slash_link.'" class="'.$choosen.'" rel="nofollow">' . $site_icon . $the_cat->name.'</a>';  //liwrapper
                         if(!empty($catss)){
                             if(get_option('site_metanav_switcher') && strpos(get_option('site_metanav_array'),$the_cat_slug)!==false){ //https://blog.csdn.net/ArthurBryant/article/details/6581833
                                 if(strpos(get_option('site_metanav_image'), $the_cat_slug)!==false) $metaCls = "metaboxes";else $metaCls="";  // must else for each-loop
@@ -199,7 +134,7 @@
                                     $choosen = $the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single() ? "choosen 2nd" : "2nd";  // current choosen detect
                                     $cur_link = get_category_link($the_cats_id);
                                     $slash_link = $cur_link==get_site_url()||$cur_link==get_site_url().'/category/'||$cur_link==get_site_url().'/category' ? 'javascript:void(0)' : $cur_link;  // detect if use $slash_link
-                                    echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent." ".$level.'"><a href="'.$slash_link.'" class="'.$choosen.'">'.$the_cats->name.'</a>';  //liwrapper
+                                    echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent." ".$level.'"><a href="'.$slash_link.'" class="'.$choosen.'" rel="nofollow">'.$the_cats->name.'</a>';  //liwrapper
                                     if(!empty($catsss)){
                                         echo '<div class="sub-additional"><ol class="links-more">';
                                         foreach($catsss as $the_catss){
@@ -241,7 +176,7 @@
         <span class="m-menu">
           <i class="BBFontIcons"></i>
         </span>
-        <a href="/" rel="nofollow">
+        <a href="/" rel="nofollow" aria-label="weibo">
           <div class="m-logo">
             <?php site_logo(); ?>
           </div>

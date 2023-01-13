@@ -103,7 +103,7 @@
             left: 100%;
             z-index: 9;
             font-size: 12px;
-            padding: 8px 12px;
+            padding: 6px 12px 8px 12px;
             border-radius: 50px;
             text-align: center;
             white-space: nowrap;
@@ -139,8 +139,11 @@
             /*color: var(--theme-color)!important;*/
             /*border-color: currentColor!important;*/
         }
+        .cs-tree .dayto:hover{
+            opacity: 1;
+        }
         .cs-tree .dayto{
-            opacity: .75;
+            opacity: .5;
             color: var(--preset-e);
             z-index: 0;
         }

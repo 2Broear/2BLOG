@@ -46,6 +46,7 @@
                                 if($image_url) echo '<li style="background: url('.$image_url.') no-repeat center center /cover;"></li>';
                             }
                         ?>
+                        <!--<li><?php //the_countdown_widget('2023/01/14,00:00:00','自定义定时器/定时完成','https://img.2broear.com/images/1llusion.gif'); ?></li>-->
                     </ul>
                     <div class="switcher">
                         <span id="banner-prev"></span>
@@ -73,7 +74,7 @@
                     <article class="<?php if($post_orderby>1) echo 'topset'; ?> article" id="recommend-inside">
                       <div class="recommend-newsImg">
                         <div>
-                          <a href="<?php the_permalink() ?>">
+                          <a href="<?php the_permalink() ?>" aria-label="bg">
                             <span id="lowerbg" style="background:url('<?php echo get_postimg(0,$post->ID,true); ?>') center 40% no-repeat;background-size:cover;"></span>
                           </a>
                           <a href="<?php the_permalink() ?>" id="rel" rel="bookmark" target="_blank">

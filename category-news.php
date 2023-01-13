@@ -49,8 +49,8 @@
                                 <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window icom wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                                     <div class="news-window-inside">
                                         <?php
-                                            $lazyload = get_option('site_lazyload_switcher') ? 'data-' : false;
-                                            if(get_postimg() || has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img '.$lazyload.'src="'.get_postimg().'" /></a></span>';
+                                            // global $lazysrc;// $lazyload = get_option('site_lazyload_switcher') ? 'data-src' : 'src';
+                                            if(get_postimg() || has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img '.$lazysrc.'="'.get_postimg().'" alt="'.get_the_title().'" /></a></span>';
                                         ?>
                                         <div class="news-inside-content" style="<?php //echo $hasimg_style; ?>">
                                             <h2 class="entry-title">

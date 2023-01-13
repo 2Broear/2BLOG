@@ -92,12 +92,15 @@
                             	        echo $cdn_img ? "imgCdn: '".$cdn_img."', srcCdn: '".$cdn_src."'," : false;
                             	       // $cdn_src ? $rootPath=$cdn_src : $rootPath;
                             	    };
+                            	    $postimg = get_postimg();
+                            	    $wxnotify = get_option("site_wpwx_notify_switcher");
+                        	       // echo $postimg ? 'posterImg:"'.$postimg.'",' : false;
+                        	        echo $wxnotify ? 'wxNotify:"'.$wxnotify.'",' : false;
                             	?>
+                            	posterImg: '<?php echo $postimg ?>',
                             	rootPath: '<?php echo $rootPath ?>',
                             	adminMd5: '<?php echo md5(get_bloginfo('admin_email')) ?>',
                             	avatarCdn: '<?php echo get_option("site_avatar_mirror") ?>avatar/',
-                            	posterImg: '<?php echo get_postimg(); ?>',
-                            	wxNotify: '<?php echo get_option("site_wpwx_notify_switcher") ?>',
                             	placeholder: '快来玩右下角的“涂鸦画板”！'
                             });
                             // reply at current floor
@@ -239,8 +242,9 @@
                     </span>
                     <span class="preview">
                         <?php
-                            $lazyload = get_option('site_lazyload_switcher') ? 'data-src' : 'src';
-                            echo '<img '.$lazyload.'="'.get_option('site_contact_wechat').'" alt="wechat" />';
+                            // $lazyload = get_option('site_lazyload_switcher') ? 'data-src' : 'src';
+                            global $lazysrc;
+                            echo '<img '.$lazysrc.'="'.get_option('site_contact_wechat').'" alt="wechat" />';
                         ?>
                     </span>
                   </a>
@@ -287,7 +291,7 @@
                 </li>
                 <li class="PoweredBy2B">
                   <ins> XTyDesign </ins>
-                  <?php echo '<img '.$lazyload.'="'.custom_cdn_src('img',true).'/images/svg/XTy_.svg" style="max-width:66px" alt="XTY Design" />'; ?>
+                  <?php echo '<img '.$lazysrc.'="'.custom_cdn_src('img',true).'/images/svg/XTy_.svg" style="max-width:66px" alt="XTY Design" />'; ?>
               </li>
               </ul>
               <ul class="friend_links">
@@ -335,12 +339,12 @@
             <p id="supports">
                 <?php 
                     if(get_option('site_monitor_switcher')) echo '<script type="text/javascript" src="'.get_option('site_monitor').'"></script>';
-                    if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online" rel="nofollow"><img '.$lazyload.'="'.custom_cdn_src('img',true).'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>';
+                    if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online" rel="nofollow"><img '.$lazysrc.'="'.custom_cdn_src('img',true).'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>';
                     // if(get_option('site_foreverblog_switcher'))
-                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank" rel="nofollow"><img '.$lazyload.'="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
+                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank" rel="nofollow"><img '.$lazysrc.'="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
                     // if($valine_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
                     $server = get_option('site_server_side');
-                    if($server) echo '<a href="javascript:void(0);" rel="nofollow"><img '.$lazyload.'="'.$server.'" style="height: 12px;" alt="server"></a>'; //&&$server!="已关闭"
+                    if($server) echo '<a href="javascript:void(0);" rel="nofollow"><img '.$lazysrc.'="'.$server.'" style="height: 12px;" alt="server"></a>'; //&&$server!="已关闭"
                     if(get_option('site_foreverblog_wormhole')){
                         $theme = array_key_exists('theme_mode',$_COOKIE) ? $_COOKIE['theme_mode'] : false;
                         // $warmhole_img = $theme ? custom_cdn_src('img',true).'/images/wormhole_2_tp.gif' : custom_cdn_src('img',true).'/images/wormhole_4_tp.gif';
@@ -399,8 +403,8 @@
                 for(let i=0;i<bodyimg.length;i++){
                     let eachimg = bodyimg[i],
                         datasrc = eachimg.dataset.src;
+                    eachimg.src = loadimg; //pre-holder
                     if(datasrc){
-                        eachimg.src = loadimg; //pre-holder
                         array.push(eachimg); //for-closure
                         eachimg.getBoundingClientRect().top < window.innerHeight ? eachimg.src = datasrc : false;
                         window.addEventListener('scroll', function(){

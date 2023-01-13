@@ -101,9 +101,8 @@
                                     <div class="user_info">
                                         <span id="head-photo">
                                             <?php
-                                                $lazyload = get_option('site_lazyload_switcher');
-                                                $avatar = get_option('site_avatar');
-                                                echo $lazyload ? '<img data-src="'.$avatar.'" />' : '<img src="'.$avatar.'" />';
+                                                // global $lazysrc; // $lazyload = get_option('site_lazyload_switcher');
+                                                echo '<img '.$lazysrc.'="'.get_option('site_avatar').'" alt="avatar" />';
                                             ?>
                                         </span>
                                         <div class="intro_info">
@@ -113,7 +112,7 @@
                                     </div>
                                 </div>
                                 <div class="head-inside wow fadeInUp" data-wow-delay="0.15s" style="background:url(<?php echo $catbg=cat_metabg($cat, get_option('site_bgimg')); ?>) center center /cover;">
-                                    <video src="<?php $video=get_option('site_about_video');echo $video; ?>" poster="<?php echo $catbg; ?>" <?php echo $video ? 'controls=""' : false; ?> preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
+                                    <video src="<?php $video=get_option('site_about_video');echo $video; ?>" poster="<?php echo $catbg; ?>" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
                                 </div>
                             </li>
                             <li class="intro_right">
@@ -156,9 +155,6 @@
                                             }
                                         ?>
                                     </ol>
-                                    <!--<div class="mbit_extra">-->
-                                    <!--    <p>Lastest result: <a href="javascript:;">Oct 21, 2022</a></p>-->
-                                    <!--</div>-->
                                 </div>
                             </li>
                         </ul>

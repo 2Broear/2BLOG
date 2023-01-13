@@ -353,6 +353,7 @@ option{
 }
 .weblog-tree-box .tree-box-content p{
 	margin: 0;
+    margin-bottom: 10px;
 	font-size: var(--min-size);
 	line-height: 23px;
 	padding: 0!important;

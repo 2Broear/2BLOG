@@ -383,7 +383,7 @@
             for($i=0;$i<$match_m;$i++){
                 $value = $match_h[$i];
                 $title = trim(strip_tags($matches[2][$i]));
-                $content = str_replace($matches[0][$i], '<a href="javascript:;" id="title-'.$i.'" class="index_anchor"></a><h'.$value.' id="title_'.$i.'">'.$title.'</h2>', $content);
+                $content = str_replace($matches[0][$i], '<a href="javascript:;" id="title-'.$i.'" class="index_anchor" aria-label="anchor"></a><h'.$value.' id="title_'.$i.'">'.$title.'</h2>', $content);
                 $value = $match_h[$i];
                 $pre_val = array_key_exists($i-1,$match_h) ? $match_h[$i-1] : 9;
                 // for($j=0;$j<$i;$j++){
@@ -406,7 +406,7 @@
         }
         return $content;
     }
-    add_filter( 'the_content', 'article_index' );
+    add_filter( 'the_content', 'article_index');
     // 自定义文章归档
     function get_post_archives($type="yearly", $post_type="post", $limit=""){
         $archives = wp_get_archives(
@@ -804,12 +804,13 @@
     }
     
     //lazyload 图片<img>懒加载
-    $lazyload = 'src';
+    $lazysrc = 'src';
+    $loadimg = custom_cdn_src('img',true).'/images/loading_3_color_tp.png';
     if(get_option('site_lazyload_switcher')){
-        $lazyload = 'data-src';
-        add_filter('the_content', 'lazyload_images');
+        $lazysrc = 'data-src';
+        add_filter('the_content', 'lazyload_images', 10);  // 设置 priority 低于 custom_cdn_src
         function lazyload_images($content){
-            // return $content = str_replace('src="', 'data-src="', $content);
+            // return str_replace('src="', 'data-src="', $content);
             return preg_replace('/\<img(.*)src=("[^"]*")/i', '<img $1 data-src=$2', $content);
         }
     }
@@ -817,7 +818,7 @@
     //友情链接函数
     function site_links($links,$frame=false){
         // if(!$orderby) $orderby='id';  //默认id排序
-        global $lazyload;
+        global $lazysrc;
     	//$links = get_bookmarks(array('orderby'=>'date','order'=>'DESC','category_name'=>$category,'hide_invisible'=>0));
         foreach ($links as $link){
             $link_notes = $link->link_notes;
@@ -831,9 +832,10 @@
             // global $wpdb;
             // print_r($wpdb->get_var("SELECT ID FROM $wpdb->links WHERE post_name = '$slug'"));
             $avatar = !$link->link_image ? 'https:' . get_option('site_avatar_mirror') . 'avatar/' . md5(mt_rand().'@rand.avatar') . '?s=300' : $link->link_image;
-            if($lazyload=='data-src'){
+            if($lazysrc!='src'){
+                global $loadimg;
                 $holder = 'data-src="'.$avatar.'"';
-                $avatar = custom_cdn_src('img',true).'/images/loading_3_color_tp.png';
+                $avatar = $loadimg;
             }
             switch ($frame) {
                 case 'full':
@@ -885,7 +887,7 @@
     
     // 过滤 CDN 图片路径
     if(get_option('site_cdn_switcher')){
-        add_filter('the_content', 'replace_cdnimg_path');
+        add_filter('the_content', 'replace_cdnimg_path', 9);
         function replace_cdnimg_path($content) {
             $upload_url = wp_get_upload_dir()['baseurl'];
             $cdnimg_url = get_option('site_cdn_img') ? get_option('site_cdn_img') : $upload_url;
@@ -1020,7 +1022,7 @@
     
     // acg post query
     function acg_posts_query($the_cat, $pre_cat=false, $limit=99){
-        global $post,$lazyload;
+        global $post,$lazysrc;
         $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
         $cat_slug = $the_cat->slug;
         echo '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> '.$cat_slug.' </sup></h2></div><div class="info flexboxes">';
@@ -1048,7 +1050,12 @@
                     <span class="author"><?php echo $post_feeling; ?></span>
                     <?php
                         $postimg = get_postimg(0,$post->ID,true);
-                        echo '<img class="bg" '.$lazyload.'="'.$postimg.'"><img '.$lazyload.'="'.$postimg.'">';
+                        if($lazysrc!='src'){
+                            global $loadimg;
+                            $holder = 'data-src="'.$postimg.'"';
+                            $postimg = $loadimg;
+                        }
+                        echo '<img class="bg" '.$holder.' src="'.$postimg.'" alt="'.$post_feeling.'"><img '.$holder.' src="'.$postimg.'" alt="'.$post_feeling.'">';
                     ?>
                 </div>
                 <div class="inbox-aside">
@@ -1147,8 +1154,67 @@
         }
     };
     
+    // 倒计时挂件
+    function the_countdown_widget($date=false, $title=false, $bgimg=false){
+        if(get_option('site_countdown_switcher')){
+            $date = $date ? $date : get_option('site_countdown_date');
+            $title = $title ? $title : get_option('site_countdown_title');
+            $bgimg = $bgimg ? $bgimg : get_option('site_countdown_bgimg');
+            $countDate = date('Y/m/d,H:i:s',strtotime($date));
+            $countTitle = explode('/', $title);
+    ?>
+            <style>.news-ppt div,#countdown:before{border-radius:inherit}.countdown-box{width:100%;height:100%;min-height:160px;position:relative;}/* 新年侧边栏 */ #countdown {height:100%;padding: 1rem;box-sizing: border-box;position: absolute;top: 0;left: 0;width: 100%;background-size: cover;background-position: center;}#countdown * {position: relative;color: white;/*line-height: 1.2;*/}#countdown p{text-align: left;margin: auto;font-size: small;}#countdown p.title{font-weight:bold}#countdown p.today{opacity: .75;font-size: 12px;position: inherit;bottom: 15px;right: 15px;}#countdown .time {font-weight: bold;text-align: center;width:100%;position: inherit;top: 50%;left: 50%;transform: translate(-50%,-50%);}#countdown .time, #countdown .timesup {font-size: 3.5rem;display: block;/*margin: 1rem 0;*/}#countdown .day {font-size: 4.2rem;}#countdown .day .unit {font-size: 1rem;display:inline;font-weight:normal;}#countdown:before{content: "";position: inherit;left: 0;top: 0;height: 100%;width: 100%;background-color: rgba(0, 0, 0, .36);}</style>
+            <div class="countdown-box">
+                <div id="countdown" style="background-image:url(<?php echo $bgimg; ?>)">
+                    <p class="title"><?php echo $countTitle[0]; ?></p>
+                    <div class="time"></div>
+                    <p class="today" style="text-align: right;"></p>
+                </div>
+            </div>
+            <script>
+                const main = document.querySelector('#countdown'),
+                      target = main.querySelector('.time'),
+                      title = main.querySelector('.title'),
+                      today = main.querySelector('.today'),
+                      weeks = ['一','二','三','四','五','六','天'];
+                var nowtime = new Date(),
+                    endtime = new Date("<?php echo $countDate; ?>"),
+                    result = parseInt((endtime.getTime() - nowtime.getTime()) / 1000),
+                    day = parseInt(result / (24 * 60 * 60)),
+                    fillZero = function(i){
+                        return i < 10 ? "0"+i : i;
+                    },
+                    timesup = function(){
+                        if(result <= 0) {
+                            title.innerHTML = "TIME'S UP!";
+                            target.innerHTML = "<span class='timesup'><?php echo $countTitle[1]; ?></span>";
+                            main.setAttribute('style','background-image:url(<?php custom_cdn_src('img') ?>/2023/01/dzht2-ez.gif)')
+                        }
+                    };
+                today.innerHTML = `${nowtime.getMonth()+1}月${nowtime.getDate()}日 星期${weeks[nowtime.getDay()-1]}`; //${nowtime.getFullYear()}年
+                if(parseInt(day)<=0){
+                    (function countDown() {
+                        let nowtime = new Date(),
+                            result = parseInt((endtime.getTime() - nowtime.getTime()) / 1000),
+                            hour = fillZero(parseInt(result / (60 * 60) % 24)),
+                            min = fillZero(parseInt(result / 60 % 60)),
+                            sec = fillZero(parseInt(result % 60));
+                        target.innerHTML = `<span class="day">${hour}:${min}:${sec}</span>`;
+                        timesup();
+                        setTimeout(countDown, 1000);
+                    })();
+                }else{
+                    target.innerHTML = `<span class="day">${fillZero(day)}<span class="unit">天</span></span>`;
+                    timesup();
+                }
+            </script>
+<?php
+        }
+    }
+    
     // search/tag page posts with styles
     function the_posts_with_styles($queryString){
+        global $lazysrc;
         $post_styles = get_option('site_search_style_switcher');
         if($post_styles){
     ?>
@@ -1163,7 +1229,7 @@
     	    .win-content.main,
     	    .news-inside-content .news-core_area p,
     	    .empty_card{margin:0 auto;}
-    	    .news-inside-content .news-core_area p{padding:0}
+    	    .news-inside-content .news-core_area p{padding-left:0}
         	.win-content{width:100%;padding:0;display:initial}
             .win-top h5:before{content:none}
             .win-top h5{font-size:3rem;color:var(--preset-e)}
@@ -1192,7 +1258,7 @@
         // global $post;
         if(have_posts()) {
             while (have_posts()): the_post();
-                global $post;
+                global $post,$lazysrc;
                 $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                 $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                 $post_rights = get_post_meta($post->ID, "post_rights", true);
@@ -1230,7 +1296,7 @@
                         <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window icom wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                             <div class="news-window-inside">
                                 <?php
-                                    if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img class="lazy" src="'.get_postimg(0,$post->ID,true).'" /></a></span>';
+                                    if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img class="lazy" '.$lazysrc.'="'.get_postimg(0,$post->ID,true).'" /></a></span>';
                                 ?>
                                 <div class="news-inside-content">
                                     <h2 class="entry-title">
@@ -1304,9 +1370,16 @@
                             <div class="info anime flexboxes">
                                 <div class="inbox flexboxes">
                                     <div class="inbox-headside flexboxes">
-                                        <span class="author"><?php echo get_post_meta($post->ID, "post_feeling", true); ?></span>
-                                        <img class="bg" src="<?php echo get_postimg(0,$post->ID,true); ?>">
-                                        <img src="<?php echo get_postimg(0,$post->ID,true); ?>">
+                                        <span class="author"><?php echo $post_feeling = get_post_meta($post->ID, "post_feeling", true); ?></span>
+                                        <?php
+                                            $postimg = get_postimg(0,$post->ID,true);
+                                            if($lazysrc!='src'){
+                                                global $loadimg;
+                                                $holder = 'data-src="'.$postimg.'"';
+                                                $postimg = $loadimg;
+                                            }
+                                            echo '<img class="bg" '.$holder.' src="'.$postimg.'" alt="'.$post_feeling.'"><img '.$holder.' src="'.$postimg.'" alt="'.$post_feeling.'">';
+                                        ?>
                                     </div>
                                     <div class="inbox-aside">
                                         <span class="lowside-title">

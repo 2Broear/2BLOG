@@ -393,6 +393,9 @@ i.icomoon,
 }
 .additional.metaboxes ol{
     padding: 15px;
+    background: rgb(255 255 255 / 66%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 .additional.metaboxes li:last-child a{
     margin: auto;
