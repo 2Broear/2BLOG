@@ -1,35 +1,47 @@
 jQuery(document).ready(function($){
     var mediaUploader;
-    var _this;  // preset global this
-    var p_list;
+    // var _this;  // preset global this
     const upload_buttons = document.querySelectorAll(".upload_button");
     if(upload_buttons.length>0){
         for(let i=0;i<upload_buttons.length;i++){
             upload_buttons[i].onclick=function(e){
-                _this = this;
+                // _this = this;
                 this_parent = this.parentNode;
-                p_list = this_parent.querySelector('.upload_preview_list');//.parent().find('.upload_preview_list')[0];
-                e.preventDefault();
-                if(mediaUploader) {
-                    mediaUploader.open();
-                    return;
-                }
+                var p_list = this_parent.querySelector('.upload_preview_list');
+                use_multi = this.dataset.multiple;
+                // If the media frame already exists, reopen it (this will Cache mediaUploader frame arguments which's not applicable for required. tested: non-second requests without reopen)
+                // e.preventDefault();
+                // if(mediaUploader) {  // && !use_multi
+                //     mediaUploader.open();
+                //     return;
+                // }
+                //https://wordpress.stackexchange.com/questions/264115/show-only-images-and-videos-in-a-wp-media-window
                 mediaUploader = wp.media.frames.file_frame = wp.media({
                     title: '',
                     button: {
-                        text: '选择图片'
+                        text: '选择文件'
                     },
-                    multiple: p_list ? true : false
+                    multiple: use_multi ? true : false,
+                    library: {
+                        type: use_multi ? 'image' : [ 'video', 'image' ]
+                    },
                 });
                 mediaUploader.on('select', function() {
                     var attachment = mediaUploader.state().get('selection').first().toJSON(),
                         attachments = mediaUploader.state().get('selection').toJSON();
-                    let field = this_parent.querySelector('.upload_field');//.parent().find('.upload_field')[0],
-                        img = this_parent.querySelector('.upload_preview.img');//.parent().find('.upload_preview.img'),
-                        bg = this_parent.querySelector('.upload_preview.bg');//.parent().find('.upload_preview.bg');
+                    // console.log(mediaUploader.state());
+                    let field = this_parent.querySelector('.upload_field'),//.parent().find('.upload_field')[0],
+                        img = this_parent.querySelector('.upload_preview.img'),//.parent().find('.upload_preview.img'),
+                        bg = this_parent.querySelector('.upload_preview.bg'),//.parent().find('.upload_preview.bg');
+                        bgm = this_parent.querySelector('.upload_preview.bgm');
                     // preview loads
-                    img ? img.setAttribute('src',attachment.url) : false;
-                    bg ? bg.setAttribute('style','background:url('+attachment.url+') center center /cover;') : false;
+                    if(bgm){
+                        bgm.setAttribute('src',attachment.url);
+                        bgm.setAttribute('poster',attachment.url);
+                    }else{
+                        img ? img.setAttribute('src',attachment.url) : false;
+                        bg ? bg.setAttribute('style','background:url('+attachment.url+') center center /cover;') : false;
+                    };
                     if(p_list){
                         p_list.innerHTML = "";
                         field.value = "";

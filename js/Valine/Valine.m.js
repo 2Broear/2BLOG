@@ -3,6 +3,7 @@
  * (c) 2017-2019 xCss
  * Released under the GPL-2.0 License.
  * Last Update: 2019-08-29 10:10:02
+ * Last Modified: 2023-01-03 15:24:00
  */
 function dynamicLoad(jsUrl,fn){
 	var _doc = document.getElementsByTagName('head')[0],
@@ -113,15 +114,14 @@ recordIP = (demo) =>{
 };
 if (el_ != null && el_ != undefined) {
     const saveAttr = (like, view) =>{
-        recordIP(countDemo);
+        // recordIP(countDemo); //canceled
         let countURL = URL;
         countDemo.save({
             'like': like,
             'view': view,
             'url': countURL,
             'title': Doc,
-            'from': referrer_list
-            // ,'user': {}
+            // 'from': referrer_list //canceled
         }).then(result =>{
             console.log("Save Successfully.");
         },
@@ -130,9 +130,8 @@ if (el_ != null && el_ != undefined) {
         });
     },
     updateAttr = (id, attrNum, fromArr, userObj) =>{
-        let //userdata = user_info(),
-            increase = AV.Object.createWithoutData('COUNTER', id);
-        recordIP(increase);
+        let increase = AV.Object.createWithoutData('COUNTER', id);
+        // recordIP(increase); //canceled
         attrNum ? increase.increment(attrNum, 1) : false;
         fromArr ? increase.add(fromArr, referrer) : false;
         userObj ? increase.add(userObj, user_info) : false;
@@ -169,7 +168,7 @@ if (el_ != null && el_ != undefined) {
 			};
             viewNum++;
             el != null && likeNum != undefined ? el.innerHTML = likeNum: el.innerHTML = 0;
-            updateAttr(objId, 'view', 'from');
+            updateAttr(objId, 'view'); //updateAttr(objId, 'view', 'from');
             els != null ? els.innerHTML = viewNum: false
         } else {
             let likeNum = 0,
@@ -226,7 +225,7 @@ if (el_ != null && el_ != undefined) {
     }
 }
 
-const mostview=document.getElementById("mostview"),loading = document.createElement("span");if(mostview!=undefined&&mostview!=null){loading.id="loading";mostview.insertBefore(loading,mostview.firstChild);var QUERY=new AV.Query("COUNTER");QUERY.descending('view').limit(max).find().then(function(e){loading.remove();for(let i=0;i<e.length;i++){let res=e[i],title=res.attributes.title,view=res.attributes.view,like=res.attributes.like,link=res.attributes.url,titled=title.replace(" | 2BROEAR","").replace(" - 2B博客","");mostview.innerHTML+=`<li data-view="${view}" data-like="${like}"><a href="${link}"target="_blank"title="${title}">${titled}</a></li>`}}).catch(function(e){console.log('err')})}var ocinput=document.querySelector(".vmail");if(localStorage.ValineCache==undefined&&ocinput!=null){ocinput.onchange=function(){let tmail=this.value,avatar=document.querySelector("#avatar img"),qqavatar='//api.paugram.com/gravatar/?email='+tmail;if(tmail.indexOf("@qq.com")>=0){let prefix=tmail.replace(/@. * /,""),pattern=/^\d+$/g,result=prefix.match(pattern);qqavatar="//q.qlogo.cn/headimg_dl?dst_uin="+prefix+"&spec=640";avatar.setAttribute('src',qqavatar);console.log(qqavatar)}else{avatar.setAttribute('src',qqavatar)}}}clearTimeout(isLoadFooter)},500);var R=u.findAll(document,".valine-comment-count"),L=R.length;u.each(R,function(t,n){if(n){L--;var r=u.attr(n,"data-xid");setTimeout(()=>{r&&e.Q(r).count().then(function(e){n.innerText=e}).catch(function(e){n.innerText=0})},L*100)}}),p&&k.add(AV.Object.extend("Counter"));var j=e.config.el||null,B=u.findAll(document,j);if(!(j=j instanceof HTMLElement?j:B[B.length-1]||null))return;e.el=j,e.el.classList.add("v"),m.hide&&e.el.classList.add("hide-avatar"),e.config.meta=(e.config.guest_info||e.config.meta||b).filter(function(e){return b.indexOf(e)>-1});var P=(0==e.config.meta.length?b:e.config.meta).map(function(t){var n="mail"==t?"email":"text";return b.indexOf(t)>-1?'<input name="'+t+'" placeholder="'+e.locale.head[t]+'" class="v'+t+' vinput" type="'+n+'" autocapitalize="off" autocomplete="off" autocorrect="off" >':""});
+const mostview=document.getElementById("mostview");if(mostview!=undefined&&mostview!=null){/*loading.id="loading";mostview.insertBefore(loading,mostview.firstChild);*/var QUERY=new AV.Query("COUNTER");QUERY.descending('view').limit(max).find().then(function(e){mostview.querySelector("#loading").remove();for(let i=0;i<e.length;i++){let res=e[i],title=res.attributes.title,view=res.attributes.view,like=res.attributes.like,link=res.attributes.url,titled=title.replace(" | 2BROEAR","").replace(" - 2B博客","");mostview.innerHTML+=`<li data-view="${view}" data-like="${like}"><a href="${link}"target="_blank"title="${title}">${titled}</a></li>`}}).catch(function(e){console.log('err')})}var ocinput=document.querySelector(".vmail");if(localStorage.ValineCache==undefined&&ocinput!=null){ocinput.onchange=function(){let tmail=this.value,avatar=document.querySelector("#avatar img"),qqavatar='//api.paugram.com/gravatar/?email='+tmail;if(tmail.indexOf("@qq.com")>=0){let prefix=tmail.replace(/@. * /,""),pattern=/^\d+$/g,result=prefix.match(pattern);qqavatar="//q.qlogo.cn/headimg_dl?dst_uin="+prefix+"&spec=640";avatar.setAttribute('src',qqavatar);console.log(qqavatar)}else{avatar.setAttribute('src',qqavatar)}}}clearTimeout(isLoadFooter)},500);var R=u.findAll(document,".valine-comment-count"),L=R.length;u.each(R,function(t,n){if(n){L--;var r=u.attr(n,"data-xid");setTimeout(()=>{r&&e.Q(r).count().then(function(e){n.innerText=e}).catch(function(e){n.innerText=0})},L*100)}}),p&&k.add(AV.Object.extend("Counter"));var j=e.config.el||null,B=u.findAll(document,j);if(!(j=j instanceof HTMLElement?j:B[B.length-1]||null))return;e.el=j,e.el.classList.add("v"),m.hide&&e.el.classList.add("hide-avatar"),e.config.meta=(e.config.guest_info||e.config.meta||b).filter(function(e){return b.indexOf(e)>-1});var P=(0==e.config.meta.length?b:e.config.meta).map(function(t){var n="mail"==t?"email":"text";return b.indexOf(t)>-1?'<input name="'+t+'" placeholder="'+e.locale.head[t]+'" class="v'+t+' vinput" type="'+n+'" autocapitalize="off" autocomplete="off" autocorrect="off" >':""});
 m.cdn= e.config.avatarCdn;  // 重写 gravatar cdn 为 wp 后台自定义 cdn
 custom_initfield_adminmd5 = e.config.adminMd5;
 // custom_initfield_qmsgchan = e.config.qmsgChan;

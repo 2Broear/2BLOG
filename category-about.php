@@ -10,6 +10,10 @@
     <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/about.css?v=<?php echo get_theme_info('Version'); ?>" />
     <style>
+        .In-core-head .user_info{
+            background: -webkit-linear-gradient(180deg,rgba(255, 255, 255, 0) -50%,var(--preset-e) 100%);
+            background: linear-gradient(-90deg,rgba(255, 255, 255, 0) -50%,var(--preset-e) 100%);
+        }
         .head-inside video{
             /*height: auto;*/
         }
@@ -40,8 +44,8 @@
         }
         /*.about_blocks li.intro_right .mbit .mbit_range li.after span em:after,*/
         .about_blocks li.intro_right .mbit .mbit_range li.after span em:before{
-            background: -webkit-linear-gradient(left,var(--preset-fa) 0%,transparent 100%);
-            -webkit-background: -webkit-linear-gradient(left,var(--preset-fa) 0%,transparent 100%);
+            background: linear-gradient(left,var(--preset-fa) 0%,transparent 100%);
+            background: -webkit-linear-gradient(left,var(--preset-fa) 0%,rgba(255, 255, 255, 0) 100%);
             animation: loader-reverse ease-out 3.6s 1.2s infinite;
             -webkit-animation: loader-reverse ease-out 3.6s 1.2s infinite;
             left: auto;
@@ -58,8 +62,8 @@
             top: 0;
             left: 0;
             transform: translateX(-100%);
-            background: -webkit-linear-gradient(left,transparent 0%,var(--preset-fa) 100%);
-            -webkit-background: -webkit-linear-gradient(left,transparent 0%,var(--preset-fa) 100%);
+            background: linear-gradient(left,transparent 0%,var(--preset-fa) 100%);
+            background: -webkit-linear-gradient(left,rgba(255, 255, 255, 0) 0%,var(--preset-fa) 100%);
             animation: loader ease-out 3.6s 1.2s infinite;
             -webkit-animation: loader ease-out 3.6s 1.2s infinite;
             opacity: .75;
@@ -111,7 +115,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="head-inside wow fadeInUp" data-wow-delay="0.15s" style="background:url(<?php echo $catbg=cat_metabg($cat, get_option('site_bgimg')); ?>) center center /cover;">
+                                <div class="head-inside wow fadeInUp" data-wow-delay="0.15s" style="background:url(<?php //echo $catbg=cat_metabg($cat, get_option('site_bgimg')); ?>) center center /cover;">
                                     <video src="<?php $video=get_option('site_about_video');echo $video; ?>" poster="<?php echo $catbg; ?>" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
                                 </div>
                             </li>

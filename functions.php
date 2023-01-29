@@ -94,6 +94,7 @@
     //     update_option( 'wpa59168_counter', $count + 1 );
     // }
     // add_action( 'add_attachment', 'wpa59168_rename_attachment' );
+    
     //禁用远程管理文件 xmlrpc.php 防爆破
     if(get_option('site_xmlrpc_switcher')){
         add_filter('xmlrpc_enabled', '__return_false');
@@ -845,6 +846,7 @@
             // global $wpdb;
             // print_r($wpdb->get_var("SELECT ID FROM $wpdb->links WHERE post_name = '$slug'"));
             $avatar = !$link->link_image ? 'https:' . get_option('site_avatar_mirror') . 'avatar/' . md5(mt_rand().'@rand.avatar') . '?s=300' : $link->link_image;
+            $holder = "";
             if($lazysrc!='src'){
                 global $loadimg;
                 $holder = 'data-src="'.$avatar.'"';
@@ -854,12 +856,12 @@
                 case 'full':
                     // echo in_category('standby') ? 'standby' : false;
                     // if($link->link_visible==="Y") 
-                    $avatar_status = $status=='standby' ? '<img class="lazy" src="" alt="近期访问出现问题" draggable="false">' : '<img class="lazy" '.$holder.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
-                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'"><img class="blur" '.$holder.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span><em></em></a></div>';
+                    $avatar_status = $status=='standby' ? '<img class="lazy" alt="近期访问出现问题" draggable="false">' : '<img class="lazy" '.$holder.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
+                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'"><img class="blur" '.$holder.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>
                     break;
                 case 'half':
                     // if($link->link_visible==="Y") 
-                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'">'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span><em></em></a></div>';
+                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'">'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>
                     break;
                 case 'none':
                     echo '<a href="'.$link->link_url.'" title="'.$link->link_name.'" target="'.$target.'" rel="nofollow">'.$link->link_name.'</a>';
@@ -870,6 +872,7 @@
             }
         }
     }
+    
     //面包屑导航（site_breadcrumb_switcher开启并传参true时启用）
     function breadcrumb_switch($switch,$frame){
         if(get_option('site_breadcrumb_switcher')&&$switch){
@@ -880,6 +883,7 @@
             }else echo(the_breadcrumb());
         }
     };
+    
     //谷歌 Adsense 广告（默认加载link传参true则加载sidebar广告块）
     // function google_ads_switch($bar){  //$ink,
     //     // $disabled = '<h2 style="opacity:.5">Google 广告已关闭</h2>';
@@ -891,6 +895,7 @@
     //         echo '<h2 style="opacity:.75">未启用广告插件！</h2>';
     //     }
     // };
+    
     //分类 post metabox 信息
     function get_cat_title(){
         $cat_desc = strip_tags(trim(category_description()),"");
@@ -898,7 +903,7 @@
         if($cat_meta) echo($cat_meta);else echo($cat_desc);
     };
     
-    // 过滤 CDN 图片路径
+    // 过滤替换 CDN 图片路径（包括后台媒体库图片）
     if(get_option('site_cdn_switcher')){
         add_filter('the_content', 'replace_cdnimg_path', 9);
         function replace_cdnimg_path($content) {
@@ -907,12 +912,18 @@
             // return str_replace('srcset="'.$upload_url, 'srcset="'.$img_cdn_url, $content);
             return str_replace('="'.$upload_url, '="'.$cdnimg_url, $content);
         }
+        // Setting the uploads directory URL https://wordpress.stackexchange.com/questions/189704/is-it-possible-to-change-image-urls-by-hooks
+        function wpse_change_featured_img_url() {
+          return get_option('site_cdn_img'); //'http://www.example.com/media/uploads';
+        }
+        add_filter( 'pre_option_upload_url_path', 'wpse_change_featured_img_url' );
     }
-    // disable srcset
+    // Disable SrcSet
     function remove_max_srcset_image_width( $max_width ) {
         return 1;
     }
     add_filter( 'max_srcset_image_width', 'remove_max_srcset_image_width' );
+    
     //启用cdn加速(指定src/img)
     function custom_cdn_src($holder='src',$var=false){
         $default_src = get_bloginfo('template_directory');
@@ -1176,12 +1187,13 @@
             $countDate = date('Y/m/d,H:i:s',strtotime($date));
             $countTitle = explode('/', $title);
     ?>
-            <style>.news-ppt div,#countdown:before{border-radius:inherit}.countdown-box{width:100%;height:100%;min-height:160px;position:relative;}/* 新年侧边栏 */ #countdown {height:100%;padding: 1rem;box-sizing: border-box;position: absolute;top: 0;left: 0;width: 100%;background-size: cover;background-position: center;}#countdown * {position: relative;color: white;/*line-height: 1.2;*/}#countdown p{text-align: left;margin: auto;font-size: small;}#countdown p.title{font-weight:bold}#countdown p.today{opacity: .75;font-size: 12px;position: inherit;bottom: 15px;right: 15px;}#countdown .time {font-weight: bold;text-align: center;width:100%;position: inherit;top: 50%;left: 50%;transform: translate(-50%,-50%);}#countdown .time, #countdown .timesup {font-size: 3.5rem;display: block;/*margin: 1rem 0;*/}#countdown .day {font-size: 4.2rem;}#countdown .day .unit {font-size: 1rem;display:inline;font-weight:normal;}#countdown:before{content: "";position: inherit;left: 0;top: 0;height: 100%;width: 100%;background-color: rgba(0, 0, 0, .36);}</style>
+            <style>.news-ppt div,#countdown:before{border-radius:inherit}.countdown-box{width:100%;height:100%;min-height:160px;position:relative;}/* 新年侧边栏 */ #countdown {height:100%;padding: 1rem;box-sizing: border-box;position: absolute;top: 0;left: 0;width: 100%;background-size: cover;background-position: center;}#countdown * {position: relative;color: white;/*line-height: 1.2;*/}#countdown p,#countdown div{position:relative;z-index:9;}#countdown p{text-align: left;margin: auto;font-size: small;}#countdown p.title{font-weight:bold;}#countdown p.today{opacity: .75;font-size: 12px;position: inherit;bottom: 15px;right: 15px;}#countdown .time {font-weight: bold;text-align: center;width:100%;position: inherit;top: 50%;left: 50%;transform: translate(-50%,-50%);}#countdown .time, #countdown .timesup {font-size: 3.5rem;display: block;/*margin: 1rem 0;*/}#countdown .day {font-size: 4.2rem;}@keyframes typing{0%{opacity:0;}50%{opacity:1;}100%{opacity:0;}}#countdown .day .unit {font-size: 1rem;display:inline;animation: typing ease .8s infinite;-webkit-animation: typing ease .8s infinite;opacity:0;}#countdown:before{content: "";position: inherit;left: 0;top: 0;height: 100%;width: 100%;background-color: rgba(0, 0, 0, .36);z-index:1;}.countdown-box video{width: 100%;height: 100%;position: absolute!important;top: 0;left: 0;object-fit: cover;}</style>
             <div class="countdown-box">
-                <div id="countdown" style="background-image:url(<?php echo $bgimg; ?>)">
+                <div id="countdown" style="background-image:url(<?php //echo $bgimg; ?>)">
+                    <video src="<?php echo $bgimg; ?>" poster="<?php echo $bgimg; ?>" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
                     <p class="title"><?php echo $countTitle[0]; ?></p>
                     <div class="time"></div>
-                    <p class="today" style="text-align: right;"></p>
+                    <p class="today"></p>
                 </div>
             </div>
             <script>
@@ -1189,11 +1201,12 @@
                       target = main.querySelector('.time'),
                       title = main.querySelector('.title'),
                       today = main.querySelector('.today'),
-                      weeks = ['一','二','三','四','五','六','天'];
+                      weeks = ['日','一','二','三','四','五','六'];
                 var nowtime = new Date(),
                     endtime = new Date("<?php echo $countDate; ?>"),
                     result = parseInt((endtime.getTime() - nowtime.getTime()) / 1000),
                     day = parseInt(result / (24 * 60 * 60)),
+                    // week = nowtime.getDay()-1 ? nowtime.getDay()-1 : nowtime.getDay();
                     fillZero = function(i){
                         return i < 10 ? "0"+i : i;
                     },
@@ -1201,11 +1214,11 @@
                         if(result <= 0) {
                             title.innerHTML = "TIME'S UP!";
                             target.innerHTML = "<span class='timesup'><?php echo $countTitle[1]; ?></span>";
-                            main.setAttribute('style','background-image:url(<?php custom_cdn_src('img') ?>/2023/01/dzht2-ez.gif)')
+                            // main.setAttribute('style','background-image:url(<?php custom_cdn_src('img') ?>/2023/01/dzht2-ez.gif)')
                         }
                     };
-                today.innerHTML = `${nowtime.getMonth()+1}月${nowtime.getDate()}日 星期${weeks[nowtime.getDay()-1]}`; //${nowtime.getFullYear()}年
-                if(parseInt(day)<=0){
+                today.innerHTML = `${nowtime.getMonth()+1}月${nowtime.getDate()}日 &nbsp;星期${weeks[nowtime.getDay()]}`; //${nowtime.getFullYear()}年
+                if(parseInt(day)<=0 && result>0){
                     (function countDown() {
                         let nowtime = new Date(),
                             result = parseInt((endtime.getTime() - nowtime.getTime()) / 1000),

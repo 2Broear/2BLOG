@@ -1,4 +1,5 @@
 <?php
+    global $lazysrc;
     $third_cmt = get_option('site_third_comments');
     $comment_sw = $third_cmt=='Valine' ? true : false;//get_option('site_valine_switcher');
     $twikoo_sw = $third_cmt=='Twikoo' ? true : false;//get_option('site_twikoo_switcher');
@@ -147,7 +148,7 @@
                     
                 	<textarea name="comment" cols="30" rows="10" placeholder="<?php if($replytocom) echo '正在回复给：@'.get_comment_author($replytocom);else echo '畅所，你的欲言..'; ?>"></textarea>
                     <div class="userinfo">
-                        <img class="avatar" src="<?php echo $avatar_src; ?>" />
+                        <img class="avatar" <?php echo $lazysrc.'="'.$avatar_src.'"'; ?> />
                     	<input type="text" name="author" placeholder="昵称" value="<?php echo $user_name; ?>" />
                     	<input type="email" name="email" placeholder="邮箱" value="<?php echo $user_mail; ?>" />
                     	<input type="url" name="url" placeholder="网址" value="<?php echo $user_link; ?>" />
@@ -176,7 +177,9 @@
                     <?php echo '<strong id="count">'.$comment_count.'</strong> 条评论'; ?>
                 </div>            
                 <div class="wp_comments_list">
-                    <?php function custom_comment($comment, $args, $depth){
+                    <?php 
+                    function custom_comment($comment, $args, $depth){
+                        global $lazysrc;
                         $GLOBALS['comment'] = $comment; 
                         $admin_mail = get_bloginfo('admin_email');
                         $approved = $comment->comment_approved;
@@ -190,7 +193,7 @@
                                         <?php 
                                             if(get_option('show_avatars')){
                                                 $email = get_comment_author_email();
-                                                echo '<img class="avatar" src="'.match_mail_avatar($email).'" width=50 height=50 />';
+                                                echo '<img class="avatar" '.$lazysrc.'="'.match_mail_avatar($email).'" width=50 height=50 />';
                                             }
                                         ?>
                                     </a>

@@ -6,7 +6,7 @@
     </div>
     <div class="container">
       <div id="footer-support-board">
-        <p id="supports-txt"><?php echo '<q>'.get_option('site_support','Art Design | Coding | Documents | Social Media | Tech Support | 2broear.com').'</q><b>'.get_option('site_nick').'</b>'; ?></p>
+        <p id="supports-txt"><?php $blogdesc=get_bloginfo('description');echo '<q>'.get_option('site_support',$blogdesc).'</q><b>'.$blogdesc.'</b>'; ?></p>
       </div>
       <div id="footer-contact-way">
         <ul class="footer-ul">
@@ -236,7 +236,7 @@
                       <i class="BBFontIcons"></i>
                     </span>
                   </a>
-                  <a href="javascript:void(0)" target="_blank" rel="nofollow" aria-label="wechat">
+                  <a href="javascript:void(0)" target="_self" rel="nofollow" aria-label="wechat">
                     <span class="contact-icons" id="icon-wechat">
                       <i class="icom"></i>
                     </span>

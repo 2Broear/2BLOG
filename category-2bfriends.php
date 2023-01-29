@@ -10,6 +10,11 @@
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/2bfriends.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
+        details{
+            width: 100%;
+            text-align: left;
+            margin-bottom: 15px;
+        }
         @keyframes spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}
         #loading{position:relative;padding:20px;display:block;height:80px;margin: 0 auto;}
         #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:20px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%;-webkit-animation:spin 1s infinite linear;animation:spin 1s infinite linear}
@@ -28,6 +33,13 @@
         .friends-boxes .deals .inbox.standby .inbox-headside img{
             border-radius: 0;
         }
+        .friends-boxes .deals .inbox.girl::after{
+            content: "";
+            width: 80px;height: 100px;
+	        background: url('<?php custom_cdn_src('img'); ?>/images/girl_symbols.png') center center /contain no-repeat;
+	        right: -12px;
+        }
+        .friends-boxes ul, .friends-boxes ol{margin-bottom: auto;}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

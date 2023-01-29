@@ -9,6 +9,13 @@
 <head>
     <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/ranking.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <style>
+        #ranks b{
+            margin: 5px auto;
+            font-size: small;
+            max-width: 6em;
+        }
+    </style>
 </head>
 <body class="<?php theme_mode(); ?>">
     <div class="content-all">
@@ -21,7 +28,7 @@
         <div class="ranks">
             <div class="ranking">
                 <?php
-                    echo '<h1>常客 <sup> &lt;3 </sup></h1><p>访问较频繁的老铁</p><ul id="rankest"><span id="loading"></span>';
+                    echo '<h1>常客 </h1><p>访问较频繁的童鞋</p><ul id="rankest"><span id="loading"></span>'; //<sup> &lt;3 </sup>
                     $third_cmt = get_option('site_third_comments');
                     $valine_sw = $third_cmt=='Valine' ? true : false;//get_option('site_valine_switcher');
                     $twikoo_sw = $third_cmt=='Twikoo' ? true : false;//get_option('site_twikoo_switcher');
@@ -59,7 +66,7 @@
                     // top 10
                     if(!$valine_sw){
                         if($datalen>3){
-                            echo '<h1>稀客 <sup> &lt;10 </sup></h1><p>偶尔来访的兄弟</p><ul id="ranks"></span>';
+                            echo '<h1>稀客 </h1><p>偶尔来访的小伙伴</p><ul id="ranks"></span>'; //<sup> &lt;10 </sup>
                             for($i=3;$i<13;$i++){
                                 $user = array_key_exists($i,$rankdata) ? $rankdata[$i] : false;
                                 if($user){
@@ -83,8 +90,8 @@
                         }
                     }else{
                 ?>
-                        <h1>稀客 <sup> &lt;10th </sup></h1>
-                        <p>偶尔来访的兄弟</p>
+                        <h1>稀客 </h1><!--<sup> &lt;10th </sup>-->
+                        <p>偶尔来访的小伙伴</p>
                         <ul id="ranks"><span id="loading"></ul>
                 <?php
                     };
@@ -92,7 +99,7 @@
                     if(!$valine_sw){
                         if($datalen>13){
                             // if($datalen<13) echo '<p>这里暂时没有人哦～</p>';
-                            echo '<h1>游客 <sup> &gt;10 </sup></h1><ul id="ranked">';
+                            echo '<h1>游客 </h1><ul id="ranked">'; //<sup> &gt;10 </sup>
                             for($i=13;$i<50;$i++){
                                 $user = $rankdata[$i];
                                 if($user) echo '<li><p>'.$user->name.'<sup>'.$user->count.'</sup></p></li>';
@@ -101,7 +108,7 @@
                         }
                     }else{
                 ?>
-                        <h1>游客 <sup> &gt;10th </sup></h1>
+                        <h1>游客 </h1><!--<sup> &gt;10th </sup>-->
                         <ul id="ranked"><span id="loading"></span></ul>
                 <?php
                     };
@@ -200,7 +207,7 @@
                         }
                         if(i>=max && i<maxes){
                             remove_load(ranks);
-                            ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar"><img <?php echo $lazysrc; ?>="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" alt="${name}" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b><sup>${times}+</sup></a></li>`;
+                            ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar" data-t="${times}"><img <?php echo $lazysrc; ?>="<?php echo get_option("site_avatar_mirror") ?>avatar/${mail||'none'}?d=retro&s=100" alt="${name}" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b></a></li>`; //<sup>${times}+</sup>
                         }
                         if(i>maxes){
                             remove_load(ranked);

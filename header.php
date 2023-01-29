@@ -2,6 +2,11 @@
     body.dark #supports em.warmhole{
         background: url(<?php custom_cdn_src('img'); ?>/images/wormhole_2_tp.gif) no-repeat center center /cover!important;
     }
+    .footer-contact a{position:relative;}
+    .footer-contact a:hover{text-decoration:none;}
+    .footer-contact a .preview{display:none;position: absolute;top: -10px;left: 80px;z-index: 1;}
+    .footer-contact a .preview img{width: 100px;height: 66px;}
+    span#icon-wechat:hover + span{display:block;}
 </style>
 <div class="nav-wrap">
   <div class="top-bar-tips">
