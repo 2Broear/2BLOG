@@ -11,6 +11,49 @@
         console.log(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2BROEAR %c Release https://github.com/2Broear/2BLOG %c ${content} `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
     })();
     
+    function getVideoFrames(url,frame,base64){
+        return new Promise(function (resolve, reject) {
+            let dataURL = '';
+            const video = document.createElement('video');
+            video.currentTime = frame ? frame : 0;  // 设置当前帧
+            video.setAttribute('src', url);
+            video.setAttribute('crossOrigin', 'Anonymous'); // 处理跨域
+            video.setAttribute('autoplay', true);
+            video.setAttribute('muted', true);
+            video.setAttribute('preload', 'auto'); // auto|metadata|none
+            video.addEventListener('loadeddata', function(){
+                const canvas = document.createElement('canvas'),
+                      width = video.videoWidth, //width = video.width,
+                      height = video.videoHeight; //height = video.height;
+                canvas.width = width;
+                canvas.height = height;
+                canvas.getContext('2d').drawImage(video, 0, 0, width, height); // 绘制 canvas
+                if(base64){
+                    dataURL = canvas.toDataURL('image/jpeg',0.5);  //转换 base64
+                    resolve(dataURL);
+                }else{
+                    canvas.toBlob(function(blob){
+                        dataURL = URL.createObjectURL(blob);  //转换 blob
+                        resolve(dataURL);  // 回调 resolve
+                    },"image/png",0.88);
+                }
+            });
+        });
+    }
+    function setVideoPoster(curTime,imgType){
+        (async()=>{
+            const videos = document.querySelectorAll('video');
+            if(videos[0]){
+                for(let i=0;i<videos.length;i++){
+                    let video = videos[i],
+                        check = video.src.match(/\.(?:avi|mp4|mov|mpg|mpeg|flv|swf|wmv|wma|rmvb|mkv)$/i), //video.src.match(/^(.*)(\.)(.{1,8})$/)[3],
+                        dataURL = await this.getVideoFrames(video.src,curTime,imgType); // video的url
+                    check ? video.setAttribute('poster', dataURL) : false;
+                }
+            }
+        })();
+    }
+    
     function dynamicLoad(jsUrl,fn){
     	var _doc = document.getElementsByTagName('head')[0],
     		script = document.createElement('script');

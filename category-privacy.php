@@ -19,7 +19,7 @@
                 <?php get_header(); ?>
             </nav>
         </header>
-        <video src="<?php echo get_option('site_privacy_video'); ?>" poster="<?php echo cat_metabg($cat, custom_cdn_src('img',true).'/images/privacy.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+        <video src="<?php echo get_option('site_privacy_video'); ?>" poster="<?php //echo cat_metabg($cat, custom_cdn_src('img',true).'/images/privacy.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
 	    <h5><?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '<span> 隐私</span> 协议'; ?></h5>
     </div>
     <div class="content-all-windows">
@@ -43,5 +43,8 @@
     </footer>
 </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(false); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script>
+    setVideoPoster(1,true); // 截取设置当前页面所有视频 poster 
+</script>
 </body></html>

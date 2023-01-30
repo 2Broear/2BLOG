@@ -375,6 +375,12 @@
     /* ------------------------------------------------------------------------ *
      * 自定义功能函数
      * ------------------------------------------------------------------------ */
+    $lazysrc = 'src';
+    $loadimg = custom_cdn_src('img',true).'/images/loading_3_color_tp.png';
+    // $upload_url = wp_get_upload_dir()['baseurl'];
+    $images_cdn = get_option('site_cdn_img');
+    $content_url = content_url().'/uploads';
+    
     // 文章目录 https://www.ludou.org/wordpress-content-index-plugin.html/comment-page-3#comment-16566
     function article_index($content) {
         if(is_single() && preg_match_all('/<h([2-6]).*?\>(.*?)<\/h[2-6]>/is', $content, $matches) && get_option('site_indexes_switcher')) {
@@ -408,6 +414,7 @@
         return $content;
     }
     add_filter( 'the_content', 'article_index');
+    
     // 自定义文章归档
     function get_post_archives($type="yearly", $post_type="post", $limit=""){
         $archives = wp_get_archives(
@@ -445,7 +452,8 @@
             }
         }
         return $array;
-    };
+    }
+    
     // 自定义文章标签
     function the_tag_list($pid, $max=3, $dot="、"){
         $tags_list = get_the_tags($pid);
@@ -463,6 +471,7 @@
             }
         }
     }
+    
     // 自定义标签云
     function the_tag_clouds($html_tag="li"){
         $num = get_option('site_tagcloud_num');
@@ -497,13 +506,14 @@
             echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
         }
     }
+    
     // 分类背景图/视频海报
     function cat_metabg($cid, $preset=false){
         $metaimg = get_term_meta($cid, 'seo_image', true);  //$page_cat->term_id
         $result = $metaimg ? $metaimg : ($preset ? $preset : custom_cdn_src('img',true).'/images/default.jpg');  //get_option('site_bgimg')
         if(get_option('site_cdn_switcher')){
-            $upload_url = wp_get_upload_dir()['baseurl'];
-            return str_replace($upload_url, get_option('site_cdn_img', $upload_url), $result);
+            global $images_cdn, $content_url;
+            return strpos($result, $images_cdn)!==false ? $result : str_replace($content_url, $images_cdn, $result);
         }else{
             return $result;
         }
@@ -818,8 +828,6 @@
     }
     
     //lazyload 图片<img>懒加载
-    $lazysrc = 'src';
-    $loadimg = custom_cdn_src('img',true).'/images/loading_3_color_tp.png';
     if(get_option('site_lazyload_switcher')){
         $lazysrc = 'data-src';
         add_filter('the_content', 'lazyload_images', 10);  // 设置 priority 低于 custom_cdn_src
@@ -907,10 +915,8 @@
     if(get_option('site_cdn_switcher')){
         add_filter('the_content', 'replace_cdnimg_path', 9);
         function replace_cdnimg_path($content) {
-            $upload_url = wp_get_upload_dir()['baseurl'];
-            $cdnimg_url = get_option('site_cdn_img') ? get_option('site_cdn_img') : $upload_url;
-            // return str_replace('srcset="'.$upload_url, 'srcset="'.$img_cdn_url, $content);
-            return str_replace('="'.$upload_url, '="'.$cdnimg_url, $content);
+            global $images_cdn, $content_url;
+            return strpos($content, $images_cdn)!==false ? $content : str_replace('="'.$content_url, '="'.$images_cdn, $content);
         }
         // Setting the uploads directory URL https://wordpress.stackexchange.com/questions/189704/is-it-possible-to-change-image-urls-by-hooks
         function wpse_change_featured_img_url() {
@@ -970,8 +976,8 @@
         }
         $result = $ret ? $ret[$index] : false;
         if(get_option('site_cdn_switcher')){
-            $upload_url = wp_get_upload_dir()['baseurl'];
-            return str_replace($upload_url, get_option('site_cdn_img'), $result);
+            global $images_cdn, $content_url;
+            return strpos($result, $images_cdn)!==false ? $result : str_replace($content_url, $images_cdn, $result);
         }else{
             return $result;
         }
@@ -1050,6 +1056,11 @@
         $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
         $cat_slug = $the_cat->slug;
         echo '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> '.$cat_slug.' </sup></h2></div><div class="info flexboxes">';
+        // preset all acg query
+        $all_query = new WP_Query(array_filter(array(
+            'cat' => $the_cat->term_id,
+            'posts_per_page' => -1
+        )));
         // start acg query
         $acg_query = new WP_Query(array_filter(array(
             'cat' => $the_cat->term_id,  //$acg_cat
@@ -1114,8 +1125,12 @@
         // 单独判断当前查询文章数量
         // $found = $acg_query->found_posts;
         // $loaded = $found<$limit ? $found : $limit;
-        $posts_count = $acg_query->post_count;  //count($acg_query->posts)
-        echo '<div class="inbox more flexboxes"><div class="inbox-more flexboxes"><a id="more" href="javascript:;" data-load="'.$posts_count.'" data-count="0" data-cid="'.$acg_query->query['cat'].'" data-cat="'.strtoupper($acg_query->query_vars['category_name']).'" title="加载更多数据"></a></div></div></div>'; //mailto:'.get_bloginfo("admin_email").' 发送邮件，荐你所见
+        if(get_option('site_async_switcher')){
+            $all_count = $all_query->post_count;
+            $posts_count = $acg_query->post_count;  //count($acg_query->posts) //mailto:'.get_bloginfo("admin_email").' 发送邮件，荐你所见
+            $disable_statu = $posts_count==$all_count ? ' disabled' : false; //>=
+            echo '<div class="inbox more flexboxes"><div class="inbox-more flexboxes'.$disable_statu.'"><a id="more" href="javascript:;" data-all="'.$all_count.'" data-load="'.$posts_count.'" data-count="0" data-cid="'.$acg_query->query['cat'].'" data-cat="'.strtoupper($acg_query->query_vars['category_name']).'" title="加载更多数据"></a></div></div></div>';
+        }
     };
     
     // wp自定义（含置顶无分页）查询函数
@@ -1187,7 +1202,7 @@
             $countDate = date('Y/m/d,H:i:s',strtotime($date));
             $countTitle = explode('/', $title);
     ?>
-            <style>.news-ppt div,#countdown:before{border-radius:inherit}.countdown-box{width:100%;height:100%;min-height:160px;position:relative;}/* 新年侧边栏 */ #countdown {height:100%;padding: 1rem;box-sizing: border-box;position: absolute;top: 0;left: 0;width: 100%;background-size: cover;background-position: center;}#countdown * {position: relative;color: white;/*line-height: 1.2;*/}#countdown p,#countdown div{position:relative;z-index:9;}#countdown p{text-align: left;margin: auto;font-size: small;}#countdown p.title{font-weight:bold;}#countdown p.today{opacity: .75;font-size: 12px;position: inherit;bottom: 15px;right: 15px;}#countdown .time {font-weight: bold;text-align: center;width:100%;position: inherit;top: 50%;left: 50%;transform: translate(-50%,-50%);}#countdown .time, #countdown .timesup {font-size: 3.5rem;display: block;/*margin: 1rem 0;*/}#countdown .day {font-size: 4.2rem;}@keyframes typing{0%{opacity:0;}50%{opacity:1;}100%{opacity:0;}}#countdown .day .unit {font-size: 1rem;display:inline;animation: typing ease .8s infinite;-webkit-animation: typing ease .8s infinite;opacity:0;}#countdown:before{content: "";position: inherit;left: 0;top: 0;height: 100%;width: 100%;background-color: rgba(0, 0, 0, .36);z-index:1;}.countdown-box video{width: 100%;height: 100%;position: absolute!important;top: 0;left: 0;object-fit: cover;}</style>
+            <style>.news-ppt div,#countdown:before{border-radius:inherit}.countdown-box{width:100%;height:100%;min-height:160px;position:relative;}/* 新年侧边栏 */ #countdown {height:100%;padding: 1rem;box-sizing: border-box;position: absolute;top: 0;left: 0;width: 100%;background-size: cover;background-position: center;}#countdown * {position: relative;color: white;/*line-height: 1.2;*/}#countdown p,#countdown div{position:relative;z-index:9;}#countdown p{text-align: left;margin: auto;font-size: small;}#countdown p.title{font-weight:bold;}#countdown p.today{opacity: .75;font-size: 12px;position: inherit;bottom: 15px;right: 15px;}#countdown .time {font-weight: bold;text-align: center;width:100%;position: inherit;top: 50%;left: 50%;transform: translate(-50%,-50%);}#countdown .time, #countdown .timesup {font-size: 3.5rem;display: block;/*margin: 1rem 0;*/}#countdown .day {font-size: 4rem;}@keyframes typing{0%{opacity:0;}50%{opacity:1;}100%{opacity:0;}}#countdown .day .unit {font-size: 1rem;display:inline;animation: typing ease .8s infinite;-webkit-animation: typing ease .8s infinite;opacity:0;}#countdown:before{content: "";position: inherit;left: 0;top: 0;height: 100%;width: 100%;background-color: rgba(0, 0, 0, .36);z-index:1;}.countdown-box video{width: 100%;height: 100%;position: absolute!important;top: 0;left: 0;object-fit: cover;border-radius:inherit;}</style>
             <div class="countdown-box">
                 <div id="countdown" style="background-image:url(<?php //echo $bgimg; ?>)">
                     <video src="<?php echo $bgimg; ?>" poster="<?php echo $bgimg; ?>" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>

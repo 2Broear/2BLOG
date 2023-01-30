@@ -269,6 +269,7 @@
                     //     // print_r($res[0]);
                     //     echo $archive['title'].' : '.$archive['count'].' , ';
                     // }
+                    // echo cal_days_in_month(CAL_GREGORIAN,1,2023);
                     for($i=1;$i<13;$i++){
                         $m = days_in_month($i, $toyea);
                         // echo '<div class="m'.$i.'_'.$m.'d contributions">';
@@ -276,35 +277,37 @@
                             $days = $j<10 ? $i.'0'.$j : $i.$j;
                             $compare_date = $toyea.'年'.$i.'月'.$j.'日';
                             $the_day = $days==$today ? 'today' : ($days>$today ? 'dayto' : false);
-                            echo '<span class="'.$the_day.'" data-dates="'.$compare_date.'" data-date="'.$days.'"';
-                                foreach ($archive_daily as $archive){
-                                    $archive_date = $archive['title'];
-                                    preg_match("/$toyea/", $archive_date, $res);  //cur year only
-                                    if(array_key_exists(0,$res) && $archive_date==$compare_date){
-                                        $counts = $archive['count'];
-                                        echo ' id="edit" data-count="'.$counts.'" style="color:';
-                                        if($counts>=4){
-                                            $color = $color_more;
-                                        }else{
-                                            switch ($counts) {
-                                                case 1:
-                                                    $color = $color_light;
-                                                    break;
-                                                case 2:
-                                                    $color = $color_middle;
-                                                    break;
-                                                case 3:
-                                                    $color = $color_heavy;
-                                                    break;
-                                                default:
-                                                    $color = '';
-                                                    break;
+                            if($i<=date('m')){// && $j<=date('d')
+                                echo '<span class="'.$the_day.'" data-dates="'.$compare_date.'" data-date="'.$days.'"';
+                                    foreach ($archive_daily as $archive){
+                                        $archive_date = $archive['title'];
+                                        preg_match("/$toyea/", $archive_date, $res);  //cur year only
+                                        if(array_key_exists(0,$res) && $archive_date==$compare_date){
+                                            $counts = $archive['count'];
+                                            echo ' id="edit" data-count="'.$counts.'" style="color:';
+                                            if($counts>=4){
+                                                $color = $color_more;
+                                            }else{
+                                                switch ($counts) {
+                                                    case 1:
+                                                        $color = $color_light;
+                                                        break;
+                                                    case 2:
+                                                        $color = $color_middle;
+                                                        break;
+                                                    case 3:
+                                                        $color = $color_heavy;
+                                                        break;
+                                                    default:
+                                                        $color = '';
+                                                        break;
+                                                };
                                             };
-                                        };
-                                        echo $color.'"';
+                                            echo $color.'"';
+                                        }
                                     }
-                                }
-                            echo '></span>';
+                                echo '></span>';
+                            }
                         }
                         // echo '</div>';
                     }
@@ -359,13 +362,13 @@
                     $blog_count = count($blog_array);
                     $rest_count = $all_count-($news_count+$note_count+$blog_count);
                     $output_stats = '<span class="stat_'.$cur_year.' stats">📈📉统计：<b>'.$news_temp->name.'</b> '.$news_count.'篇、 <b>'.$note_temp->name.'</b> '.$note_count.'篇、 <b>'.$blog_temp->name.'</b> '.$blog_count.'篇、 <b>其他类型</b> '.$rest_count.'篇。</span>';
-                    $head_emoji = $toyea==$cur_year ? '🚀' : '📁';
+                    $head_emoji = $toyea==$cur_year ? ' 🚀 ' : ' 📁 ';
                     // SAME COMPARE AS $found $limit
                     if($posts_count>=$async_loads){
-                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'">加载更多</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2><ul class="call_'.$cur_year.'">';
+                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'">加载更多</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
                     }else{
                         // $head_emoji = '📂';
-                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'" class="disabled">已全部载入</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2><ul class="call_'.$cur_year.'">';
+                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'" class="disabled">已全部载入</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
                     };
                     // print_r($cur_posts[0]->ID);
                     for($i=0;$i<$posts_count;$i++){

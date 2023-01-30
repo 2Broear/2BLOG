@@ -1920,3 +1920,12 @@ p.wp_comment_tip{
     visibility: hidden;
     opacity: 0;
 }
+
+/***  Header.php temp fix  ***/
+
+.footer-contact a{position:relative;}
+.footer-contact a:hover{text-decoration:none;}
+.footer-contact a .preview{display:none;position: absolute;top: -10px;left: 80px;z-index: 1;}
+.footer-contact a .preview img{width: 100px;height: 66px;}
+span#icon-wechat:hover + span{display:block;}
+body.dark details{color:var(--preset-9)}

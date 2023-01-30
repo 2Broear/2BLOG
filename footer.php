@@ -437,6 +437,7 @@
 	window.addEventListener('load', function(){
 		NProgress.done();
     });
+    // 自动根据时段设置主题
     function automode(){
         getCookie('theme_manual') ? setCookie('theme_manual',0,0,1) : false;  // disable manual mode
         let date = new Date(),
@@ -447,7 +448,7 @@
             end = <?php echo get_option('site_darkmode_end',9); ?>;
         hour>=end&&hour<start || hour==end&&min>=0&&sec>=0 ? setCookie('theme_mode','light',0,1) : setCookie('theme_mode','dark',0,1);
         document.body.className = getCookie('theme_mode');  //change apperance after cookie updated
-    }
+    };
 </script>
 <?php 
     if(get_option('site_logo_switcher')){
