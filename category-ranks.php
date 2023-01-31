@@ -28,7 +28,7 @@
         <div class="ranks">
             <div class="ranking">
                 <?php
-                    echo '<h1>常客 </h1><p>访问较频繁的童鞋</p><ul id="rankest"><span id="loading"></span>'; //<sup> &lt;3 </sup>
+                    echo '<h1>常客 </h1><p>访问较频繁的童鞋</p><ul id="rankest">'; //<sup> &lt;3 </sup>
                     $third_cmt = get_option('site_third_comments');
                     $valine_sw = $third_cmt=='Valine' ? true : false;//get_option('site_valine_switcher');
                     $twikoo_sw = $third_cmt=='Twikoo' ? true : false;//get_option('site_twikoo_switcher');
@@ -61,6 +61,8 @@
                             </li>
                 <?php
                         }
+                    }else{
+                        echo '<span id="loading"></span>';
                     };
                     echo '</ul>';
                     // top 10

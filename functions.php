@@ -513,7 +513,9 @@
         $result = $metaimg ? $metaimg : ($preset ? $preset : custom_cdn_src('img',true).'/images/default.jpg');  //get_option('site_bgimg')
         if(get_option('site_cdn_switcher')){
             global $images_cdn, $content_url;
-            return strpos($result, $images_cdn)!==false ? $result : str_replace($content_url, $images_cdn, $result);
+            // return strpos($result, $images_cdn)!==false ? $result : str_replace($content_url, $images_cdn, $result);
+            // return str_replace($content_url, $images_cdn, $result);
+            return preg_replace('/(<img.+src=\"?.+)('.preg_quote($content_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $result);
         }else{
             return $result;
         }
@@ -854,18 +856,24 @@
             // global $wpdb;
             // print_r($wpdb->get_var("SELECT ID FROM $wpdb->links WHERE post_name = '$slug'"));
             $avatar = !$link->link_image ? 'https:' . get_option('site_avatar_mirror') . 'avatar/' . md5(mt_rand().'@rand.avatar') . '?s=300' : $link->link_image;
-            $holder = "";
+            $lazyhold = "";
             if($lazysrc!='src'){
                 global $loadimg;
-                $holder = 'data-src="'.$avatar.'"';
+                $lazyhold = 'data-src="'.$avatar.'"';
                 $avatar = $loadimg;
             }
             switch ($frame) {
                 case 'full':
                     // echo in_category('standby') ? 'standby' : false;
                     // if($link->link_visible==="Y") 
-                    $avatar_status = $status=='standby' ? '<img class="lazy" alt="近期访问出现问题" draggable="false">' : '<img class="lazy" '.$holder.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
-                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'"><img class="blur" '.$holder.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>
+                    if($status=='standby'){
+                        $avatar_status = '<img alt="近期访问出现问题" draggable="false">';
+                        $avatar_status_bg = '<img class="blur" alt="近期访问出现问题" draggable="false">';
+                    }else{
+                        $avatar_status = '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
+                        $avatar_status_bg = '<img class="blur" '.$lazyhold.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
+                    }
+                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'">'.$avatar_status_bg.'<div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>
                     break;
                 case 'half':
                     // if($link->link_visible==="Y") 
@@ -911,16 +919,18 @@
         if($cat_meta) echo($cat_meta);else echo($cat_desc);
     };
     
-    // 过滤替换 CDN 图片路径（包括后台媒体库图片）
+    // 过滤替换 CDN 图片路径（已解决 video 被替换bug）
     if(get_option('site_cdn_switcher')){
         add_filter('the_content', 'replace_cdnimg_path', 9);
         function replace_cdnimg_path($content) {
             global $images_cdn, $content_url;
-            return strpos($content, $images_cdn)!==false ? $content : str_replace('="'.$content_url, '="'.$images_cdn, $content);
+            // return strpos($content, $images_cdn)!==false ? $content : str_replace('="'.$content_url, '="'.$images_cdn, $content);  //bug:第一张匹配到img，后续图片均不再匹配cdn（仅适用单张图片）
+            // return str_replace('="'.$content_url, '="'.$images_cdn, $content);
+            return preg_replace('/(<img.+src=\"?.+)('.preg_quote($content_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $content);  //http://blog.iis7.com/article/53278.html
         }
-        // Setting the uploads directory URL https://wordpress.stackexchange.com/questions/189704/is-it-possible-to-change-image-urls-by-hooks
-        function wpse_change_featured_img_url() {
-          return get_option('site_cdn_img'); //'http://www.example.com/media/uploads';
+        // 替换后台媒体库图片路径 Setting the uploads directory URL https://wordpress.stackexchange.com/questions/189704/is-it-possible-to-change-image-urls-by-hooks
+        function wpse_change_featured_img_url(){
+            return get_option('site_cdn_img');  //'http://www.example.com/media/uploads';
         }
         add_filter( 'pre_option_upload_url_path', 'wpse_change_featured_img_url' );
     }
@@ -977,7 +987,9 @@
         $result = $ret ? $ret[$index] : false;
         if(get_option('site_cdn_switcher')){
             global $images_cdn, $content_url;
-            return strpos($result, $images_cdn)!==false ? $result : str_replace($content_url, $images_cdn, $result);
+            // return strpos($result, $images_cdn)!==false ? $result : str_replace($content_url, $images_cdn, $result);
+            return str_replace($content_url, $images_cdn, $result);
+            // return preg_replace('/(<img.+src=\"?.+)('.preg_quote($content_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $result);
         }else{
             return $result;
         }
@@ -1087,10 +1099,10 @@
                         $postimg = get_postimg(0,$post->ID,true);
                         if($lazysrc!='src'){
                             global $loadimg;
-                            $holder = 'data-src="'.$postimg.'"';
+                            $lazyhold = 'data-src="'.$postimg.'"';
                             $postimg = $loadimg;
                         }
-                        echo '<img class="bg" '.$holder.' src="'.$postimg.'" alt="'.$post_feeling.'"><img '.$holder.' src="'.$postimg.'" alt="'.$post_feeling.'">';
+                        echo '<img class="bg" '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'"><img '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'">';
                     ?>
                 </div>
                 <div class="inbox-aside">
@@ -1416,10 +1428,10 @@
                                             $postimg = get_postimg(0,$post->ID,true);
                                             if($lazysrc!='src'){
                                                 global $loadimg;
-                                                $holder = 'data-src="'.$postimg.'"';
+                                                $lazyhold = 'data-src="'.$postimg.'"';
                                                 $postimg = $loadimg;
                                             }
-                                            echo '<img class="bg" '.$holder.' src="'.$postimg.'" alt="'.$post_feeling.'"><img '.$holder.' src="'.$postimg.'" alt="'.$post_feeling.'">';
+                                            echo '<img class="bg" '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'"><img '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'">';
                                         ?>
                                     </div>
                                     <div class="inbox-aside">

@@ -116,7 +116,7 @@
                                     </div>
                                 </div>
                                 <div class="head-inside wow fadeInUp" data-wow-delay="0.15s" style="background:url(<?php //echo $catbg=cat_metabg($cat, get_option('site_bgimg')); ?>) center center /cover;">
-                                    <video src="<?php $video=get_option('site_about_video');echo $video; ?>" poster="<?php echo $video; ?>" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
+                                    <video src="<?php $video=get_option('site_about_video');echo $video; ?>" poster="<?php echo $video ? $video : cat_metabg($cat, get_option('site_bgimg')); ?>" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
                                 </div>
                             </li>
                             <li class="intro_right">
@@ -183,10 +183,10 @@
     </footer>
 </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(false); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <script>
     // 截取设置当前页面所有视频 poster 
-    setVideoPoster();
+    setVideoPoster(2);
     // const video = document.querySelector('video'),
     //       user_info = document.querySelector('.user_info');
     // video.onplaying=()=>{user_info.classList.remove('pause');user_info.classList.add('playing');}

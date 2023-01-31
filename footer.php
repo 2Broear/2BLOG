@@ -397,33 +397,33 @@
     ?>
             const bodyimg = document.querySelectorAll("body img"),
                   loadimg = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png";
-            var timer = null,
-                array = [];
+            var timer_throttle = null,
+                array_images = [];
             if(bodyimg.length>=1){
                 for(let i=0;i<bodyimg.length;i++){
                     let eachimg = bodyimg[i],
                         datasrc = eachimg.dataset.src;
+                    eachimg.onerror=function(){
+                        // this.src = loadimg;  //始终显示 loading
+                        this.dataset.src = loadimg;
+                    }
                     eachimg.src = loadimg; //pre-holder
                     if(datasrc){
-                        array.push(eachimg); //for-closure
+                        array_images.push(eachimg); //for-closure
                         eachimg.getBoundingClientRect().top < window.innerHeight ? eachimg.src = datasrc : false;
                         window.addEventListener('scroll', function(){
                             return (function(){
-                                if(timer==null){
-                                    timer = setTimeout(function(){
-                                        // console.log(eachimg); //需传入array重新（单次）循环，否则无法正常访问外部参数
-                                        for(let i=0;i<array.length;i++){
-                                            let eachimg = array[i];
+                                if(timer_throttle==null){
+                                    timer_throttle = setTimeout(function(){
+                                        // console.log(eachimg); //需重新传入array（单次）循环
+                                        for(let i=0;i<array_images.length;i++){
+                                            let eachimg = array_images[i];
                                             if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight
-                                                eachimg.src = eachimg.dataset.src; // 即时更新 eachimg.dataset.src 替代 datasrc
-                                                eachimg.onerror=function(){ //!this.complete
-                                                    this.src = loadimg;
-                                                    this.dataset.src = loadimg;
-                                                }
+                                                eachimg.src = eachimg.dataset.src; // 即时更新 eachimg
                                             }
                                         }
-                                        timer = null;  //消除定时器
-                                    }, 100, array);
+                                        timer_throttle = null;  //消除定时器
+                                    }, 100, array_images);
                                 }
                             })();
                         });

@@ -49,8 +49,14 @@
                                 <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window icom wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                                     <div class="news-window-inside">
                                         <?php
-                                            // global $lazysrc;// $lazyload = get_option('site_lazyload_switcher') ? 'data-src' : 'src';
-                                            if(get_postimg() || has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img '.$lazysrc.'="'.get_postimg().'" alt="'.get_the_title().'" /></a></span>';
+                                            global $lazysrc,$loadimg;
+                                            $lazyhold = "";
+                                            $postimg = get_postimg();
+                                            if($lazysrc!='src'){
+                                                $lazyhold = 'data-src="'.$postimg.'"';
+                                                $postimg = $loadimg;
+                                            }
+                                            if(get_postimg() || has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img '.$lazyhold.' src="'.$postimg.'" alt="'.get_the_title().'" /></a></span>';
                                         ?>
                                         <div class="news-inside-content" style="<?php //echo $hasimg_style; ?>">
                                             <h2 class="entry-title">
@@ -104,7 +110,7 @@
         </footer>
     </div>
     <!-- asyncLoadJs -->
-    <script type="text/javascript" src="<?php custom_cdn_src(false); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+    <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
     <script>
         setVideoPoster(12); // 截取设置当前页面所有视频 poster 
     </script>
