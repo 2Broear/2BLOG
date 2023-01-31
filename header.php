@@ -2,6 +2,8 @@
     body.dark #supports em.warmhole{
         background: url(<?php custom_cdn_src('img'); ?>/images/wormhole_2_tp.gif) no-repeat center center /cover!important;
     }
+    .footer-contact a .preview{top: -80px;left: -15px}
+    .footer-contact a .preview img{width:66px;}
 </style>
 <div class="nav-wrap">
   <div class="top-bar-tips">

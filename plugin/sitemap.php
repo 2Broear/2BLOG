@@ -1,6 +1,6 @@
 <?php
     // if(get_option('site_map_switcher')){
-        // require_once( '../../../../wp-load.php' );  // DO NOT Load WordPress Core!!! Caused E_COMPILE_ERROR while Requiring wp-load.php
+        // equire_once($_SERVER['DOCUMENT_ROOT'].'/wp-load.php');  // DO NOT Load WordPress Core!!! Caused E_COMPILE_ERROR
         $sitemap_opts = get_option('site_map_includes','');
         $site_url = get_site_url();//get_option("home"); bloginfo('url')
         // https://www.xingkongweb.com/3320.html

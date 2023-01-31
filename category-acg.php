@@ -39,18 +39,19 @@
                     <?php get_header(); ?>
                 </nav>
             </header>
-            <video src="<?php echo get_option('site_acgn_video'); ?>" poster="<?php echo cat_metabg($cat, custom_cdn_src('img',true).'/images/acg.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video><!-- bf2_240p_main forest -->
+            <video src="<?php echo $video = replace_video_url(get_option('site_acgn_video')); ?>" poster="<?php echo $video ? $video : cat_metabg($cat, custom_cdn_src('img',true).'/images/acg.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
             <div class="counter">
                 <?php
                     $async_sw = get_option('site_async_switcher');
                     $async_loads = $async_sw ? get_option("site_async_acg", 14) : 999;
-                    $filename = basename(__FILE__);
+    		        $basename = basename(__FILE__);
+                    $preset = get_cat_by_template(str_replace('.php',"",substr($basename,9)));
+                    $preslug = $preset->slug;
                     $curslug = current_slug();
-                    $preset = get_template_bind_cat($filename)->slug;//'acg';
-                    $baas = get_option('site_leancloud_switcher')&&strpos(get_option('site_leancloud_category'), $filename)!==false;  //use post as category is leancloud unset
+                    $baas = get_option('site_leancloud_switcher')&&strpos(get_option('site_leancloud_category'), $basename)!==false;  //use post as category is leancloud unset
                     if(!$baas){
-                        $cats = get_categories(meta_query_categories(get_category_by_slug($preset)->term_id, 'ASC', 'seo_order'));
-                        if(!empty($cats) && $curslug==$preset){
+                        $cats = get_categories(meta_query_categories($preset->term_id, 'ASC', 'seo_order'));
+                        if(!empty($cats) && $curslug==$preslug){
                             foreach($cats as $the_cat){
                                 $cat_slug = $the_cat->slug;  // print_r($the_cat);
                                 $cat_count = $the_cat->count;
@@ -83,12 +84,12 @@
             <div class="rcmd-boxes flexboxes">
                 <?php
                     if(!$baas){
-                        if(!empty($cats) && $curslug==$preset){
+                        if(!empty($cats) && $curslug==$preslug){
                             foreach($cats as $the_cat){
-                                acg_posts_query($the_cat, $preset, $async_loads); // // if($cat_slug!=$preset)
+                                acg_posts_query($the_cat, $preslug, $async_loads); // // if($cat_slug!=$preslug)
                             }
                         }else{
-                            acg_posts_query(get_category($cat), $preset, $async_loads);  //get_category_by_slug($curslug)
+                            acg_posts_query(get_category($cat), $preslug, $async_loads);  //get_category_by_slug($curslug)
                         }
                     }
                 ?>

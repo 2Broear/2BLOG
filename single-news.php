@@ -84,6 +84,8 @@
 <!-- inHtmlJs -->
 <script src="<?php custom_cdn_src(); ?>/js/fancybox.umd.js"></script>
 <script>
+    // 截取设置当前页面所有视频 poster 
+    setVideoPoster(2);
     // gallery js initiate 'bodyimg' already exists in footer lazyload, use contimg insted.
     const contimg = document.querySelectorAll(".news-article-container .content img");
     if(contimg.length>=1){

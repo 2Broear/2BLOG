@@ -37,7 +37,7 @@
         $offset = $_POST['offset'];
         $cur_posts = get_wpdb_yearly_pids($key, $limit, $offset);
         $res_array = array();
-        $news_temp = !get_template_bind_cat('category-news.php')->errors ? get_template_bind_cat('category-news.php') : false;
+        $news_temp = get_cat_by_template('news','slug');
         for($i=0;$i<count($cur_posts);$i++){
             $each_posts = $cur_posts[$i];
             $prev_posts = $i>0 ? $cur_posts[$i-1] : $cur_posts[$i];
@@ -166,6 +166,10 @@
         $template_term_id = $wpdb->get_var("SELECT term_id FROM $wpdb->termmeta WHERE meta_value = '$template'");
         // return !get_category($template_term_id)->errors ? get_category($template_term_id) : get_category(1);
         return get_category($template_term_id);
+    }
+    function get_cat_by_template($temp='news', $parm=false){
+        $cats = get_template_bind_cat('category-'.$temp.'.php');
+        return !$cats->errors ? ($parm ? $cats->$parm : $cats) : false;
     }
     /* ------------------------------------------------------------------------ *
      * Plugin Name: Link Manager
@@ -378,8 +382,11 @@
     $lazysrc = 'src';
     $loadimg = custom_cdn_src('img',true).'/images/loading_3_color_tp.png';
     // $upload_url = wp_get_upload_dir()['baseurl'];
+    // $video_cdn_sw = get_option('site_cdn_vid_sw');
+    $upload_url = content_url().'/uploads';
+    $cdn_switch = get_option('site_cdn_switcher');
     $images_cdn = get_option('site_cdn_img');
-    $content_url = content_url().'/uploads';
+    $videos_cdn_page = get_option('site_cdn_vdo_includes');
     
     // 文章目录 https://www.ludou.org/wordpress-content-index-plugin.html/comment-page-3#comment-16566
     function article_index($content) {
@@ -511,11 +518,11 @@
     function cat_metabg($cid, $preset=false){
         $metaimg = get_term_meta($cid, 'seo_image', true);  //$page_cat->term_id
         $result = $metaimg ? $metaimg : ($preset ? $preset : custom_cdn_src('img',true).'/images/default.jpg');  //get_option('site_bgimg')
-        if(get_option('site_cdn_switcher')){
-            global $images_cdn, $content_url;
-            // return strpos($result, $images_cdn)!==false ? $result : str_replace($content_url, $images_cdn, $result);
-            // return str_replace($content_url, $images_cdn, $result);
-            return preg_replace('/(<img.+src=\"?.+)('.preg_quote($content_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $result);
+        global $images_cdn, $upload_url, $cdn_switch;
+        if($cdn_switch){
+            // return str_replace($upload_url, $images_cdn, $result);
+            // $result = get_option('site_cdn_vid_sw') ? preg_replace('/(<video.*src=.*)('.preg_quote($upload_url,'/').')(.*>)/i', "\${1}$images_cdn\${3}", $result) : preg_replace('/(<video.*src=.*)('.preg_quote($images_cdn,'/').')(.*>)/i', "\${1}$upload_url\${3}", $result);  // video filter works fine.
+            return preg_replace('/(<img.+src=\"?.+)('.preg_quote($upload_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $result);
         }else{
             return $result;
         }
@@ -679,10 +686,10 @@
                 $slug = "INDEX";
                 break;
             case is_page():
-                $upper ? $slug=strtoupper($post->post_name) : $slug=$post->post_name;
+                $slug = $upper ? strtoupper($post->post_name) : strtolower($post->post_name);
                 break;
             case is_category():
-                $upper ? $slug=strtoupper(get_category($cat)->slug) : $slug=get_category($cat)->slug;
+                $slug = $upper ? strtoupper(get_category($cat)->slug) : strtolower(get_category($cat)->slug);
                 break;
             case is_single(): //in_category(array('news','notes')):
                 $slug = "ARTICLE";
@@ -914,21 +921,44 @@
     
     //分类 post metabox 信息
     function get_cat_title(){
-        $cat_desc = strip_tags(trim(category_description()),"");
         $cat_meta = get_term_meta($cat, 'seo_title', true);
-        if($cat_meta) echo($cat_meta);else echo($cat_desc);
+        echo $cat_meta ? $cat_meta : strip_tags(trim(category_description()),"");
     };
     
-    // 过滤替换 CDN 图片路径（已解决 video 被替换bug）
-    if(get_option('site_cdn_switcher')){
-        add_filter('the_content', 'replace_cdnimg_path', 9);
-        function replace_cdnimg_path($content) {
-            global $images_cdn, $content_url;
-            // return strpos($content, $images_cdn)!==false ? $content : str_replace('="'.$content_url, '="'.$images_cdn, $content);  //bug:第一张匹配到img，后续图片均不再匹配cdn（仅适用单张图片）
-            // return str_replace('="'.$content_url, '="'.$images_cdn, $content);
-            return preg_replace('/(<img.+src=\"?.+)('.preg_quote($content_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $content);  //http://blog.iis7.com/article/53278.html
+    // 过滤单页视频 cdn 路径
+    function replace_video_url($url=false, $key=false){
+        if($url){
+            global $images_cdn, $upload_url, $videos_cdn_page, $cat, $cdn_switch;
+            if($cdn_switch){
+                $key = $key ? $key : current_slug();
+                // return strpos($videos_cdn_page, $key)!==false ? str_replace($upload_url, $images_cdn, $url) : str_replace($images_cdn, $upload_url, $url);
+                $matched = false;
+                $vdo_array = explode(',',trim($videos_cdn_page));  // NO "," Array
+                for($i=0;$i<count($vdo_array);$i++){
+                    $arr = trim($vdo_array[$i]);  // NO WhiteSpace
+                    if($arr){
+                        $arr==$key ? $matched =true : false;
+                    }
+                };
+                $url = $matched ? str_replace($upload_url, $images_cdn, $url) : str_replace($images_cdn, $upload_url, $url);
+            }else{
+                $url = str_replace($images_cdn, $upload_url, $url);
+            };
+            return $url;
         }
-        // 替换后台媒体库图片路径 Setting the uploads directory URL https://wordpress.stackexchange.com/questions/189704/is-it-possible-to-change-image-urls-by-hooks
+    }
+    
+    // 过滤文章内容 CDN 路径（新增 video 开关）
+    if($cdn_switch){
+        add_filter('the_content', 'replace_cdn_path', 9);
+        function replace_cdn_path($content) {
+            global $images_cdn, $upload_url, $videos_cdn_page;
+            // return str_replace('="'.$upload_url, '="'.$images_cdn, $content);
+            // 控制全站视频加速开关（默认替换$images_cdn为$upload_url）
+            $content = strpos($videos_cdn_page, 'article')!==false ? preg_replace('/(<video.*src=.*)('.preg_quote($upload_url,'/').')(.*>)/i', "\${1}$images_cdn\${3}", $content) : preg_replace('/(<video.*src=.*)('.preg_quote($images_cdn,'/').')(.*>)/i', "\${1}$upload_url\${3}", $content);  // video filter works fine.
+            return preg_replace('/(<img.+src=\"?.+)('.preg_quote($upload_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $content);  //http://blog.iis7.com/article/53278.html
+        }
+        // 替换后台媒体库图片路径（目前无法自定义每个图像url）https://wordpress.stackexchange.com/questions/189704/is-it-possible-to-change-image-urls-by-hooks
         function wpse_change_featured_img_url(){
             return get_option('site_cdn_img');  //'http://www.example.com/media/uploads';
         }
@@ -985,11 +1015,11 @@
             
         }
         $result = $ret ? $ret[$index] : false;
-        if(get_option('site_cdn_switcher')){
-            global $images_cdn, $content_url;
-            // return strpos($result, $images_cdn)!==false ? $result : str_replace($content_url, $images_cdn, $result);
-            return str_replace($content_url, $images_cdn, $result);
-            // return preg_replace('/(<img.+src=\"?.+)('.preg_quote($content_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $result);
+        global $images_cdn, $upload_url, $cdn_switch;
+        if($cdn_switch){
+            // return strpos($result, $images_cdn)!==false ? $result : str_replace($upload_url, $images_cdn, $result);
+            return str_replace($upload_url, $images_cdn, $result);
+            // return preg_replace('/(<img.+src=\"?.+)('.preg_quote($upload_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $result);
         }else{
             return $result;
         }
@@ -1054,8 +1084,7 @@
             $par_cid = get_category($cid)->parent;
             $par_slug = $par_cid!=0&&get_category($par_cid)->slug!='/' ? get_category($par_cid)->slug : get_category($cid)->slug;
             $post_cat = get_the_category($post->ID);
-            $bind_slug = !get_template_bind_cat('category-acg.php')->errors ? get_template_bind_cat('category-acg.php')->slug : false;
-            $loc_id = $par_slug==$bind_slug ? ($post_cat[0]->parent!=0 ? $post_cat[0]->slug : $post_cat[1]->slug) : 'pid_'.get_the_ID();  // print_r(get_category(wp_get_post_categories($post->ID)[1])->slug);
+            $loc_id = $par_slug==get_cat_by_template('acg','slug') ? ($post_cat[0]->parent!=0 ? $post_cat[0]->slug : $post_cat[1]->slug) : 'pid_'.get_the_ID();  // print_r(get_category(wp_get_post_categories($post->ID)[1])->slug);
             $pre_link = $link||get_option('site_single_switcher') ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="'.get_category_link($cid).'#'.$loc_id.'" target="_self">';
             echo '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
         endwhile;
@@ -1210,14 +1239,14 @@
         if(get_option('site_countdown_switcher')){
             $date = $date ? $date : get_option('site_countdown_date');
             $title = $title ? $title : get_option('site_countdown_title');
-            $bgimg = $bgimg ? $bgimg : get_option('site_countdown_bgimg');
+            $bgimg = $bgimg ? $bgimg : replace_video_url(get_option('site_countdown_bgimg'), 'sidebar');
             $countDate = date('Y/m/d,H:i:s',strtotime($date));
             $countTitle = explode('/', $title);
     ?>
             <style>.news-ppt div,#countdown:before{border-radius:inherit}.countdown-box{width:100%;height:100%;min-height:160px;position:relative;}/* 新年侧边栏 */ #countdown {height:100%;padding: 1rem;box-sizing: border-box;position: absolute;top: 0;left: 0;width: 100%;background-size: cover;background-position: center;}#countdown * {position: relative;color: white;/*line-height: 1.2;*/}#countdown p,#countdown div{position:relative;z-index:9;}#countdown p{text-align: left;margin: auto;font-size: small;}#countdown p.title{font-weight:bold;}#countdown p.today{opacity: .75;font-size: 12px;position: inherit;bottom: 15px;right: 15px;}#countdown .time {font-weight: bold;text-align: center;width:100%;position: inherit;top: 50%;left: 50%;transform: translate(-50%,-50%);}#countdown .time, #countdown .timesup {font-size: 3.5rem;display: block;/*margin: 1rem 0;*/}#countdown .day {font-size: 4rem;}@keyframes typing{0%{opacity:0;}50%{opacity:1;}100%{opacity:0;}}#countdown .day .unit {font-size: 1rem;display:inline;animation: typing ease .8s infinite;-webkit-animation: typing ease .8s infinite;opacity:0;}#countdown:before{content: "";position: inherit;left: 0;top: 0;height: 100%;width: 100%;background-color: rgba(0, 0, 0, .36);z-index:1;}.countdown-box video{width: 100%;height: 100%;position: absolute!important;top: 0;left: 0;object-fit: cover;border-radius:inherit;}</style>
             <div class="countdown-box">
                 <div id="countdown" style="background-image:url(<?php //echo $bgimg; ?>)">
-                    <video src="<?php echo $bgimg; ?>" poster="<?php echo $bgimg; ?>" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
+                    <video src="<?php echo $bgimg; ?>" poster="<?php echo $bgimg; ?>" preload="" autoplay="" muted="muted" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
                     <p class="title"><?php echo $countTitle[0]; ?></p>
                     <div class="time"></div>
                     <p class="today"></p>
@@ -1315,10 +1344,10 @@
                 $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                 $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                 $post_rights = get_post_meta($post->ID, "post_rights", true);
-                $notes_slug = !get_template_bind_cat('category-notes.php')->errors ? get_template_bind_cat('category-notes.php')->slug : false;
-                $news_slug = !get_template_bind_cat('category-news.php')->errors ? get_template_bind_cat('category-news.php')->slug : false;
-                $weblog_slug = !get_template_bind_cat('category-weblog.php')->errors ? get_template_bind_cat('category-weblog.php')->slug : false;
-                $acg_slug = !get_template_bind_cat('category-acg.php')->errors ? get_template_bind_cat('category-acg.php')->slug : false;
+                $notes_slug = get_cat_by_template('notes','slug');
+                $news_slug = get_cat_by_template('news','slug');
+                $weblog_slug = get_cat_by_template('weblog','slug');
+                $acg_slug = get_cat_by_template('acg','slug');
                 if(!$post_styles){
     ?>
                     <article class="<?php if($post_orderby>1) echo 'topset'; ?> cat-<?php echo $post->ID ?>">

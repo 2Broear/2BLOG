@@ -55,7 +55,8 @@
 					<div class="main-root">
                         <ul class="wp_list_cats">
                         <?php 
-                            $cats = get_categories(meta_query_categories(get_template_bind_cat(basename(__FILE__))->term_id, 'ASC', 'seo_order'));
+                            $temp = get_cat_by_template(str_replace('.php',"",substr(basename(__FILE__),9)));
+                            $cats = get_categories(meta_query_categories($temp->term_id, 'ASC', 'seo_order'));
                             if(!empty($cats)){
                                 foreach($cats as $the_cat){
                                     $the_cat_id = $the_cat->term_id;
@@ -133,10 +134,9 @@
                                 <span class="classify" id="">
                                     <i class="icom"></i>
                                     <?php 
-                                        $slug = get_template_bind_cat(basename(__FILE__))->slug;
                                         $cats = get_the_category();
                                         foreach ($cats as $cat){
-                                            if($cat->slug!=$slug) echo '<em> '.$cat->name.' </em>';  //leave a blank at the end of em
+                                            if($cat->slug!=$temp->slug) echo '<em> '.$cat->name.' </em>';  //leave a blank at the end of em
                                         }
                                     ?>
                                 </span>

@@ -7,23 +7,39 @@ jQuery(document).ready(function($){
             upload_buttons[i].onclick=function(e){
                 // _this = this;
                 this_parent = this.parentNode;
-                var p_list = this_parent.querySelector('.upload_preview_list');
-                use_multi = this.dataset.multiple;
+                var p_list = this_parent.querySelector('.upload_preview_list'),
+                    d_type = Number(this.dataset.type), //1:images,2:videos,3:all;
+                    u_multi = this.dataset.multi;
                 // If the media frame already exists, reopen it (this will Cache mediaUploader frame arguments which's not applicable for required. tested: non-second requests without reopen)
                 // e.preventDefault();
-                // if(mediaUploader) {  // && !use_multi
+                // if(mediaUploader) {  // && !u_multi
                 //     mediaUploader.open();
                 //     return;
                 // }
                 //https://wordpress.stackexchange.com/questions/264115/show-only-images-and-videos-in-a-wp-media-window
+                switch(d_type){
+                    case 1:
+                        d_type = 'image';
+                        break;
+                    case 2:
+                        d_type = 'video';
+                        break;
+                    case 3:
+                        d_type = ['video','image'];
+                        break;
+                    default:
+                        d_type = ['video','image'];
+                        break;
+                }
+                console.log(`multiple: ${u_multi}, ${d_type} selection available.`);
                 mediaUploader = wp.media.frames.file_frame = wp.media({
                     title: '',
                     button: {
                         text: '选择文件'
                     },
-                    multiple: use_multi ? true : false,
+                    multiple: u_multi ? true : false,
                     library: {
-                        type: use_multi ? 'image' : [ 'video', 'image' ]
+                        type: d_type
                     },
                 });
                 mediaUploader.on('select', function() {

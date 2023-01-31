@@ -25,13 +25,14 @@
         <div class="download_boxes">
 		    <?php 
 		        $basename = basename(__FILE__);
-                $preset = get_template_bind_cat($basename)->slug;//'download';
+                $preset = get_cat_by_template(str_replace('.php',"",substr($basename,9)));//get_template_bind_cat($basename)->slug;//'download';
+                $preslug = $preset->slug;
                 $curslug = current_slug();
                 $baas = get_option('site_leancloud_switcher')&&strpos(get_option('site_leancloud_category'), $basename)!==false;
-                $cats = get_categories(meta_query_categories(get_template_bind_cat($basename)->term_id, 'ASC', 'seo_order'));
+                $cats = get_categories(meta_query_categories($preset->term_id, 'ASC', 'seo_order'));
                 if(!$baas){
-                    // !empty($cats) && $curslug==$preset ? download_posts_query($cats, 1) : download_posts_query(array(get_category($cat)), 1, 'single');
-                    if(!empty($cats) && $curslug==$preset){
+                    // !empty($cats) && $curslug==$preslug ? download_posts_query($cats, 1) : download_posts_query(array(get_category($cat)), 1, 'single');
+                    if(!empty($cats) && $curslug==$preslug){
                         echo '<div class="dld_boxes">';
                         download_posts_query($cats, 1);
                         echo '</div>';
@@ -73,7 +74,7 @@
             <?php
                 };
                 if(!$baas){
-                    if(!empty($cats) && $curslug==$preset){
+                    if(!empty($cats) && $curslug==$preslug){
                         echo '<div class="dld_boxes">';
                         download_posts_query($cats, 2);
                         echo '</div>';
@@ -125,7 +126,7 @@
             <?php
                 };
                 if(!$baas){
-                    if(!empty($cats) && $curslug==$preset){
+                    if(!empty($cats) && $curslug==$preslug){
                         echo '<div class="dld_boxes">';
                         download_posts_query($cats, 3);
                         echo '</div>';
@@ -200,7 +201,7 @@
     	        serverURLs: "<?php echo get_option('site_leancloud_server') ?>"
             });
             //request AV.Query
-            const query_new = new AV.Query("<?php echo $preset; ?>"),
+            const query_new = new AV.Query("<?php echo $preslug; ?>"),
                   query_tab = ["soft","p2p","tool","tools","vpn","crack","media","adobe"];
             query_new.addDescending("createdAt").find().then(result=>{ //.equalTo('type_download',loadType)
                 for (let i=0; i<result.length;i++) {

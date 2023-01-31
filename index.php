@@ -164,7 +164,7 @@
                 <span class='resource-windows-top_inside'>
                     <span id="icon-resource"></span>
                 </span>
-                <h3><?php $news_temp = !get_template_bind_cat('category-news.php')->errors ? get_template_bind_cat('category-news.php') : false;echo $news_temp ? $news_temp->name : '近期文章'; ?></h3>
+                <h3><?php $news_temp = get_cat_by_template('news');echo $news_temp ? $news_temp->name : '近期文章'; ?></h3>
                 </span>
                 <ul class="news-list" id="mainNews">
                     <?php recent_posts_query($news_temp->term_id, true); ?>
@@ -175,7 +175,7 @@
                 <span class='resource-windows-top_inside'>
                     <span id="icon-download"></span>
                 </span>
-                <h3><?php $note_temp = !get_template_bind_cat('category-notes.php')->errors ? get_template_bind_cat('category-notes.php') : false;echo $note_temp ? $note_temp->name : '笔记栈'; ?></h3>
+                <h3><?php $note_temp = get_cat_by_template('notes');echo $note_temp ? $note_temp->name : '笔记栈'; ?></h3>
                 </span>
                 <ul class="download-list" id="rcmdNewsHside">
                     <?php recent_posts_query($note_temp->term_id, true); ?>
@@ -198,7 +198,7 @@
                         <span class="newsBox-supTitle-iDescription" id="icon-technology" title="Tech | 科技资讯">
                             <em>BLOG</em><i class="icom icon-weblog"></i>
                         </span>
-                        <h2><?php $blog_temp = !get_template_bind_cat('category-weblog.php')->errors ? get_template_bind_cat('category-weblog.php') : false;echo strtoupper($blog_temp->slug).'「'.$blog_temp->name.'」'; ?></h2>
+                        <h2><?php $blog_temp = get_cat_by_template('weblog');echo strtoupper($blog_temp->slug).'「'.$blog_temp->name.'」'; ?></h2>
                     </div>
                     <ul class="tech_window-content">
                         <?php 

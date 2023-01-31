@@ -29,7 +29,7 @@
                 <th valign="top" scope="row"><label for="term_fields[seo_image]"><?php _e('Category Background'); ?></label></th>
                 <td>
                     <input type="text" size="40" value="<?php echo esc_attr(get_term_meta($term->term_id, 'seo_image', true)); ?>" id="term_fields[seo_image]" name="term_fields[seo_image]" class="upload_field">
-                    <input id="upload_image_button" type="button" class="button-primary upload_button" value="选择图片" />
+                    <input id="upload_image_button" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />
                     <br/>
                     <span class="image"><?php _e('SEO Background Image Options, upload or edit it.'); ?></span>
                 </td>
@@ -94,7 +94,7 @@
             <div class="form-field">
                 <label for="term_fields[seo_image]"><?php _e('Background Images'); ?></label>
                 <input type="text" size="40" value="" id="term_fields[seo_image]" name="term_fields[seo_image]" class="upload_field">
-                <input id="upload_image_button" type="button" class="button-primary upload_button" value="选择图片" style="margin: 20px;float: right;" />
+                <input id="upload_image_button" type="button" class="button-primary upload_button" data-type=1 value="选择图片" style="margin: 20px;float: right;" />
                 <p class="description"><?php _e('SEO Images, Used in metaNav/pageBG somewhere.'); ?></p>
             </div>
             <!--<div class="form-field">-->
@@ -541,8 +541,11 @@
         register_setting( 'baw-settings-group', 'site_lazyload_switcher' );
         register_setting( 'baw-settings-group', 'site_cdn_switcher' );
         // if(get_option('site_cdn_switcher')){
-            register_setting( 'baw-settings-group', 'site_cdn_img' );
             register_setting( 'baw-settings-group', 'site_cdn_src' );
+            register_setting( 'baw-settings-group', 'site_cdn_img' );
+            // register_setting( 'baw-settings-group', 'site_cdn_vid' );
+            // register_setting( 'baw-settings-group', 'site_cdn_vid_sw' );
+            register_setting( 'baw-settings-group', 'site_cdn_vdo_includes' );
         // }
         register_setting( 'baw-settings-group', 'site_darkmode_switcher' );
         // if(get_option('site_darkmode_switcher')){
@@ -691,8 +694,8 @@
 ?>
     <div class="wrap settings">
         <style>
-        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 3px;font-size: smaller;font-weight:bold;background:white;font-weight:900;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:188px;height:18px;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:<?php echo $theme_color; ?>}.form-table tr:hover > th sup{color:<?php echo $theme_color; ?>}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:<?php echo $theme_color; ?>}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid <?php echo $theme_color; ?>!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
-            .upload_button:focus,.upload_button:hover{background:<?php echo $theme_color; ?>!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px <?php echo $theme_color; ?>!important;border-color:transparent!important;}.upload_button.video{background:purple;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
+        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 50%, currentColor 250%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 50%, currentColor 250%)}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:188px;height:18px;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:<?php echo $theme_color; ?>}.form-table tr:hover > th sup{color:<?php echo $theme_color; ?>}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:<?php echo $theme_color; ?>}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid <?php echo $theme_color; ?>!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+            .upload_button:focus,.upload_button:hover{background:<?php echo $theme_color; ?>!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px <?php echo $theme_color; ?>!important;border-color:transparent!important;}.upload_button.multi{background:purple;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;color: white;font-size: smaller;text-align: center;background: rgb(0 0 0 / 52%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius:5px;position:relative;overflow:hidden;}
             .formtable{display:none;}.formtable.show{display:block;}.switchTab.fixed{position: fixed;width: 100%;background: rgb(255 255 255 / 75%);top: 32px;left:0;z-index: 9;padding:10px 0;padding-left:160px;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}.switchTab{transition: top .35s ease;top: -32px;padding: 0;}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:<?php echo $theme_color; ?>;background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px <?php echo $theme_color; ?>}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 2px #fff, 0 0 0 3px <?php echo $theme_color; ?>;}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:0;border-radius:25px}.switchTab li b{font-size:initial;display:block;text-shadow:1px 1px 0 white;font-style:normal}
             .smtp{margin-left:10px;vertical-align:middle;}
@@ -757,7 +760,7 @@
                                 // !$mail ? $mail="wapuu@wordpress.example" : $mail;
                                 $preset = 'https:' . get_option('site_avatar_mirror','//cravatar.cn/') . 'avatar/' . md5($mail) . '?s=300';
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_avatar_label">个人头像，用于笔记栈、关于等页面（默认管理员邮箱 gravatar 头像</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="border-radius: 100%;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 gravatar 头像" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="选择图片" />';
+                                echo '<p class="description" id="site_avatar_label">个人头像，用于笔记栈、关于等页面（默认管理员邮箱 gravatar 头像</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="border-radius: 100%;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 gravatar 头像" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
                             ?>
                         </td>
                     </tr>
@@ -770,7 +773,7 @@
                                 $preset = custom_cdn_src('img',true).'/images/fox.jpg';  
                                 // $preset = 'https:'.get_option('site_avatar_mirror','//sdn.geekzu.org/').'/avatar/?d=identicon&s=300';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="">默认背景图，用于各页面调用背景图（默认随机 gravatar 背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="选择图片" />';
+                                echo '<p class="description" id="">默认背景图，用于各页面调用背景图（默认随机 gravatar 背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
                             ?>
                         </td>
                     </tr>
@@ -818,7 +821,7 @@
                                 // }else{
                                 //     $value ? $status="checked" : $status="closed";
                                 // };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_logo_switcher_label">站点 logo 图片（默认显示文字类型的站点名称</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:#2271b1;" class="btn">LOGO</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_logo_switcher_label">站点 logo 图片（默认显示文字类型的站点名称</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:steelblue;" class="btn">LOGO</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -833,7 +836,7 @@
                                         $value = get_option($opt);
                                         $preset = custom_cdn_src('img',true).'/images/svg/XTy_115x35.svg';
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        echo '<p class="description" id="site_logo_label">站点 LOGO 图片链接（应用于全站，留空默认预设LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY 矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="选择图片" />';
+                                        echo '<p class="description" id="site_logo_label">站点 LOGO 图片链接（应用于全站，留空默认预设LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY 矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
                                     ?>
                                 </td>
                             </tr>
@@ -845,7 +848,7 @@
                                         $value = get_option($opt);
                                         $preset = get_option('site_logo',custom_cdn_src('img',true).'/images/svg/XTy_115x35_light.svg');
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        echo '<p class="description" id="site_logos_label">站点 LOGO（深色）图片链接（应用于深色模式，默认上方LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY（深色）矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="选择图片" />';
+                                        echo '<p class="description" id="site_logos_label">站点 LOGO（深色）图片链接（应用于深色模式，默认上方LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY（深色）矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
                                     ?>
                                 </td>
                             </tr>
@@ -859,7 +862,7 @@
                                 $opt = 'site_icon_switcher';
                                 $value = get_option($opt);
                                 $value ? $status="checked" : $status="closed";
-                                echo '<label for="'.$opt.'"><p class="description" id="">站点导航字体图标，导航别名默认为图标css类（暂不支持创建时手动选择</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:navy;" class="btn">ICON</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">站点导航字体图标，导航别名默认为图标css类（暂不支持创建时手动选择</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:royalblue;" class="btn">ICON</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -992,8 +995,8 @@
                                         $opt = 'site_indexes_includes';  //unique str
                                         $value = get_option($opt);
                                         echo '<p class="description" id="">选定分类下文章模版将开启目录索引，使用逗号“ , ”分隔（默认 notes 类型</p><div class="checkbox">';
-                                        $notes_cat =  !get_template_bind_cat('category-notes.php')->errors ? get_template_bind_cat('category-notes.php') : false;
-                                        $news_cat =  !get_template_bind_cat('category-news.php')->errors ? get_template_bind_cat('category-news.php') : false;
+                                        $news_cat =  get_cat_by_template('news');
+                                        $notes_cat =  get_cat_by_template('notes');
                                         $arrobj = array();
                                         if($notes_cat && $news_cat){
                                             array_push($arrobj, array('name' => $notes_cat->name, 'slug' => $notes_cat->slug));
@@ -1024,7 +1027,7 @@
                                     <?php
                                         // $opt = 'site_indexes_includes';  //unique str
                                         // $value = get_option($opt);
-                                        // $options = array(get_template_bind_cat('category-notes.php')->name, get_template_bind_cat('category-news.php')->name);
+                                        // $options = array(get_cat_by_template('notes','name'), get_cat_by_template('news','name'));
                                         // $preset = $options[0].',';
                                         // if(!$value){
                                         //     update_option($opt, $preset);
@@ -1176,7 +1179,7 @@
                         </td>
                     </tr>
                     <tr valign="top" class="">
-                        <th scope="row">RSS 订阅分类（多选项）</th>
+                        <th scope="row">RSS 订阅分类（多选）</th>
                         <td>
                             <?php
                                 $opt = 'site_rss_categories';  //unique str
@@ -1210,7 +1213,7 @@
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_map_switcher_label">生成全站站点地图（默认启用，开启后可指定生成类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:steelblue;" class="btn">SITEMAP</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_map_switcher_label">生成全站站点地图（默认启用，开启后可指定生成类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:inherit;" class="btn">SITEMAP</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1218,7 +1221,7 @@
                         // if(get_option('site_map_switcher')){
                     ?>
                             <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_map_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">Sitemap 生成类型（多选项）</th>
+                                <th scope="row">— 生成类型（多选）</th>
                                 <td>
                                     <?php
                                         $opt = 'site_map_includes';  //unique str
@@ -1323,8 +1326,37 @@
                             <tr valign="top" class="child_option dynamic_opts <?php echo $cdn; ?>">
                                 <th scope="row">— 图片加速域名</th>
                                 <td>
-                                    <p class="description" id="site_cdn_img_label">网站媒体文件（推荐加速静态文件存放 uploads 路径</p>
+                                    <p class="description" id="site_cdn_img_label">媒体库图片文件（存放于 wp-content/uploads 路径</p>
                                     <input type="text" name="site_cdn_img" id="site_cdn_img" class="middle-text" placeholder="site_cdn_img" value="<?php echo get_option( 'site_cdn_img', '' ) ?>"/>
+                                </td>
+                            </tr>
+                            <!--<tr valign="top" class="child_option dynamic_opts <?php echo $cdn; ?>">-->
+                            <!--    <th scope="row">— 开启视频加速</th>-->
+                            <!--    <td>-->
+                                    <?php
+                                        // $opt = 'site_cdn_vid_sw';
+                                        // get_option($opt) ? $status="checked" : $status="closed";
+                                        // echo '<label for="'.$opt.'"><p class="description" id="">开启后使用上方图片cdn加速域名加速站内视频（默认关闭</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">视频加速</b></label>';
+                                    ?>
+                            <!--    </td>-->
+                            <!--</tr>-->
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $cdn; ?>">
+                                <th scope="row">— 页面视频加速（多选）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_cdn_vdo_includes';  //unique str
+                                        $value = get_option($opt);
+                                        $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+                                        $options = array('Article','Sidebar',get_cat_by_template('about'),get_cat_by_template('acg'),get_cat_by_template('guestbook'),get_cat_by_template('privacy'));
+                                        echo '<p class="description" id="site_map_includes_label">开启后使用上方图片cdn加速域名加速站内视频，主要用途小型文件，可按需选择（article：文章视频，sidebar：侧栏视频</p><div class="checkbox">';
+                                        foreach ($options as $option){
+                                            $slug = $option->slug ? strtolower($option->slug) : strtolower($option);  
+                                            $name = $option->name ? $option->name : $option;
+                                            $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                            echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$name.'</label>';
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '" placeholder="当前可选开启位置" /></div>';;
+                                    ?>
                                 </td>
                             </tr>
                     <?php
@@ -1336,7 +1368,7 @@
                             <?php
                                 $opt = 'site_leancloud_switcher';
                                 get_option($opt) ? $status="checked" : $status="closed";
-                                echo '<label for="'.$opt.'"><p class="description" id="site_leancloud_switcher_label">使用第三方云数据库（Serverless）接管日记、友链、公告等数据内容（需在 leancloud 中新建 category-* 分类模板同名数据表，必填设置项均与第三方评论 valine 自动同步，开启后可单独控制 BaaS 页面数据开关</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:#2b96e7;" class="btn">LeanCloud</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_leancloud_switcher_label">使用第三方云数据库（Serverless）接管日记、友链、公告等数据内容（需在 leancloud 中新建 category-* 分类模板同名数据表，必填设置项均与第三方评论 valine 自动同步，开启后可单独控制 BaaS 页面数据开关</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:dodgerblue;" class="btn">LeanCloud</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1747,7 +1779,7 @@
                             ?>
                                     </label>
                                 <input type="text" name="<?php echo $opt ?>" placeholder="<?php echo $preset; ?>" class="large-text upload_field" value="<?php echo $preset; ?>" style="max-width:88%" />
-                                <input id="upload_banner_button" data-multiple="true" type="button" class="button-primary upload_button" value="选择图片" />
+                                <input id="upload_banner_button" type="button" class="button-primary upload_button" data-multi=true data-type=1 value="选择图片" />
                         </td>
                     </tr>
                     <tr valign="top" class="">
@@ -1800,7 +1832,7 @@
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">首页随机标签云（自带主题色，若检测到无标签将默认展示随机动漫图</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:dodgerblue;" class="btn">标签云</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">首页随机标签云（自带主题色，若检测到无标签将默认展示随机动漫图</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:teal;" class="btn">标签云</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1877,7 +1909,7 @@
                                         // $value = get_option($opt);
                                         // $preset =  custom_cdn_src('img',true).'/images/google_flush.gif';//Tech-x4.png
                                         // $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        // echo '<p class="description" id="site_bgimg_label">分类背景图，列表旁调用图片（默认背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="选择图片" />';
+                                        // echo '<p class="description" id="site_bgimg_label">分类背景图，列表旁调用图片（默认背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
                                     ?>
                             <!--    </td>-->
                             <!--</tr>-->
@@ -2014,7 +2046,7 @@
                                 $value = get_option($opt);
                                 $preset = '';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="">漫游影视背景视频（开启后背景图片将作为视频的poster展示</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_acgn_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="选取文件" />';
+                                echo '<p class="description" id="">漫游影视背景视频（开启后背景图片将作为视频的poster展示</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_acgn_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2026,7 +2058,7 @@
                                 $value = get_option($opt);
                                 $preset = '';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_guestbook_video_label">留言板背景视频</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_guestbook_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="选取文件" />';
+                                echo '<p class="description" id="site_guestbook_video_label">留言板背景视频</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_guestbook_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2038,7 +2070,7 @@
                                 $value = get_option($opt);
                                 $preset = '';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_about_video_label">关于我背景视频</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_about_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="选取文件" />';
+                                echo '<p class="description" id="site_about_video_label">关于我背景视频</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_about_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2050,7 +2082,7 @@
                                 $value = get_option($opt);
                                 // $preset = custom_cdn_src('img',true).'/media/videos/data.mp4';
                                 // $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_privacy_video_label">隐私政策背景视频</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$value.'" poster="'.$value.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_privacy_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="选取文件" />';
+                                echo '<p class="description" id="site_privacy_video_label">隐私政策背景视频</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$value.'" poster="'.$value.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_privacy_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2147,7 +2179,7 @@
                             <?php
                                 $opt = 'site_countdown_switcher';
                                 get_option($opt) ? $status="checked" : $status="closed";
-                                echo '<label for="'.$opt.'"><p class="description" id="">文章列表及内页侧边栏倒计时挂件（如需在其他页面自定义定时器，只需在调用 the_countdown_widget() 函数时新增下列三个子选项作为参数即可</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'"><span style="color:black;" class="btn">CountDown</span></b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">文章列表及内页侧边栏倒计时挂件（如需在其他页面自定义定时器，只需在调用 the_countdown_widget() 函数时新增下列三个子选项作为参数即可</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'"><span style="color:inherit;" class="btn">CountDown</span></b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2184,7 +2216,7 @@
                                         $value = get_option($opt);
                                         $preset = custom_cdn_src('img',true).'/images/newyear.gif';
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        echo '<p class="description" id="">倒计时背景图片/视频（默认新年 gif </p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button video" value="选取文件" />';  //<em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em>
+                                        echo '<p class="description" id="">倒计时背景图片/视频（默认新年 gif </p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button multi" data-type value="选取文件" />';  //<em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em>
                                     ?>
                                 </td>
                             </tr>
@@ -2479,7 +2511,7 @@
                                 $value = get_option( $opt, '' );
                                 $preset = get_option('site_avatar');
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_contact_wechat_label">底部（微信）联系方式（图片链接</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" /></label><input type="text" name="'.$opt.'" placeholder="微信二维码" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" value="选择图片" />';
+                                echo '<p class="description" id="site_contact_wechat_label">底部（微信）联系方式（图片链接</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" /></label><input type="text" name="'.$opt.'" placeholder="微信二维码" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
                             ?>
                         </td>
                     </tr>

@@ -115,8 +115,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="head-inside wow fadeInUp" data-wow-delay="0.15s" style="background:url(<?php //echo $catbg=cat_metabg($cat, get_option('site_bgimg')); ?>) center center /cover;">
-                                    <video src="<?php $video=get_option('site_about_video');echo $video; ?>" poster="<?php echo $video ? $video : cat_metabg($cat, get_option('site_bgimg')); ?>" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
+                                <?php
+                                    $video = replace_video_url(get_option('site_about_video'));
+                                ?>
+                                <div class="head-inside wow fadeInUp" data-wow-delay="0.15s" style="background:url(<?php echo !$video ? cat_metabg($cat, get_option('site_bgimg')) : false; ?>) center center /cover;">
+                                    <?php
+                                        if($video){
+                                            echo '<video src="'.$video.'" poster="'.$video.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>';
+                                        }
+                                    ?>
                                 </div>
                             </li>
                             <li class="intro_right">

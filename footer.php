@@ -226,11 +226,13 @@
               <ul class="footer-contact">
                 <h2>找到我</h2>
                 <li class="contactBox">
-                  <a href="<?php echo get_option('site_contact_weibo') ?>" target="_blank" rel="nofollow" aria-label="weibo">
-                    <span class="contact-icons" id="icon-weibo">
-                      <i class="icom"></i>
-                    </span>
-                  </a>
+                    <?php
+                        $weibo = get_option('site_contact_weibo');
+                        if($weibo){
+                            echo '<a href="'.$weibo.'" target="_blank" rel="nofollow" aria-label="weibo"><span class="contact-icons" id="icon-weibo"><i class="icom"></i></span></a>';
+                        }
+                    ?>
+                  
                   <a href="<?php echo get_option('site_contact_music') ?>" target="_blank" rel="nofollow" aria-label="music">
                     <span class="contact-icons" id="icon-netease">
                       <i class="BBFontIcons"></i>

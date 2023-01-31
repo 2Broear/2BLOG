@@ -1,6 +1,6 @@
 <?php
     define('WP_USE_THEMES', false);  // No need for the template engine
-    require_once( '../../../../wp-load.php' );  // Load WordPress Core 
+    require_once($_SERVER['DOCUMENT_ROOT'].'/wp-load.php');  // Load WordPress Core 
     parse_str($_SERVER['QUERY_STRING'], $parameters);
     global $post;
     $pid = array_key_exists('pid',$parameters) ? $parameters['pid'] : 1;

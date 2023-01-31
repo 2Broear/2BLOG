@@ -55,11 +55,17 @@
                                 		    scrollY: 0,
                                 		    backgroundColor: null
                                 	    }).then(canvas => {
-                                			let baseUrl = canvas.toDataURL("image/png"),
-                                				newImg = document.createElement("img"),
-                                				imgDom = '<img src="'+baseUrl+'" />';
-                                			newImg.src = baseUrl;
-                                			document.getElementById('poster').innerHTML+=imgDom;
+                                	        const newImg = document.createElement("img");
+                                            canvas.toBlob(function(blob){
+                                    			let baseUrl = URL.createObjectURL(blob),
+                                    				imgDom = '<img src="'+baseUrl+'" />';
+                                    			newImg.src = baseUrl;
+                                    			document.getElementById('poster').innerHTML+=imgDom;
+                                            },"image/png",1);
+                                // 			let baseUrl = canvas.toDataURL("image/png"),
+                                // 				imgDom = '<img src="'+baseUrl+'" />';
+                                // 			newImg.src = baseUrl;
+                                // 			document.getElementById('poster').innerHTML+=imgDom;
                                             _tp.classList.remove("disabled");  // remove click restrict
                                 		});
                                 		clearTimeout(delay_h2c);

@@ -329,9 +329,9 @@
                 ?>
             </select>
             <?php
-                $news_temp = !get_template_bind_cat('category-news.php')->errors ? get_template_bind_cat('category-news.php') : false;
-                $note_temp = !get_template_bind_cat('category-notes.php')->errors ? get_template_bind_cat('category-notes.php') : false;
-                $blog_temp = !get_template_bind_cat('category-weblog.php')->errors ? get_template_bind_cat('category-weblog.php') : false;
+                $news_temp = get_cat_by_template('news');
+                $note_temp = get_cat_by_template('notes');
+                $blog_temp = get_cat_by_template('weblog');
                 $async_sw = get_option('site_async_switcher');
                 $async_loads = $async_sw ? get_option("site_async_archive", 99) : 999;
                 // https://wordpress.stackexchange.com/questions/46136/archive-by-year
