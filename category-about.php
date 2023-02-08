@@ -25,7 +25,7 @@
             background: rgb(51 164 116 / 6%);
         }
         .about_blocks li.intro_right .mbit:before{
-            right: 2%;
+            right: 8%;
         }
         .about_blocks{
             margin-top: 15px;
@@ -105,8 +105,14 @@
                                     <div class="user_info">
                                         <span id="head-photo">
                                             <?php
-                                                // global $lazysrc; // $lazyload = get_option('site_lazyload_switcher');
-                                                echo '<img '.$lazysrc.'="'.get_option('site_avatar').'" alt="avatar" />';
+                                                global $lazysrc,$loadimg; // $lazyload = get_option('site_lazyload_switcher');
+                                                $lazyhold = "";
+                                                $avatar = get_option('site_avatar');
+                                                if($lazysrc!='src'){
+                                                    $lazyhold = 'data-src="'.$avatar.'"';
+                                                    $avatar = $loadimg;
+                                                }
+                                                echo '<img '.$lazyhold.' src="'.$avatar.'" alt="avatar" />';
                                             ?>
                                         </span>
                                         <div class="intro_info">

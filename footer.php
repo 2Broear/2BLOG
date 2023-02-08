@@ -452,6 +452,98 @@
         document.body.className = getCookie('theme_mode');  //change apperance after cookie updated
     };
 </script>
+<?php
+    if(get_option('site_video_capture_switcher')){
+        $ffmpeg_sw_gif = get_option('site_video_capture_gif');
+?>
+        <style>
+            video{object-fit: initial;}
+            .wp-block-video.hide_preview:before,.wp-block-video.hide_preview .preview_bg{content:"";display:none}
+            .wp-block-video.previews:before{content:'';width:100%;height:50%;backdrop-filter:blur(10px);position:absolute;top:0;left:0;z-index:1;background:-webkit-linear-gradient(90deg,rgb(255 255 255 / 0%) 0%, rgb(0 0 0 / 25%) 100%);background:linear-gradient(0deg,rgb(255 255 255 / 0%) 0%, rgb(0 0 0 / 25%) 100%);}
+            .wp-block-video.previews{cursor: e-resize;}
+            .wp-block-video.hide_preview{cursor: default;}
+            .wp-block-video{position:relative;overflow:hidden;display:inline-block;border-radius:10px}
+            .wp-block-video.previews .preview_bg{z-index:1;opacity:1;top:25%;pointer-events:none;}
+            .preview_bg .progress{width:32%;height:3px;background:white;border:1px solid black;border-radius:15px;position:absolute;bottom:10%;left:50%;transform:translate(-50%,-50%);overflow:hidden}
+            .preview_bg .progress em.pause_move{transform:translateX(0%)!important}
+            .preview_bg .progress em{width:100%;height:100%;background:var(--theme-color);position:inherit;top:1px;left:0;transform:translateX(-100%);will-change:transform}
+            .preview_bg{cursor:crosshair;position:absolute;left:50%;transform:translate(-50%,-50%);border-radius:10px;z-index:-1;opacity:0;transition:opacity .35s ease-in;width:90%;height:35%;top:20%;/*transition:top 1s ease;width:88%;height:58%;top:38%!important;*/}
+        </style>
+        <script>
+            const videos = document.querySelectorAll('video');
+            if(videos[0]){
+                for(let i=0;i<videos.length;i++){
+                    let video = videos[i];
+                    if(!video.autoplay){
+                        let video_src = video.src,
+                            video_box = video.parentNode,
+                            video_dir = video_src.lastIndexOf('/')+1,
+                            video_url = video_src.substr(0, video_dir),
+                            video_title = video_src.substr(video_dir, video_src.length),
+                            video_name = video_title.substr(0, video_title.lastIndexOf('.')),
+                            video_path = video_url+video_name+"/"+video_name,
+                            // video_width = video_box.offsetWidth,
+                            video_gif = video_path+'.gif',
+                            video_timer = null;
+                        video.addEventListener('canplay', function () {
+                            video = video_box.querySelector('video'); // canplay 内需重新声明 video，否则修改后无法应用到dom
+                            <?php 
+                                // if($ffmpeg_sw_gif){
+                            ?>
+                                    // let gifWidth = video.videoWidth/2,  //预置gif预览宽度 this.videoWidth/2
+                                    //     boxWidth = video_box.offsetWidth;
+                                    // // 仅当预览gif宽度小于视频盒子宽度时设置视频宽高，防止 poster 缩小视频宽高
+                                    // if(gifWidth<boxWidth){
+                                    //     video.width = boxWidth;//this.videoWidth;
+                                    //     video.height = video_box.offsetHeight;//this.videoHeight;
+                                    // }
+                            <?php
+                                // }
+                            ?>
+                            video.onplaying=()=>{
+                                video_box.classList.add('hide_preview');
+                            }
+                            video.onpause=()=>{
+                                video_box.classList.remove('hide_preview');
+                            }
+                        });
+                        video_box.innerHTML += `<div class="preview_bg"<?php echo $ffmpeg_sw_gif ? ' data-previews="${video_gif}"' : false; ?> style="background:url(${video_path}.jpg) no-repeat 0% 0% /cover"><span class="progress"><em></em></span></div>`;
+                        const preview_bg = video_box.querySelector('.preview_bg'),
+                              preview_gif = preview_bg.dataset.previews,
+                              preview_pg = video_box.querySelector('.progress em');
+                        video_box.onmousemove=function(e){
+                            var _this = this,
+                                video = _this.querySelector("video"),  //update video dom
+                                video_offset = e.offsetX,
+                                video_width = video_box.offsetWidth;  //always update videoBox width
+                            return (function(){
+                                if(video_timer==null){
+                                    <?php echo $ffmpeg_sw_gif ? 'video.poster!=video_gif&&preview_gif ? video.poster=preview_gif : false;' : false; ?>
+                                    _this.classList.add('previews');
+                                    video_timer = setTimeout(function(){
+                                        // e.stopPropagation(); //e.preventDefault(); 
+                                        let percentage = (Math.round(video_offset/video_width*10000)/100).toFixed(0),
+                                            progressOffset = -100+Number(percentage); //-100+Number(percentage)
+                                        preview_bg.style.backgroundPosition = percentage+"% 0%";
+                                        preview_pg.style.transform = 'translateX('+progressOffset+'%)';
+                                        // console.log(percentage);
+                                        Number(percentage)>=100 ? preview_pg.classList.add('pause_move') : preview_pg.classList.remove('pause_move');
+                                        _this.onmouseleave = function(){
+                                            this.classList.remove("previews");
+                                            preview_pg.style.transform = "";
+                                        }
+                                        video_timer = null;  //消除定时器
+                                    }, 10);
+                                }
+                            })();
+                        };
+                    }
+                }
+            }
+        </script>
+<?php
+    }
+?>
 <?php 
     if(get_option('site_logo_switcher')){
 ?>

@@ -80,10 +80,15 @@ jQuery(document).ready(function($){
 
 // ***  ROW JAVASCRIPT FUNCTIONs (AFTER DOCUMENT LOADED) *** //
 
-    var switch_tab = document.querySelector(".switchTab"),
-        blog_settings = document.querySelector(".wrap.settings"),
-        scroll_record = 0;
+    const switch_tab = document.querySelector(".switchTab"),
+          blog_settings = document.querySelector(".wrap.settings"),
+          theme_root = document.querySelector(":root"),
+          theme_picker = document.querySelector("input[type=color]");
+    var scroll_record = 0;
     if(blog_settings){
+        theme_picker.onchange = theme_picker.oninput=function(){  //onchange/onpropertychange only active when off-focus
+            theme_root.style.setProperty("--panel-theme", this.value);
+        };
         // 多选框同步逻辑
         const checkboxes = document.querySelectorAll('.checkbox');
         for(let i=0;i<checkboxes.length;i++){

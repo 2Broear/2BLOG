@@ -23,8 +23,8 @@
             video.setAttribute('preload', 'auto'); // auto|metadata|none
             video.addEventListener('loadeddata', function(){
                 const canvas = document.createElement('canvas'),
-                      width = video.videoWidth/1.5, //width = video.width,
-                      height = video.videoHeight/1.5; //height = video.height;
+                      width = video.videoWidth, ///1.5width = video.width,
+                      height = video.videoHeight; ///1.5height = video.height;
                 canvas.width = width;
                 canvas.height = height;
                 canvas.getContext('2d').drawImage(video, 0, 0, width, height); // 绘制 canvas
@@ -239,7 +239,7 @@
                 };
                 for(let i=0;i<max;i++){
                     const each_index = document.querySelector('#title-'+i),
-                          each_offset = each_index.offsetTop+300;
+                          each_offset = each_index ? each_index.offsetTop+300 : false;
                     // each_index.setAttribute('data-offset',each_index.offsetTop);
                     aindexOffset.push(new Constructor(i, each_offset));
                 }

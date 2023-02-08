@@ -1,4 +1,94 @@
 <?php 
+ // Automatic-Generate images captures(jpg/gif) while uploading a video file.(whether uploading inside the article)
+    if(get_option('site_video_capture_switcher')){
+        $execmd = ['shell_exec','system','exec'];
+        $shell = false;
+        foreach($execmd as $cmd){
+            if(function_exists($cmd)){
+                $shell = $cmd;
+            }
+        }
+        if($shell){
+            // https://wp-kama.com/hook/wp_embed_handler_video
+            function add_video_attachment_capture($attachment_ID){
+                global $current_user, $shell;
+                get_currentuserinfo();
+                function ratio($a, $b){
+                    $gcd = function($a, $b) use (&$gcd) {
+                        return ($a % $b) ? $gcd($b, $a % $b) : $b;
+                    };
+                    $g = $gcd($a, $b);
+                    return $a/$g . ':' . $b/$g;
+                };
+                $file = get_post($attachment_ID); // get_post_mime_type($attachment_ID);
+                // DO WHAT YOU NEED 
+                $fileURI = get_attached_file($attachment_ID); // wp_get_upload_dir()["basedir"]
+                $dirURI = substr($fileURI, 0, strrpos($fileURI,'/')); //wp_upload_dir()["path"];
+                $fileName = $file->post_title;
+                $filePath = $dirURI.'/'.$fileName;// with file-name
+                preg_match('/video\/.+/', $file->post_mime_type, $vdo_upload);
+                //attachment_url_to_postid($file->guid)// get_post_like_slug($fileName)
+                if (array_key_exists(0,$vdo_upload)) {
+                    $fileWidth = $shell("ffmpeg -i ".$fileURI." 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}' | cut -d'x' -f1");
+                    $fileHeight = $shell("ffmpeg -i ".$fileURI." 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}' | cut -d'x' -f2");
+                    $file_ratio = ratio($fileWidth,$fileHeight);
+                    $preset_ratio = '16:9';
+                    $calcH = $fileHeight;
+                    $calcW = $fileWidth;
+                    if($file_ratio!=$preset_ratio){
+                        list($scaleW, $scaleH) = explode(':', $preset_ratio);
+                        if($fileHeight < $fileWidth){
+                            $calcW = round($fileHeight / $scaleH * $scaleW); //根据高计算比例宽
+                        }else{
+                            $calcH = round($fileWidth / $scaleW * $scaleH); //根据宽计算比例高
+                        }
+                    }
+                    mkdir($filePath, 0777);
+                    $savePath = $filePath.'/'.$fileName;
+                    file_put_contents($savePath.'.json', json_encode($file, JSON_UNESCAPED_SLASHES + JSON_PRETTY_PRINT));
+                    // file_put_contents($savePath.'.txt', substr($fileURI, 0, strrpos($fileURI,'/')+1));
+                    $fileList = glob($savePath.'*.jpeg');
+                    // USE FFMPEG CAPTURE
+                    if(count($fileList)<=0){
+                        $shell('ffmpeg -i '.$fileURI.' -vf "scale='.$calcW.':'.$calcH.',setdar=16:9" -r 0.25 -f image2 "'.$savePath.'_%2d.jpeg"');
+                        $fileList = glob($savePath.'*.jpeg');
+                        $shell('ffmpeg -i '.$savePath.'_%2d.jpeg -filter_complex "scale=iw:-1,tile='.count($fileList).'x1" "'.$savePath.'.jpg"');
+                        $shell('ffmpeg -r 1 -f image2 -i '.$savePath.'_%2d.jpeg -vf "scale=iw/2:-1" '.$savePath.'.gif');
+                    }
+                }
+            }
+            add_action("add_attachment", 'add_video_attachment_capture');
+            function delete_video_attachment_capture($attachment_ID){
+                $attachment_file = get_post($attachment_ID);
+                preg_match('/video\/.+/', $attachment_file->post_mime_type, $vdo_upload);
+                if (!array_key_exists(0,$vdo_upload)) {
+                    return;
+                }else{
+                    $fileURI = get_attached_file($attachment_ID); // wp_get_upload_dir()["basedir"]
+                    $dirURI = substr($fileURI, 0, strrpos($fileURI,'/')); //wp_upload_dir()["path"];
+                    $fileName = $attachment_file->post_title;
+                    $filePath = $dirURI.'/'.$fileName;
+                    // https://zhuanlan.zhihu.com/p/557484268
+                    if(is_dir($filePath)){
+                        $p = scandir($filePath);
+                        foreach($p as $val){
+                            if($val !="." && $val !=".."){
+                                if(is_dir($filePath.'/'.$val)){
+                                    deldir($filePath.'/'.$val);
+                                    // @rmdir($filePath.'/'.$val);
+                                }else{
+                                    unlink($filePath.'/'.$val);
+                                }
+                            }
+                        }
+                    }
+                    @rmdir($filePath);
+                }
+            }
+            add_action("delete_attachment", 'delete_video_attachment_capture');
+        }
+    }
+    
     // Ajax Data Loads
     function ajaxCallAcg(){
         $cid = $_POST['cid'];
@@ -95,6 +185,22 @@
     // }
     // add_action( 'add_attachment', 'wpa59168_rename_attachment' );
     
+    //关闭图片上传自动裁剪
+    if(get_option('site_imgcrop_switcher')){
+        // https://wordpress.stackexchange.com/questions/126718/disabling-auto-resizing-of-uploaded-images
+        function remove_image_sizes( $sizes, $metadata ) {
+            return [];
+        }
+        add_filter('intermediate_image_sizes_advanced', 'remove_image_sizes', 10, 2);
+        // update_option('thumbnail_crop', '');
+        // update_option('thumbnail_size_w', 0);
+        // update_option('thumbnail_size_h', 0);
+        // update_option('medium_size_w', 0);
+        // update_option('medium_size_h', 0);
+        // update_option('large_size_w', 0);
+        // update_option('large_size_h', 0);
+        // update_option('medium_large_size_w', 0);
+    }
     //禁用远程管理文件 xmlrpc.php 防爆破
     if(get_option('site_xmlrpc_switcher')){
         add_filter('xmlrpc_enabled', '__return_false');
@@ -393,16 +499,23 @@
         if(is_single() && preg_match_all('/<h([2-6]).*?\>(.*?)<\/h[2-6]>/is', $content, $matches) && get_option('site_indexes_switcher')) {
             $match_h = $matches[1];
             $match_m = count($match_h);
-            global $ul_li;
+            // set unique_title for the completely same h-tag
+            // $match_str = ''; //$match_arr = [];
+            // for($i=0;$i<$match_m;$i++){
+            //     $match_str.=' ['.trim(strip_tags($matches[2][$i])).'] '; // array_push($match_arr, trim(strip_tags($matches[2][$i])));
+            // }
+            $ul_li = '';
             for($i=0;$i<$match_m;$i++){
                 $value = $match_h[$i];
                 $title = trim(strip_tags($matches[2][$i]));
-                $content = str_replace($matches[0][$i], '<a href="javascript:;" id="title-'.$i.'" class="index_anchor" aria-label="anchor"></a><h'.$value.' id="title_'.$i.'">'.$title.'</h2>', $content);
+                // if(substr_count($match_str, '['.$title.']')>=2){
+                //     $title = trim(strip_tags($matches[2][substr($i,0)])).'_';
+                //     // echo trim(strip_tags($matches[2][$i]));
+                // }
+                $content = str_replace($matches[0][$i], '<a href="javascript:;" id="title-'.$i.'" class="index_anchor" aria-label="anchor"></a><h'.$value.' id="title_'.$i.'">'.$title.'</h'.$value.'>', $content);
+                // $content = preg_replace('/<h(\d)>(.+)(<\/h\d>)/i', "<a href='javascript:;' id='title-$i' class='index_anchor' aria-label='anchor'></a><h\${1} id='title_$i'>\${2}\${3}", $content);
                 $value = $match_h[$i];
                 $pre_val = array_key_exists($i-1,$match_h) ? $match_h[$i-1] : 9;
-                // for($j=0;$j<$i;$j++){
-                //     echo 'h'.$match_h[$j-1].' , ';
-                // }
                 $ul_li .= $value>$pre_val || $value>=3 ? '<li class="child" id="t'.$i.'"><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a></li>' : '<li id="t'.$i.'"><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a></li>';
                 // $ul_li .= '<li><a href="#title-'.$i.'" title="'.$title.'">'.$title.'</a>'.$child.'</li>';
             }
@@ -841,9 +954,10 @@
         $lazysrc = 'data-src';
         add_filter('the_content', 'lazyload_images', 10);  // 设置 priority 低于 custom_cdn_src
         function lazyload_images($content){
-            // return str_replace('src="', 'data-src="', $content);
             return preg_replace('/\<img(.*)src=("[^"]*")/i', '<img $1 data-src=$2', $content);
         }
+        // replace comments images url
+        add_filter('comment_text' , 'lazyload_images', 20, 2);
     }
     
     //友情链接函数

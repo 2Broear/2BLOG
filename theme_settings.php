@@ -547,6 +547,8 @@
             // register_setting( 'baw-settings-group', 'site_cdn_vid_sw' );
             register_setting( 'baw-settings-group', 'site_cdn_vdo_includes' );
         // }
+        register_setting( 'baw-settings-group', 'site_video_capture_switcher' );
+            register_setting( 'baw-settings-group', 'site_video_capture_gif' );
         register_setting( 'baw-settings-group', 'site_darkmode_switcher' );
         // if(get_option('site_darkmode_switcher')){
             register_setting( 'baw-settings-group', 'site_darkmode_start' );
@@ -603,6 +605,7 @@
         // }
         register_setting( 'baw-settings-group', 'site_wpmail_switcher' );
         register_setting( 'baw-settings-group', 'site_xmlrpc_switcher' );
+        register_setting( 'baw-settings-group', 'site_imgcrop_switcher' );
         
         register_setting( 'baw-settings-group', 'site_rss_categories' );
         register_setting( 'baw-settings-group', 'site_map_switcher' );
@@ -680,9 +683,9 @@
             }
         }
     }
+    $theme_color = get_option('site_theme','#eb6844');
     function add_options_submenu() {
-        $theme_color = get_option('site_theme','#eb6844');
-        global $cats;
+        global $cats,$theme_color;
         $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
         $cats_haschild = array();
         $cats_seclevel = array();
@@ -694,10 +697,13 @@
 ?>
     <div class="wrap settings">
         <style>
-        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 50%, currentColor 250%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 50%, currentColor 250%)}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:188px;height:18px;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:<?php echo $theme_color; ?>}.form-table tr:hover > th sup{color:<?php echo $theme_color; ?>}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:<?php echo $theme_color; ?>}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid <?php echo $theme_color; ?>!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
-            .upload_button:focus,.upload_button:hover{background:<?php echo $theme_color; ?>!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px <?php echo $theme_color; ?>!important;border-color:transparent!important;}.upload_button.multi{background:purple;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
+            :root{
+                --panel-theme: <?php echo $theme_color; ?>;
+            }
+        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 50%, currentColor 250%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 50%, currentColor 250%)}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:233px;height:18px;cursor:pointer;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme)}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text-disabled{display:none;}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:var(--panel-theme)}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+            .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{background:purple;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;color: white;font-size: smaller;text-align: center;background: rgb(0 0 0 / 52%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius:5px;position:relative;overflow:hidden;}
-            .formtable{display:none;}.formtable.show{display:block;}.switchTab.fixed{position: fixed;width: 100%;background: rgb(255 255 255 / 75%);top: 32px;left:0;z-index: 9;padding:10px 0;padding-left:160px;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}.switchTab{transition: top .35s ease;top: -32px;padding: 0;}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:<?php echo $theme_color; ?>;background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px <?php echo $theme_color; ?>}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:<?php echo $theme_color; ?>;box-shadow:0 0 0 2px #fff, 0 0 0 3px <?php echo $theme_color; ?>;}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:0;border-radius:25px}.switchTab li b{font-size:initial;display:block;text-shadow:1px 1px 0 white;font-style:normal}
+            .formtable{display:none;}.formtable.show{display:block;}.switchTab.fixed{position: fixed;width: 100%;background: rgb(255 255 255 / 75%);top: 32px;left:0;z-index: 9;padding:10px 0;padding-left:160px;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}.switchTab{transition: top .35s ease;top: -32px;padding: 0;}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:var(--panel-theme);background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:0;border-radius:25px}.switchTab li b{font-size:initial;display:block;text-shadow:1px 1px 0 white;font-style:normal}
             .smtp{margin-left:10px;vertical-align:middle;}
             #loading.responsed{-webkit-animation-duration:.35s!important;animation-duration:.35s!important;}
             #loading.responsing{-webkit-animation:rotateloop .5s infinite linear;animation:rotateloop .5s infinite linear}
@@ -736,7 +742,7 @@
             <?php settings_fields( 'baw-settings-group' ); // 设置字段 这个函数取代了 nonce magic, action field, and page_options ?>
             <?php do_settings_sections( 'baw-settings-group' ); // 这个函数取代了表单字段标记形式本身 ?>
             <div class="formtable basic">
-                <h1><b class="num" style="border-color:#eb6844;box-shadow:-5px -5px 0 rgb(235 104 68 / 18%);">01</b>基本信息<p class="en">BASICALLY INFOMATION</p></h1>
+                <h1><b class="num" style="border-color:var(--panel-theme);box-shadow:-5px -5px 0 rgb(155 155 155 / 18%);">01</b>基本信息<p class="en">BASICALLY INFOMATION</p></h1>
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row">博主昵称</th>
@@ -802,7 +808,7 @@
                                 $value = get_option($opt);
                                 $preset = "#eb6844";
                                 if(!$value) update_option($opt, $preset);else $preset=$value;
-                                echo '<label for="'.$opt.'"><p class="description" id="site_theme_label">此选项将重写网站主题色及后台高亮色（默认 #eb6844</p><input type="color" name="'.$opt.'" id="'.$opt.'" value="' . $preset . '"/></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_theme_label">此选项将重写网站主题色及后台设置高亮，即时生效（默认 #eb6844</p><input type="color" name="'.$opt.'" id="'.$opt.'" value="' . $preset . '"/></label>';
                             ?>
                         </td>
                     </tr>
@@ -956,8 +962,17 @@
                                             $value = $preset;
                                         }
                                         echo '<p class="description" id="site_search_includes_label">指定搜索包含内容，使用逗号“ , ”分隔（默认 post 类型，可选 page（页面）及自定义选填类型</p><div class="checkbox">';
+                                        $pre_array = explode(',',trim($value));  // NO "," Array
                                         foreach ($options as $option){
-                                            $checking = strpos($value, $option)!==false ? 'checked' : '';
+                                            // $checking = strpos($value, $option)!==false ? 'checked' : '';
+                                            $each_matched = false;
+                                            for($i=0;$i<count($pre_array);$i++){
+                                                $arr = trim($pre_array[$i]);  // NO WhiteSpace
+                                                if($arr){
+                                                    $arr==$option ? $each_matched=true : false;
+                                                }
+                                            };
+                                            $checking = $each_matched ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
                                         }
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
@@ -989,7 +1004,7 @@
                         // if(get_option('site_indexes_switcher')){
                     ?>
                             <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_indexes_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">索引目录分类（多选项）</th>
+                                <th scope="row">索引目录分类（多选）</th>
                                 <td>
                                     <?php
                                         $opt = 'site_indexes_includes';  //unique str
@@ -1012,10 +1027,19 @@
                                                 update_option($opt, $preset);
                                                 $value = $preset;
                                             }
-                                            foreach ($arrobj as $arr){
-                                                $slug = $arr['slug'];
-                                                $checking = strpos($value, $slug)!==false ? 'checked' : '';
-                                                echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$arr['name'].'</label>';
+                                            $pre_array = explode(',',trim($value));  // NO "," Array
+                                            foreach ($arrobj as $array){
+                                                $slug = $array['slug'];
+                                                // $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                                $each_matched = false;
+                                                for($i=0;$i<count($pre_array);$i++){
+                                                    $arr = trim($pre_array[$i]);  // NO WhiteSpace
+                                                    if($arr){
+                                                        $arr==$slug ? $each_matched=true : false;
+                                                    }
+                                                };
+                                                $checking = $each_matched ? 'checked' : '';
+                                                echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$array['name'].'</label>';
                                             }
                                             echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
                                         }else{
@@ -1113,9 +1137,18 @@
                                         //     $value = $preset;
                                         // }
                                         echo '<p class="description" id="site_metanav_array_label">需要应用元导航样式的分类别名，使用逗号“ , ”分隔（仅输出存在子分类的一级分类</p><div class="checkbox">';
+                                        $pre_array = explode(',',trim($value));  // NO "," Array
                                         foreach ($cats_seclevel as $option){
                                             $slug = $option->slug;
-                                            $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                            // $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                            $each_matched = false;
+                                            for($i=0;$i<count($pre_array);$i++){
+                                                $arr = trim($pre_array[$i]);  // NO WhiteSpace
+                                                if($arr){
+                                                    $arr==$slug ? $each_matched=true : false;
+                                                }
+                                            };
+                                            $checking = $each_matched ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$option->name.'</label>';
                                         }
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
@@ -1130,11 +1163,6 @@
                                         $value = get_option($opt);
                                         $enabled_array = explode(',',trim(get_option('site_metanav_array')));
                                         echo '<p class="description" id="site_metanav_image_label">需要使用背景图片的元分类导航，使用逗号“ , ”分隔（仅可选上方“基础元分类”中已启用分类，注slash“/”需手动写入</p><div class="checkbox">';
-                                        // foreach ($cats_seclevel as $option){
-                                        //     $slug = $option->slug;
-                                        //     $checking = strpos($value, $slug)!==false ? 'checked' : '';
-                                        //     echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$option->name.'</label>';
-                                        // }
                                         for($i=0;$i<count($enabled_array);$i++){
                                             $slug = trim($enabled_array[$i]);  // NO WhiteSpace
                                             if($slug){
@@ -1145,7 +1173,7 @@
                                                 }
                                             }
                                         }
-                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text array-text-disabled" value="' . $value . '"/></div>';
                                     ?>
                                 </td>
                             </tr>
@@ -1190,9 +1218,18 @@
                                     if($the_cat->count>=1) array_push($options, $the_cat);  // has-content category only
                                 }
                                 echo '<p class="description" id="site_rss_categories_label">指定站点 RSS 分类文章，使用逗号“ , ”分隔（feed将在任意文章更新后更新</p><div class="checkbox">';
+                                $pre_array = explode(',',trim($value));  // NO "," Array
                                 foreach ($options as $option){
                                     $slug = $option->slug;
-                                    $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                    // $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                    $each_matched = false;
+                                    for($i=0;$i<count($pre_array);$i++){
+                                        $arr = trim($pre_array[$i]);  // NO WhiteSpace
+                                        if($arr){
+                                            $arr==$slug ? $each_matched=true : false;
+                                        }
+                                    };
+                                    $checking = $each_matched ? 'checked' : '';
                                     echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$option->name.'</label>';
                                 }
                                 echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '" placeholder="默认所有分类" /></div>';;
@@ -1233,8 +1270,17 @@
                                             $value = $preset_str;
                                         }
                                         echo '<p class="description" id="site_map_includes_label">指定 sitemap 生成内容，使用逗号“ , ”分隔（默认 post（文章）tag（标签）category（分类/<del>即 page（页面）</del>）</p><div class="checkbox">';
+                                        $pre_array = explode(',',trim($value));  // NO "," Array
                                         foreach ($options as $option){
-                                            $checking = strpos($value, $option)!==false ? 'checked' : '';
+                                            // $checking = strpos($value, $option)!==false ? 'checked' : '';
+                                            $each_matched = false;
+                                            for($i=0;$i<count($pre_array);$i++){
+                                                $arr = trim($pre_array[$i]);  // NO WhiteSpace
+                                                if($arr){
+                                                    $arr==$option ? $each_matched=true : false;
+                                                }
+                                            };
+                                            $checking = $each_matched ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
                                         }
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
@@ -1348,11 +1394,20 @@
                                         $value = get_option($opt);
                                         $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
                                         $options = array('Article','Sidebar',get_cat_by_template('about'),get_cat_by_template('acg'),get_cat_by_template('guestbook'),get_cat_by_template('privacy'));
-                                        echo '<p class="description" id="site_map_includes_label">开启后使用上方图片cdn加速域名加速站内视频，主要用途小型文件，可按需选择（article：文章视频，sidebar：侧栏视频</p><div class="checkbox">';
+                                        echo '<p class="description" id="site_map_includes_label">开启后使用上方👆图片加速域名👆加速站内指定位置视频，常用于超小型文件（Article：文章视频，Sidebar：侧栏视频</p><div class="checkbox">';
+                                        $pre_array = explode(',',trim($value));  // NO "," Array
                                         foreach ($options as $option){
                                             $slug = $option->slug ? strtolower($option->slug) : strtolower($option);  
                                             $name = $option->name ? $option->name : $option;
-                                            $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                            // $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                            $each_matched = false;
+                                            for($i=0;$i<count($pre_array);$i++){
+                                                $arr = trim($pre_array[$i]);  // NO WhiteSpace
+                                                if($arr){
+                                                    $arr==$slug ? $each_matched=true : false;
+                                                }
+                                            };
+                                            $checking = $each_matched ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$name.'</label>';
                                         }
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '" placeholder="当前可选开启位置" /></div>';;
@@ -1363,12 +1418,32 @@
                         // }
                     ?>
                     <tr valign="top">
+                        <th scope="row">视频截图捕获（动态预览）</th>
+                        <td>
+                            <?php
+                                $opt = 'site_video_capture_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">上传视频文件时自动在存放文件同目录下生成动态截图，开启前上传的视频无效（⚠运行环境：服务端须提前安装<b> ffmpeg </b> 扩展，且开启 <b>exec、system、shell_exec</b> 函数其中之一，测试shell_exec无法解析大文件</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">开启片段预览</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_video_capture_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 截图 Gif 预览</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_video_capture_gif';
+                                        get_option($opt) ? $status="checked" : $status="closed";
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后上传视频时生成 gif 动图作用于视频海报（开启视频截图捕获后默认自动生成gif预览，此处仅控制 poster 属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">GIF预览</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <tr valign="top">
                         <th scope="row">Leancloud<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
                             <?php
                                 $opt = 'site_leancloud_switcher';
                                 get_option($opt) ? $status="checked" : $status="closed";
-                                echo '<label for="'.$opt.'"><p class="description" id="site_leancloud_switcher_label">使用第三方云数据库（Serverless）接管日记、友链、公告等数据内容（需在 leancloud 中新建 category-* 分类模板同名数据表，必填设置项均与第三方评论 valine 自动同步，开启后可单独控制 BaaS 页面数据开关</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:dodgerblue;" class="btn">LeanCloud</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_leancloud_switcher_label">使用第三方云数据库（Serverless）接管日记、友链、公告等数据内容（需在 leancloud 中新建对应分类 slug 名称的同名CLASS类，必填项与第三方评论 valine 自动同步，开启后可单独控制 BaaS 页面数据开关</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:dodgerblue;" class="btn">LeanCloud</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1478,7 +1553,7 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">第三方评论系统<sup class="dualdata dynamic_comment"> <?php $third_comment=get_option('site_third_comments');if($third_comment=='Valine'){echo 'Valine';}elseif($third_comment=='Twikoo'){echo 'Twikoo';}else{echo 'BaaS';} ?></sup></th>
+                        <th scope="row">评论系统<sup class="dualdata dynamic_comment"> <?php $third_comment=get_option('site_third_comments');echo $third_comment ? $third_comment : 'WordPress';//if($third_comment=='Valine'){echo 'Valine';}elseif($third_comment=='Twikoo'){echo 'Twikoo';}else{echo 'BaaS';} ?></sup></th>
                         <td>
                             <?php
                                 $opt = 'site_third_comments';
@@ -1488,7 +1563,7 @@
                                     // array('name'=>'Waline', 'icon'=>custom_cdn_src('img',true).'/images/settings/alicloud.png'),
                                     array('name'=>'Twikoo'),
                                 );
-                                echo '<label for="'.$opt.'"><p class="description" id="">第三方评论系统（开启后需填配置项</p><select name="'.$opt.'" id="'.$opt.'" class="select_options"><option value="">请选择</option>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">可选第三方评论系统（开启后需填配置项</p><select name="'.$opt.'" id="'.$opt.'" class="select_options"><option value="">WordPress</option>';
                                     foreach ($arrobj as $arr){
                                         $name = $arr['name'];
                                         echo '<option value="'.$name.'"';if($value==$name)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
@@ -1540,7 +1615,7 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option <?php echo $valine_statu; ?>">
-                                <th scope="row">— ServerChan SendKey</th>
+                                <th scope="row">— ServerChan</th>
                                 <td>
                                     <?php
                                         $opt = 'site_comment_serverchan';
@@ -1549,7 +1624,7 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option <?php echo $valine_statu; ?>">
-                                <th scope="row">— PushPlus Token</th>
+                                <th scope="row">— PushPlus</th>
                                 <td>
                                     <?php
                                         $opt = 'site_comment_pushplus';
@@ -1740,6 +1815,16 @@
                                 $opt = 'site_xmlrpc_switcher';
                                 get_option($opt) ? $status="checked" : $status="closed";
                                 echo '<label for="'.$opt.'"><p class="description" id="">防止攻击者绕过 wordpress 登录限制消耗系统资源（禁用后将无法使用 wp 官方APP及相关接口</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Disable XML-RPC</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">禁用图片上传自动裁剪</th>
+                        <td>
+                            <?php
+                                $opt = 'site_imgcrop_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="">一般图片上传裁剪规则可在<a href="/wp-admin/options-media.php" target="_blank"> 媒体 </a>中修改</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">禁用图片裁剪</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2331,7 +2416,8 @@
                                 echo '<label for="'.$opt.'"><p class="description" id="">网站应用服务器（页尾图标</p><img src="'.$value.'" style="vertical-align: middle;max-width: 66px;margin:auto 15px;" /><select name="'.$opt.'" id="'.$opt.'" class="select_images"><option value="">请选择</option>';
                                     foreach ($arrobj as $arr){
                                         $icon = $arr['icon'];
-                                        echo '<option value="'.$icon.'"';if($value==$icon)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
+                                        $selected = $value==$icon ? 'selected="selected"' : false;
+                                        echo '<option value="'.$icon.'"'.$selected.'>'.$arr['name'].'</option>';
                                     }
                                 echo '</select></label>';
                             ?>
@@ -2368,15 +2454,24 @@
                             <?php
                                 $opt = 'site_bottom_nav';  //unique str
                                 $value = get_option($opt);
-                                $options = array('privacy');
+                                $options = array('privacy','archives');
                                 if(!$value){
                                     $preset_str = implode(',', $options).',';
                                     update_option($opt, $preset_str );
                                     $value = $preset_str;
                                 }
                                 echo '<p class="description" id="site_bottom_nav_label">底部右下角导航链接（使用逗号“ , ”分隔，可选填其他分类 slug 别名</p><div class="checkbox">';
+                                $pre_array = explode(',',trim($value));  // NO "," Array
                                 foreach ($options as $option){
-                                    $checking = strpos($value, $option)!==false ? 'checked' : '';
+                                    // $checking = strpos($value, $option)!==false ? 'checked' : '';
+                                    $each_matched = false;
+                                    for($i=0;$i<count($pre_array);$i++){
+                                        $arr = trim($pre_array[$i]);  // NO WhiteSpace
+                                        if($arr){
+                                            $arr==$option ? $each_matched=true : false;
+                                        }
+                                    };
+                                    $checking = $each_matched ? 'checked' : '';
                                     echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
                                 }
                                 echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
