@@ -941,7 +941,7 @@
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_search_style_switcher_label">搜索结果及标签内容展示列表样式，开启后将使用各页面数据列表样式（默认使用笔记栈列表样式</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>展示列表样式</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_search_style_switcher_label">搜索结果及标签内容展示列表样式，开启后将使用各页面数据列表样式（默认使用笔记栈列表样式</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>搜索列表样式</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1376,16 +1376,6 @@
                                     <input type="text" name="site_cdn_img" id="site_cdn_img" class="middle-text" placeholder="site_cdn_img" value="<?php echo get_option( 'site_cdn_img', '' ) ?>"/>
                                 </td>
                             </tr>
-                            <!--<tr valign="top" class="child_option dynamic_opts <?php echo $cdn; ?>">-->
-                            <!--    <th scope="row">— 开启视频加速</th>-->
-                            <!--    <td>-->
-                                    <?php
-                                        // $opt = 'site_cdn_vid_sw';
-                                        // get_option($opt) ? $status="checked" : $status="closed";
-                                        // echo '<label for="'.$opt.'"><p class="description" id="">开启后使用上方图片cdn加速域名加速站内视频（默认关闭</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">视频加速</b></label>';
-                                    ?>
-                            <!--    </td>-->
-                            <!--</tr>-->
                             <tr valign="top" class="child_option dynamic_opts <?php echo $cdn; ?>">
                                 <th scope="row">— 页面视频加速（多选）</th>
                                 <td>
@@ -1397,9 +1387,8 @@
                                         echo '<p class="description" id="site_map_includes_label">开启后使用上方👆图片加速域名👆加速站内指定位置视频，常用于超小型文件（Article：文章视频，Sidebar：侧栏视频</p><div class="checkbox">';
                                         $pre_array = explode(',',trim($value));  // NO "," Array
                                         foreach ($options as $option){
-                                            $slug = $option->slug ? strtolower($option->slug) : strtolower($option);  
-                                            $name = $option->name ? $option->name : $option;
-                                            // $checking = strpos($value, $slug)!==false ? 'checked' : '';
+                                            $slug = is_object($option)&&$option->slug ? strtolower($option->slug) : strtolower($option);  
+                                            $name = is_object($option)&&$option->name ? $option->name : $option;
                                             $each_matched = false;
                                             for($i=0;$i<count($pre_array);$i++){
                                                 $arr = trim($pre_array[$i]);  // NO WhiteSpace
@@ -1423,7 +1412,10 @@
                             <?php
                                 $opt = 'site_video_capture_switcher';
                                 get_option($opt) ? $status="checked" : $status="closed";
-                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">上传视频文件时自动在存放文件同目录下生成动态截图，开启前上传的视频无效（⚠运行环境：服务端须提前安装<b> ffmpeg </b> 扩展，且开启 <b>exec、system、shell_exec</b> 函数其中之一，测试shell_exec无法解析大文件</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">开启片段预览</b></label>';
+                                function funcStatus($func){
+                                    return function_exists($func) ? "<b style='color:green'>$func (已启用)</b>" : "<u style='color:red'>$func</u>";
+                                }
+                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">上传视频文件时自动在存放文件同目录下生成动态截图（此前上传的视频无效<br/>⚠后端环境：服务端须提前安装<b> ffmpeg </b> 扩展，并开启以下任一<b> php 函数</b>：'.funcStatus('exec').'、'.funcStatus('system').'、'.funcStatus('shell_exec').'，测试 shell_exec 暂时无法解析大文件<br/>⚠前端应用：视频元素不存在<b> autoplay </b>自动播放属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">视频片段预览</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1433,7 +1425,7 @@
                                     <?php
                                         $opt = 'site_video_capture_gif';
                                         get_option($opt) ? $status="checked" : $status="closed";
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后上传视频时生成 gif 动图作用于视频海报（开启视频截图捕获后默认自动生成gif预览，此处仅控制 poster 属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">GIF预览</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后上传视频时生成 gif 动图作用于视频海报（开启视频截图捕获后默认自动生成gif预览，此处仅控制 poster 属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">GIF动图</b></label>';
                                     ?>
                                 </td>
                             </tr>

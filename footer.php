@@ -412,23 +412,39 @@
                     eachimg.src = loadimg; //pre-holder
                     if(datasrc){
                         array_images.push(eachimg); //for-closure
-                        eachimg.getBoundingClientRect().top < window.innerHeight ? eachimg.src = datasrc : false;
-                        window.addEventListener('scroll', function(){
+                        // eachimg.getBoundingClientRect().top < window.innerHeight ? eachimg.src = datasrc : false;
+                        if(eachimg.getBoundingClientRect().top < window.innerHeight){
+                            eachimg.src = datasrc;
+                            array_images.splice(array_images.indexOf(eachimg), 1); //delete array_images[eachimg]
+                        }
+                        function scrollload(){
                             return (function(){
                                 if(timer_throttle==null){
                                     timer_throttle = setTimeout(function(){
-                                        // console.log(eachimg); //需重新传入array（单次）循环
-                                        for(let i=0;i<array_images.length;i++){
-                                            let eachimg = array_images[i];
-                                            if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight
-                                                eachimg.src = eachimg.dataset.src; // 即时更新 eachimg
+                                        let images_length = array_images.length;
+                                        if(images_length>=1){
+                                            for(let i=0;i<images_length;i++){
+                                                let eachimg = array_images[i];
+                                                if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight
+                                                    eachimg.src = eachimg.dataset.src; // 即时更新 eachimg
+                                                    let clear_delay = setTimeout(function(){
+                                                        array_images.splice(array_images.indexOf(eachimg), 1);// 清空已加载图片数组
+                                                        clearTimeout(clear_delay);
+                                                        clear_delay = null;
+                                                    }, 100);
+                                                }
                                             }
+                                            // console.log('throttling..',array_images);
+                                            timer_throttle = null;  //消除定时器
+                                        }else{
+                                            window.removeEventListener('scroll', scrollload, true);
+                                            // console.log('removed..');
                                         }
-                                        timer_throttle = null;  //消除定时器
-                                    }, 100, array_images);
+                                    }, 500, array_images); //重新传入array（单次）循环
                                 }
                             })();
-                        });
+                        }
+                        window.addEventListener('scroll', scrollload, true);
                     }
                 }
             }

@@ -23,37 +23,39 @@
                 $file = get_post($attachment_ID); // get_post_mime_type($attachment_ID);
                 // DO WHAT YOU NEED 
                 $fileURI = get_attached_file($attachment_ID); // wp_get_upload_dir()["basedir"]
-                $dirURI = substr($fileURI, 0, strrpos($fileURI,'/')); //wp_upload_dir()["path"];
-                $fileName = $file->post_title;
-                $filePath = $dirURI.'/'.$fileName;// with file-name
-                preg_match('/video\/.+/', $file->post_mime_type, $vdo_upload);
-                //attachment_url_to_postid($file->guid)// get_post_like_slug($fileName)
-                if (array_key_exists(0,$vdo_upload)) {
-                    $fileWidth = $shell("ffmpeg -i ".$fileURI." 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}' | cut -d'x' -f1");
-                    $fileHeight = $shell("ffmpeg -i ".$fileURI." 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}' | cut -d'x' -f2");
-                    $file_ratio = ratio($fileWidth,$fileHeight);
-                    $preset_ratio = '16:9';
-                    $calcH = $fileHeight;
-                    $calcW = $fileWidth;
-                    if($file_ratio!=$preset_ratio){
-                        list($scaleW, $scaleH) = explode(':', $preset_ratio);
-                        if($fileHeight < $fileWidth){
-                            $calcW = round($fileHeight / $scaleH * $scaleW); //根据高计算比例宽
-                        }else{
-                            $calcH = round($fileWidth / $scaleW * $scaleH); //根据宽计算比例高
+                if(file_exists($fileURI)){
+                    $dirURI = substr($fileURI, 0, strrpos($fileURI,'/')); //wp_upload_dir()["path"];
+                    $fileName = $file->post_title;
+                    $filePath = $dirURI.'/'.$fileName;// with file-name
+                    preg_match('/video\/.+/', $file->post_mime_type, $vdo_upload);
+                    //attachment_url_to_postid($file->guid)// get_post_like_slug($fileName)
+                    if (array_key_exists(0,$vdo_upload)) {
+                        $fileWidth = $shell("ffmpeg -i ".$fileURI." 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}' | cut -d'x' -f1");
+                        $fileHeight = $shell("ffmpeg -i ".$fileURI." 2>&1 | grep Video: | grep -Po '\d{3,5}x\d{3,5}' | cut -d'x' -f2");
+                        $file_ratio = ratio($fileWidth,$fileHeight);
+                        $preset_ratio = '16:9';
+                        $calcH = $fileHeight;
+                        $calcW = $fileWidth;
+                        if($file_ratio!=$preset_ratio){
+                            list($scaleW, $scaleH) = explode(':', $preset_ratio);
+                            if($fileHeight < $fileWidth){
+                                $calcW = round($fileHeight / $scaleH * $scaleW); //根据高计算比例宽
+                            }else{
+                                $calcH = round($fileWidth / $scaleW * $scaleH); //根据宽计算比例高
+                            }
                         }
-                    }
-                    mkdir($filePath, 0777);
-                    $savePath = $filePath.'/'.$fileName;
-                    file_put_contents($savePath.'.json', json_encode($file, JSON_UNESCAPED_SLASHES + JSON_PRETTY_PRINT));
-                    // file_put_contents($savePath.'.txt', substr($fileURI, 0, strrpos($fileURI,'/')+1));
-                    $fileList = glob($savePath.'*.jpeg');
-                    // USE FFMPEG CAPTURE
-                    if(count($fileList)<=0){
-                        $shell('ffmpeg -i '.$fileURI.' -vf "scale='.$calcW.':'.$calcH.',setdar=16:9" -r 0.25 -f image2 "'.$savePath.'_%2d.jpeg"');
+                        mkdir($filePath, 0777);
+                        $savePath = $filePath.'/'.$fileName;
+                        file_put_contents($savePath.'.json', json_encode($file, JSON_UNESCAPED_SLASHES + JSON_PRETTY_PRINT));
+                        // file_put_contents($savePath.'.txt', substr($fileURI, 0, strrpos($fileURI,'/')+1));
                         $fileList = glob($savePath.'*.jpeg');
-                        $shell('ffmpeg -i '.$savePath.'_%2d.jpeg -filter_complex "scale=iw:-1,tile='.count($fileList).'x1" "'.$savePath.'.jpg"');
-                        $shell('ffmpeg -r 1 -f image2 -i '.$savePath.'_%2d.jpeg -vf "scale=iw/2:-1" '.$savePath.'.gif');
+                        // USE FFMPEG CAPTURE
+                        if(count($fileList)<=0){
+                            $shell('ffmpeg -i '.$fileURI.' -vf "scale='.$calcW.':'.$calcH.',setdar=16:9" -r 0.25 -f image2 "'.$savePath.'_%2d.jpeg"');
+                            $fileList = glob($savePath.'*.jpeg');
+                            $shell('ffmpeg -i '.$savePath.'_%2d.jpeg -filter_complex "scale=iw:-1,tile='.count($fileList).'x1" "'.$savePath.'.jpg"');
+                            $shell('ffmpeg -r 1 -f image2 -i '.$savePath.'_%2d.jpeg -vf "scale=iw/2:-1" '.$savePath.'.gif');
+                        }
                     }
                 }
             }
@@ -65,24 +67,26 @@
                     return;
                 }else{
                     $fileURI = get_attached_file($attachment_ID); // wp_get_upload_dir()["basedir"]
-                    $dirURI = substr($fileURI, 0, strrpos($fileURI,'/')); //wp_upload_dir()["path"];
-                    $fileName = $attachment_file->post_title;
-                    $filePath = $dirURI.'/'.$fileName;
-                    // https://zhuanlan.zhihu.com/p/557484268
-                    if(is_dir($filePath)){
-                        $p = scandir($filePath);
-                        foreach($p as $val){
-                            if($val !="." && $val !=".."){
-                                if(is_dir($filePath.'/'.$val)){
-                                    deldir($filePath.'/'.$val);
-                                    // @rmdir($filePath.'/'.$val);
-                                }else{
-                                    unlink($filePath.'/'.$val);
+                    if(file_exists($fileURI)){
+                        $dirURI = substr($fileURI, 0, strrpos($fileURI,'/')); //wp_upload_dir()["path"];
+                        $fileName = $attachment_file->post_title;
+                        $filePath = $dirURI.'/'.$fileName;
+                        // https://zhuanlan.zhihu.com/p/557484268
+                        if(is_dir($filePath)){
+                            $p = scandir($filePath);
+                            foreach($p as $val){
+                                if($val !="." && $val !=".."){
+                                    if(is_dir($filePath.'/'.$val)){
+                                        deldir($filePath.'/'.$val);
+                                        // @rmdir($filePath.'/'.$val);
+                                    }else{
+                                        unlink($filePath.'/'.$val);
+                                    }
                                 }
                             }
                         }
+                        @rmdir($filePath);
                     }
-                    @rmdir($filePath);
                 }
             }
             add_action("delete_attachment", 'delete_video_attachment_capture');
@@ -157,6 +161,7 @@
     }
     add_action('wp_ajax_updateArchive', 'updateArchive');
     add_action('wp_ajax_nopriv_updateArchive', 'updateArchive');
+    
     
     function get_wpdb_yearly_pids($year=false, $limit=99, $offset=0){
         global $wpdb;

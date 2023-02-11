@@ -142,7 +142,7 @@
             const standbyimg = document.querySelectorAll(".friends-boxes .deals .inbox.standby img");
             if(standbyimg.length>=1){
                 for(let i=0;i<standbyimg.length;i++){
-                    standbyimg[i].src = "";
+                    standbyimg[i].removeAttribute('src');
                 }
             }
         </script>
