@@ -80,12 +80,12 @@
 <!-- siteJs-->
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <!-- pluginJs-->
-<!--<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/s2t.js"></script>-->
+<!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/s2t.js"></script>-->
 <!-- inHtmlJs -->
 <script src="<?php custom_cdn_src(); ?>/js/fancybox.umd.js"></script>
 <script>
     // 截取设置当前页面所有视频 poster 
-    setVideoPoster(2);
+    setupVideoPoster(2);
     // gallery js initiate 'bodyimg' already exists in footer lazyload, use contimg insted.
     const contimg = document.querySelectorAll(".news-article-container .content img");
     if(contimg.length>=1){

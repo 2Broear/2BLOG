@@ -216,12 +216,27 @@
 .friends-boxes .deals.rcmd .inbox{
     max-width: calc(100%/5.8);
 }
+
+.friends-boxes .deals .inbox:hover > .inbox-headside img{
+    border-radius: 0;
+}
+.friends-boxes .deals .inbox:hover > .inbox-headside{
+    display: inherit;
+    width: 100%;
+    position: absolute;
+    filter: opacity(.1) blur(15px) saturate(1.5);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
 .friends-boxes .deals .inbox:hover{
 	margin: 3px;
 	/*border: 2px dashed var(--theme-color);*/
 	border: 2px solid rgb(255 255 255 / 5%);
-	transform: scale(.9);
-	-webkit-transform: scale(.9);
+	transform: scale(.85);
+	-webkit-transform: scale(.85);
 	/* background-color: #fffafa;
 	box-shadow: rgb(0 0 0 / 12%) 0 0 18px; */
 }
@@ -320,6 +335,7 @@
 	border-top-left-radius: var(--radius);
 	transition: border-radius .15s ease;
 }
+
 .friends-boxes .deals .inbox span.ssl{
 	color: var(--preset-f);
 	font-size: 12px;

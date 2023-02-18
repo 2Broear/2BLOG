@@ -400,7 +400,52 @@
             const bodyimg = document.querySelectorAll("body img"),
                   loadimg = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png";
             var timer_throttle = null,
-                array_images = [];
+                array_images = [],
+                scrollload = function(){
+                    return (function(){
+                        if(timer_throttle==null){
+                            timer_throttle = setTimeout(function(){
+                                let images_length = array_images.length;
+                                if(images_length<=0){
+                                    window.removeEventListener('scroll', scrollload, true);
+                                    return;
+                                };
+                                for(let i=0;i<images_length;i++){
+                                    let eachimg = array_images[i];
+                                    if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight
+                                        eachimg.src = eachimg.dataset.src; // 即时更新 eachimg
+                                        let clear_delay = setTimeout(function(){
+                                            array_images.splice(array_images.indexOf(eachimg), 1);// 清空已加载图片数组
+                                            <?php
+                                                global $cat;
+                                                // $basecat = get_cat_by_template('acg');
+                                                $acgcid = get_cat_by_template('acg','term_id'); //$basecat->term_id;
+                                                if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
+                                            ?>
+                                                    // window.onload=function(){
+                                                        const acg = eachimg.parentNode.parentNode;
+                                                        if(!acg.classList.contains('inbox')){
+                                                            return;
+                                                        }
+                                                        let rgb = getAverageRGB(eachimg),
+                                                            rgba = rgb['r']+' '+rgb['g']+' '+rgb['b']+' / 50%';
+                                                        acg.setAttribute('style','background:rgb('+rgba+')');
+                                                    // }
+                                            <?php
+                                                }
+                                            ?>
+                                            clearTimeout(clear_delay);
+                                            clear_delay = null;
+                                        }, 100);
+                                    }
+                                };
+                                // console.log('throttling..',array_images);
+                                timer_throttle = null;  //消除定时器
+                            }, 500, array_images); //重新传入array（单次）循环
+                        }
+                    })();
+                    // console.log(array_images);
+                };
             if(bodyimg.length>=1){
                 for(let i=0;i<bodyimg.length;i++){
                     let eachimg = bodyimg[i],
@@ -416,33 +461,10 @@
                         if(eachimg.getBoundingClientRect().top < window.innerHeight){
                             eachimg.src = datasrc;
                             array_images.splice(array_images.indexOf(eachimg), 1); //delete array_images[eachimg]
-                        }
-                        function scrollload(){
-                            return (function(){
-                                if(timer_throttle==null){
-                                    timer_throttle = setTimeout(function(){
-                                        let images_length = array_images.length;
-                                        if(images_length>=1){
-                                            for(let i=0;i<images_length;i++){
-                                                let eachimg = array_images[i];
-                                                if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight
-                                                    eachimg.src = eachimg.dataset.src; // 即时更新 eachimg
-                                                    let clear_delay = setTimeout(function(){
-                                                        array_images.splice(array_images.indexOf(eachimg), 1);// 清空已加载图片数组
-                                                        clearTimeout(clear_delay);
-                                                        clear_delay = null;
-                                                    }, 100);
-                                                }
-                                            }
-                                            // console.log('throttling..',array_images);
-                                            timer_throttle = null;  //消除定时器
-                                        }else{
-                                            window.removeEventListener('scroll', scrollload, true);
-                                            // console.log('removed..');
-                                        }
-                                    }, 500, array_images); //重新传入array（单次）循环
-                                }
-                            })();
+                            // set color block
+                            // let rgb = getAverageRGB(eachimg),
+                            //     rgba = rgb['r']+' '+rgb['g']+' '+rgb['b']+' / 50%';
+                            // eachimg.parentNode.parentNode.setAttribute('style','background:rgb('+rgba+')');
                         }
                         window.addEventListener('scroll', scrollload, true);
                     }
@@ -474,16 +496,16 @@
 ?>
         <style>
             video{object-fit: initial;}
-            .wp-block-video.hide_preview:before,.wp-block-video.hide_preview .preview_bg{content:"";display:none}
-            .wp-block-video.previews:before{content:'';width:100%;height:50%;backdrop-filter:blur(10px);position:absolute;top:0;left:0;z-index:1;background:-webkit-linear-gradient(90deg,rgb(255 255 255 / 0%) 0%, rgb(0 0 0 / 25%) 100%);background:linear-gradient(0deg,rgb(255 255 255 / 0%) 0%, rgb(0 0 0 / 25%) 100%);}
-            .wp-block-video.previews{cursor: e-resize;}
-            .wp-block-video.hide_preview{cursor: default;}
-            .wp-block-video{position:relative;overflow:hidden;display:inline-block;border-radius:10px}
-            .wp-block-video.previews .preview_bg{z-index:1;opacity:1;top:25%;pointer-events:none;}
-            .preview_bg .progress{width:32%;height:3px;background:white;border:1px solid black;border-radius:15px;position:absolute;bottom:10%;left:50%;transform:translate(-50%,-50%);overflow:hidden}
+            .video_preview_hide:before,.video_preview_hide .preview_bg{content:"";display:none}
+            .video_previews:before{content:'';width:100%!important;height:50%;backdrop-filter:blur(10px);position:absolute!important;top:0!important;left:0!important;z-index:1;background:-webkit-linear-gradient(90deg,rgb(255 255 255 / 0%) 0%, rgb(0 0 0 / 25%) 100%);background:linear-gradient(0deg,rgb(255 255 255 / 0%) 0%, rgb(0 0 0 / 25%) 100%);}
+            .video_previews{cursor: e-resize;}
+            .video_preview_hide{cursor: default;}
+            .wp-block-video, .video_previews{position:relative;overflow:hidden;display:inline-block;border-radius:10px}
+            .video_previews .preview_bg{z-index:99!important;opacity:1!important;top:30%;pointer-events:none;}
+            .preview_bg .progress{width:32%;height:4px;background:white;border:1px solid black;border-radius:15px;position:absolute!important;bottom:10%;left:50%;transform:translate(-50%,-50%);overflow:hidden}
             .preview_bg .progress em.pause_move{transform:translateX(0%)!important}
-            .preview_bg .progress em{width:100%;height:100%;background:var(--theme-color);position:inherit;top:1px;left:0;transform:translateX(-100%);will-change:transform}
-            .preview_bg{cursor:crosshair;position:absolute;left:50%;transform:translate(-50%,-50%);border-radius:10px;z-index:-1;opacity:0;transition:opacity .35s ease-in;width:90%;height:35%;top:20%;/*transition:top 1s ease;width:88%;height:58%;top:38%!important;*/}
+            .preview_bg .progress em{width:100%;height:100%;background:var(--theme-color);position:inherit!important;top:1px;left:0;transform:translateX(-100%);will-change:transform}
+            .preview_bg{cursor:crosshair;position:absolute!important;left:50%;transform:translate(-50%,-50%);border-radius:10px!important;z-index:-1!important;opacity:0;transition:opacity .35s ease-in;width:90%;height:45%;top:20%;margin:auto!important;/*transition:top 1s ease;width:88%;height:58%;top:38%!important;*/}
         </style>
         <script>
             const videos = document.querySelectorAll('video');
@@ -517,10 +539,10 @@
                                 // }
                             ?>
                             video.onplaying=()=>{
-                                video_box.classList.add('hide_preview');
+                                video_box.classList.add('video_preview_hide');
                             }
                             video.onpause=()=>{
-                                video_box.classList.remove('hide_preview');
+                                video_box.classList.remove('video_preview_hide');
                             }
                         });
                         video_box.innerHTML += `<div class="preview_bg"<?php echo $ffmpeg_sw_gif ? ' data-previews="${video_gif}"' : false; ?> style="background:url(${video_path}.jpg) no-repeat 0% 0% /cover"><span class="progress"><em></em></span></div>`;
@@ -535,7 +557,7 @@
                             return (function(){
                                 if(video_timer==null){
                                     <?php echo $ffmpeg_sw_gif ? 'video.poster!=video_gif&&preview_gif ? video.poster=preview_gif : false;' : false; ?>
-                                    _this.classList.add('previews');
+                                    _this.classList.add('video_previews');
                                     video_timer = setTimeout(function(){
                                         // e.stopPropagation(); //e.preventDefault(); 
                                         let percentage = (Math.round(video_offset/video_width*10000)/100).toFixed(0),
@@ -545,7 +567,7 @@
                                         // console.log(percentage);
                                         Number(percentage)>=100 ? preview_pg.classList.add('pause_move') : preview_pg.classList.remove('pause_move');
                                         _this.onmouseleave = function(){
-                                            this.classList.remove("previews");
+                                            this.classList.remove("video_previews");
                                             preview_pg.style.transform = "";
                                         }
                                         video_timer = null;  //消除定时器

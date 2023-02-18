@@ -28,7 +28,16 @@
             padding: 15% 15px;
             box-sizing: border-box;
         }
+        .rcmd-boxes .info .inbox .inbox-aside span{
+            max-height: 75%;
+        }
+        .rcmd-boxes .info .inbox{
+            /*transition-property: background-color, transform;*/
+        }
     </style>
+    <script>
+        function getAverageRGB(imgEl){var blockSize=5,defaultRGB={r:255,g:255,b:255},canvas=document.createElement('canvas'),context=canvas.getContext&&canvas.getContext('2d'),data,width,height,i=-4,length,rgb={r:0,g:0,b:0},count=0;if(!context){return defaultRGB}height=canvas.height=imgEl.naturalHeight||imgEl.offsetHeight||imgEl.height;width=canvas.width=imgEl.naturalWidth||imgEl.offsetWidth||imgEl.width;context.drawImage(imgEl,0,0);try{data=context.getImageData(0,0,width,height)}catch(e){return defaultRGB}length=data.data.length;while((i+=blockSize*4)<length){++count;rgb.r+=data.data[i];rgb.g+=data.data[i+1];rgb.b+=data.data[i+2]}rgb.r=~~(rgb.r/count);rgb.g=~~(rgb.g/count);rgb.b=~~(rgb.b/count);return rgb}
+    </script>
 </head>
 <body class="<?php theme_mode(); ?>">
     <div class="content-all">
@@ -108,6 +117,24 @@
 <!-- siteJs -->
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <script>
+    // set images-color cover
+    window.onload=function(){
+        const inboxes = document.querySelectorAll('.rcmd-boxes .info .inbox');
+        for(let i=0;i<inboxes.length;i++){
+            let inbox = inboxes[i],
+                tempimg = document.createElement('img'),
+                poster = inbox.querySelector('img');
+            if(poster){
+                tempimg.src = poster.dataset.src;
+                tempimg.setAttribute('crossorigin','Anonymous');
+                let rgb = getAverageRGB(tempimg),
+                    rgba = rgb['r']+' '+rgb['g']+' '+rgb['b']+' / 50%';
+                // console.log(poster, rgba, tempimg);
+                inbox.setAttribute('style','background-color: rgb('+rgba+')');
+            }
+        }
+    }
+    
     const counterList = document.querySelectorAll('.win-top .counter div');
     function insideLoop(counter,init,limit,i){
         let times = -limit;
@@ -164,10 +191,10 @@
                                 for(let i=0;i<posts_count;i++){
                                     let each_post = posts_array[i],
                                         each_temp = document.createElement("div");
+                                    // console.log(each_post)
                                     each_temp.id = "pid_"+each_post.id;
                                     each_temp.classList.add("inbox", "flexboxes");
-                                    each_temp.innerHTML = `<div class="inbox-headside flexboxes"><span class="author">${each_post.subtitle}</span><img class="bg" src="${each_post.poster}"><img src="${each_post.poster}"></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="javascript:;" target="_self">${each_post.title}</a></h4></span><span class="lowside-description"><p>${each_post.excerpt}</p></span></div>`;
-                                    // console.log(each_post)
+                                    each_temp.innerHTML = `<div class="inbox-headside flexboxes"><span class="author">${each_post.subtitle}</span><img src="${each_post.poster}" alt="${each_post.subtitle}" crossorigin="Anonymous"></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="javascript:;" target="_self">${each_post.title}</a></h4></span><span class="lowside-description"><p>${each_post.excerpt}</p></span></div>`; //<img class="bg" src="${each_post.poster}">
                                     load_box.insertBefore(each_temp, load_box.lastChild);
                                 };
                                 _this.innerText = "";

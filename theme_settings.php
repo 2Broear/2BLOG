@@ -2260,7 +2260,7 @@
                             ?>
                         </td>
                     </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags = get_option('site_countdown_switcher') ? 'dynamic_optshow' : false; ?>">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $countdown_sw = get_option('site_countdown_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 定时日期</th>
                                 <td>
                                     <?php
@@ -2272,7 +2272,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags = get_option('site_countdown_title') ? 'dynamic_optshow' : false; ?>">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $countdown_sw ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 标题 / 结语</th>
                                 <td>
                                     <p class="description" id="site_countdown_title_label">倒计时左上角显示名称，及倒计时结束标语（默认当年春节倒计时，使用“/”分隔</p>
@@ -2285,7 +2285,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags = get_option('site_countdown_switcher') ? 'dynamic_optshow' : false; ?>">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $countdown_sw ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 背景图片/视频</th>
                                 <td>
                                     <?php

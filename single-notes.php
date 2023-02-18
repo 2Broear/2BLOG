@@ -77,14 +77,13 @@
             <?php get_footer(); ?>
         </footer>
     </div>
-    <script type="text/javascript" src="<?php custom_cdn_src(false); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+    <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
     <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/highlight/highlight.pack.js"></script>
     <!-- plugins -->
     <script>hljs.initHighlightingOnLoad();</script>
     <script src="<?php custom_cdn_src(); ?>/js/fancybox.umd.js"></script>
     <script>
-        // 截取设置当前页面所有视频 poster 
-        setVideoPoster(3);
+        setupVideoPoster(3);  // 截取设置当前页面所有视频 poster 
         // gallery js initiate 'bodyimg' already exists in footer lazyload, use contimg insted.
         const contimg = document.querySelectorAll(".news-article-container .content img");
         if(contimg.length>=1){

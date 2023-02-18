@@ -16,9 +16,13 @@
         .archive-tree h2{
             margin: 35px auto 5px;
         }
-        .archive-tree ul{
+        .archive-tree ul:hover{
             max-height: 518px;
-            /*max-height: 368px;*/
+        }
+        .archive-tree ul{
+            /*max-height: 518px;*/
+            max-height: 318px;
+            transition: max-height 1s ease .5s;
         }
         .archive-tree ul li a:hover{
             padding-left: 10px;
@@ -135,11 +139,24 @@
         .cs-tree span#edit{
             border-color: currentColor;
         }
+        @keyframes twinkler {
+            0% {
+                opacity: .5;
+            }
+            50% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
         body.dark .cs-tree span.today,
         .cs-tree .today{
             color: var(--theme-color);
             /*color: var(--theme-color)!important;*/
             /*border-color: currentColor!important;*/
+            animation: twinkler 1s infinite alternate ease;
+            -webkit-animation: twinkler 1s infinite alternate ease;
         }
         .cs-tree .dayto:hover{
             opacity: .75;
@@ -239,7 +256,7 @@
         <div class="archive-tree">
             <div class="cs-tree">
                 <h5>
-                    <strong><?php $curYear = gmdate('Y', time() + 3600*8);$lastYear = $curYear-1;//echo "$lastYear-$curYear"; ?> Contributions overview </strong>
+                    <strong><?php $curYear = gmdate('Y', time() + 3600*8);$lastYear = $curYear-1;//echo "$lastYear-$curYear"; ?> Contributions view </strong>
                     <ul class="cs_tips">
                         <?php
                             $color_light = '#9be9a8';$color_middle = '#40c463';
@@ -318,7 +335,8 @@
                             if($i<$tomon){ // && $j<=date('d')
                                 archive_contributions_output($days,$the_day,$compare_date,$curYear);
                             }else if($i==$tomon){
-                                $j<=$today ? archive_contributions_output($days,$the_day,$compare_date,$curYear) : false;
+                                archive_contributions_output($days,$the_day,$compare_date,$curYear);
+                                // $j<=$today ? archive_contributions_output($days,$the_day,$compare_date,$curYear) : false;
                             }
                         }
                     }

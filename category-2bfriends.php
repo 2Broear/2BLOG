@@ -40,6 +40,24 @@
 	        right: -12px;
         }
         .friends-boxes ul, .friends-boxes ol{margin-bottom: auto;}
+        /*.friends-boxes .deals .inbox .inbox-headside img{*/
+        /*    transition: none;*/
+        /*}*/
+        .friends-boxes .deals .inbox:hover{
+            transform: scale(.85);
+        }
+        .friends-boxes .deals .inbox:hover > .inbox-headside img{
+            border-radius: 0;
+        }
+        .friends-boxes .deals .inbox:hover > .inbox-headside{
+            display: inherit;
+            width: 100%;
+            position: absolute;
+            filter: opacity(.1) blur(15px) saturate(1.5);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

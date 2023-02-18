@@ -11,37 +11,127 @@
         console.log(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2BROEAR %c Release https://github.com/2Broear/2BLOG %c ${content} `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
     })();
     
-    function getVideoFrames(url,second,quality,base64){
-        return new Promise(function (resolve, reject) {
-            let dataURL = '';
-            const video = document.createElement('video');
-            video.currentTime = second;  // 设置当前帧
-            video.setAttribute('src', url);
-            video.setAttribute('crossOrigin', 'Anonymous'); // 处理跨域
-            video.setAttribute('autoplay', true);
-            video.setAttribute('muted', true);
-            video.setAttribute('preload', 'auto'); // auto|metadata|none
-            video.addEventListener('loadeddata', function(){
-                const canvas = document.createElement('canvas'),
-                      width = video.videoWidth, ///1.5width = video.width,
-                      height = video.videoHeight; ///1.5height = video.height;
-                canvas.width = width;
-                canvas.height = height;
-                canvas.getContext('2d').drawImage(video, 0, 0, width, height); // 绘制 canvas
-                // video.remove();// video.pause();
-                video.removeAttribute('preload');  // 阻止视频在 network 中持续加载耗费网络资源
-                if(base64){
-                    dataURL = canvas.toDataURL('image/jpeg',quality);  //转换 base64
-                    resolve(dataURL);
-                }else{
-                    canvas.toBlob(function(blob){
-                        dataURL = URL.createObjectURL(blob);  //转换 blob
-                        resolve(dataURL);  // 回调 resolve
-                    },"image/jpeg",quality);
-                }
-            });
-        });
+    //https://qa.1r1g.com/sf/ask/177903701/
+    function getAverageRGB(imgEl) {
+        var blockSize = 5, // only visit every 5 pixels
+            defaultRGB = {r:255,g:255,b:255}, // for non-supporting envs
+            canvas = document.createElement('canvas'),
+            context = canvas.getContext && canvas.getContext('2d'),
+            data, width, height,
+            i = -4,
+            length,
+            rgb = {r:0,g:0,b:0},
+            count = 0;
+    
+        if (!context) {
+            return defaultRGB;
+        }
+    
+        height = canvas.height = imgEl.naturalHeight || imgEl.offsetHeight || imgEl.height;
+        width = canvas.width = imgEl.naturalWidth || imgEl.offsetWidth || imgEl.width;
+    
+        context.drawImage(imgEl, 0, 0);
+    
+        try {
+            data = context.getImageData(0, 0, width, height);
+        } catch(e) {
+            /* security error, img on diff domain */
+            return defaultRGB;
+        }
+    
+        length = data.data.length;
+    
+        while ( (i += blockSize * 4) < length ) {
+            ++count;
+            rgb.r += data.data[i];
+            rgb.g += data.data[i+1];
+            rgb.b += data.data[i+2];
+        }
+    
+        // ~~ used to floor values
+        rgb.r = ~~(rgb.r/count);
+        rgb.g = ~~(rgb.g/count);
+        rgb.b = ~~(rgb.b/count);
+    
+        return rgb;
     }
+    
+    function setupVideoPoster(second,quality,base64){
+        const videos = document.querySelectorAll('video');
+        if(videos[0]){
+            // var dataNods = [],
+            //     // dataObjs = {},
+            //     dataURLs = [];
+            for(let i=0;i<videos.length;i++){
+                let video = videos[i];
+                // return new Promise(function (resolve, reject) {  // RETURN caused outside-loop array length calc-err
+                new Promise(function (resolve, reject) {
+                    if(video.autoplay){
+                        reject('setupVideoPoster abort: v'+i);
+                        return;
+                    }
+                    let vdo = document.createElement('video');
+                    quality = quality ? quality : 0.5;
+                    vdo.currentTime = second ? second : 1;  // 设置当前帧
+                    vdo.setAttribute('src', video.src);
+                    vdo.setAttribute('crossOrigin', 'Anonymous'); // 处理跨域
+                    vdo.setAttribute('autoplay', true);
+                    vdo.setAttribute('muted', true);
+                    vdo.setAttribute('preload', 'auto'); // auto|metadata|none
+                    vdo.addEventListener('loadeddata', function(){
+                        const canvas = document.createElement('canvas'),
+                              width = vdo.videoWidth, ///1.5width = vdo.width,
+                              height = vdo.videoHeight; ///1.5height = vdo.height;
+                        canvas.width = width;
+                        canvas.height = height;
+                        canvas.getContext('2d').drawImage(vdo, 0, 0, width, height); // 绘制 canvas
+                        vdo.removeAttribute('preload');  // 阻止临时创建的视频在 network 中持续加载耗费网络资源
+                        if(base64){
+                            resolve([video, canvas.toDataURL('image/jpeg', quality)]);
+                            // dataURLs.push(canvas.toDataURL('image/jpeg', quality));  //转换 base64
+                            // dataNods.push(video);
+                            // resolve([dataURLs, dataNods]);
+                        }else{
+                            canvas.toBlob(function(blob){
+                                resolve([video, URL.createObjectURL(blob)]);
+                                // dataURLs.push(URL.createObjectURL(blob));  //转换 blob
+                                // dataNods.push(video);
+                                // // Object.assign(dataObjs, {poster: dataURLs},{nodes: dataNods});
+                                // resolve([dataURLs, dataNods]);  // 回调 resolve
+                            },"image/jpeg",quality);
+                        }
+                    });
+                }).then(function(res){
+                    // console.log(res);
+                    let video = res[0],
+                        check = video.src.match(/\.(?:avi|mp4|mov|mpg|mpeg|flv|swf|wmv|wma|rmvb|mkv)$/i);
+                    if(video&&check){
+                        video.setAttribute('poster', res[1]);
+                        console.log('setupVideoPoster ok: v'+i);
+                    }else{
+                        console.log('setupVideoPoster err: v'+i);
+                    }
+                    // let vdos = res[0];
+                    // console.log(vdos.length);
+                    // for(let i=0;i<vdos.length;i++){
+                    //     let vdo = vdos[i],
+                    //         check = vdo.src.match(/\.(?:avi|mp4|mov|mpg|mpeg|flv|swf|wmv|wma|rmvb|mkv)$/i);
+                    //     if(vdo&&check){
+                    //         vdo.setAttribute('poster', res[1][i]);
+                    //         // console.log('setupVideoPoster okay! v'+i);
+                    //     }else{
+                    //         console.log('setupVideoPoster : Ext err');
+                    //     }
+                    // }
+                }).catch(function(err){
+                    console.log(err);
+                });
+            }
+        }else{
+            console.log('setupVideoPoster: not found');
+        }
+    }
+    
     function setVideoPoster(curTime,imgSize,imgType){
         (async()=>{
             const videos = document.querySelectorAll('video');
@@ -101,6 +191,7 @@
         str = str.substr(0,str.lastIndexOf("&"));
         return decode ? decodeURI(str) : str;
     }
+    
     //https://www.jb51.net/article/216692.htm
     function lazyload(imgs){
         const bodyimg = document.querySelectorAll(imgs);

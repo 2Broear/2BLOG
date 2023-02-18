@@ -994,19 +994,19 @@
                     // if($link->link_visible==="Y") 
                     if($status=='standby'){
                         $avatar_status = '<img alt="近期访问出现问题" draggable="false">';
-                        $avatar_status_bg = '<img class="blur" alt="近期访问出现问题" draggable="false">';
+                        // $avatar_status_bg = '<img class="blur" alt="近期访问出现问题" draggable="false">';
                     }else{
                         $avatar_status = '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
-                        $avatar_status_bg = '<img class="blur" '.$lazyhold.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
+                        // $avatar_status_bg = '<img class="blur" '.$lazyhold.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
                     }
-                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'">'.$avatar_status_bg.'<div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>
+                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>'.$avatar_status_bg.'
                     break;
                 case 'half':
                     // if($link->link_visible==="Y") 
                     echo '<div class="inbox flexboxes '.$status.' '.$sex.'">'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>
                     break;
                 case 'none':
-                    echo '<a href="'.$link->link_url.'" title="'.$link->link_name.'" target="'.$target.'" rel="nofollow">'.$link->link_name.'</a>';
+                    echo '<a href="'.$link->link_url.'" title="'.$link->link_name.'" target="'.$target.'" rel="followed">'.$link->link_name.'</a>';
                     break;
                 default:
                     echo '<a href="'.$link->link_url.'" title="'.$link->link_name.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$link->link_name.'</a>';  //$link->link_visible=="Y"
@@ -1168,6 +1168,25 @@
         if($begain&&$begain<$year) echo $begain."-";
         echo $year;
     }
+    
+    function extract_images_rgb($url){
+        $im  =  imagecreatefromstring(file_get_contents($url));
+        $rgb  =  imagecolorat ( $im ,  10 ,  15 );
+        $r  = ( $rgb  >>  16 ) &  0xFF ;
+        $g  = ( $rgb  >>  8 ) &  0xFF ;
+        $b  =  $rgb  &  0xFF ;
+        return "$r $g $b";
+        // 加载图片
+        // $image = imagecreatefrompng($url) or die('ext format err.');
+        // // 获取图片中指定位置的颜色
+        // $rgb = imagecolorat($image, 1, 2);
+        // // 将rgb值转换为hex值
+        // $hex = "#".str_pad(dechex($rgb), 6, "0", STR_PAD_LEFT); 
+        // // 获取rgb
+        // list($r, $g, $b) = array_map('hexdec', str_split($hex, 2));
+        // return "$hex";
+    }
+    
     // leancloud avos（标准li结构）查询
     function avos_posts_query($cid,$els){
         $slug = get_category($cid)->slug;
@@ -1210,9 +1229,10 @@
         wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
     };
     
+    
     // acg post query
     function acg_posts_query($the_cat, $pre_cat=false, $limit=99){
-        global $post,$lazysrc;
+        global $post,$lazysrc,$loadimg;
         $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
         $cat_slug = $the_cat->slug;
         echo '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> '.$cat_slug.' </sup></h2></div><div class="info flexboxes">';
@@ -1233,24 +1253,22 @@
             'posts_per_page' => $limit//get_option('site_techside_num', 5),
         )));
         // $acg_count = $acg_query->post_count; //count($acg_query->posts); //$acg_query->found_posts
-        // print_r($acg_query);
         while ($acg_query->have_posts()):
             $acg_query->the_post();
             $post_feeling = get_post_meta($post->ID, "post_feeling", true);
             $post_orderby = get_post_meta($post->ID, "post_orderby", true);
             $post_source = get_post_meta($post->ID, "post_source", true);
+            $postimg = get_postimg(0,$post->ID,true);
+            if($lazysrc!='src'){
+                $lazyhold = 'data-src="'.$postimg.'"';
+                $postimg = $loadimg;
+            }
 ?>
-            <div class="inbox flexboxes" id="<?php echo 'pid_'.get_the_ID() ?>">
+            <div class="inbox flexboxes" id="<?php echo 'pid_'.get_the_ID() ?>"> <!-- style="background-color:rgb(<?php //echo extract_images_rgb($postimg); ?> / 50%)"-->
                 <div class="inbox-headside flexboxes">
                     <span class="author"><?php echo $post_feeling; ?></span>
                     <?php
-                        $postimg = get_postimg(0,$post->ID,true);
-                        if($lazysrc!='src'){
-                            global $loadimg;
-                            $lazyhold = 'data-src="'.$postimg.'"';
-                            $postimg = $loadimg;
-                        }
-                        echo '<img class="bg" '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'"><img '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'">';
+                        echo '<img '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous">'; //<img class="bg" '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'">
                     ?>
                 </div>
                 <div class="inbox-aside">
@@ -1442,9 +1460,9 @@
             .win-content article .info span{margin-left:10px}
             .win-content article .info span#slider{margin:auto}
     	    .news-window-img{max-width:16%}
-    	    .rcmd-boxes{width:21%;display:inline-block;vertical-align:middle}
+    	    .rcmd-boxes{width:19%;display:inline-block;vertical-align:middle}
     	    .empty_card h1{max-width: 88%;overflow: hidden;text-overflow: ellipsis;display: block;margin: 25px auto;}
-    	    .rcmd-boxes .info .inbox{max-width:none}
+    	    .rcmd-boxes .info .inbox{max-width:none;margin: 5px}
     	    .main h2{font-weight: 600;font-size:1.25rem};
             #core-info p{padding:0}
             @media screen and (max-width:760px){
@@ -1459,7 +1477,13 @@
         // global $post;
         if(have_posts()) {
             while (have_posts()): the_post();
-                global $post,$lazysrc;
+                global $post,$lazysrc,$loadimg;
+                $postimg = get_postimg(0,$post->ID,true);
+                $lazyhold = "";
+                if($lazysrc!='src'){
+                    $lazyhold = 'data-src="'.$postimg.'"';
+                    $postimg = $loadimg;
+                }
                 $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                 $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                 $post_rights = get_post_meta($post->ID, "post_rights", true);
@@ -1497,7 +1521,7 @@
                         <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window icom wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                             <div class="news-window-inside">
                                 <?php
-                                    if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img class="lazy" '.$lazysrc.'="'.get_postimg(0,$post->ID,true).'" /></a></span>';
+                                    if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img class="lazy" '.$lazyhold.' src="'.$postimg.'" /></a></span>';
                                 ?>
                                 <div class="news-inside-content">
                                     <h2 class="entry-title">
@@ -1573,13 +1597,7 @@
                                     <div class="inbox-headside flexboxes">
                                         <span class="author"><?php echo $post_feeling = get_post_meta($post->ID, "post_feeling", true); ?></span>
                                         <?php
-                                            $postimg = get_postimg(0,$post->ID,true);
-                                            if($lazysrc!='src'){
-                                                global $loadimg;
-                                                $lazyhold = 'data-src="'.$postimg.'"';
-                                                $postimg = $loadimg;
-                                            }
-                                            echo '<img class="bg" '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'"><img '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'">';
+                                            echo '<img '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous">'; //<img class="bg" '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'">
                                         ?>
                                     </div>
                                     <div class="inbox-aside">

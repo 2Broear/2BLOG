@@ -199,7 +199,7 @@
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <script>
     // 截取设置当前页面所有视频 poster 
-    setVideoPoster(2);
+    setupVideoPoster(2);
     // const video = document.querySelector('video'),
     //       user_info = document.querySelector('.user_info');
     // video.onplaying=()=>{user_info.classList.remove('pause');user_info.classList.add('playing');}
