@@ -67,7 +67,7 @@
 .rcmd-boxes .info .inbox .inbox-aside .game-ratings .ign h3{margin:0;position:relative;top:-2px}
 .rcmd-boxes .info .inbox .inbox-aside .game-ratings .ign:after{content:'';width:0;height:0;border-style:solid;border-width:12px 20px 0 20px;border-color:currentColor transparent transparent transparent;position:absolute;left:0;bottom:-12px}
 .rcmd-boxes .info .inbox .inbox-headside.squared img{border-radius:50%}
-.rcmd-boxes .info .inbox .inbox-headside img{max-width:88%;max-height:300px;margin:15px auto;box-sizing:border-box;transition:all .5s ease;transform:translateZ(0px);border-top-left-radius: 10px;border-top-right-radius: 10px;will-change:transform}
+.rcmd-boxes .info .inbox .inbox-headside img{max-width:88%;max-height:300px;margin:15px auto;box-sizing:border-box;transition: transform .75s ease;transform:translateZ(0px);border-top-left-radius: 10px;border-top-right-radius: 10px;will-change:transform}
 .rcmd-boxes .info .inbox .inbox-headside img.bg{min-width:100%;margin:0 auto;filter:opacity(.55) blur(15px) saturate(1.5);-webkit-filter:opacity(.55) blur(15px) saturate(1.5);position:absolute;top:0;left:0;padding:0;height:100%;transform:none!important;border-radius:inherit;object-fit:cover}
 .rcmd-boxes .info .inbox .inbox-headside span{width:auto;color:var(--preset-2b);border-radius:50px;font-size:var(--min-size);line-height:23px;padding:0 5px 0 15px;margin:15px auto;margin-left:-10px;position:absolute;top:0;left:0;z-index:2;background-color:var(--preset-6);white-space:nowrap;box-sizing:border-box;transition:padding .15s ease}
 .rcmd-boxes .info .inbox .inbox-headside span.author{background:rgba(255,255,255,0.66);color:var(--preset-2b)}

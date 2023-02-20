@@ -22,7 +22,7 @@
         .archive-tree ul{
             /*max-height: 518px;*/
             max-height: 318px;
-            transition: max-height 1s ease .5s;
+            transition: max-height 1s ease 1s;
         }
         .archive-tree ul li a:hover{
             padding-left: 10px;
@@ -143,7 +143,10 @@
             0% {
                 opacity: .5;
             }
-            50% {
+            15% {
+                opacity: 1;
+            }
+            30% {
                 opacity: 0;
             }
             100% {
@@ -267,22 +270,22 @@
                 </h5>
                 <?php
                     // https://stackoverflow.com/questions/49612838/call-to-undefined-function-cal-days-in-month-error-while-running-from-server
-                    // function days_in_month($month, $year){
-                    //     // calculate number of days in a month
-                    //     return $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
-                    // };
+                    function days_in_month($month, $year){
+                        // calculate number of days in a month
+                        return $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
+                    };
                     // echo cal_days_in_month(CAL_GREGORIAN,1,2023);
                     $curday = gmdate('md', time() + 3600*8);//date('md'); 
                     $today = date('d');
                     $tomon = date('m');
                     $lastYear = $curYear-1;
                     $archive_daily = get_post_archives('daily','post',9999);
-                    function days_in_month($month, $year){
-                        if($month>=1){
-                            $date_str = "$year-$month-".$today;
-                            return date('t', strtotime($date_str));
-                        }
-                    }
+                    // function days_in_month($month, $year){
+                    //     if($month>=1){
+                    //         $date_str = "$year-$month-".$today;
+                    //         return date('t', strtotime($date_str));
+                    //     }
+                    // }
                     function archive_contributions_output($days, $the_day, $compare_date, $year){
                         global $color_light,$color_middle,$color_heavy,$color_more,$archive_daily;
                         echo '<span class="'.$the_day.'" data-dates="'.$compare_date.'" data-date="'.$days.'"';
@@ -343,7 +346,7 @@
                 ?>
             </div>
             <select name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;" style="float:right;">
-                <option value=""><?php esc_attr( _e( 'Monthly Overview', 'textdomain' ) ); ?></option> 
+                <option value=""><?php esc_attr( _e( 'Monthly previews', 'textdomain' ) ); ?></option> 
                 <?php 
                     wp_get_archives(array(
                         'type' => 'monthly',
@@ -435,28 +438,10 @@
 	</div>
 <!-- siteJs -->
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
-<script>
-    const counterList = document.querySelectorAll('.win-top .counter div');
-    function insideLoop(counter,init,limit,i){
-        let times = -limit-200;
-        var inOrder = function(){
-                clearInterval(noOrder);
-                init<=limit ? counter.innerHTML=init++ : clearInterval(noOrder);
-                times>=0 ? (times=0,clearInterval(noOrder)) : times++;
-                // console.log(init+times);
-                noOrder = setInterval(inOrder, init+times);
-            };
-        var noOrder = setInterval(inOrder, 0);
-    };
-    for(let i=0;i<counterList.length;i++){ //counterList.length
-        let count = parseInt(counterList[i].dataset.res), //getAttribute('data-res')
-            counter = counterList[i].querySelector('h1'),
-            limit = parseInt(counter.innerText);
-        insideLoop(counter,0,limit,i);
-        // console.log(i);
-    }
-</script>
 <?php
+    if(get_option('site_animated_counting_switcher')){
+        echo '<script>dataDancing(document.querySelectorAll(".win-top .counter div"), "h1", false, 200);</script>';
+    }
     if($async_sw){
 ?>
         <script>

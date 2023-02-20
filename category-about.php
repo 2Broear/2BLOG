@@ -198,29 +198,36 @@
 <!-- siteJs -->
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <script>
-    // 截取设置当前页面所有视频 poster 
-    setupVideoPoster(2);
-    // const video = document.querySelector('video'),
-    //       user_info = document.querySelector('.user_info');
-    // video.onplaying=()=>{user_info.classList.remove('pause');user_info.classList.add('playing');}
-    // video.onpause=()=>{user_info.classList.remove('playing');user_info.classList.add('pause')}
-    const counterList = document.querySelectorAll('.about_blocks li.intro_right .mbit .mbit_range li');
-    function countAnimation(list,order){
-        for(let i=0;i<list.length;i++){
-            let count = parseInt(list[i].dataset.res),//getAttribute('data-res')),
-                counter = list[i].querySelector('em');
-            // counter.style.width = count+"%";
-            if(order){
-                var inOrder = setTimeout(function(){
+    <?php
+        if(get_option('site_video_poster_switcher')){
+            echo 'setupVideoPoster(2)';  // 截取设置当前页面所有视频 poster 
+        }
+    ?>
+    function animatedInqueue(list, queue){
+        if(list[0]){
+            for(let i=0;i<list.length;i++){
+                new Promise(function(resolve,reject){
+                    let count = parseInt(list[i].dataset.res),
+                        counter = list[i].querySelector('em');
+                    counter ? resolve([count,counter]) : reject(counter);
+                }).then(function(res){
+                    let count = res[0],
+                        counter = res[1];
+                    if(queue){
+                        var inOrder = setTimeout(function(){
+                            counter.style.width = count+"%";
+                            inOrder = null;
+                            clearTimeout(inOrder);
+                        }, i*100);
+                    }else{
                         counter.style.width = count+"%";
-                        inOrder = null;
-                        clearTimeout(inOrder);
-                    }, i*100);
-            }else{
-                counter.style.width = count+"%";
+                    }
+                }).catch(function(err){
+                    console.log(err);
+                });
             }
         }
     };
-    countAnimation(counterList,true);
+    animatedInqueue(document.querySelectorAll('.mbit .mbit_range li'), true);
 </script>
 </body></html>

@@ -5,10 +5,8 @@
               styleContent = `color: rgb(100,100,100);line-height:18px`,
               styleLight = `color:#3a3a3a;background:rgb(235,235,235);padding:5px 0;`,
               styleDark = `color:white;background:#3a3a3a;padding:5px 0;margin-bottom:10px`,
-              title2 = `
-    A wordpress theme Design & Devoloped via 2BROEAR open source in 2022`,
-              content = ``;
-        console.log(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2BROEAR %c Release https://github.com/2Broear/2BLOG %c ${content} `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
+              title2 = `A wordpress theme Design & Devoloped via 2BROEAR open source in 2022`;
+        console.log(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2BROEAR %c Release https://github.com/2Broear/2BLOG %c `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
     })();
     
     //https://qa.1r1g.com/sf/ask/177903701/
@@ -148,6 +146,49 @@
         })();
     }
     
+    function dataDancing(counterList,target,append='',offset=0){
+        if(counterList[0]){
+            for(let i=0;i<counterList.length;i++){
+                new Promise(function(resolve,reject){
+                    let count = parseInt(counterList[i].dataset.res),//getAttribute('data-res')),
+                        counter = counterList[i].querySelector(target),
+                        limit = parseInt(counter.innerText);
+                    counter ? resolve([counter,0,limit,i]) : reject(counter);
+                }).then(function(res){
+                    let init = res[1],
+                        limit = res[2],
+                        times = -limit-offset;
+                    // append = append ? '<sup>+</sup>' : '';
+                    var inOrder = function(){
+                            clearInterval(noOrder);
+                            init<=limit ? res[0].innerHTML = (init++)+append : clearInterval(noOrder);
+                            times>=0 ? (times=0,clearInterval(noOrder)) : times++;
+                            // console.log(init+times);
+                            noOrder = setInterval(inOrder, init+times);
+                        };
+                    var noOrder = setInterval(inOrder, 0);
+                }).catch(function(err){
+                    console.log(err);
+                });
+            }
+        }
+    }
+    
+    function fancyImages(imgs){
+        if(imgs.length>=1){
+            for(let i=0;i<imgs.length;i++){
+                let eachimg = imgs[i],
+                    datasrc = eachimg.dataset.src,
+                    imgbox = document.createElement("a");
+                imgbox.setAttribute("data-fancybox","gallery");
+                imgbox.setAttribute("href", datasrc);
+                imgbox.setAttribute("aria-label", "gallery_images");
+                eachimg.parentNode.insertBefore(imgbox, eachimg);
+                imgbox.appendChild(eachimg);
+            }
+        }
+    }
+    
     function dynamicLoad(jsUrl,fn){
     	var _doc = document.getElementsByTagName('head')[0],
     		script = document.createElement('script');
@@ -163,26 +204,6 @@
     	};
     }
     
-    function send_ajax_request(method,url,data,callback){
-        var ajax = new XMLHttpRequest();
-        if(method=='get'){  // GET请求
-            data ? (url+='?',url+=data) : false;
-            ajax.open(method,url);
-            ajax.send();
-        }else{  // 非GET请求
-            ajax.open(method,url);
-            ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");  // 设置请求报文
-            data ? ajax.send(data) : ajax.send();
-        }
-        ajax.onreadystatechange = function () {
-            if(ajax.readyState==4 && ajax.status==200){
-                callback ? callback(ajax.responseText) : false;
-            }else{
-                // error ? error(ajax.responseText) : false;
-            }
-        };
-    }
-    
     function parse_ajax_parameter(data,decode){
         let str = "";
         for(let key in data){
@@ -191,13 +212,39 @@
         str = str.substr(0,str.lastIndexOf("&"));
         return decode ? decodeURI(str) : str;
     }
+    function send_ajax_request(method,url,data,callback){
+        return new Promise(function(resolve,reject){
+            var ajax = new XMLHttpRequest();
+            if(method=='get'){  // GET请求
+                data ? (url+='?',url+=data) : false;
+                ajax.open(method,url);
+            }else{  // 非GET请求
+                ajax.open(method,url);
+                ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");  // 设置请求报文
+            }
+            ajax.onreadystatechange=function(){
+                if(this.readyState==4){
+                    if(this.status==200){
+                        callback ? resolve(callback(this.responseText)) : resolve(this.responseText);
+                    }else{
+                        reject(this.status);
+                    }
+                }
+            };
+            data ? ajax.send(data) : ajax.send();
+        }).catch(function(err){
+            console.log(err);
+        });
+    }
+    
     
     //https://www.jb51.net/article/216692.htm
     function lazyload(imgs){
-        const bodyimg = document.querySelectorAll(imgs);
-        if(bodyimg.length>=1){
-            for(let i=0;i<bodyimg.length;i++){
-                let eachimg = bodyimg[i],
+        const //bodyimg = document.querySelectorAll(imgs),
+              loadimg = "https://img.2broear.com/images/loading_3_color_tp.png";
+        if(imgs.length>=1){
+            for(let i=0;i<imgs.length;i++){
+                let eachimg = imgs[i],
                     datasrc = eachimg.dataset.src;
                 if(datasrc){
                     eachimg.getBoundingClientRect().top < window.innerHeight ? eachimg.src = datasrc : false;
@@ -205,7 +252,6 @@
                         if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight
                             eachimg.src = eachimg.dataset.src; // 即时更新 eachimg.dataset.src 替代 datasrc
                             eachimg.onerror=function(){ //!this.complete
-                                let loadimg = "https://img.2broear.com/images/loading_3_color_tp.png";
                                 this.src = loadimg;
                                 this.dataset.src = loadimg;
                             }
@@ -240,6 +286,7 @@
         var cval=getCookie(name);
         cval!=null ? document.cookie = name+ "="+cval+";expires="+exp.toGMTString()+";path=/" : false;
     }
+    
     function darkmode(){
         setCookie('theme_manual',1,false);  // set cookie to manual (disable auto detect)
         getCookie('theme_mode')!="dark" ? setCookie('theme_mode','dark',false) : setCookie('theme_mode','light',false);

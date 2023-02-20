@@ -117,7 +117,7 @@
 <!-- siteJs -->
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <script>
-    // set images-color cover
+    // setup images rgb-color bg-cover
     window.onload=function(){
         const inboxes = document.querySelectorAll('.rcmd-boxes .info .inbox');
         for(let i=0;i<inboxes.length;i++){
@@ -134,28 +134,11 @@
             }
         }
     }
-    
-    const counterList = document.querySelectorAll('.win-top .counter div');
-    function insideLoop(counter,init,limit,i){
-        let times = -limit;
-        var inOrder = function(){
-                clearInterval(noOrder);
-                init<=limit ? counter.innerHTML=`${init++}<sup>+</sup>` : clearInterval(noOrder);
-                times>=0 ? (times=0,clearInterval(noOrder)) : times++;
-                // console.log(init+times);
-                noOrder = setInterval(inOrder, init+times);
-            };
-        var noOrder = setInterval(inOrder, 0);
-    };
-    for(let i=0;i<counterList.length;i++){
-        let count = parseInt(counterList[i].dataset.res),//getAttribute('data-res')),
-            counter = counterList[i].querySelector('h2'),
-            limit = parseInt(counter.innerText);
-        insideLoop(counter,0,limit,i);
-        // var noOrder = setInterval(function(){
-        //     init<=limit ? counter.innerHTML = `${init++}<sup>+</sup>` : clearInterval(noOrder);
-        // }, 10*i);
-    }
+    <?php
+        if(get_option('site_animated_counting_switcher')){
+            echo 'dataDancing(document.querySelectorAll(".win-top .counter div"), "h2", "<sup>+</sup>");';
+        }
+    ?>
 </script>
 <?php
     if($async_sw){

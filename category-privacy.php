@@ -44,7 +44,9 @@
 </div>
 <!-- siteJs -->
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
-<script>
-    setupVideoPoster(1); //setVideoPoster(1,0.5,true); 截取设置当前页面所有视频 poster 
-</script>
+<?php
+    if(get_option('site_video_poster_switcher')){
+        echo '<script>setupVideoPoster(1);</script>';  // 截取设置当前页面所有视频 poster 
+    }
+?>
 </body></html>

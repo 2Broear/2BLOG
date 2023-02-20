@@ -507,6 +507,7 @@
         // }
         register_setting( 'baw-settings-group', 'site_mbit_array' );
         register_setting( 'baw-settings-group', 'site_mbit_result_array' );
+        register_setting( 'baw-settings-group', 'site_animated_counting_switcher' );
         
         register_setting( 'baw-settings-group', 'site_async_switcher' );
             register_setting( 'baw-settings-group', 'site_async_archive' );
@@ -547,6 +548,7 @@
             // register_setting( 'baw-settings-group', 'site_cdn_vid_sw' );
             register_setting( 'baw-settings-group', 'site_cdn_vdo_includes' );
         // }
+        register_setting( 'baw-settings-group', 'site_video_poster_switcher' );
         register_setting( 'baw-settings-group', 'site_video_capture_switcher' );
             register_setting( 'baw-settings-group', 'site_video_capture_gif' );
         register_setting( 'baw-settings-group', 'site_darkmode_switcher' );
@@ -1407,13 +1409,23 @@
                         // }
                     ?>
                     <tr valign="top">
+                        <th scope="row">视频海报预览</th>
+                        <td>
+                            <?php
+                                $opt = 'site_video_poster_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">开启后自动捕获当前页面所有 未设置 autoplay 属性的视频生成并设置预览海报（仅部分页面启用，默认截取第一帧</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">视频海报生成</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
                         <th scope="row">视频截图捕获（动态预览）</th>
                         <td>
                             <?php
                                 $opt = 'site_video_capture_switcher';
                                 get_option($opt) ? $status="checked" : $status="closed";
                                 function funcStatus($func){
-                                    return function_exists($func) ? "<b style='color:green'>$func (已启用)</b>" : "<u style='color:red'>$func</u>";
+                                    return function_exists($func) ? "<b style='color:green'>$func (已启用)</b>" : "<u style='color:red'>$func (关闭)</u>";
                                 }
                                 echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">上传视频文件时自动在存放文件同目录下生成动态截图（此前上传的视频无效<br/>⚠后端环境：服务端须提前安装<b> ffmpeg </b> 扩展，并开启以下任一<b> php 函数</b>：'.funcStatus('exec').'、'.funcStatus('system').'、'.funcStatus('shell_exec').'，测试 shell_exec 暂时无法解析大文件<br/>⚠前端应用：视频元素不存在<b> autoplay </b>自动播放属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">视频片段预览</b></label>';
                             ?>
@@ -1838,7 +1850,17 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">首页 - banner 图集</th>
+                        <th scope="row">文章列表预览图</th>
+                        <td>
+                            <?php
+                                $opt = 'site_default_postimg_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="">默认当文章存在自定义 thumbnail 特色图片时才显示列表预览图，开启后将始终显示（显示优先级：自定义特色图片>文章内图片>默认图片</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">始终显示预览</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">首页 - banner</th>
                         <td>
                             <?php
                                 $opt = 'site_banner_array';
@@ -1874,16 +1896,6 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">文章列表预览图</th>
-                        <td>
-                            <?php
-                                $opt = 'site_default_postimg_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
-                                echo '<label for="'.$opt.'"><p class="description" id="">默认当文章存在自定义 thumbnail 特色图片时才显示列表预览图，开启后将始终显示（显示优先级：自定义特色图片>文章内图片>默认图片</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">始终显示预览</b></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top">
                         <th scope="row">首页 - 卡片导航</th>
                         <td>
                             <?php
@@ -1895,54 +1907,6 @@
                             ?>
                         </td>
                     </tr>
-                    <tr valign="top">
-                        <th scope="row">首页 - 标签云</th>
-                        <td>
-                            <?php
-                                $opt = 'site_tagcloud_switcher';
-                                $value = get_option($opt);
-                                $data = get_option( 'site_tagcloud_num', '' );
-                                //设置默认开启（仅适用存在默认值的checkbox）
-                                if(!$value&&!$data){
-                                    update_option($opt, "on_default");
-                                    $status="checked";
-                                }else{
-                                    $value ? $status="checked" : $status="closed";
-                                };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">首页随机标签云（自带主题色，若检测到无标签将默认展示随机动漫图</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:teal;" class="btn">标签云</span></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <?php
-                        // if(get_option('site_tagcloud_switcher')){
-                    ?>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags = get_option('site_tagcloud_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 标签展示数量</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_tagcloud_num';
-                                        $value = get_option($opt);
-                                        $preset = 32;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">TagClouds 最多显示数量（默认显示 32 个</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags; ?>">
-                                <th scope="row">— 标签最大字体</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_tagcloud_max';
-                                        $value = get_option($opt);
-                                        $preset = 30;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">TagClouds 最大显示字体（默认最大 30px，最小 10px</p><input type="number" min="11" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                    <?php
-                        // }
-                    ?>
                     <tr valign="top">
                         <th scope="row">首页 - 日志日记<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
@@ -2044,6 +2008,54 @@
                         // }
                     ?>
                     <tr valign="top">
+                        <th scope="row">首页 - 标签云</th>
+                        <td>
+                            <?php
+                                $opt = 'site_tagcloud_switcher';
+                                $value = get_option($opt);
+                                $data = get_option( 'site_tagcloud_num', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option($opt, "on_default");
+                                    $status="checked";
+                                }else{
+                                    $value ? $status="checked" : $status="closed";
+                                };
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">首页随机标签云（自带主题色，若检测到无标签将默认展示随机动漫图</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:teal;" class="btn">标签云</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        // if(get_option('site_tagcloud_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags = get_option('site_tagcloud_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 标签展示数量</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_tagcloud_num';
+                                        $value = get_option($opt);
+                                        $preset = 32;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">TagClouds 最多显示数量（默认显示 32 个</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags; ?>">
+                                <th scope="row">— 标签最大字体</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_tagcloud_max';
+                                        $value = get_option($opt);
+                                        $preset = 30;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">TagClouds 最大显示字体（默认最大 30px，最小 10px</p><input type="number" min="11" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        // }
+                    ?>
+                    <tr valign="top">
                         <th scope="row">关于 - MBIT测试数据</th>
                         <td>
                             <?php
@@ -2064,6 +2076,16 @@
                                 $preset = 'infp-a/mediator'; 
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
                                 echo '<p class="description" id="site_cardnav_array_label">MBIT测试人格类型，使用斜杠“ / ”分隔（规则同上</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $preset . '"/>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">归档/漫游影视 - 数字动画</th>
+                        <td>
+                            <?php
+                                $opt = 'site_animated_counting_switcher';
+                                get_option($opt) ? $status="checked" : $status="closed";
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">启用位于页面背景上的数字自动递增到目标值动画（目前支持归档及漫游影视页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:slateblue" class="btn">计数动画</span></label>';
                             ?>
                         </td>
                     </tr>

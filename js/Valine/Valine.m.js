@@ -19,32 +19,37 @@ function dynamicLoad(jsUrl,fn){
 		script.onload = script.onreadystatechange = null;
 	};
 }
-function send_ajax_request(method,url,data,callback){
-    var ajax = new XMLHttpRequest();
-    if(method=='get'){  // GET请求
-        data ? (url+='?',url+=data) : false;
-        ajax.open(method,url);
-        ajax.send();
-    }else{  // 非GET请求
-        ajax.open(method,url);
-        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");  // 设置请求报文
-        data ? ajax.send(data) : ajax.send();
-    }
-    ajax.onreadystatechange = function () {
-        if(ajax.readyState==4 && ajax.status==200){
-            callback ? callback(ajax.responseText) : false;
-        }else{
-            // error ? error(ajax.responseText) : false;
-        }
-    };
-}
 function parse_ajax_parameter(data,decode){
     let str = "";
     for(let key in data){
-        str += `${key}=${data[key]}&`
+        str += `${key}=${data[key]}&`;
     }
     str = str.substr(0,str.lastIndexOf("&"));
     return decode ? decodeURI(str) : str;
+}
+function send_ajax_request(method,url,data,callback){
+    return new Promise(function(resolve,reject){
+        var ajax = new XMLHttpRequest();
+        if(method=='get'){  // GET请求
+            data ? (url+='?',url+=data) : false;
+            ajax.open(method,url);
+        }else{  // 非GET请求
+            ajax.open(method,url);
+            ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");  // 设置请求报文
+        }
+        ajax.onreadystatechange=function(){
+            if(this.readyState==4){
+                if(this.status==200){
+                    callback ? resolve(callback(this.responseText)) : resolve(this.responseText);
+                }else{
+                    reject(this.status);
+                }
+            }
+        };
+        data ? ajax.send(data) : ajax.send();
+    }).catch(function(err){
+        console.log(err);
+    });
 }
 !function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define([],t):"object"==typeof exports?exports.Valine=t():e.Valine=t()}(this,function(){return function(e){function t(r){if(n[r])return n[r].exports;var i=n[r]={i:r,l:!1,exports:{}};return e[r].call(i.exports,i,i.exports,t),i.l=!0,i.exports}var n={};return t.m=e,t.c=n,t.i=function(e){return e},t.d=function(e,n,r){t.o(e,n)||Object.defineProperty(e,n,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(n,"a",n),n},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=17)}([function(e,t,n){var r,i,o;/*!
 	autosize 4.0.2
