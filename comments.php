@@ -25,16 +25,16 @@
             };
             function ajaxPoster(t){
                 if(!document.querySelector("#capture")){
-                    let _tp = t.parentNode;
-                    _tp.classList.add("disabled");  // incase multi click (first generating only)
-                    var div = document.createElement('DIV');
                     send_ajax_request("get", "<?php custom_cdn_src(false); ?>/plugin/html2canvas.php",
-                        'pid=<?php echo $post->ID ?>', 
-                        function(res){
+                        'pid=<?php echo $post->ID ?>', function(res){
+    					// generate poster QRCode (async)
+    					return new Promise(function(resolve,reject){
+                            let _tp = t.parentNode,
+                                div = document.createElement('DIV');;
+                            _tp.classList.add("disabled");  // incase multi click (first generating only)
         					div.innerHTML += res;  //在valine环境直接追加到body会导致点赞元素层级错误
         					document.body.appendChild(div);
-        					// generate poster QRCode
-                        	dynamicLoad('<?php custom_cdn_src(); ?>/js/qrcode/qrcode.min.js',function(){
+                    	    dynamicLoad('<?php custom_cdn_src(); ?>/js/qrcode/qrcode.min.js', function(){
                         		let url = location.href;
                         		var qrcode = new QRCode(document.getElementById("qrcode"), {
                         			text: url,
@@ -44,37 +44,34 @@
                         			colorLight : "#ffffff",
                         			correctLevel : QRCode.CorrectLevel.L
                         		});
-                        		// html2canvas CAUSED too many requests.
-                        		dynamicLoad('<?php custom_cdn_src(); ?>/js/html2canvas/html2canvas.min.js',function(){
-                        		    // delay 300ms wait for QRCode generated incase qrcode not-fit
-                        		    var delay_h2c = setTimeout(function(){
-                                		html2canvas(document.querySelector('#capture'),{
-                                		    useCORS: true,
-                                		    allowTaint: true,
-                                		    scrollX: 0,
-                                		    scrollY: 0,
-                                		    backgroundColor: null
-                                	    }).then(canvas => {
-                                	        const newImg = document.createElement("img");
-                                            canvas.toBlob(function(blob){
-                                    			let baseUrl = URL.createObjectURL(blob),
-                                    				imgDom = '<img src="'+baseUrl+'" />';
-                                    			newImg.src = baseUrl;
-                                    			document.getElementById('poster').innerHTML+=imgDom;
-                                            },"image/png",1);
-                                // 			let baseUrl = canvas.toDataURL("image/png"),
-                                // 				imgDom = '<img src="'+baseUrl+'" />';
-                                // 			newImg.src = baseUrl;
-                                // 			document.getElementById('poster').innerHTML+=imgDom;
-                                            _tp.classList.remove("disabled");  // remove click restrict
-                                		});
-                                		clearTimeout(delay_h2c);
-                                        delay_h2c = null;  //消除定时器表示激活
-                                    }, 300);  // 延迟 0.5s 生成以获取外链图片url
+                    	        qrcode ? resolve([_tp,"qrcode loaded."]) : reject('qrcode loading err.');
+                    	    });
+    					}).then(function(resolved){
+    					    console.log(resolved[1]);
+                    	    dynamicLoad('<?php custom_cdn_src(); ?>/js/html2canvas/html2canvas.min.js', function(){
+                    	       // console.log('now loading html2canvas..')
+                        		html2canvas(document.querySelector('#capture'),{
+                        		    useCORS: true,
+                        		    allowTaint: true,
+                        		    scrollX: 0,
+                        		    scrollY: 0,
+                        		    backgroundColor: null
+                        	    }).then(canvas => {
+                        	        const newImg = document.createElement("img");
+                                    canvas.toBlob(function(blob){
+                            			let baseUrl = URL.createObjectURL(blob),
+                            				imgDom = '<img src="'+baseUrl+'" />';
+                            			newImg.src = baseUrl;
+                            			document.getElementById('poster').innerHTML+=imgDom;
+                                    },"image/png",1);
+                                    resolved[0].classList.remove("disabled");  // remove click restrict
+					                console.log('html2canvas done.');
                         		});
-                        	});
-                        }
-                    )
+                    	    });
+    					}).catch(function(rejected){
+    					    console.log(rejected);
+    					});
+                    });
                 }else{
                     poster_sw();
                 }
@@ -108,34 +105,15 @@
 ?>
             <script type="text/javascript">
                 function postLike(t){
-                    let _this = t;
-                    // console.log(_this);
-                    if(_this.classList.contains('liked')){
+                    if(t.classList.contains('liked')){
                         alert("您已经点过赞了!");
-                        return false;
-                    }else{
-                        _this.classList.add('liked');
-                        var id = _this.dataset.id,//getAttribute('data-id'),
-                            action =_this.dataset.action,//getAttribute('data-action'),
-                            rateHolder = document.querySelector('.count #counter');
-                        var ajax_data = {
-                                action: "post_like",
-                                um_id: parseInt(id),
-                                um_action: action
-                            };
-                        console.log(ajax_data);
-                        send_ajax_request("get", "/wp-admin/admin-ajax.php", "action=post_like&um_id="+id+"&um_action="+action, function(res){
-                                console.log(res);
-                                rateHolder.innerText = res;
-                        })
-                        // var form_data = 'action=post_like&um_id='+id+'&um_action='+action;
-                        // send_ajax_request("post", "/wp-admin/admin-ajax.php", form_data, function(res){
-                        //         console.log(res);
-                        //         rateHolder.innerText = res;
-                        //     }
-                        // );
-                        return false;
-                    }
+                        return;
+                    };
+                    t.classList.add('liked');
+                    send_ajax_request("get", "/wp-admin/admin-ajax.php", "action=post_like&um_id="+t.dataset.id+"&um_action="+t.dataset.action, function(res){
+                        document.querySelector('.count #counter').innerText = res;
+                        console.log('liked')
+                    });
                 };
             </script>
 <?php 
@@ -170,12 +148,12 @@
                 </form>
             </div>
     <?php
-                $comments = get_comments(array(
-                    'post_id' => $post->ID,
-                    'orderby' => 'comment_date',
-                    'order' => 'DESC',
-                    'status' => 'approve'  //仅输出已通过审核的评论数量
-                ));
+            $comments = get_comments(array(
+                'post_id' => $post->ID,
+                'orderby' => 'comment_date',
+                'order' => 'DESC',
+                'status' => 'approve'  //仅输出已通过审核的评论数量
+            ));
             $comment_count = count($comments);
             if($comment_count>=1){
 ?>
