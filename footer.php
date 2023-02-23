@@ -60,6 +60,9 @@
                     $valine_sw = $third_cmt=='Valine' ? true : false;//get_option('site_valine_switcher');
                     $twikoo_sw = $third_cmt=='Twikoo' ? true : false;//get_option('site_twikoo_switcher');
                     if($valine_sw){    // 全站加载
+                ?>
+                        <script src="<?php custom_cdn_src(); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+                <?php
                         if(!$baas){
                 ?>
                             <script src="<?php custom_cdn_src(); ?>/js/leancloud/av-min.js?v=footcall"></script>
@@ -73,8 +76,6 @@
                             	appKey: '<?php echo get_option('site_leancloud_appkey') ?>',
                             	serverURLs: '<?php echo get_option('site_leancloud_server') ?>',
                             	pageSize: '<?php echo get_option('comments_per_page',15) ?>',
-                            	// avosSdk: '<?php //echo get_option('site_leancloud_sdk') ?>',
-                            	// avatar: '<?php //echo get_option('avatar_default','retro') ?>',
                             	listSize: '<?php echo get_option('site_per_posts', 5) ?>',
                             	notify: false,
                             	verify: false,
@@ -82,23 +83,15 @@
                             	recordIP: false,
                             	pushPlus: '<?php echo get_option('site_comment_pushplus') ?>',
                             	serverChan: '<?php echo get_option('site_comment_serverchan') ?>',
-                            	// qmsgChan: '<?php //echo get_option('site_comment_qmsgchan') ?>',
                             	<?php
                             	    echo get_option('site_lazyload_switcher') ? 'lazyLoad: true,' : 'lazyLoad: false,';
-                            	    $rootPath = get_bloginfo('template_directory');
                             	    if(get_option('site_cdn_switcher')){
-                                	    $cdn_src = get_option('site_cdn_src');
-                                	    $cdn_img = get_option('site_cdn_img');
-                            	        echo $cdn_img ? "imgCdn: '".$cdn_img."', srcCdn: '".$cdn_src."'," : false;
-                            	       // $cdn_src ? $rootPath=$cdn_src : $rootPath;
-                            	    };
-                            	    $postimg = get_postimg();
-                            	    $wxnotify = get_option("site_wpwx_notify_switcher");
-                        	       // echo $postimg ? 'posterImg:"'.$postimg.'",' : false;
-                        	        echo $wxnotify ? 'wxNotify:"'.$wxnotify.'",' : false;
+                            	        echo 'imgCdn: "'.get_option('site_cdn_img').'", srcCdn: "'.get_option('site_cdn_src').'",';
+                            	    }
+                        	        echo get_option("site_wpwx_notify_switcher") ? 'wxNotify: true,' : 'wxNotify: false,';
                             	?>
-                            	posterImg: '<?php echo $postimg ?>',
-                            	rootPath: '<?php echo $rootPath ?>',
+                            	posterImg: '<?php echo get_postimg(); ?>',
+                            	rootPath: '<?php echo get_bloginfo('template_directory'); ?>',
                             	adminMd5: '<?php echo md5(get_bloginfo('admin_email')) ?>',
                             	avatarCdn: '<?php echo get_option("site_avatar_mirror") ?>avatar/',
                             	placeholder: '快来玩右下角的“涂鸦画板”！'
@@ -106,37 +99,10 @@
                             // reply at current floor
                             const vcomments = document.querySelector("#vcomments");
                             if(vcomments){
-                                vcomments.onclick=(e)=>{
-                                    var e = e || window.event,
-                                        t = e.target || e.srcElement;
-                                    while(t!=vcomments){
-                                        if(t.classList[0]=="vat"){
-                                            let vwraps = vcomments.querySelectorAll(".vwrap"),
-                                                origin_wrap = vwraps[0],
-                                                vats = vcomments.querySelectorAll(".vat"),
-                                                adopt_node = document.adoptNode(origin_wrap),  // adopt(clone)node
-                                                adopt_area = adopt_node.querySelector("textarea");
-                                            if(!t.classList.contains('reply')){
-                                                for(let i=0;i<vats.length;i++){
-                                                    vats[i].classList.remove('reply');
-                                                    vats[i].innerText = "回复";
-                                                }
-                                                t.classList.add('reply');
-                                                t.innerText = "取消回复";
-                                                t.parentElement.parentElement.appendChild(adopt_node);  // append adopt node
-                                                adopt_area.focus();
-                                            }else{
-                                                t.classList.remove('reply');
-                                                t.innerText = "回复";
-                                                vcomments.insertBefore(adopt_node, vcomments.querySelector(".vinfo"));  // reverse adopt
-                                                adopt_area.focus();
-                                            }
-                                            break;
-                                        }else{
-                                            t = t.parentNode;
-                                        }
-                                    }
-                                }
+                                const vwraps = vcomments.querySelectorAll(".vwrap"),
+                                      vats = vcomments.querySelectorAll(".vat"),
+                                      origin_wrap = vwraps[0];
+                                bindEventClick(vcomments, 'vat');
                             }
                         </script>
                 <?php
@@ -400,88 +366,89 @@
     <?php
         // lazyLoad images
         if(get_option('site_lazyload_switcher')){
+            global $cat;
+            $acgcid = get_cat_by_template('acg','term_id');
+            if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
+    ?>
+                var getAverageRGB = function(imgEl){var blockSize=5,defaultRGB={r:255,g:255,b:255},canvas=document.createElement('canvas'),context=canvas.getContext&&canvas.getContext('2d'),data,width,height,i=-4,length,rgb={r:0,g:0,b:0},count=0;if(!context){return defaultRGB}height=canvas.height=imgEl.naturalHeight||imgEl.offsetHeight||imgEl.height;width=canvas.width=imgEl.naturalWidth||imgEl.offsetWidth||imgEl.width;context.drawImage(imgEl,0,0);try{data=context.getImageData(0,0,width,height)}catch(e){return defaultRGB}length=data.data.length;while((i+=blockSize*4)<length){++count;rgb.r+=data.data[i];rgb.g+=data.data[i+1];rgb.b+=data.data[i+2]}rgb.r=~~(rgb.r/count);rgb.g=~~(rgb.g/count);rgb.b=~~(rgb.b/count);return rgb},
+                    setupBlurColor = function(imgEl,tarEl,tarCls="inbox"){
+                        if(!tarEl.classList.contains(tarCls)){
+                            return;
+                        }
+                        let rgb = getAverageRGB(imgEl),
+                            rgba = rgb['r']+' '+rgb['g']+' '+rgb['b']+' / 50%';
+                        tarEl.setAttribute('style','background:rgb('+rgba+')');
+                    };
+    <?php
+            }
     ?>
             const bodyimg = document.querySelectorAll("body img"),
                   loadimg = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png";
-            var timer_throttle = null,
-                array_images = [],
-                scrollload = function(){
-                    return (function(){
-                        if(timer_throttle==null){
-                            timer_throttle = setTimeout(function(){
-                                let images_length = array_images.length;
-                                if(images_length<=0){
-                                    console.log('lazyload(cover+) images done.');
-                                    window.removeEventListener('scroll', scrollload, true);
-                                    return;
-                                };
-                                for(let i=0;i<images_length;i++){
-                                    let eachimg = array_images[i];
-                                    if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight
-                                        eachimg.src = eachimg.dataset.src; // 即时更新 eachimg
-                                        let clear_delay = setTimeout(function(){
-                                            array_images.splice(array_images.indexOf(eachimg), 1);// 清空已加载图片数组
+            if(bodyimg[0]){
+                var timer_throttle = null,
+                    loadArray = [],
+                    msgObject = Object.create(null),
+                    autoLoad = function(imgLoadArr, initDomArr=false){
+                        let tempArray = initDomArr ? initDomArr : imgLoadArr;  //判断加载数组类型，默认加载 loadArray
+                        for(let i=0;i<tempArray.length;i++){
+                            let eachimg = tempArray[i],
+                                datasrc = eachimg.dataset.src;
+                            if(datasrc){
+                                eachimg.src = loadimg; //pre-holder(datasrc only)
+                                new Promise(function(resolve,reject){
+                                    initDomArr ? imgLoadArr.push(eachimg) : false;  //判断首次加载（载入 lazyload 元素数组）
+                                    resolve(imgLoadArr);
+                                }).then(function(res){
+                                    if(eachimg.getBoundingClientRect().top<window.innerHeight){
+                                        eachimg.src = datasrc; // 即时更新 eachimg（设置后即可监听图片 onload 事件）
+                                        // 使用 onload 事件替代定时器或Promise，判断已设置真实 src 的图片加载完成后再执行后续操作
+                                        eachimg.onload=function(){
+                                            if(this.getAttribute('src')==datasrc){
+                                                res.splice(res.indexOf(this), 1);  // 移除已加载图片数组（已赋值真实 src 情况下）
+                                            }else{
+                                                this.removeAttribute('data-src'); // disable loadimg
+                                                this.src = datasrc;  // this.src will auto-fix [http://] prefix
+                                                // console.log('waitting..', this);
+                                            }
                                             <?php
-                                                global $cat;
-                                                // $basecat = get_cat_by_template('acg');
-                                                $acgcid = get_cat_by_template('acg','term_id'); //$basecat->term_id;
                                                 if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
-                                            ?>
-                                                    const acg = eachimg.parentNode.parentNode;
-                                                    if(!acg.classList.contains('inbox')){
-                                                        return;
-                                                    }
-                                                    let rgb = getAverageRGB(eachimg),
-                                                        rgba = rgb['r']+' '+rgb['g']+' '+rgb['b']+' / 50%';
-                                                    acg.setAttribute('style','background:rgb('+rgba+')');
-                                            <?php
+                                                    echo 'setupBlurColor(eachimg, eachimg.parentNode.parentNode);';
                                                 }
                                             ?>
-                                            clearTimeout(clear_delay);
-                                            clear_delay = null;
-                                        }, 100);
+                                        }
+                                        // handle loading-err images eachimg.onerror=()=>this.src=loadimg;
+                                        eachimg.onerror=function(){
+                                            res.splice(res.indexOf(this), 1);  // 移除错误图片数组
+                                            this.removeAttribute('src');
+                                            this.removeAttribute('data-src'); // disable loadimg
+                                            this.setAttribute('alt','图片请求出现问题'); // this.removeAttribute('src');
+                                        }
                                     }
-                                };
-                                // console.log('throttling..',array_images);
-                                timer_throttle = null;  //消除定时器
-                            }, 500, array_images); //重新传入array（单次）循环
-                        }
-                    })();
-                    // console.log(array_images);
-                };
-            if(bodyimg.length>=1){
-                window.addEventListener('scroll', scrollload, true);
-                for(let i=0;i<bodyimg.length;i++){
-                    let eachimg = bodyimg[i],
-                        datasrc = eachimg.dataset.src;
-                    if(datasrc){
-                        new Promise(function(resolve,reject){
-                            eachimg.src = loadimg; //pre-holder
-                            array_images.push(eachimg); //for-closure
-                            resolve(array_images); //datasrc ? resolve(array_images) : reject(array_images);
-                        }).then(function(res){
-                            if(eachimg.getBoundingClientRect().top < window.innerHeight){
-                                eachimg.src = datasrc;
-                                res.splice(res.indexOf(eachimg), 1); //delete array_images[eachimg]
+                                }).catch(function(err){
+                                    console.log(err);
+                                });
                             }
-                        }).catch(function(err){
-                            console.log(err);
-                        });
-                    }
-                    // eachimg.onerror=function(){
-                    //     // this.src = loadimg;  //始终显示 loading
-                    //     this.dataset.src = loadimg;
-                    // }
-                    // eachimg.src = loadimg; //pre-holder
-                    // if(datasrc){
-                    //     array_images.push(eachimg); //for-closure
-                    //     if(eachimg.getBoundingClientRect().top < window.innerHeight){
-                    //         eachimg.src = datasrc;
-                    //         array_images.splice(array_images.indexOf(eachimg), 1); //delete array_images[eachimg]
-                    //     }
-                    //     window.addEventListener('scroll', scrollload, true);
-                    // }
-                }
+                        }
+                    },
+                    scrollLoad = function(){
+                        return (function(){
+                            if(timer_throttle==null){
+                                timer_throttle = setTimeout(function(){
+                                    // console.log('loading..');
+                                    if(loadArray.length<=0){
+                                        console.log(Object.assign(msgObject, {status:'lazyload done', type:'all'}));
+                                        window.removeEventListener('scroll', scrollLoad, true);
+                                        return;
+                                    };
+                                    autoLoad(loadArray);
+                                    // console.log('throttling..',loadArray);
+                                    timer_throttle = null;  //消除定时器
+                                }, 500, loadArray); //重新传入array（单次）循环
+                            }
+                        })();
+                    };
+                window.addEventListener('scroll', scrollLoad, true);
+                autoLoad(loadArray, bodyimg);
             }
     <?php
         }
@@ -534,6 +501,8 @@
                             video_timer = null;
                         video.addEventListener('canplay', function () {
                             video = video_box.querySelector('video'); // canplay 内需重新声明 video，否则修改后无法应用到dom
+                            video.onplaying=()=>video_box.classList.add('video_preview_hide');
+                            video.onpause=()=>video_box.classList.remove('video_preview_hide');
                             <?php 
                                 // if($ffmpeg_sw_gif){
                             ?>
@@ -547,12 +516,6 @@
                             <?php
                                 // }
                             ?>
-                            video.onplaying=()=>{
-                                video_box.classList.add('video_preview_hide');
-                            }
-                            video.onpause=()=>{
-                                video_box.classList.remove('video_preview_hide');
-                            }
                         });
                         video_box.innerHTML += `<div class="preview_bg"<?php echo $ffmpeg_sw_gif ? ' data-previews="${video_gif}"' : false; ?> style="background:url(${video_path}.jpg) no-repeat 0% 0% /cover"><span class="progress"><em></em></span></div>`;
                         const preview_bg = video_box.querySelector('.preview_bg'),
@@ -583,7 +546,7 @@
                                     }, 10);
                                 }
                             })();
-                        };
+                        }
                     }
                 }
             }

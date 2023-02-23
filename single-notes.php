@@ -83,12 +83,12 @@
     <script>hljs.initHighlightingOnLoad();</script>
     <script src="<?php custom_cdn_src(); ?>/js/fancybox.umd.js"></script>
     <script>
-        <?php
-            if(get_option('site_video_poster_switcher')){
-                echo 'setupVideoPoster(2)';  // 截取设置当前页面所有视频 poster 
-            }
-        ?>
         // gallery js initiate 'bodyimg' already exists in footer lazyload, use contimg insted.
         fancyImages(document.querySelectorAll(".news-article-container .content img"));
+        <?php
+            if(get_option('site_video_poster_switcher')){
+                echo 'setupVideoPoster(2);';  // 截取设置当前页面所有视频 poster 
+            }
+        ?>
     </script>
 </body></html>

@@ -113,7 +113,9 @@
     <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
     <?php
         if(get_option('site_video_poster_switcher')){
-            echo '<script>setupVideoPoster(1);</script>';  // 截取设置当前页面所有视频 poster 
+    ?>
+            <script>setupVideoPoster(1);// 截取设置当前页面所有视频 poster</script>
+    <?php
         }
     ?>
 </body></html>

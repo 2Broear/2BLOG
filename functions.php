@@ -1235,7 +1235,7 @@
         global $post,$lazysrc,$loadimg;
         $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
         $cat_slug = $the_cat->slug;
-        echo '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> '.$cat_slug.' </sup></h2></div><div class="info flexboxes">';
+        echo '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> ['.$cat_slug.'] </sup></h2></div><div class="info flexboxes">';
         // preset all acg query
         $all_query = new WP_Query(array_filter(array(
             'cat' => $the_cat->term_id,
@@ -1307,7 +1307,7 @@
             $all_count = $all_query->post_count;
             $posts_count = $acg_query->post_count;  //count($acg_query->posts) //mailto:'.get_bloginfo("admin_email").' 发送邮件，荐你所见
             $disable_statu = $posts_count==$all_count ? ' disabled' : false; //>=
-            echo '<div class="inbox more flexboxes"><div class="inbox-more flexboxes'.$disable_statu.'"><a id="more" href="javascript:;" data-all="'.$all_count.'" data-load="'.$posts_count.'" data-count="0" data-cid="'.$acg_query->query['cat'].'" data-cat="'.strtoupper($acg_query->query_vars['category_name']).'" title="加载更多数据"></a></div></div></div>';
+            echo '<div class="inbox more flexboxes"><div class="inbox-more flexboxes'.$disable_statu.'"><a class="load-more" href="javascript:;" data-all="'.$all_count.'" data-load="'.$posts_count.'" data-count="0" data-cid="'.$acg_query->query['cat'].'" data-cat="'.strtoupper($acg_query->query_vars['category_name']).'" title="加载更多数据"></a></div></div></div>';
         }
     };
     

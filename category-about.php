@@ -8,81 +8,47 @@
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/about.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(false); ?>/style/about.css?v=<?php echo get_theme_info('Version'); ?>" />
     <style>
-        .In-core-head .user_info{
-            background: -webkit-linear-gradient(180deg,rgba(255, 255, 255, 0) -10%,var(--preset-e) 100%);
-            background: linear-gradient(-90deg,rgba(255, 255, 255, 0) -10%,var(--preset-e) 100%);
+        /*.about_blocks li.intro_right .mbit .mbit_range li:nth-child(1) span em,*/
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(1) span em::after{
+            background: #4398AD;
         }
-        .head-inside video{
-            /*height: auto;*/
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(1).before span:before,
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(1).after span:after{
+            color: #4398AD;
         }
-        .about_blocks li.intro_right .mbit .mbit_intro{
-            margin-left: 25px;
+        /*.about_blocks li.intro_right .mbit .mbit_range li:nth-child(2) span em,*/
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(2) span em::after{
+            background: #E6AE3F;
         }
-        .about_blocks li.intro_right .mbit .mbit_intro a{
-            box-shadow: 0px 0 0px 3px rgb(51 164 116 / 12%);
-            background: rgb(51 164 116 / 6%);
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(2).before span:before,
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(2).after span:after{
+            color: #E6AE3F;
         }
-        .about_blocks li.intro_right .mbit:before{
-            right: 8%;
+        /*.about_blocks li.intro_right .mbit .mbit_range li:nth-child(3) span em,*/
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(3) span em::after{
+            background: #2EA575;
         }
-        .about_blocks{
-            margin-top: 15px;
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(3).before span:before,
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(3).after span:after{
+            color: #2EA575;
         }
-        .In-core-head #head-nickname{
-            font-size: 1.35rem;
+        /*.about_blocks li.intro_right .mbit .mbit_range li:nth-child(4) span em,*/
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(4) span em::after{
+            background: #895D9E;
         }
-        
-        @keyframes loader{
-            0%{transform:translateX(-100%);}
-            100%{transform:translateX(360%);}
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(4).before span:before,
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(4).after span:after{
+            color: #895D9E;
         }
-        @keyframes loader-reverse{
-            0%{transform:translateX(100%);}
-            100%{transform:translateX(-360%);}
+        /*.about_blocks li.intro_right .mbit .mbit_range li:nth-child(5) span em,*/
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(5) span em::after{
+            background: #EB6167;
         }
-        /*.about_blocks li.intro_right .mbit .mbit_range li.after span em:after,*/
-        .about_blocks li.intro_right .mbit .mbit_range li.after span em:before{
-            background: linear-gradient(left,var(--preset-fa) 0%,transparent 100%);
-            background: -webkit-linear-gradient(left,var(--preset-fa) 0%,rgba(255, 255, 255, 0) 100%);
-            animation: loader-reverse ease-out 3.6s 1.2s infinite;
-            -webkit-animation: loader-reverse ease-out 3.6s 1.2s infinite;
-            left: auto;
-            right: 0;
-            transform: translateX(100%);
-        }
-        /*.about_blocks li.intro_right .mbit .mbit_range li span em:after,*/
-        .about_blocks li.intro_right .mbit .mbit_range li span em:before{
-            content: '';
-            width: 66%;
-            height: 100%;
-            background-color: currentColor;
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform: translateX(-100%);
-            background: linear-gradient(left,transparent 0%,var(--preset-fa) 100%);
-            background: -webkit-linear-gradient(left,rgba(255, 255, 255, 0) 0%,var(--preset-fa) 100%);
-            animation: loader ease-out 3.6s 1.2s infinite;
-            -webkit-animation: loader ease-out 3.6s 1.2s infinite;
-            opacity: .75;
-        }
-        .about_blocks li.intro_right .mbit .mbit_range li span em{
-            width: 0%;
-            transition: width 1s ease;
-            will-change: width;
-            overflow: hidden;
-        }
-        .In-core-head .head-inside::before{
-            /*background: url(https://img.2broear.com/images/svg/digital_mask.svg);*/
-            background-size: 3px 3px!important;
-            max-height: 100%;
-        }
-        
-        .cs-tree{
-            margin: 35px auto auto;
-            text-align: left;
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(5).before span:before,
+        .about_blocks li.intro_right .mbit .mbit_range li:nth-child(5).after span:after{
+            color: #EB6167;
         }
     </style>
 </head>
@@ -166,7 +132,7 @@
                                                     $init_before = strtoupper(trim($each_data[2]['before']));
                                                     $init_after = strtoupper(trim($each_data[2]['after']));
                                                     if($data_type){  //incase end with ";"
-                                                        echo '<li class="'.$data_type.'" data-res="'.$data_percent.'"><span id="data-range" data-before="'.$data_before.'" data-after="'.$data_after.'"><em style="width:0%;"></em></span><span id="data-type" data-before="'.$init_before.'" data-after="'.$init_after.'"></span></li>'; //'.$data_percent.'%;
+                                                        echo '<li class="'.$data_type.'" data-res="'.$data_percent.'"><span id="data-range" data-before="'.$data_before.'" data-after="'.$data_after.'"><em style="width:'.$data_percent.'%;"></em></span><span id="data-type" data-before="'.$init_before.'" data-after="'.$init_after.'"></span></li>'; //'.$data_percent.'%;
                                                     }
                                                 }
                                             }
@@ -198,36 +164,28 @@
 <!-- siteJs -->
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <script>
-    <?php
-        if(get_option('site_video_poster_switcher')){
-            echo 'setupVideoPoster(2)';  // 截取设置当前页面所有视频 poster 
-        }
-    ?>
-    function animatedInqueue(list, queue){
+    (function(list, queue=false, ms=100){
         if(list[0]){
             for(let i=0;i<list.length;i++){
-                new Promise(function(resolve,reject){
-                    let count = parseInt(list[i].dataset.res),
-                        counter = list[i].querySelector('em');
-                    counter ? resolve([count,counter]) : reject(counter);
-                }).then(function(res){
-                    let count = res[0],
-                        counter = res[1];
-                    if(queue){
-                        var inOrder = setTimeout(function(){
-                            counter.style.width = count+"%";
-                            inOrder = null;
-                            clearTimeout(inOrder);
-                        }, i*100);
-                    }else{
-                        counter.style.width = count+"%";
-                    }
-                }).catch(function(err){
-                    console.log(err);
-                });
+                let each = list[i],
+                    count = parseInt(each.dataset.res),
+                    counter = each.querySelector('em');
+                if(queue){
+                    var inOrder = setTimeout(()=>{
+                        each.classList.add('active'); //counter.style.width = count+"%";
+                        inOrder = null;
+                        clearTimeout(inOrder);
+                    }, i*ms);
+                }else{
+                    each.classList.add('active'); //counter.style.width = count+"%";
+                }
             }
         }
-    };
-    animatedInqueue(document.querySelectorAll('.mbit .mbit_range li'), true);
+    })(document.querySelectorAll('.mbit .mbit_range li'), true, 150);
+    <?php
+        if(get_option('site_video_poster_switcher')){
+            echo 'setupVideoPoster(2);';  // 截取设置当前页面所有视频 poster 
+        }
+    ?>
 </script>
 </body></html>

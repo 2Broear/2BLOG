@@ -275,17 +275,17 @@
                         return $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
                     };
                     // echo cal_days_in_month(CAL_GREGORIAN,1,2023);
-                    $curday = gmdate('md', time() + 3600*8);//date('md'); 
-                    $today = date('d');
-                    $tomon = date('m');
-                    $lastYear = $curYear-1;
-                    $archive_daily = get_post_archives('daily','post',9999);
                     // function days_in_month($month, $year){
                     //     if($month>=1){
                     //         $date_str = "$year-$month-".$today;
                     //         return date('t', strtotime($date_str));
                     //     }
                     // }
+                    $curday = gmdate('md', time() + 3600*8);//date('md'); 
+                    $today = date('d');
+                    $tomon = date('m');
+                    $lastYear = $curYear-1;
+                    $archive_daily = get_post_archives('daily','post',9999);
                     function archive_contributions_output($days, $the_day, $compare_date, $year){
                         global $color_light,$color_middle,$color_heavy,$color_more,$archive_daily;
                         echo '<span class="'.$the_day.'" data-dates="'.$compare_date.'" data-date="'.$days.'"';
@@ -397,10 +397,10 @@
                     $head_emoji = $curYear==$cur_year ? ' 🚀 ' : ' 📁 ';
                     // SAME COMPARE AS $found $limit
                     if($posts_count>=$async_loads){
-                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'">加载更多</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
+                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup class="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'">加载更多</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
                     }else{
                         // $head_emoji = '📂';
-                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup id="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'" class="disabled">已全部载入</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
+                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup class="call disabled" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'">已全部载入</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
                     };
                     // print_r($cur_posts[0]->ID);
                     for($i=0;$i<$posts_count;$i++){
@@ -440,65 +440,59 @@
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
     if(get_option('site_animated_counting_switcher')){
-        echo '<script>dataDancing(document.querySelectorAll(".win-top .counter div"), "h1", false, 200);</script>';
+?>
+        <script>
+            dataDancing(document.querySelectorAll(".win-top .counter div"), "h1", 200);
+        </script>
+<?php
     }
     if($async_sw){
 ?>
         <script>
             const archive_tree = document.querySelector(".archive-tree"),
                   preset_loads = <?php echo $async_loads; ?>;
-            archive_tree.onclick=(e)=>{
-                var e = e || window.event,
-                    t = e.target || e.srcElement;
-                while(t!=archive_tree){
-                    if(t.id=="call" && t.nodeName.toLowerCase()=="sup"){
-                        let _this = t,
-                            years = _this.dataset.year, //.getAttribute("data-year"),
-                            loads = parseInt(_this.dataset.load), //.getAttribute("data-load")
-                            click_count = parseInt(_this.dataset.count), //.getAttribute('data-count')
-                            load_box = archive_tree.querySelector('.call_'+years),//_this.parentNodenextSibling,
-                            last_load = load_box.lastChild.offsetTop;  // preset lastChild offsetTop record
-                        click_count++;
-                        _this.innerText="加载中";
-                        _this.classList.add('loading','disabled');
-                        _this.setAttribute('data-count', click_count);
-                        // console.log(click_count)
-                        send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", 
-                            parse_ajax_parameter({
-                                "action": "updateArchive",
-                                "key": years, 
-                                "limit": preset_loads,
-                                "offset": preset_loads*click_count,
-                            }, true), function(res){
-                                // console.log(res);  //response
-                                var posts_array = JSON.parse(res),
-                                    posts_count = posts_array.length,
-                                    lasts_loads = load_box.lastChild.offsetTop;  // same as preset, define last_load before insert
-                                // console.log(load_box.lastChild.offsetTop);
-                                if(posts_count<=0){
-                                    _this.classList.add("disabled");
-                                    _this.innerText="已加载全部";
-                                }else{
-                                    _this.classList.remove('disabled');
-                                    _this.setAttribute('data-load', loads+posts_count);
-                                    _this.innerText = "加载更多";
-                                };
-                                _this.classList.remove('loading');
-                                for(let i=0;i<posts_count;i++){
-                                    let each_post = posts_array[i];
-                                    // console.log(each_post)
-                                    load_box.innerHTML += `<li>${each_post.date}<a class="link${each_post.mark}" href="${each_post.link}" target="_blank">${each_post.title}<sup>${each_post.cat}</sup></a></li>`;
-                                };
-                                // console.log(load_box.lastChild.offsetTop);  // offsetTop = 0
-                                load_box.scrollTo(0, lasts_loads); //+load_box.lastChild.offsetHeight
-                            }
-                        );
-                        break;
-                    }else{
-                        t = t.parentNode;
+            bindEventClick(archive_tree, 'call', function(t){
+                let years = t.dataset.year, //.getAttribute("data-year"),
+                    loads = parseInt(t.dataset.load), //.getAttribute("data-load")
+                    click_count = parseInt(t.dataset.count), //.getAttribute('data-count')
+                    load_box = archive_tree.querySelector('.call_'+years),//t.parentNodenextSibling,
+                    last_load = load_box.lastChild.offsetTop;  // preset lastChild offsetTop record
+                click_count++;
+                t.innerText="加载中";
+                t.classList.add('loading','disabled');
+                t.setAttribute('data-count', click_count);
+                // console.log(click_count)
+                send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", 
+                    parse_ajax_parameter({
+                        "action": "updateArchive",
+                        "key": years, 
+                        "limit": preset_loads,
+                        "offset": preset_loads*click_count,
+                    }, true), function(res){
+                        // console.log(res);  //response
+                        var posts_array = JSON.parse(res),
+                            posts_count = posts_array.length,
+                            lasts_loads = load_box.lastChild.offsetTop;  // same as preset, define last_load before insert
+                        // console.log(load_box.lastChild.offsetTop);
+                        if(posts_count<=0){
+                            t.classList.add("disabled");
+                            t.innerText="已加载全部";
+                        }else{
+                            t.classList.remove('disabled');
+                            t.setAttribute('data-load', loads+posts_count);
+                            t.innerText = "加载更多";
+                        }
+                        t.classList.remove('loading');
+                        for(let i=0;i<posts_count;i++){
+                            let each_post = posts_array[i];
+                            // console.log(each_post)
+                            load_box.innerHTML += `<li>${each_post.date}<a class="link${each_post.mark}" href="${each_post.link}" target="_blank">${each_post.title}<sup>${each_post.cat}</sup></a></li>`;
+                        }
+                        // console.log(load_box.lastChild.offsetTop);  // offsetTop = 0
+                        load_box.scrollTo(0, lasts_loads); //+load_box.lastChild.offsetHeight
                     }
-                }
-            }
+                );
+            });
         </script>
 <?php
     }

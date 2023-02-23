@@ -92,7 +92,7 @@
                                     <div class="weblog-tree-box">
                                         <div class="tree-box-title">
                                             <a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : 'javascript:;' ?>" id="<?php echo 'pid_'.get_the_ID() ?>" target="_self">
-                                                <h3><?php the_title() ?></h3>
+                                                <h3 class="reply_quote"><?php the_title() ?></h3>
                                             </a>
                                         </div>
                                         <div class="tree-box-content">
@@ -144,7 +144,7 @@
         </footer>
     </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(false); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
     if($baas){
 ?>
@@ -175,7 +175,7 @@
                             index = res.attributes.index,
                             dates = res.attributes.dates,
                             today = res.attributes.today;
-                        loadContent.innerHTML += '<div class="weblog-tree-core-record i'+index+'" data-type="'+type+'"><div class="weblog-tree-core-l"><span id="weblog-timeline" data-year="'+today.y+'" data-month="'+today.m+'" data-day="'+today.d+'">'+dates+'</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div class="weblog-tree-box"><div class="tree-box-title"><h3 id="'+res.id+'">'+title+'</h3></div><div class="tree-box-content"><span id="core-info"><p>'+main+'</p></span><span id="other-info"><h4> Ps. </h4><p>'+ps+'</p><p id="sub">'+dates+'</p></span></div></div></div></div>';
+                        loadContent.innerHTML += '<div class="weblog-tree-core-record i'+index+'" data-type="'+type+'"><div class="weblog-tree-core-l"><span id="weblog-timeline" data-year="'+today.y+'" data-month="'+today.m+'" data-day="'+today.d+'">'+dates+'</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div class="weblog-tree-box"><div class="tree-box-title"><h3 id="'+res.id+'" class="reply_quote">'+title+'</h3></div><div class="tree-box-content"><span id="core-info"><p>'+main+'</p></span><span id="other-info"><h4> Ps. </h4><p>'+ps+'</p><p id="sub">'+dates+'</p></span></div></div></div></div>';
                         // loadcore.appendChild(loadContent);
                         loadcore.insertBefore(loadContent, loadbox);
                     }
@@ -193,38 +193,24 @@
     if($third_cmt && $third_cmt!=''){
 ?>
         <script>
-            // BLOCKQUOTE Reply support
-            const weblog = document.querySelector(".weblog-tree-core"),
-                  replier = weblog.querySelectorAll('.weblog-tree-box .tree-box-title h3'),
-                  editor = document.querySelector('textarea');
-            weblog.onclick=(e)=>{
-                var e = e || window.event,
-                    t = e.target || e.srcElement;
-                while(t!=weblog){
-                    if(t.nodeName.toLowerCase()=="h3"){
-                        let content = t.parentElement.parentElement.parentElement.querySelector('#core-info p');
-                        editor.focus();
-                        editor.value = '';
-                        editor.setAttribute('placeholder', '回复片段：'+t.innerText);
-                        var quote = `\n> __${t.innerText}__ \n> ${content.innerText.substr(0,88)}...`;
-                            // delay = setTimeout(function(){
-                                editor.style.cssText="min-height:150px;opacity:.75;";//editor.style.minHeight = '150px';
-                                editor.value = '\n'+quote;//this.id;
-                                editor.setSelectionRange(0,0);
-                                // clearTimeout(delay);
-                            // }, 1000);
-                        editor.oninput=function(){
-                            if(this.value.indexOf(quote)==-1 || this.value.substr(this.value.length-3,this.value.length)!='...'){  //
-                                this.value = quote;
-                                editor.setSelectionRange(0,0);
-                            }
-                        }
-                        break;
-                    }else{
-                        t = t.parentNode;
+            // BLOCKQUOTE Reply
+            const editor = document.querySelector('textarea');
+            bindEventClick(document.querySelector(".weblog-tree-core"), 'reply_quote', function(t){
+                editor.focus();
+                editor.value = "";
+                editor.setAttribute('placeholder', '回复片段：'+t.innerText);
+                const cores = t.parentElement.parentElement.parentElement.querySelector('#core-info p'),
+                      quote = `\n> __${t.innerText}__ \n> ${cores ? cores.innerText.substr(0,88) : ".."}...`;
+                editor.style.cssText="min-height:150px;opacity:.75;";
+                editor.value = '\n'+quote;//this.id;
+                editor.setSelectionRange(0,0);
+                editor.oninput=function(){
+                    if(this.value.indexOf(quote)==-1 || this.value.substr(this.value.length-3,this.value.length)!='...'){  //
+                        this.value = quote;
+                        editor.setSelectionRange(0,0);
                     }
                 }
-            }
+            });
         </script>
 <?php
     }

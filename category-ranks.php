@@ -175,7 +175,7 @@
         </footer>
     </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(false); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
     if($valine_sw){
 ?>
@@ -277,11 +277,11 @@
                             ranked.innerHTML += `<li><p>${name}<sup>${times}</sup></p></li>`;
                         }
                         // note: re-call 'body img' caused frame drops, scrolling stuck at loop(specific images will be better)
-                        // lazyload("body img");
+                        // loadlazy("body img");
                     }
                 };
                 // fine re-call with outside of loop
-                lazyload(".ranks .ranking img");
+                loadlazy(".ranks .ranking img");
             })
         </script>
 <?php

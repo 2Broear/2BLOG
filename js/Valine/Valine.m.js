@@ -285,7 +285,8 @@ t.semoji={
     //         pattern=/^\d+$/g,result=prefix.match(pattern);
     //     result!==null?qqavatar="//q.qlogo.cn/headimg_dl?dst_uin="+prefix+"&spec=640":false
     // };
-    var isAdmin=(md5)=>{return md5==custom_initfield_adminmd5 ? '<span class="vadmin">admin</span>' : "";},isEdited=(e)=>{if(e==true)return"「 已编辑 」";else return""},topset=e.get("topset"),isTop="",ifTop="";topset!=undefined&&topset!=false?(isTop=topset,ifTop='<span class="vtop"> 置顶评论 </span>'):false;var adCheck=isAdmin(md5mail),edCheck=isEdited(e.get("isEdited")),p="",f=e.get("link")||"",ff="http://"+f.replace(/http:\/\//,"").replace(/https:\/\//,""),i=u.create("div",{class:"vcard "+isTop,id:e.id}),o=m.hide?"":p=f?'<a class="noslide" rel="nofollow" href="'+ff+'" target="_blank" ><img class="vimg" src="'+qqavatar+'" alt="user_avatar"></a>':'<img class="vimg" src="'+qqavatar+'" alt="user_avatar">',s=e.get("ua")||"",l="";if(s){s=d(s);
+    var //lazyload = custom_initfield_lazyload ? 'data-src' : 'src', '+lazyload+'
+        isAdmin=(md5)=>{return md5==custom_initfield_adminmd5 ? '<span class="vadmin">admin</span>' : "";},isEdited=(e)=>{if(e==true)return"「 已编辑 」";else return""},topset=e.get("topset"),isTop="",ifTop="";topset!=undefined&&topset!=false?(isTop=topset,ifTop='<span class="vtop"> 置顶评论 </span>'):false;var adCheck=isAdmin(md5mail),edCheck=isEdited(e.get("isEdited")),p="",f=e.get("link")||"",ff="http://"+f.replace(/http:\/\//,"").replace(/https:\/\//,""),i=u.create("div",{class:"vcard "+isTop,id:e.id}),o=m.hide?"":p=f?'<a class="noslide" rel="nofollow" href="'+ff+'" target="_blank" ><img class="vimg" src="'+qqavatar+'" alt="user_avatar"></a>':'<img class="vimg" src="'+qqavatar+'" alt="user_avatar">',s=e.get("ua")||"",l="";if(s){s=d(s);
 const new_vertion = '12.01',
         macOSver = [{
         "slug": "Monterey",

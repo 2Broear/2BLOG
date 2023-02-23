@@ -153,7 +153,7 @@
 <!--<script src="//cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js"></script>-->
 <!-- inHtmlJs -->
 <?php
-    // declear lazyLoad standby-avatar(fix alt tips)
+    // declear lazyLoad standby-avatar(seo-fix alt tips)
     if(get_option('site_lazyload_switcher')){
 ?>
         <script>

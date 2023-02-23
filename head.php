@@ -9,11 +9,31 @@
 <meta name="msapplication-TileImage" content="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico" />
 <link rel="shortcut icon" href="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico"/>
 <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/universal.min.css?v=<?php echo get_theme_info('Version'); ?>" />
-<?php echo $theme_color!='#eb6844' ? '<style>:root{--theme-color: '.$theme_color.'}</style>' : false; ?>
+<script async>
+    document.documentElement.style.setProperty('--theme-color','<?php echo $theme_color; ?>');
+    function bindEventClick(parent,cls,callback=false){
+        parent.onclick=(e)=>{
+            e = e || window.event;
+            let t = e.target || e.srcElement;
+            if(!t || !t.classList.contains(cls)){
+                return;
+            }
+            callback ? callback(t) : false; //callback(t) || callback(t);
+            // while(t!=parent && t!=null){
+            //     if(t.classList.contains(cls)){
+            //         callback ? callback(t) : false;
+            //         break;
+            //     }else{
+            //         t = t.parentNode;
+            //     }
+            // }
+        }
+    }
+</script>
 <?php
     if(get_option('site_leancloud_switcher')){
 ?>
-        <script src="<?php custom_cdn_src(); ?>/js/leancloud/av-min.js?v=headcall"></script>
+        <script defer src="<?php custom_cdn_src(); ?>/js/leancloud/av-min.js?v=headcall"></script>
         <script>
             AV.init({
                 appId: "<?php echo get_option('site_leancloud_appid') ?>",
@@ -21,11 +41,6 @@
     	        serverURLs: "<?php echo get_option('site_leancloud_server') ?>"
             });
         </script>
-<?php
-    }
-    if(get_option('site_third_comments')=='Valine'){  // 全站加载
-?>
-        <script src="<?php custom_cdn_src(); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
     }
 ?>

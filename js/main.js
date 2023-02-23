@@ -56,16 +56,14 @@
     
     function setupVideoPoster(second,quality,base64){
         const videos = document.querySelectorAll('video');
+        var msgJson = Object.create(null);
         if(videos[0]){
-            // var dataNods = [],
-            //     // dataObjs = {},
-            //     dataURLs = [];
             for(let i=0;i<videos.length;i++){
                 let video = videos[i];
                 // return new Promise(function (resolve, reject) {  // RETURN caused outside-loop array length calc-err
-                new Promise(function (resolve, reject) {
+                new Promise(function(resolve, reject){
                     if(video.autoplay){
-                        reject('setupVideoPoster abort: v'+i);
+                        reject(Object.assign(msgJson, {status:'setupVideoPoster Abort', code:'v'+i}));
                         return;
                     }
                     let vdo = document.createElement('video');
@@ -86,47 +84,27 @@
                         vdo.removeAttribute('preload');  // 阻止临时创建的视频在 network 中持续加载耗费网络资源
                         if(base64){
                             resolve([video, canvas.toDataURL('image/jpeg', quality)]);
-                            // dataURLs.push(canvas.toDataURL('image/jpeg', quality));  //转换 base64
-                            // dataNods.push(video);
-                            // resolve([dataURLs, dataNods]);
                         }else{
                             canvas.toBlob(function(blob){
                                 resolve([video, URL.createObjectURL(blob)]);
-                                // dataURLs.push(URL.createObjectURL(blob));  //转换 blob
-                                // dataNods.push(video);
-                                // // Object.assign(dataObjs, {poster: dataURLs},{nodes: dataNods});
-                                // resolve([dataURLs, dataNods]);  // 回调 resolve
                             },"image/jpeg",quality);
                         }
                     });
                 }).then(function(res){
-                    // console.log(res);
                     let video = res[0],
                         check = video.src.match(/\.(?:avi|mp4|mov|mpg|mpeg|flv|swf|wmv|wma|rmvb|mkv)$/i);
                     if(video&&check){
                         video.setAttribute('poster', res[1]);
-                        console.log('setupVideoPoster ok: v'+i);
+                        console.log(Object.assign(msgJson, {status:'setupVideoPoster Done', code:'v'+i}));
                     }else{
-                        console.log('setupVideoPoster err: v'+i);
+                        console.log(Object.assign(msgJson, {status:'setupVideoPoster Error', code:'v'+i}));
                     }
-                    // let vdos = res[0];
-                    // console.log(vdos.length);
-                    // for(let i=0;i<vdos.length;i++){
-                    //     let vdo = vdos[i],
-                    //         check = vdo.src.match(/\.(?:avi|mp4|mov|mpg|mpeg|flv|swf|wmv|wma|rmvb|mkv)$/i);
-                    //     if(vdo&&check){
-                    //         vdo.setAttribute('poster', res[1][i]);
-                    //         // console.log('setupVideoPoster okay! v'+i);
-                    //     }else{
-                    //         console.log('setupVideoPoster : Ext err');
-                    //     }
-                    // }
                 }).catch(function(err){
                     console.log(err);
                 });
             }
         }else{
-            console.log('setupVideoPoster: not found');
+            console.log(Object.assign(msgJson, {status:'setupVideoPoster NotFound', code:0}));
         }
     }
     
@@ -146,30 +124,23 @@
         })();
     }
     
-    function dataDancing(counterList,target,append='',offset=0){
+    
+    function dataDancing(counterList,target,offset=0,append=''){
         if(counterList[0]){
             for(let i=0;i<counterList.length;i++){
-                new Promise(function(resolve,reject){
-                    let count = parseInt(counterList[i].dataset.res),//getAttribute('data-res')),
-                        counter = counterList[i].querySelector(target),
-                        limit = parseInt(counter.innerText);
-                    counter ? resolve([counter,0,limit,i]) : reject(counter);
-                }).then(function(res){
-                    let init = res[1],
-                        limit = res[2],
-                        times = -limit-offset;
-                    // append = append ? '<sup>+</sup>' : '';
-                    var inOrder = function(){
+                // let insideLoop = 
+                (function(counter){
+                    let limit = parseInt(counter.innerText),
+                        times = -limit-offset,
+                        init = 0,
+                        inOrder = function(){
                             clearInterval(noOrder);
-                            init<=limit ? res[0].innerHTML = (init++)+append : clearInterval(noOrder);
+                            init<=limit ? counter.innerHTML = (init++)+append : clearInterval(noOrder);
                             times>=0 ? (times=0,clearInterval(noOrder)) : times++;
-                            // console.log(init+times);
                             noOrder = setInterval(inOrder, init+times);
                         };
-                    var noOrder = setInterval(inOrder, 0);
-                }).catch(function(err){
-                    console.log(err);
-                });
+                    var noOrder = setInterval(inOrder);
+                })(counterList[i].querySelector(target));
             }
         }
     }
@@ -237,30 +208,71 @@
         });
     }
     
-    
     //https://www.jb51.net/article/216692.htm
-    function lazyload(imgs){
-        const //bodyimg = document.querySelectorAll(imgs),
+    function loadlazy(imgs){
+        const imglist = document.querySelectorAll(imgs),
               loadimg = "https://img.2broear.com/images/loading_3_color_tp.png";
-        if(imgs.length>=1){
-            for(let i=0;i<imgs.length;i++){
-                let eachimg = imgs[i],
-                    datasrc = eachimg.dataset.src;
-                if(datasrc){
-                    eachimg.getBoundingClientRect().top < window.innerHeight ? eachimg.src = datasrc : false;
-                    window.addEventListener('scroll', function(){
-                        if(eachimg.getBoundingClientRect().top < window.innerHeight){ // height-sheight<=wheight
-                            eachimg.src = eachimg.dataset.src; // 即时更新 eachimg.dataset.src 替代 datasrc
-                            eachimg.onerror=function(){ //!this.complete
-                                this.src = loadimg;
-                                this.dataset.src = loadimg;
-                            }
+        if(imglist.length>=1){
+            var timer_throttle = null,
+                loadArray = [],
+                msgObject = Object.create(null),
+                autoLoad = function(imgLoadArr, initDomArr=false){
+                    let tempArray = initDomArr ? initDomArr : imgLoadArr;  //判断加载数组类型，默认加载 loadArray
+                    for(let i=0;i<tempArray.length;i++){
+                        let eachimg = tempArray[i],
+                            datasrc = eachimg.dataset.src;
+                        if(datasrc){
+                            eachimg.src = loadimg; //pre-holder(datasrc only)
+                            new Promise(function(resolve,reject){
+                                initDomArr ? imgLoadArr.push(eachimg) : false;  //判断首次加载（载入 lazyload 元素数组）
+                                resolve(imgLoadArr);
+                            }).then(function(res){
+                                if(eachimg.getBoundingClientRect().top<window.innerHeight){
+                                    eachimg.src = datasrc; // 即时更新 eachimg（设置后即可监听图片 onload 事件）
+                                    // 使用 onload 事件替代定时器或Promise，判断已设置真实 src 的图片加载完成后再执行后续操作
+                                    eachimg.onload=function(){
+                                        if(this.getAttribute('src')==datasrc){
+                                            res.splice(res.indexOf(this), 1);  // 移除已加载图片数组（已赋值真实 src 情况下）
+                                        }else{
+                                            this.removeAttribute('data-src'); // disable loadimg
+                                            this.src = datasrc;  // this.src will auto-fix [http://] prefix
+                                            // console.log('waitting..', this);
+                                        }
+                                    }
+                                    // handle loading-err images eachimg.onerror=()=>this.src=loadimg;
+                                    eachimg.onerror=function(){
+                                        res.splice(res.indexOf(this), 1);  // 移除错误图片数组
+                                        this.removeAttribute('src');
+                                        this.removeAttribute('data-src'); // disable loadimg
+                                        this.setAttribute('alt','图片请求出现问题'); // this.removeAttribute('src');
+                                    }
+                                }
+                            }).catch(function(err){
+                                console.log(err);
+                            });
                         }
-                    });
-                }
-            }
+                    }
+                },
+                scrollLoad = function(){
+                    return (function(){
+                        if(timer_throttle==null){
+                            timer_throttle = setTimeout(function(){
+                                if(loadArray.length<=0){
+                                    console.log(Object.assign(msgObject, {status:'lazyload done', type:'call'}));
+                                    window.removeEventListener('scroll', scrollLoad, true);
+                                    return;
+                                };
+                                autoLoad(loadArray);
+                                // console.log('throttling..',loadArray);
+                                timer_throttle = null;  //消除定时器
+                            }, 500, loadArray); //重新传入array（单次）循环
+                        }
+                    })();
+                };
+            autoLoad(loadArray, imglist);
+            window.addEventListener('scroll', scrollLoad, true);
         }
-    };
+    }
     // lazyload("body img");
     
     function setCookie(name,value,path,days){
