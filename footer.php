@@ -57,9 +57,7 @@
                 <?php
                     $baas = get_option('site_leancloud_switcher');
                     $third_cmt = get_option('site_third_comments');
-                    $valine_sw = $third_cmt=='Valine' ? true : false;//get_option('site_valine_switcher');
-                    $twikoo_sw = $third_cmt=='Twikoo' ? true : false;//get_option('site_twikoo_switcher');
-                    if($valine_sw){    // 全站加载
+                    if($third_cmt=='Valine'){    // 全站加载
                 ?>
                         <script src="<?php custom_cdn_src(); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
                 <?php
@@ -100,13 +98,31 @@
                             const vcomments = document.querySelector("#vcomments");
                             if(vcomments){
                                 const vwraps = vcomments.querySelectorAll(".vwrap"),
-                                      vats = vcomments.querySelectorAll(".vat"),
                                       origin_wrap = vwraps[0];
-                                bindEventClick(vcomments, 'vat');
+                                bindEventClick(vcomments, 'vat', function(t){
+                                    let adopt_node = document.adoptNode(origin_wrap),  // adopt(clone)node
+                                        adopt_area = adopt_node.querySelector("textarea");
+                                    if(!t.classList.contains('reply')){
+                                        const vats = vcomments.querySelectorAll(".vat");
+                                        for(let i=0;i<vats.length;i++){
+                                            vats[i].classList.remove('reply');
+                                            vats[i].innerText = "回复";
+                                        }
+                                        t.classList.add('reply');
+                                        t.innerText = "取消回复";
+                                        t.parentElement.parentElement.appendChild(adopt_node);  // append adopt node
+                                        adopt_area.focus();
+                                    }else{
+                                        t.classList.remove('reply');
+                                        t.innerText = "回复";
+                                        vcomments.insertBefore(adopt_node, vcomments.querySelector(".vinfo"));  // reverse adopt
+                                        adopt_area.focus();
+                                    }
+                                });
                             }
                         </script>
                 <?php
-                    }elseif($twikoo_sw){
+                    }elseif($third_cmt=='Twikoo'){
                 ?>
                         <script src="https://cdn.staticfile.org/twikoo/1.6.4/twikoo.all.min.js"></script>
                         <script>
@@ -348,7 +364,7 @@
                 </div>
                 <div class="bottom" title="跳至顶部"><em>底</em></div>
                 <div class="pagePer" title="双击自动根据时段设置主题" ondblclick="automode()">
-                    <strong></strong>
+                    <strong data-percent="0"></strong>
                     <i style>
                         <span class="wave"></span>
                     </i>
@@ -370,6 +386,7 @@
             $acgcid = get_cat_by_template('acg','term_id');
             if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
     ?>
+                //https://qa.1r1g.com/sf/ask/177903701/
                 var getAverageRGB = function(imgEl){var blockSize=5,defaultRGB={r:255,g:255,b:255},canvas=document.createElement('canvas'),context=canvas.getContext&&canvas.getContext('2d'),data,width,height,i=-4,length,rgb={r:0,g:0,b:0},count=0;if(!context){return defaultRGB}height=canvas.height=imgEl.naturalHeight||imgEl.offsetHeight||imgEl.height;width=canvas.width=imgEl.naturalWidth||imgEl.offsetWidth||imgEl.width;context.drawImage(imgEl,0,0);try{data=context.getImageData(0,0,width,height)}catch(e){return defaultRGB}length=data.data.length;while((i+=blockSize*4)<length){++count;rgb.r+=data.data[i];rgb.g+=data.data[i+1];rgb.b+=data.data[i+2]}rgb.r=~~(rgb.r/count);rgb.g=~~(rgb.g/count);rgb.b=~~(rgb.b/count);return rgb},
                     setupBlurColor = function(imgEl,tarEl,tarCls="inbox"){
                         if(!tarEl.classList.contains(tarCls)){
@@ -386,6 +403,7 @@
                   loadimg = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png";
             if(bodyimg[0]){
                 var timer_throttle = null,
+                    time_delay = 500,
                     loadArray = [],
                     msgObject = Object.create(null),
                     autoLoad = function(imgLoadArr, initDomArr=false){
@@ -409,6 +427,8 @@
                                                 this.removeAttribute('data-src'); // disable loadimg
                                                 this.src = datasrc;  // this.src will auto-fix [http://] prefix
                                                 // console.log('waitting..', this);
+                                                time_delay = 1500;  //increase delay (decrease request)
+                                                console.log(time_delay);
                                             }
                                             <?php
                                                 if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
@@ -443,7 +463,7 @@
                                     autoLoad(loadArray);
                                     // console.log('throttling..',loadArray);
                                     timer_throttle = null;  //消除定时器
-                                }, 500, loadArray); //重新传入array（单次）循环
+                                }, time_delay, loadArray); //重新传入array（单次）循环
                             }
                         })();
                     };

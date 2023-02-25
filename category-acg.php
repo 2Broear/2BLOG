@@ -10,36 +10,32 @@
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/acg.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
-        .rcmd-boxes .info .inbox .inbox-more.disabled a:before,
-        .rcmd-boxes .info .inbox .inbox-more.disabled a:after{
-            /*content: attr(data-load)' 'attr(data-cat)'s ';*/
-            content: attr(data-load)' 'attr(data-cat)'S LOAD ';
-            /*content: attr(data-load)' 'attr(data-cat)'S NO ';*/
+        .rcmd-boxes .inbox-clip h2 sup{
+            color: var(--preset-9);
+            font-size: 15rem;
+            letter-spacing: 15px;
+            text-transform: uppercase;
+            /*text-shadow: 3px 3px var(--preset-6);*/
+            opacity: .1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
         }
-        .rcmd-boxes .info .inbox .inbox-more.disabled a:after{
-            /*content: "LOAD";*/
-            content: "DONE";
+        .rcmd-boxes .inbox-clip:first-child{
+            margin-top: auto!important;
         }
-        .rcmd-boxes .info .inbox .inbox-more.disabled{
-            border-width: 0px;
+        .rcmd-boxes .inbox-clip:first-child h2{
+            margin: auto;
         }
-        .rcmd-boxes .info .inbox .inbox-more a{
-            color: inherit;
-            padding: 15% 15px;
-            box-sizing: border-box;
-        }
-        .rcmd-boxes .info .inbox .inbox-aside span{
-            max-height: 75%;
-        }
-        .rcmd-boxes .info .inbox{
-            /*transition-property: background-color, transform;*/
-        }
-        .rcmd-boxes .info .inbox .inbox-aside span.lowside-title h4{
+        .rcmd-boxes .inbox-clip h2{
+            font-size: 1.75rem;
+            letter-spacing: 5px;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+            margin: 35px auto 15px;
             overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .rcmd-boxes .inbox-clip{
-            text-align: inherit;
         }
     </style>
 </head>

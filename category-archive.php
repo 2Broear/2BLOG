@@ -437,7 +437,7 @@
         </footer>
 	</div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(false); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
     if(get_option('site_animated_counting_switcher')){
 ?>

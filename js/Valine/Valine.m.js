@@ -163,10 +163,13 @@ if (el_ != null && el_ != undefined) {
 				for(let key in likeUser){
 					if(key<3){
 						keys++;  //超过3个人点赞才显示超出点赞人数
-						let likeName = likeUser[key].nick,
-							//likeMail = likeUser[key].mail,//md5mail
-							likeLink = "http://"+likeUser[key].link.replace(/http:\/\//,"").replace(/https:\/\//,"");
-						els_s.innerHTML += `<a href="${likeLink||'javascript:;'}" title="" target="_blank" rel="nofollow">${likeName}、</a>`;
+						if(Object.prototype.toString.call(likeUser[key])==='[object Object]'){
+    						let likeHref = likeUser[key].link,
+    							likeLink = likeHref ? "http://"+likeHref.replace(/http:\/\//,"").replace(/https:\/\//,"") : false;
+    						els_s.innerHTML += `<a href="${likeLink||'javascript:;'}" title="" target="_blank" rel="nofollow">${likeUser[key].nick||'user'}、</a>`;
+						}else{
+						    console.log(likeUser[key]);
+						}
 					}
 				}
 				els_s.innerHTML += `等<strong>${likeNum-keys||''}</strong>人应该觉得这篇文章海星⭐️~`;  //likeUser.length-keys||

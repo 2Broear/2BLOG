@@ -1235,7 +1235,7 @@
         global $post,$lazysrc,$loadimg;
         $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
         $cat_slug = $the_cat->slug;
-        echo '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> ['.$cat_slug.'] </sup></h2></div><div class="info flexboxes">';
+        echo '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> '.$cat_slug.' </sup></h2></div><div class="info flexboxes">';
         // preset all acg query
         $all_query = new WP_Query(array_filter(array(
             'cat' => $the_cat->term_id,
@@ -1394,37 +1394,40 @@
                       target = main.querySelector('.time'),
                       title = main.querySelector('.title'),
                       today = main.querySelector('.today'),
-                      weeks = ['日','一','二','三','四','五','六'];
+                      weeks = ['日','一','二','三','四','五','六'],
+                      fillZero = function(i){
+                          return i < 10 ? "0"+i : i;
+                      };
                 var nowtime = new Date(),
                     endtime = new Date("<?php echo $countDate; ?>"),
                     result = parseInt((endtime.getTime() - nowtime.getTime()) / 1000),
-                    day = parseInt(result / (24 * 60 * 60)),
-                    // week = nowtime.getDay()-1 ? nowtime.getDay()-1 : nowtime.getDay();
-                    fillZero = function(i){
-                        return i < 10 ? "0"+i : i;
-                    },
-                    timesup = function(){
-                        if(result <= 0) {
-                            title.innerHTML = "TIME'S UP!";
-                            target.innerHTML = "<span class='timesup'><?php echo $countTitle[1]; ?></span>";
-                            // main.setAttribute('style','background-image:url(<?php custom_cdn_src('img') ?>/2023/01/dzht2-ez.gif)')
-                        }
-                    };
-                today.innerHTML = `${nowtime.getMonth()+1}月${nowtime.getDate()}日 &nbsp;星期${weeks[nowtime.getDay()]}`; //${nowtime.getFullYear()}年
+                    day = parseInt(result / (24 * 60 * 60));
+                today.innerHTML = `${nowtime.getMonth()+1}月${nowtime.getDate()}日 &nbsp;星期${weeks[nowtime.getDay()]}`;
                 if(parseInt(day)<=0 && result>0){
                     (function countDown() {
-                        let nowtime = new Date(),
-                            result = parseInt((endtime.getTime() - nowtime.getTime()) / 1000),
-                            hour = fillZero(parseInt(result / (60 * 60) % 24)),
-                            min = fillZero(parseInt(result / 60 % 60)),
-                            sec = fillZero(parseInt(result % 60));
-                        target.innerHTML = `<span class="day">${hour}:${min}:${sec}</span>`;
-                        timesup();
+                        // console.log('counting..')
+                        let now = new Date(),
+                            res = parseInt((endtime.getTime() - now.getTime()) / 1000),
+                            hour = fillZero(parseInt(res / (60 * 60) % 24)),
+                            min = fillZero(parseInt(res / 60 % 60)),
+                            sec = fillZero(parseInt(res % 60)),
+                            text = hour>0 ? hour+':'+min+':'+sec : (min>0 ? min+':'+sec : sec);
+                        target.innerHTML = '<span class="day">'+text+'</span>';
+                        if(res <= 0) {
+                            title.innerHTML = "TIME'S UP!";
+                            target.innerHTML = "<span class='timesup'><?php echo $countTitle[1]; ?></span>";
+                            clearTimeout(countDown);
+                            countDown = null;
+                            return;
+                        }
                         setTimeout(countDown, 1000);
                     })();
                 }else{
                     target.innerHTML = `<span class="day">${fillZero(day)}<span class="unit">天</span></span>`;
-                    timesup();
+                    if(result <= 0) {
+                        title.innerHTML = "TIME'S UP!";
+                        target.innerHTML = "<span class='timesup'><?php echo $countTitle[1]; ?></span>";
+                    }
                 }
             </script>
 <?php

@@ -9,6 +9,11 @@
 <meta name="msapplication-TileImage" content="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico" />
 <link rel="shortcut icon" href="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico"/>
 <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/universal.min.css?v=<?php echo get_theme_info('Version'); ?>" />
+<style>
+    body.dark #supports em.warmhole{
+        background: url(<?php custom_cdn_src('img'); ?>/images/wormhole_2_tp.gif) no-repeat center center /cover!important;
+    }
+</style>
 <script async>
     document.documentElement.style.setProperty('--theme-color','<?php echo $theme_color; ?>');
     function bindEventClick(parent,cls,callback=false){

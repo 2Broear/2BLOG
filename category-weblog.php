@@ -10,25 +10,8 @@
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/weblog.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
-        @keyframes spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}
-        #loading{position:relative;padding:20px;display:block;height:80px}
-        #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:20px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%;-webkit-animation:spin 1s infinite linear;animation:spin 1s infinite linear}
-        .weblog-tree-box .tree-box-title h3:before{color:inherit;opacity:.5;text-decoration:none;}
-        .vquote{border-left:none!important;}
-        blockquote{margin:10px 0 auto!important};
-        .tk-content{overflow: hidden;}
-        .pageSwitcher span{color: var(--preset-9);}
-        .vcontent blockquote{opacity:.75}
-        body.dark #comment_txt h2{color:var(--preset-c)}
-        .weblog-tree-core.reply .tree-box-title h3:after{
-            content: "回复此片段";
-        }
-        .wp_comments_list .children{border:none;}
-        figure img,figure video{border-radius:var(--radius)}
         figure{text-align:left}
-        .weblog-tree-box .tree-box-content p{
-            margin-bottom: 10px;
-        }
+        figure img,figure video{border-radius:var(--radius);width: 66%;}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -144,7 +127,7 @@
         </footer>
     </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(false); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
     if($baas){
 ?>

@@ -1,28 +1,4 @@
-<style>
-    body.dark #supports em.warmhole{
-        background: url(<?php custom_cdn_src('img'); ?>/images/wormhole_2_tp.gif) no-repeat center center /cover!important;
-    }
-    .footer-contact a .preview{top: -80px;left: -15px}
-    .footer-contact a .preview img{width:66px;}
-    .additional.metabox ol{
-        padding-right: 15px;
-    }
-    .friend_links li a,
-    .additional .links-more li a{
-        border-radius: var(--radius);
-    }
-    /*body.dark .inside_of_block nav.main-nav .links-more a.choosen,*/
-    body.dark .inside_of_block nav.main-nav .links-more li:hover>a{
-        background: var(--preset-4a);
-    }
-    /*.inside_of_block nav.main-nav .links-more a.choosen,*/
-    .inside_of_block nav.main-nav .links-more li:hover>a{
-        background: var(--preset-s);
-    }
-    .additional .sub-additional.metabox a{
-        margin: auto 15px;
-    }
-</style>
+
 <div class="nav-wrap">
   <div class="top-bar-tips">
     <div class="tips-switch">
