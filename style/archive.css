@@ -1,6 +1,6 @@
 @charset "utf-8";
 .content-all-windows{overflow-y:visible!important}
-.win-top .counter{color:var(--preset-s);font-size:14px;position:relative;max-width:88%;margin: 7% auto 5%;z-index:1}
+.win-top .counter{color:var(--preset-s);font-size:14px;position:relative;max-width:88%;margin: 8% auto 7%;;z-index:1}
 .win-top .counter div{display:inline-block;margin:auto 35px;padding:15px 0}
 .win-top .counter div a:hover{color:var(--preset-f)}
 .win-top .counter div a{color:inherit;display:inherit}
@@ -37,13 +37,15 @@ body.dark .archive-tree ul li a{
 }
 .archive-tree h2{
     /*opacity: .75;*/
+    margin: 35px auto 5px;
 }
 h2 sup.disabled{
     pointer-events: none;
     opacity: .32;
 }
 h2 sup{
-    font-size: small;
+    font-size: 12px;
+    text-decoration: underline;
     opacity: .88;
     margin-left: 5px;
     cursor: pointer;
@@ -77,11 +79,12 @@ h2 sup.loading:after{
 }
 .archive-tree ul{
     padding: 0;
-    max-height: 588px;
+    max-height: 318px;
     overflow: auto;
     position: relative;
     scroll-behavior: smooth;
     /*margin-left: 15px;*/
+    transition: max-height 1s ease .5s;
 }
 .archive-tree ul li{
     max-width: 95%;
@@ -111,6 +114,10 @@ h2 sup.loading:after{
     white-space: nowrap;
     vertical-align: middle;
     font-size: var(--min-size-rem);
+    transition: padding .35s ease;
+}
+.archive-tree ul li a:hover{
+    padding-left: 10px;
 }
 .archive-tree ul li a{
     color: inherit;
@@ -148,136 +155,183 @@ h2 sup.loading:after{
     float: right;
 }
 
-        .cs-tree{
-            margin: 15px auto;
-            text-align: left;
-        }
-        .cs-tree .contributions{
-            display: inline-block;
-        }
-        body.dark .cs-tree span{
-            color: var(--preset-3a);
-            border: 1px solid var(--preset-3a);
-            /*border-color: var(--preset-4a);*/
-        }
-        body.dark .cs-tree span:before{
-            border-color: var(--preset-2b);
-            /*color: #9be9a8;*/
-        }
-        /*.cs-tree .today:hover::before,*/
-        .cs-tree span#edit:hover::before{
-            content: attr(data-count)' posted on 'attr(data-dates);
-        }
-        .cs-tree span.today:hover::before{
-            content: "today's comtribution";
-        }
-        .cs-tree span.dayto:hover::before{
-            content: "future comtributions";
-        }
-        .cs-tree span:before{
-            content: none;
-            color: white;
-            background: var(--preset-3a);
-            position: absolute;
-            top: 100%;
-            left: 100%;
-            z-index: 9;
-            font-size: 12px;
-            padding: 8px 12px;
-            border-radius: 50px;
-            text-align: center;
-            white-space: nowrap;
-            border: 2px solid currentColor;
-            /*font-weight: bold;*/
-            /*-webkit-backdrop-filter: blur(10px);*/
-            /*backdrop-filter: blur(10px);*/
-        }
-        .cs-tree .dayto,
-        .cs-tree .today,
-        .cs-tree span:hover{
-            /*border-color: transparent;*/
-            border-radius: 50%;
-            z-index: 9;
-        }
-        .cs-tree span{
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            color: var(--preset-s);
-            background: currentColor;
-            border: 1px solid var(--preset-e);
-            margin: 2px;
-            border-radius: 2px;
-            position: relative;
-        }
-        .cs-tree span#edit{
-            border-color: currentColor;
-        }
-        .cs-tree .today{
-            color: var(--theme-color);
-            /*color: var(--theme-color)!important;*/
-            /*border-color: currentColor!important;*/
-        }
-        .cs-tree .dayto{
-            opacity: .75;
-            color: var(--preset-e);
-            z-index: 0;
-        }
-        /*.cs-tree span:last-child{*/
-        /*    margin-right: auto;*/
-        /*}*/
-        /*.cs-tree span{*/
-        /*    margin: 2px 24px 2px 0;*/
-        /*}*/
-        .cs_tips::before{
-            content: 'Less';
-        }
-        .cs_tips::after{
-            content: 'More';
-        }
-        .cs_tips::before,
-        .cs_tips::after{
-            font-size: 12px;
-            /*font-weight: bold;*/
-            opacity: .5;
-        }
-        .cs_tips{
-            margin: auto;
-            padding: 0;
-            float: right;
-        }
-        body.dark .cs_tips li{
-            color: var(--preset-3a);
-            /*border-color: currentColor!important;*/
-        }
-        body.dark .cs_tips li:first-child{
-            border-color: var(--preset-6);
-        }
-        .cs_tips li{
-            width: 10px;
-            height: 10px;
-            margin: -2px 3px!important;
-            /*width: 3px;*/
-            /*height: 12px;*/
-            /*margin: -3px 1px!important;*/
-            display: inline-block;
-            color: var(--preset-s);
-            background: currentColor;
-            border: 1px solid var(--preset-e);
-            border-radius: 2px;
-        }
-        .cs_tips li:not(:first-child){
-            border-color: currentColor!important;
-        }
-        /*.cs_tips li:nth-child(2){*/
-        /*    color: #9be9a8!important;*/
-        /*}*/
-        /*.cs_tips li:nth-child(3){*/
-        /*    color: #40c463!important;*/
-        /*}*/
-        /*.cs_tips li:nth-child(4){*/
-        /*    color: #30a14e!important;*/
-        /*}*/
-        /*.cs_tips li:last-child{*/
-        /*    color: #216e39!important;*/
-        /*}*/
+.cs-tree{
+    margin: 15px auto;
+    text-align: left;
+}
+.cs-tree .contributions{
+    display: inline-block;
+}
+body.dark .cs-tree span{
+    color: var(--preset-3a);
+    border: 1px solid var(--preset-3a);
+    /*border-color: var(--preset-4a);*/
+}
+body.dark .cs-tree span:before{
+    border-color: var(--preset-2b);
+    /*color: #9be9a8;*/
+}
+
+.stats{
+    font-weight: bold;
+    border-top: 1px dashed rgb(100 100 100 / 30%);
+    /*padding: 5px 15px;*/
+    padding: 10px 2px;
+    /* margin-top: 5px; */
+    /*border-radius: 50px;*/
+    font-size: 12px;
+    /* float: right; */
+    border-top-left-radius: 0;
+    /*display: inline-block;*/
+    display: block;
+    /*background: rgb(200 200 200 / 10%);*/
+}
+.stats b{
+    opacity: .75;
+    font-weight: normal;
+}
+
+/*.cs-tree .today:hover::before,*/
+.cs-tree span#edit:hover::before{
+    content: attr(data-count)' spot on 'attr(data-dates);
+}
+.cs-tree span.today:hover::before{
+    content: "today's comtribution";
+}
+.cs-tree span:hover::before,
+.cs-tree span.dayto:hover::before{
+    content: attr(data-dates);
+    /*content: "future contributions";*/
+}
+.cs-tree span:before{
+    content: none;
+    color: white;
+    background: var(--preset-3a);
+    position: absolute;
+    top: 100%;
+    left: 100%;
+    z-index: 9;
+    font-size: 12px;
+    padding: 6px 12px 8px 12px;
+    border-radius: 50px;
+    text-align: center;
+    white-space: nowrap;
+    border: 2px solid currentColor;
+    /*font-weight: bold;*/
+    /*-webkit-backdrop-filter: blur(10px);*/
+    /*backdrop-filter: blur(10px);*/
+}
+.cs-tree .dayto,
+.cs-tree .today,
+.cs-tree span:hover{
+    /*border-color: transparent;*/
+    border-radius: 50%;
+    z-index: 9;
+}
+.cs-tree span{
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    color: var(--preset-s);
+    background: currentColor;
+    border: 1px solid var(--preset-e);
+    margin: 2px;
+    border-radius: 2px;
+    position: relative;
+}
+.cs-tree span#edit{
+    border-color: currentColor;
+}
+@keyframes twinkler {
+    0% {
+        opacity: .5;
+    }
+    15% {
+        opacity: 1;
+    }
+    30% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+body.dark .cs-tree span.today,
+.cs-tree .today{
+    color: var(--theme-color);
+    /*color: var(--theme-color)!important;*/
+    /*border-color: currentColor!important;*/
+    animation: twinkler 1s infinite alternate ease;
+    -webkit-animation: twinkler 1s infinite alternate ease;
+}
+.cs-tree .dayto:hover{
+    opacity: .75;
+}
+.cs-tree .dayto{
+    opacity: .5;
+    color: var(--preset-e);
+    z-index: 0;
+}
+/*.cs-tree span:last-child{*/
+/*    margin-right: auto;*/
+/*}*/
+/*.cs-tree span{*/
+/*    margin: 2px 24px 2px 0;*/
+/*}*/
+.cs_tips::before{
+    content: 'Less';
+}
+.cs_tips::after{
+    content: 'More';
+}
+.cs_tips::before,
+.cs_tips::after{
+    font-size: 12px;
+    /*font-weight: bold;*/
+    opacity: .5;
+}
+.cs_tips{
+    margin: auto;
+    padding: 0;
+    float: right;
+}
+body.dark .cs_tips li{
+    color: var(--preset-3a);
+    /*border-color: currentColor!important;*/
+}
+body.dark .cs_tips li:first-child{
+    border-color: var(--preset-6);
+}
+.cs_tips li{
+    width: 10px;
+    height: 10px;
+    margin: -2px 3px!important;
+    /*width: 3px;*/
+    /*height: 12px;*/
+    /*margin: -3px 1px!important;*/
+    display: inline-block;
+    color: var(--preset-s);
+    background: currentColor;
+    border: 1px solid var(--preset-e);
+    border-radius: 2px;
+}
+.cs_tips li:not(:first-child){
+    border-color: currentColor!important;
+}
+/*.cs_tips li:nth-child(2){*/
+/*    color: #9be9a8!important;*/
+/*}*/
+/*.cs_tips li:nth-child(3){*/
+/*    color: #40c463!important;*/
+/*}*/
+/*.cs_tips li:nth-child(4){*/
+/*    color: #30a14e!important;*/
+/*}*/
+/*.cs_tips li:last-child{*/
+/*    color: #216e39!important;*/
+/*}*/
+
+.archive-tree ul li .article + a,
+.archive-tree ul li a.article{
+    font-weight: bold;
+}

@@ -10,11 +10,45 @@
 .win-top .counter p{color:var(--preset-e);font-size:var(--min-size);margin:3px auto;opacity:.75}
 .rcmd-boxes{width:100%;max-width:100%;height:auto;flex-flow:row wrap}
 .rcmd-boxes .inbox-clip.subcat{text-align:center;margin-top:auto}
-.rcmd-boxes .inbox-clip.subcat h2{font-size:2rem;padding-top:0}
+.rcmd-boxes .inbox-clip.subcat h2{font-size:2rem;/*padding-top:0*/}
 .rcmd-boxes .inbox-clip{width:100%;color:var(--preset-4a);margin:15px auto;text-align: inherit;}
 /*.rcmd-boxes .inbox-clip h2.single{font-size:2rem}*/
-.rcmd-boxes .inbox-clip h2{width:100%;margin:0 auto;padding:15px 10px;box-sizing:border-box;font-weight:400;font-family:var(--font-serif)}
-.rcmd-boxes .inbox-clip h2 sup{color:var(--preset-8);font-size:var(--min-size);font-weight:bold;position:absolute;/*padding-left:3px;*/}
+.rcmd-boxes .inbox-clip h2{
+    width:100%;padding:20px 10px;box-sizing:border-box;font-weight:400;
+    font-size: 1.75rem;
+    /*letter-spacing: 5px;*/
+    font-style: italic;
+    position: relative;
+    z-index: 1;
+    margin: 35px auto 15px;
+    overflow: hidden;
+    font-family: cursive;
+}
+.rcmd-boxes .inbox-clip:first-child{
+    margin-top: auto!important;
+}
+.rcmd-boxes .inbox-clip:first-child h2{
+    margin: auto;
+}
+.rcmd-boxes .inbox-clip h2 sup{
+    font-size: small;
+}
+/*.rcmd-boxes .inbox-clip h2 sup,*/
+.rcmd-boxes .inbox-clip h2:before{
+    content: attr(id);
+    color: var(--preset-9);
+    font-size: 15rem;
+    font-weight: bold;
+    letter-spacing: 15px;
+    text-transform: uppercase;
+    opacity: .1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    /*text-shadow: 3px 3px var(--preset-6);*/
+}
 .rcmd-boxes .info{width:100%;max-width:inherit;flex-wrap:wrap}
 .rcmd-boxes .info.example .inbox .inbox-headside img{border-radius:50%}
 .rcmd-boxes .info.example{width:100%;height:auto;position:relative}
@@ -96,8 +130,8 @@
     content: none;
 }
 .rcmd-boxes .info .inbox .inbox-more.disabled{
-    opacity: .75;
-    border-width: 1px;
+    /*opacity: .75;*/
+    border-width: 0;
 }
 .rcmd-boxes .info .inbox .inbox-more.disabled a:before,
 .rcmd-boxes .info .inbox .inbox-more.disabled a:after{

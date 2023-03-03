@@ -8,7 +8,7 @@
 	width: 100%;
 	color: var(--preset-9);
 	text-align: left;
-	margin: 10px auto 30px;
+	margin: 10px auto auto;
 	list-style-type: initial;
 	box-sizing: border-box;
 }
@@ -188,10 +188,10 @@
 	padding: 0 15px;
 }
 /* .friends-boxes .deals .inbox:hover > .inbox-headside.squared img {border-radius: 50%;} */
-.friends-boxes .deals .inbox:hover > .inbox-headside{
-	width: 0%;
-	display: none;
-}
+/*.friends-boxes .deals .inbox:hover > .inbox-headside{*/
+/*	width: 0%;*/
+/*	display: none;*/
+/*}*/
 .friends-boxes .deals .inbox:hover > img.blur{
     /*display: block;*/
     opacity: 1;
@@ -267,7 +267,7 @@
 	/*content: '';*/
 	width: 38%;
 	height: 78%;
-	background: url('//img.2broear.com/2bfriends/girl_symbols.png') center no-repeat;
+	background: url('//img.2broear.com/images/girl_symbols.png') center no-repeat;
 	background-size: contain;
 	position: absolute;
 	top: auto;
@@ -277,6 +277,15 @@
 	opacity: .18;
 	transform: rotate(-45deg);
 	-webkit-transform: rotate(-45deg);
+}
+.friends-boxes .deals .inbox.girl em{
+    width: 80px;
+    height: 100px;
+}
+.friends-boxes .deals .inbox.girl::after{
+    content: "";
+    width: 80px;height: 100px;
+    right: -12px;
 }
 .friends-boxes .deals .inbox.standby{
 	box-shadow: none;
@@ -413,4 +422,18 @@
 	.friends-boxes .deals .inbox .inbox-lowside span.lowside-description p{text-align:inherit}
 	.friends-boxes .deals .inboxSliderCard .slideBox{ width: 335%;/*235*/}
 	.friends-boxes .deals .inbox .inbox-aside{margin: auto}
+}
+
+
+details{
+    width: 100%;
+    text-align: left;
+    margin-bottom: 15px;
+}
+@keyframes spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}
+#loading{position:relative;padding:20px;display:block;height:80px;margin: 0 auto;}
+#loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:20px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%;-webkit-animation:spin 1s infinite linear;animation:spin 1s infinite linear}
+.main{margin-bottom:auto}
+.friends-boxes .deals .inbox.standby .inbox-headside img{
+    border-radius: 0;
 }

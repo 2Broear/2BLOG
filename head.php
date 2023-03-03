@@ -13,10 +13,33 @@
     body.dark #supports em.warmhole{
         background: url(<?php custom_cdn_src('img'); ?>/images/wormhole_2_tp.gif) no-repeat center center /cover!important;
     }
+    <?php 
+        if(get_option('site_logo_switcher')){
+    ?>
+                body.dark .mobile-vision .m-logo span,
+                body.dark .logo-area span{
+                    background: url(<?php echo get_option('site_logos'); ?>) no-repeat center center /cover!important;
+                }
+    <?php
+        }
+    ?>
+    .container,
+    #comment_txt,
+    .rcmd-boxes .info .inbox,
+    .rcmd-boxes .inbox-clip{
+        /*will-change: transform;*/
+        /*transform: translateZ(0);*/
+    }
+    .friends-boxes .deals .inbox,
+    .rcmd-boxes .info .inbox{
+        min-height: 100px;
+        /*will-change: initial;*/
+        /*transform: none;*/
+    }
 </style>
 <script async>
     document.documentElement.style.setProperty('--theme-color','<?php echo $theme_color; ?>');
-    function bindEventClick(parent,cls,callback=false){
+    function bindEventClick(parent, cls, callback=false){
         parent.onclick=(e)=>{
             e = e || window.event;
             let t = e.target || e.srcElement;
@@ -24,14 +47,6 @@
                 return;
             }
             callback ? callback(t) : false; //callback(t) || callback(t);
-            // while(t!=parent && t!=null){
-            //     if(t.classList.contains(cls)){
-            //         callback ? callback(t) : false;
-            //         break;
-            //     }else{
-            //         t = t.parentNode;
-            //     }
-            // }
         }
     }
 </script>

@@ -12,6 +12,10 @@
     <style>
         figure{text-align:left}
         figure img,figure video{border-radius:var(--radius);width: 66%;}
+        .anchor{
+            position: relative;
+            top: -15px;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -72,9 +76,10 @@
                                     <span id="weblog-circle"></span>
                                 </div>
                                 <div class="weblog-tree-core-r">
-                                    <div class="weblog-tree-box">
+                                    <!--<a class="anchor"></a>-->
+                                    <div id="<?php echo 'pid_'.get_the_ID() ?>" class="weblog-tree-box">
                                         <div class="tree-box-title">
-                                            <a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : 'javascript:;' ?>" id="<?php echo 'pid_'.get_the_ID() ?>" target="_self">
+                                            <a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : 'javascript:;' ?>" target="_self">
                                                 <h3 class="reply_quote"><?php the_title() ?></h3>
                                             </a>
                                         </div>

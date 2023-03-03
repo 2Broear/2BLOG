@@ -10,53 +10,9 @@
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/2bfriends.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
-        details{
-            width: 100%;
-            text-align: left;
-            margin-bottom: 15px;
-        }
-        @keyframes spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}
-        #loading{position:relative;padding:20px;display:block;height:80px;margin: 0 auto;}
-        #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:20px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%;-webkit-animation:spin 1s infinite linear;animation:spin 1s infinite linear}
-        .main{margin-bottom:auto}
-        .friends-boxes .deals .inbox.girl em{background: url('<?php custom_cdn_src('img'); ?>/images/girl_symbols.png') no-repeat center center /contain;width: 80px;height: 100px;}
-        .friends-boxes .inbox-clip h2:before{
-            box-shadow: -78px 0 #27c93f, 78px 0 #ffbd2e;
-        }
-        .friends-boxes .inbox-clip h2:after{
-            height: 18px!important;
-            box-shadow: -88px 0 #ffbd2e, 88px 0 #27c93f;
-        }
-        .friends-boxes .deals.rcmd .inbox{
-            max-width: calc(100%/5.8);
-        }
-        .friends-boxes .deals .inbox.standby .inbox-headside img{
-            border-radius: 0;
-        }
+        .friends-boxes .deals .inbox.girl em{background: url('<?php custom_cdn_src('img'); ?>/images/girl_symbols.png') no-repeat center center /contain;}
         .friends-boxes .deals .inbox.girl::after{
-            content: "";
-            width: 80px;height: 100px;
 	        background: url('<?php custom_cdn_src('img'); ?>/images/girl_symbols.png') center center /contain no-repeat;
-	        right: -12px;
-        }
-        .friends-boxes ul, .friends-boxes ol{margin-bottom: auto;}
-        /*.friends-boxes .deals .inbox .inbox-headside img{*/
-        /*    transition: none;*/
-        /*}*/
-        .friends-boxes .deals .inbox:hover{
-            transform: scale(.85);
-        }
-        .friends-boxes .deals .inbox:hover > .inbox-headside img{
-            border-radius: 0;
-        }
-        .friends-boxes .deals .inbox:hover > .inbox-headside{
-            display: inherit;
-            width: 100%;
-            position: absolute;
-            filter: opacity(.1) blur(15px) saturate(1.5);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
         }
     </style>
 </head>
@@ -154,18 +110,6 @@
 <!-- inHtmlJs -->
 <?php
     // declear lazyLoad standby-avatar(seo-fix alt tips)
-    if(get_option('site_lazyload_switcher')){
-?>
-        <script>
-            const standbyimg = document.querySelectorAll(".friends-boxes .deals .inbox.standby img");
-            if(standbyimg.length>=1){
-                for(let i=0;i<standbyimg.length;i++){
-                    standbyimg[i].removeAttribute('src');
-                }
-            }
-        </script>
-<?php
-    };
     if($baas){
 ?>
     <script type="text/javascript">

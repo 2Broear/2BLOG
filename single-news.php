@@ -23,10 +23,7 @@
         </nav>
     </header>
     <div class="content-all-windows">
-        <div class="news-article-window<?php 
-            $sidebar = array_key_exists('sidebar_status',$_COOKIE) ? $_COOKIE['sidebar_status'] : false;
-            $fontsize = array_key_exists('article_fontsize',$_COOKIE) ? $_COOKIE['article_fontsize'] : false;
-            echo !$sidebar ? " fullview" : ""; 
+        <div class="news-article-window<?php $sidebar = !array_key_exists('sidebar_status',$_COOKIE) ? 1 : $_COOKIE['sidebar_status']; echo !$sidebar ? " fullview" : ""; 
         ?>">
             <?php breadcrumb_switch(false,true); ?>
             <div class="news-article-core">
@@ -38,7 +35,7 @@
                                     <em><?php echo $sidebar  ? "全屏阅读" : "展开边栏"; ?></em>
                                 </span>
                                 <span id="font-plus" title="字体大小">
-                                    <em><?php if($fontsize) echo "A-";else echo "A+"; ?></em>
+                                    <em><?php $fontsize = !array_key_exists('article_fontsize',$_COOKIE) ? 0 : $_COOKIE['article_fontsize'];echo $fontsize ? "A-" : "A+"; ?></em>
                                 </span>
                                 <!--<span id="s2t2s-switch" title="简繁切换"><em>简</em></span>-->
                                 <?php $rights = get_post_meta($post->ID, "post_rights", true);if($rights&&$rights!='请选择') echo '<span id="copyright-sign" title="版权声明"><em>' . $rights . '</em></span>'; ?>
@@ -55,7 +52,7 @@
             	  	          </ul>
                         </div>
                     </div>
-                    <div class="news-article-container<?php if($fontsize) echo " AfontPlus"; ?>">
+                    <div class="news-article-container<?php echo $fontsize ? " AfontPlus" : ""; ?>">
                         <div class="content">
                             <?php the_content()//echo get_postimg(); ?>
                         </div>
@@ -76,7 +73,7 @@
     <footer>
         <?php get_footer(); ?>
     </footer>
-</div
+</div>
 <!-- siteJs-->
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <!-- pluginJs-->

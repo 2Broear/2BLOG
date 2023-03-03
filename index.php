@@ -4,10 +4,20 @@
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/main.min.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php include_once(TEMPLATEPATH. '/head.php'); ?>
     <style>
-        #banner-prev, #banner-next{background:url('<?php custom_cdn_src('img'); ?>/images/css_sprites.png') no-repeat}
-        .resource-windows div span.resource-windows-top span.resource-windows-top_inside{display:none}
-        @media screen and (max-width:600px){
-            .Fresh-ImgBoxs{display:none}
+        #special-img{
+            position: absolute;
+            top: 0;
+            left: 15px;
+            right: auto;
+            height: 100%;
+            /*animation: dancing ease-in-out 2.5s 0s infinite;*/
+            /*animation-fill-mode: both;*/
+        }
+        #special-img video{
+            height: 100%;
+            width: 100%;
+            border-radius: inherit;
+            object-fit: cover;
         }
     </style>
 </head>
@@ -123,38 +133,10 @@
         <!-- 左 -->
         <div class="special-display">
             <ul class="flexboxes">
-                <!--<style>
-                    @keyframes dancing{
-                        0%{
-                            left: 0;
-                            right: auto;
-                        }
-                        33%{
-                            left: 25px;
-                            right: auto;
-                        }
-                        66%{
-                            left: auto;
-                            right: 0;
-                        }
-                        100%{
-                            left: auto;
-                            right: 25px;
-                        }
-                    }
-                    #special-img{
-                        position: absolute;
-                        top: 0;
-                        left: 15px;
-                        right: auto;
-                        height: 100%;
-                        animation: dancing ease-in-out 2.5s 0s infinite;
-                        animation-fill-mode: both;
-                    }
-                </style>
-                <li id="special-img" style="background: url(<?php custom_cdn_src('img'); ?>/images/dance.gif) center /cover;">-->
+                <li id="special-img" style="background: url() center /cover;">
                     <!--<a href="javascript:;" style="width:100%;height:100%;position:absolute;top:0;left:0;"></a>-->
-                <!--</li>-->
+                    <video src="<?php echo get_option('site_list_bg'); ?>" poster="<?php echo get_option('site_list_bg'); ?>" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
+                </li>
             </ul>
         </div>
         <!-- 右 -->

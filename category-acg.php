@@ -10,32 +10,14 @@
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/acg.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
-        .rcmd-boxes .inbox-clip h2 sup{
-            color: var(--preset-9);
-            font-size: 15rem;
-            letter-spacing: 15px;
-            text-transform: uppercase;
-            /*text-shadow: 3px 3px var(--preset-6);*/
-            opacity: .1;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: -1;
-        }
-        .rcmd-boxes .inbox-clip:first-child{
-            margin-top: auto!important;
-        }
-        .rcmd-boxes .inbox-clip:first-child h2{
-            margin: auto;
-        }
         .rcmd-boxes .inbox-clip h2{
-            font-size: 1.75rem;
-            letter-spacing: 5px;
-            font-style: italic;
-            position: relative;
-            z-index: 1;
-            margin: 35px auto 15px;
-            overflow: hidden;
+            padding: 20px 15px;
+            letter-spacing: 0;
+            text-decoration: underline;
+        }
+        .rcmd-boxes .inbox-clip.subcat h2{
+            padding: 15px 10px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -65,9 +47,9 @@
                                 $cat_slug = $the_cat->slug;  // print_r($the_cat);
                                 $cat_count = $the_cat->count;
                 ?>
-                                <div class="<?php echo $cat_slug ?>" data-res="<?php echo $cat_count; ?>">
+                                <div class="<?php echo $cat_slug ?> blink" data-count="<?php echo $cat_count; ?>">
                                     <a href="<?php echo get_category_link($the_cat->term_id) ?>" rel="nofollow">
-                                        <h2><?php echo $cat_count; ?><sup>+</sup></h2>
+                                        <h2><?php //echo $cat_count; ?>0<sup>+</sup></h2>
                                         <p><?php echo $the_cat->name.'/'.strtoupper($cat_slug); ?></p>
                                     </a>
                                 </div>
@@ -76,14 +58,7 @@
                         }else{
                             $the_cat = get_category($cat);
                             $cat_count = $the_cat->count;
-                ?>
-                            <div class="" data-res="<?php echo $cat_count; ?>">
-                                <!--<a href="javascript:;" rel="nofollow">-->
-                                    <h2 class="single"><?php echo $cat_count; ?><sup>+</sup></h2>
-                                    <p><?php echo $the_cat->name.'/'.$the_cat->slug; ?></p>
-                                <!--</a>-->
-                            </div>
-                <?php
+                            echo "<div class='blink' data-count='$cat_count'><h2 class='single'>$cat_count<sup>+</sup></h2><p>$the_cat->name/$the_cat->slug</p></div>";
                         }
                     }
                 ?>
@@ -120,7 +95,7 @@
     if(get_option('site_animated_counting_switcher')){
 ?>
         <script>
-            dataDancing(document.querySelectorAll(".win-top .counter div"), "h2", 0, "<sup>+</sup>");
+            dataDancing(document.querySelectorAll(".win-top .counter div"), "h2", 0, 10, "<sup>+</sup>");
         </script>
 <?php
     }

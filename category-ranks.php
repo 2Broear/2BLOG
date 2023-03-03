@@ -15,39 +15,6 @@
             font-size: small;
             max-width: 6em;
         }
-        .ranking ul li span#range em span.wave{
-             top: -10px;
-             min-height: 32px;
-        }
-        .ranking ul li span#range em span.wave.active:before,
-        .ranking ul li span#range em span.wave.active:after{
-            content: "";
-            width: 200%;
-            height: 200%;
-            position: absolute;
-            top: 0%;
-            left: 0%;
-            background-color: var(--theme-color);
-            animation-iteration-count: infinite;
-            animation-timing-function: linear;
-            
-            left: auto;
-            animation-name: rotate;
-            -wbkit-animation-name: rotate;
-        }
-        .ranking ul li span#range em span.wave.active:before{
-            top: 6px;
-            border-radius: 36%;
-            animation-duration: 10s;
-            -webkit-animation-duration: 10s;
-        }
-        .ranking ul li span#range em span.wave.active:after{
-            top: 3px;
-            opacity: .5;
-            border-radius: 44%;
-            animation-duration: 7s;
-            -wbkit-animation-duration: 7s;
-        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -72,7 +39,7 @@
                             if(array_key_exists($i,$rankdata)){
                                 $user = $rankdata[$i];
                                 $count = $user->count ? $user->count : 0;
-                                $link = $user->link;
+                                $link = $user->link ? $user->link : 'javascript:;';
                                 $name = $user->name ? $user->name : '???';
                             }
                 ?>
@@ -248,6 +215,12 @@
                     max=3,
                     maxes=10,
                     limit=52;
+                var fragment_rankest = document.createDocumentFragment(),
+                    fragment_ranks = document.createDocumentFragment(),
+                    fragment_ranked = document.createDocumentFragment(),
+                    temp_rankest = document.createElement("DIV"),
+                    temp_ranks = document.createElement("DIV"),
+                    temp_ranked = document.createElement("DIV");
                 for(let i=0;i<limit;i++){
                     let name = temps[i].n,
                         mail = temps[i].m,//md5(temps[i].m),
@@ -264,22 +237,29 @@
                                 $avatar = $loadimg;
                             }
                         ?>
+                        link = link ? link : 'javascript:;';
                         if(i<max){
                             remove_load(rankest);
-                            rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img <?php echo $lazyhold; ?> src="<?php echo $avatar; ?>" title="这家伙留了 ${times} 条评论！" alt="${name}" /></a></span><span id="range" style="height:${average}px"><em style="height:${times*2}%"><span class="wave active"></span></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>`;
+                            temp_rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img <?php echo $lazyhold; ?> src="<?php echo $avatar; ?>" title="这家伙留了 ${times} 条评论！" alt="${name}" /></a></span><span id="range" style="height:${average}px"><em style="height:${times*2}%"><span class="wave active"></span></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>`;
+                            fragment_rankest.appendChild(temp_rankest);
                         }
                         if(i>=max && i<maxes){
                             remove_load(ranks);
-                            ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar" data-t="${times}"><img <?php echo $lazyhold; ?> src="<?php echo $avatar; ?>" alt="${name}" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b></a></li>`; //<sup>${times}+</sup>
+                            temp_ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar" data-t="${times}"><img <?php echo $lazyhold; ?> src="<?php echo $avatar; ?>" alt="${name}" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b></a></li>`; //<sup>${times}+</sup>
+                            fragment_ranks.appendChild(temp_ranks);
                         }
                         if(i>maxes){
                             remove_load(ranked);
-                            ranked.innerHTML += `<li><p>${name}<sup>${times}</sup></p></li>`;
+                            temp_ranked.innerHTML += `<li><p>${name}<sup>${times}</sup></p></li>`;
+                            fragment_ranked.appendChild(temp_ranked);
                         }
                         // note: re-call 'body img' caused frame drops, scrolling stuck at loop(specific images will be better)
                         // loadlazy("body img");
                     }
                 };
+                rankest.appendChild(fragment_rankest);
+                ranks.appendChild(fragment_ranks);
+                ranked.appendChild(fragment_ranked);
                 // fine re-call with outside of loop
                 loadlazy(".ranks .ranking img", 0);
             })

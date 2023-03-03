@@ -41,14 +41,14 @@
                                             // console.log('waitting..', this);
                                             time_delay = 1500;  //increase delay (decrease request)
                                         }
-                                    }
+                                    };
                                     // handle loading-err images eachimg.onerror=()=>this.src=loadimg;
                                     eachimg.onerror=function(){
                                         res.splice(res.indexOf(this), 1);  // 移除错误图片数组
                                         this.removeAttribute('src');
                                         this.removeAttribute('data-src'); // disable loadimg
                                         this.setAttribute('alt','图片请求出现问题'); // this.removeAttribute('src');
-                                    }
+                                    };
                                 }
                             }).catch(function(err){
                                 console.log(err);
@@ -73,7 +73,14 @@
                     })();
                 };
             autoLoad(loadArray, imglist);
-            window.addEventListener('scroll', scrollLoad, true);
+            // requestAnimationFrame
+            if(raf_available){
+                window.addEventListener('scroll', function(){
+                    window.requestAnimationFrame(scrollLoad);
+                }, true);
+            }else{
+                window.addEventListener('scroll', scrollLoad, true);
+            }
         }
     }
     
@@ -147,39 +154,105 @@
         })();
     }
     
+    //https://www.jianshu.com/p/1dc6909e9456
+    function raf_animate(cb,time){
+        let myReq;    // 记录requestAnimationFrame的返回值
+        let i = 1;    // 记录requestAnimationFrame的执行次数（屏幕刷新次数）
+        myReq = requestAnimationFrame(function fn(){    // 开启初始requestAnimationFrame
+            // 计数器 % (60/一秒钟执行的次数)
+            if(i%parseInt(60/(1000/time)) == 0){
+                cb();    // 执行真正要做的事情
+            }
+            i++;    // 记录requestAnimationFrame执行的次数
+            myReq = requestAnimationFrame(fn);    // 开启下次requestAnimationFrame
+            window.myReq = myReq;    // 将requestAnimationFrame返回值暴露，方便清除
+        });
+    }
+    //https://www.cnblogs.com/yu01/p/15493430.html
+    function raf_enqueue(enqueue=false, callback=false, ms=100, i=1, init=0){
+        const caf_available = window.cancelAnimationFrame || window.mozCancelAnimationFrame,
+              exec = (rid,init)=>{
+                  callback ? callback(init) : false;
+                  caf_available ? cancelAnimationFrame(rid) : false;
+              };
+        return (function raf_queue(){
+            init++;  // exec at returns
+            rafId = window.requestAnimationFrame(raf_queue);
+            // console.log('i'+init+'>='+i*ms); //debugger
+            if(enqueue){
+                init>=i*ms ? exec(rafId,init) : false;
+            }else{
+                exec(rafId,init);
+            }
+        })();
+    }
+    // setTimeout enqueue tasks
+    function sto_enqueue(list, enqueue=false, callback=false, ms=100){
+        if(list[0]){
+            for(let i=0;i<list.length;i++){
+                // let each = list[i];
+                if(enqueue){
+                    var inOrder = setTimeout(()=>{
+                        callback ? callback(i) : false;
+                        inOrder = null;
+                        clearTimeout(inOrder);
+                    }, i*ms);
+                }else{
+                    callback ? callback(i) : false;
+                }
+            }
+        }
+    }
     
-    function dataDancing(counterList,target,offset=0,append=''){
-        if(counterList[0]){
-            for(let i=0;i<counterList.length;i++){
-                // let insideLoop = 
-                (function(counter){
-                    let limit = parseInt(counter.innerText),
-                        times = -limit-offset,
-                        init = 0,
-                        inOrder = function(){
-                            clearInterval(noOrder);
-                            init<=limit ? counter.innerHTML = (init++)+append : clearInterval(noOrder);
-                            times>=0 ? (times=0,clearInterval(noOrder)) : times++;
-                            noOrder = setInterval(inOrder, init+times);
-                        };
-                    var noOrder = setInterval(inOrder);
-                })(counterList[i].querySelector(target));
+    // const raf_available already defineded in footer
+    function dataDancing(list,target,offset=0,interval=100,append=''){
+        // sto_enqueue(list, true, function(i){
+        //     list[i].querySelector(target).innerHTML = (i++)+append;
+        // });
+        if(list[0]){
+            for(let i=0;i<list.length;i++){
+                const counter = list[i].querySelector(target),
+                      limit = parseInt(list[i].dataset.count),
+                      exec = function(){
+                        list[i].classList.remove('blink');
+                        let times = -limit-offset,
+                            init = 0,
+                            inOrder = function(){
+                                clearInterval(noOrder);
+                                init<=limit ? counter.innerHTML = (init++)+append : clearInterval(noOrder);
+                                    times>=0 ? (times=0,clearInterval(noOrder)) : times++;
+                                noOrder = setInterval(inOrder, init+times);
+                                };
+                           var noOrder = setInterval(inOrder);
+                      };
+                // requestAnimationFrame
+                if(raf_available){
+                    raf_enqueue(true, function(){
+                        exec();
+                    }, interval, i);
+                }else{
+                    exec();
+                }
             }
         }
     }
     
     function fancyImages(imgs){
         if(imgs.length>=1){
+            // var fragment = document.createDocumentFragment();
             for(let i=0;i<imgs.length;i++){
                 let eachimg = imgs[i],
-                    datasrc = eachimg.dataset.src,
-                    imgbox = document.createElement("a");
-                imgbox.setAttribute("data-fancybox","gallery");
-                imgbox.setAttribute("href", datasrc);
-                imgbox.setAttribute("aria-label", "gallery_images");
-                eachimg.parentNode.insertBefore(imgbox, eachimg);
-                imgbox.appendChild(eachimg);
+                    eachpar = eachimg.parentNode,
+                    fancybox = document.createElement("a");
+                fancybox.setAttribute("data-fancybox","gallery");
+                fancybox.setAttribute("href", eachimg.dataset.src);
+                fancybox.setAttribute("aria-label", "gallery_images");
+                // eachimg.parentNode.insertBefore(fancybox, eachimg);
+                // eachimg.parentNode.appendChild(fancybox);
+                fancybox.appendChild(eachimg);
+                eachpar.insertBefore(fancybox, eachpar.firstChild);
             }
+            // eachimg.appendChild(fragment);
         }
     }
     
@@ -262,12 +335,14 @@
         console.warn(`theme_mode has changed: ${getCookie('theme_mode')}`);
     }
     
-    /*
-     *
+    /*  
      *  
-     *
-    */
-    
+     *  
+     *   DIY CUSTOM FUNCTIONS
+     *  
+     *  
+     */
+     
     const header = document.querySelector('.main-header-all'),
           headbar = document.querySelector('.top-bar-tips .tipsbox .tips'),
           inform = document.querySelector('.scroll-inform'),
@@ -290,18 +365,17 @@
           class_down = 'barSetDown',
           class_fixed = 'window-all-get-fixed',
           marginOffset = inform ? inform.offsetHeight+15 : 15,
-          aindex_fn = function(){
+          aindex_fn = function(offset=300){
               if(aindex){
-                  var aindexOffset = [],
-                      max = aindex.dataset.index,
-                      Constructor = function(index,offset){
-                      this.index = index;
-                      this.offset = offset;
-                  };
-                  for(let i=0;i<max;i++){
+                  var aindexOffset = [];
+                    //   Constructor = function(index, offsets){
+                    //       this.index = index;
+                    //       this.offset = offsets;
+                    //   };
+                  for(let i=0;i<aindex.dataset.index;i++){
                       const each_index = document.querySelector('#title-'+i),
-                            each_offset = each_index ? each_index.offsetTop+300 : false;
-                      aindexOffset.push(new Constructor(i, each_offset));
+                            each_offset = each_index ? each_index.offsetTop+offset : 0;
+                      aindexOffset.push(each_offset); //new Constructor(i, each_offset)
                   }
                   return aindexOffset;
               }
@@ -338,6 +412,13 @@
            };
     
     
+    const scrollToTop = () => {
+        const c = document.documentElement.scrollTop || document.body.scrollTop 
+        if (c > 0) {  
+            window.requestAnimationFrame(scrollToTop) 
+            window.scrollTo(0, c - c / 8) 
+        }
+    }
     // scrollTo原生api兼容ie处理 https://www.cnblogs.com/xieyongbin/p/11274959.html
     if(!window.scrollTo){
     	window.scrollTo = function (x, y) {
@@ -355,6 +436,9 @@
     // scrollTo && article_tool
     site_tool.querySelector(".top").onclick=()=>window.scrollTo(0,0);
     site_tool.querySelector(".bottom").onclick=()=>window.scrollTo(0,99999);
+    // site_tool.querySelector(".top").onclick=()=>window.requestAnimationFrame(function(){window.scrollTo(0,0);});
+    // site_tool.querySelector(".bottom").onclick=()=>window.requestAnimationFrame(function(){window.scrollTo(0,99999);});
+    
     if(article_tool){
         const tool_view = article_tool.querySelector("#full-view em"),
               tool_font = article_tool.querySelector("#font-plus em"),
@@ -489,7 +573,9 @@
                 }
                 scroll_record = scroll_foward;  // Update scrolled value
                 // Progress ball
-                progress_ball.querySelector(".pagePer strong").dataset.percent = page_percent; //.innerText = page_percent+"%";
+                progress_ball.querySelector(".pagePer strong").setAttribute('data-percent',page_percent);
+                //.dataset.percent = page_percent; // dataset can not Update attr immediately https://qa.1r1g.com/sf/ask/1962219521/
+                // progress_ball.querySelector(".pagePer strong").innerText = page_percent+"%";
                 progress_ball.querySelector(".pagePer i").style.transform = `translateY(${100-page_percent}%)`;
                 progress_wave.classList.add("active");
                 progress_bar.classList.add("active");
@@ -511,13 +597,13 @@
                         let aindexOffset = aindex_fn();
                         aindexOffset.length>=1 ? resolve(aindexOffset) : reject(aindexOffset);  // always update(do not call aindex_once_data)
                     }).then(function(res){
-                        if(scrollTop<=res[0].offset || scrollTop>=share.offsetTop){ //-100
+                        if(scrollTop<=res[0] || scrollTop>=share.offsetTop){ //-100
                             aindex_cl(aindex_li,'current')
                         }else{
-                            res.forEach(function (item) {
-                                if(scrollTop>=item.offset){
-                                    aindex_cl(aindex_li,'current');  // location.href='title-'+item.index;
-                                    document.querySelector('#t'+item.index).classList.add('current');
+                            res.forEach(function(offset,index){
+                                if(scrollTop>=offset){
+                                    aindex_cl(aindex_li,'current');  // location.href='title-'+index;
+                                    document.querySelector('#t'+index).classList.add('current');
                                 }
                             });
                         }
@@ -535,13 +621,20 @@
                             console.log('scroll_throttler'); // e = e || window.event;
                             exec_scroll();
                             scroll_throttler = null;  //消除定时器
-                        }, scroll_delay); //重新传入array（单次）循环
+                        }, scroll_delay);
                     }
                 })();
             }
         };
+    // requestAnimationFrame
+    if(raf_available){
+        window.addEventListener('scroll', function(){
+            window.requestAnimationFrame(scroll_func);
+        }, true);
+    }else{
+        window.addEventListener('scroll', scroll_func, true);
+    }
     // document.addEventListener('DOMMouseScroll', scroll_func, false);  //DOMMouseScroll  // scroll 滚动+拖拽滚动条代替 wheel 滚动函数
-    window.addEventListener('scroll', scroll_func, true);
     
     // moblie ux
     document.querySelector('.mobile-vision .m-search').onclick=function(){

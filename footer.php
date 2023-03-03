@@ -59,7 +59,7 @@
                     $third_cmt = get_option('site_third_comments');
                     if($third_cmt=='Valine'){    // 全站加载
                 ?>
-                        <script src="<?php custom_cdn_src(); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+                        <script src="<?php custom_cdn_src(false); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
                 <?php
                         if(!$baas){
                 ?>
@@ -400,7 +400,8 @@
             }
     ?>
             const bodyimg = document.querySelectorAll("body img"),
-                  loadimg = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png";
+                  loadimg = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png",
+                  raf_available = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;;
             if(bodyimg[0]){
                 var timer_throttle = null,
                     time_delay = 500,
@@ -467,8 +468,15 @@
                             }
                         })();
                     };
-                window.addEventListener('scroll', scrollLoad, true);
                 autoLoad(loadArray, bodyimg);
+                // requestAnimationFrame
+                if(raf_available){
+                    window.addEventListener('scroll', function(){
+                        window.requestAnimationFrame(scrollLoad);
+                    }, true);
+                }else{
+                    window.addEventListener('scroll', scrollLoad, true);
+                }
             }
     <?php
         }
@@ -573,18 +581,6 @@
         </script>
 <?php
     }
-?>
-<?php 
-    if(get_option('site_logo_switcher')){
-?>
-        <style>
-            body.dark .mobile-vision .m-logo span,
-            body.dark .logo-area span{
-                background: url(<?php echo get_option('site_logos'); ?>) no-repeat center center /cover!important;
-            }
-        </style>
-<?php
-    };
     $cat = $cat ? $cat : get_page_cat_id(current_slug());  //rewrite cat to cid (var cat for require php)
     require_once(TEMPLATEPATH. '/foot.php');
 ?>

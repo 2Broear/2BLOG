@@ -145,6 +145,9 @@ figure.wp-block-table{margin:25px auto}
 	font-family: var(--font-serif);
 	max-width: 82%;
 }
+.bg h1:hover{
+    background-size: 88% 32%;
+}
 .content-all-windows {
 	overflow-y: inherit;
 	max-width: 100%;
@@ -413,4 +416,26 @@ table tr.openyear {
 	.win-content article .infos{
 		max-width: 66%;
 	}
+}
+
+
+.bg h1{
+    background: linear-gradient(var(--theme-color), var(--theme-color)) no-repeat center 100%/0 50%;
+    background-size: 88% 12%;
+    color: white;
+    padding: 5px;
+    border-radius: initial;
+    transition: background-size .35s ease;
+}
+.win-top em.digital_mask:before{
+    content: "";
+}
+figure > figure{
+    vertical-align: bottom;
+}
+.content .index_anchor{
+    position: relative;
+    top: -65px;
+    visibility: hidden;
+    opacity: 0;
 }

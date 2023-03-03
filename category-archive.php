@@ -10,223 +10,24 @@
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/archive.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
-        .win-top .counter{
-            margin: 8% auto 7%;
-        }
-        .archive-tree h2{
-            margin: 35px auto 5px;
-        }
         .archive-tree ul:hover{
-            max-height: 518px;
+            max-height: 368px;
         }
-        .archive-tree ul{
-            /*max-height: 518px;*/
-            max-height: 318px;
-            transition: max-height 1s ease 1s;
-        }
-        .archive-tree ul li a:hover{
-            padding-left: 10px;
-        }
-        .archive-tree ul li a.link{
-            transition: padding .35s ease;
-        }
-        .archive-tree ul li .article + a,
-        .archive-tree ul li a.article{
-            font-weight: bold;
-        }
-        @keyframes dot {
-            33.33% {
-                content: ".";
-            }
-            66.67% {
-                content: "..";
-            }
-            100% {
-                content: "...";
-            }
-        }
-        h2 sup.loading:after{
-            animation: dot .5s infinite steps(2, start);
-            -webkit-animation: dot .5s infinite steps(2, start);
-        }
-        h2 sup{
-            font-size: 12px;
-            text-decoration: underline;
-        }
-        .stats{
-            font-weight: bold;
-            border-top: 1px dashed rgb(100 100 100 / 30%);
-            /*padding: 5px 15px;*/
-            padding: 10px 2px;
-            /* margin-top: 5px; */
-            /*border-radius: 50px;*/
-            font-size: 12px;
-            /* float: right; */
-            border-top-left-radius: 0;
-            /*display: inline-block;*/
-            display: block;
-            /*background: rgb(200 200 200 / 10%);*/
-        }
-        .stats b{
-            opacity: .75;
-            font-weight: normal;
-        }
-        
-        .cs-tree{
-            margin: 15px auto;
-            text-align: left;
-        }
-        .cs-tree .contributions{
-            display: inline-block;
-        }
-        body.dark .cs-tree span{
-            color: var(--preset-3a);
-            border: 1px solid var(--preset-3a);
-            /*border-color: var(--preset-4a);*/
-        }
-        body.dark .cs-tree span:before{
-            border-color: var(--preset-2b);
-            /*color: #9be9a8;*/
-        }
-        /*.cs-tree .today:hover::before,*/
-        .cs-tree span#edit:hover::before{
-            content: attr(data-count)' spot on 'attr(data-dates);
-        }
-        .cs-tree span.today:hover::before{
-            content: "today's contribution";
-        }
-        .cs-tree span:hover::before,
-        .cs-tree span.dayto:hover::before{
-            content: attr(data-dates);
-            /*content: "future contributions";*/
-        }
-        .cs-tree span:before{
-            content: none;
-            color: white;
-            background: var(--preset-3a);
-            position: absolute;
-            top: 100%;
-            left: 100%;
-            z-index: 9;
-            font-size: 12px;
-            padding: 6px 12px 8px 12px;
-            border-radius: 50px;
-            text-align: center;
-            white-space: nowrap;
-            border: 2px solid currentColor;
-            /*font-weight: bold;*/
-            /*-webkit-backdrop-filter: blur(10px);*/
-            /*backdrop-filter: blur(10px);*/
-        }
-        .cs-tree .dayto,
-        .cs-tree .today,
-        .cs-tree span:hover{
-            /*border-color: transparent;*/
-            border-radius: 50%;
-            z-index: 9;
-        }
-        .cs-tree span{
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            color: var(--preset-s);
-            background: currentColor;
-            border: 1px solid var(--preset-e);
-            margin: 2px;
-            border-radius: 2px;
-            position: relative;
-        }
-        .cs-tree span#edit{
-            border-color: currentColor;
-        }
-        @keyframes twinkler {
+        @keyframes blinker {
             0% {
+                opacity: 1;
+            }
+            50% {
                 opacity: .5;
             }
-            15% {
-                opacity: 1;
-            }
-            30% {
-                opacity: 0;
-            }
             100% {
                 opacity: 1;
             }
         }
-        body.dark .cs-tree span.today,
-        .cs-tree .today{
-            color: var(--theme-color);
-            /*color: var(--theme-color)!important;*/
-            /*border-color: currentColor!important;*/
-            animation: twinkler 1s infinite alternate ease;
-            -webkit-animation: twinkler 1s infinite alternate ease;
+        div.blink{
+            animation: blinker .5s infinite alternate ease;
+            -webkit-animation: blinker .5s infinite alternate ease;
         }
-        .cs-tree .dayto:hover{
-            opacity: .75;
-        }
-        .cs-tree .dayto{
-            opacity: .5;
-            color: var(--preset-e);
-            z-index: 0;
-        }
-        /*.cs-tree span:last-child{*/
-        /*    margin-right: auto;*/
-        /*}*/
-        /*.cs-tree span{*/
-        /*    margin: 2px 24px 2px 0;*/
-        /*}*/
-        .cs_tips::before{
-            content: 'Less';
-        }
-        .cs_tips::after{
-            content: 'More';
-        }
-        .cs_tips::before,
-        .cs_tips::after{
-            font-size: 12px;
-            /*font-weight: bold;*/
-            opacity: .5;
-        }
-        .cs_tips{
-            margin: auto;
-            padding: 0;
-            float: right;
-        }
-        body.dark .cs_tips li{
-            color: var(--preset-3a);
-            /*border-color: currentColor!important;*/
-        }
-        body.dark .cs_tips li:first-child{
-            border-color: var(--preset-6);
-        }
-        .cs_tips li{
-            width: 10px;
-            height: 10px;
-            margin: -2px 3px!important;
-            /*width: 3px;*/
-            /*height: 12px;*/
-            /*margin: -3px 1px!important;*/
-            display: inline-block;
-            color: var(--preset-s);
-            background: currentColor;
-            border: 1px solid var(--preset-e);
-            border-radius: 2px;
-        }
-        .cs_tips li:not(:first-child){
-            border-color: currentColor!important;
-        }
-        /*.cs_tips li:nth-child(2){*/
-        /*    color: #9be9a8!important;*/
-        /*}*/
-        /*.cs_tips li:nth-child(3){*/
-        /*    color: #40c463!important;*/
-        /*}*/
-        /*.cs_tips li:nth-child(4){*/
-        /*    color: #30a14e!important;*/
-        /*}*/
-        /*.cs_tips li:last-child{*/
-        /*    color: #216e39!important;*/
-        /*}*/
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -243,11 +44,12 @@
                 <?php
                     $archive_yearly = get_post_archives('yearly');
                     foreach ($archive_yearly as $archive){
+                        $archive_count = $archive['count'];
                 ?>
-                        <div>
+                        <div class="blink" data-count="<?php echo $archive_count; ?>">
                             <a href="<?php echo $archive['link']; ?>" rel="nofollow">
                                 <b><?php echo $archive['title']; ?></b>
-                                <h1><?php echo $archive['count']; ?></h1>
+                                <h1>0<?php //echo $archive_count; ?></h1>
                                 <p>篇发布记录</p>
                             </a>
                         </div>
@@ -310,7 +112,6 @@
                                                 break;
                                             default:
                                                 $color = '';
-                                                break;
                                         };
                                     };
                                     echo $color.'"';
@@ -346,7 +147,7 @@
                 ?>
             </div>
             <select name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;" style="float:right;">
-                <option value=""><?php esc_attr( _e( 'Monthly previews', 'textdomain' ) ); ?></option> 
+                <option value=""><?php esc_attr( _e( 'monthly previews', 'textdomain' ) ); ?></option> 
                 <?php 
                     wp_get_archives(array(
                         'type' => 'monthly',
@@ -442,7 +243,7 @@
     if(get_option('site_animated_counting_switcher')){
 ?>
         <script>
-            dataDancing(document.querySelectorAll(".win-top .counter div"), "h1", 200);
+            dataDancing(document.querySelectorAll(".win-top .counter div"), "h1", 200, 25);
         </script>
 <?php
     }

@@ -17,7 +17,7 @@
                 <?php get_header(); ?>
             </nav>
         </header>
-        <?php //echo $cat;//get_inform(); ?>
+        <?php //get_inform(); ?>
         <div class="content-all-windows hfeed">
             <div class="news-content-window">
                 <?php breadcrumb_switch(true,true); ?>

@@ -12,31 +12,8 @@
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/highlight/agate.m.css" />
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/fancybox.css" />
     <style>
-        .child{
-            padding-left: 20px;
-        }
-        .bg h1:hover{
-            background-size: 88% 32%;
-        }
-        .bg h1{
-            background: linear-gradient(var(--theme-color), var(--theme-color)) no-repeat center 100%/0 50%;
-            background-size: 88% 12%;
-            color: white;
-            padding: 5px;
-            border-radius: initial;
-            transition: background-size .35s ease;
-        }
-        .win-top em.digital_mask:before{
-            content: "";
-        }
-        figure > figure{
-            vertical-align: bottom;
-        }
-        .content .index_anchor{
-            position: relative;
-            top: -65px;
-            visibility: hidden;
-            opacity: 0;
+        .win-top em.digital_mask{
+            background-size: 2px 2px!important;
         }
     </style>
 </head>

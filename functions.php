@@ -870,8 +870,18 @@
     
     // 自动主题模式
     function theme_mode(){
-        $theme = array_key_exists('theme_mode',$_COOKIE) ? $_COOKIE['theme_mode'] : false;
-        echo get_option('site_darkmode_switcher') ? $theme : 'theme_mode_disabled';
+        if(get_option('site_darkmode_switcher')){
+            if(!array_key_exists('sidebar_status',$_COOKIE)){
+                if(!$theme_manual){  //if theme_manual actived
+                    $hour = current_time('G');
+                    $start = get_option('site_darkmode_start');
+                    $end = get_option('site_darkmode_end');
+                    echo $hour>=$end&&$hour<$start || $hour==$end&&current_time('i')>=0&&current_time('s')>=0 ? 'light' : 'dark';
+                };
+            }else{
+                echo $_COOKIE['theme_mode'];
+            }
+        }
     }
     
     // 指定分类输出RSS feed  https://www.laobuluo.com/3863.html

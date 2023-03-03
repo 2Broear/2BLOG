@@ -93,7 +93,7 @@
                                 <div class="head-inside wow fadeInUp" data-wow-delay="0.15s" style="background:url(<?php echo !$video ? cat_metabg($cat, get_option('site_bgimg')) : false; ?>) center center /cover;">
                                     <?php
                                         if($video){
-                                            echo '<video src="'.$video.'" poster="'.$video.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>';
+                                            echo '<video src="'.$video.'" poster="'.cat_metabg($cat, get_option('site_bgimg')).'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>';
                                         }
                                     ?>
                                 </div>
@@ -164,24 +164,20 @@
 <!-- siteJs -->
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <script>
-    (function(list, queue=false, ms=100){
+    const list = document.querySelectorAll('.mbit .mbit_range li');
+    if(raf_available){
         if(list[0]){
             for(let i=0;i<list.length;i++){
-                let each = list[i],
-                    count = parseInt(each.dataset.res),
-                    counter = each.querySelector('em');
-                if(queue){
-                    var inOrder = setTimeout(()=>{
-                        each.classList.add('active'); //counter.style.width = count+"%";
-                        inOrder = null;
-                        clearTimeout(inOrder);
-                    }, i*ms);
-                }else{
-                    each.classList.add('active'); //counter.style.width = count+"%";
-                }
+                raf_enqueue(true, function(init){
+                    list[i].classList.add('active');
+                }, 25, i);
             }
         }
-    })(document.querySelectorAll('.mbit .mbit_range li'), true, 150);
+    }else{
+        sto_enqueue(list, true, function(i){
+            list[i].classList.add('active');
+        }, 150);
+    }
     <?php
         if(get_option('site_video_poster_switcher')){
             echo 'setupVideoPoster(2);';  // 截取设置当前页面所有视频 poster 
