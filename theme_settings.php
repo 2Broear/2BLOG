@@ -1873,7 +1873,7 @@
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update
                                 $arr = explode(',',trim($preset));
                             ?>
-                                <p class="description" id="site_banner_array_label">首页 banner 组图数组（使用逗号“ , ”分隔，图库多选项</p>
+                                <p class="description" id="site_banner_array_label">首页 banner 组图数组（使用逗号“ , ”分隔，图库中按住“CTRL”多选图片</p>
                                     <label for="upload_banner_button" class="upload_preview_list">
                             <?php
                                         for($i=0;$i<count($arr);$i++){

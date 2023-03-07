@@ -401,48 +401,53 @@
     ?>
             const bodyimg = document.querySelectorAll("body img"),
                   loadimg = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png",
-                  raf_available = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;;
+                  raf_available = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
             if(bodyimg[0]){
                 var timer_throttle = null,
                     time_delay = 500,
-                    loadArray = [],
+                    // loadArray = [], 
+                    loadArray = [...bodyimg],
                     msgObject = Object.create(null),
                     autoLoad = function(imgLoadArr, initDomArr=false){
-                        let tempArray = initDomArr ? initDomArr : imgLoadArr;  //判断加载数组类型，默认加载 loadArray
-                        for(let i=0;i<tempArray.length;i++){
-                            let eachimg = tempArray[i],
+                        // let tempArray = initDomArr ? initDomArr : imgLoadArr;  //判断加载数组类型，默认加载 loadArray
+                        for(let i=0;i<imgLoadArr.length;i++){
+                            let eachimg = imgLoadArr[i],
                                 datasrc = eachimg.dataset.src;
                             if(datasrc){
-                                eachimg.src = loadimg; //pre-holder(datasrc only)
+                                eachimg.src = loadimg; //pre-holder (datasrc only)
                                 new Promise(function(resolve,reject){
-                                    initDomArr ? imgLoadArr.push(eachimg) : false;  //判断首次加载（载入 lazyload 元素数组）
+                                    // initDomArr ? imgLoadArr.push(eachimg) : false;  //判断首次加载（载入 lazyload 元素数组）
                                     resolve(imgLoadArr);
                                 }).then(function(res){
                                     if(eachimg.getBoundingClientRect().top<window.innerHeight){
-                                        eachimg.src = datasrc; // 即时更新 eachimg（设置后即可监听图片 onload 事件）
-                                        // 使用 onload 事件替代定时器或Promise，判断已设置真实 src 的图片加载完成后再执行后续操作
-                                        eachimg.onload=function(){
-                                            if(this.getAttribute('src')==datasrc){
-                                                res.splice(res.indexOf(this), 1);  // 移除已加载图片数组（已赋值真实 src 情况下）
-                                            }else{
-                                                this.removeAttribute('data-src'); // disable loadimg
-                                                this.src = datasrc;  // this.src will auto-fix [http://] prefix
-                                                // console.log('waitting..', this);
-                                                time_delay = 1500;  //increase delay (decrease request)
-                                                console.log(time_delay);
-                                            }
-                                            <?php
-                                                if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
-                                                    echo 'setupBlurColor(eachimg, eachimg.parentNode.parentNode);';
+                                        // 创建一个临时图片，这个图片在内存中不会到页面上去（修复 firefox 图片未设置加载被移出加载数组）https://segmentfault.com/a/1190000041517694
+                                        var temp = new Image();
+                                        temp.src = datasrc;  //请求一次
+                                        temp.onload = function(){
+                                            eachimg.src = datasrc; // 即时更新 eachimg（设置后即可监听图片 onload 事件）
+                                            // 使用 onload 事件替代定时器或Promise，判断已设置真实 src 的图片加载完成后再执行后续操作
+                                            eachimg.onload=function(){
+                                                if(this.getAttribute('src')==datasrc){
+                                                    res.splice(res.indexOf(eachimg), 1);  // 移除已加载图片数组（已赋值真实 src 情况下）
+                                                }else{
+                                                    eachimg.removeAttribute('data-src'); // disable loadimg
+                                                    eachimg.src = datasrc;  // this.src will auto-fix [http://] prefix
+                                                    time_delay = 1500;  //increase delay (decrease request)
+                                                    console.log(time_delay);
                                                 }
-                                            ?>
-                                        }
-                                        // handle loading-err images eachimg.onerror=()=>this.src=loadimg;
-                                        eachimg.onerror=function(){
-                                            res.splice(res.indexOf(this), 1);  // 移除错误图片数组
-                                            this.removeAttribute('src');
-                                            this.removeAttribute('data-src'); // disable loadimg
-                                            this.setAttribute('alt','图片请求出现问题'); // this.removeAttribute('src');
+                                                <?php
+                                                    if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
+                                                        echo 'setupBlurColor(eachimg, eachimg.parentNode.parentNode);';
+                                                    }
+                                                ?>
+                                            }
+                                            // handle loading-err images eachimg.onerror=()=>this.src=loadimg;
+                                            eachimg.onerror=function(){
+                                                res.splice(res.indexOf(this), 1);  // 移除错误图片数组
+                                                this.removeAttribute('src');
+                                                this.removeAttribute('data-src'); // disable loadimg
+                                                this.setAttribute('alt','图片请求出现问题'); // this.removeAttribute('src');
+                                            }
                                         }
                                     }
                                 }).catch(function(err){

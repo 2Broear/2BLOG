@@ -147,14 +147,12 @@
                 <div class="In-core-body">
                     <div class="body-basically wow fadeInUp" data-wow-delay="0.1s">
                         <div class="Introduce">
-                            <?php 
-                                the_content();  // the_page_content(current_slug());
-                                dual_data_comments();  // include_once(TEMPLATEPATH. '/comments.php');
-                            ?>
+                            <?php the_content();  // the_page_content(current_slug());?>
                         </div>
                     </div>
                 </div>
             </div>
+            <?php dual_data_comments();  // include_once(TEMPLATEPATH. '/comments.php');?>
         </div>
     </div>
     <footer>

@@ -416,7 +416,7 @@
 	/* .friends-boxes .deals .inboxSliderCard .slideBox{ width: 155%;} */
 }
 @media only screen and (max-width: 760px) {
-	.friends-boxes .deals .inbox.girl::after{width: 100%;right: -8px;opacity:.12}
+	.friends-boxes .deals .inbox.girl::after{right: -8px;opacity:.12;/*width: 100%;*/}
 	.friends-boxes .deals .inboxSliderCard .inbox{ display: inline-block;}
 	.friends-boxes .deals .inbox{flex-flow:column;max-width:calc(100%/2.55)!important;}
 	.friends-boxes .deals .inbox .inbox-lowside span.lowside-description p{text-align:inherit}

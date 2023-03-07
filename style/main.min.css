@@ -159,7 +159,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 .weBlog-Description .weBlog-Description-inside-content span{display:block;overflow:hidden;margin:0 auto;padding:15px 0;}
 .weBlog-Description .weBlog-Description-inside-content span p{font-size:small;margin:10px auto;font-weight:300;letter-spacing: 10px;}
 .weBlog-Description .weBlog-Description-inside-content span small{font-size: x-large;margin-top: 10px;/*width:88%;*/display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;letter-spacing: 3px;}
-.recommendation{max-width:100%;font-size:var(--min-size);position:relative;z-index:9;background:whitesmoke;padding:0;margin-left:15px;border-radius:var(--radius);display:block;-ms-flex:3 1 0;-moz-box-flex:3 1 0;-webkit-box-flex:3 1 0;-webkit-flex:3 1 0;flex:3 1 0}
+.recommendation{max-width:100%;font-size:var(--min-size);position:relative;background:whitesmoke;padding:0;margin-left:15px;border-radius:var(--radius);display:block;-ms-flex:3 1 0;-moz-box-flex:3 1 0;-webkit-box-flex:3 1 0;-webkit-flex:3 1 0;flex:3 1 0;/*z-index:9;*/}
 .recommendation #recommend-inside{width:auto;height:100%;color:var(--preset-9);font-family:var(--font-serif);box-sizing:border-box;box-shadow:rgba(0, 0, 0, 0.08) -20px 0px 20px;border-radius:inherit;overflow: hidden;}
 .recommendation #recommend-inside .recommend-newsContent{width:100%;height:50%;position:relative;background: white;}
 .recommendation #recommend-inside .recommend-newsImg{width:100%;height:50%}

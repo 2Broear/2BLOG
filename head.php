@@ -30,12 +30,17 @@
         /*will-change: transform;*/
         /*transform: translateZ(0);*/
     }
-    .friends-boxes .deals .inbox,
-    .rcmd-boxes .info .inbox{
-        min-height: 100px;
-        /*will-change: initial;*/
-        /*transform: none;*/
-    }
+    /*.additional.metaboxes ol{*/
+    /*    backdrop-filter: saturate(2) blur(10px);*/
+    /*}*/
+    /*@keyframes valueSetUp{*/
+    /*    0%{transform:translateY(0);}*/
+    /*    100%{transform:translateY(-150%);}*/
+    /*}*/
+    /*@keyframes valueSetDown{*/
+    /*    0%{transform:translateY(-150%);}*/
+    /*    100%{transform:translateY(0);}*/
+    /*}*/
 </style>
 <script async>
     document.documentElement.style.setProperty('--theme-color','<?php echo $theme_color; ?>');

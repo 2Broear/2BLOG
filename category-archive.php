@@ -11,7 +11,7 @@
     <?php get_head(); ?>
     <style>
         .archive-tree ul:hover{
-            max-height: 368px;
+            /*max-height: 368px;*/
         }
         @keyframes blinker {
             0% {
@@ -198,10 +198,10 @@
                     $head_emoji = $curYear==$cur_year ? ' 🚀 ' : ' 📁 ';
                     // SAME COMPARE AS $found $limit
                     if($posts_count>=$async_loads){
-                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup class="call" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'">加载更多</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
+                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup class="call" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$all_count.'">加载更多</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
                     }else{
                         // $head_emoji = '📂';
-                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup class="call disabled" data-year="'.$cur_year.'" data-count="0" data-load="'.$posts_count.'">已全部载入</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
+                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup class="call disabled" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$all_count.'">已全部载入</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
                     };
                     // print_r($cur_posts[0]->ID);
                     for($i=0;$i<$posts_count;$i++){
@@ -238,7 +238,7 @@
         </footer>
 	</div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(false); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
     if(get_option('site_animated_counting_switcher')){
 ?>
@@ -253,44 +253,43 @@
             const archive_tree = document.querySelector(".archive-tree"),
                   preset_loads = <?php echo $async_loads; ?>;
             bindEventClick(archive_tree, 'call', function(t){
-                let years = t.dataset.year, //.getAttribute("data-year"),
-                    loads = parseInt(t.dataset.load), //.getAttribute("data-load")
-                    click_count = parseInt(t.dataset.count), //.getAttribute('data-count')
-                    load_box = archive_tree.querySelector('.call_'+years),//t.parentNodenextSibling,
-                    last_load = load_box.lastChild.offsetTop;  // preset lastChild offsetTop record
-                click_count++;
+                let years = t.dataset.year,
+                    loads = parseInt(t.dataset.load),
+                    counts = parseInt(t.dataset.counts),
+                    clicks = parseInt(t.dataset.click);
+                if(loads>=counts){
+                    t.classList.add("disabled");
+                    t.innerText="已加载全部";
+                    return;
+                }
                 t.innerText="加载中";
                 t.classList.add('loading','disabled');
-                t.setAttribute('data-count', click_count);
-                // console.log(click_count)
-                send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", 
-                    parse_ajax_parameter({
+                t.setAttribute('data-click', clicks++);
+                send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", parse_ajax_parameter({
                         "action": "updateArchive",
                         "key": years, 
                         "limit": preset_loads,
-                        "offset": preset_loads*click_count,
+                        "offset": preset_loads*clicks,
                     }, true), function(res){
-                        // console.log(res);  //response
                         var posts_array = JSON.parse(res),
+                            load_box = archive_tree.querySelector('.call_'+years),
+                            last_offset = load_box.lastChild.offsetTop,  // same as preset, define last_load before insert
                             posts_count = posts_array.length,
-                            lasts_loads = load_box.lastChild.offsetTop;  // same as preset, define last_load before insert
-                        // console.log(load_box.lastChild.offsetTop);
-                        if(posts_count<=0){
-                            t.classList.add("disabled");
-                            t.innerText="已加载全部";
-                        }else{
-                            t.classList.remove('disabled');
-                            t.setAttribute('data-load', loads+posts_count);
-                            t.innerText = "加载更多";
-                        }
-                        t.classList.remove('loading');
+                            loads_count = loads+posts_count;
+                        t.innerText = "加载更多";
+                        t.classList.remove('disabled','loading');
+                        loads_count>=counts ? t.setAttribute('data-load', counts) :  t.setAttribute('data-load', loads_count);  // update current loaded(limit judge)
                         for(let i=0;i<posts_count;i++){
                             let each_post = posts_array[i];
-                            // console.log(each_post)
                             load_box.innerHTML += `<li>${each_post.date}<a class="link${each_post.mark}" href="${each_post.link}" target="_blank">${each_post.title}<sup>${each_post.cat}</sup></a></li>`;
                         }
-                        // console.log(load_box.lastChild.offsetTop);  // offsetTop = 0
-                        load_box.scrollTo(0, lasts_loads); //+load_box.lastChild.offsetHeight
+                        // compare updated load counts
+                        if(parseInt(t.dataset.load)>=counts){
+                            t.innerText="已加载全部";
+                            t.classList.add("disabled");
+                        }
+                        // scrollTo lastest
+                        load_box.scrollTo(0, last_offset);
                     }
                 );
             });

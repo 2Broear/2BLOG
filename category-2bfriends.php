@@ -14,6 +14,19 @@
         .friends-boxes .deals .inbox.girl::after{
 	        background: url('<?php custom_cdn_src('img'); ?>/images/girl_symbols.png') center center /contain no-repeat;
         }
+        .friends-boxes .deals.rcmd .inbox .inbox-aside span.lowside-description p{
+            max-width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin: 10px auto;
+        }
+        .friends-boxes .deals.exchanged .inbox,
+        .rcmd-boxes .info .inbox{
+            min-height: 103px;
+            /*will-change: initial;*/
+            /*transform: none;*/
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -57,6 +70,18 @@
                         }else{
                             echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';
                         };
+        	            $tech_links = get_bookmarks(array(
+        	                'orderby' => 'link_id',
+        	                'order' => 'ASC',  // 最新排最后
+        	                'category_name' => "technical",
+        	                'hide_invisible' => 0
+    	                ));
+                        if(count($tech_links)>0){
+                ?>
+                            <div class="inbox-clip"><h2 id="exchanged"> 技术侧重 </h2></div>
+                            <div class="deals exchanged flexboxes"><?php site_links($tech_links, 'full'); ?></div>
+                <?php
+                        }
                         if(count($rcmd_links)>0){
                 ?>
                             <div class="inbox-clip"><h2 id="rcmded"> 荐亦有见 </h2></div>

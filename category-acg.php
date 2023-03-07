@@ -40,6 +40,7 @@
                     $preslug = $preset->slug;
                     $curslug = current_slug();
                     $baas = get_option('site_leancloud_switcher')&&strpos(get_option('site_leancloud_category'), $basename)!==false;  //use post as category is leancloud unset
+                    $datadance = get_option('site_animated_counting_switcher');
                     if(!$baas){
                         $cats = get_categories(meta_query_categories($preset->term_id, 'ASC', 'seo_order'));
                         if(!empty($cats) && $curslug==$preslug){
@@ -49,7 +50,7 @@
                 ?>
                                 <div class="<?php echo $cat_slug ?> blink" data-count="<?php echo $cat_count; ?>">
                                     <a href="<?php echo get_category_link($the_cat->term_id) ?>" rel="nofollow">
-                                        <h2><?php //echo $cat_count; ?>0<sup>+</sup></h2>
+                                        <h2><?php echo $datadance ? "0" : $cat_count; ?><sup>+</sup></h2>
                                         <p><?php echo $the_cat->name.'/'.strtoupper($cat_slug); ?></p>
                                     </a>
                                 </div>
@@ -92,7 +93,7 @@
 <!-- siteJs -->
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
-    if(get_option('site_animated_counting_switcher')){
+    if($datadance){
 ?>
         <script>
             dataDancing(document.querySelectorAll(".win-top .counter div"), "h2", 0, 10, "<sup>+</sup>");

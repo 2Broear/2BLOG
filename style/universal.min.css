@@ -1334,7 +1334,7 @@ body.dark .v .vwrap .vedit .vemojis img{opacity:.66;}
 body.dark .load button:active,body.dark .v .vbtn:active,body.dark .win-content .load-more_notes button:active{color:#333333!important;border-color:var(--theme-color)}
 body.dark .inside-functions .box div:hover > span{background-color:var(--theme-color)}
 body.dark .article_index .in_dex,
-body.dark .v code, body.dark .v pre,body.dark .v .vedit,body.dark .v .vlist .vcard .vhead .vsys,body.dark .v .vlist .vcard.true .vhead .vtop,body.dark .links-more,body.dark .resource-windows div ul li:hover,body.dark .tech_window-content li:hover,body.dark .news-article-container h5,body.dark .rcmd-boxes .info .inbox,body.dark .weblog-tree-core-record:hover > .weblog-tree-core-r,body.dark .v .vwrap .vheader .vinput:focus{background-color:var(--preset-3a)!important;}
+body.dark .v code, body.dark .v pre,body.dark .v .vedit,body.dark .v .vlist .vcard .vhead .vsys,body.dark .v .vlist .vcard.true .vhead .vtop,body.dark .links-more,body.dark .resource-windows div ul li:hover,body.dark .tech_window-content li:hover,body.dark .news-article-container h5,body.dark .weblog-tree-core-record:hover > .weblog-tree-core-r,body.dark .v .vwrap .vheader .vinput:focus{background-color:var(--preset-3a)!important;}
 body.dark .v .vlist .vcard .vquote,body.dark .v .vlist .vcard .vh{border-style:none}
 body.dark .v .vlist .vcard .vquote .vcard:hover{background:#333333}
 body.dark .v .vwrap .vheader .vinput,body.dark .vheader{background:#303030;border-color:transparent;border-right-style:none}
@@ -1349,6 +1349,7 @@ body.dark .inside_of_block nav.main-nav ul li.sec_level div.links-more a:hover{b
 body.dark .v .vlist .vcard .vimg,body.dark .inside_of_block nav.main-nav ul li.sec_level div.links-more a,body.dark .weblog-tree-box .tree-box-title h3,body.dark .weblog-tree-core-l #weblog-timeline{color:var(--preset-c);border-color:var(--preset-4a)}
 body.dark .mobile-search .ms-inside .ms-inside-searchBox form,body.dark .friend_links li a{border-color:transparent}
 /*body.dark .friend_links li a#Travelling{background:url(https://img.2broear.com/svg/Travelling_dark.svg) no-repeat center center /contain}*/
+body.dark .rcmd-boxes .info .inbox,
 body.dark .inside-functions span,body.dark .friend_links li a:hover{/*color:var(--preset-9)!important;*/border-color:transparent;background-color:var(--preset-3a)}
 body.dark #special-img,body.dark .Fresh-ImgBoxs span,body.dark .friends-boxes .deals .inbox .inbox-headside img,body.dark .box_down ul li .details span,body.dark .banner .banner-inside ul li,body.dark span#lowerbg,body.dark span#acg-content-area,body.dark .news-window-img img,body.dark .news-article-container img,body.dark .win-content article img,body.dark .rcmd-boxes .info .inbox .inbox-headside img,body.dark #tech_pic img,body.dark #acg_window-content-inside_left-pic,body.dark .news-content-right-recommend ul{opacity: .66;}
 body.dark .wp_comments:hover,
