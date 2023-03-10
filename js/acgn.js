@@ -53,7 +53,7 @@ $(function(){
 				  times>=tjson ? clearInterval(timer) : false
 			  },50)
 		  };
-	for(let i=0;i<loadlist.length;i++){
+	for(let i=0,listLen=loadlist.length;i<listLen;i++){
 		let eachload = loadlist[i],
 			loading = document.createElement("span"),
 			evalload = rcmdbox.querySelector(`.${eachload}`);
@@ -64,7 +64,7 @@ $(function(){
 		var times = 0,
 			types = [],
 			typed = [];
-		for (let i=0; i<result.length;i++) {
+		for (let i=0,resLen=result.length; i<resLen;i++) {
 			let res = result[i],
 				title = res.attributes.title,
 				subtitle = res.attributes.subtitle,
@@ -79,7 +79,7 @@ $(function(){
 				gameplay = templates(title,subtitle,desc,link,img,rating,ign,gs);
 			types.push(type);
 			types.sort();
-			for(let i=0;i<loadlist.length;i++){
+			for(let i=0,listLen=loadlist.length;i<listLen;i++){
 				let eachload = loadlist[i],
 					evalload = rcmdbox.querySelector(`.${eachload}`),
 					inbox = document.createElement("div");
@@ -96,9 +96,9 @@ $(function(){
 				}
 			}
 		};
-		for(let i=0;i<types.length;){  
+		for(let i=0,typeLen=types.length;i<typeLen;){  
 			let count=0;  
-			for(var j=i;j<types.length;j++){  
+			for(var j=i;j<typeLen;j++){  
 				if(types[i]==types[j]){  
 					count++;  
 				}
@@ -107,7 +107,7 @@ $(function(){
 			i+=count;  
 		};
 		//res 二维数维中保存了 值和值的重复数  
-		for(let  i=0 ;i<typed.length;i++){  
+		for(let  i=0,typedLen=typed.length;i<typedLen;i++){  
 			let typename = typed[i][0],
 				typenum = typed[i][1],
 				count = document.querySelector(`.counter .${typename} h2`);
@@ -115,7 +115,7 @@ $(function(){
 		};
 // 		$("img.lazy").lazyload();
 		const loads = document.querySelectorAll("span#loading");
-		for(let i=0;i<loads.length;i++){
+		for(let i=0,laodLen=loads.length;i<laodLen;i++){
 			loads[i].remove()
 		}
 	});

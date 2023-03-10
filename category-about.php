@@ -71,7 +71,7 @@
                                     <div class="user_info">
                                         <span id="head-photo">
                                             <?php
-                                                global $lazysrc,$loadimg; // $lazyload = get_option('site_lazyload_switcher');
+                                                // global $lazysrc, $loadimg; //
                                                 $lazyhold = "";
                                                 $avatar = get_option('site_avatar');
                                                 if($lazysrc!='src'){
@@ -79,6 +79,7 @@
                                                     $avatar = $loadimg;
                                                 }
                                                 echo '<img '.$lazyhold.' src="'.$avatar.'" alt="avatar" />';
+                                                // unset($lazysrc, $loadimg);
                                             ?>
                                         </span>
                                         <div class="intro_info">
@@ -107,6 +108,7 @@
                                     <ol class="mbit_range">
                                         <?php
                                             $mbit_array = explode(';', get_option('site_mbit_array'));
+                                            $mbit_array_count = count($mbit_array);
                                             $mbit_inits = array(
                                                 array('before' => 'Extraverted', 'after' => 'Introverted'),
                                                 array('before' => 'Intuitive', 'after' => 'Observant'),
@@ -114,7 +116,7 @@
                                                 array('before' => 'Judging', 'after' => 'Prospecting'),
                                                 array('before' => 'Assertive', 'after' => 'Turbulent'),
                                             );
-                                            for($i=0;$i<count($mbit_array);$i++){
+                                            for($i=0;$i<$mbit_array_count;$i++){
                                                 $each_data = explode('/', $mbit_array[$i]);
                                                 array_key_exists($i,$mbit_inits) ? array_push($each_data, $mbit_inits[$i]) : false;
                                                 //   print_r($each_data);
@@ -165,7 +167,7 @@
     const list = document.querySelectorAll('.mbit .mbit_range li');
     if(raf_available){
         if(list[0]){
-            for(let i=0;i<list.length;i++){
+            for(let i=0,listLen=list.length;i<listLen;i++){
                 raf_enqueue(true, function(init){
                     list[i].classList.add('active');
                 }, 25, i);

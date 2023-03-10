@@ -128,7 +128,8 @@ a:link{text-decoration:none}
 .inside-content li.news-personal_stand em::-moz-selection{background:transparent}
 blockquote{border-left: 2px solid rgba(150, 150, 150, 0.36);padding-left: 15px;margin:25px 15px;}
 blockquote:first-letter{font-size: 300%;font-weight:bold;font-style:normal;float: left;padding: 5px;margin: 5px;color: inherit;}
-blockquote p{color: var(--preset-9)!important;margin:5px auto!important}
+/*blockquote p:first-child{text-indent: initial;}*/
+blockquote p{color: var(--preset-9)!important;margin:5px auto!important;/*text-indent: 2em;*/}
 blockquote p#s{font-size:var(--min-size);text-align:right;position:relative}
 blockquote p#s i{position:absolute;top:-18px;right:18px;width:66px;height:66px;opacity:.36;}
 #what_says_inside::selection{background-color:transparent}

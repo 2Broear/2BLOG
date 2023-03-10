@@ -29,7 +29,7 @@
                 run = function(){
                     let curstep = index==lists.length-1 ? index=0 : index,  //克隆节点位置判断
                         nexstep = index+1==lists.length-1 ? index=0 : index+1;  //预备节点
-                    for(let i=0;i<els.length;i++){
+                    for(let i=0,elsLen=els.length;i<elsLen;i++){
                         els[i].classList.remove(cur)
                         els[i].classList.remove(pre)
                     };
@@ -38,7 +38,7 @@
                 };
             if(reset){
                 delay||delay==0 ? delay : delay=350;  //触发型statu函数，判断是否立即执行（注意0为false）
-                for(let i=0;i<els.length;i++){
+                for(let i=0,elsLen=els.length;i<elsLen;i++){
                     els[i].classList.remove(pre);
                     els[i].classList.remove(cur);
                 };
@@ -107,7 +107,7 @@
       transitionDelay = 750,
       intervalDelay = 3000,
       debounceDelay = 300;
-  for(let i=0;i<lists.length;i++){
+  for(let i=0,listLen=lists.length;i<listLen;i++){
       let dot = document.createElement("span");
       dot.setAttribute("index",i);
       dot.innerHTML = "<em></em>";

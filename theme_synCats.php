@@ -29,6 +29,7 @@
         $page_cid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_title = '$create_cat_title' AND post_type = 'page'");  // same name(title) with category's name
         update_post_meta($page_cid, 'post_term_id', $term_id);  // bind category id to page(slash err)
         if($use_slash) $wpdb->update($wpdb->posts, array('post_name' => '/'), array('ID' => $page_cid), array('%s'), array('%d'));  // sync 'slash' to page
+        unset($wpdb);
     }
     
     
@@ -56,6 +57,7 @@
         );
         wp_update_post(wp_slash($post_data));
         if($use_slash) $wpdb->update($wpdb->posts, array('post_name' => '/'), array('ID' => $page_cid), array('%s'), array('%d'));  // sync 'slash' to page
+        unset($wpdb);
     }
     // DELETE category sync-action to page  // https://wp-kama.com/hook/delete_category
     add_action('delete_category', 'delete_category_sync_page', 10, 4);
@@ -110,6 +112,7 @@
                 if($edit_post_slug==='slash'){// || $edit_post_slug==$edit_post_title
                     $wpdb->update($wpdb->posts, array('post_name' => '/'), array('ID' => $post_id), array('%s'), array('%d'));  // sync 'slash' to post
                     $wpdb->update($wpdb->terms, array('slug' => '/'), array('term_id' => $term_id), array('%s'), array('%d'));  // sync 'slash' to category
+                    unset($wpdb);
                 }
         		// return hook back
         		add_action( 'save_post', 'update_page_sync_category', 10, 3);  //, __FUNCTION__ 

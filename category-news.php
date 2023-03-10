@@ -49,7 +49,6 @@
                                 <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window icom wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                                     <div class="news-window-inside">
                                         <?php
-                                            global $lazysrc,$loadimg;
                                             $lazyhold = "";
                                             $postimg = get_postimg();
                                             if($lazysrc!='src'){
@@ -63,7 +62,9 @@
                                                 <a href="<?php the_permalink() ?>" title="<?php the_title() ?>"><?php the_title() ?></a>
                                             </h2>
                                             <span class="news-core_area entry-content"><p><?php custom_excerpt(66); ?></p></span>
-                                            <?php if($post_feeling) echo '<span class="news-personal_stand" unselectable="on"><dd>'.$post_feeling.'</dd></span>'; ?>
+                                            <span class="news-personal_stand" unselectable="on">
+                                                <dd><?php echo $post_feeling ? $post_feeling : '...'; ?></dd>
+                                            </span>
                                             <div id="news-tail_info">
                                                 <ul class="post-info">
                                                     <li class="tags author">

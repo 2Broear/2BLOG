@@ -5,7 +5,7 @@
       <div class="tipsbox">
         <div class="tips">
             <?php
-                // global $lazysrc;// $lazyload = get_option('site_lazyload_switcher') ? 'data-src' : 'src';
+                global $cat;  //变量提升
                 echo '<p>';
                 $nick = get_option('site_nick', get_bloginfo('name'));
                 $curcat = get_the_category() ? get_the_category()[0] : false;
@@ -62,7 +62,6 @@
                 $site_icon = $use_icon ? '<i class="icom icon-more"></i>' : '';
                 $choosen = is_home() ? 'choosen' : '';
                 echo '<li class="cat_0 top_level"><a href="/" class="'.$choosen.'">'.$site_icon.'首页</a></li>';
-                global $cat;  //变量提升
                 $cat = $cat ? $cat : get_page_cat_id(current_slug());  // if is_page() then rewrite cat to cid // echo $cat;
                 // print_r(get_category($cat));
                 $cats = get_categories(meta_query_categories(0, 'ASC', 'seo_order'));
@@ -159,6 +158,7 @@
                         };
                         echo "</li>";
                     }
+                    unset($cat);  //release current file.php global variables
                 }
             ?>
             <!--<li><small style="padding: 0 15px;display: none;">oop<strong>S</strong>ays..</small></li>-->

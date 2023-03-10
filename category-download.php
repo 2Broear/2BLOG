@@ -211,7 +211,7 @@
                         src = res.attributes.src,
                         type = res.attributes.type_download,
                         img = res.attributes.img;
-                    for(let j=0;j<query_tab.length;j++){
+                    for(let j=0,qtLen=query_tab.length;j<qtLen;j++){
                         let each_load = query_tab[j];
                         if(type == each_load){
                             let curdom = document.querySelector('.'+each_load);

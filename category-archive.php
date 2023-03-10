@@ -89,7 +89,7 @@
                     $lastYear = $curYear-1;
                     $archive_daily = get_post_archives('daily','post',9999);
                     function archive_contributions_output($days, $the_day, $compare_date, $year){
-                        global $color_light,$color_middle,$color_heavy,$color_more,$archive_daily;
+                        global $color_light, $color_middle, $color_heavy, $color_more, $archive_daily;
                         echo '<span class="'.$the_day.'" data-dates="'.$compare_date.'" data-date="'.$days.'"';
                             foreach ($archive_daily as $archive){
                                 $archive_date = $archive['title'];
@@ -118,6 +118,7 @@
                                 }
                             }
                         echo '></span>';
+                        unset($color_light, $color_middle, $color_heavy, $color_more, $archive_daily);
                     }
                     for($i=1;$i<13;$i++){
                         $m = days_in_month($i-$tomon, $lastYear);
@@ -198,10 +199,10 @@
                     $head_emoji = $curYear==$cur_year ? ' 🚀 ' : ' 📁 ';
                     // SAME COMPARE AS $found $limit
                     if($posts_count>=$async_loads){
-                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup class="call" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$all_count.'">加载更多</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
+                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup class="call" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$all_count.'" data-nonce="'.wp_create_nonce($cur_year."_archive_ajax_nonce").'">加载更多</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
                     }else{
                         // $head_emoji = '📂';
-                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup class="call disabled" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$all_count.'">已全部载入</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
+                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup class="call disabled" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$all_count.'" data-nonce="disabled">已全部载入</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
                     };
                     // print_r($cur_posts[0]->ID);
                     for($i=0;$i<$posts_count;$i++){
@@ -262,14 +263,16 @@
                     t.innerText="已加载全部";
                     return;
                 }
-                t.innerText="加载中";
+                clicks++;
+                t.innerText="加载中..";
                 t.classList.add('loading','disabled');
-                t.setAttribute('data-click', clicks++);
+                t.setAttribute('data-click', clicks);
                 send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", parse_ajax_parameter({
                         "action": "updateArchive",
                         "key": years, 
                         "limit": preset_loads,
                         "offset": preset_loads*clicks,
+                        _ajax_nonce: t.dataset.nonce,
                     }, true), function(res){
                         var posts_array = JSON.parse(res),
                             load_box = archive_tree.querySelector('.call_'+years),

@@ -1,5 +1,5 @@
 <?php
-    global $lazysrc;
+    global $post;
     $third_cmt = get_option('site_third_comments');
     $comment_sw = $third_cmt=='Valine' ? true : false;//get_option('site_valine_switcher');
     $twikoo_sw = $third_cmt=='Twikoo' ? true : false;//get_option('site_twikoo_switcher');
@@ -79,8 +79,6 @@
         </script>
 <?php
     }
-    global $post,
-           $posts;
     if($post->comment_status=="open" || is_category()){
         if(is_user_logged_in()){
             $wp_user = get_currentuserinfo();// global $current_user;// print_r($wp_user);
@@ -178,6 +176,7 @@
                                             if(get_option('show_avatars')){
                                                 $email = get_comment_author_email();
                                                 echo '<img class="avatar" '.$lazysrc.'="'.match_mail_avatar($email).'" width=50 height=50 />';
+                                                unset($lazysrc);
                                             }
                                         ?>
                                     </a>
@@ -249,4 +248,5 @@
     }else{
         echo '<p class="disabled_comment">* 抱歉，由于某些原因已关闭页面评论</p>';
     }
+    unset($post);
 ?>

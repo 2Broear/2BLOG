@@ -103,26 +103,35 @@
     if($async_sw){
 ?>
         <script>
-            const preset_loads = <?php echo $async_loads; ?>;
-            bindEventClick(document.querySelector(".rcmd-boxes"), 'load-more', function(t){
-                let cid = parseInt(t.dataset.cid),
+            const rcmd_boxes = document.querySelector(".rcmd-boxes"),
+                  preset_loads = <?php echo $async_loads; ?>;
+            bindEventClick(rcmd_boxes, 'load-more', function(t){
+                let tp = t.parentNode,
+                    cid = parseInt(t.dataset.cid),
                     loads = parseInt(t.dataset.load),
-                    click_count = parseInt(t.dataset.count),
-                    load_box = t.parentNode.parentNode.parentNode;
-                click_count++;
-                t.setAttribute('data-count', click_count);
-                t.innerText = "Now Loading..";
+                    counts = parseInt(t.dataset.counts),
+                    clicks = parseInt(t.dataset.click);
+                if(loads>=counts){
+                    tp.classList.add("disabled");
+                    return;
+                }
+                clicks++;
+                t.innerText = "Loading..";
+                t.setAttribute('data-click', clicks);
                 send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", 
                     parse_ajax_parameter({
                         "action": "ajaxCallAcg",
                         "cid": cid,
                         "limit": preset_loads,
-                        "offset": preset_loads*click_count,
+                        "offset": preset_loads*clicks,
+                        _ajax_nonce: t.dataset.nonce,
                     }, true), function(res){
                         var posts_array = JSON.parse(res),
-                            posts_count = posts_array.length;
-                        console.log(posts_array);  //response
-                        posts_count<=0 ? t.parentNode.classList.add("disabled") : t.setAttribute('data-load', loads+posts_count);
+                            load_box = tp.parentNode.parentNode,
+                            posts_count = posts_array.length,
+                            loads_count = loads+posts_count;
+                        t.innerText = "";
+                        loads_count>=counts ? t.setAttribute('data-load', counts) :  t.setAttribute('data-load', loads_count);  // update current loaded(limit judge)
                         for(let i=0;i<posts_count;i++){
                             let each_post = posts_array[i],
                                 each_temp = document.createElement("div");
@@ -131,12 +140,15 @@
                             each_temp.innerHTML = `<div class="inbox-headside flexboxes"><span class="author">${each_post.subtitle}</span><img src="${each_post.poster}" alt="${each_post.subtitle}" crossorigin="Anonymous"></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="javascript:;" target="_self">${each_post.title}</a></h4></span><span class="lowside-description"><p>${each_post.excerpt}</p></span></div>`; //<img class="bg" src="${each_post.poster}">
                             load_box.insertBefore(each_temp, load_box.lastChild);
                             // setup ajax-load images blur-color
-                            let tempimg = document.createElement('img');
+                            let tempimg = new Image();
                                 tempimg.src = each_post.poster;
                                 tempimg.setAttribute('crossorigin','Anonymous');
                             tempimg.onload=()=>setupBlurColor(tempimg, each_temp);
                         };
-                        t.innerText = "";
+                        // compare updated load counts
+                        if(parseInt(t.dataset.load)>=counts){
+                            tp.classList.add("disabled");
+                        }
                     }
                 );
             });

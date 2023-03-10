@@ -47,7 +47,7 @@
                                 <span id="avatar" data-t="<?php echo $count ?>">
                                     <a href="<?php echo $link; ?>" target="_blank">
                                         <?php 
-                    				        // global $lazysrc,$loadimg;
+                    				        // global $lazysrc, $loadimg;
                                             $lazyhold = "";
                                             $avatar = get_option('site_avatar_mirror').'avatar/'.md5($user->mail).'?d=retro&s=100';
                                             if($lazysrc!='src'){

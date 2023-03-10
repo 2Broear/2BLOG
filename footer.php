@@ -1,4 +1,6 @@
-
+<?php
+    global $lazysrc, $cat;
+?>
 <div class="footer-all">
     <div class="footer-detector" id="end-news-all">
         <span id="end-end">END</span>
@@ -13,35 +15,37 @@
           <div class="footer-contact-left">
             <div class="footer-left flexboxes">
               <ul class="footer-recommend">
-                <h2>近期文章</h2>
+                <h2>近期更新</h2>
                 <div class="recently">
                     <?php
                         $post_per = get_option('site_per_posts', get_option('posts_per_page'));
-                        $cat_id = get_option('site_bottom_recent_cid');
-                        if($cat_id){
-                            $query_array = array('cat' => $cat_id, 'meta_key' => 'post_orderby', 'posts_per_page' => $post_per,
-                                'orderby' => array(
-                                    'meta_value_num' => 'DESC',
-                                    'date' => 'DESC',
-                                    'modified' => 'DESC',
-                                )
-                            );
-                        }else{
-                            $query_array = array('cat' => $cat_id, 'posts_per_page' => $post_per, 'order' => 'DESC', 'orderby' => 'date');
-                        }
+                        // $cat_id = get_option('site_bottom_recent_cid');
+                        // if($cat_id){
+                        //     $query_array = array('cat' => $cat_id, 'meta_key' => 'post_orderby', 'posts_per_page' => $post_per,
+                        //         'orderby' => array(
+                        //             'meta_value_num' => 'DESC',
+                        //             'date' => 'DESC',
+                        //             'modified' => 'DESC',
+                        //         )
+                        //     );
+                        // }else{
+                        $query_array = array('cat' => [get_option('site_bottom_recent_cat')], 'posts_per_page' => $post_per, 'order' => 'DESC', 'orderby' => 'date');
+                        // }
+                        $current_month = date('Ym');
                         $left_query = new WP_Query(array_filter($query_array));
                         while ($left_query->have_posts()):
                             $left_query->the_post();
                             $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                     ?>
-                            <li class="<?php if($post_orderby>1) echo 'topset'; ?>" title="<?php the_title() ?>">
-                                <a href="<?php the_permalink() ?>" target="_blank">
-                                    <em><?php the_title() ?></em>
+                            <li class="<?php if($post_orderby>1) echo 'topset'; ?>" title="<?php the_title(); ?>">
+                                <a href="<?php the_permalink(); ?>" target="_blank">
+                                    <em><?php the_title(); ?></em>
                                     <?php 
                                         if($post->comment_count>=50){
                                             echo '<sup id="hot">Hot</sup>';
                                         }else{
-                                            if($post_orderby>1) echo '<sup id="new">new</sup>';
+                                            // if($post_orderby>1) echo '<sup id="new">new</sup>';
+                                            if(date('Ym',strtotime($post->post_date))==$current_month) echo '<sup id="new">new</sup>';
                                         }
                                     ?>
                                 </a>
@@ -59,7 +63,7 @@
                     $third_cmt = get_option('site_third_comments');
                     if($third_cmt=='Valine'){    // 全站加载
                 ?>
-                        <script src="<?php custom_cdn_src(false); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+                        <script src="<?php custom_cdn_src(); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
                 <?php
                         if(!$baas){
                 ?>
@@ -104,7 +108,7 @@
                                         adopt_area = adopt_node.querySelector("textarea");
                                     if(!t.classList.contains('reply')){
                                         const vats = vcomments.querySelectorAll(".vat");
-                                        for(let i=0;i<vats.length;i++){
+                                        for(let i=0,vatsLen=vats.length;i<vatsLen;i++){
                                             vats[i].classList.remove('reply');
                                             vats[i].innerText = "回复";
                                         }
@@ -134,7 +138,7 @@
                                   comments_list = document.querySelector('#comments');
                             if(comment_count){
                                 var count_array = [];
-                                for(let i=0;i<comment_count.length;i++){
+                                for(let i=0,ccLen=comment_count.length;i<ccLen;i++){
                                     count_array.push(comment_count[i].dataset.xid);//getAttribute('data-xid'));
                                 }
                                 twikoo.getCommentsCount({
@@ -142,7 +146,7 @@
                                         urls: count_array,
                                         includeReply: false // 评论数是否包括回复，默认：false
                                     }).then(function (res) {
-                                        for(let i=0;i<res.length;i++){
+                                        for(let i=0,resLen=res.length;i<resLen;i++){
                                             comment_count[i].innerHTML = res[i].count;
                                         }
                                     }).catch(function (err) {
@@ -155,7 +159,7 @@
                                     pageSize: <?php echo $post_per; ?>, // 获取多少条，默认：5，最大：100
                                     includeReply: true // 是否包括最新回复，默认：true
                                 }).then(function (res) {
-                                    for(let i=0;i<res.length;i++){
+                                    for(let i=0,resLen=res.length;i<resLen;i++){
                                         // console.log(res[i]);
                                         let each = res[i];
                                         comments_list.innerHTML += `<a href="${each.url}#${each.id}" target="_blank" rel="nofollow"><em title="${each.commentText}">${each.nick}：${each.commentText}</em></a>`;
@@ -226,8 +230,6 @@
                     </span>
                     <span class="preview">
                         <?php
-                            // $lazyload = get_option('site_lazyload_switcher') ? 'data-src' : 'src';
-                            global $lazysrc;
                             echo '<img '.$lazysrc.'="'.get_option('site_contact_wechat').'" alt="wechat" />';
                         ?>
                     </span>
@@ -286,7 +288,7 @@
                     ?>
                             <script type="text/javascript"> //addAscending createdAt
                                 new AV.Query("link").addDescending("updatedAt").equalTo('sitelink', 'true').find().then(result=>{
-                                    for (let i=0; i<result.length;i++) {
+                                    for (let i=0,resLen=result.length; i<resLen;i++) {
                                         let res = result[i],
                                             name = res.attributes.name,
                                             link = res.attributes.link;
@@ -341,7 +343,8 @@
               <li id="feed"><a href="<?php bloginfo('rss2_url'); ?>" target="_blank">RSS</a></li>
               <?php
                   $bottom_nav_array = explode(',',get_option('site_bottom_nav'));
-                  for($i=0;$i<count($bottom_nav_array);$i++){
+                  $bottom_nav_array_count = count($bottom_nav_array);
+                  for($i=0;$i<$bottom_nav_array_count;$i++){
                       $cat_slug = trim($bottom_nav_array[$i]);
                       $cat_term = get_category_by_slug($cat_slug);
                       if($cat_slug&&$cat_term){
@@ -382,7 +385,6 @@
     <?php
         // lazyLoad images
         if(get_option('site_lazyload_switcher')){
-            global $cat;
             $acgcid = get_cat_by_template('acg','term_id');
             if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
     ?>
@@ -408,52 +410,52 @@
                     // loadArray = [], 
                     loadArray = [...bodyimg],
                     msgObject = Object.create(null),
-                    autoLoad = function(imgLoadArr, initDomArr=false){
+                    autoLoad = function(imgLoadArr, initial=false){ //initDomArr=false
                         // let tempArray = initDomArr ? initDomArr : imgLoadArr;  //判断加载数组类型，默认加载 loadArray
-                        for(let i=0;i<imgLoadArr.length;i++){
+                        for(let i=0,arrLen=imgLoadArr.length;i<arrLen;i++){
                             let eachimg = imgLoadArr[i],
                                 datasrc = eachimg.dataset.src;
-                            if(datasrc){
-                                eachimg.src = loadimg; //pre-holder (datasrc only)
-                                new Promise(function(resolve,reject){
-                                    // initDomArr ? imgLoadArr.push(eachimg) : false;  //判断首次加载（载入 lazyload 元素数组）
-                                    resolve(imgLoadArr);
-                                }).then(function(res){
-                                    if(eachimg.getBoundingClientRect().top<window.innerHeight){
-                                        // 创建一个临时图片，这个图片在内存中不会到页面上去（修复 firefox 图片未设置加载被移出加载数组）https://segmentfault.com/a/1190000041517694
-                                        var temp = new Image();
-                                        temp.src = datasrc;  //请求一次
-                                        temp.onload = function(){
-                                            eachimg.src = datasrc; // 即时更新 eachimg（设置后即可监听图片 onload 事件）
-                                            // 使用 onload 事件替代定时器或Promise，判断已设置真实 src 的图片加载完成后再执行后续操作
-                                            eachimg.onload=function(){
-                                                if(this.getAttribute('src')==datasrc){
-                                                    res.splice(res.indexOf(eachimg), 1);  // 移除已加载图片数组（已赋值真实 src 情况下）
-                                                }else{
-                                                    eachimg.removeAttribute('data-src'); // disable loadimg
-                                                    eachimg.src = datasrc;  // this.src will auto-fix [http://] prefix
-                                                    time_delay = 1500;  //increase delay (decrease request)
-                                                    console.log(time_delay);
-                                                }
-                                                <?php
-                                                    if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
-                                                        echo 'setupBlurColor(eachimg, eachimg.parentNode.parentNode);';
-                                                    }
-                                                ?>
-                                            }
-                                            // handle loading-err images eachimg.onerror=()=>this.src=loadimg;
-                                            eachimg.onerror=function(){
-                                                res.splice(res.indexOf(this), 1);  // 移除错误图片数组
-                                                this.removeAttribute('src');
-                                                this.removeAttribute('data-src'); // disable loadimg
-                                                this.setAttribute('alt','图片请求出现问题'); // this.removeAttribute('src');
-                                            }
+                            // if(!datasrc) return;
+                            initial ? eachimg.src = loadimg : false; //pre-holder (datasrc only)
+                            new Promise(function(resolve,reject){
+                                // initDomArr ? imgLoadArr.push(eachimg) : false;  //判断首次加载（载入 lazyload 元素数组）
+                                resolve(imgLoadArr);
+                            }).then(function(res){
+                                if(eachimg.getBoundingClientRect().top>=window.innerHeight) return;
+                                // if(eachimg.getBoundingClientRect().top<window.innerHeight){
+                                // 创建一个临时图片，这个图片在内存中不会到页面上去（修复 firefox 图片未设置加载被移出加载数组）https://segmentfault.com/a/1190000041517694
+                                // var temp = new Image();
+                                // temp.src = datasrc;  //请求一次
+                                // temp.onload = function(){
+                                    eachimg.src = datasrc; // 即时更新 eachimg（设置后即可监听图片 onload 事件）
+                                    // 使用 onload 事件替代定时器或Promise，判断已设置真实 src 的图片加载完成后再执行后续操作
+                                    eachimg.onload=function(){
+                                        if(this.getAttribute('src')===datasrc){
+                                            res.splice(res.indexOf(this), 1);  // 移除已加载图片数组（已赋值真实 src 情况下）
+                                        }else{
+                                            this.removeAttribute('data-src'); // disable loadimg
+                                            this.src = datasrc;  // this.src will auto-fix [http://] prefix
+                                            time_delay = 1500;  //increase delay (decrease request)
+                                            console.log(time_delay);
                                         }
+                                        <?php
+                                            if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
+                                                echo 'setupBlurColor(this, this.parentNode.parentNode);';
+                                            }
+                                        ?>
                                     }
-                                }).catch(function(err){
-                                    console.log(err);
-                                });
-                            }
+                                    // handle loading-err images eachimg.onerror=()=>this.src=loadimg;
+                                    eachimg.onerror=function(){
+                                        res.splice(res.indexOf(this), 1);  // 移除错误图片数组
+                                        this.removeAttribute('src');
+                                        this.removeAttribute('data-src'); // disable loadimg
+                                        this.setAttribute('alt','图片请求出现问题'); // this.removeAttribute('src');
+                                    }
+                                // }
+                                // }
+                            }).catch(function(err){
+                                console.log(err);
+                            });
                         }
                     },
                     scrollLoad = function(){
@@ -462,18 +464,18 @@
                                 timer_throttle = setTimeout(function(){
                                     // console.log('loading..');
                                     if(loadArray.length<=0){
-                                        console.log(Object.assign(msgObject, {status:'lazyload done', type:'all'}));
+                                        console.log(Object.assign(msgObject, {status:'lazyload done', type:'scroll'}));
                                         window.removeEventListener('scroll', scrollLoad, true);
                                         return;
                                     };
                                     autoLoad(loadArray);
-                                    // console.log('throttling..',loadArray);
+                                    console.log('throttling..',loadArray);
                                     timer_throttle = null;  //消除定时器
-                                }, time_delay, loadArray); //重新传入array（单次）循环
+                                }, time_delay); //, loadArray重新传入array（单次）循环
                             }
                         })();
                     };
-                autoLoad(loadArray, bodyimg);
+                autoLoad(loadArray, true);
                 // requestAnimationFrame
                 if(raf_available){
                     window.addEventListener('scroll', function(){
@@ -518,74 +520,73 @@
         </style>
         <script>
             const videos = document.querySelectorAll('video');
-            if(videos[0]){
-                for(let i=0;i<videos.length;i++){
-                    let video = videos[i];
-                    if(!video.autoplay){
-                        let video_src = video.src,
-                            video_box = video.parentNode,
-                            video_dir = video_src.lastIndexOf('/')+1,
-                            video_url = video_src.substr(0, video_dir),
-                            video_title = video_src.substr(video_dir, video_src.length),
-                            video_name = video_title.substr(0, video_title.lastIndexOf('.')),
-                            video_path = video_url+video_name+"/"+video_name,
-                            // video_width = video_box.offsetWidth,
-                            video_gif = video_path+'.gif',
-                            video_timer = null;
-                        video.addEventListener('canplay', function () {
-                            video = video_box.querySelector('video'); // canplay 内需重新声明 video，否则修改后无法应用到dom
-                            video.onplaying=()=>video_box.classList.add('video_preview_hide');
-                            video.onpause=()=>video_box.classList.remove('video_preview_hide');
-                            <?php 
-                                // if($ffmpeg_sw_gif){
-                            ?>
-                                    // let gifWidth = video.videoWidth/2,  //预置gif预览宽度 this.videoWidth/2
-                                    //     boxWidth = video_box.offsetWidth;
-                                    // // 仅当预览gif宽度小于视频盒子宽度时设置视频宽高，防止 poster 缩小视频宽高
-                                    // if(gifWidth<boxWidth){
-                                    //     video.width = boxWidth;//this.videoWidth;
-                                    //     video.height = video_box.offsetHeight;//this.videoHeight;
-                                    // }
-                            <?php
-                                // }
-                            ?>
-                        });
-                        video_box.innerHTML += `<div class="preview_bg"<?php echo $ffmpeg_sw_gif ? ' data-previews="${video_gif}"' : false; ?> style="background:url(${video_path}.jpg) no-repeat 0% 0% /cover"><span class="progress"><em></em></span></div>`;
-                        const preview_bg = video_box.querySelector('.preview_bg'),
-                              preview_gif = preview_bg.dataset.previews,
-                              preview_pg = video_box.querySelector('.progress em');
-                        video_box.onmousemove=function(e){
-                            var _this = this,
-                                video = _this.querySelector("video"),  //update video dom
-                                video_offset = e.offsetX,
-                                video_width = video_box.offsetWidth;  //always update videoBox width
-                            return (function(){
-                                if(video_timer==null){
-                                    <?php echo $ffmpeg_sw_gif ? 'video.poster!=video_gif&&preview_gif ? video.poster=preview_gif : false;' : false; ?>
-                                    _this.classList.add('video_previews');
-                                    video_timer = setTimeout(function(){
-                                        // e.stopPropagation(); //e.preventDefault(); 
-                                        let percentage = (Math.round(video_offset/video_width*10000)/100).toFixed(0),
-                                            progressOffset = -100+Number(percentage); //-100+Number(percentage)
-                                        preview_bg.style.backgroundPosition = percentage+"% 0%";
-                                        preview_pg.style.transform = 'translateX('+progressOffset+'%)';
-                                        // console.log(percentage);
-                                        Number(percentage)>=100 ? preview_pg.classList.add('pause_move') : preview_pg.classList.remove('pause_move');
-                                        _this.onmouseleave = function(){
-                                            this.classList.remove("video_previews");
-                                            preview_pg.style.transform = "";
-                                        }
-                                        video_timer = null;  //消除定时器
-                                    }, 10);
+            if(!videos[0]) return;
+            for(let i=0,vdosLen=videos.length;i<vdosLen;i++){
+                let video = videos[i];
+                if(video.autoplay) return;
+                let video_src = video.src,
+                    video_box = video.parentNode,
+                    video_dir = video_src.lastIndexOf('/')+1,
+                    video_url = video_src.substr(0, video_dir),
+                    video_title = video_src.substr(video_dir, video_src.length),
+                    video_name = video_title.substr(0, video_title.lastIndexOf('.')),
+                    video_path = video_url+video_name+"/"+video_name,
+                    // video_width = video_box.offsetWidth,
+                    video_gif = video_path+'.gif',
+                    video_timer = null;
+                video.addEventListener('canplay', function () {
+                    video = video_box.querySelector('video'); // canplay 内需重新声明 video，否则修改后无法应用到dom
+                    video.onplaying=()=>video_box.classList.add('video_preview_hide');
+                    video.onpause=()=>video_box.classList.remove('video_preview_hide');
+                    <?php 
+                        // if($ffmpeg_sw_gif){
+                    ?>
+                            // let gifWidth = video.videoWidth/2,  //预置gif预览宽度 this.videoWidth/2
+                            //     boxWidth = video_box.offsetWidth;
+                            // // 仅当预览gif宽度小于视频盒子宽度时设置视频宽高，防止 poster 缩小视频宽高
+                            // if(gifWidth<boxWidth){
+                            //     video.width = boxWidth;//this.videoWidth;
+                            //     video.height = video_box.offsetHeight;//this.videoHeight;
+                            // }
+                    <?php
+                        // }
+                    ?>
+                });
+                video_box.innerHTML += `<div class="preview_bg"<?php echo $ffmpeg_sw_gif ? ' data-previews="${video_gif}"' : false; ?> style="background:url(${video_path}.jpg) no-repeat 0% 0% /cover"><span class="progress"><em></em></span></div>`;
+                const preview_bg = video_box.querySelector('.preview_bg'),
+                      preview_gif = preview_bg.dataset.previews,
+                      preview_pg = video_box.querySelector('.progress em');
+                video_box.onmousemove=function(e){
+                    var _this = this,
+                        video = _this.querySelector("video"),  //update video dom
+                        video_offset = e.offsetX,
+                        video_width = video_box.offsetWidth;  //always update videoBox width
+                    return (function(){
+                        if(video_timer==null){
+                            <?php echo $ffmpeg_sw_gif ? 'video.poster!=video_gif&&preview_gif ? video.poster=preview_gif : false;' : false; ?>
+                            _this.classList.add('video_previews');
+                            video_timer = setTimeout(function(){
+                                // e.stopPropagation(); //e.preventDefault(); 
+                                let percentage = Number((Math.round(video_offset/video_width*10000)/100).toFixed(0)),
+                                    progressOffset = -100+percentage;
+                                preview_bg.style.backgroundPosition = percentage+"% 0%";
+                                preview_pg.style.transform = 'translateX('+progressOffset+'%)';
+                                // console.log(percentage);
+                                percentage>=100 ? preview_pg.classList.add('pause_move') : preview_pg.classList.remove('pause_move');
+                                _this.onmouseleave = function(){
+                                    this.classList.remove("video_previews");
+                                    preview_pg.style.transform = "";
                                 }
-                            })();
+                                video_timer = null;  //消除定时器
+                            }, 10);
                         }
-                    }
+                    })();
                 }
             }
         </script>
 <?php
     }
-    $cat = $cat ? $cat : get_page_cat_id(current_slug());  //rewrite cat to cid (var cat for require php)
+    // $cat = $cat ? $cat : get_page_cat_id(current_slug());  //rewrite cat to cid (var cat for require php)
+    unset($lazysrc, $cat);  //release current file.php global variables
     require_once(TEMPLATEPATH. '/foot.php');
 ?>

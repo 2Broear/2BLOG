@@ -51,7 +51,8 @@
                         <!--<li style="background: url('https://api.luvying.com/acgimg') no-repeat center center /cover;"></li>-->
                         <?php
                             $banner_array = explode(',',get_option('site_banner_array',''));
-                            for($i=0;$i<count($banner_array);$i++){
+                            $banner_array_count = count($banner_array);
+                            for($i=0;$i<$banner_array_count;$i++){
                                 $image_url = trim($banner_array[$i]);
                                 if($image_url) echo '<li style="background: url('.$image_url.') no-repeat center center /cover;"></li>';
                             }
@@ -114,7 +115,8 @@
         <div class="Fresh-ImgBoxs flexboxes">
           <?php
               $cardnav_array = explode(';', get_option('site_cardnav_array'));
-              for($i=0;$i<count($cardnav_array);$i++){
+              $cardnav_array_count = count($cardnav_array);
+              for($i=0;$i<$cardnav_array_count;$i++){
                   $each_card = explode('/', $cardnav_array[$i]);
                   if($each_card[0]){
                       $card_slug = trim($each_card[0]);

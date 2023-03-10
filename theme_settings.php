@@ -283,7 +283,8 @@
                 $selects = ["请选择","原创","转载","二创"];
                 //output each selects
                 echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><select name="'.$for.'" id="'.$for.'">';
-                for($i=0;$i<count($selects);$i++){
+                $selects_count = count($selects);
+                for($i=0;$i<$selects_count;$i++){
                     $each = $selects[$i];
                     echo '<option value="'.$each.'"';
                         if($value==$each)
@@ -349,7 +350,8 @@
                 $options = ["none","text","image"];
                 //output each options
                 echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><select name="'.$for.'" id="'.$for.'">';
-                for($i=0;$i<count($options);$i++){
+                $options_count = count($options);
+                for($i=0;$i<$options_count;$i++){
                     $each = $options[$i];
                     echo '<option value="'.$each.'"';
                         if($value==$each)
@@ -564,7 +566,8 @@
         // }
         register_setting( 'baw-settings-group', 'site_mostview_switcher' );
         // if(get_option('site_mostview_switcher')){
-            register_setting( 'baw-settings-group', 'site_mostview_cid' );
+            // register_setting( 'baw-settings-group', 'site_mostview_cid' );
+            register_setting( 'baw-settings-group', 'site_mostview_cat' );
         // }      
         register_setting( 'baw-settings-group', 'site_leancloud_switcher' );
         register_setting( 'baw-settings-group', 'site_third_comments' );
@@ -617,7 +620,8 @@
         // }
         
         register_setting( 'baw-settings-group', 'site_banner_array' );
-        register_setting( 'baw-settings-group', 'site_bottom_recent_cid' );
+        // register_setting( 'baw-settings-group', 'site_bottom_recent_cid' );
+        register_setting( 'baw-settings-group', 'site_bottom_recent_cat' );
         register_setting( 'baw-settings-group', 'site_bottom_nav' );
         register_setting( 'baw-settings-group', 'site_monitor_switcher' );
         // if(get_option('site_monitor_switcher')){
@@ -686,9 +690,9 @@
             }
         }
     }
-    $theme_color = get_option('site_theme','#eb6844');
     function add_options_submenu() {
-        global $cats,$theme_color;
+        $theme_color = get_option('site_theme','#eb6844');
+        $article_opts = array(get_cat_by_template('news'), get_cat_by_template('notes'), get_cat_by_template('weblog'));
         $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
         $cats_haschild = array();
         $cats_seclevel = array();
@@ -706,7 +710,7 @@
         textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 50%, currentColor 250%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 50%, currentColor 250%)}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:233px;height:18px;cursor:pointer;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme)}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text-disabled{display:none;}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:var(--panel-theme)}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{background:purple;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;color: white;font-size: smaller;text-align: center;background: rgb(0 0 0 / 52%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius:5px;position:relative;overflow:hidden;}
-            .formtable{display:none;}.formtable.show{display:block;}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;}.switchTab{background: rgb(255 255 255 / 75%);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:10px 0;top:32px;position:sticky;z-index: 9;box-sizing:border-box;/*transition: top .35s ease;top: -32px;padding: 0;*/}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:var(--panel-theme);background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:0;border-radius:25px}.switchTab li b{font-size:initial;display:block;text-shadow:1px 1px 0 white;font-style:normal}
+            .formtable{display:none;}.formtable.show{display:block;}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.switchTab{background: rgb(255 255 255 / 75%);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:10px 0;top:32px;position:sticky;z-index: 9;box-sizing:border-box;/*transition: top .35s ease;top: -32px;padding: 0;*/box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:var(--panel-theme);background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:0;border-radius:25px}.switchTab li b{font-size:initial;display:block;text-shadow:1px 1px 0 white;font-style:normal}
             .smtp{margin-left:10px;vertical-align:middle;}
             #loading.responsed{-webkit-animation-duration:.35s!important;animation-duration:.35s!important;}
             #loading.responsing{-webkit-animation:rotateloop .5s infinite linear;animation:rotateloop .5s infinite linear}
@@ -731,7 +735,7 @@
             .wrap.settings{margin:0}
         </style>
         <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>THEME</b><p style="letter-spacing:normal;margin-bottom:auto;"> 主题部分页面提供 Leancloud 第三方 bass 数据储存服务 </p></h1>
-        <hr/>
+        <!--<hr/>-->
         <div class="switchTab">
             <ul>
                 <li id="basic" class="active"><b>基本信息</b></li>
@@ -742,7 +746,7 @@
                 <!--<li id="contact"><b>联系方式</b></li>-->
             </ul>
         </div>
-        <hr/>
+        <!--<hr/>-->
         <form method="post" action="options.php">
             <?php submit_button('立即提交'); ?>
             <?php settings_fields( 'baw-settings-group' ); // 设置字段 这个函数取代了 nonce magic, action field, and page_options ?>
@@ -969,10 +973,11 @@
                                         }
                                         echo '<p class="description" id="site_search_includes_label">指定搜索包含内容，使用逗号“ , ”分隔（默认 post 类型，可选 page（页面）及自定义选填类型</p><div class="checkbox">';
                                         $pre_array = explode(',',trim($value));  // NO "," Array
+                                        $pre_array_count = count($pre_array);
                                         foreach ($options as $option){
                                             // $checking = strpos($value, $option)!==false ? 'checked' : '';
                                             $each_matched = false;
-                                            for($i=0;$i<count($pre_array);$i++){
+                                            for($i=0;$i<$pre_array_count;$i++){
                                                 $arr = trim($pre_array[$i]);  // NO WhiteSpace
                                                 if($arr){
                                                     $arr==$option ? $each_matched=true : false;
@@ -1034,11 +1039,12 @@
                                                 $value = $preset;
                                             }
                                             $pre_array = explode(',',trim($value));  // NO "," Array
+                                            $pre_array_count = count($pre_array);
                                             foreach ($arrobj as $array){
                                                 $slug = $array['slug'];
                                                 // $checking = strpos($value, $slug)!==false ? 'checked' : '';
                                                 $each_matched = false;
-                                                for($i=0;$i<count($pre_array);$i++){
+                                                for($i=0;$i<$pre_array_count;$i++){
                                                     $arr = trim($pre_array[$i]);  // NO WhiteSpace
                                                     if($arr){
                                                         $arr==$slug ? $each_matched=true : false;
@@ -1144,11 +1150,12 @@
                                         // }
                                         echo '<p class="description" id="site_metanav_array_label">需要应用元导航样式的分类别名，使用逗号“ , ”分隔（仅输出存在子分类的一级分类</p><div class="checkbox">';
                                         $pre_array = explode(',',trim($value));  // NO "," Array
+                                        $pre_array_count = count($pre_array);
                                         foreach ($cats_seclevel as $option){
                                             $slug = $option->slug;
                                             // $checking = strpos($value, $slug)!==false ? 'checked' : '';
                                             $each_matched = false;
-                                            for($i=0;$i<count($pre_array);$i++){
+                                            for($i=0;$i<$pre_array_count;$i++){
                                                 $arr = trim($pre_array[$i]);  // NO WhiteSpace
                                                 if($arr){
                                                     $arr==$slug ? $each_matched=true : false;
@@ -1168,8 +1175,9 @@
                                         $opt = 'site_metanav_image';  //unique str
                                         $value = get_option($opt);
                                         $enabled_array = explode(',',trim(get_option('site_metanav_array')));
+                                        $enabled_array_count = count($enabled_array);
                                         echo '<p class="description" id="site_metanav_image_label">需要使用背景图片的元分类导航，使用逗号“ , ”分隔（仅可选上方“基础元分类”中已启用分类，注slash“/”需手动写入</p><div class="checkbox">';
-                                        for($i=0;$i<count($enabled_array);$i++){
+                                        for($i=0;$i<$enabled_array_count;$i++){
                                             $slug = trim($enabled_array[$i]);  // NO WhiteSpace
                                             if($slug){
                                                 $new_category = get_category_by_slug($slug);
@@ -1225,11 +1233,12 @@
                                 }
                                 echo '<p class="description" id="site_rss_categories_label">指定站点 RSS 分类文章，使用逗号“ , ”分隔（feed将在任意文章更新后更新</p><div class="checkbox">';
                                 $pre_array = explode(',',trim($value));  // NO "," Array
+                                $pre_array_count = count($pre_array);
                                 foreach ($options as $option){
                                     $slug = $option->slug;
                                     // $checking = strpos($value, $slug)!==false ? 'checked' : '';
                                     $each_matched = false;
-                                    for($i=0;$i<count($pre_array);$i++){
+                                    for($i=0;$i<$pre_array_count;$i++){
                                         $arr = trim($pre_array[$i]);  // NO WhiteSpace
                                         if($arr){
                                             $arr==$slug ? $each_matched=true : false;
@@ -1277,10 +1286,11 @@
                                         }
                                         echo '<p class="description" id="site_map_includes_label">指定 sitemap 生成内容，使用逗号“ , ”分隔（默认 post（文章）tag（标签）category（分类/<del>即 page（页面）</del>）</p><div class="checkbox">';
                                         $pre_array = explode(',',trim($value));  // NO "," Array
+                                        $pre_array_count = count($pre_array);
                                         foreach ($options as $option){
                                             // $checking = strpos($value, $option)!==false ? 'checked' : '';
                                             $each_matched = false;
-                                            for($i=0;$i<count($pre_array);$i++){
+                                            for($i=0;$i<$pre_array_count;$i++){
                                                 $arr = trim($pre_array[$i]);  // NO WhiteSpace
                                                 if($arr){
                                                     $arr==$option ? $each_matched=true : false;
@@ -1392,11 +1402,12 @@
                                         $options = array('Article','Sidebar',get_cat_by_template('about'),get_cat_by_template('acg'),get_cat_by_template('guestbook'),get_cat_by_template('privacy'));
                                         echo '<p class="description" id="site_map_includes_label">开启后使用上方👆图片加速域名👆加速站内指定位置视频，常用于超小型文件（Article：文章视频，Sidebar：侧栏视频</p><div class="checkbox">';
                                         $pre_array = explode(',',trim($value));  // NO "," Array
+                                        $pre_array_count = count($pre_array);
                                         foreach ($options as $option){
                                             $slug = is_object($option)&&$option->slug ? strtolower($option->slug) : strtolower($option);  
                                             $name = is_object($option)&&$option->name ? $option->name : $option;
                                             $each_matched = false;
-                                            for($i=0;$i<count($pre_array);$i++){
+                                            for($i=0;$i<$pre_array_count;$i++){
                                                 $arr = trim($pre_array[$i]);  // NO WhiteSpace
                                                 if($arr){
                                                     $arr==$slug ? $each_matched=true : false;
@@ -1466,7 +1477,6 @@
                                     </p>
                                     <p>需前往<a href="https://console.leancloud.cn/" target="_blank"> Leancloud 控制台 </a>设置对应 serverurl 并创建对应页面 slug 数据表（启用后将自动新建别名为“lbms”及“lbms-login”页面</del></p>
                                     <?php
-                                        global $wpdb;
                                         $request_page = new WP_REST_Request( 'POST', '/wp/v2/pages' );
                                         $init_pages = array(
                                             array(
@@ -1480,10 +1490,12 @@
                                                 'template' => 'plugin/lbms-login.php'
                                             ),
                                         );
+                                        global $wpdb;
                                         foreach ($init_pages as $each_page){
                                             $slug = $each_page['slug'];
                                             $title = $each_page['title'];
                                             $check_page = $wpdb->get_var("SELECT * FROM $wpdb->posts WHERE post_name = '$slug' AND post_type = 'page'");
+                                            // unset($wpdb);
                                             if(!$check_page){
                                                 // https://developer.wordpress.org/reference/classes/wp_rest_request/set_query_params/
                                                 $request_page->set_query_params(array(
@@ -1544,13 +1556,14 @@
                                         $baastring .= $temp.',';
                                     }
                                 }
+                                $baasarray_count = count($baasarray);
                                 if(!$value){
                                     update_option($opt, $baastring);
                                     $value = $baastring;
                                 }
                                 $check = strpos($value, $inform)!==false ? 'checked' : '';
                                 echo '<p class="description" id="">手动指定需要启用 BaaS 的分类页面，使用逗号“ , ”分隔（默认全部开启，开启后将接管全站支持 LBMS 页面的 BaaS 数据来源</p><div class="checkbox"><input id="'.$inform.'" type="checkbox" value="'.$inform.'" '.$check.'><label for="'.$inform.'">站点公告（LBMS）</label>';
-                                for($i=0;$i<count($baasarray);$i++){
+                                for($i=0;$i<$baasarray_count;$i++){
                                     foreach ($baasarray[$i] as $option => $index){
                                         $checking = strpos($value, $index)!==false ? 'checked' : '';
                                         echo '<input id="'.$opt.'_'.$index.'" type="checkbox" value="'.$index.'" '.$checking.' /><label for="'.$opt.'_'.$index.'">'.$option.'</label>';
@@ -1872,11 +1885,12 @@
                                 $preset = custom_cdn_src('img',true).'/images/fox.jpg,';
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update
                                 $arr = explode(',',trim($preset));
+                                $arr_count = count($arr);
                             ?>
                                 <p class="description" id="site_banner_array_label">首页 banner 组图数组（使用逗号“ , ”分隔，图库中按住“CTRL”多选图片</p>
                                     <label for="upload_banner_button" class="upload_preview_list">
                             <?php
-                                        for($i=0;$i<count($arr);$i++){
+                                        for($i=0;$i<$arr_count;$i++){
                                             if($arr[$i]) echo '<em class="upload_previews" style="background:url('.$arr[$i].') center center /cover;"></em>';
                                         }
                             ?>
@@ -2361,13 +2375,35 @@
                                 <th scope="row">— 热门文章分类</th>
                                 <td>
                                     <?php
-                                        $opt = 'site_mostview_cid';
-                                        // $preset = $cats_haschild[0]->term_id;  //return id rather then slug(get id by slug once)
+                                        // $opt = 'site_mostview_cid';
+                                        // $value = get_option($opt);
+                                        // echo '<label for="'.$opt.'"><p class="description" id="site_mostview_cid_label">默认使用一级栏目首位“$cats_haschild[0]->slug”分类（亦可选用其他分类文章热度排行</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
+                                        //     category_options($value);
+                                        // echo '</select><label>';
+                                        $opt = 'site_mostview_cat';
                                         $value = get_option($opt);
-                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if options unset
-                                        echo '<label for="'.$opt.'"><p class="description" id="site_mostview_cid_label">默认使用一级栏目首位“$cats_haschild[0]->slug”分类（亦可选用其他分类文章热度排行</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
-                                            category_options($value);
-                                        echo '</select><label>';
+                                        if(!$value){
+                                            $preset_str = $article_opts[0]->term_id.','.$article_opts[1]->term_id.',';
+                                            update_option($opt, $preset_str );
+                                            $value = $preset_str;
+                                        }
+                                        echo '<p class="description" id="site_bottom_nav_label">页面底部最左侧资讯栏目分类（使用逗号“ , ”分隔，可选多个分类</p><div class="checkbox">';
+                                        $pre_array = explode(',',trim($value));  // NO "," Array
+                                        $pre_array_count = count($pre_array);
+                                        foreach ($article_opts as $option){
+                                            $opts_key = $option->name;
+                                            $opts_val = $option->term_id;
+                                            $each_matched = false;
+                                            for($i=0;$i<$pre_array_count;$i++){
+                                                $arr = trim($pre_array[$i]);  // NO WhiteSpace
+                                                if($arr){
+                                                    $arr==$opts_val ? $each_matched=true : false;
+                                                }
+                                            };
+                                            $checking = $each_matched ? 'checked' : '';
+                                            echo '<input id="'.$opt.'_'.$opts_key.'" type="checkbox" value="'.$opts_val.'" '.$checking.' /><label for="'.$opt.'_'.$opts_key.'">'.strtoupper($opts_key).'</label>';
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';
                                     ?>
                                 </td>
                             </tr>
@@ -2383,13 +2419,35 @@
                         <th scope="row">底部近期文章</th>
                         <td>
                             <?php
-                                $opt = 'site_bottom_recent_cid';
-                                // $preset = $cats_haschild[0]->term_id;  //return id rather then slug(get id by slug once)
+                                // $opt = 'site_bottom_recent_cid';
+                                // $value = get_option($opt);
+                                // echo '<label for="'.$opt.'"><p class="description" id="site_bottom_recent_cid_label">页面底部最左侧资讯栏目分类</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
+                                //     category_options($value);
+                                // echo '</select><label>';
+                                $opt = 'site_bottom_recent_cat';
                                 $value = get_option($opt);
-                                // if(!$value) update_option($opt , $preset);else $preset=$value;  //auto update option to default if options unset
-                                echo '<label for="'.$opt.'"><p class="description" id="site_bottom_recent_cid_label">页面底部最左侧资讯栏目分类</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
-                                    category_options($value);
-                                echo '</select><label>';
+                                if(!$value){
+                                    $preset_str = $article_opts[0]->term_id.',';
+                                    update_option($opt, $preset_str );
+                                    $value = $preset_str;
+                                }
+                                echo '<p class="description" id="site_bottom_nav_label">页面底部最左侧资讯栏目分类（使用逗号“ , ”分隔，可选多个分类</p><div class="checkbox">';
+                                $pre_array = explode(',',trim($value));  // NO "," Array
+                                $pre_array_count = count($pre_array);
+                                foreach ($article_opts as $option){
+                                    $opts_key = $option->name;
+                                    $opts_val = $option->term_id;
+                                    $each_matched = false;
+                                    for($i=0;$i<$pre_array_count;$i++){
+                                        $arr = trim($pre_array[$i]);  // NO WhiteSpace
+                                        if($arr){
+                                            $arr==$opts_val ? $each_matched=true : false;
+                                        }
+                                    };
+                                    $checking = $each_matched ? 'checked' : '';
+                                    echo '<input id="'.$opt.'_'.$opts_key.'" type="checkbox" value="'.$opts_val.'" '.$checking.' /><label for="'.$opt.'_'.$opts_key.'">'.strtoupper($opts_key).'</label>';
+                                }
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';
                             ?>
                         </td>
                     </tr>
@@ -2405,8 +2463,9 @@
                                 for(;$year>1999;$year--){
                                     array_push($options,$year);
                                 }
+                                $options_count = count($options);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_begain_label">站点开启时间，单位年</p><select name="'.$opt.'" id="'.$opt.'">';
-                                    for($i=0;$i<count($options);$i++){
+                                    for($i=0;$i<$options_count;$i++){
                                         $each = $options[$i];
                                         echo '<option value="'.$each.'"';if($value==$each)echo('selected="selected"');echo '>'.$each.'</option>';
                                     };
@@ -2422,9 +2481,10 @@
                                 $value = get_option($opt);
                                 $options = ["CC-BY","CC-BY-SA","CC-BY-NC","CC-BY-ND","CC-BY-NC-SA","CC-BY-NC-ND","CC-SA","CC-NC","CC-ND","CC-NC-SA","CC-NC-ND"];
                                 if(!$value) update_option($opt, $options[0]);
+                                $options_count = count($options);
                                 //output each options
                                 echo '<label for="'.$opt.'"><p class="description" id="site_copyright_label">创作共用许可协议用于网站底部、文章署名等位置</p><select name="'.$opt.'" id="'.$opt.'">';
-                                    for($i=0;$i<count($options);$i++){
+                                    for($i=0;$i<$options_count;$i++){
                                         $each = $options[$i];
                                         echo '<option value="'.$each.'"';if($value==$each)echo('selected="selected"');echo '>'.$each.'</option>';
                                     };
@@ -2492,10 +2552,11 @@
                                 }
                                 echo '<p class="description" id="site_bottom_nav_label">底部右下角导航链接（使用逗号“ , ”分隔，可选填其他分类 slug 别名</p><div class="checkbox">';
                                 $pre_array = explode(',',trim($value));  // NO "," Array
+                                $pre_array_count = count($pre_array);
                                 foreach ($options as $option){
                                     // $checking = strpos($value, $option)!==false ? 'checked' : '';
                                     $each_matched = false;
-                                    for($i=0;$i<count($pre_array);$i++){
+                                    for($i=0;$i<$pre_array_count;$i++){
                                         $arr = trim($pre_array[$i]);  // NO WhiteSpace
                                         if($arr){
                                             $arr==$option ? $each_matched=true : false;

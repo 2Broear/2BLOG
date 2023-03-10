@@ -11,7 +11,7 @@
         if($shell){
             // https://wp-kama.com/hook/wp_embed_handler_video
             function add_video_attachment_capture($attachment_ID){
-                global $current_user, $shell;
+                global $shell; //$current_user, 
                 get_currentuserinfo();
                 function ratio($a, $b){
                     $gcd = function($a, $b) use (&$gcd) {
@@ -56,6 +56,7 @@
                             $shell('ffmpeg -i '.$savePath.'_%2d.jpeg -filter_complex "scale=iw:-1,tile='.count($fileList).'x1" "'.$savePath.'.jpg"');
                             $shell('ffmpeg -r 1 -f image2 -i '.$savePath.'_%2d.jpeg -vf "scale=iw/2:-1" '.$savePath.'.gif');
                         }
+                        unset($shell);
                     }
                 }
             }
@@ -96,11 +97,13 @@
     // Ajax Data Loads
     function ajaxCallAcg(){
         $cid = $_POST['cid'];
-        $limit = $_POST['limit'];
-        $offset = $_POST['offset'];
-        $cur_posts = get_wpdb_pids_by_cid($cid, $limit, $offset);
+        // wp_verify_nonce($_POST['_ajax_nonce']);
+        check_ajax_referer(get_category($cid)->slug.'_acg_ajax_nonce');  // 检查 nonce
+        // check_ajax_referer('my_acg_ajax_nonce',$_POST['nonce']);
+        $cur_posts = get_wpdb_pids_by_cid($cid, $_POST['limit'], $_POST['offset']);
         $res_array = array();
-        for($i=0;$i<count($cur_posts);$i++){
+        $cur_posts_count = count($cur_posts);
+        for($i=0;$i<$cur_posts_count;$i++){
             $each_posts = $cur_posts[$i];
             $this_post = get_post($each_posts->ID);
             $pid = $this_post->ID;
@@ -122,17 +125,19 @@
     function get_wpdb_pids_by_cid($cid=0, $limit=99, $offset=0){
         global $wpdb;
         // https://www.likecs.com/show-306636263.html#sc=304
-        return $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts,wp_term_relationships WHERE ID = object_id AND post_type = 'post' AND post_status = 'publish' AND wp_term_relationships.term_taxonomy_id = $cid ORDER BY post_date DESC LIMIT $limit OFFSET $offset ");
+        $res = $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts,wp_term_relationships WHERE ID = object_id AND post_type = 'post' AND post_status = 'publish' AND wp_term_relationships.term_taxonomy_id = $cid ORDER BY post_date DESC LIMIT $limit OFFSET $offset ");
+        unset($wpdb);
+        return $res;
     }
     // response wpdb data from ajax calls
     function updateArchive(){
         $key = $_POST['key'];
-        $limit = $_POST['limit'];
-        $offset = $_POST['offset'];
-        $cur_posts = get_wpdb_yearly_pids($key, $limit, $offset);
+        check_ajax_referer($key.'_archive_ajax_nonce');  // 检查 nonce
+        $cur_posts = get_wpdb_yearly_pids($key, $_POST['limit'], $_POST['offset']);
         $res_array = array();
         $news_temp = get_cat_by_template('news','slug');
-        for($i=0;$i<count($cur_posts);$i++){
+        $cur_posts_count = count($cur_posts);
+        for($i=0;$i<$cur_posts_count;$i++){
             $each_posts = $cur_posts[$i];
             $prev_posts = $i>0 ? $cur_posts[$i-1] : $cur_posts[$i];
             $this_post = get_post($each_posts->ID);
@@ -166,8 +171,10 @@
     function get_wpdb_yearly_pids($year=false, $limit=99, $offset=0){
         global $wpdb;
         $year = $year ? $year : gmdate('Y', time() + 3600*8);//date('Y');
+        $res = $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' AND YEAR(post_date) = $year ORDER BY post_date DESC LIMIT $limit OFFSET $offset ");
+        unset($wpdb);
         // !!!LIMIT & OFFSET must type of NUMBER!!!
-        return $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' AND YEAR(post_date) = $year ORDER BY post_date DESC LIMIT $limit OFFSET $offset ");
+        return $res;
     }
     //限制上传文件的最大体积值 https://www.cnwper.com/wp-limit-uploads.html
     // function max_up_size() {
@@ -223,6 +230,7 @@
         global $wpdb;
         $post_slug = '%' . $post_slug . '%';
         $pid = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name LIKE %s", $post_slug));
+        unset($wpdb);
         return get_post($pid);
     }
     //禁用 Gutenberg 编辑器
@@ -276,6 +284,7 @@
         // $template_term_id = get_post_meta($template_page_id, "post_term_id", true); //SELECT *
         $template_term_id = $wpdb->get_var("SELECT term_id FROM $wpdb->termmeta WHERE meta_value = '$template'");
         // return !get_category($template_term_id)->errors ? get_category($template_term_id) : get_category(1);
+        unset($wpdb);
         return get_category($template_term_id);
     }
     function get_cat_by_template($temp='news', $parm=false){
@@ -527,7 +536,8 @@
             $article_index = array_key_exists('article_index',$_COOKIE) ? $_COOKIE['article_index'] : false;
             $auto_fold = !$article_index ? 'fold' : '';
             $index_array = explode(',', get_option('site_indexes_includes'));
-            for($i=0;$i<count($index_array);$i++){
+            $index_array_count = count($index_array);
+            for($i=0;$i<$index_array_count;$i++){
                 $each_index = trim($index_array[$i]);
                 if($each_index){
                     if(in_category($each_index)){
@@ -627,6 +637,7 @@
                 $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
                 echo '<'.$html_tag.' data-count="'.$tag->count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';color:'.$color_font.'">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
             }
+            unset($bold_font);
         }else{
             echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
         }
@@ -637,13 +648,12 @@
         $metaimg = get_term_meta($cid, 'seo_image', true);  //$page_cat->term_id
         $result = $metaimg ? $metaimg : ($preset ? $preset : custom_cdn_src('img',true).'/images/default.jpg');  //get_option('site_bgimg')
         global $images_cdn, $upload_url, $cdn_switch;
+        $res = $result;
         if($cdn_switch){
-            // return str_replace($upload_url, $images_cdn, $result);
-            // $result = get_option('site_cdn_vid_sw') ? preg_replace('/(<video.*src=.*)('.preg_quote($upload_url,'/').')(.*>)/i', "\${1}$images_cdn\${3}", $result) : preg_replace('/(<video.*src=.*)('.preg_quote($images_cdn,'/').')(.*>)/i', "\${1}$upload_url\${3}", $result);  // video filter works fine.
-            return preg_replace('/(<img.+src=\"?.+)('.preg_quote($upload_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $result);
-        }else{
-            return $result;
+            $res = preg_replace('/(<img.+src=\"?.+)('.preg_quote($upload_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $result);
         }
+        unset($images_cdn, $upload_url, $cdn_switch);
+        return $res;
     }
     // 更新 sitemap 站点地图
     if(get_option('site_map_switcher')){
@@ -673,6 +683,7 @@
             $comments_obj->count = count($mail_data);
             array_push($comments_data, $comments_obj);
         }
+        unset($wpdb);
         usort($comments_data,function($first,$second){
             return $first->count < $second->count;
         });
@@ -709,7 +720,7 @@
     ?>
                 <script type="text/javascript">  //addAscending("createdAt")
                     new AV.Query("inform").addDescending("createdAt").limit(<?php echo $inform_max; ?>).find().then(result=>{
-                        for (let i=0; i<result.length;i++) {
+                        for (let i=0,resLen=result.length; i<resLen;i++) {
                             let res = result[i],
                                 title = res.attributes.title,
                                 content = res.attributes.content;
@@ -749,21 +760,28 @@
     // }
     function wpdb_postmeta_query($data,$key,$val){
         global $wpdb;
-        return $wpdb->get_var("SELECT $data FROM $wpdb->postmeta WHERE $key = '$val'");
+        $res = $wpdb->get_var("SELECT $data FROM $wpdb->postmeta WHERE $key = '$val'");
+        unset($wpdb);
+        return $res;
     }
     // 获取自定义页面所属分类term_id
     function get_page_cat_id($slug){
         global $wpdb;
-        return $wpdb->get_var("SELECT term_id FROM $wpdb->terms WHERE slug = '$slug'");
+        $res = $wpdb->get_var("SELECT term_id FROM $wpdb->terms WHERE slug = '$slug'");
+        unset($wpdb);
+        return $res;
     }
     // 获取自定义页面内容
     function the_page_id($slug){
         global $wpdb;
-        return $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name = '$slug'");
+        $res = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name = '$slug'");
+        unset($wpdb);
+        return $res;
     }
     function the_page_content($slug){
         global $wpdb;
         $id = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name = '$slug'");
+        unset($wpdb);
         echo get_page($id)->post_content;// if(is_page()) echo get_page($id)->post_content;else echo '<p style="color:red">页面 '.current_slug().' 不存在，无法调用该页面内容。</p>';
     }
     
@@ -825,11 +843,12 @@
                 $slug = "NOT MATCHED";
                 break;
         };
+        unset($cat, $post);
         return $slug;
     }
     // 自动匹配首页、分类、文章、页面标题
     function custom_title(){
-        global $cat, $post;
+        global $wp_query;//$cat, $post;
         $nick = get_option('site_nick');
         $name = !is_home() ? ' - '.get_bloginfo('name') : '';
         $surfix = $nick ? " | " . get_option('site_nick') . $name : $nick; //
@@ -843,15 +862,12 @@
                 echo single_cat_title() . $surfix;
                 break;
             case is_search():
-                global $wp_query;
-                echo $wp_query->found_posts . ' search results for "' . esc_html(get_search_query()) .'"'. $surfix;//. '" in '.trim(get_option('site_search_includes')) 
+                echo $wp_query->found_posts . ' search results for "' . esc_html(get_search_query()) .'"'. $surfix;
                 break;
             case is_tag():
-                global $wp_query;
                 echo $wp_query->found_posts . ' post for tag "'. single_tag_title('',false) .'"'. $surfix;
                 break;
             case is_archive():
-                global $wp_query;
                 $dates = $wp_query->query;
                 $date_mon = array_key_exists('monthnum',$dates) ? ' - '.$dates['monthnum'].' ' : '';
                 echo $wp_query->found_posts . ' archives in ' . $dates['year'] . $date_mon . $surfix;
@@ -866,6 +882,7 @@
                 echo "NO TITLE MATCHED" . $surfix;
                 break;
         }
+        unset($wp_query);//$cat, $post
     }
     
     // 自动主题模式
@@ -888,7 +905,8 @@
     function rss_category($query) {
         $rss_array = explode(',',trim(get_option('site_rss_categories')));  // NO "," Array
         $new_array = array();
-        for($i=0;$i<count($rss_array);$i++){
+        $rss_array_count = count($rss_array);
+        for($i=0;$i<$rss_array_count;$i++){
             $arr = trim($rss_array[$i]);  // NO WhiteSpace
             if($arr){
                 $rss_category = get_category_by_slug($arr);
@@ -978,7 +996,7 @@
     //友情链接函数
     function site_links($links,$frame=false){
         // if(!$orderby) $orderby='id';  //默认id排序
-        global $lazysrc;
+        global $lazysrc, $loadimg;
     	//$links = get_bookmarks(array('orderby'=>'date','order'=>'DESC','category_name'=>$category,'hide_invisible'=>0));
         foreach ($links as $link){
             $link_notes = $link->link_notes;
@@ -989,12 +1007,9 @@
             $status = $link->link_visible!='Y' ? 'standby' : 'standard';
             $ssl = $link_rating==10 ? 'httpd' : 'https';
             $impress = $link_notes&&$link_notes!='' ? '<span class="ssl '.$ssl.'"> '.$link_notes.' </span>' : false;
-            // global $wpdb;
-            // print_r($wpdb->get_var("SELECT ID FROM $wpdb->links WHERE post_name = '$slug'"));
             $avatar = !$link->link_image ? 'https:' . get_option('site_avatar_mirror') . 'avatar/' . md5(mt_rand().'@rand.avatar') . '?s=300' : $link->link_image;
             $lazyhold = "";
             if($lazysrc!='src'){
-                global $loadimg;
                 $lazyhold = 'data-src="'.$avatar.'"';
                 $avatar = $loadimg;
             }
@@ -1023,6 +1038,7 @@
                     break;
             }
         }
+        unset($lazysrc, $loadimg);
     }
     
     //面包屑导航（site_breadcrumb_switcher开启并传参true时启用）
@@ -1063,7 +1079,8 @@
                 // return strpos($videos_cdn_page, $key)!==false ? str_replace($upload_url, $images_cdn, $url) : str_replace($images_cdn, $upload_url, $url);
                 $matched = false;
                 $vdo_array = explode(',',trim($videos_cdn_page));  // NO "," Array
-                for($i=0;$i<count($vdo_array);$i++){
+                $vdo_array_count = count($vdo_array);
+                for($i=0;$i<$vdo_array_count;$i++){
                     $arr = trim($vdo_array[$i]);  // NO WhiteSpace
                     if($arr){
                         $arr==$key ? $matched =true : false;
@@ -1073,6 +1090,7 @@
             }else{
                 $url = str_replace($images_cdn, $upload_url, $url);
             };
+            unset($images_cdn, $upload_url, $videos_cdn_page, $cat, $cdn_switch);
             return $url;
         }
     }
@@ -1085,7 +1103,9 @@
             // return str_replace('="'.$upload_url, '="'.$images_cdn, $content);
             // 控制全站视频加速开关（默认替换$images_cdn为$upload_url）
             $content = strpos($videos_cdn_page, 'article')!==false ? preg_replace('/(<video.*src=.*)('.preg_quote($upload_url,'/').')(.*>)/i', "\${1}$images_cdn\${3}", $content) : preg_replace('/(<video.*src=.*)('.preg_quote($images_cdn,'/').')(.*>)/i', "\${1}$upload_url\${3}", $content);  // video filter works fine.
-            return preg_replace('/(<img.+src=\"?.+)('.preg_quote($upload_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $content);  //http://blog.iis7.com/article/53278.html
+            $res = preg_replace('/(<img.+src=\"?.+)('.preg_quote($upload_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $content);
+            unset($images_cdn, $upload_url, $videos_cdn_page);
+            return $res;  //http://blog.iis7.com/article/53278.html
         }
         // 替换后台媒体库图片路径（目前无法自定义每个图像url）https://wordpress.stackexchange.com/questions/189704/is-it-possible-to-change-image-urls-by-hooks
         function wpse_change_featured_img_url(){
@@ -1120,7 +1140,7 @@
     };
     //兼容gallery获取post内容指定图片（视频海报）
     function get_postimg($index=0,$postid=false,$default=false) {
-        global $post, $posts;
+        global $post, $images_cdn, $upload_url, $cdn_switch;
         $postid ? $post = get_post($postid) : $post;
         $ret = array();
         if(has_post_thumbnail()){
@@ -1144,14 +1164,14 @@
             
         }
         $result = $ret ? $ret[$index] : false;
-        global $images_cdn, $upload_url, $cdn_switch;
+        $res = $result;
         if($cdn_switch){
             // return strpos($result, $images_cdn)!==false ? $result : str_replace($upload_url, $images_cdn, $result);
-            return str_replace($upload_url, $images_cdn, $result);
+            $res = str_replace($upload_url, $images_cdn, $result);
             // return preg_replace('/(<img.+src=\"?.+)('.preg_quote($upload_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $result);
-        }else{
-            return $result;
         }
+        unset($post, $images_cdn, $upload_url, $cdn_switch);
+        return $res;
     };
     // 自定义文章摘要
     function wpdocs_custom_excerpt_length( $length ) {
@@ -1203,7 +1223,7 @@
 ?>
         <script type="text/javascript">
             new AV.Query("<?php echo $slug; ?>").addDescending("createdAt").limit(<?php echo get_option('site_per_posts', get_option('posts_per_page')); ?>).find().then(result=>{
-                for (let i=0; i<result.length;i++) {
+                for (let i=0,resLen=result.length; i<resLen;i++) {
                     let res = result[i],
                         title = res.attributes.title,
                         content = res.attributes.content.replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -1215,6 +1235,7 @@
     }
     // wp自定义（含置顶无分页）查询函数
     function recent_posts_query($cid=0, $link=false, $detail=false, $random=false){
+        global $post;
         $orderby = $random ? 'rand' : array(
             'date' => 'DESC',
             'meta_value_num' => 'DESC',
@@ -1224,7 +1245,6 @@
         $left_query = new WP_Query(array_filter($query_array));
         while ($left_query->have_posts()):
             $left_query->the_post();
-            global $post;
             $topset = get_post_meta($post->ID, "post_orderby", true)>1 ? 'topset' : false;
             $title = $detail ? trim(get_the_title()).' -（'.get_post_meta($post->ID, "post_feeling", true).'）<sup>'.$post->post_date.'</sup>' : trim(get_the_title());
             // print_r(get_category($cid)->parent);
@@ -1237,12 +1257,13 @@
             echo '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
         endwhile;
         wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
+        unset($post);
     };
     
     
     // acg post query
     function acg_posts_query($the_cat, $pre_cat=false, $limit=99){
-        global $post,$lazysrc,$loadimg;
+        global $post, $lazysrc, $loadimg;
         $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
         $cat_slug = $the_cat->slug;
         echo '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> '.$cat_slug.' </sup></h2></div><div class="info flexboxes">';
@@ -1310,20 +1331,23 @@
 <?php
         endwhile;
         wp_reset_query();  // reset wp query incase following code occured query err
+        unset($post, $lazysrc, $loadimg);
         // 单独判断当前查询文章数量
         // $found = $acg_query->found_posts;
         // $loaded = $found<$limit ? $found : $limit;
         if(get_option('site_async_switcher')){
+            $cat_name = $acg_query->query_vars['category_name'];
             $all_count = $all_query->post_count;
             $posts_count = $acg_query->post_count;  //count($acg_query->posts) //mailto:'.get_bloginfo("admin_email").' 发送邮件，荐你所见
             $disable_statu = $posts_count==$all_count ? ' disabled' : false; //>=
-            echo '<div class="inbox more flexboxes"><div class="inbox-more flexboxes'.$disable_statu.'"><a class="load-more" href="javascript:;" data-all="'.$all_count.'" data-load="'.$posts_count.'" data-count="0" data-cid="'.$acg_query->query['cat'].'" data-cat="'.strtoupper($acg_query->query_vars['category_name']).'" title="加载更多数据"></a></div></div></div>';
+            echo '<div class="inbox more flexboxes"><div class="inbox-more flexboxes'.$disable_statu.'"><a class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$acg_query->query['cat'].'" data-cat="'.strtoupper($cat_name).'" data-nonce="'.wp_create_nonce($cat_name."_acg_ajax_nonce").'" title="加载更多数据"></a></div></div></div>';
         }
     };
     
     // wp自定义（含置顶无分页）查询函数
     function download_posts_query($cats, $order, $single=false){
-        for($i=0;$i<count($cats);$i++){
+        $cats_count = count($cats);
+        for($i=0;$i<$cats_count;$i++){
             $term_order = get_term_meta($cats[$i]->term_id, 'seo_order', true);
             // print_r($term_order);
             if($term_order==$order){
@@ -1344,6 +1368,7 @@
 						<div class="box_down">
 						    <ul>
 						        <?php 
+                                    global $post;
                                     $left_query = new WP_Query(array_filter(array(
                                         'cat' => $cat_id,
                                         'meta_key' => 'post_orderby',
@@ -1356,7 +1381,6 @@
                                     )));
                                     while ($left_query->have_posts()):
                                         $left_query->the_post();
-                                        global $post;
                             ?>
                                         <li class="<?php if(get_post_meta($post->ID, "post_orderby", true)>1) echo 'topset'; ?>">
                                             <div class="details">
@@ -1371,6 +1395,7 @@
                             <?php
                                     endwhile;
                                     wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
+                                    unset($post);
 						        ?>
 						    </ul>
 						</div>
@@ -1446,7 +1471,7 @@
     
     // search/tag page posts with styles
     function the_posts_with_styles($queryString){
-        global $lazysrc;
+        global $post, $lazysrc, $loadimg, $wp_query;
         $post_styles = get_option('site_search_style_switcher');
         if($post_styles){
     ?>
@@ -1487,10 +1512,8 @@
             .main h2{margin-bottom: 0}
     	</style>
     <?php
-        // global $post;
         if(have_posts()) {
             while (have_posts()): the_post();
-                global $post,$lazysrc,$loadimg;
                 $postimg = get_postimg(0,$post->ID,true);
                 $lazyhold = "";
                 if($lazysrc!='src'){
@@ -1541,7 +1564,9 @@
                                         <a href="<?php the_permalink() ?>" title="<?php the_title() ?>"><?php the_title() ?></a>
                                     </h2>
                                     <span class="news-core_area entry-content"><p><?php custom_excerpt(66); ?></p></span>
-                                    <?php if($post_feeling) echo '<span class="news-personal_stand" unselectable="on"><dd>'.$post_feeling.'</dd></span>'; ?>
+                                    <span class="news-personal_stand" unselectable="on">
+                                        <dd><?php echo $post_feeling ? $post_feeling : '...'; ?></dd>
+                                    </span>
                                     <div id="news-tail_info">
                                         <ul class="post-info">
                                             <li class="tags author"><?php the_tag_list($post->ID); ?></li>
@@ -1653,16 +1678,17 @@
                     }
                 }
             endwhile;
-                global $wp_query;  // use global varibal $wp_query
-                $pages = paginate_links(array(
-                    'prev_text' => __('上一页'),
-                    'next_text' => __('下一页'),
-                    'type' => 'plaintext',
-                    'screen_reader_text' => null,
-                    'total' => $wp_query -> max_num_pages,  //总页数
-                    'current' => max(1, get_query_var('paged')), //当前页数
-                ));
-                if($pages) echo '<div class="pageSwitcher">'.$pages.'</div>';
+            wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
+            $pages = paginate_links(array(
+                'prev_text' => __('上一页'),
+                'next_text' => __('下一页'),
+                'type' => 'plaintext',
+                'screen_reader_text' => null,
+                'total' => $wp_query -> max_num_pages,  //总页数
+                'current' => max(1, get_query_var('paged')), //当前页数
+            ));
+            unset($post, $lazysrc, $loadimg, $wp_query);
+            if($pages) echo '<div class="pageSwitcher">'.$pages.'</div>';
         }else{
             echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.$queryString.' </h1></div>';  //<b>'.current_slug(true).'</b> 
         }
@@ -1686,7 +1712,6 @@
         return '<a href="' . esc_url( get_comments_pagenum_link( $prevpage ) ) . '" ' . apply_filters( 'previous_comments_link_attributes', '' ) . '><i class="icom"></i>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '</a>';
     }
     function get_next_comments_html( $label = '', $max_page = 0 ) {
-        global $wp_query;
         if ( ! is_singular() ) {
             return;
         }
@@ -1696,7 +1721,9 @@
         }
         $nextpage = (int) $page + 1;
         if ( empty( $max_page ) ) {
+            global $wp_query;
             $max_page = $wp_query->max_num_comment_pages;
+            unset($wp_query);
         }
         if ( empty( $max_page ) ) {
             $max_page = get_comment_pages_count();
@@ -1769,10 +1796,8 @@
     add_action('wp_ajax_nopriv_post_like', 'post_like');
     add_action('wp_ajax_post_like', 'post_like');
     function post_like(){
-        global $wpdb,$post;
         $id = $_GET["um_id"];  //$_POST
-        $action = $_GET["um_action"];  //$_POST
-        if($action=='like'){
+        if($_GET["um_action"]=='like'){
             $post_liked = get_post_meta($id,'post_liked',true);
             $expire = time() + 99999999;
             $domain = ($_SERVER['HTTP_HOST']!='localhost') ? $_SERVER['HTTP_HOST'] : false;
@@ -1836,11 +1861,12 @@
                 echo the_title();
             }
             if (is_home()){
-                global $post;
                 $page_for_posts_id = get_option('page_for_posts');
                 if ( $page_for_posts_id ) { 
+                    global $post;
                     $post = get_page($page_for_posts_id);
                     setup_postdata($post);
+                    unset($post);
                     the_title();
                     rewind_posts();
                 }

@@ -168,7 +168,7 @@
                   };
                   return templates;
               };
-        for(let i=0;i<loadlist.length;i++){
+        for(let i=0,listLen=loadlist.length;i<listLen;i++){
             let eachload = loadlist[i],
                 loading = document.createElement("span"),
                 evalload = eval(eachload);
@@ -203,7 +203,7 @@
             }
             // loading.remove();
             const loads = document.querySelectorAll("#loading");
-            for(let i=0;i<loads.length;i++){
+            for(let i=0,loadLen=loads.length;i<loadLen;i++){
                 loads[i].remove()
             }
         })
