@@ -1,6 +1,6 @@
-.wp_comment_box form .userinfo{
-    width: 27.5%!important;
-}
+/*.wp_comment_box form .userinfo{*/
+/*    width: 27.5%!important;*/
+/*}*/
 .wp_comment_box form textarea{width:70%!important}
 body.dark .wp_comments:hover{background:var(--preset-3a)!important}
 .pageSwitcher{font-size:14px;margin:15px auto}

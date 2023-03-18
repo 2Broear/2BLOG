@@ -8,7 +8,7 @@
     </div>
     <div class="container">
       <div id="footer-support-board">
-        <p id="supports-txt"><?php $blogdesc=get_bloginfo('description');echo '<q>'.get_option('site_support',$blogdesc).'</q><b>'.$blogdesc.'</b>'; ?></p>
+        <p id="supports-txt"><?php $blogdesc=get_bloginfo('description');echo '<q>'.get_option('site_support',$blogdesc).'</q><b>'.$blogdesc.'</b>';// ?></p>
       </div>
       <div id="footer-contact-way">
         <ul class="footer-ul">
@@ -19,18 +19,7 @@
                 <div class="recently">
                     <?php
                         $post_per = get_option('site_per_posts', get_option('posts_per_page'));
-                        // $cat_id = get_option('site_bottom_recent_cid');
-                        // if($cat_id){
-                        //     $query_array = array('cat' => $cat_id, 'meta_key' => 'post_orderby', 'posts_per_page' => $post_per,
-                        //         'orderby' => array(
-                        //             'meta_value_num' => 'DESC',
-                        //             'date' => 'DESC',
-                        //             'modified' => 'DESC',
-                        //         )
-                        //     );
-                        // }else{
                         $query_array = array('cat' => [get_option('site_bottom_recent_cat')], 'posts_per_page' => $post_per, 'order' => 'DESC', 'orderby' => 'date');
-                        // }
                         $current_month = date('Ym');
                         $left_query = new WP_Query(array_filter($query_array));
                         while ($left_query->have_posts()):
@@ -63,7 +52,7 @@
                     $third_cmt = get_option('site_third_comments');
                     if($third_cmt=='Valine'){    // 全站加载
                 ?>
-                        <script src="<?php custom_cdn_src(); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+                        <script src="<?php custom_cdn_src(0); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
                 <?php
                         if(!$baas){
                 ?>
@@ -382,6 +371,30 @@
 	window.addEventListener('load', function(){
 		NProgress.done();
     });
+    // 闭包节流器
+    function closure_throttle(callback=false, delay=200){
+        let closure_variable = true;  //default running
+        return function(){
+            if(!closure_variable) return;  //now running..
+            closure_variable = false;  //stop running
+            setTimeout(()=>{
+                callback.apply(this, arguments);
+                closure_variable = true;  //reset running
+            }, delay);
+        };
+    }
+    // 自动根据时段设置主题
+    function automode(){
+        getCookie('theme_manual') ? setCookie('theme_manual',0,0,1) : false;  // disable manual mode
+        let date = new Date(),
+            hour = date.getHours(),
+            min = date.getMinutes(),
+            sec = date.getSeconds(),
+            start = <?php echo get_option('site_darkmode_start',17); ?>,
+            end = <?php echo get_option('site_darkmode_end',9); ?>;
+        hour>=end&&hour<start || hour==end&&min>=0&&sec>=0 ? setCookie('theme_mode','light',0,1) : setCookie('theme_mode','dark',0,1);
+        document.body.className = getCookie('theme_mode');  //change apperance after cookie updated
+    };
     <?php
         // lazyLoad images
         if(get_option('site_lazyload_switcher')){
@@ -449,7 +462,7 @@
                                         res.splice(res.indexOf(this), 1);  // 移除错误图片数组
                                         this.removeAttribute('src');
                                         this.removeAttribute('data-src'); // disable loadimg
-                                        this.setAttribute('alt','图片请求出现问题'); // this.removeAttribute('src');
+                                        !this.dataset.err ? this.setAttribute('alt','图片请求出现问题') : false;
                                     }
                                 // }
                                 // }
@@ -458,48 +471,28 @@
                             });
                         }
                     },
-                    scrollLoad = function(){
-                        return (function(){
-                            if(timer_throttle==null){
-                                timer_throttle = setTimeout(function(){
-                                    // console.log('loading..');
-                                    if(loadArray.length<=0){
-                                        console.log(Object.assign(msgObject, {status:'lazyload done', type:'scroll'}));
-                                        window.removeEventListener('scroll', scrollLoad, true);
-                                        return;
-                                    };
-                                    autoLoad(loadArray);
-                                    console.log('throttling..',loadArray);
-                                    timer_throttle = null;  //消除定时器
-                                }, time_delay); //, loadArray重新传入array（单次）循环
-                            }
-                        })();
+                    scrollLoad = closure_throttle((e)=>{
+                        if(loadArray.length<=0){
+                            console.log(Object.assign(msgObject, {status:'lazyload done', type:'scroll'}));
+                            window.removeEventListener('scroll', scrollForRemove, true);
+                            return;
+                        };
+                        autoLoad(loadArray);
+                        console.log('throttling..',loadArray);
+                    }, time_delay),
+                    scrollForRemove = function(event){
+                        let e = event || window.event,
+                            t = e.target || e.srcElement;
+                        if(t!==document) return;
+                        raf_available ? window.requestAnimationFrame(scrollLoad) : scrollLoad();
                     };
                 autoLoad(loadArray, true);
-                // requestAnimationFrame
-                if(raf_available){
-                    window.addEventListener('scroll', function(){
-                        window.requestAnimationFrame(scrollLoad);
-                    }, true);
-                }else{
-                    window.addEventListener('scroll', scrollLoad, true);
-                }
+                // requestAnimationFrame support
+                window.addEventListener('scroll', scrollForRemove, true);
             }
     <?php
         }
     ?>
-    // 自动根据时段设置主题
-    function automode(){
-        getCookie('theme_manual') ? setCookie('theme_manual',0,0,1) : false;  // disable manual mode
-        let date = new Date(),
-            hour = date.getHours(),
-            min = date.getMinutes(),
-            sec = date.getSeconds(),
-            start = <?php echo get_option('site_darkmode_start',17); ?>,
-            end = <?php echo get_option('site_darkmode_end',9); ?>;
-        hour>=end&&hour<start || hour==end&&min>=0&&sec>=0 ? setCookie('theme_mode','light',0,1) : setCookie('theme_mode','dark',0,1);
-        document.body.className = getCookie('theme_mode');  //change apperance after cookie updated
-    };
 </script>
 <?php
     if(get_option('site_video_capture_switcher')){
@@ -588,5 +581,5 @@
     }
     // $cat = $cat ? $cat : get_page_cat_id(current_slug());  //rewrite cat to cid (var cat for require php)
     unset($lazysrc, $cat);  //release current file.php global variables
-    require_once(TEMPLATEPATH. '/foot.php');
+    // require_once(TEMPLATEPATH. '/foot.php');
 ?>

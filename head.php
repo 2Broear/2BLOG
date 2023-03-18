@@ -8,7 +8,7 @@
 <meta name="msapplication-TileColor" content="<?php echo $theme_color; ?>" />
 <meta name="msapplication-TileImage" content="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico" />
 <link rel="shortcut icon" href="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico"/>
-<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/universal.min.css?v=<?php echo get_theme_info('Version'); ?>" />
+<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(0); ?>/style/universal.min.css?v=<?php echo get_theme_info('Version'); ?>" />
 <style>
     body.dark #supports em.warmhole{
         background: url(<?php custom_cdn_src('img'); ?>/images/wormhole_2_tp.gif) no-repeat center center /cover!important;
@@ -44,12 +44,20 @@
 </style>
 <script async>
     document.documentElement.style.setProperty('--theme-color','<?php echo $theme_color; ?>');
-    function bindEventClick(parent, cls, callback=false){
+    function bindEventClick(parent, cls, callback){
         parent.onclick=(e)=>{
             e = e || window.event;
             let t = e.target || e.srcElement;
-            if(!t || !t.classList.contains(cls)) return;
-            callback ? callback(t) : false; //callback(t) || callback(t);
+            if(!t) return;
+            while(t!=parent){
+                if(t.classList && t.classList.contains(cls)){
+                    // callback.apply(this, ...arguments);
+                    callback ? callback(t,e) : false; //callback(t) || callback(t);
+                    break;
+                }else{
+                    t = t.parentNode;
+                }
+            }
         }
     }
 </script>

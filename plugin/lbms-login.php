@@ -367,7 +367,7 @@ p#desc{
         },
         ifVaild = (ip,fn)=>{
             var fs = 0;
-            for(let i=0;i<ip.length;i++){
+            for(let i=0,ipLen=ip.length;i<ipLen;i++){
                 let ipv = ip[i];
                 isVaild(ip[i]);
                 ipv.value=="" ? fs++ : false
@@ -444,7 +444,7 @@ p#desc{
             })
         },
         switchAct = (t)=>{
-            for(let i=0;i<boxes.length;i++){
+            for(let i=0,boxLen=boxes.length;i<boxLen;i++){
                 boxes[i].classList.remove("show")
             };
             signlog.querySelector(`.${t.id}`).classList.add("show")
@@ -470,7 +470,7 @@ p#desc{
         let pmsg = document.getElementById("postMessage");
         pmsg ? pmsg.contentWindow.postMessage(JSON.stringify(currentUser),"/") : console.warn('no postMessage');
     };
-    for(let i=0;i<inputs.length;i++){
+    for(let i=0,ipsLen=inputs.length;i<ipsLen;i++){
         let input = inputs[i];
         input.onblur=()=>{
             isVaild(input)

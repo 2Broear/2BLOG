@@ -19,6 +19,21 @@
             padding: 15px 10px;
             margin-bottom: 15px;
         }
+        @keyframes blinker {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        div.blink{
+            animation: blinker .5s infinite alternate ease;
+            -webkit-animation: blinker .5s infinite alternate ease;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -96,7 +111,7 @@
     if($datadance){
 ?>
         <script>
-            dataDancing(document.querySelectorAll(".win-top .counter div"), "h2", 0, 10, "<sup>+</sup>");
+            dataDancing(document.querySelectorAll(".win-top .counter div"), "h2", -15, 15, "<sup>+</sup>");
         </script>
 <?php
     }

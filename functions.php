@@ -324,28 +324,6 @@
         }
         add_filter('user_trailingslashit', 'remove_category', 100, 2);
     }
-    /* ------------------------------------------------------------------------ *
-     * WordPress Comments Setup etc
-     * ------------------------------------------------------------------------  */
-    function my_fields($fields) {
-    	$fields =  array(
-        	'author' => ($req ? '<span class="required">*</span>' : '' ) . '<input id="author" name="author" type="text" placeholder="昵称" value="' . esc_attr( $commenter['comment_author'] ) . '"' . $aria_req . ' />',
-        	
-        	'email'  => ($req ? '<span class="required">*</span>' : '' ) . '<input id="email" name="email" type="text" placeholder="邮箱" value="' . esc_attr(  $commenter['comment_author_email'] ) . '"' . $aria_req . ' />',
-        	
-        	'url'    => '<input id="url" name="url" type="text" placeholder="网址" value="' . esc_attr( $commenter['comment_author_url'] ) . '" />',
-    	);
-    	return $fields;
-    }
-    add_filter('comment_form_default_fields','my_fields');
-    
-    /* Auto set comment user cookies */
-    function coffin_set_cookies( $comment, $user, $cookies_consent){
-    	$cookies_consent = true;
-    	wp_set_comment_cookies($comment, $user, $cookies_consent);
-    }
-    add_action('set_comment_cookies','coffin_set_cookies',10,3);
-    
     
     //通过meta_query获取指定id自定义排序输出子级
     function meta_order_categories($cid,$order,$orderby,$num=99){
@@ -478,6 +456,154 @@
         // 挂载 WordPress 评论提交的接口
         add_action('comment_post', 'push_weixin', 19, 2);
     }
+    
+    
+    /* ------------------------------------------------------------------------ *
+     * WordPress Comments Setup etc (Ajax comment/pagination Support)
+     * ------------------------------------------------------------------------  */
+    
+    /* Auto set comment user cookies */
+    function coffin_set_cookies( $comment, $user, $cookies_consent){
+    	$cookies_consent = true;
+    	wp_set_comment_cookies($comment, $user, $cookies_consent);
+    }
+    add_action('set_comment_cookies','coffin_set_cookies',10,3);
+    
+    // Ajax 评论支持
+    if(get_option('site_ajax_comment_switcher')){
+        // Loop-back child-comments
+        function wp_child_comments_loop($cur_comment){
+            $child_comment = $cur_comment->get_children(array(
+                'hierarchical' => 'threaded',
+                // 'status'       => 'approve',
+                'order'        => 'ASC',
+                // 'orderby'=>'order_clause',
+                // 'meta_query'=>array(
+                //   'order_clause' => 'comment_parent'
+                // )
+            ));
+            if(count($child_comment)<=0){
+                return;
+            }
+            foreach ($child_comment as $child) {
+                wp_comments_template($child);
+                wp_child_comments_loop($child);
+            }
+        }
+        // Direct comments output
+        function wp_comments_template($comment){
+            global $lazysrc, $post;
+            $id = $comment->comment_ID;
+            $nick = $comment->comment_author;
+            $link = $comment->comment_author_url;
+            $email = $comment->comment_author_email;
+            $userAgent = get_userAgent_info($comment->comment_agent);
+            $approved = $comment->comment_approved;
+            $content = strip_tags($comment->comment_content);
+            $parent = $comment->comment_parent;
+            if($approved=='0') $content = '<small style="opacity:.5">[ 评论未审核，通过后显示 ]</small>';
+            if($parent>0) $content = '<a href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
+    ?>
+            <div class="wp_comments" id="comment-<?php echo $id; ?>">
+                <div class="vh" rootid="<?php echo $id; ?>">
+                    <div class="vhead">
+                        <a rel="nofollow" href="<?php echo $link; ?>" target="_blank">
+                            <?php if(get_option('show_avatars')) echo '<img class="avatar" '.$lazysrc.'="'.match_mail_avatar($email).'" width=50 height=50 />'; ?>
+                        </a>
+                    </div>
+                    <div class="vcontent">
+                        <div class="vinfo">
+                            <a rel="nofollow" href="<?php echo $link; ?>" target="_blank"><?php echo $nick; ?></a>
+                            <?php
+                                if($email==get_option('site_smtp_mail', get_bloginfo('admin_email'))) echo '<span class="admin">admin</span>';
+                                echo '<span class="useragent">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
+                                if($approved=="0") echo '<span class="auditing">待审核</span>';
+                            ?>
+                            <div class="vtime"><?php echo date('Y-m-d', strtotime($comment->comment_date)); ?></div>
+                            <?php 
+                                if($approved=='1'){
+                                    // global $wp;
+                                    // $current_url = home_url( add_query_arg( array(), $wp->request ) );
+                                    $locate = 'comment-'.$id;
+                                    echo '<a rel="nofollow" class="comment-reply-link" href="javascript:void(0);" data-commentid="'.$id.'" data-postid="'.$post->ID.'" data-belowelement="'.$locate.'" data-respondelement="respond" data-replyto="'.$nick.'" aria-label="正在回复给：@'.$nick.'">回复</a>'; //'.$current_url.'?replytocom='.$id.'#respond  //'.$locate.'
+                                    // unset($wp);
+                                }
+                            ?>
+                        </div>
+                        <?php echo '<p>'.$content.'</p>'; ?>
+                    </div>
+                </div>
+            </div>
+    <?php
+            unset($lazysrc,  $post);
+        }
+    }
+    
+    //Ajax 加载更多评论
+    if(get_option('site_ajax_comment_paginate')){
+        // Childs comment Loop-load method
+        function ajax_child_comments_loop($cur_comment){
+            $child_comment = $cur_comment->get_children(array(
+                'hierarchical' => 'threaded',
+                'order'        => 'ASC',
+                // 'orderby'=>'order_clause',
+                // 'meta_query'=>array(
+                //   'order_clause' => 'comment_parent'
+                // )
+            ));
+            if(count($child_comment)>=1){
+                // Objects to Array object
+                // $child_comment = json_decode(json_encode($child_comment), true);
+                foreach ($child_comment as $child) {
+                    if($child->comment_approved=='0') $child->comment_content = '评论未审核，通过后显示';
+                    // use privacy data encryption
+                    $child->comment_author_IP = sha1($child->comment_author_IP);
+                    $child->comment_author_email = md5($child->comment_author_email);
+                    // add Objects for frontend calls
+                    $child->_comment_reply = get_comment_author($child->comment_parent);
+                    $child->_comment_agent = get_userAgent_info($child->comment_agent);
+                    $cur_comment->_comment_childs = $child_comment; //$child_comment;//load all-childs but single[$child];
+                    ajax_child_comments_loop($child);
+                }
+            }
+            // return first-level(contains sub-more) only
+            if($cur_comment->comment_parent==0){
+                // print_r(json_encode($cur_comment));
+                return $cur_comment; //$child_comment
+            }
+        }
+        // Ajax request comments output
+        function ajaxLoadComments(){
+            $pid = $_POST['pid'];
+            check_ajax_referer($pid.'_comment_ajax_nonce');  // 检查 nonce
+            $comments_array = [];
+            $comments = get_comments(array(
+                'post_id' => $pid,
+                'orderby' => 'comment_date',
+                'order'   => 'DESC',
+                // 'status'  => 'approve',
+                'number'  => $_POST['limit'],
+                'offset'  => $_POST['offset'],
+                'parent'  => 0,
+                // 'comment__not_in' => [2,14],
+            ));
+            foreach($comments as $each){
+                // user privacy data crypt
+                $each->comment_author_IP = sha1($each->comment_author_IP);
+                $each->comment_author_email = md5($each->comment_author_email);
+                // add Objects for frontend calls
+                $each->_comment_agent = get_userAgent_info($each->comment_agent);
+                if($each->comment_parent==0){
+                    array_push($comments_array, ajax_child_comments_loop($each));
+                }
+            }
+            print_r(json_encode($comments_array));
+            die();
+        }
+        add_action('wp_ajax_ajaxLoadComments', 'ajaxLoadComments');
+        add_action('wp_ajax_nopriv_ajaxLoadComments', 'ajaxLoadComments');
+    }
+    
     
     // 评论添加@（提交时写入数据库）https://www.ludou.org/wordpress-comment-reply-add-at.html
     // function ludou_comment_add_at( $commentdata ) {
@@ -1017,13 +1143,7 @@
                 case 'full':
                     // echo in_category('standby') ? 'standby' : false;
                     // if($link->link_visible==="Y") 
-                    if($status=='standby'){
-                        $avatar_status = '<img alt="近期访问出现问题" draggable="false">';
-                        // $avatar_status_bg = '<img class="blur" alt="近期访问出现问题" draggable="false">';
-                    }else{
-                        $avatar_status = '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
-                        // $avatar_status_bg = '<img class="blur" '.$lazyhold.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
-                    }
+                    $avatar_status = $status=='standby' ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
                     echo '<div class="inbox flexboxes '.$status.' '.$sex.'"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>'.$avatar_status_bg.'
                     break;
                 case 'half':
@@ -1796,15 +1916,16 @@
     add_action('wp_ajax_nopriv_post_like', 'post_like');
     add_action('wp_ajax_post_like', 'post_like');
     function post_like(){
-        $id = $_GET["um_id"];  //$_POST
-        if($_GET["um_action"]=='like'){
+        $id = $_GET["um_id"];
+        check_ajax_referer($id.'_post_like_ajax_nonce');  // 检查 nonce
+        // if($_GET["um_action"]=='like'){
             $post_liked = get_post_meta($id,'post_liked',true);
             $expire = time() + 99999999;
             $domain = ($_SERVER['HTTP_HOST']!='localhost') ? $_SERVER['HTTP_HOST'] : false;
             setcookie('post_liked_'.$id,$id,$expire,'/',$domain,false);
             if (!$post_liked || !is_numeric($post_liked)) update_post_meta($id, 'post_liked', 1);else update_post_meta($id, 'post_liked', ($post_liked + 1));
             echo get_post_meta($id,'post_liked',true);
-        }
+        // }
         die;
     };
     // 文章浏览量

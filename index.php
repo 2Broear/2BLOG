@@ -4,6 +4,11 @@
     <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/main.min.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php include_once(TEMPLATEPATH. '/head.php'); ?>
     <style>
+        #banner-prev,#banner-next{
+            cursor: pointer;
+            background:url("<?php custom_cdn_src('img'); ?>/images/css_sprites.png") no-repeat;
+        }
+        .banner .banner-inside ul{cursor:grab;}
         #special-img{
             position: absolute;
             top: 0;
@@ -60,8 +65,8 @@
                         <!--<li><?php //the_countdown_widget('2023/01/14,00:00:00','自定义定时器/定时完成','https://img.2broear.com/images/1llusion.gif'); ?></li>-->
                     </ul>
                     <div class="switcher">
-                        <span id="banner-prev"></span>
-                        <span id="banner-next"></span>
+                        <span id="banner-prev" class="banner_prew"></span>
+                        <span id="banner-next" class="banner_next"></span>
                     </div>
                     <div class="dots"></div>
                 </div>
@@ -180,9 +185,9 @@
                 <span id="tech_window" style="width:100%">
                     <div class="newsBox-supTitle flexboxes" id="tech_window-top">
                         <span class="newsBox-supTitle-iDescription" id="icon-technology" title="Tech | 科技资讯">
-                            <em>BLOG</em><i class="icom icon-weblog"></i>
+                            <em>LOG</em><i class="icom icon-weblog"></i>
                         </span>
-                        <h2><?php $blog_temp = get_cat_by_template('weblog');echo strtoupper($blog_temp->slug).'「'.$blog_temp->name.'」'; ?></h2>
+                        <h2><?php echo $blog_temp = get_cat_by_template('weblog')->name;//echo strtoupper($blog_temp->slug).'「'.$blog_temp->name.'」'; ?></h2>
                     </div>
                     <ul class="tech_window-content">
                         <?php 
@@ -211,7 +216,7 @@
                         <span class="newsBox-supTitle-iDescription" id="icon-acg" title="ACG 宅周报">
                             <em>ACG</em><i class="icom icon-acg"></i>
                         </span>
-                        <h2> ACG はすぐに TAG CLOUDS </h2>
+                        <h2> ACG · TAG </h2><!--<h2> ACG はすぐに TAG CLOUDS </h2>-->
                     </div>
                     <ul class="acg_window-content">
                         <!--<div class="ajaxloadMainAcg" ajaxload="ajax/main/ajax-main-acg.html"></div>-->
@@ -287,6 +292,6 @@
 </footer>
 <?php if(get_option('site_chat_switcher')) echo '<script src="'.get_option('site_chat').'"></script>'; ?>
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/banner.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(0); ?>/js/banner.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/cursor.js"></script>-->
 </body></html>

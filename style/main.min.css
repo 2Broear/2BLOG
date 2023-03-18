@@ -125,7 +125,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 .banner:hover span#banner-prev,.banner:hover span#banner-next{margin:0}
 #banner-prev{left:0;margin-left:-25px;background-position: -228px -100px!important;}
 #banner-next{right:0;margin-right:-25px;background-position: -183px -100px!important;}
-#banner-prev,#banner-next{display:block;/*background:url('https://img.2broear.com/css_sprites.png') no-repeat;*/opacity:0.3;filter:alpha(opacity=30);width:25px;height:50px;position:absolute;top:42%;z-index:99;transition:margin .3s ease}
+#banner-prev,#banner-next{display:block;background:url('https://img.2broear.com/images/css_sprites.png') no-repeat;opacity:0.3;filter:alpha(opacity=30);width:25px;height:50px;position:absolute;top:42%;z-index:99;transition:margin .3s ease}
 #banner-prev:hover,#banner-next:hover{opacity:0.6;filter:alpha(opacity=60)}
 .special-display{width:100%;height:auto;margin-top:15px;position:relative;display:block}
 .special-display ul{width:auto;height:100%;box-sizing:border-box;flex-flow:row nowrap;justify-content:space-between;list-style-type:none;padding:0;margin:0;overflow:hidden;border-radius:var(--radius);position:relative;/*background-color:var(--preset-f);box-shadow:rgba(0,0,0,0.12) -20px 20px 20px;*/}
@@ -423,6 +423,7 @@ i.media:before{content:"\e917"}
 .close-btn-trans{transform:rotate(360deg);-webkit-transform:rotate(360deg);-o-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg)}
 .windowmask{background:rgba(0,0,0,0.5);width:100%;height:100%;position:fixed;z-index:99996;top:0;left:0;display:none;z-index:99998}
 @media screen and (max-width:960px){.weBlog-Description .weBlog-Description-inside-content span small{text-align:center}
+#acg_window-content-inside_left-tInfo,
 #acg_window-content-inside_left-txt,#middle-poster-content div li:last-child,.Wanted-list,#tech_pic,.acg_window-content li.acg_window-content-inside_right{display:none}
 .banner .banner-inside ul{max-height: 150px;}
 .banner .banner-inside{margin-bottom: 15px;}

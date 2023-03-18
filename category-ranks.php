@@ -261,7 +261,7 @@
                 ranks.appendChild(fragment_ranks);
                 ranked.appendChild(fragment_ranked);
                 // fine re-call with outside of loop
-                loadlazy(".ranks .ranking img", 0);
+                loadlazy(".ranks .ranking img");
             })
         </script>
 <?php

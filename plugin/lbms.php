@@ -662,12 +662,12 @@
         },
         forArr=(arr,exe)=>{
             if(arr!=null && arr!=undefined)
-            for(let i=0;i<arr.length;i++){
+            for(let i=0,arrLen=arr.length;i<arrLen;i++){
                 exe!=undefined ? exe(i) : false;
             }
         },
         replaceAll = function(repStr,fromArr,toArr){
-            for(let i=0;i<fromArr.length;i++){
+            for(let i=0,fromLen=fromArr.length;i<fromLen;i++){
                 repStr = repStr.split(fromArr[i]).join(toArr[i])
             };
             return repStr
@@ -827,7 +827,7 @@
                 inputs.onchange = function(){
                     var that = this,
                         fileArr = [];
-                    for(let i=0;i<this.files.length;i++){
+                    for(let i=0,fileLen=this.files.length;i<fileLen;i++){
                         fileArr.push(this.files[i])
                     };
                     console.log(fileArr);  //alert("checking file..")
@@ -1441,7 +1441,7 @@ if (currentUser) {
                         this.setAttribute("disabled","true");
                         this.parentNode.appendChild(loadbar);
                         if(flupFile[0]){  //flupFile 始终存在，但 length 为 0
-                            for(let i=0;i<flupFile.length;i++){  //循环每个flupFile再执行 logSaving（循环执行）
+                            for(let i=0,fileLen=flupFile.length;i<fileLen;i++){  //循环每个flupFile再执行 logSaving（循环执行）
                                 let file = flupFile[i],
                                     text = flupText[i];
                                 if(file.files.length) {
@@ -1565,7 +1565,7 @@ if (currentUser) {
             const options = log.querySelectorAll(".option select"),
                   flupText = log.querySelectorAll(".flup input[type=text]");
             // if(flupText[0]){
-            //     for(let i=0;i<flupText.length;i++){
+            //     for(let i=0,flupLen=flupText.length;i<flupLen;i++){
             //         console.log(flupText[i])
             //         flupText[i].onclick=function(){
             //             console.log(this)
@@ -1573,7 +1573,7 @@ if (currentUser) {
             //     }
             // };
             if(options[0]){
-                for(let i=0;i<options.length;i++){
+                for(let i=0,opsLen=options.length;i<opsLen;i++){
                     let eachOpts = options[i],
                         optsId = eachOpts.id,
                         dataInput = eachOpts.parentNode.querySelector("input[type=text]"),
@@ -1586,7 +1586,7 @@ if (currentUser) {
                         this.value!=this.getAttribute("selected") ? this.classList.add("changed") : this.classList.remove("changed");
                     };
                     if(selList){
-                        for(let j=0;j<selList.length;j++){
+                        for(let j=0,listLen=selList.length;j<listLen;j++){
                             // eachOpts.innerHTML += `<option value="${selList[j]}">${selList[j]}</option>`;
                             if(selList[j]==eachOpts.getAttribute("selected")){
                                 eachOpts.innerHTML += `<option value="${selList[j]}" selected="selected">${selList[j]}</option>`;
@@ -1768,7 +1768,7 @@ if (currentUser) {
                             rs = Math.random().toString().substr(2,3);  //随机生成 3 位数避免 colspan 匹配到重复项;
                         if(sarea.value.split("\n")[1]){
                             let lc = sarea.value.split("\n")[1].match(/\|/g);
-                            for(let i=0;i<lc.length-1;i++){
+                            for(let i=0,lcLen=lc.length-1;i<lcLen;i++){
                                 nl+="| "+i+"-"+rs;  // newline.replace(/\|\|/g,"|")
                             };
                             sarea.value += nl+" |\n";
@@ -1883,7 +1883,7 @@ if (currentUser) {
                         this.parentNode.classList.remove("ondrag")
                         var res = e.dataTransfer,
                             dragArr = [];  //每次 drag 重置当前 dragArr
-                        for(let i=0;i<res.items.length;i++){
+                        for(let i=0,resLen=res.items.length;i<resLen;i++){
                             let dragFiles = res.files[i];
                             dragArr.push(dragFiles)
                         };

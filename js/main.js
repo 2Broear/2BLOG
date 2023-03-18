@@ -9,29 +9,26 @@
         console.log(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2BROEAR %c Release https://github.com/2Broear/2BLOG %c `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
     })();
     
+    
     //https://www.jb51.net/article/216692.htm
-    function loadlazy(imgs,offset=0){
+    function loadlazy(imgs,offset=0, scroll=true){
         const imglist = document.querySelectorAll(imgs),
+            //   raf_available = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame,
               loadimg = "https://img.2broear.com/images/loading_3_color_tp.png";
         if(imglist.length<=0) return;
         var timer_throttle = null,
-            // loadArray = [],
             loadArray = [...imglist],
             time_delay = 500,
             msgObject = Object.create(null),
-            autoLoad = function(imgLoadArr, initDomArr=false){
-                // let tempArray = initDomArr ? initDomArr : imgLoadArr;  //判断加载数组类型，默认加载 loadArray
+            autoLoad = function(imgLoadArr){
                 for(let i=0,arrLen=imgLoadArr.length;i<arrLen;i++){
                     let eachimg = imgLoadArr[i],
                         datasrc = eachimg.dataset.src;
-                    // if(!datasrc) return;
                     eachimg.src = loadimg; //pre-holder(datasrc only)
                     new Promise(function(resolve,reject){
-                        // initDomArr ? imgLoadArr.push(eachimg) : false;  //判断首次加载（载入 lazyload 元素数组）
                         resolve(imgLoadArr);
                     }).then(function(res){
                         if(eachimg.getBoundingClientRect().top>=window.innerHeight) return;
-                        // 创建一个临时图片，这个图片在内存中不会到页面上去（修复 firefox 图片未设置加载被移出加载数组）https://segmentfault.com/a/1190000041517694
                         // var temp = new Image();
                         // temp.src = datasrc;  //请求一次
                         // temp.onload = function(){
@@ -46,21 +43,21 @@
                                     time_delay = 1500;  //increase delay (decrease request)
                                     console.log(time_delay);
                                 }
-                            }
+                            };
                             // handle loading-err images eachimg.onerror=()=>this.src=loadimg;
                             eachimg.onerror=function(){
                                 res.splice(res.indexOf(this), 1);  // 移除错误图片数组
                                 this.removeAttribute('src');
                                 this.removeAttribute('data-src'); // disable loadimg
                                 this.setAttribute('alt','图片请求出现问题'); // this.removeAttribute('src');
-                            }
+                            };
                         // }
                     }).catch(function(err){
                         console.log(err);
                     });
                 }
             },
-            scrollLoad = function(){
+            /*scrollLoad = function(){
                 return (function(){
                     if(timer_throttle==null){
                         timer_throttle = setTimeout(function(){
@@ -70,21 +67,30 @@
                                 return;
                             };
                             autoLoad(loadArray);
-                            // console.log('throttling..',loadArray);
+                            console.log('throttling..',loadArray);
                             timer_throttle = null;  //消除定时器
                         }, time_delay, loadArray); //重新传入array（单次）循环
                     }
                 })();
+            },*/
+            scrollLoad = closure_throttle((e)=>{
+                if(loadArray.length<=0){
+                    console.log(Object.assign(msgObject, {status:'lazyload done', type:'call'}));
+                    window.removeEventListener('scroll', scrollForRemove, true);
+                    return;
+                };
+                autoLoad(loadArray);
+            }, time_delay),
+            scrollForRemove = function(event){
+                let e = event || window.event,
+                    t = e.target || e.srcElement;
+                if(t!==document) return;
+                raf_available ? window.requestAnimationFrame(scrollLoad) : scrollLoad();
             };
         autoLoad(loadArray);
-        // requestAnimationFrame
-        if(raf_available){
-            window.addEventListener('scroll', function(){
-                window.requestAnimationFrame(scrollLoad);
-            }, true);
-        }else{
-            window.addEventListener('scroll', scrollLoad, true);
-        }
+        // requestAnimationFrame support
+        if(!scroll) return;
+        window.addEventListener('scroll', scrollForRemove, true);
     }
     
     function setupVideoPoster(second,quality,base64){
@@ -117,6 +123,7 @@
                     canvas.width = width;
                     canvas.height = height;
                     canvas.getContext('2d').drawImage(vdo, 0, 0, width, height); // 绘制 canvas
+                    vdo.pause();
                     vdo.removeAttribute('preload');  // 阻止临时创建的视频在 network 中持续加载耗费网络资源
                     if(base64){
                         resolve([video, canvas.toDataURL('image/jpeg', quality)]);
@@ -277,7 +284,7 @@
         str = str.substr(0,str.lastIndexOf("&"));
         return decode ? decodeURI(str) : str;
     }
-    function send_ajax_request(method,url,data,callback){
+    function send_ajax_request(method,url,data,callback=false,catchback=false){
         return new Promise(function(resolve,reject){
             var ajax = new XMLHttpRequest();
             if(method=='get'){  // GET请求
@@ -298,6 +305,7 @@
             data ? ajax.send(data) : ajax.send();
         }).catch(function(err){
             console.log(err);
+            catchback ? catchback(err) : false; //catchback.apply(this, err);
         });
     }
     
@@ -356,7 +364,6 @@
           progress_ball = site_tool.querySelector(".inside-functions"),
           progress_wave = progress_ball.querySelector(".pagePer i span"),
           progress_bar = document.querySelector(".top-bar-tips span#doc-progress-bar"),
-          slide_menu = document.querySelector('.slider-menu'),
           menu_mask = document.querySelector('.windowmask'),
     	  class_up = 'barSetUp',
           class_down = 'barSetDown',
@@ -487,7 +494,7 @@
     // console.log(aindex_once_data());
     if(aindex){
         aindex.querySelector('p').onclick=(e)=>{
-            if(aindex.classList.contains('fold')){
+            if(aindex.classList && aindex.classList.contains('fold')){
                 aindex.classList.remove('fold');
                 setCookie('article_index', 1);  // disable fold
             }else{
@@ -501,153 +508,171 @@
         scroll_record = 0,
         scroll_delay = 200,
         scroll_func = function(){
-            let exec_scroll=function(){
-                var scrollTop = document.documentElement.scrollTop || document.body.scrollTop,
-                    clientHeight = document.body.clientHeight,
-                    windowHeight = window.innerHeight,
-        		    page_percent = Math.round((((scrollTop)/(clientHeight-windowHeight))*100)),
-                    fixedSidebar = sidebar_window ? header.offsetHeight+(sidebar_ads ? sidebar_ads.offsetHeight+marginOffset : 0) : false,
-                    headbar_oh = headbar.querySelector('p#np') ? 100 : headbar.offsetHeight,
-                    footerDetect = sidebar_window ? footer.querySelector(".footer-detector").offsetTop-(headbar_oh+sidebar_float.offsetHeight) : false;
-                // https://stackoverflow.com/questions/31223341/detecting-scroll-direction
-                scroll_foward = window.pageYOffset;  // Get scroll Value
-                if(scroll_record-scroll_foward<0){
-                    // scroll_delay = scrollTop>=header.offsetHeight+window.innerHeight ? 1000 : 0;  //设置滚动节流延迟
-                    //下滚超过导航栏执行
-                    if(scrollTop>=header.offsetHeight){
-                        class_switch(header,class_up,class_down);  //nav bar
-                        class_switch(headbar,"slide-down",null);
-                        class_switch(progress_ball,"pull-up",null);
-                        if(npost && share && scrollTop>=share.offsetTop){
-                            class_switch(headbar,"next-post",null);  //show next post
-                        }
-                    }else{
-                        class_switch(headbar,null,class_up);
-                    }
-                    //超过侧边栏执行
-                    if(sidebar_window){
-                        if(scrollTop>=fixedSidebar-5){
-                            class_switch(sidebar_float,class_fixed,null);
-                            sidebar_float.style.width = sidebar_float.parentElement.offsetWidth+"px";
-                        }
-                        //到达底部检测栏执行
-                        if(scrollTop>=footerDetect){
-                            sidebar_float.style.height = sidebar_float.offsetHeight+"px";
-                            class_switch(sidebar_float,"window-all-get-stoped",null);
-                            sidebar_float.parentElement.style.height = "100%";  //fix google ads load bug
-                        }
-                        sidebar_float.style.transform = "";  //始终执行
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop,
+                clientHeight = document.body.clientHeight,
+                windowHeight = window.innerHeight,
+    		    page_percent = Math.round((((scrollTop)/(clientHeight-windowHeight))*100)),
+                fixedSidebar = sidebar_window ? header.offsetHeight+(sidebar_ads ? sidebar_ads.offsetHeight+marginOffset : 0) : false,
+                headbar_oh = headbar.querySelector('p#np') ? 100 : headbar.offsetHeight,
+                footerDetect = sidebar_window ? footer.querySelector(".footer-detector").offsetTop-(headbar_oh+sidebar_float.offsetHeight) : false;
+            // https://stackoverflow.com/questions/31223341/detecting-scroll-direction
+            scroll_foward = window.pageYOffset;  // Get scroll Value
+            if(scroll_record-scroll_foward<0){
+                // scroll_delay = scrollTop>=header.offsetHeight+window.innerHeight ? 1000 : 0;  //设置滚动节流延迟
+                //下滚超过导航栏执行
+                if(scrollTop>=header.offsetHeight){
+                    class_switch(header,class_up,class_down);  //nav bar
+                    class_switch(headbar,"slide-down",null);
+                    class_switch(progress_ball,"pull-up",null);
+                    if(npost && share && scrollTop>=share.offsetTop){
+                        class_switch(headbar,"next-post",null);  //show next post
                     }
                 }else{
-                    //上滚至导航栏执行
-                    if(scrollTop<=header.offsetHeight){
-                        // class_switch(header,class_down,class_up,true);
-                        class_switch(headbar,null,"slide-down");
-                        class_switch(progress_ball,null,"pull-up");
-                    }
-                    class_switch(header,class_down,class_up);
-                    // else{
-                    //     class_switch(header,class_down,class_up);
-                    // }
-                    if(npost && share && scrollTop<=share.offsetTop){
-                        class_switch(headbar,null,"next-post");  //show next post
-                    }
-                    if(sidebar_window){
-                        //上滑至侧边栏执行
-                        if(scrollTop<fixedSidebar){
-                            class_switch(sidebar_float,null,class_fixed);
-                            sidebar_float.style.width = "";
-                        }
-                        //上滑小于侧边栏，大于底部栏+导航高度之间执行
-                        sidebar_float.style.transform =  scrollTop>fixedSidebar && scrollTop<footerDetect-header.offsetHeight ? `translateY(${header.offsetHeight}px)` : "";
-                        //上滑过底部栏后执行
-                        if(scrollTop<footerDetect){
-                            sidebar_float.style.height = "";
-                            class_switch(sidebar_float,null,"window-all-get-stoped");
-                        }
-                    }
+                    class_switch(headbar,null,class_up);
                 }
-                scroll_record = scroll_foward;  // Update scrolled value
-                // Progress ball
-                progress_ball.querySelector(".pagePer strong").setAttribute('data-percent',page_percent);
-                //.dataset.percent = page_percent; // dataset can not Update attr immediately https://qa.1r1g.com/sf/ask/1962219521/
-                // progress_ball.querySelector(".pagePer strong").innerText = page_percent+"%";
-                progress_ball.querySelector(".pagePer i").style.transform = `translateY(${100-page_percent}%)`;
-                progress_wave.classList.add("active");
-                progress_bar.classList.add("active");
-                progress_bar.style.opacity = 1;
-                progress_bar.style.transform = `translateX(${page_percent-100}%)`;
-                if(scrollTop==0 || scrollTop+windowHeight>=clientHeight){  // 到达顶部（底部）执行
-                    progress_wave.classList.remove("active");
-                    progress_bar.classList.remove("active");
-                }
-                // TOC extends
-                if(!aindex) return;
-                const aindex_li = aindex.querySelectorAll('li'),
-                      aindex_cl = function(el,cl){
-                          for(let i=0,elLen=el.length;i<elLen;i++){
-                              el[i].classList.remove(cl);
-                          }
-                      };
-                new Promise(function(resolve,reject){
-                    let aindexOffset = aindex_fn();
-                    aindexOffset.length>=1 ? resolve(aindexOffset) : reject(aindexOffset);  // always update(do not call aindex_once_data)
-                }).then(function(res){
-                    if(scrollTop<=res[0] || scrollTop>=share.offsetTop){ //-100
-                        aindex_cl(aindex_li,'current')
-                    }else{
-                        res.forEach(function(offset,index){
-                            if(scrollTop>=offset){
-                                aindex_cl(aindex_li,'current');  // location.href='title-'+index;
-                                document.querySelector('#t'+index).classList.add('current');
-                            }
-                        });
+                //超过侧边栏执行
+                if(sidebar_window){
+                    if(scrollTop>=fixedSidebar-5){
+                        class_switch(sidebar_float,class_fixed,null);
+                        sidebar_float.style.width = sidebar_float.parentElement.offsetWidth+"px";
                     }
-                }).catch(function(err){
-                    console.log(err);
-                });
-            }
-            if(sidebar_window){
-                exec_scroll();
-                return;
+                    //到达底部检测栏执行
+                    if(scrollTop>=footerDetect){
+                        sidebar_float.style.height = sidebar_float.offsetHeight+"px";
+                        class_switch(sidebar_float,"window-all-get-stoped",null);
+                        sidebar_float.parentElement.style.height = "100%";  //fix google ads load bug
+                    }
+                    sidebar_float.style.transform = "";  //始终执行
+                }
             }else{
-                return (function(){
-                    if(scroll_throttler==null){
-                        scroll_throttler = setTimeout(function(){
-                            exec_scroll();
-                            scroll_throttler = null;  //消除定时器
-                        }, scroll_delay);
+                //上滚至导航栏执行
+                if(scrollTop<=header.offsetHeight){
+                    // class_switch(header,class_down,class_up,true);
+                    class_switch(headbar,null,"slide-down");
+                    class_switch(progress_ball,null,"pull-up");
+                }
+                class_switch(header,class_down,class_up);
+                // else{
+                //     class_switch(header,class_down,class_up);
+                // }
+                if(npost && share && scrollTop<=share.offsetTop){
+                    class_switch(headbar,null,"next-post");  //show next post
+                }
+                if(sidebar_window){
+                    //上滑至侧边栏执行
+                    if(scrollTop<fixedSidebar){
+                        class_switch(sidebar_float,null,class_fixed);
+                        sidebar_float.style.width = "";
                     }
-                })();
+                    //上滑小于侧边栏，大于底部栏+导航高度之间执行
+                    sidebar_float.style.transform =  scrollTop>fixedSidebar && scrollTop<footerDetect-header.offsetHeight ? `translateY(${header.offsetHeight}px)` : "";
+                    //上滑过底部栏后执行
+                    if(scrollTop<footerDetect){
+                        sidebar_float.style.height = "";
+                        class_switch(sidebar_float,null,"window-all-get-stoped");
+                    }
+                }
             }
+            scroll_record = scroll_foward;  // Update scrolled value
+            // Progress ball
+            progress_ball.querySelector(".pagePer strong").setAttribute('data-percent',page_percent);
+            //.dataset.percent = page_percent; // dataset can not Update attr immediately https://qa.1r1g.com/sf/ask/1962219521/
+            // progress_ball.querySelector(".pagePer strong").innerText = page_percent+"%";
+            progress_ball.querySelector(".pagePer i").style.transform = `translateY(${100-page_percent}%)`;
+            progress_wave.classList.add("active");
+            progress_bar.classList.add("active");
+            progress_bar.style.opacity = 1;
+            progress_bar.style.transform = `translateX(${page_percent-100}%)`;
+            if(scrollTop==0 || scrollTop+windowHeight>=clientHeight){  // 到达顶部（底部）执行
+                progress_wave.classList.remove("active");
+                progress_bar.classList.remove("active");
+            }
+            // TOC extends
+            if(!aindex) return;
+            const aindex_li = aindex.querySelectorAll('li'),
+                  aindex_cl = function(el,cl){
+                      for(let i=0,elLen=el.length;i<elLen;i++){
+                          el[i].classList.remove(cl);
+                      }
+                  };
+            new Promise(function(resolve,reject){
+                let aindexOffset = aindex_fn();
+                aindexOffset.length>=1 ? resolve(aindexOffset) : reject(aindexOffset);  // always update(do not call aindex_once_data)
+            }).then(function(res){
+                if(scrollTop<=res[0] || scrollTop>=share.offsetTop){ //-100
+                    aindex_cl(aindex_li,'current')
+                }else{
+                    res.forEach(function(offset,index){
+                        if(scrollTop>=offset){
+                            aindex_cl(aindex_li,'current');  // location.href='title-'+index;
+                            document.querySelector('#t'+index).classList.add('current');
+                        }
+                    });
+                }
+            }).catch(function(err){
+                console.log(err);
+            });
         };
-    // requestAnimationFrame
-    if(raf_available){
-        window.addEventListener('scroll', function(){
-            window.requestAnimationFrame(scroll_func);
-        }, true);
-    }else{
-        window.addEventListener('scroll', scroll_func, true);
-    }
+        
     // document.addEventListener('DOMMouseScroll', scroll_func, false);  //DOMMouseScroll  // scroll 滚动+拖拽滚动条代替 wheel 滚动函数
+    if(sidebar_window){
+        window.addEventListener('scroll', scroll_func, true);
+    }else{
+        const scrollLoad = closure_throttle((e)=>{
+                  scroll_func();
+              }, scroll_delay),
+              scrollForRemove = function(event){
+                  let e = event || window.event,
+                      t = e.target || e.srcElement;
+                  if(t!==document) return;
+                  // requestAnimationFrame support
+                  raf_available ? window.requestAnimationFrame(scrollLoad) : scrollLoad();
+              };
+        window.addEventListener('scroll', scrollForRemove, true);
+        // return (function(){
+        //     if(scroll_throttler==null){
+        //         scroll_throttler = setTimeout(function(){
+        //             exec_scroll();
+        //             scroll_throttler = null;  //消除定时器
+        //         }, scroll_delay);
+        //     }
+        // })();
+    }
     
     // moblie ux
-    document.querySelector('.mobile-vision .m-search').onclick=function(){
-        let cls = 'searching',
-            search = this.parentNode;
-        search.classList.contains(cls) ? search.classList.remove(cls) : search.classList.add(cls);
-    }
-    document.querySelector('.mobile-vision .m-menu').onclick = slide_menu.querySelector('.slider-close').onclick = menu_mask.onmouseup = menu_mask.ontouchend = function(e){  //menu_mask.onmouseup
-        e.cancelable ? e.preventDefault() : e.stopPropagation();  // prevent penetrate a link
-        const cls = 'show';
-        if(slide_menu.classList.contains(cls)){
-            document.body.style.overflowY = '';
-            slide_menu.classList.remove(cls)
-            menu_mask.style.display = '';
-        }else{
-            document.body.style.overflowY = 'hidden';
-            slide_menu.classList.add(cls)
-            menu_mask.style.display = 'block';
+    const mobile_nav = document.querySelector('header .nav-wrap'),
+          slide_menu = mobile_nav.querySelector('.slider-menu'),
+          mobile_func = function(e){
+              e.cancelable ? e.preventDefault() : e.stopPropagation();  // prevent penetrate a link
+              const cls = 'show';
+              if(slide_menu.classList && slide_menu.classList.contains(cls)){
+                  document.body.style.overflowY = '';
+                  slide_menu.classList.remove(cls)
+                  menu_mask.style.display = '';
+              }else{
+                  document.body.style.overflowY = 'hidden';
+                  slide_menu.classList.add(cls)
+                  menu_mask.style.display = 'block';
+              }
+          };
+    menu_mask.onmouseup = menu_mask.ontouchend=(e)=>mobile_func(e);
+    // bind click event
+    mobile_nav.onclick=(e)=>{
+        e = e || window.event;
+        let t = e.target || e.srcElement;
+        if(!t) return;
+        while(t!=mobile_nav){
+            if(t.classList && t.classList.contains("m-search")){
+                let cls = 'searching',
+                    search = t.parentNode;
+                search.classList && search.classList.contains(cls) ? search.classList.remove(cls) : search.classList.add(cls);
+                break;
+            }else if(t.classList && ["m-menu", "slider-close"].some(c => t.classList.contains(c))){ //t.classList.contains("m-menu", "slider-close") || t.classList.contains("slider-close")
+                mobile_func(e);
+                break;
+            }else{
+                t = t.parentNode;
+            }
         }
     }
     

@@ -17,6 +17,7 @@
             <div class="body-main">
                 <ul>
                     <?php
+                        global $cat;  //变量提升
                         $use_icon = get_option('site_icon_switcher');
                         $site_icon = $use_icon ? '<i class="icom icon-more"></i>' : '';
                         $choosen = is_home() ? 'choosen' : '';
@@ -49,6 +50,7 @@
                                 echo '</li>';
                             }
                         }
+                        unset($cat);
                     ?>
                 </ul>
             </div>
@@ -59,4 +61,4 @@
     </div>
 </div>
 <div class="windowmask"></div>
-<div class="windowmask-s2"></div>
+<!--<div class="windowmask-s2"></div>-->

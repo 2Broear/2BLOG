@@ -15,6 +15,14 @@
         .win-top em.digital_mask{
             background-size: 2px 2px!important;
         }
+        .bg h1{
+            background: none;
+        }
+        .bg h1 a{
+            background: linear-gradient(var(--theme-color), var(--theme-color)) no-repeat left 97%/0 30%;
+            background-size: 100% 30%;
+            color: inherit;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -26,7 +34,7 @@
                 </nav>
             </header>
             <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
-            <h1><?php the_title() ?><span></span> </h1>
+            <h1><a href="javascript:;" rel="nofollow"><?php the_title(); ?></a><!--<span></span>--></h1>
         </div>
         <div class="content-all-windows">
             <div class="win-nav-content">

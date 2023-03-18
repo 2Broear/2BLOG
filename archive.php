@@ -27,7 +27,6 @@
             $date_yea = $dates['year'];
             $date_mon = array_key_exists('monthnum',$dates) ? '<b> '.$dates['monthnum'].' </b>月' : '';
             echo '<b>'.$date_yea.'</b> 年'.$date_mon.'中有<b> '.$wp_query->found_posts.' </b>篇记录';
-            unset($wp_query);
             $string = 'Archives of '.$date_yea;
         ?>
     </h5>
@@ -39,6 +38,7 @@
                 <?php 
                     // print_r($wp_query->posts[0]->ID);
                     the_posts_with_styles($string);
+                    // unset($wp_query);
                 ?>
 			</div>
 		</div>

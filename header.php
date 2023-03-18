@@ -196,4 +196,5 @@
       </div>
     </div>
   </div>
+  <?php require_once(TEMPLATEPATH. '/foot.php'); ?>
 </div>

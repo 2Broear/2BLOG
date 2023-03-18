@@ -27,6 +27,35 @@
             /*will-change: initial;*/
             /*transform: none;*/
         }
+        
+        @keyframes blinker {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .15;
+            }
+            80% {
+                opacity: .85;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        .friends-boxes .deals.exchanged .inbox:hover > .inbox-headside{
+            filter: saturate(5) blur(15px) opacity(.15);
+            animation: blinker 3s infinite linear;
+            -webkit-animation: blinker 3s infinite linear;
+        }
+        .friends-boxes .deals.exchanged .inbox .inbox-aside{
+            display: flex;
+            flex-flow: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .friends-boxes .deals.exchanged .inbox .inbox-aside span.lowside-title h4{
+            margin: 0;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

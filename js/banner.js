@@ -110,6 +110,7 @@
   for(let i=0,listLen=lists.length;i<listLen;i++){
       let dot = document.createElement("span");
       dot.setAttribute("index",i);
+      dot.classList.add("dot");
       dot.innerHTML = "<em></em>";
       dots.appendChild(dot);
   };
@@ -191,7 +192,7 @@
               e.preventDefault();  //阻止默认行为（拖拽）
               var _this = this,  //prevTrans = preUnit==="%" ? -num*preWidth : num*_getComputedStyle(_this,"transform",4),  //通过单位判断上次偏移量记录;
                   maxWidth = parseInt(preWidth/20);
-              _this.style.cssText += `transition-duration:0ms`;
+              _this.style.cssText += `transition-duration:0ms;cursor:grabbing;`;
               startPoint = parseInt(e.clientX);
               _this.onmousemove=function(e){
                   e.preventDefault();  //阻止默认行为（拖拽）
@@ -203,7 +204,7 @@
                       //按下后松开/离开
                       _this.onmouseup = _this.onmouseleave = function(){
                           releaseEvent(_this,startPoint,moveRoute,moveOffset,maxWidth);
-                          _this.style.cssText += `transition-duration:${transitionDelay}ms`;
+                          _this.style.cssText += `transition-duration:${transitionDelay}ms;cursor:grab;`;
                       }
                   }
               };
@@ -211,7 +212,7 @@
                   clearEvent(_this)  // 始终执行松开后销毁
                   //必须移动后再触发事件（bug：原地点击触发）
                   if(startPoint!=moveRoute){
-                      _this.style.cssText += `transition-duration:${transitionDelay}ms`;
+                      _this.style.cssText += `transition-duration:${transitionDelay}ms;cursor:grab;`;
                   }
               };
           }
@@ -221,7 +222,7 @@
           banner.ontouchstart=function(e){
               var _this = this,  //prevTrans = preUnit==="%" ? -num*preWidth : num*_getComputedStyle(_this,"transform",4),  //通过单位判断上次偏移量记录;
                   maxWidth = parseInt(preWidth/20);
-              _this.style.cssText += `transition-duration:0ms`;
+              _this.style.cssText += `transition-duration:0ms;cursor:grabbing;`;
               startPoint = parseInt(e.touches[0].clientX);
               _this.ontouchmove=function(e){
                   moveRoute = parseInt(e.touches[0].clientX);  //移动路径
@@ -231,7 +232,7 @@
                       dragLogic(_this,startPoint,moveRoute,moveOffset,preUnit);  //拖拽及方向无缝逻辑
                       _this.ontouchend=function(){
                           releaseEvent(_this,startPoint,moveRoute,moveOffset,maxWidth);
-                          _this.style.cssText += `transition-duration:${transitionDelay}ms`;
+                          _this.style.cssText += `transition-duration:${transitionDelay}ms;cursor:grab;`;
                       }
                   }
               }
@@ -241,7 +242,7 @@
           preUnit!=="%" ? preWidth = banner.offsetWidth : preWidth;  //每次点击更新当前每次移动距离（仅限px）
           if(num==0){
               num = lists.length-1;
-              banner.style.cssText += `transition-duration:0ms`;  //取消过渡
+              banner.style.cssText += `transition-duration:0ms;`;  //取消过渡
               banner.style.transform = `translate(${-num*preWidth+preUnit},0${preUnit})`;  //瞬移
           }
           num--;  //执行判断后递减，再执行 banner 位移
@@ -253,7 +254,7 @@
           preUnit!=="%" ? preWidth = banner.offsetWidth : preWidth;  //每次点击更新当前每次移动距离（仅限px）
           if(num==lists.length-1){
               num = 0;
-              banner.style.cssText += `transition-duration:0ms`;  //瞬移
+              banner.style.cssText += `transition-duration:0ms;`;  //瞬移
               banner.style.transform = `translate(0${preUnit},0${preUnit})`;
           }
           num++;  //执行判断后递增，再执行 banner 位移
@@ -299,33 +300,33 @@
     
     //swipe mouseevent
     mouseEvent();
-     //swipe touchevent..
+    //swipe touchevent..
     touchEvent();
-    
-    prev.onclick=function(){
-        timer ? clearInterval(timer) : false;
-        backward();  //点击事件可使用 debounce 防抖，拖拽释放事件直接执行动画函数
+    // bind click event
+    box.onclick=(e)=>{
+        e = e || window.event;
+        let t = e.target || e.srcElement;
+        if(!t) return;
+        while(t!=box){
+            if(t.id=="banner-prev"){
+                timer ? clearInterval(timer) : false;
+                backward();  //点击事件可使用 debounce 防抖，拖拽释放事件直接执行动画函数
+                break;
+            }else if(t.id=="banner-next"){
+                timer ? clearInterval(timer) : false;
+                forward();  //moving(toNext,debounceDelay);//debounce(toNext,debounce
+                break;
+            }else if(t.nodeName.toLowerCase()=="em"){
+                preUnit!=="%" ? preWidth = banner.offsetWidth : preWidth;  //每次点击更新当前每次移动距离（仅限px）
+                let index = t.parentNode.getAttribute("index");  //获取到的是 String 类型
+                num = Number(index);  //赋值当前 index 到全局 num
+                animate(banner,-num*preWidth,preUnit,function(){
+                    flag=true;  //banner 位移动画结束后重新启用运动
+                });
+                statu(circle,num);  //激活当前状态点
+                break;
+            }else{
+                t = t.parentNode;
+            }
+        }
     }
-    next.onclick=function(){
-        timer ? clearInterval(timer) : false;
-        forward();  //moving(toNext,debounceDelay);//debounce(toNext,debounceDelay)();  //需在时间外定义后触发引用
-    }
-    
-  dots.onclick=(e)=>{
-      preUnit!=="%" ? preWidth = banner.offsetWidth : preWidth;  //每次点击更新当前每次移动距离（仅限px）
-      var e = e || window.event,
-          t = e.target || e.srcElement;
-      while(t!=dots){
-          if(t.nodeName.toLowerCase()=="span"){
-              let index = t.getAttribute("index");  //获取到的是 String 类型
-              num = Number(index);  //赋值当前 index 到全局 num
-              animate(banner,-num*preWidth,preUnit,function(){
-                  flag=true;  //banner 位移动画结束后重新启用运动
-              });
-              statu(circle,num);  //激活当前状态点
-              break;
-          }else{
-              t = t.parentNode;
-          }
-      }
-  }
