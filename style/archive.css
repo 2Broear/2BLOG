@@ -38,7 +38,10 @@ body.dark .archive-tree ul li a{
 .archive-tree h2{
     /*opacity: .75;*/
     margin: 35px auto 5px;
+    border-bottom: 1px dashed rgb(100 100 100 / 30%);
+    padding-bottom: 5px;
 }
+h2.disabled sup,
 h2 sup.disabled{
     pointer-events: none;
     opacity: .32;
@@ -174,9 +177,9 @@ body.dark .cs-tree span:before{
 
 .stats{
     font-weight: bold;
-    border-top: 1px dashed rgb(100 100 100 / 30%);
-    /*padding: 5px 15px;*/
-    padding: 10px 2px;
+    /*border-top: 1px dashed rgb(100 100 100 / 30%);*/
+    /*padding: 10px 2px;*/
+    padding: 0 2px 10px 2px;
     /* margin-top: 5px; */
     /*border-radius: 50px;*/
     font-size: 12px;
@@ -300,7 +303,7 @@ body.dark .cs_tips li{
     /*border-color: currentColor!important;*/
 }
 body.dark .cs_tips li:first-child{
-    border-color: var(--preset-6);
+    border-color: var(--preset-3a);
 }
 .cs_tips li{
     width: 10px;

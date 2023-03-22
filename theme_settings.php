@@ -513,8 +513,12 @@
         register_setting( 'baw-settings-group', 'site_animated_counting_switcher' );
         
         register_setting( 'baw-settings-group', 'site_async_switcher' );
-            register_setting( 'baw-settings-group', 'site_async_archive' );
+            register_setting( 'baw-settings-group', 'site_async_includes' );
             register_setting( 'baw-settings-group', 'site_async_acg' );
+            register_setting( 'baw-settings-group', 'site_async_weblog' );
+            register_setting( 'baw-settings-group', 'site_async_archive' );
+        register_setting( 'baw-settings-group', 'site_async_archive_stats' );
+        register_setting( 'baw-settings-group', 'site_async_archive_contributions' );
         
         register_setting( 'baw-settings-group', 'site_countdown_switcher' );
             register_setting( 'baw-settings-group', 'site_countdown_date' );
@@ -691,6 +695,10 @@
                 }
             }
         }
+    }
+    function check_statu($opt){
+        if(!$opt) return;
+        return get_option($opt) ? "checked" : "closed";
     }
     function add_options_submenu() {
         $theme_color = get_option('site_theme','#eb6844');
@@ -921,7 +929,7 @@
                                 <td>
                                     <?php
                                         $opt = 'site_url_slash_sw';
-                                        get_option($opt) ? $status="checked" : $status="closed";
+                                        $status = check_statu($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">开启后移除站点 Permalink 超链接中的尾部"/"，URL地址中的“/”需在<a href="/wp-admin/options-permalink.php" target="_blank"> 固定链接 </a>中设置</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">去除 URL 斜杠</b></label>';
                                     ?>
                                 </td>
@@ -934,7 +942,7 @@
                             <!--    <td>-->
                                     <?php
                                         // $opt = 'site_sync_level_sw';
-                                        // get_option($opt) ? $status="checked" : $status="closed";
+                                        // $status = check_statu($opt);
                                         // echo '<label for="'.$opt.'"><p class="description" id="">实验性功能默认关闭，开启可使用自定义关键字“slash”将分类别名重写为“/” 以达到隐藏当前层级，将子级作为同级输出的目的（启用后将自动同步分类层级到页面。启用此项请保证分类中不存在“/”别名分类，如访问错误请检查错误页面父级别名是否为“/”并修改</b></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">同步页面层级</b></label>';
                                     ?>
                             <!--    </td>-->
@@ -977,15 +985,7 @@
                                         $pre_array = explode(',',trim($value));  // NO "," Array
                                         $pre_array_count = count($pre_array);
                                         foreach ($options as $option){
-                                            // $checking = strpos($value, $option)!==false ? 'checked' : '';
-                                            $each_matched = false;
-                                            for($i=0;$i<$pre_array_count;$i++){
-                                                $arr = trim($pre_array[$i]);  // NO WhiteSpace
-                                                if($arr){
-                                                    $arr==$option ? $each_matched=true : false;
-                                                }
-                                            };
-                                            $checking = $each_matched ? 'checked' : '';
+                                            $checking = in_array($option, $pre_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
                                         }
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
@@ -1044,15 +1044,7 @@
                                             $pre_array_count = count($pre_array);
                                             foreach ($arrobj as $array){
                                                 $slug = $array['slug'];
-                                                // $checking = strpos($value, $slug)!==false ? 'checked' : '';
-                                                $each_matched = false;
-                                                for($i=0;$i<$pre_array_count;$i++){
-                                                    $arr = trim($pre_array[$i]);  // NO WhiteSpace
-                                                    if($arr){
-                                                        $arr==$slug ? $each_matched=true : false;
-                                                    }
-                                                };
-                                                $checking = $each_matched ? 'checked' : '';
+                                                $checking = in_array($slug, $pre_array) ? 'checked' : '';
                                                 echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$array['name'].'</label>';
                                             }
                                             echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
@@ -1061,24 +1053,6 @@
                                         }
                                     ?>
                                 </td>
-                                <!--<td>-->
-                                    <?php
-                                        // $opt = 'site_indexes_includes';  //unique str
-                                        // $value = get_option($opt);
-                                        // $options = array(get_cat_by_template('notes','name'), get_cat_by_template('news','name'));
-                                        // $preset = $options[0].',';
-                                        // if(!$value){
-                                        //     update_option($opt, $preset);
-                                        //     $value = $preset;
-                                        // }
-                                        // echo '<p class="description" id="site_search_includes_label">指定文章页是否包含目录分类，使用逗号“ , ”分隔（默认 notes 类型，可选 news 类型</p><div class="checkbox">';
-                                        // foreach ($options as $option){
-                                        //     $checking = strpos($value, $option)!==false ? 'checked' : '';
-                                        //     echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
-                                        // }
-                                        // echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
-                                    ?>
-                                <!--</td>-->
                             </tr>
                     <?php 
                         // }
@@ -1088,7 +1062,7 @@
                         <td>
                             <?php
                                 $opt = 'site_breadcrumb_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">页面层级导航</b></label>';
                             ?>
                         </td>
@@ -1098,7 +1072,7 @@
                         <td>
                             <?php
                                 $opt = 'site_inform_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">部分页面头部公告显示内容（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">页面头部公告</b></label>';
                             ?>
                         </td>
@@ -1126,7 +1100,7 @@
                         <td>
                             <?php
                                 $opt = 'site_metanav_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_metanav_switcher_label">多元化展示分类导航名称、描述及背景</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">多元分类导航</b></label>';
                             ?>
                         </td>
@@ -1155,15 +1129,7 @@
                                         $pre_array_count = count($pre_array);
                                         foreach ($cats_seclevel as $option){
                                             $slug = $option->slug;
-                                            // $checking = strpos($value, $slug)!==false ? 'checked' : '';
-                                            $each_matched = false;
-                                            for($i=0;$i<$pre_array_count;$i++){
-                                                $arr = trim($pre_array[$i]);  // NO WhiteSpace
-                                                if($arr){
-                                                    $arr==$slug ? $each_matched=true : false;
-                                                }
-                                            };
-                                            $checking = $each_matched ? 'checked' : '';
+                                            $checking = in_array($slug, $pre_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$option->name.'</label>';
                                         }
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
@@ -1238,15 +1204,7 @@
                                 $pre_array_count = count($pre_array);
                                 foreach ($options as $option){
                                     $slug = $option->slug;
-                                    // $checking = strpos($value, $slug)!==false ? 'checked' : '';
-                                    $each_matched = false;
-                                    for($i=0;$i<$pre_array_count;$i++){
-                                        $arr = trim($pre_array[$i]);  // NO WhiteSpace
-                                        if($arr){
-                                            $arr==$slug ? $each_matched=true : false;
-                                        }
-                                    };
-                                    $checking = $each_matched ? 'checked' : '';
+                                    $checking = in_array($slug, $pre_array) ? 'checked' : '';
                                     echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$option->name.'</label>';
                                 }
                                 echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '" placeholder="默认所有分类" /></div>';;
@@ -1286,19 +1244,11 @@
                                             update_option($opt, $preset_str);
                                             $value = $preset_str;
                                         }
-                                        echo '<p class="description" id="site_map_includes_label">指定 sitemap 生成内容，使用逗号“ , ”分隔（默认 post（文章）tag（标签）category（分类/<del>即 page（页面）</del>）</p><div class="checkbox">';
+                                        echo '<p class="description" id="site_map_includes_label">指定 sitemap 生成内容，使用逗号“ , ”分隔（默认 post（文章）tag（标签）category（分类/<del>即 page 页面</del></p><div class="checkbox">';
                                         $pre_array = explode(',',trim($value));  // NO "," Array
                                         $pre_array_count = count($pre_array);
                                         foreach ($options as $option){
-                                            // $checking = strpos($value, $option)!==false ? 'checked' : '';
-                                            $each_matched = false;
-                                            for($i=0;$i<$pre_array_count;$i++){
-                                                $arr = trim($pre_array[$i]);  // NO WhiteSpace
-                                                if($arr){
-                                                    $arr==$option ? $each_matched=true : false;
-                                                }
-                                            };
-                                            $checking = $each_matched ? 'checked' : '';
+                                            $checking = in_array($option, $pre_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
                                         }
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
@@ -1362,7 +1312,7 @@
                         <td>
                             <?php
                                 $opt = 'site_lazyload_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">开启文章/部分页面图片使用懒加载（默认关闭 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">图片懒加载</b></label>';
                             ?>
                         </td>
@@ -1372,7 +1322,7 @@
                         <td>
                             <?php
                                 $opt = 'site_cdn_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_cdn_switcher_label">开启后可自定义cdn加速域名（需要配置 nginx 指定域名 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">CDN加速域名</b></label>';
                             ?>
                         </td>
@@ -1408,14 +1358,7 @@
                                         foreach ($options as $option){
                                             $slug = is_object($option)&&$option->slug ? strtolower($option->slug) : strtolower($option);  
                                             $name = is_object($option)&&$option->name ? $option->name : $option;
-                                            $each_matched = false;
-                                            for($i=0;$i<$pre_array_count;$i++){
-                                                $arr = trim($pre_array[$i]);  // NO WhiteSpace
-                                                if($arr){
-                                                    $arr==$slug ? $each_matched=true : false;
-                                                }
-                                            };
-                                            $checking = $each_matched ? 'checked' : '';
+                                            $checking = in_array($slug, $pre_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$name.'</label>';
                                         }
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '" placeholder="当前可选开启位置" /></div>';;
@@ -1430,7 +1373,7 @@
                         <td>
                             <?php
                                 $opt = 'site_video_poster_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">开启后自动捕获当前页面所有 未设置 autoplay 属性的视频生成并设置预览海报（仅部分页面启用，默认截取第一帧</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">视频海报生成</b></label>';
                             ?>
                         </td>
@@ -1440,7 +1383,7 @@
                         <td>
                             <?php
                                 $opt = 'site_video_capture_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 function funcStatus($func){
                                     return function_exists($func) ? "<b style='color:green'>$func (已启用)</b>" : "<u style='color:red'>$func (关闭)</u>";
                                 }
@@ -1453,7 +1396,7 @@
                                 <td>
                                     <?php
                                         $opt = 'site_video_capture_gif';
-                                        get_option($opt) ? $status="checked" : $status="closed";
+                                        $status = check_statu($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">开启后上传视频时生成 gif 动图作用于视频海报（开启视频截图捕获后默认自动生成gif预览，此处仅控制 poster 属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">GIF动图</b></label>';
                                     ?>
                                 </td>
@@ -1463,7 +1406,7 @@
                         <td>
                             <?php
                                 $opt = 'site_leancloud_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_leancloud_switcher_label">使用第三方云数据库（Serverless）接管日记、友链、公告等数据内容（需在 leancloud 中新建对应分类 slug 名称的同名CLASS类，必填项与第三方评论 valine 自动同步，开启后可单独控制 BaaS 页面数据开关</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:dodgerblue;" class="btn">LeanCloud</span></label>';
                             ?>
                         </td>
@@ -1602,7 +1545,7 @@
                                 <td>
                                     <?php
                                         $opt = 'site_ajax_comment_switcher';
-                                        get_option($opt) ? $status="checked" : $status="closed";
+                                        $status = check_statu($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">开启后免刷新页面评论（提交评论及回复</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AJAX Comments</b></label>';
                                     ?>
                                 </td>
@@ -1612,7 +1555,7 @@
                                 <td>
                                     <?php
                                         $opt = 'site_ajax_comment_paginate';
-                                        get_option($opt) ? $status="checked" : $status="closed";
+                                        $status = check_statu($opt);
                                         $premise = get_option('site_ajax_comment_switcher');
                                         $tips = !$premise ? '未开启上方 Ajax 评论支持，此选项应在其开启后使用，否则可能导致无法正常评论' : '开启后免刷新加载评论（替代 PREV/NEXT 翻页按钮';
                                         $check = !$premise ? 'disabled' : '';
@@ -1818,7 +1761,7 @@
                         <td>
                             <?php
                                 $opt = 'site_wpmail_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_wpmail_switcher_label">WP自带评论审核提醒邮件，此选项为定制模板邮件（两者均需上方 SMTP 配置测试通过后才能收到邮件提醒，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>评论邮件提醒</b></label>';
                             ?>
                         </td>
@@ -1828,7 +1771,7 @@
                         <td>
                             <?php
                                 $opt = 'site_xmlrpc_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="">防止攻击者绕过 wordpress 登录限制消耗系统资源（禁用后将无法使用 wp 官方APP及相关接口</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Disable XML-RPC</b></label>';
                             ?>
                         </td>
@@ -1838,7 +1781,7 @@
                         <td>
                             <?php
                                 $opt = 'site_imgcrop_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="">一般图片上传裁剪规则可在<a href="/wp-admin/options-media.php" target="_blank"> 媒体 </a>中修改</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">禁用图片裁剪</b></label>';
                             ?>
                         </td>
@@ -1865,7 +1808,7 @@
                         <td>
                             <?php
                                 $opt = 'site_default_postimg_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="">默认当文章存在自定义 thumbnail 特色图片时才显示列表预览图，开启后将始终显示（显示优先级：自定义特色图片>文章内图片>默认图片</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">始终显示预览</b></label>';
                             ?>
                         </td>
@@ -2045,7 +1988,7 @@
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">首页随机标签云（自带主题色，若检测到无标签将默认展示随机动漫图</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:teal;" class="btn">标签云</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">首页随机标签云（自带主题色，若检测到无标签将默认展示随机动漫图</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:cornflowerblue;" class="btn">标签云</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -2060,7 +2003,7 @@
                                         $value = get_option($opt);
                                         $preset = 32;  //默认填充数据
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">TagClouds 最多显示数量（默认显示 32 个</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        echo '<p class="description" id="site_bar_pixiv_label"> 最多显示数量（默认显示 32 个</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -2072,7 +2015,7 @@
                                         $value = get_option($opt);
                                         $preset = 30;  //默认填充数据
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">TagClouds 最大显示字体（默认最大 30px，最小 10px</p><input type="number" min="11" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        echo '<p class="description" id="site_bar_pixiv_label"> 最大显示字体（默认最大 30px，最小 10px</p><input type="number" min="11" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -2080,41 +2023,17 @@
                         // }
                     ?>
                     <tr valign="top">
-                        <th scope="row">关于 - MBIT测试数据</th>
-                        <td>
-                            <?php
-                                $opt = 'site_mbit_array';
-                                $value = get_option($opt);
-                                $preset = 'after/64; before/67; after/69; after/71; before/53;'; 
-                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                echo '<p class="description" id="site_cardnav_array_label">展示在关于页面的MBIT图表数据，使用分号“ ; ”分隔（使用斜杠“ / ”分隔类型和占比，如 before/64; after/67;...</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" value="' . $preset . '"/>';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top" class="child_option">
-                        <th scope="row">MBIT测试结果</th>
-                        <td>
-                            <?php
-                                $opt = 'site_mbit_result_array';
-                                $value = get_option($opt);
-                                $preset = 'infp-a/mediator'; 
-                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                echo '<p class="description" id="site_cardnav_array_label">MBIT测试人格类型，使用斜杠“ / ”分隔（规则同上</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $preset . '"/>';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">归档/漫游影视 - 数字动画</th>
+                        <th scope="row">归档/漫游影视 - 计数动画</th>
                         <td>
                             <?php
                                 $opt = 'site_animated_counting_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">启用位于页面背景上的数字自动递增到目标值动画（目前支持归档及漫游影视页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:slateblue" class="btn">计数动画</span></label>';
+                                $status = check_statu($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">启用位于页面背景上的数字自动递增到目标值动画（目前支持归档及漫游影视页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:teal" class="btn">计数动画</span></label>';
                             ?>
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">归档/漫游影视 - 异步加载</th>
+                        <th scope="row"> 异步加载 - 页面设置 </th>
                         <td>
                             <?php
                                 $opt = 'site_async_switcher';
@@ -2127,27 +2046,36 @@
                                 }else{
                                     $value ? $status="checked" : $status="closed";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">部分页面使用 ajax 异步加载数据（默认开启，目前支持归档及漫游影视页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:purple;" class="btn">异步加载</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">部分页面使用 ajax 异步加载数据（默认开启</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:slateblue;" class="btn">异步加载</span></label>';
                             ?>
                         </td>
                     </tr>
-                    <?php
-                        // if(get_option('site_async_switcher')){
-                    ?>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags = get_option('site_async_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 归档加载数量</th>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $async = get_option('site_async_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 开启页面（多选）</th>
                                 <td>
                                     <?php
-                                        $opt = 'site_async_archive';
+                                        $opt = 'site_async_includes';  //unique str
                                         $value = get_option($opt);
-                                        $preset = 99;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">归档默认/手动加载数量（默认 99</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        $async_opts = array(get_cat_by_template('archive'), get_cat_by_template('acg'),  get_cat_by_template('weblog'));
+                                        if(!$value){
+                                            $preset_str = $async_opts[0]->slug.','.$async_opts[1]->slug.',';
+                                            update_option($opt, $preset_str);
+                                            $value = $preset_str;
+                                        }
+                                        echo '<p class="description" id="">指定开启 ajax 异步页面，使用逗号“ , ”分隔（默认开启漫游影视、归档页面</p><div class="checkbox">';
+                                        $pre_array = explode(',',trim($value));  // NO "," Array
+                                        $pre_array_count = count($pre_array);
+                                        foreach ($async_opts as $option){
+                                            $opts_slug = $option->slug;
+                                            $checking = in_array($opts_slug, $pre_array) ? 'checked' : '';
+                                            echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags; ?>">
-                                <th scope="row">— 漫游影视加载数量</th>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
+                                <th scope="row">— 漫游影视 加载数量</th>
                                 <td>
                                     <?php
                                         $opt = 'site_async_acg';
@@ -2158,9 +2086,75 @@
                                     ?>
                                 </td>
                             </tr>
-                    <?php
-                        // }
-                    ?>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
+                                <th scope="row">— 日志记 加载数量</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_async_weblog';
+                                        $value = get_option($opt);
+                                        $preset = 15;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">日志·记默认/手动加载数量（默认 15</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
+                                <th scope="row">— 归档 加载数量</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_async_archive';
+                                        $value = get_option($opt);
+                                        $preset = 99;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">归档默认/手动加载数量（默认 99</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <!-- Archives options -->
+                    <tr valign="top">
+                        <th scope="row">归档 - 分类统计</th>
+                        <td>
+                            <?php
+                                $opt = 'site_async_archive_stats';
+                                $status = check_statu($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示当年已发布文章分类统计（默认开启，可能存在的性能问题</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Categorize Posts</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">归档 - 报表范围</th>
+                        <td>
+                            <?php
+                                $opt = 'site_async_archive_contributions';
+                                $status = check_statu($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示<b>去年+今年</b>当月热度报表（默认显示当年/月份</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Fully Contributions</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">关于 - MBIT测试数据</th>
+                        <td>
+                            <?php
+                                $opt = 'site_mbit_array';
+                                $value = get_option($opt);
+                                $preset = 'after/64; before/67; after/69; after/71; before/53;'; 
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                echo '<p class="description" id="site_cardnav_array_label">展示在关于页面的MBIT图表数据，使用分号“ ; ”分隔（使用斜杠“ / ”分隔类型和占比，如 before/64; after/67;...</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" value="' . $preset . '"/>';
+                            ?>
+                        </td>
+                    </tr>
+                        <tr valign="top" class="child_option">
+                            <th scope="row">MBIT测试结果</th>
+                            <td>
+                                <?php
+                                    $opt = 'site_mbit_result_array';
+                                    $value = get_option($opt);
+                                    $preset = 'infp-a/mediator'; 
+                                    if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                    echo '<p class="description" id="site_cardnav_array_label">MBIT测试人格类型，使用斜杠“ / ”分隔（规则同上</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $preset . '"/>';
+                                ?>
+                            </td>
+                        </tr>
                     <tr valign="top" class="">
                         <th scope="row">漫游影视 - 背景视频</th>
                         <td>
@@ -2219,7 +2213,7 @@
                         <td>
                             <?php
                                 $opt = 'site_ads_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_ads_switcher_label">谷歌广告（开启后需填写初始化代码</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color: orangered;" class="btn">Google Ads</span></label>';
                             ?>
                         </td>
@@ -2301,7 +2295,7 @@
                         <td>
                             <?php
                                 $opt = 'site_countdown_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="">文章列表及内页侧边栏倒计时挂件（如需在其他页面自定义定时器，只需在调用 the_countdown_widget() 函数时新增下列三个子选项作为参数即可</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'"><span style="color:inherit;" class="btn">CountDown</span></b></label>';
                             ?>
                         </td>
@@ -2387,14 +2381,7 @@
                                         foreach ($article_opts as $option){
                                             $opts_key = $option->name;
                                             $opts_val = $option->term_id;
-                                            $each_matched = false;
-                                            for($i=0;$i<$pre_array_count;$i++){
-                                                $arr = trim($pre_array[$i]);  // NO WhiteSpace
-                                                if($arr){
-                                                    $arr==$opts_val ? $each_matched=true : false;
-                                                }
-                                            };
-                                            $checking = $each_matched ? 'checked' : '';
+                                            $checking = in_array($opts_val, $pre_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$opts_key.'" type="checkbox" value="'.$opts_val.'" '.$checking.' /><label for="'.$opt.'_'.$opts_key.'">'.strtoupper($opts_key).'</label>';
                                         }
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';
@@ -2413,11 +2400,6 @@
                         <th scope="row">底部近期文章</th>
                         <td>
                             <?php
-                                // $opt = 'site_bottom_recent_cid';
-                                // $value = get_option($opt);
-                                // echo '<label for="'.$opt.'"><p class="description" id="site_bottom_recent_cid_label">页面底部最左侧资讯栏目分类</p><select name="'.$opt.'" id="'.$opt.'"><option value="">请选择</option>';
-                                //     category_options($value);
-                                // echo '</select><label>';
                                 $opt = 'site_bottom_recent_cat';
                                 $value = get_option($opt);
                                 if(!$value){
@@ -2431,14 +2413,7 @@
                                 foreach ($article_opts as $option){
                                     $opts_key = $option->name;
                                     $opts_val = $option->term_id;
-                                    $each_matched = false;
-                                    for($i=0;$i<$pre_array_count;$i++){
-                                        $arr = trim($pre_array[$i]);  // NO WhiteSpace
-                                        if($arr){
-                                            $arr==$opts_val ? $each_matched=true : false;
-                                        }
-                                    };
-                                    $checking = $each_matched ? 'checked' : '';
+                                    $checking = in_array($opts_val, $pre_array) ? 'checked' : '';
                                     echo '<input id="'.$opt.'_'.$opts_key.'" type="checkbox" value="'.$opts_val.'" '.$checking.' /><label for="'.$opt.'_'.$opts_key.'">'.strtoupper($opts_key).'</label>';
                                 }
                                 echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';
@@ -2512,7 +2487,7 @@
                         <td>
                             <?php
                                 $opt = 'site_beian_switcher';
-                                get_option($opt) ? $status="checked" : $status="closed";
+                                $status = check_statu($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_beian_switcher_label">网站备案信息（国外服务器请无视此选项</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">网站备案号</b></label>';
                             ?>
                         </td>
@@ -2538,9 +2513,9 @@
                             <?php
                                 $opt = 'site_bottom_nav';  //unique str
                                 $value = get_option($opt);
-                                $options = array('privacy','archives');
+                                $options = array(get_cat_by_template('archive'), get_cat_by_template('privacy')); //array('privacy','archives');
                                 if(!$value){
-                                    $preset_str = implode(',', $options).',';
+                                    $preset_str = $options[0]->slug.','.$options[1]->slug.',';
                                     update_option($opt, $preset_str );
                                     $value = $preset_str;
                                 }
@@ -2548,16 +2523,9 @@
                                 $pre_array = explode(',',trim($value));  // NO "," Array
                                 $pre_array_count = count($pre_array);
                                 foreach ($options as $option){
-                                    // $checking = strpos($value, $option)!==false ? 'checked' : '';
-                                    $each_matched = false;
-                                    for($i=0;$i<$pre_array_count;$i++){
-                                        $arr = trim($pre_array[$i]);  // NO WhiteSpace
-                                        if($arr){
-                                            $arr==$option ? $each_matched=true : false;
-                                        }
-                                    };
-                                    $checking = $each_matched ? 'checked' : '';
-                                    echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
+                                    $opts_slug = $option->slug;
+                                    $checking = in_array($opts_slug, $pre_array) ? 'checked' : '';
+                                    echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
                                 }
                                 echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
                             ?>
@@ -2600,7 +2568,7 @@
                                 <td>
                                     <?php
                                         $opt = 'site_foreverblog_wormhole';
-                                        get_option($opt) ? $status="checked" : $status="closed";
+                                        $status = check_statu($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_wormhole_label">随机访问十年之约友链博客（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">穿梭虫洞</b></label>';
                                     ?>
                                 </td>

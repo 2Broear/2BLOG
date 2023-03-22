@@ -163,6 +163,7 @@
         })();
     }
     
+    
     //https://www.jianshu.com/p/1dc6909e9456
     function raf_animate(cb,time){
         let myReq;    // 记录requestAnimationFrame的返回值
@@ -275,6 +276,15 @@
     		script.onload = script.onreadystatechange = null;
     	};
     }
+    
+    // function getParByCls(curEl, parCls){
+    //     while(!curEl || !curEl.classList || !curEl.classList.contains(parCls)){
+    //         if(!curEl) break;  //return undefined
+    //         curEl = curEl.parentNode; //parentElement
+    //     };
+    //     return curEl;
+    // };
+    
     
     function parse_ajax_parameter(data,decode){
         let str = "";

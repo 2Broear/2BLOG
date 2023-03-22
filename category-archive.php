@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/archive.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(0); ?>/style/archive.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
         .archive-tree ul:hover{
@@ -120,14 +120,18 @@
                         echo '></span>';
                         unset($color_light, $color_middle, $color_heavy, $color_more, $archive_daily);
                     }
-                    for($i=1;$i<13;$i++){
-                        $m = days_in_month($i-$tomon, $lastYear);
-                        for($j=1;$j<=$m;$j++){
-                            $days = $j<10 ? $i.'0'.$j : $i.$j;
-                            $the_day = $days==$curday ? 'today' : ($days>$curday ? 'dayto' : false);
-                            $compare_date = $lastYear.'年'.$i.'月'.$j.'日';
-                            if($lastYear<$curYear && $i>$tomon){// && $j>=$otday月份大于等于当前月份，天数大于今天
-                                archive_contributions_output($days,$the_day,$compare_date,$lastYear);
+                    $async_stats_sw = get_option('site_async_archive_stats');
+                    $async_fully_sw = get_option('site_async_archive_contributions');
+                    if($async_fully_sw){
+                        for($i=1;$i<13;$i++){
+                            $m = days_in_month($i-$tomon, $lastYear);
+                            for($j=1;$j<=$m;$j++){
+                                $days = $j<10 ? $i.'0'.$j : $i.$j;
+                                $the_day = $days==$curday ? 'today' : ($days>$curday ? 'dayto' : false);
+                                $compare_date = $lastYear.'年'.$i.'月'.$j.'日';
+                                if($lastYear<$curYear && $i>$tomon){// && $j>=$otday月份大于等于当前月份，天数大于今天
+                                    archive_contributions_output($days,$the_day,$compare_date,$lastYear);
+                                }
                             }
                         }
                     }
@@ -166,44 +170,48 @@
                 $news_temp = get_cat_by_template('news');
                 $note_temp = get_cat_by_template('notes');
                 $blog_temp = get_cat_by_template('weblog');
+                $news_temp_id = $news_temp->term_id;
+                $note_temp_id = $note_temp->term_id;
+                $blog_temp_id = $blog_temp->term_id;
+                $news_temp_name = $news_temp->name;
+                $note_temp_name = $note_temp->name;
+                $blog_temp_name = $blog_temp->name;
                 $async_sw = get_option('site_async_switcher');
-                $async_loads = $async_sw ? get_option("site_async_archive", 99) : 999;
+                $archive_temp_slug = get_cat_by_template('archive','slug');
+                $async_array = explode(',', get_option('site_async_includes'));
+                $use_async = $async_sw ? in_array($archive_temp_slug, $async_array) : false;
+                $async_loads = $async_sw&&$use_async ? get_option("site_async_archive", 99) : 999;
+                $output_stats = "";
                 // https://wordpress.stackexchange.com/questions/46136/archive-by-year
                 // get years that have posts
                 global $wpdb;
                 $years = $wpdb->get_results( "SELECT YEAR(post_date) AS year FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' GROUP BY year DESC" );
                 // get posts for each year
-                foreach ( $years as $year ) {
+                foreach ($years as $year) {
                     $cur_year = $year->year;
                     $cur_posts = get_wpdb_yearly_pids($cur_year, $async_loads, 0);
                     $posts_count = count($cur_posts);
-                    // $news_records = 0;
-                    $all_posts = get_wpdb_yearly_pids($cur_year, 9999, 0);
-                    $all_count = count($all_posts);
-                    $news_array = array();
-                    $note_array = array();
-                    $blog_array = array();
-                    // detect if post in category
-                    for($i=0;$i<$all_count;$i++){
-                        $pid = $all_posts[$i]->ID;
-                        // in_category($news_temp->term_id, $pid) ? $news_records++ : false;
-                        in_category($news_temp->term_id, $pid) ? array_push($news_array, $pid) : false; //get_post($pid)->post_title
-                        in_category($note_temp->term_id, $pid) ? array_push($note_array, $pid) : false;
-                        in_category($blog_temp->term_id, $pid) ? array_push($blog_array, $pid) : false;
-                    };
-                    $news_count = count($news_array);
-                    $note_count = count($note_array);
-                    $blog_count = count($blog_array);
-                    $rest_count = $all_count-($news_count+$note_count+$blog_count);
-                    $output_stats = '<span class="stat_'.$cur_year.' stats">📈📉统计：<b>'.$news_temp->name.'</b> '.$news_count.'篇、 <b>'.$note_temp->name.'</b> '.$note_count.'篇、 <b>'.$blog_temp->name.'</b> '.$blog_count.'篇、 <b>其他类型</b> '.$rest_count.'篇。</span>';
-                    $head_emoji = $curYear==$cur_year ? ' 🚀 ' : ' 📁 ';
+                    if($async_stats_sw){
+                        // Categorize Posts (Performance Issues!!!)
+                        $news_count = $note_count = $blog_count = 0; //$news_array = $note_array = $blog_array = [];
+                        $all_pids = get_wpdb_yearly_pids($cur_year, 999, 0);  //list 999+posts
+                        $pids_count = count($all_pids);
+                        for($i=0;$i<$pids_count;$i++){
+                            $pst = $all_pids[$i];
+                            if(in_category($news_temp_id, $pst)) $news_count++; //array_push($news_array, $pst);
+                            if(in_category($note_temp_id, $pst)) $note_count++; //array_push($note_array, $pst);
+                            if(in_category($blog_temp_id, $pst)) $blog_count++; //array_push($blog_array, $pst);
+                        };
+                        // $news_count = count($news_array);
+                        // $note_count = count($note_array);
+                        // $blog_count = count($blog_array);
+                        $rest_count = $pids_count - ($news_count+$note_count+$blog_count);
+                        $output_stats = '<span class="stat_'.$cur_year.' stats">📈📉统计：<b>'.$news_temp_name.'</b> '.$news_count.'篇、 <b>'.$note_temp_name.'</b> '.$note_count.'篇、 <b>'.$blog_temp_name.'</b> '.$blog_count.'篇、 <b>其他类型</b> '.$rest_count.'篇。</span>';
+                    }
                     // SAME COMPARE AS $found $limit
-                    if($posts_count>=$async_loads){
-                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup class="call" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$all_count.'" data-nonce="'.wp_create_nonce($cur_year."_archive_ajax_nonce").'">加载更多</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
-                    }else{
-                        // $head_emoji = '📂';
-                        echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$head_emoji.'<sup class="call disabled" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$all_count.'" data-nonce="disabled">已全部载入</sup></h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
-                    };
+                    $load_btns = $posts_count>=$async_loads ? '<sup class="call" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="'.wp_create_nonce($cur_year."_posts_ajax_nonce").'">加载更多</sup>' : '<sup class="call disabled" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="disabled">已全部载入</sup>';
+                    $load_icon = $curYear==$cur_year ? ' 🚀 ' : ' 📁 ';
+                    echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$load_icon.$load_btns.'</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
                     // print_r($cur_posts[0]->ID);
                     for($i=0;$i<$posts_count;$i++){
                         $each_posts = $cur_posts[$i];
@@ -244,57 +252,24 @@
     if(get_option('site_animated_counting_switcher')){
 ?>
         <script>
-            dataDancing(document.querySelectorAll(".win-top .counter div"), "h1", 200, 25);
+            const counters = document.querySelectorAll(".win-top .counter div");
+            dataDancing(counters, "h1", 200, 25);
         </script>
 <?php
     }
-    if($async_sw){
+    if($async_sw&&$use_async){
 ?>
         <script>
             const archive_tree = document.querySelector(".archive-tree"),
                   preset_loads = <?php echo $async_loads; ?>;
             bindEventClick(archive_tree, 'call', function(t){
-                let years = t.dataset.year,
-                    loads = parseInt(t.dataset.load),
-                    counts = parseInt(t.dataset.counts),
-                    clicks = parseInt(t.dataset.click);
-                if(loads>=counts){
-                    t.classList.add("disabled");
-                    t.innerText="已加载全部";
-                    return;
-                }
-                clicks++;
-                t.innerText="加载中..";
-                t.classList.add('loading','disabled');
-                t.setAttribute('data-click', clicks);
-                send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", parse_ajax_parameter({
-                        "action": "updateArchive",
-                        "key": years, 
-                        "limit": preset_loads,
-                        "offset": preset_loads*clicks,
-                        _ajax_nonce: t.dataset.nonce,
-                    }, true), function(res){
-                        var posts_array = JSON.parse(res),
-                            load_box = archive_tree.querySelector('.call_'+years),
-                            last_offset = load_box.lastChild.offsetTop,  // same as preset, define last_load before insert
-                            posts_count = posts_array.length,
-                            loads_count = loads+posts_count;
-                        t.innerText = "加载更多";
-                        t.classList.remove('disabled','loading');
-                        loads_count>=counts ? t.setAttribute('data-load', counts) :  t.setAttribute('data-load', loads_count);  // update current loaded(limit judge)
-                        for(let i=0;i<posts_count;i++){
-                            let each_post = posts_array[i];
-                            load_box.innerHTML += `<li>${each_post.date}<a class="link${each_post.mark}" href="${each_post.link}" target="_blank">${each_post.title}<sup>${each_post.cat}</sup></a></li>`;
-                        }
-                        // compare updated load counts
-                        if(parseInt(t.dataset.load)>=counts){
-                            t.innerText="已加载全部";
-                            t.classList.add("disabled");
-                        }
-                        // scrollTo lastest
-                        load_box.scrollTo(0, last_offset);
-                    }
-                );
+                load_ajax_posts(t, 'archive', preset_loads, function(each_post, load_box, last_offset){
+                    let each_temp = document.createElement("LI");
+                    each_temp.innerHTML = `${each_post.date}<a class="link${each_post.mark}" href="${each_post.link}" target="_blank">${each_post.title}<sup>${each_post.cat}</sup></a>`;
+                    load_box.appendChild(each_temp);
+                    // scrollTo lastest (archive only)
+                    load_box.scrollTo(0, last_offset);
+                });
             });
         </script>
 <?php

@@ -11,7 +11,7 @@
         <p id="supports-txt"><?php $blogdesc=get_bloginfo('description');echo '<q>'.get_option('site_support',$blogdesc).'</q><b>'.$blogdesc.'</b>';// ?></p>
       </div>
       <div id="footer-contact-way">
-        <ul class="footer-ul">
+        <ol class="footer-ul">
           <div class="footer-contact-left">
             <div class="footer-left flexboxes">
               <ul class="footer-recommend">
@@ -103,13 +103,13 @@
                                         }
                                         t.classList.add('reply');
                                         t.innerText = "取消回复";
-                                        t.parentElement.parentElement.appendChild(adopt_node);  // append adopt node
+                                        getParByCls(t, 'vh').appendChild(adopt_node); //t.parentElement.parentElement.appendChild(adopt_node);  // append adopt node //.querySelector('.vcontent')
                                         adopt_area.focus();
                                     }else{
                                         t.classList.remove('reply');
                                         t.innerText = "回复";
                                         vcomments.insertBefore(adopt_node, vcomments.querySelector(".vinfo"));  // reverse adopt
-                                        adopt_area.focus();
+                                        // adopt_area.focus();
                                     }
                                 });
                             }
@@ -302,7 +302,7 @@
               </ul>
             </div>
           </div>
-        </ul>
+        </ol>
       </div>
       <div id="footer-copyright">
         <span class="what_says">
@@ -403,10 +403,8 @@
     ?>
                 //https://qa.1r1g.com/sf/ask/177903701/
                 var getAverageRGB = function(imgEl){var blockSize=5,defaultRGB={r:255,g:255,b:255},canvas=document.createElement('canvas'),context=canvas.getContext&&canvas.getContext('2d'),data,width,height,i=-4,length,rgb={r:0,g:0,b:0},count=0;if(!context){return defaultRGB}height=canvas.height=imgEl.naturalHeight||imgEl.offsetHeight||imgEl.height;width=canvas.width=imgEl.naturalWidth||imgEl.offsetWidth||imgEl.width;context.drawImage(imgEl,0,0);try{data=context.getImageData(0,0,width,height)}catch(e){return defaultRGB}length=data.data.length;while((i+=blockSize*4)<length){++count;rgb.r+=data.data[i];rgb.g+=data.data[i+1];rgb.b+=data.data[i+2]}rgb.r=~~(rgb.r/count);rgb.g=~~(rgb.g/count);rgb.b=~~(rgb.b/count);return rgb},
-                    setupBlurColor = function(imgEl,tarEl,tarCls="inbox"){
-                        if(!tarEl.classList.contains(tarCls)){
-                            return;
-                        }
+                    setupBlurColor = function(imgEl, tarEl){
+                        if(!tarEl) return;
                         let rgb = getAverageRGB(imgEl),
                             rgba = rgb['r']+' '+rgb['g']+' '+rgb['b']+' / 50%';
                         tarEl.setAttribute('style','background:rgb('+rgba+')');
@@ -414,58 +412,49 @@
     <?php
             }
     ?>
-            const bodyimg = document.querySelectorAll("body img"),
-                  loadimg = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png",
+            const lazyimg = document.querySelectorAll("body img[data-src]"),
+                  loading = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png",
                   raf_available = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-            if(bodyimg[0]){
+            if(lazyimg[0]){
                 var timer_throttle = null,
                     time_delay = 500,
-                    // loadArray = [], 
-                    loadArray = [...bodyimg],
+                    loadArray = [...lazyimg], //[], 
                     msgObject = Object.create(null),
                     autoLoad = function(imgLoadArr, initial=false){ //initDomArr=false
                         // let tempArray = initDomArr ? initDomArr : imgLoadArr;  //判断加载数组类型，默认加载 loadArray
                         for(let i=0,arrLen=imgLoadArr.length;i<arrLen;i++){
                             let eachimg = imgLoadArr[i],
                                 datasrc = eachimg.dataset.src;
-                            // if(!datasrc) return;
-                            initial ? eachimg.src = loadimg : false; //pre-holder (datasrc only)
+                            initial ? eachimg.src = loading : false; //pre-holder (datasrc only)
                             new Promise(function(resolve,reject){
                                 // initDomArr ? imgLoadArr.push(eachimg) : false;  //判断首次加载（载入 lazyload 元素数组）
                                 resolve(imgLoadArr);
                             }).then(function(res){
                                 if(eachimg.getBoundingClientRect().top>=window.innerHeight) return;
-                                // if(eachimg.getBoundingClientRect().top<window.innerHeight){
-                                // 创建一个临时图片，这个图片在内存中不会到页面上去（修复 firefox 图片未设置加载被移出加载数组）https://segmentfault.com/a/1190000041517694
-                                // var temp = new Image();
-                                // temp.src = datasrc;  //请求一次
-                                // temp.onload = function(){
                                     eachimg.src = datasrc; // 即时更新 eachimg（设置后即可监听图片 onload 事件）
                                     // 使用 onload 事件替代定时器或Promise，判断已设置真实 src 的图片加载完成后再执行后续操作
                                     eachimg.onload=function(){
                                         if(this.getAttribute('src')===datasrc){
                                             res.splice(res.indexOf(this), 1);  // 移除已加载图片数组（已赋值真实 src 情况下）
                                         }else{
-                                            this.removeAttribute('data-src'); // disable loadimg
+                                            this.removeAttribute('data-src'); // disable loading
                                             this.src = datasrc;  // this.src will auto-fix [http://] prefix
                                             time_delay = 1500;  //increase delay (decrease request)
                                             console.log(time_delay);
                                         }
                                         <?php
                                             if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
-                                                echo 'setupBlurColor(this, this.parentNode.parentNode);';
+                                                echo 'setupBlurColor(this, getParByCls(this, "inbox"));'; //this.parentNode.parentNode
                                             }
                                         ?>
                                     }
-                                    // handle loading-err images eachimg.onerror=()=>this.src=loadimg;
+                                    // handle loading-err images eachimg.onerror=()=>this.src=loading;
                                     eachimg.onerror=function(){
                                         res.splice(res.indexOf(this), 1);  // 移除错误图片数组
                                         this.removeAttribute('src');
-                                        this.removeAttribute('data-src'); // disable loadimg
+                                        this.removeAttribute('data-src'); // disable loading
                                         !this.dataset.err ? this.setAttribute('alt','图片请求出现问题') : false;
                                     }
-                                // }
-                                // }
                             }).catch(function(err){
                                 console.log(err);
                             });
@@ -478,7 +467,7 @@
                             return;
                         };
                         autoLoad(loadArray);
-                        console.log('throttling..',loadArray);
+                        // console.log('throttling..',loadArray);
                     }, time_delay),
                     scrollForRemove = function(event){
                         let e = event || window.event,
@@ -490,6 +479,71 @@
                 // requestAnimationFrame support
                 window.addEventListener('scroll', scrollForRemove, true);
             }
+    <?php
+        };
+        if(get_option('site_async_switcher')){
+    ?>
+            function load_ajax_posts(t,type,limit,callback,action=false){
+                const type_acg = "acg",
+                      dis_class = "disabled",
+                      load_done = type===type_acg ? "" : "已加载全部";
+                let tp = t.parentNode,
+                    cid = parseInt(t.dataset.cid),
+                    years = t.dataset.year, // add-opts for archive
+                    loads = parseInt(t.dataset.load),
+                    counts = parseInt(t.dataset.counts),
+                    clicks = parseInt(t.dataset.click);
+                if(loads>=counts){
+                    t.innerText = load_done;
+                    t.classList.add(dis_class);  // add-opts for weblog
+                    tp.classList.add(dis_class);
+                    return;
+                }
+                clicks++;
+                t.innerText = type===type_acg ? "Loading.." : "加载中..";
+                t.classList.add('loading','disabled');  // add-opts archive (disable click)
+                t.setAttribute('data-click', clicks);
+                send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", 
+                    parse_ajax_parameter({
+                        "action": action||"ajaxGetPosts",
+                        "key": years, // add-opts for archive
+                        "cid": cid||0,
+                        "limit": limit,
+                        "offset": limit*clicks,
+                        "type": type,
+                        _ajax_nonce: t.dataset.nonce,
+                    }, true), function(res){
+                        t.innerText = type===type_acg ? "" : "加载更多";
+                        t.classList.remove('disabled','loading');  // add-opts for archive (enable click)
+                        var posts_array = JSON.parse(res),
+                            posts_count = posts_array.length,
+                            loads_count = loads+posts_count,
+                            load_box = tp, //t.parentNode.parentNode.parentNode;
+                            last_offset = 0;
+                        switch(type){
+                            case type_acg:
+                                load_box = getParByCls(t, 'loadbox');
+                                break;
+                            case 'archive':
+                                load_box = archive_tree.querySelector('.call_'+years);
+                                last_offset = load_box.lastChild.offsetTop;
+                                break;
+                            default:
+                                break;
+                        }
+                        loads_count>=counts ? t.setAttribute('data-load', counts) :  t.setAttribute('data-load', loads_count);  // update current loaded(limit judge)
+                        for(let i=0;i<posts_count;i++){
+                            let each_post = posts_array[i];
+                            callback ? callback(each_post, load_box, last_offset) : false;
+                        };
+                        // compare updated load counts
+                        if(parseInt(t.dataset.load)>=counts){
+                            tp.classList.add(dis_class);
+                            t.innerText = load_done;
+                        }
+                    }
+                );
+            };
     <?php
         }
     ?>

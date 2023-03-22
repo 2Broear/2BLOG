@@ -8,7 +8,7 @@
 <meta name="msapplication-TileColor" content="<?php echo $theme_color; ?>" />
 <meta name="msapplication-TileImage" content="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico" />
 <link rel="shortcut icon" href="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico"/>
-<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(0); ?>/style/universal.min.css?v=<?php echo get_theme_info('Version'); ?>" />
+<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/universal.min.css?v=<?php echo get_theme_info('Version'); ?>" />
 <style>
     body.dark #supports em.warmhole{
         background: url(<?php custom_cdn_src('img'); ?>/images/wormhole_2_tp.gif) no-repeat center center /cover!important;
@@ -23,24 +23,6 @@
     <?php
         }
     ?>
-    .container,
-    #comment_txt,
-    .rcmd-boxes .info .inbox,
-    .rcmd-boxes .inbox-clip{
-        /*will-change: transform;*/
-        /*transform: translateZ(0);*/
-    }
-    /*.additional.metaboxes ol{*/
-    /*    backdrop-filter: saturate(2) blur(10px);*/
-    /*}*/
-    /*@keyframes valueSetUp{*/
-    /*    0%{transform:translateY(0);}*/
-    /*    100%{transform:translateY(-150%);}*/
-    /*}*/
-    /*@keyframes valueSetDown{*/
-    /*    0%{transform:translateY(-150%);}*/
-    /*    100%{transform:translateY(0);}*/
-    /*}*/
 </style>
 <script async>
     document.documentElement.style.setProperty('--theme-color','<?php echo $theme_color; ?>');
@@ -51,8 +33,7 @@
             if(!t) return;
             while(t!=parent){
                 if(t.classList && t.classList.contains(cls)){
-                    // callback.apply(this, ...arguments);
-                    callback ? callback(t,e) : false; //callback(t) || callback(t);
+                    callback ? callback(t,e) : false; //callback(t) || callback(t); // callback.apply(this, ...arguments);
                     break;
                 }else{
                     t = t.parentNode;
@@ -60,11 +41,20 @@
             }
         }
     }
+    function getParByCls(curEl, parCls){
+        while(!curEl || !curEl.classList || !curEl.classList.contains(parCls)){
+            // if(!curEl) break;  //return undefined
+            curEl = curEl.parentNode; //parentElement
+            break;
+        };
+        return curEl;
+    };
 </script>
 <?php
     if(get_option('site_leancloud_switcher')){
+        //DO NOT use "defer" in script
 ?>
-        <script defer src="<?php custom_cdn_src(); ?>/js/leancloud/av-min.js?v=headcall"></script>
+        <script src="<?php custom_cdn_src(); ?>/js/leancloud/av-min.js?v=headcall"></script>
         <script>
             AV.init({
                 appId: "<?php echo get_option('site_leancloud_appid') ?>",

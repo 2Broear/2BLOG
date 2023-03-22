@@ -68,7 +68,7 @@
                                             <div id="news-tail_info">
                                                 <ul class="post-info">
                                                     <li class="tags author">
-                                                        <?php the_tag_list($post->ID); ?>
+                                                        <?php echo get_tag_list($post->ID); ?>
                                                     </li>
                                                     <li title="讨论人数">
                                                         <?php 

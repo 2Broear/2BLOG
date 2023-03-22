@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/acg.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link preload type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/acg.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
         .rcmd-boxes .inbox-clip h2{
@@ -34,6 +34,16 @@
             animation: blinker .5s infinite alternate ease;
             -webkit-animation: blinker .5s infinite alternate ease;
         }
+        /***  decrease 3d layers(cancelable)  ***/
+        .rcmd-boxes .info .inbox,
+        .rcmd-boxes .info .inbox .inbox-headside img{
+            /*transform: none;*/
+            /*will-change: initial;*/
+        }
+        .rcmd-boxes .info .inbox .inbox-headside img{
+            /*transform: none;*/
+            will-change: auto;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -49,12 +59,15 @@
             <div class="counter">
                 <?php
                     $async_sw = get_option('site_async_switcher');
-                    $async_loads = $async_sw ? get_option("site_async_acg", 14) : 999;
+                    $acg_temp_slug = get_cat_by_template('acg','slug');
+                    $async_array = explode(',', get_option('site_async_includes'));
+                    $use_async = $async_sw ? in_array($acg_temp_slug, $async_array) : false;
+                    $async_loads = $async_sw&&$use_async ? get_option("site_async_acg", 14) : 999;
     		        $basename = basename(__FILE__);
                     $preset = get_cat_by_template(str_replace('.php',"",substr($basename,9)));
                     $preslug = $preset->slug;
                     $curslug = current_slug();
-                    $baas = get_option('site_leancloud_switcher')&&strpos(get_option('site_leancloud_category'), $basename)!==false;  //use post as category is leancloud unset
+                    $baas = get_option('site_leancloud_switcher')&&in_array($basename, explode(',', get_option('site_leancloud_category')));  //use post as category is leancloud unset //strpos(get_option('site_leancloud_category'), $basename)!==false
                     $datadance = get_option('site_animated_counting_switcher');
                     if(!$baas){
                         $cats = get_categories(meta_query_categories($preset->term_id, 'ASC', 'seo_order'));
@@ -111,61 +124,29 @@
     if($datadance){
 ?>
         <script>
-            dataDancing(document.querySelectorAll(".win-top .counter div"), "h2", -15, 15, "<sup>+</sup>");
+            const counters = document.querySelectorAll(".win-top .counter div");
+            dataDancing(counters, "h2", -15, 5, "<sup>+</sup>");
         </script>
 <?php
-    }
-    if($async_sw){
+    };
+    if($async_sw&&$use_async){
 ?>
         <script>
             const rcmd_boxes = document.querySelector(".rcmd-boxes"),
                   preset_loads = <?php echo $async_loads; ?>;
             bindEventClick(rcmd_boxes, 'load-more', function(t){
-                let tp = t.parentNode,
-                    cid = parseInt(t.dataset.cid),
-                    loads = parseInt(t.dataset.load),
-                    counts = parseInt(t.dataset.counts),
-                    clicks = parseInt(t.dataset.click);
-                if(loads>=counts){
-                    tp.classList.add("disabled");
-                    return;
-                }
-                clicks++;
-                t.innerText = "Loading..";
-                t.setAttribute('data-click', clicks);
-                send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", 
-                    parse_ajax_parameter({
-                        "action": "ajaxCallAcg",
-                        "cid": cid,
-                        "limit": preset_loads,
-                        "offset": preset_loads*clicks,
-                        _ajax_nonce: t.dataset.nonce,
-                    }, true), function(res){
-                        var posts_array = JSON.parse(res),
-                            load_box = tp.parentNode.parentNode,
-                            posts_count = posts_array.length,
-                            loads_count = loads+posts_count;
-                        t.innerText = "";
-                        loads_count>=counts ? t.setAttribute('data-load', counts) :  t.setAttribute('data-load', loads_count);  // update current loaded(limit judge)
-                        for(let i=0;i<posts_count;i++){
-                            let each_post = posts_array[i],
-                                each_temp = document.createElement("div");
-                            each_temp.id = "pid_"+each_post.id;
-                            each_temp.classList.add("inbox", "flexboxes");
-                            each_temp.innerHTML = `<div class="inbox-headside flexboxes"><span class="author">${each_post.subtitle}</span><img src="${each_post.poster}" alt="${each_post.subtitle}" crossorigin="Anonymous"></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="javascript:;" target="_self">${each_post.title}</a></h4></span><span class="lowside-description"><p>${each_post.excerpt}</p></span></div>`; //<img class="bg" src="${each_post.poster}">
-                            load_box.insertBefore(each_temp, load_box.lastChild);
-                            // setup ajax-load images blur-color
-                            let tempimg = new Image();
-                                tempimg.src = each_post.poster;
-                                tempimg.setAttribute('crossorigin','Anonymous');
-                            tempimg.onload=()=>setupBlurColor(tempimg, each_temp);
-                        };
-                        // compare updated load counts
-                        if(parseInt(t.dataset.load)>=counts){
-                            tp.classList.add("disabled");
-                        }
-                    }
-                );
+                load_ajax_posts(t, 'acg', preset_loads, function(each_post, load_box){
+                    let each_temp = document.createElement("div");
+                    each_temp.id = "pid_"+each_post.id;
+                    each_temp.classList.add("inbox", "flexboxes");
+                    each_temp.innerHTML = `<div class="inbox-headside flexboxes"><span class="author">${each_post.subtitle}</span><img src="${each_post.poster}" alt="${each_post.subtitle}" crossorigin="Anonymous"></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="javascript:;" target="_self">${each_post.title}</a></h4></span><span class="lowside-description"><p>${each_post.excerpt}</p></span></div>`; //<img class="bg" src="${each_post.poster}">
+                    load_box.insertBefore(each_temp, load_box.lastElementChild); //lastChild
+                    // setup ajax-load images blur-color
+                    let tempimg = new Image();
+                        tempimg.src = each_post.poster;
+                        tempimg.setAttribute('crossorigin','Anonymous');
+                    tempimg.onload=()=>setupBlurColor(tempimg, each_temp);
+                });
             });
         </script>
 <?php

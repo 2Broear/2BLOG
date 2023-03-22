@@ -10,19 +10,24 @@
 .win-top .counter p{color:var(--preset-e);font-size:var(--min-size);margin:3px auto;opacity:.75}
 .rcmd-boxes{width:100%;max-width:100%;height:auto;flex-flow:row wrap}
 .rcmd-boxes .inbox-clip.subcat{text-align:center;margin-top:auto}
-.rcmd-boxes .inbox-clip.subcat h2{font-size:2rem;/*padding-top:0*/}
+.rcmd-boxes .inbox-clip.subcat h2{font-size:2rem;padding: 15px 10px; margin-bottom: 15px;/*padding-top:0*/}
 .rcmd-boxes .inbox-clip{width:100%;color:var(--preset-4a);margin:15px auto;text-align: inherit;}
 /*.rcmd-boxes .inbox-clip h2.single{font-size:2rem}*/
 .rcmd-boxes .inbox-clip h2{
-    width:100%;padding:20px 10px;box-sizing:border-box;font-weight:400;
+    width:100%;
+    padding:20px 10px;
+    box-sizing:border-box;
+    font-weight:400;
     font-size: 1.75rem;
-    /*letter-spacing: 5px;*/
     font-style: italic;
     position: relative;
     z-index: 1;
     margin: 35px auto 15px;
     overflow: hidden;
     font-family: cursive;
+    text-decoration: underline;
+    letter-spacing: 0;
+    /*letter-spacing: 5px;*/
 }
 .rcmd-boxes .inbox-clip:first-child{
     margin-top: auto!important;

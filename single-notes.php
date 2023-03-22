@@ -42,7 +42,7 @@
                     <article class="news-article-container">
                         <div class="infos">
                             <span id="classify">
-                                <?php the_tag_list($post->ID, 5); ?>
+                                <?php echo get_tag_list($post->ID, 5); ?>
                             </span>
                             <span id="view"><?php $cat=get_the_ID();setPostViews($cat);echo getPostViews($cat); ?>°C </span>
                             <span id="date"><i class="icom"></i> <?php the_time('d-m-Y'); ?> </span>

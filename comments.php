@@ -80,7 +80,7 @@
         </script>
 <?php
     }
-    if($post->comment_status=="open" || is_category()){
+    if(comments_open() || is_category()&&$post->comment_status=="open"){ //$post->comment_status=="open"
         if(is_user_logged_in()){
             $wp_user = get_currentuserinfo();// global $current_user;// print_r($wp_user);
             $user_name = $wp_user->user_nicename; // $_COOKIE["comment_author_" . COOKIEHASH];
@@ -113,8 +113,8 @@
                         parse_ajax_parameter({
                             "action": "post_like",
                             "um_id": t.dataset.id,
-                            // "um_action": t.dataset.action,
                             _ajax_nonce: t.dataset.nonce,
+                            // "um_action": t.dataset.action,
                         }, true), function(res){
                             document.querySelector('.count #counter').innerText = res;
                         }
@@ -130,29 +130,15 @@
         }else{
             $avatar_src = match_mail_avatar($user_mail);
             parse_str($_SERVER['QUERY_STRING'], $parameters);
-            $replytocom = array_key_exists('replytocom',$parameters) ? $parameters['replytocom'] : false;  // php8
             // $commenter = wp_get_current_commenter();
             $req = get_option( 'require_name_email' );
-            // $aria_req = ( $req ? " aria-required='true'" : '' );
-            // $fields =  array(
-            //     'author' => '<input id="author" name="author" type="text" value="' . esc_attr( $commenter['comment_author'] ) . '" size="30"' . $aria_req . ' />',
-            //     'email'  => '<input id="email" name="email" type="text" value="' . esc_attr(  $commenter['comment_author_email'] ) . '" size="30"' . $aria_req . ' />', //( $req ? '<span class="required">*</span>' : '' ) . 
-            // );
-            // $comments_args = array(
-            //     'fields' =>  $fields,
-            //     'title_reply'=>'',
-            //     'label_submit' => '提交评论',
-            //     'comment_notes_before' => false,
-            //     'comment_notes_after' => false,
-            // );
-            // comment_form($comments_args);
             $text_submit = '提交评论';
             $text_loadmore = '加载更多评论';
 ?>
             <div class="wp_comment_box">
                 <form action="<?php echo esc_url(home_url('/')); ?>wp-comments-post.php" method="post">
                     
-                	<textarea name="comment" cols="30" rows="10" placeholder="<?php echo $replytocom ? '正在回复给：@'.get_comment_author($replytocom) : '畅所，你的欲言..'; ?>"></textarea>
+                	<textarea name="comment" cols="30" rows="10" placeholder="<?php $replytocom = array_key_exists('replytocom',$parameters) ? $parameters['replytocom'] : false;echo $replytocom ? '正在回复给：@'.get_comment_author($replytocom) : '畅所，你的欲言..'; ?>"></textarea>
                     <div class="userinfo">
                         <img class="avatar user" <?php echo $lazysrc.'="'.$avatar_src.'"';unset($lazysrc); ?> />
                     	<input type="text" name="author" placeholder="昵称" value="<?php echo $user_name; ?>" />
@@ -169,34 +155,36 @@
                 	?>
                 </form>
             </div>
-            <script>
-                const admin_md5mail = "<?php echo md5(get_option('site_smtp_mail', get_bloginfo('admin_email'))); ?>"; //preset for wp_comment
-            </script>
-    <?php
-            $per_page = get_option('comments_per_page', 15);//15;//
-            $comments = get_comments(array(
-                'post_id' => $post_ID,
-                'number'  => $per_page,
-                'orderby' => 'comment_date', //comment_ID
-                'order'   => 'DESC',
-                // 'status'  => 'approve', // approved only
-                'offset'  => 0,
-                'parent'  => 0  // top comments only
-            ));
-            $comments_all = get_comments(array(
-                'post_id' => $post_ID,
-                // 'status' => 'approve',
-                'count'  => true,
-                'parent'  => 0  // top comments only
-            ));
-            $comment_count = count($comments);
-    ?>
+            <?php
+                $per_page = get_option('comments_per_page', 15);//15;//
+                $comments = get_comments(array(
+                    'post_id' => $post_ID,
+                    'number'  => $per_page,
+                    'orderby' => 'comment_date', //comment_ID
+                    'order'   => 'DESC',
+                    // 'status'  => 'approve', // approved only
+                    'offset'  => 0,
+                    'parent'  => 0  // top comments only
+                ));
+                $comments_all = get_comments(array(
+                    'post_id' => $post_ID,
+                    // 'status' => 'approve',
+                    'count'  => true,
+                    'parent'  => 0  // top comments only
+                ));
+                $comment_count = count($comments);
+            ?>
             <div class="wp_comment_count">
                 <?php echo '<strong id="count">'.$comments_all.'</strong> 条评论'; ?>
             </div>            
             <div class="wp_comments_list">
-        <?php
-            if($comment_count>=1){
+            <?php
+                // if(have_comments()){ //$comment_count>=1
+                // }
+                // else{
+                //     $prefix = is_page() ? '分类页面' : (is_single() ? '文章' : '未知');
+                //     echo '<p class="wp_comment_tip">'.$prefix.' “'.get_the_title().'” <i>上暂无评论。</i></p>';
+                // }
                 function custom_comment($comment, $args, $depth){
                     global $lazysrc;
                     $GLOBALS['comment'] = $comment; 
@@ -206,9 +194,9 @@
                     $comment_ID = $comment->comment_ID;
                     $comment_author = $comment->comment_author;
                     $parent = $comment->comment_parent;
-        ?>
+            ?>
                     <div class="wp_comments" id="comment-<?php comment_ID(); ?>">
-                        <div class="vh" rootid="<?php comment_author_email(); ?>">
+                        <div class="vh" rootid="<?php comment_ID(); ?>">
                             <div class="vhead">
                                 <a rel="nofollow" href="<?php comment_author_url(); ?>" target="_blank">
                                     <?php 
@@ -255,7 +243,7 @@
                             </div>
                         </div>
                     </div>
-        <?php 
+            <?php 
                 };
                 $wp_comment_args = array(
                 	'walker'            => null,
@@ -299,200 +287,202 @@
                     }else{
                         wp_list_comments($wp_comment_args);
                     }
-        ?>
-                    <script>
-                        const comment_box = document.querySelector(".wp_comment_box"),
-                              comment_form = comment_box.querySelector("form"),
-                              placeholder = comment_box.querySelector("textarea").placeholder,
-                              comment = comment_form.querySelector("textarea[name=comment]"),
-                              author = comment_form.querySelector("input[name=author]"),
-                              email = comment_form.querySelector("input[name=email]"),
-                              url = comment_form.querySelector("input[name=url]"),
-                              comment_count = document.querySelector(".wp_comment_count"),
-                              comment_list = document.querySelector(".wp_comments_list"),
-                              comment_parnode = comment_list.parentNode,
-                              required_fields = <?php echo $req; ?>,
-                              //cururl = window.location.origin+window.location.pathname,
-                              loadDone = "已加载全部评论",
-                              focusCls = 'err',
-                              disRepCls = 'disabled_reply',
-                              reply_switcher = function(els, cls, disabled=true){
-                                  if(!els) return;
-                                  for(let i=0,eLen=els.length;eLen>i;i++){
-                                      disabled ? els[i].classList.add(cls) : els[i].classList.remove(cls);
-                                  }
-                              },
-                              getParentElement = function(curEl, parCls){
-                                  //!curEl.classList incase if dnode oes not have any classes (null occured)
-                                  while(!curEl || !curEl.classList || !curEl.classList.contains(parCls)){
-                                      if(!curEl) break;  //return undefined
-                                      curEl = curEl.parentNode; //parentElement
-                                  };
-                                  return curEl;
-                              };
-                        //*** Submit comments logic ***//
-                        bindEventClick(comment_box, 'submit_btn', function(t, e){
-                            e.preventDefault();  // prevent form submit
-                            let a_val = author.value,
-                                e_val = email.value,
-                                c_val = comment.value,
-                                comment_pid = t.dataset.cid,
-                                comment_cid = t.dataset.pid;
-                            if(required_fields){
-                                const e_reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/,
-                                      t_fuc = function(str){
-                                          let trim = str.replace(/^\s+|\s+$/g,"").replace( /^\s*/, '');
-                                          return trim ? trim : false;
-                                      },
-                                      c_err = function(el,msg){
-                                          el.setAttribute('placeholder', msg)
-                                          el.focus();
-                                          el.classList.add(focusCls);
-                                          el.oninput=function(){
-                                              this.value ? this.classList.remove(focusCls) : this.oninput=null;
-                                          };
-                                      };
-                                if(!t_fuc(c_val)) c_err(comment, '评论不能为空！');
-                                if(!t_fuc(a_val)) c_err(author, '昵称填写有误！');
-                                if(!e_reg.test(e_val)) c_err(email, '邮箱格式有误！');
-                                if(!t_fuc(c_val) || !t_fuc(a_val) || !e_reg.test(e_val)){
-                                    return;
-                                }
-                            }
-                            t.value = "提交中..";
-                            // t.classList.add('busy');  //disable submit
-                            comment_parnode.classList.add(disRepCls);  //disable reply
-                            send_ajax_request("post", "<?php echo esc_url(home_url('/')); ?>wp-comments-post.php", 
-                                parse_ajax_parameter({
-                                    "comment": c_val,
-                                    "author": a_val,
-                                    "email": e_val,
-                                    "url": url.value,
-                                    "comment_post_ID": comment_cid,
-                                    "comment_parent": comment_pid,
-                                    // _ajax_nonce: t.dataset.nonce,
-                                }, true), function(res){
-                                    let temp_date = new Date(),
-                                        temp_comment = document.createElement("div"),
-                                        comment_replyto = t.dataset.replyto ? '<a href="#comment-'+comment_pid+'">@'+t.dataset.replyto+'</a> , ' : '',
-                                        comment_info = '<span class="auditing"> Auditing / Previews </span>';
-                                    if(a_val=="<?php echo $user_name; ?>"&&e_val=="<?php echo $user_mail; ?>"){
-                                        comment_info = admin_md5mail=="<?php echo md5($user_mail); ?>" ? '<span class="admin">admin</span><span class="useragent"> Comments Preview </span>' : '<span class="useragent"> Comments / Preview </span>';
-                                    }
-                                    temp_comment.classList.add("wp_comments");
-                                    temp_comment.innerHTML = `<div class="vh" rootid=""><div class="vhead"><a rel="nofollow" href="" target="_blank"><img class="avatar" width="50" height="50" src="${comment_box.querySelector('img.avatar').src}"></a></div><div class="vcontent" style="margin-left:5px"><div class="vinfo"><a rel="nofollow" href="" target="_blank">${a_val}</a>${comment_info}<div class="vtime">${temp_date.toLocaleDateString()}</div></div><p>${comment_replyto} ${c_val}</p></div></div>`; //<small style="opacity:.5">[ 评论未审核，通过后显示 ]</small>   ${temp_date.toLocaleTimeString()}
-                                    const inside_child_reply = getParentElement(t, 'children'),
-                                          check_child_reply = getParentElement(t, 'wp_comments');
-                                    if(inside_child_reply){
-                                        inside_child_reply.appendChild(temp_comment);  // inside loaded-children list reply
-                                    }else{
-                                        if(check_child_reply){
-                                            let outside_child_list = check_child_reply.nextElementSibling;
-                                            if(outside_child_list && outside_child_list.classList.contains('children')){
-                                                outside_child_list.appendChild(temp_comment);  // child-list exist (case: child-list next to wp_comments)
-                                            }else{
-                                                // create children list (case: new reply to parent comment)
-                                                let wrap_ul = document.createElement("ul");
-                                                wrap_ul.classList.add("children");
-                                                wrap_ul.appendChild(temp_comment);
-                                                comment_list.insertBefore(wrap_ul, check_child_reply.nextElementSibling);  // (insert next to wp_comments)
-                                                wrap_ul = null;  //clear memory
-                                            }
-                                        }else{
-                                            // direct insert child-comment
-                                            comment_list.insertBefore(temp_comment, comment_list.firstElementChild);
-                                            //update comment_count at level-0 submit
-                                            comment_count.innerHTML = '<strong id="count">'+(parseInt(comment_count.innerText)+1)+'</strong> 条评论';
-                                        }
-                                    }
-                                    temp_comment = null;  //clear memory
-                                    t.value = "<?php echo $text_submit; ?>";
-                                    comment.value = "";
-                                    // t.classList.remove('busy');  //enable submit
-                                    comment_parnode.classList.remove(disRepCls);  //enable reply
-                                }, function(err){
-                                    switch (err) {
-                                        case 409:
-                                            err = "检测到重复评论，您似乎已经提交过这条评论了！";
-                                            break;
-                                        case 429:
-                                            err = "您提交评论的速度太快了，请稍后再发表评论。";
-                                            break;
-                                        default:
-                                            // err;
-                                    }
-                                    alert(err);
-                                    comment.focus();
-                                    t.value = "<?php echo $text_submit; ?>";
-                                    // t.classList.remove('busy');  //enable submit
-                                    comment_parnode.classList.remove(disRepCls);  //enable reply
-                                });
-                        });
-                        //*** Reply comments logic ***//
-                        comment_list.onclick=(e)=>{
-                            e = e || window.event;
-                            let t = e.target || e.srcElement;
-                            if(!t) return;
-                            while(t!=comment_list){
-                                if(t.classList && t.classList.contains("comment-reply-link")){
-                                    if(t.classList.contains('replying')) return;
-                                        reply_switcher(comment_list.querySelectorAll(".comment-reply-link"), 'replying', false);  //enable(all-reply) adopt 
-                                        t.classList.add('replying');  //disable(current-reply) adopt
-                                        let adopt_node = document.adoptNode(comment_box),
-                                            adopt_area = adopt_node.querySelector("textarea[name=comment]"),
-                                            adopt_submit = adopt_node.querySelector("input[type=submit]"),
-                                            remains_node = document.querySelector(".wp_comment_box");
-                                        // detect if adopt_node remains before manual-load-comments (adoptNode cache)
-                                        if(remains_node) remains_node.remove();
-                                        getParentElement(t, "vcontent").appendChild(adopt_node);  // append adopt node
-                                        adopt_area.placeholder = "正在回复给：@"+t.dataset.replyto;
-                                        adopt_area.focus();
-                                        adopt_area.classList.remove(focusCls);
-                                        adopt_submit.dataset.cid = t.dataset.commentid;
-                                        adopt_submit.dataset.replyto = t.dataset.replyto;
-                                    break;
-                                }else if(t.id && t.id=="cancel-comment-reply-link"){
-                                    reply_switcher(comment_list.querySelectorAll(".comment-reply-link"), 'replying', false);  //enable(all-reply) adopt 
-                                    let adopt_node = document.adoptNode(comment_box),
-                                        adopt_area = adopt_node.querySelector("textarea[name=comment]"),
-                                        adopt_submit = adopt_node.querySelector("input[type=submit]"),
-                                        remains_node = document.querySelector(".wp_comment_box");
-                                    // detect if adopt_node remains before manual-load-comments (adoptNode cache)
-                                    if(remains_node) remains_node.remove();
-                                    comment_list.parentNode.insertBefore(adopt_node, comment_count);  // reverse adopt
-                                    adopt_area.placeholder = placeholder;
-                                    // adopt_area.focus();
-                                    adopt_area.classList.remove(focusCls);
-                                    adopt_submit.dataset.cid = '0';
-                                    adopt_submit.removeAttribute('data-replyto');
-                                    break;
-                                }else{
-                                    t = t.parentNode;
-                                }
-                            }
-                        }
-                    </script>
-        <?php
                 }else{
                     wp_list_comments($wp_comment_args);
                 }
-            }
-            // else{
-            //     $prefix = is_page() ? '分类页面' : (is_single() ? '文章' : '未知');
-            //     echo '<p class="wp_comment_tip">'.$prefix.' “'.get_the_title().'” <i>上暂无评论。</i></p>';
-            // }
-        ?>
-        </div>
-        <nav class="pageSwitcher dev">
-            <?php 
-                if(get_option('site_ajax_comment_paginate')){
-                    $load_class = 'loadmore';
-                    if($comment_count===$comments_all){
-                        $load_class = 'loadmore disabled';
-                        $text_loadmore = '没有更多评论';
-                    }
-                    echo '<a href="javascript:;" class="'.$load_class.'" data-click="0" data-load="'.$comment_count.'" data-counts="'.$comments_all.'" data-nonce="'.wp_create_nonce($post_ID."_comment_ajax_nonce").'">'.$text_loadmore.'</a>';
             ?>
+            </div>
+            <script>
+                const comment_box = document.querySelector(".wp_comment_box"),
+                      comment_form = comment_box.querySelector("form"),
+                      placeholder = comment_box.querySelector("textarea").placeholder,
+                      comment = comment_form.querySelector("textarea[name=comment]"),
+                      author = comment_form.querySelector("input[name=author]"),
+                      email = comment_form.querySelector("input[name=email]"),
+                      admin_md5mail = "<?php echo md5(get_option('site_smtp_mail', get_bloginfo('admin_email'))); ?>", //preset for wp_comment
+                      url = comment_form.querySelector("input[name=url]"),
+                      comment_count = document.querySelector(".wp_comment_count"),
+                      comment_list = document.querySelector(".wp_comments_list"),
+                      comment_parnode = comment_list.parentNode,
+                      required_fields = <?php echo $req; ?>,
+                      //cururl = window.location.origin+window.location.pathname,
+                      loadDone = "已加载全部评论",
+                      focusCls = 'err',
+                      disRepCls = 'disabled_reply',
+                      class_switcher = function(els, cls, disabled=true){
+                          if(!els) return;
+                          for(let i=0,eLen=els.length;eLen>i;i++){
+                              disabled ? els[i].classList.add(cls) : els[i].classList.remove(cls);
+                          }
+                      },
+                      getParentElement = function(curEl, parCls){
+                          //!curEl.classList incase if dnode oes not have any classes (null occured)
+                          while(!curEl || !curEl.classList || !curEl.classList.contains(parCls)){
+                              if(!curEl) break;  //return undefined
+                              curEl = curEl.parentNode; //parentElement
+                          };
+                          return curEl;
+                      };
+                //*** Submit comments logic ***//
+                bindEventClick(comment_box, 'submit_btn', function(t, e){
+                    e.preventDefault();  // prevent form submit
+                    let a_val = author.value,
+                        e_val = email.value,
+                        c_val = comment.value,
+                        comment_pid = t.dataset.cid,
+                        comment_cid = t.dataset.pid;
+                    if(required_fields){
+                        const e_reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/,
+                              t_fuc = function(str){
+                                  let trim = str.replace(/^\s+|\s+$/g,"").replace( /^\s*/, '');
+                                  return trim ? trim : false;
+                              },
+                              c_err = function(el,msg){
+                                  el.setAttribute('placeholder', msg)
+                                  el.focus();
+                                  el.classList.add(focusCls);
+                                  el.oninput=function(){
+                                      this.value ? this.classList.remove(focusCls) : this.oninput=null;
+                                  };
+                              };
+                        if(!t_fuc(c_val)) c_err(comment, '评论不能为空！');
+                        if(!t_fuc(a_val)) c_err(author, '昵称填写有误！');
+                        if(!e_reg.test(e_val)) c_err(email, '邮箱格式有误！');
+                        if(!t_fuc(c_val) || !t_fuc(a_val) || !e_reg.test(e_val)){
+                            return;
+                        }
+                    }
+                    t.value = "提交中..";
+                    // t.classList.add('busy');  //disable submit
+                    comment_parnode.classList.add(disRepCls);  //disable reply
+                    send_ajax_request("post", "<?php echo esc_url(home_url('/')); ?>wp-comments-post.php", 
+                        parse_ajax_parameter({
+                            "comment": c_val,
+                            "author": a_val,
+                            "email": e_val,
+                            "url": url.value,
+                            "comment_post_ID": comment_cid,
+                            "comment_parent": comment_pid,
+                            // _ajax_nonce: t.dataset.nonce,
+                        }, true), function(res){
+                            let temp_date = new Date(),
+                                temp_comment = document.createElement("div"),
+                                comment_replyto = t.dataset.replyto ? '<a href="#comment-'+comment_pid+'">@'+t.dataset.replyto+'</a> , ' : '',
+                                comment_info = '<span class="auditing"> Auditing / Previews </span>';
+                            if(a_val=="<?php echo $user_name; ?>"&&e_val=="<?php echo $user_mail; ?>"){
+                                comment_info = admin_md5mail=="<?php echo md5($user_mail); ?>" ? '<span class="admin">admin</span><span class="useragent"> Comments Preview </span>' : '<span class="useragent"> Comments / Preview </span>';
+                            }
+                            temp_comment.classList.add("wp_comments");
+                            temp_comment.innerHTML = `<div class="vh" rootid=""><div class="vhead"><a rel="nofollow" href="" target="_blank"><img class="avatar" width="50" height="50" src="${comment_box.querySelector('img.avatar').src}"></a></div><div class="vcontent" style="margin-left:5px"><div class="vinfo"><a rel="nofollow" href="" target="_blank">${a_val}</a>${comment_info}<div class="vtime">${temp_date.toLocaleDateString()}</div></div><p>${comment_replyto} ${c_val}</p></div></div>`; //<small style="opacity:.5">[ 评论未审核，通过后显示 ]</small>   ${temp_date.toLocaleTimeString()}
+                            const inside_child_reply = getParentElement(t, 'children'),
+                                  check_child_reply = getParentElement(t, 'wp_comments');
+                            if(inside_child_reply){
+                                inside_child_reply.appendChild(temp_comment);  // inside loaded-children list reply
+                            }else{
+                                if(check_child_reply){
+                                    let outside_child_list = check_child_reply.nextElementSibling;
+                                    if(outside_child_list && outside_child_list.classList.contains('children')){
+                                        outside_child_list.appendChild(temp_comment);  // child-list exist (case: child-list next to wp_comments)
+                                    }else{
+                                        // create children list (case: new reply to parent comment)
+                                        let wrap_ul = document.createElement("ul");
+                                        wrap_ul.classList.add("children");
+                                        wrap_ul.appendChild(temp_comment);
+                                        comment_list.insertBefore(wrap_ul, check_child_reply.nextElementSibling);  // (insert next to wp_comments)
+                                        wrap_ul = null;  //clear memory
+                                    }
+                                }else{
+                                    // direct insert child-comment
+                                    comment_list.insertBefore(temp_comment, comment_list.firstElementChild);
+                                    //update comment_count at level-0 submit
+                                    comment_count.innerHTML = '<strong id="count">'+(parseInt(comment_count.innerText)+1)+'</strong> 条评论';
+                                }
+                            }
+                            temp_comment = null;  //clear memory
+                            t.value = "<?php echo $text_submit; ?>";
+                            comment.value = "";
+                            // t.classList.remove('busy');  //enable submit
+                            comment_parnode.classList.remove(disRepCls);  //enable reply
+                        }, function(err){
+                            switch (err) {
+                                case 409:
+                                    err = "检测到重复评论，您似乎已经提交过这条评论了！";
+                                    break;
+                                case 429:
+                                    err = "您提交评论的速度太快了，请稍后再发表评论。";
+                                    break;
+                                default:
+                                    // err;
+                            }
+                            alert(err);
+                            comment.focus();
+                            t.value = "<?php echo $text_submit; ?>";
+                            // t.classList.remove('busy');  //enable submit
+                            comment_parnode.classList.remove(disRepCls);  //enable reply
+                        });
+                });
+                //*** Reply comments logic ***//
+                comment_list.onclick=(e)=>{
+                    e = e || window.event;
+                    let t = e.target || e.srcElement;
+                    if(!t) return;
+                    while(t!=comment_list){
+                        if(t.classList && t.classList.contains("comment-reply-link")){
+                            if(t.classList.contains('replying')) return;
+                                class_switcher(comment_list.querySelectorAll(".comment-reply-link"), 'replying', false);  //enable(all-reply) adopt 
+                                t.classList.add('replying');  //disable(current-reply) adopt
+                                let adopt_node = document.adoptNode(comment_box),
+                                    adopt_area = adopt_node.querySelector("textarea[name=comment]"),
+                                    adopt_submit = adopt_node.querySelector("input[type=submit]"),
+                                    remains_node = document.querySelector(".wp_comment_box");
+                                // detect if adopt_node remains before manual-load-comments (adoptNode cache)
+                                if(remains_node) remains_node.remove();
+                                getParentElement(t, "vcontent").appendChild(adopt_node);  // append adopt node
+                                adopt_area.placeholder = "正在回复给：@"+t.dataset.replyto;
+                                adopt_area.focus();
+                                class_switcher(adopt_node.querySelectorAll('.'+focusCls), focusCls, false); // adopt_area.classList.remove(focusCls);
+                                adopt_submit.dataset.cid = t.dataset.commentid;
+                                adopt_submit.dataset.replyto = t.dataset.replyto;
+                            break;
+                        }else if(t.id && t.id=="cancel-comment-reply-link"){
+                            class_switcher(comment_list.querySelectorAll(".comment-reply-link"), 'replying', false);  //enable(all-reply) adopt 
+                            let adopt_node = document.adoptNode(comment_box),
+                                adopt_area = adopt_node.querySelector("textarea[name=comment]"),
+                                adopt_submit = adopt_node.querySelector("input[type=submit]"),
+                                remains_node = document.querySelector(".wp_comment_box");
+                            // detect if adopt_node remains before manual-load-comments (adoptNode cache)
+                            if(remains_node) remains_node.remove();
+                            comment_list.parentNode.insertBefore(adopt_node, comment_count);  // reverse adopt
+                            adopt_area.placeholder = placeholder;
+                            // adopt_area.focus();
+                            class_switcher(adopt_node.querySelectorAll('.'+focusCls), focusCls, false); // adopt_area.classList.remove(focusCls);
+                            adopt_submit.dataset.cid = 0;
+                            adopt_submit.removeAttribute('data-replyto');
+                            break;
+                        }else{
+                            t = t.parentNode;
+                        }
+                    }
+                }
+            </script>
+            <?php
+                if(have_comments()){ //$comment_count>=1
+            ?>
+                    <nav class="pageSwitcher dev">
+                        <?php 
+                            if(get_option('site_ajax_comment_paginate')){
+                                $load_class = 'loadmore';
+                                if($comment_count===$comments_all){
+                                    $load_class = 'loadmore disabled';
+                                    $text_loadmore = '没有更多评论';
+                                }
+                                echo '<a href="javascript:;" class="'.$load_class.'" data-click="0" data-load="'.$comment_count.'" data-counts="'.$comments_all.'" data-nonce="'.wp_create_nonce($post_ID."_comment_ajax_nonce").'">'.$text_loadmore.'</a>';
+                            }else{
+                                echo get_previous_comments_html("PREV COMMENTS");
+                                echo get_next_comments_html("NEXT COMMENTS");
+                            }
+                        ?>
+                    </nav>
                     <script>
                         const avatar_cdn = "<?php echo get_option('site_avatar_mirror'); ?>",
                               strip_tags = function(str){ 
@@ -512,7 +502,7 @@
                                               email = child.comment_author_email,
                                               parent = child.comment_parent,
                                               approve = child.comment_approved,
-                                              content = strip_tags(child.comment_content),
+                                              content = child.comment_content,//strip_tags(child.comment_content),
                                               user_agent = child._comment_agent,
                                               is_admin = email==admin_md5mail ? '<span class="admin">admin</span>' : '',
                                               is_approved = approve=="0" ? '<span class="auditing">待审核</span>' : '',
@@ -526,7 +516,7 @@
                               };
                         //*** Load comments logic ***//
                         const page_switcher = document.querySelector(".pageSwitcher"),
-                              preset_loads = <?php echo $per_page; ?>;
+                              comment_loads = <?php echo $per_page; ?>;
                         bindEventClick(page_switcher, 'loadmore', function(t){
                             let years = t.dataset.year,
                                 loads = parseInt(t.dataset.load),
@@ -544,8 +534,8 @@
                             send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", parse_ajax_parameter({
                                     "action": "ajaxLoadComments",
                                     "pid": <?php echo $post_ID; ?>, 
-                                    "limit": preset_loads,
-                                    "offset": preset_loads*clicks,
+                                    "limit": comment_loads,
+                                    "offset": comment_loads*clicks,
                                     _ajax_nonce: t.dataset.nonce,
                                 }, true), function(res){
                                     var posts_array = JSON.parse(res),
@@ -562,7 +552,7 @@
                                             md5mail = each_post.comment_author_email,
                                             childs = each_post._comment_childs,
                                             user_agent = each_post._comment_agent,
-                                            content = strip_tags(each_post.comment_content),
+                                            content = each_post.comment_content,//strip_tags(each_post.comment_content),
                                             approve = each_post.comment_approved,
                                             if_child = childs ? '<ul class="children" data-cpid="'+id+'">'+childCommentsLoop(childs)+'</ul>' : '',
                                             is_admin = md5mail==admin_md5mail ? '<span class="admin">admin</span>' : '',
@@ -587,13 +577,7 @@
                         });
                     </script>
             <?php
-                }else{
-                    echo get_previous_comments_html("PREV COMMENTS");
-                    echo get_next_comments_html("NEXT COMMENTS");
                 }
-            ?>
-        </nav>
-<?php
         }
     }else{
         echo '<p class="disabled_comment">* 抱歉，由于某些原因已关闭页面评论</p>';

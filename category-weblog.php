@@ -40,11 +40,15 @@
         <div class="weblog-tree-all">
             <div class="weblog-tree-core <?php $third_cmt = get_option('site_third_comments');echo $third_cmt&&$third_cmt!='' ? 'reply' : false; ?>">
                 <?php
-                    // echo basename(__FILE__);
-                    $baas = get_option('site_leancloud_switcher')&&strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false;  //use post as category is leancloud unset
+                    $async_sw = get_option('site_async_switcher');
+                    $weblog_slug = get_cat_by_template('weblog','slug'); //current_slug();
+                    $async_array = explode(',', get_option('site_async_includes'));
+                    $use_async = $async_sw ? in_array($weblog_slug, $async_array) : false;
+                    $async_loads = $async_sw&&$use_async ? get_option("site_async_weblog", 14) : get_option('posts_per_page');
+                    $baas = get_option('site_leancloud_switcher')&&in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')));  //use post as category is leancloud unset //&&strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false
                     if(!$baas){
                         $current_page = max(1, get_query_var('paged')); //current paged
-                        $left_query = new WP_Query(array_filter(array(
+                        $log_query = new WP_Query(array_filter(array(
                             'cat' => $cat,  //get_template_bind_cat(basename(__FILE__))->term_id;
                             'meta_key' => 'post_orderby',
                             'orderby' => array(
@@ -52,16 +56,12 @@
                                 'date' => 'DESC'
                             ),
                             'paged' => $current_page,  //current paged
-                            'posts_per_page' => get_option('posts_per_page'),  //use left_query counts
-                            // 'post__not_in' => get_option('sticky_posts'),  //output posts without topset
+                            'posts_per_page' => $async_loads,  //use left_query counts
                         )));
-                        $total_pages = $left_query->max_num_pages;  //total pages
                         // Empty card if null reponsed
-                        if(!$left_query->have_posts()){
-                            echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t="'.current_slug(true).'"></i><h1> 这里，<b>空空的！</b> </h1></div>';  //<b>'.current_slug(true).'</b> 
-                        }
-                        while ($left_query->have_posts()):
-                            $left_query->the_post();
+                        if(!$log_query->have_posts()) echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t="'.current_slug(true).'"></i><h1> 这里，<b>空空的！</b> </h1></div>';  //<b>'.current_slug(true).'</b> 
+                        while ($log_query->have_posts()):
+                            $log_query->the_post();
                             $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                             $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                 ?>
@@ -70,7 +70,7 @@
                                     <span id="weblog-timeline">
                                         <?php 
                                             echo $rich_date = get_the_tag_list() ? get_the_time('Y年n月j日').' - ' : get_the_time('Y年n月j日');
-                                            the_tag_list($post->ID,2,'');
+                                            echo get_tag_list($post->ID,2,'');
                                         ?>
                                     </span>
                                     <span id="weblog-circle"></span>
@@ -94,37 +94,52 @@
                                                 $ps = get_post_meta($post->ID, "post_feeling", true);
                                                 if($ps) echo '<span id="other-info"><h4> Ps. </h4><p class="feeling">'.$ps.'</p></span>';
                                             ?>
-                                            <p id="sub"><?php echo $rich_date;the_tag_list($post->ID,2,''); ?></p>
+                                            <p id="sub"><?php echo $rich_date . get_tag_list($post->ID,2,''); ?></p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                <?php
+                <?php       
                         endwhile;
                         wp_reset_query();
                     }
-                    if($baas){
-                        echo '<div class="weblog-tree-etc load"><button>加载更多</button></div>';
+                    if($baas) echo '<div class="weblog-tree-etc load"><button>加载更多</button></div>';
+                    $async_array = explode(',', get_option('site_async_includes'));
+                    if(get_option('site_async_switcher')&&in_array($weblog_slug, $async_array)){
+                        // preset all acg query
+                        $all_query = new WP_Query(array_filter(array(
+                            'cat' => $cat,
+                            'posts_per_page' => -1,
+                            'fields' => 'ids',
+                            'no_found_rows' => true,
+                        )));
+                        $all_count = $all_query->post_count;
+                        $posts_count = $log_query->post_count;
+                        $disable_statu = $posts_count==$all_count ? ' disabled' : false; //>=
+                        echo '<div class="load'.$disable_statu.'"><button class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cat.'" data-cat="'.$weblog_slug.'" data-nonce="'.wp_create_nonce(current_slug()."_posts_ajax_nonce").'" title="加载更多">加载更多</button></div>';
+                    }else{
+                ?>
+                        <div class="pageSwitcher">
+                            <?php
+                                echo paginate_links(array(
+                                    'prev_text' => __('上一页'),
+                                    'next_text' => __('下一页'),
+                                    'type' => 'plaintext',
+                                    'screen_reader_text' => null,
+                                    'total' => $log_query->max_num_pages,  //总页数
+                                    'current' => $current_page, //当前页数
+                                ));
+                            ?>
+                        </div>
+                <?php
                     }
                 ?>
-                <div class="pageSwitcher">
-                    <?php 
-                        echo paginate_links(array(
-                            'prev_text' => __('上一页'),
-                            'next_text' => __('下一页'),
-                            'type' => 'plaintext',
-                            'screen_reader_text' => null,
-                            'total' => $total_pages,  //总页数
-                            'current' => $current_page, //当前页数
-                        ));
-                    ?>
-                </div>
-                <div id="comment_txt" class="wow fadeInUp" data-wow-delay="0.25s">
-                    <?php 
-                        // the_content();  // cancel for hidding sub-cat content
-                        dual_data_comments();  // query comments from database before include
-                    ?>
-                </div>
+            </div>
+            <div id="comment_txt" class="wow fadeInUp" data-wow-delay="0.25s">
+                <?php 
+                    // the_content();  // cancel for hidding sub-cat content
+                    dual_data_comments();  // query comments from database before include
+                ?>
             </div>
         </div>
         <footer>
@@ -132,12 +147,12 @@
         </footer>
     </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(0); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
     if($baas){
 ?>
         <script type="text/javascript">
-            const curTab = "<?php echo(current_slug()); ?>",
+            const curTab = "<?php echo $weblog_slug; ?>",
                   loadbtn = document.querySelector(".load button");
             var limiter = 15,
                 curSkip = 0;  //preSkip = 1;
@@ -182,23 +197,51 @@
 ?>
         <script>
             // BLOCKQUOTE Reply
-            const editor = document.querySelector('textarea');
-            bindEventClick(document.querySelector(".weblog-tree-core"), 'reply_quote', function(t){
-                editor.focus();
-                editor.value = "";
-                editor.setAttribute('placeholder', '回复片段：'+t.innerText);
-                const cores = t.parentElement.parentElement.parentElement.querySelector('#core-info p'),
-                      quote = `\n> __${t.innerText}__ \n> ${cores ? cores.innerText.substr(0,88) : ".."}...`;
-                editor.style.cssText="min-height:150px;opacity:.75;";
-                editor.value = '\n'+quote;//this.id;
-                editor.setSelectionRange(0,0);
-                editor.oninput=function(){
-                    if(this.value.indexOf(quote)==-1 || this.value.substr(this.value.length-3,this.value.length)!='...'){  //
-                        this.value = quote;
+            const editor = document.querySelector('textarea'),
+                  weblog = document.querySelector(".weblog-tree-core"),
+                  preset_loads = <?php echo $async_loads; ?>;
+            weblog.onclick=(e)=>{
+                e = e || window.event;
+                let t = e.target || e.srcElement;
+                if(!t) return;
+                while(t!=weblog){
+                    if(t.classList && t.classList.contains("reply_quote")){
+                        editor.focus();
+                        editor.value = "";
+                        editor.setAttribute('placeholder', '回复片段：'+t.innerText);
+                        const cores = t.parentElement.parentElement.parentElement.querySelector('#core-info'), //getParentElement(t, 'weblog-tree-core-record')
+                              quote = `\n> __${t.innerText}__ \n> ${cores ? cores.innerText.substr(0,88) : ".."}...`;
+                        editor.style.cssText="min-height:150px;opacity:.75;";
+                        editor.value = '\n'+quote;//this.id;
                         editor.setSelectionRange(0,0);
+                        editor.oninput=function(){
+                            if(this.value.indexOf(quote)==-1 || this.value.substr(this.value.length-3,this.value.length)!='...'){  //
+                                this.value = quote;
+                                editor.setSelectionRange(0,0);
+                            }
+                        }
+                        break;
+                    }else if(t.classList && t.classList.contains("load-more")){ //t.id && t.id=="load"
+                        <?php
+                            if($async_sw&&$use_async){
+                        ?>
+                                load_ajax_posts(t, 'weblog', preset_loads, function(each_post, load_box){
+                                    let each_temp = document.createElement("div"),
+                                        each_tags = each_post.tag ? " - "+each_post.tag : "";
+                                    each_temp.id = "pid_"+each_post.id;
+                                    each_temp.classList.add("weblog-tree-core-record");
+                                    each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${each_post.date} ${each_tags}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="pid_4314" class="weblog-tree-box"><div class="tree-box-title"><a href="javascript:;" target="_self"><h3 class="reply_quote">${each_post.title}</h3></a></div><div class="tree-box-content"><span id="core-info"><p>${each_post.content}</p></span><span id="other-info"><h4> Ps. </h4><p class="feeling">${each_post.subtitle}</p></span><p id="sub">${each_post.date} ${each_tags}</p></div></div></div>`;
+                                    weblog.insertBefore(each_temp, load_box);
+                                });
+                        <?php
+                            }
+                        ?>
+                        break;
+                    }else{
+                        t = t.parentNode;
                     }
                 }
-            });
+            }
         </script>
 <?php
     }

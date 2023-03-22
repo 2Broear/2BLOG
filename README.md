@@ -23,6 +23,7 @@ __Preview Site__ ：[演示站点](http://wpk.2broear.com) （演示并不代表
 - 可控的侧栏广告位（Google AdSense）及 Pixiv 排行展示（数量）、最高浏览分类及展示数量
 - 底部各项自定义、各图标等信息开启控制
 - 支持开启 Valine 评论及调用 Leancloud 应用数据（可单独控制分类页面数据来源）
+- 支持 Wordpress Ajax 评论/翻页
 - _图片懒加载_
 - _视频动态预览_
 - _全新文章归档页面（ajax）_
@@ -193,7 +194,7 @@ server {
 
 伪静态与固定链接
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-如需实现 [演示站](http://wpk.2broear.com) 的 _permalink/url_ 层级（404等预设页面也需要配置伪静态或在分类层级前加入 `index.php` 后才能访问）如下：
+> 如需实现 [演示站](http://wpk.2broear.com) 的 _permalink/url_ 层级（404等预设页面也需要配置伪静态或在分类层级前加入 `index.php` 后才能访问）如下：
 
 ___Nginx 伪静态规则___ （apache或其他环境请自行转换语法，宝塔面板可一键配置）
 ``` nginx
@@ -208,6 +209,10 @@ ___WordPress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 /%category%/%postname%_%post_id%  
 ```
 固定连接可删除 `%post_id%`，建议保留 `%postname%` 后的下划线 `_` __如下图所示__（其目的是为了访问多层级分类时正确显示 url 地址栏中的分类/页面层级，属于临时方案）
+
+---
+
+__更新:__ 现已在 wp 初始化时自动设置 `permalink_structure` 默认值为 `/%category%/%day%-%monthnum%-%year%_%postname%`, 可前往 __设置->固定链接__ 自行更改
 
 ![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/permalink.png "permalink setting")
 
@@ -248,6 +253,10 @@ ___WordPress 固定链接___ （请勿关闭 __通用控制__ 中的 ___移除 C
 
 外网有些很棒的 WordPress 主题开发文档教程，这些文档一定程度上提升了开发进度，后续将在此补上相关链接。
 
+- [https://wp-kama.com](https://wp-kama.com)
+- [https://wordpress.stackexchange.com](https://wordpress.stackexchange.com)
+- [https://developer.wordpress.org/reference](https://developer.wordpress.org/reference)
+
 ### 版权声明
 
 本主题遵循GPL协议开源，在您免费使用此主题时，__请保留站点底部右下角声明字样，谢谢。__
@@ -263,6 +272,7 @@ Futures todo & bugs
 - ✅ ~~引进 Twikoo 评论~~
 - ✅ ~~集成图片懒加载~~
 - ✅ ~~视频动态预览~~
+- ✅ ~~集成 Ajax 功能到 wp 评论~~
 - 集成 Valine 自定义功能到 WordPress 评论
 
 ### bug

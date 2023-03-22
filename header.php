@@ -80,8 +80,10 @@
                         $site_icon = $use_icon ? '<i class="icom icon-'.$slug_icon.'"></i>' : '';
                         if($the_cat_slug!='uncategorized') echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.$slash_link.'" class="'.$choosen.'" rel="nofollow">' . $site_icon . $the_cat->name.'</a>';  //liwrapper
                         if(!empty($catss)){
-                            if(get_option('site_metanav_switcher') && strpos(get_option('site_metanav_array'),$the_cat_slug)!==false){ //https://blog.csdn.net/ArthurBryant/article/details/6581833
-                                if(strpos(get_option('site_metanav_image'), $the_cat_slug)!==false) $metaCls = "metaboxes";else $metaCls="";  // must else for each-loop
+                            $metanav_array = explode(',', get_option('site_metanav_array'));
+                            if(get_option('site_metanav_switcher') && in_array($the_cat_slug, $metanav_array)){ //strpos(get_option('site_metanav_array'),$the_cat_slug)!==false
+                                $metaimg_array = explode(',', get_option('site_metanav_image'));
+                                $metaCls = in_array($the_cat_slug, $metaimg_array) ? "metaboxes" : "";  // must else for each-loop //strpos(get_option('site_metanav_image'), $the_cat_slug)!==false
                                 //METABOX RICH INFO
                                 echo '<div class="additional metabox '.$metaCls.'"><ol class="links-more">';
                                 foreach($catss as $the_cats){

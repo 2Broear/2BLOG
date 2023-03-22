@@ -2,6 +2,7 @@
     // if(get_option('site_map_switcher')){
         // equire_once($_SERVER['DOCUMENT_ROOT'].'/wp-load.php');  // DO NOT Load WordPress Core!!! Caused E_COMPILE_ERROR
         $sitemap_opts = get_option('site_map_includes','');
+        $async_array = explode(',', $sitemap_opts);
         $site_url = get_site_url();//get_option("home"); bloginfo('url')
         // https://www.xingkongweb.com/3320.html
         ob_start();
@@ -13,7 +14,7 @@
                 <priority>1</priority>
             </url>
 <?php
-        if(strpos($sitemap_opts, 'category')!==false){ // count($cat_match[0])>0
+        if(in_array('category', $async_array)){ // count($cat_match[0])>0 //strpos($sitemap_opts, 'category')!==false
             // 显示分类
             $terms = get_terms(array('hide_empty'=>0, 'order'=>'ASC' ,'orderby'=>'order_clause', 
                 'meta_query'=>array(
@@ -37,7 +38,7 @@
                 }
             }
         }
-        if(strpos($sitemap_opts, 'page')!==false){ // count($page_match[0])>0
+        if(in_array('page', $async_array)){ // count($page_match[0])>0 //strpos($sitemap_opts, 'page')!==false
             // 显示页面
             $mypages = get_pages();
             if(count($mypages)>0){
@@ -55,7 +56,7 @@
                 }
             }
         }
-        if(strpos($sitemap_opts, 'post')!==false){ // count($post_match[0])>0
+        if(in_array('post', $async_array)){ // count($post_match[0])>0 //strpos($sitemap_opts, 'post')!==false
             // 显示文章$args
             query_posts(array(
                 'showposts' => 1000
@@ -71,7 +72,7 @@
             endwhile;
             wp_reset_query();
         }
-        if(strpos($sitemap_opts, 'tag')!==false){ // count($tag_match[0])>0
+        if(in_array('tag', $async_array)){ // count($tag_match[0])>0 //strpos($sitemap_opts, 'tag')!==false
             // 显示便签
             $tags = get_terms("post_tag");
             foreach($tags as $key => $tag){

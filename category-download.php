@@ -28,7 +28,7 @@
                 $preset = get_cat_by_template(str_replace('.php',"",substr($basename,9)));//get_template_bind_cat($basename)->slug;//'download';
                 $preslug = $preset->slug;
                 $curslug = current_slug();
-                $baas = get_option('site_leancloud_switcher')&&strpos(get_option('site_leancloud_category'), $basename)!==false;
+                $baas = get_option('site_leancloud_switcher')&&in_array($basename, explode(',', get_option('site_leancloud_category'))); //&&strpos(get_option('site_leancloud_category'), $basename)!==false;
                 $cats = get_categories(meta_query_categories($preset->term_id, 'ASC', 'seo_order'));
                 if(!$baas){
                     // !empty($cats) && $curslug==$preslug ? download_posts_query($cats, 1) : download_posts_query(array(get_category($cat)), 1, 'single');

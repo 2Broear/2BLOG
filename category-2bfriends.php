@@ -69,7 +69,7 @@
         <div class="content-all-windows" style="padding-top:0;">
             <div class="friends-boxes flexboxes">
                 <?php 
-                    $baas = get_option('site_leancloud_switcher')&&strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false;
+                    $baas = get_option('site_leancloud_switcher')&&in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category'))); //&&strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false;
                     if(!$baas){
         	            $rich_links = get_bookmarks(array(
         	                'orderby' => 'link_id',
