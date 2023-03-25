@@ -564,6 +564,14 @@
         unset($wpdb);
         return $res;
     }
+    function get_yearly_cat_count($year, $cid, $limit=99){
+        $year_posts = get_posts(array(
+            "year"        => $year,
+            "category"    => $cid,
+            "numberposts" => $limit,
+        ));
+        return count($year_posts);
+    }
     // Ajax PostData calls
     function ajaxGetPosts(){
         $cid = $_POST['cid'];

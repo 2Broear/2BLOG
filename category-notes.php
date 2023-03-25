@@ -118,7 +118,7 @@
                         $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                         $post_rights = get_post_meta($post->ID, "post_rights", true);
                 ?>
-                        <article class="<?php if($post_orderby>1) echo 'topset'; ?> cat-<?php echo $post->ID ?>">
+                        <article class="<?php if($post_orderby>1) echo 'topset '; ?>cat-<?php echo $post->ID ?>">
                             <h1>
                                 <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
                                 <?php 

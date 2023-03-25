@@ -209,10 +209,10 @@
                         editor.focus();
                         editor.value = "";
                         editor.setAttribute('placeholder', '回复片段：'+t.innerText);
-                        const cores = t.parentElement.parentElement.parentElement.querySelector('#core-info'), //getParentElement(t, 'weblog-tree-core-record')
-                              quote = `\n> __${t.innerText}__ \n> ${cores ? cores.innerText.substr(0,88) : ".."}...`;
+                        const cores = getParByCls(t, 'weblog-tree-box').querySelector('#core-info'), //getParentElement(t, 'weblog-tree-core-record')
+                              quote = `\n> __${t.innerText}__ \n> ${cores.innerText.replace(/\n/g,"").substr(0,88)}..`;
                         editor.style.cssText="min-height:150px;opacity:.75;";
-                        editor.value = '\n'+quote;//this.id;
+                        editor.value = quote;//this.id; '\n'+
                         editor.setSelectionRange(0,0);
                         editor.oninput=function(){
                             if(this.value.indexOf(quote)==-1 || this.value.substr(this.value.length-3,this.value.length)!='...'){  //

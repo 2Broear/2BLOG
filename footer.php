@@ -52,7 +52,7 @@
                     $third_cmt = get_option('site_third_comments');
                     if($third_cmt=='Valine'){    // 全站加载
                 ?>
-                        <script src="<?php custom_cdn_src(0); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+                        <script src="<?php custom_cdn_src(); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
                 <?php
                         if(!$baas){
                 ?>
@@ -266,7 +266,7 @@
                 </li>
                 <li class="PoweredBy2B">
                   <ins> XTyDesign </ins>
-                  <?php echo '<img '.$lazysrc.'="'.custom_cdn_src('img',true).'/images/svg/XTy_.svg" style="max-width:66px" alt="XTY Design" />'; ?>
+                  <?php echo '<img src="'.custom_cdn_src('img',true).'/images/svg/XTy_.svg" style="max-width:66px" alt="XTY Design" />'; //'.$lazysrc.' ?>
               </li>
               </ul>
               <ul class="friend_links">
@@ -314,15 +314,13 @@
             <p id="supports">
                 <?php 
                     if(get_option('site_monitor_switcher')) echo '<script type="text/javascript" src="'.get_option('site_monitor').'"></script>';
-                    if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online" rel="nofollow"><img '.$lazysrc.'="'.custom_cdn_src('img',true).'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>';
-                    // if(get_option('site_foreverblog_switcher'))
-                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank" rel="nofollow"><img '.$lazysrc.'="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
+                    if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online" rel="nofollow"><img src="'.custom_cdn_src('img',true).'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>'; //'.$lazysrc.'
+                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank" rel="nofollow"><img src="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>'; //'.$lazysrc.'
                     // if($valine_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
                     $server = get_option('site_server_side');
-                    if($server) echo '<a href="javascript:void(0);" rel="nofollow"><img '.$lazysrc.'="'.$server.'" style="height: 12px;" alt="server"></a>'; //&&$server!="已关闭"
+                    if($server) echo '<a href="javascript:void(0);" rel="nofollow"><img src="'.$server.'" style="height: 12px;" alt="server"></a>'; //'.$lazysrc.'
                     if(get_option('site_foreverblog_wormhole')){
                         $theme = array_key_exists('theme_mode',$_COOKIE) ? $_COOKIE['theme_mode'] : false;
-                        // $warmhole_img = $theme ? custom_cdn_src('img',true).'/images/wormhole_2_tp.gif' : custom_cdn_src('img',true).'/images/wormhole_4_tp.gif';
                         echo '<a href="https://www.foreverblog.cn/go.html" target="_blank" rel="nofollow"><em class="warmhole" style="background:url('.custom_cdn_src('img',true).'/images/wormhole_4_tp_ez.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
                     }
                 ?>

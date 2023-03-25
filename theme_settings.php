@@ -2104,9 +2104,9 @@
                                     <?php
                                         $opt = 'site_async_archive';
                                         $value = get_option($opt);
-                                        $preset = 99;  //默认填充数据
+                                        $preset = 8;  //默认填充数据
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">归档默认/手动加载数量（默认 99</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        echo '<p class="description" id="site_bar_pixiv_label">归档默认/手动加载数量（默认 8</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>

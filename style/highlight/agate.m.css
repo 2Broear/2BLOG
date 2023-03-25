@@ -25,7 +25,7 @@
     height: 10px;
     top: 0;
     left: 15px;
-    margin-top: 15px;
+    margin-top: 18px;
     -webkit-box-shadow: 20px 0 #ffbd2e, 40px 0 #27c93f;
     box-shadow: 18px 0 #ffbd2e, 36px 0 #27c93f;
 }
@@ -36,14 +36,16 @@
   background: #3a3a3a;
   color: whitesmoke;
   border-radius: 10px;
-  padding: 35px 0.5em 1em;
+  padding: 3em 0 1em 0.5em;
+  /*padding: 40px 0.5em 1em;*/
   position: relative;
 }
 .hljs ul {
   list-style: decimal;
   background: inherit;
-  margin: 0px 0px 0 40px !important;
-  padding: 0px;
+  margin: 0px 0px 0 35px !important;
+  padding: 0;
+  cursor: text;
 }
 .hljs ul li:hover{
   background: rgb(88 88 88 / 0.38);
@@ -52,9 +54,10 @@
   color: inherit!important;
   list-style: decimal-leading-zero;
   border-left: 1px solid #4a4a4a !important;
-  padding: 3px 12px!important;
+  padding: 0 10px!important;
+  line-height: 1.5em;
   margin: 0 !important;
-  line-height: 14px;
+  /*line-height: 14px;*/
   word-break: break-all;
   word-wrap: break-word;
 }

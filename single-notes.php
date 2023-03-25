@@ -63,9 +63,49 @@
         </footer>
     </div>
     <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
-    <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/highlight/highlight.pack.js"></script>
     <!-- plugins -->
-    <script>hljs.initHighlightingOnLoad();</script>
+    <script>
+        const codeblock = document.querySelectorAll("pre code");
+        if(codeblock.length>=1){
+			new Promise(function(resolve,reject){
+        	    dynamicLoad('<?php custom_cdn_src(); ?>/js/highlight/highlight.pack.js', function(){
+        	        hljs ? resolve(hljs) : reject('highlight err.');
+        	    });
+			}).then(function(res){
+                // initilize highlight.js
+                res.initHighlightingOnLoad();
+                // code copy support
+                const content = document.querySelector('.content'),
+                      text = document.createElement('textarea'),
+                      codeLoop = function(callback){
+                          for(let i=0,codeLen=codeblock.length;i<codeLen;i++){
+                              if(callback&&typeof callback=='function') callback(i); //callback.apply(this, arguments);
+                          }
+                      },
+                      copied = 'copied';
+                codeLoop(function(i){
+                    const each_code = codeblock[i];
+                    each_code.innerHTML = "<ul><li>" +each_code.innerHTML.replace(/\n/g,"\n</li><li>") +"\n</li></ul><span class='copy_btn' title='复制当前代码块'></span>"; //each_code.innerHTML.replace(/\n/g,"\n") +"\n<span class='copy_btn'></span>"
+                });
+                text.classList.add('copy_area');
+                document.body.appendChild(text);
+                bindEventClick(content, 'copy_btn', function(t){
+                    const tp = t.parentNode;
+                    if(tp.classList.contains(copied)) return;
+                    codeLoop(function(i){
+                        codeblock[i].classList.remove(copied);
+                    });
+                    tp.classList.add(copied);
+                    text.value = tp.querySelector('ul').innerText.replace(/\n\n/g,"\n");
+                    text.select(); //.setSelectionRange(0,text.value.length);
+                    document.execCommand('copy');
+                    // console.log(text.value);
+                });
+			}).catch(function(err){
+			    console.log(err);
+			});
+        }
+    </script>
     <script src="<?php custom_cdn_src(); ?>/js/fancybox.umd.js"></script>
     <script>
         // gallery js initiate 'bodyimg' already exists in footer lazyload, use contimg insted.

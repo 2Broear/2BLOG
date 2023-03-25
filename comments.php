@@ -189,11 +189,6 @@
                     global $lazysrc;
                     $GLOBALS['comment'] = $comment; 
                     $approved = $comment->comment_approved;
-                    $userAgent = get_userAgent_info($comment->comment_agent);
-                    $content = strip_tags($comment->comment_content);
-                    $comment_ID = $comment->comment_ID;
-                    $comment_author = $comment->comment_author;
-                    $parent = $comment->comment_parent;
             ?>
                     <div class="wp_comments" id="comment-<?php comment_ID(); ?>">
                         <div class="vh" rootid="<?php comment_ID(); ?>">
@@ -214,6 +209,7 @@
                                         <?php
                                             comment_author();
                                             if(get_comment_author_email()==get_bloginfo('admin_email')) echo '<span class="admin">admin</span>';
+                                            $userAgent = get_userAgent_info($comment->comment_agent);
                                             echo '<span class="useragent">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
                                             if($approved=="0") echo '<span class="auditing">待审核</span>';
                                         ?>
@@ -223,6 +219,8 @@
                                         if($approved=="1"){
                                             if(get_option('site_ajax_comment_switcher')){
                                                 global $post;
+                                                $comment_ID = $comment->comment_ID;
+                                                $comment_author = $comment->comment_author;
                                                 echo '<a rel="nofollow" class="comment-reply-link" href="javascript:void(0);" data-commentid="'.$comment_ID.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$comment_ID.'" data-respondelement="respond" data-replyto="'.$comment_author.'" aria-label="正在回复给：@'.$comment_author.'">回复</a>';
                                                 unset($post);
                                             }else{
@@ -236,6 +234,8 @@
                                     ?>
                                 </div>
                                 <?php 
+                                    $content = strip_tags($comment->comment_content);
+                                    $parent = $comment->comment_parent;
                                     if($approved=='0') $content = '<small style="opacity:.5">[ 评论未审核，通过后显示 ]</small>';
                                     if($parent>0) $content = '<a href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
                                     echo '<p>'.$content.'</p>'; //comment_text();
@@ -314,15 +314,15 @@
                           for(let i=0,eLen=els.length;eLen>i;i++){
                               disabled ? els[i].classList.add(cls) : els[i].classList.remove(cls);
                           }
-                      },
-                      getParentElement = function(curEl, parCls){
-                          //!curEl.classList incase if dnode oes not have any classes (null occured)
-                          while(!curEl || !curEl.classList || !curEl.classList.contains(parCls)){
-                              if(!curEl) break;  //return undefined
-                              curEl = curEl.parentNode; //parentElement
-                          };
-                          return curEl;
                       };
+                    //   getParentElement = function(curEl, parCls){
+                    //       //!curEl.classList incase if dnode oes not have any classes (null occured)
+                    //       while(!curEl || !curEl.classList || !curEl.classList.contains(parCls)){
+                    //           if(!curEl) break;  //return undefined
+                    //           curEl = curEl.parentNode; //parentElement
+                    //       };
+                    //       return curEl;
+                    //   };
                 //*** Submit comments logic ***//
                 bindEventClick(comment_box, 'submit_btn', function(t, e){
                     e.preventDefault();  // prevent form submit
@@ -374,8 +374,8 @@
                             }
                             temp_comment.classList.add("wp_comments");
                             temp_comment.innerHTML = `<div class="vh" rootid=""><div class="vhead"><a rel="nofollow" href="" target="_blank"><img class="avatar" width="50" height="50" src="${comment_box.querySelector('img.avatar').src}"></a></div><div class="vcontent" style="margin-left:5px"><div class="vinfo"><a rel="nofollow" href="" target="_blank">${a_val}</a>${comment_info}<div class="vtime">${temp_date.toLocaleDateString()}</div></div><p>${comment_replyto} ${c_val}</p></div></div>`; //<small style="opacity:.5">[ 评论未审核，通过后显示 ]</small>   ${temp_date.toLocaleTimeString()}
-                            const inside_child_reply = getParentElement(t, 'children'),
-                                  check_child_reply = getParentElement(t, 'wp_comments');
+                            const inside_child_reply = getParByCls(t, 'children'),
+                                  check_child_reply = getParByCls(t, 'wp_comments');
                             if(inside_child_reply){
                                 inside_child_reply.appendChild(temp_comment);  // inside loaded-children list reply
                             }else{
@@ -437,7 +437,7 @@
                                     remains_node = document.querySelector(".wp_comment_box");
                                 // detect if adopt_node remains before manual-load-comments (adoptNode cache)
                                 if(remains_node) remains_node.remove();
-                                getParentElement(t, "vcontent").appendChild(adopt_node);  // append adopt node
+                                getParByCls(t, "vcontent").appendChild(adopt_node);  // append adopt node
                                 adopt_area.placeholder = "正在回复给：@"+t.dataset.replyto;
                                 adopt_area.focus();
                                 class_switcher(adopt_node.querySelectorAll('.'+focusCls), focusCls, false); // adopt_area.classList.remove(focusCls);

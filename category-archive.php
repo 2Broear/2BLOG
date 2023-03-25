@@ -159,10 +159,10 @@
                         'format' => 'option',
                         'show_post_count' => 1,
                         'limit' => '',
-                //         'year' => '2018',
-                // 		'monthnum' => '',
-                // 		'day' => '',
-                // 		'w' => '',
+                        // 'year' => '2018',
+                		// 'monthnum' => '',
+                		// 'day' => '',
+                		// 'w' => '',
                     )); 
                 ?>
             </select>
@@ -182,8 +182,7 @@
                 $use_async = $async_sw ? in_array($archive_temp_slug, $async_array) : false;
                 $async_loads = $async_sw&&$use_async ? get_option("site_async_archive", 99) : 999;
                 $output_stats = "";
-                // https://wordpress.stackexchange.com/questions/46136/archive-by-year
-                // get years that have posts
+                // get years that have posts // https://wordpress.stackexchange.com/questions/46136/archive-by-year
                 global $wpdb;
                 $years = $wpdb->get_results( "SELECT YEAR(post_date) AS year FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' GROUP BY year DESC" );
                 // get posts for each year
@@ -191,20 +190,22 @@
                     $cur_year = $year->year;
                     $cur_posts = get_wpdb_yearly_pids($cur_year, $async_loads, 0);
                     $posts_count = count($cur_posts);
+                    $all_pids = get_wpdb_yearly_pids($cur_year, 999, 0);  //list 999+posts
+                    $pids_count = count($all_pids);
                     if($async_stats_sw){
-                        // Categorize Posts (Performance Issues!!!)
-                        $news_count = $note_count = $blog_count = 0; //$news_array = $note_array = $blog_array = [];
-                        $all_pids = get_wpdb_yearly_pids($cur_year, 999, 0);  //list 999+posts
-                        $pids_count = count($all_pids);
-                        for($i=0;$i<$pids_count;$i++){
-                            $pst = $all_pids[$i];
-                            if(in_category($news_temp_id, $pst)) $news_count++; //array_push($news_array, $pst);
-                            if(in_category($note_temp_id, $pst)) $note_count++; //array_push($note_array, $pst);
-                            if(in_category($blog_temp_id, $pst)) $blog_count++; //array_push($blog_array, $pst);
-                        };
-                        // $news_count = count($news_array);
-                        // $note_count = count($note_array);
-                        // $blog_count = count($blog_array);
+                        // // Categorize Posts (Performance Issues!!!)
+                        // $news_count = $note_count = $blog_count = 0;
+                        // //$news_array = $note_array = $blog_array = [];
+                        // for($i=0;$i<$pids_count;$i++){
+                        //     $pst = $all_pids[$i];
+                        //     if(in_category($news_temp_id, $pst)) $news_count++; //array_push($news_array, $pst);
+                        //     if(in_category($note_temp_id, $pst)) $note_count++; //array_push($note_array, $pst);
+                        //     if(in_category($blog_temp_id, $pst)) $blog_count++; //array_push($blog_array, $pst);
+                        // };
+                        // // $news_count = count($news_array); // $note_count = count($note_array); // $blog_count = count($blog_array);
+                        $news_count = get_yearly_cat_count($cur_year, $news_temp_id);
+                        $note_count = get_yearly_cat_count($cur_year, $note_temp_id);
+                        $blog_count = get_yearly_cat_count($cur_year, $blog_temp_id);
                         $rest_count = $pids_count - ($news_count+$note_count+$blog_count);
                         $output_stats = '<span class="stat_'.$cur_year.' stats">📈📉统计：<b>'.$news_temp_name.'</b> '.$news_count.'篇、 <b>'.$note_temp_name.'</b> '.$note_count.'篇、 <b>'.$blog_temp_name.'</b> '.$blog_count.'篇、 <b>其他类型</b> '.$rest_count.'篇。</span>';
                     }
@@ -212,7 +213,14 @@
                     $load_btns = $posts_count>=$async_loads ? '<sup class="call" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="'.wp_create_nonce($cur_year."_posts_ajax_nonce").'">加载更多</sup>' : '<sup class="call disabled" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="disabled">已全部载入</sup>';
                     $load_icon = $curYear==$cur_year ? ' 🚀 ' : ' 📁 ';
                     echo $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$load_icon.$load_btns.'</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="call_'.$cur_year.'">';
-                    // print_r($cur_posts[0]->ID);
+                    // $year_posts = get_posts(array(
+                    //     "year"        => $year,
+                    //     "numberposts" => $posts_count,
+                    // ));
+                    // foreach ($year_posts as $yearpost){
+                    //     echo '<li><a class="link" href="'.get_the_permalink($yearpost).'" target="_blank">'.$yearpost->post_title.'<sup>';
+                    //     echo '</sup></a></li>';
+                    // }
                     for($i=0;$i<$posts_count;$i++){
                         $each_posts = $cur_posts[$i];
                         $prev_posts = $i>0 ? $cur_posts[$i-1] : $cur_posts[$i]; //$i>1 ? $cur_posts[$i-1] : false;
@@ -261,7 +269,7 @@
 ?>
         <script>
             const archive_tree = document.querySelector(".archive-tree"),
-                  preset_loads = <?php echo $async_loads; ?>;
+                  preset_loads = <?php echo $async_loads>=99 ? $async_loads : 99; ?>;
             bindEventClick(archive_tree, 'call', function(t){
                 load_ajax_posts(t, 'archive', preset_loads, function(each_post, load_box, last_offset){
                     let each_temp = document.createElement("LI");

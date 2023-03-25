@@ -292,6 +292,6 @@
 </footer>
 <?php if(get_option('site_chat_switcher')) echo '<script src="'.get_option('site_chat').'"></script>'; ?>
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
-<script type="text/javascript" src="<?php custom_cdn_src(0); ?>/js/banner.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/banner.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/cursor.js"></script>-->
 </body></html>

@@ -33,7 +33,7 @@
             if(!t) return;
             while(t!=parent){
                 if(t.classList && t.classList.contains(cls)){
-                    callback ? callback(t,e) : false; //callback(t) || callback(t); // callback.apply(this, ...arguments);
+                    if(callback&&typeof callback=='function') callback(t,e); //callback(t) || callback(t); // callback.apply(this, ...arguments);
                     break;
                 }else{
                     t = t.parentNode;
@@ -42,10 +42,10 @@
         }
     }
     function getParByCls(curEl, parCls){
+        //!curEl.classList incase if dnode oes not have any classes (null occured)
         while(!curEl || !curEl.classList || !curEl.classList.contains(parCls)){
-            // if(!curEl) break;  //return undefined
-            curEl = curEl.parentNode; //parentElement
-            break;
+          if(!curEl) break;  //return undefined
+          curEl = curEl.parentNode; //parentElement
         };
         return curEl;
     };

@@ -1647,6 +1647,7 @@ body.dark .share #dislike span #counter {color:#303030}
 .wp_comments_list .children .wp_comments img.avatar.user{
     max-width: 50px;
     max-height: 50px;
+    border-radius: 50%!important;
 }
 .wp_comments_list .children .wp_comments img.avatar{
     max-width: 35px;
