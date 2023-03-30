@@ -8,7 +8,7 @@
 <meta name="msapplication-TileColor" content="<?php echo $theme_color; ?>" />
 <meta name="msapplication-TileImage" content="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico" />
 <link rel="shortcut icon" href="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico"/>
-<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/universal.min.css?v=<?php echo get_theme_info('Version'); ?>" />
+<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(0); ?>/style/universal.min.css?v=<?php echo get_theme_info('Version'); ?>" />
 <style>
     body.dark #supports em.warmhole{
         background: url(<?php custom_cdn_src('img'); ?>/images/wormhole_2_tp.gif) no-repeat center center /cover!important;
@@ -24,8 +24,22 @@
         }
     ?>
 </style>
-<script async>
+<script>
     document.documentElement.style.setProperty('--theme-color','<?php echo $theme_color; ?>');
+    function asyncLoad(url, callback){
+    	const head = document.getElementsByTagName('head')[0],
+    		  script = document.createElement('script');
+	    script.setAttribute('type', 'text/javascript');
+	    script.setAttribute('async', true);
+	    script.setAttribute('src', url);
+		head.appendChild(script);
+    	script.onload = script.onreadystatechange = function(){
+    		if(!this.readyState || this.readyState=='loaded' || this.readyState=='complete'){
+    			if(callback&&typeof callback=='function') callback();
+    		}
+    		script.onload = script.onreadystatechange = null;
+    	};
+    };
     function bindEventClick(parent, cls, callback){
         parent.onclick=(e)=>{
             e = e || window.event;
@@ -56,11 +70,15 @@
 ?>
         <script src="<?php custom_cdn_src(); ?>/js/leancloud/av-min.js?v=headcall"></script>
         <script>
-            AV.init({
-                appId: "<?php echo get_option('site_leancloud_appid') ?>",
-                appKey: "<?php echo get_option('site_leancloud_appkey') ?>",
-    	        serverURLs: "<?php echo get_option('site_leancloud_server') ?>"
-            });
+            // function asyncCallback(){
+            // asyncLoad('<?php custom_cdn_src(); ?>/js/leancloud/av-min.js?v=headcall', function(){
+                AV.init({
+                    appId: "<?php echo get_option('site_leancloud_appid') ?>",
+                    appKey: "<?php echo get_option('site_leancloud_appkey') ?>",
+        	        serverURLs: "<?php echo get_option('site_leancloud_server') ?>"
+                });
+            // });
+            // }
         </script>
 <?php
     }

@@ -41,6 +41,6 @@
 		</footer>
 	</div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<?php require_once(TEMPLATEPATH. '/foot.php'); ?>
 <!-- pluginJs -->
 </body></html>

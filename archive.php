@@ -49,6 +49,6 @@
 </footer>
 </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
+<?php require_once(TEMPLATEPATH. '/foot.php'); ?>
 <!-- inHtmlJs -->
 </body></html>

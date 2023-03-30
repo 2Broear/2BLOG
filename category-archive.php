@@ -255,21 +255,13 @@
         </footer>
 	</div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
-    if(get_option('site_animated_counting_switcher')){
-?>
-        <script>
-            const counters = document.querySelectorAll(".win-top .counter div");
-            dataDancing(counters, "h1", 200, 25);
-        </script>
-<?php
-    }
+    require_once(TEMPLATEPATH. '/foot.php');
     if($async_sw&&$use_async){
 ?>
         <script>
             const archive_tree = document.querySelector(".archive-tree"),
-                  preset_loads = <?php echo $async_loads>=99 ? $async_loads : 99; ?>;
+                  preset_loads = <?php echo $async_loads; ?>;
             bindEventClick(archive_tree, 'call', function(t){
                 load_ajax_posts(t, 'archive', preset_loads, function(each_post, load_box, last_offset){
                     let each_temp = document.createElement("LI");

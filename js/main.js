@@ -374,7 +374,6 @@
           progress_ball = site_tool.querySelector(".inside-functions"),
           progress_wave = progress_ball.querySelector(".pagePer i span"),
           progress_bar = document.querySelector(".top-bar-tips span#doc-progress-bar"),
-          menu_mask = document.querySelector('.windowmask'),
     	  class_up = 'barSetUp',
           class_down = 'barSetDown',
           class_fixed = 'window-all-get-fixed',
@@ -652,37 +651,49 @@
     // moblie ux
     const mobile_nav = document.querySelector('header .nav-wrap'),
           slide_menu = mobile_nav.querySelector('.slider-menu'),
+          menu_mask = document.querySelector('.windowmask'),
           mobile_func = function(e){
               e.cancelable ? e.preventDefault() : e.stopPropagation();  // prevent penetrate a link
               const cls = 'show';
               if(slide_menu.classList && slide_menu.classList.contains(cls)){
                   document.body.style.overflowY = '';
-                  slide_menu.classList.remove(cls)
+                  slide_menu.classList.remove(cls);
                   menu_mask.style.display = '';
               }else{
                   document.body.style.overflowY = 'hidden';
-                  slide_menu.classList.add(cls)
+                  slide_menu.classList.add(cls);
                   menu_mask.style.display = 'block';
               }
+          },
+          search_func = function(tar){
+              const search_cls = "searching";
+              if(tar.classList&&tar.classList.contains(search_cls)){
+                  tar.classList.remove(search_cls);
+              }else{
+                  tar.classList.add(search_cls);
+                  tar.querySelector('.tips form input').focus();
+              }
           };
+    // release event
     menu_mask.onmouseup = menu_mask.ontouchend=(e)=>mobile_func(e);
     // bind click event
-    mobile_nav.onclick=(e)=>{
+    mobile_nav.onclick=function(e){ //=> this->window
         e = e || window.event;
         let t = e.target || e.srcElement;
         if(!t) return;
         while(t!=mobile_nav){
-            if(t.classList && t.classList.contains("m-search")){
-                let cls = 'searching',
-                    search = t.parentNode;
-                search.classList && search.classList.contains(cls) ? search.classList.remove(cls) : search.classList.add(cls);
+            if(t.classList&&t.classList.contains("search-pop")){
+                search_func(this);
                 break;
-            }else if(t.classList && ["m-menu", "slider-close"].some(c => t.classList.contains(c))){ //t.classList.contains("m-menu", "slider-close") || t.classList.contains("slider-close")
+            }else if(t.classList&&["m-menu", "slider-close"].some(c => t.classList.contains(c))){ //t.classList.contains("m-menu", "slider-close") || t.classList.contains("slider-close")
                 mobile_func(e);
+                break;
+            }else if(t.classList&&t.classList.contains("footer-tips")){
+                mobile_func(e);
+                search_func(this);
                 break;
             }else{
                 t = t.parentNode;
             }
         }
     }
-    

@@ -38,7 +38,7 @@
                         _tp.classList.add("disabled");  // incase multi click (first generating only)
     					div.innerHTML += res;  //在valine环境直接追加到body会导致点赞元素层级错误（重绘性能问题）
     					document.body.appendChild(div);
-                	    dynamicLoad('<?php custom_cdn_src(); ?>/js/qrcode/qrcode.min.js', function(){
+                	    asyncLoad('<?php custom_cdn_src(); ?>/js/qrcode/qrcode.min.js', function(){
                     		let url = location.href;
                     		var qrcode = new QRCode(document.getElementById("qrcode"), {
                     			text: url,
@@ -52,7 +52,7 @@
                 	    });
 					}).then(function(res){
 					    console.log(res[1]);
-                	    dynamicLoad('<?php custom_cdn_src(); ?>/js/html2canvas/html2canvas.min.js', function(){
+                	    asyncLoad('<?php custom_cdn_src(); ?>/js/html2canvas/html2canvas.min.js', function(){
                 	       // console.log('now loading html2canvas..')
                     		html2canvas(document.querySelector('#capture'),{
                     		    useCORS: true,

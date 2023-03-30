@@ -119,16 +119,8 @@
         </footer>
 	</div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
-    if($datadance){
-?>
-        <script>
-            const counters = document.querySelectorAll(".win-top .counter div");
-            dataDancing(counters, "h2", -15, 5, "<sup>+</sup>");
-        </script>
-<?php
-    };
+    require_once(TEMPLATEPATH. '/foot.php');
     if($async_sw&&$use_async){
 ?>
         <script>

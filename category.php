@@ -1,4 +1,5 @@
 <?php
+    // global $cat;
     $cat = $cat ? $cat : get_page_cat_id(current_slug(false));  // if is_page() then rewrite cat to cid
     $cur_template = get_term_meta($cat, 'seo_template', true);
     !$cur_template || $cur_template=='default' ? include_once(TEMPLATEPATH . '/index.php') : include_once(TEMPLATEPATH . '/'.$cur_template);//use category as folder

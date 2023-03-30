@@ -1,64 +1,78 @@
-<div class="slider-menu" tabindex="1" style="background:url(<?php custom_cdn_src('img'); ?>/images/bg3.png) repeat center center">
-    <div class="slider-menu-inside">
-        <div class="slider-menu_header">
-            <span class="slider-tips">
-                <p> <?php echo get_option('site_nick', get_bloginfo('name')); ?> の <strong><?php bloginfo('name') ?></strong> </p>
-            </span>
-            <span class="slider-close" title="Close Menu">
-                <i class="BBFontIcons close-btn"></i>
-            </span>
-            <div class="slider-logo">
-                <a href="<?php bloginfo('url') ?>" data-instant style="display: inline-block;" rel="nofollow">
-                    <?php site_logo(true); ?><!--<svg class="svg-symbols" width="115px" height="41px" viewBox="0 0 115 41"></svg>-->
-                </a>
-            </div>
-        </div>
-        <div class="slider-menu_body">
-            <div class="body-main">
-                <ul>
-                    <?php
-                        global $cat;  //变量提升
-                        $use_icon = get_option('site_icon_switcher');
-                        $site_icon = $use_icon ? '<i class="icom icon-more"></i>' : '';
-                        $choosen = is_home() ? 'choosen' : '';
-                        echo '<li class="cat_0 top_level"><a href="/" class="'.$choosen.'">'.$site_icon.'首页</a></li>';
-                        $cats = get_categories(meta_query_categories(0, 'ASC', 'seo_order'));
-                        if(!empty($cats)){
-                            foreach($cats as $the_cat){
-                                $the_cat_id = $the_cat->term_id;
-                                $the_cat_slug = $the_cat->slug;  //use slug compare current category
-                                $the_cat_par = get_category($the_cat->category_parent);
-                                $catss = get_categories(meta_query_categories($the_cat_id, 'ASC', 'seo_order'));
-                                $slug_icon = $the_cat->slug!="/" ? $the_cat->slug : "more";
-                                if(!empty($catss)) $level="sec_level";else $level="top_level";
-                                if($the_cat_id==$cat&&!is_single() || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";  //current category/page detect (bychild) DO NOT USE ID DETECT, because all cat are page(post) type;
-                                $slash_link = get_category_link($the_cat_id)!=get_site_url() ? get_category_link($the_cat_id) : 'javascript:void(0)';  // detect if use $slash_link
-                                $site_icon = $use_icon ? '<i class="icom icon-'.$slug_icon.'"></i>' : '';
-                                if($the_cat_slug!='uncategorized') echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.$slash_link.'" class="'.$choosen.'">' . $site_icon . $the_cat->name.'</a>';  //liwrapper
-                                if(!empty($catss)){
-                                    echo '<ul class="links-mores">';
-                                    foreach($catss as $the_cats){
-                                        $the_cats_id = $the_cats->term_id;
-                                        $catsss = get_categories(meta_query_categories($the_cats_id, 'ASC', 'seo_order'));
-                                        if(!empty($catsss)) $level="trd_level";else $level="sec_child";
-                                        if($the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single()) $choosen = "choosen 2rd";else $choosen="2nd";  // current choosen detect
-                                        $slash_link = get_category_link($the_cats_id)!=get_site_url() ? get_category_link($the_cats_id) : 'javascript:void(0)';  // detect if use $slash_link
-                                        echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent." ".$level.'"><a href="'.$slash_link.'" class="'.$choosen.'">&nbsp; '.$the_cats->name.'</a></li>';  //liwrapper
-                                    }
-                                    echo "</ul>";
-                                }
-                                echo '</li>';
-                            }
-                        }
-                        unset($cat);
-                    ?>
-                </ul>
-            </div>
-        </div>
-        <div class="slider-menu_footer">
-            <span class="footer-tips">找什么？搜搜看<i class="BBFontIcons check-hook"></i></span>
-        </div>
-    </div>
-</div>
-<div class="windowmask"></div>
-<!--<div class="windowmask-s2"></div>-->
+<!--<script async src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>-->
+<script src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<script type="text/javascript">
+    <?php
+        global $cat;
+        $vdo_poster_sw = get_option('site_video_poster_switcher');
+        $datadance = get_option('site_animated_counting_switcher');
+        $news_temp_id = get_cat_by_template('news','term_id');
+        $note_temp_id = get_cat_by_template('notes','term_id');
+        $acg_temp_id = get_cat_by_template('acg','term_id');
+        if(is_single()){
+            if(in_category($news_temp_id) || in_category($note_temp_id)){
+    ?>
+                //dynamicLoad
+                asyncLoad('<?php custom_cdn_src(); ?>/js/fancybox.umd.js', function(){
+                    console.log('fancybox init.');
+                    // gallery js initiate 'bodyimg' already exists in footer lazyload, use contimg insted.
+                    fancyImages(document.querySelectorAll(".news-article-container .content img"));
+                });
+    <?php
+            }
+        }
+        if($cat){
+            switch ($cat) {
+               // case in_category($news_temp_id):
+                case $news_temp_id:
+                case $note_temp_id:
+                case get_cat_by_template('privacy','term_id'):
+                    if($vdo_poster_sw) echo 'setupVideoPoster(1);'; // 截取设置当前页面所有视频 poster
+                    break;
+                case $acg_temp_id:
+                case cat_is_ancestor_of($acg_temp_id, $cat):
+                    if($datadance) echo 'dataDancing(document.querySelectorAll(".win-top .counter div"), "h2", -15, 5, "<sup>+</sup>");';
+                    break;
+                case get_cat_by_template('archive','term_id'):
+                    if($datadance) echo 'dataDancing(document.querySelectorAll(".win-top .counter div"), "h1", 200, 25);';
+                    break;
+                case get_cat_by_template('about','term_id'):
+                    if($vdo_poster_sw) echo 'setupVideoPoster(2);';  // 截取设置当前页面所有视频 poster 
+    ?>
+                    const list = document.querySelectorAll('.mbit .mbit_range li');
+                    // if(raf_available){
+                    //     if(list[0]){
+                    //         for(let i=0,listLen=list.length;i<listLen;i++){
+                    //             raf_enqueue(true, function(init){
+                    //                 list[i].classList.add('active');
+                    //             }, 25, i);
+                    //         }
+                    //     }
+                    // }else{
+                        sto_enqueue(list, true, function(i){
+                            list[i].classList.add('active');
+                        }, 150);
+                    // }
+    <?php
+                    break;
+                case get_cat_by_template('weblog','term_id'):
+                    // code...
+                    break;
+                case get_cat_by_template('guestbook','term_id'):
+                    // code...
+                    break;
+                case get_cat_by_template('2bfriends','term_id'):
+                    // code...
+                    break;
+                case get_cat_by_template('download','term_id'):
+                    // code...
+                    break;
+                case get_cat_by_template('ranks','term_id'):
+                    // code...
+                    break;
+                default:
+                    // code...
+                    break;
+            }
+        }
+    ?>
+</script>

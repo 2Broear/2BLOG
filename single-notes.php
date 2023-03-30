@@ -62,7 +62,7 @@
             <?php get_footer(); ?>
         </footer>
     </div>
-    <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+    <?php require_once(TEMPLATEPATH. '/foot.php'); ?>
     <!-- plugins -->
     <script>
         const codeblock = document.querySelectorAll("pre code");
@@ -105,15 +105,5 @@
 			    console.log(err);
 			});
         }
-    </script>
-    <script src="<?php custom_cdn_src(); ?>/js/fancybox.umd.js"></script>
-    <script>
-        // gallery js initiate 'bodyimg' already exists in footer lazyload, use contimg insted.
-        fancyImages(document.querySelectorAll(".news-article-container .content img"));
-        <?php
-            if(get_option('site_video_poster_switcher')){
-                echo 'setupVideoPoster(2);';  // 截取设置当前页面所有视频 poster 
-            }
-        ?>
     </script>
 </body></html>

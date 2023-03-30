@@ -499,6 +499,7 @@
             register_setting( 'baw-settings-group', 'site_metanav_image' );
         // }
         register_setting( 'baw-settings-group', 'site_per_posts' );
+        register_setting( 'baw-settings-group', 'site_catnav_deepth' );
         
         register_setting( 'baw-settings-group', 'site_rcmdside_cid' );
         register_setting( 'baw-settings-group', 'site_cardnav_array' );
@@ -1803,13 +1804,25 @@
                             ?>
                         </td>
                     </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">分类导航最大层级</th>
+                        <td>
+                            <?php
+                                $opt = 'site_catnav_deepth';
+                                $value = get_option($opt);
+                                $preset = 4;  //默认填充数据
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                echo '<p class="description" id="">页面 Header 头部分类导航层级（默认最大4级</p><input type="number" max="" min="1" max="4" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                            ?>
+                        </td>
+                    </tr>
                     <tr valign="top">
                         <th scope="row">文章列表预览图</th>
                         <td>
                             <?php
                                 $opt = 'site_default_postimg_switcher';
                                 $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">默认当文章存在自定义 thumbnail 特色图片时才显示列表预览图，开启后将始终显示（显示优先级：自定义特色图片>文章内图片>默认图片</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">始终显示预览</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">默认当文章存在自定义 thumbnail 特色图片时才显示列表预览图，开启后将始终显示（显示优先级：自定义特色图片>文章内图片>默认图片</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">始终显示预览图</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2127,7 +2140,7 @@
                             <?php
                                 $opt = 'site_async_archive_contributions';
                                 $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示<b>去年+今年</b>当月热度报表（默认显示当年/月份</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Fully Contributions</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示<b>全年</b>（去年-今年当月）热度报表（默认显示当年/月份</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Lastest Contributions</b></label>';
                             ?>
                         </td>
                     </tr>

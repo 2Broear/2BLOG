@@ -44,8 +44,8 @@
         }
         .friends-boxes .deals.exchanged .inbox:hover > .inbox-headside{
             filter: saturate(5) blur(15px) opacity(.15);
-            animation: blinker 3s infinite linear;
-            -webkit-animation: blinker 3s infinite linear;
+            animation: blinker 2s infinite linear;
+            -webkit-animation: blinker 2s infinite linear;
         }
         .friends-boxes .deals.exchanged .inbox .inbox-aside{
             display: flex;
@@ -157,12 +157,12 @@
 		</footer>
     </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <!-- inHtmlJs -->
 <!-- pluginJs !!! Cannot redefine property: applicationId (av-min must be same with valine.js cdn) !!! av-min.js must be load via dynamicLoad(use no raw function twice) to head js which allow init AV twice -->
 <!--<script src="//cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js"></script>-->
 <!-- inHtmlJs -->
 <?php
+    require_once(TEMPLATEPATH. '/foot.php');
     // declear lazyLoad standby-avatar(seo-fix alt tips)
     if($baas){
 ?>

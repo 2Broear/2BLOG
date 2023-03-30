@@ -147,8 +147,8 @@
         </footer>
     </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <?php
+    require_once(TEMPLATEPATH. '/foot.php');
     if($baas){
 ?>
         <script type="text/javascript">
@@ -209,8 +209,8 @@
                         editor.focus();
                         editor.value = "";
                         editor.setAttribute('placeholder', '回复片段：'+t.innerText);
-                        const cores = getParByCls(t, 'weblog-tree-box').querySelector('#core-info'), //getParentElement(t, 'weblog-tree-core-record')
-                              quote = `\n> __${t.innerText}__ \n> ${cores.innerText.replace(/\n/g,"").substr(0,88)}..`;
+                        const cores = getParByCls(t, 'weblog-tree-box').querySelector('#core-info'),
+                              quote = `\n> __${t.innerText}__ \n> ${cores ? cores.innerText.replace(/\n/g,"").substr(0,88) : ".."}...`;
                         editor.style.cssText="min-height:150px;opacity:.75;";
                         editor.value = quote;//this.id; '\n'+
                         editor.setSelectionRange(0,0);

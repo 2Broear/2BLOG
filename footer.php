@@ -313,12 +313,12 @@
             <?php if(get_option('site_beian_switcher')) echo '<li id="etc">'.get_option('site_beian').'</li>'; ?>
             <p id="supports">
                 <?php 
-                    if(get_option('site_monitor_switcher')) echo '<script type="text/javascript" src="'.get_option('site_monitor').'"></script>';
+                    if(get_option('site_monitor_switcher')) echo '<script async type="text/javascript" src="'.get_option('site_monitor').'"></script>';
                     if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online" rel="nofollow"><img src="'.custom_cdn_src('img',true).'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>'; //'.$lazysrc.'
                     echo '<a href="'.get_option('site_foreverblog').'" target="_blank" rel="nofollow"><img src="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>'; //'.$lazysrc.'
                     // if($valine_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
                     $server = get_option('site_server_side');
-                    if($server) echo '<a href="javascript:void(0);" rel="nofollow"><img src="'.$server.'" style="height: 12px;" alt="server"></a>'; //'.$lazysrc.'
+                    if($server) echo '<a href="javascript:;" rel="nofollow"><img src="'.$server.'" style="height: 12px;" alt="server"></a>'; //'.$lazysrc.'
                     if(get_option('site_foreverblog_wormhole')){
                         $theme = array_key_exists('theme_mode',$_COOKIE) ? $_COOKIE['theme_mode'] : false;
                         echo '<a href="https://www.foreverblog.cn/go.html" target="_blank" rel="nofollow"><em class="warmhole" style="background:url('.custom_cdn_src('img',true).'/images/wormhole_4_tp_ez.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
@@ -363,11 +363,14 @@
         </div>
     </div>
 </div>
-<script src="<?php custom_cdn_src(); ?>/js/nprogress.js"></script>
 <script type="text/javascript">
-	NProgress.start();
-	window.addEventListener('load', function(){
-		NProgress.done();
+    asyncLoad('<?php custom_cdn_src(); ?>/js/nprogress.js', function(){
+	    NProgress.start();
+	    const NProgressLoaded = function(){
+    		NProgress.done();
+    	    window.removeEventListener('load', NProgressLoaded, true);
+	    }
+    	window.addEventListener('load', NProgressLoaded, true);
     });
     // 闭包节流器
     function closure_throttle(callback=false, delay=200){
@@ -471,10 +474,10 @@
                         let e = event || window.event,
                             t = e.target || e.srcElement;
                         if(t!==document) return;
+                        // requestAnimationFrame support
                         raf_available ? window.requestAnimationFrame(scrollLoad) : scrollLoad();
                     };
                 autoLoad(loadArray, true);
-                // requestAnimationFrame support
                 window.addEventListener('scroll', scrollForRemove, true);
             }
     <?php
