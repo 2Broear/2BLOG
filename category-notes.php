@@ -123,7 +123,7 @@
                                 <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
                                 <?php 
                                     if($post_orderby>1) echo '<sup>置顶</sup>';
-                                    if($post_rights&&$post_rights!="请选择") echo '<sup>'.$post_rights.'</sup>';
+                                    if($post_rights&&$post_rights!="原创") echo '<sup>'.$post_rights.'</sup>';
                                 ?>
                             </h1>
                             <p><?php custom_excerpt(150); ?></p>

@@ -565,7 +565,7 @@ header input{width:66px;/*width:0;*/float:right;height:100%;color:inherit;transi
 input::-webkit-input-placeholder{color:var(--preset-8)}
 header input:focus{width:150px;font-size:var(--min-size-rem);}
 header input:focus+.slider{width:100%}
-header form span.slider{width:0%;height:2px;background:var(--theme-color);display:block;position:relative;left:0;top:0;z-index:2;transition:all .35s ease;text-align:center;margin:0 auto}
+header form span.slider{width:0%;height:2px;background:var(--theme-color);display:block;position:relative;left:0;top:0;z-index:2;transition:all .5s ease;text-align:center;margin:0 auto}
 /*.button-active{background:url('https://img.2broear.com/css_sprites.png') -133px -178px no-repeat !important;right:15px !important}*/
 .imtl-content-right-inside-search button.buttonActive:before{right:15px}
 .imtl-content-right-inside-search button:before{display:block;position:absolute;right:12px;top:8px}
@@ -826,7 +826,7 @@ i.arrow-down::after{content:'\e908'}
     left: -5px;
 }
 .slider-menu_footer{width:100%;height:auto;border-top:2px solid var(--theme-color)}
-.slider-menu_footer .footer-tips{color:var(--preset-fa);padding:25px 0;width:100%;display:inline-block;letter-spacing:5px;font-size:var(--min-size);font-weight:300}
+.slider-menu_footer .footer-tips{color:var(--preset-fa);padding:25px 0;width:100%;display:inline-block;letter-spacing:5px;font-size:var(--min-size);font-weight:300;cursor:pointer}
 .slider-menu_footer .footer-tips i:before{
     content: '\e919'!important;
 }
@@ -872,7 +872,7 @@ i.arrow-down::after{content:'\e908'}
 .footer-contact-left .footer-right{display:flex;flex-flow:column nowrap;width:70%;justify-content:space-between}
 .footer-contact-right{width:51%;height:auto;float:right;overflow:hidden}
 .footer-contact-left ul h2{font-weight:400;margin:0 0 10px 0;text-align:left;letter-spacing:1px;font-size:1.35rem;white-space:nowrap;font-family:var(--font-serif)}
-.footer-contact-left ul a{color:var(--preset-8);font-size:calc(1.05px * var(--size))}
+.footer-contact-left ul a{font-size:calc(1.05px * var(--size))}
 .footer-contact-left ul p,.PoweredBy2B ins{opacity:0.66}
 .footer-contact-left ul p{margin:5px auto;font-size:var(--min-size);font-weight:400;letter-spacing:3px}
 .footer-contact-left ul b{font-size:12px;float:inherit}
@@ -896,7 +896,7 @@ i.arrow-down::after{content:'\e908'}
 .friend_links li a#more:hover{text-decoration:underline;background:transparent;color:var(--theme-color)}
 .friend_links li a#more{color:var(--preset-8);border-color:transparent}
 .footer-recommend{width:8em;/*padding:0 8%*/}
-.footer-recommend a,.footer-quickway a{color:var(--preset-6)!important;line-height:calc(2.7px * var(--size))}
+.footer-recommend a,.footer-quickway a{color:var(--preset-6);line-height:calc(2.7px * var(--size))}
 .footer-recommend a em,.footer-left a em{font-style:normal;display:block;position:relative;padding-right:15px;overflow:hidden;text-overflow:ellipsis;}
 .footer-recommend a sup{font-weight:bold;position:absolute;right:0;top:0}
 .footer-recommend li sup#hot{color:var(--theme-color);top:-7px;opacity:1;animation:footerHot .88s step-end infinite normal}
@@ -906,6 +906,7 @@ i.arrow-down::after{content:'\e908'}
 .footer-contact .contactBox{max-width:122px;text-align:left}
 .footer-contact li:last-child{margin:auto}
 /*.footer-contact .rcmdBrowser{margin: auto 7%}*/
+.footer-right a{color:var(--preset-8);}
 .footer-contact a:hover{text-decoration:none;}
 .footer-contact a{padding:0 1px;text-align:left;line-height:32px;position:relative;}
 .footer-contact a .preview{display:none;position: absolute;top: -80px;left: -15px;z-index: 1;}
@@ -1355,10 +1356,12 @@ body.dark::-webkit-scrollbar-thumb:hover,body.dark .v .vwrap .vedit .vemojis::-w
 body.dark::-webkit-scrollbar-thumb:active,body.dark .v .vwrap .vedit .vemojis::-webkit-scrollbar-thumb:active,body.dark .footer-detector::before{background-color:var(--preset-9)}
 
 /* preset-9 color only */
+body.dark .footer-contact-left ul a,
 body.dark .tags,
 body.dark .mobile-vision i,
 body.dark .weBlog-Description .weBlog-Description-inside,body.dark .body-basically .Introduce,body.dark .v .power,body.dark .v .power a,body.dark #supports-txt,body.dark .footer-ul,body.dark .slider-menu_body ul li a,body.dark .Introduce-window,body.dark .main p,body.dark .news-article-window,body.dark #icon-special b,body.dark .resource-windows div ul li a,body.dark .resource-windows,body.dark .tech_window-content li a,body.dark .newsBox-subText-Description a,body.dark #acg_window-top h2,body.dark .tech_window-content li span,body.dark #icon-technology i,body.dark #acg_window-top #icon-acg i,body.dark .pageSwitcher div,body.dark body.dark .news-inside-content .news-core_area p,body.dark .win-content article,body.dark .win-content article li,body.dark .win-nav .nav-header p,body.dark .win-nav .nav-header small,body.dark .main-root ul,body.dark .box_down ul li .details,body.dark .weblog-tree-box .tree-box-content{color:var(--preset-9)}
 /* preset-c color only */
+body.dark form,
 body.dark .article_index .in_dex p,
 body.dark .mobile-vision .m-logo span, body.dark .inside_of_block .logo-area span,
 body.dark .footer-contact-left ul h2,body.dark .news-article-container h3,body.dark #news-article-head h1,body.dark .footer-detector #end-end,body.dark .main h2,body.dark .body-basically h2,body.dark .body-basically h1,body.dark .body-basically h3,body.dark .resource-windows div span.resource-windows-top h3,body.dark #tech_window-top h2,body.dark .resource-windows div span.resource-windows-top span.resource-windows-top_inside,body.dark .news-inside-content h2 a,body.dark .topic h2,body.dark .topic-inside i,body.dark .win-nav .nav-header h2,body.dark .win-content article h1,body.dark .imtl-content-right-inside-search form,body.dark .win-content article h2,body.dark .win-content article h3,body.dark .rcmd-boxes .inbox-clip,body.dark .rcmd-boxes .info .inbox .inbox-aside span.lowside-title h4,body.dark .rcmd-boxes .info .inbox:hover > .inbox-aside,body.dark .dld_box .box_up span a h3,body.dark .v .veditor,body.dark .v .vlist .vcard .vhead .vnick,body.dark .inside_of_block nav.main-nav ul li a,body.dark .footer-recommend li sup#new,body.dark .links-more span,body.dark .footer-contact li a:hover,body.dark .footer-ul a:hover{color:var(--preset-c)}
@@ -2045,8 +2048,6 @@ body.dark .wp_comment_box a#cancel-comment-reply-link{
 
 /***  Header.php temp fix  ***/
 
-.footer-contact a{position:relative;}
-.footer-contact a:hover{text-decoration:none;}
 .footer-contact a .preview{display:none;position: absolute;top: -10px;left: 80px;z-index: 1;}
 .footer-contact a .preview img{width: 100px;height: 66px;}
 span#icon-wechat:hover + span{display:block;}

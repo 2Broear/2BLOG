@@ -1,4 +1,24 @@
 <?php 
+    /**
+     * is_edit_page 
+     * function to check if the current page is a post edit page
+     * 
+     * @author Ohad Raz <admin@bainternet.info>
+     * 
+     * @param  string  $new_edit what page to check for accepts new - new post page ,edit - edit post page, null for either
+     * @return boolean
+     */
+    function is_edit_page($new_edit = null){
+        global $pagenow;
+        //make sure we are on the backend
+        if (!is_admin()) return false;
+        if($new_edit == "edit")
+            return in_array( $pagenow, array( 'post.php',  ) );
+        elseif($new_edit == "new") //check for new post page
+            return in_array( $pagenow, array( 'post-new.php' ) );
+        else //check for either new or edit
+            return in_array( $pagenow, array( 'post.php', 'post-new.php' ) );
+    }
     
     //禁用远程管理文件 xmlrpc.php 防爆破
     if(get_option('site_xmlrpc_switcher')){
@@ -674,20 +694,6 @@
     }
     
     
-    function get_wpdb_pids_by_cid($cid=0, $limit=99, $offset=0){
-        global $wpdb;
-        // https://www.likecs.com/show-306636263.html#sc=304
-        $res = $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts,wp_term_relationships WHERE ID = object_id AND post_type = 'post' AND post_status = 'publish' AND wp_term_relationships.term_taxonomy_id = $cid ORDER BY post_date DESC LIMIT $limit OFFSET $offset ");
-        unset($wpdb);
-        return $res;
-    }
-    function get_wpdb_yearly_pids($year=false, $limit=99, $offset=0){
-        global $wpdb;
-        $year = $year ? $year : gmdate('Y', time() + 3600*8); //date('Y');
-        $res = $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' AND YEAR(post_date) = $year ORDER BY post_date DESC LIMIT $limit OFFSET $offset "); // !!!LIMIT & OFFSET must type of NUMBER!!!
-        unset($wpdb);
-        return $res;
-    }
     function get_yearly_cat_count($year, $cid, $limit=99){
         $year_posts = get_posts(array(
             "year"        => $year,
@@ -696,12 +702,27 @@
         ));
         return count($year_posts);
     }
+    function get_wpdb_yearly_pids($year=false, $limit=99, $offset=0){
+        global $wpdb;
+        $year = $year ? $year : gmdate('Y', time() + 3600*8); //date('Y');
+        $res = $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' AND YEAR(post_date) = $year ORDER BY post_date DESC LIMIT $limit OFFSET $offset "); // !!!LIMIT & OFFSET must type of NUMBER!!!
+        unset($wpdb);
+        return $res;
+    }
+    function get_wpdb_pids_by_cid($cid=0, $limit=99, $offset=0){
+        global $wpdb;
+        // https://www.likecs.com/show-306636263.html#sc=304
+        $res = $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts,wp_term_relationships WHERE ID = object_id AND post_type = 'post' AND post_status = 'publish' AND wp_term_relationships.term_taxonomy_id = $cid ORDER BY post_date DESC LIMIT $limit OFFSET $offset "); //(post_status = 'publish' OR post_status = 'private') //instance_type in ("m5.4xlarge","r5.large","r5.xlarge");
+        unset($wpdb);
+        return $res;
+    }
     // Ajax PostData calls
     function ajaxGetPosts(){
         $cid = $_POST['cid'];
         $type = $_POST['type'];
         $limit = $_POST['limit'];
         $offset = $_POST['offset'];
+        // $private = 'Accesing Private Content';
         $prefix = get_category($cid)->slug;
         if($type==='archive'){
             $prefix = $_POST['key'];
@@ -729,6 +750,8 @@
                     $post_class->link = get_the_permalink($pid);
                     $post_class->poster = get_postimg(0, $pid, true);
                     $post_class->excerpt = get_the_excerpt($this_post);
+                    $post_class->rcmd = get_post_meta($pid, "post_rcmd", true);
+                    $post_class->rating = get_post_meta($pid, "post_rating", true);
                     break;
                 case 'weblog':
                     $post_class->tag = get_tag_list($pid);
@@ -758,6 +781,12 @@
                     // code...
                     break;
             }
+            // private
+            // if($this_post->post_status==='private'){
+            //     $post_class->title = $private;
+            //     $post_class->content = $private;
+            //     $post_class->subtitle = $private;
+            // }
             array_push($res_array, $post_class);
         }
         print_r(json_encode($res_array));
@@ -766,44 +795,6 @@
     add_action('wp_ajax_ajaxGetPosts', 'ajaxGetPosts');
     add_action('wp_ajax_nopriv_ajaxGetPosts', 'ajaxGetPosts');
     
-    
-    // response wpdb data from ajax calls
-    function ajaxGetArchives(){
-        $key = $_POST['key'];
-        check_ajax_referer($key.'_posts_ajax_nonce');  // 检查 nonce
-        $cur_posts = get_wpdb_yearly_pids($key, $_POST['limit'], $_POST['offset']);
-        $res_array = array();
-        $news_temp = get_cat_by_template('news','slug');
-        $cur_posts_count = count($cur_posts);
-        for($i=0;$i<$cur_posts_count;$i++){
-            $each_posts = $cur_posts[$i];
-            $this_post = get_post($each_posts->ID);
-            $prev_posts = $i>0 ? $cur_posts[$i-1] : $cur_posts[$i];
-            $prev_post = get_post($prev_posts->ID);
-            $this_cats = get_the_category($this_post);
-            preg_match('/\d{2}-\d{2} /', $this_post->post_date, $this_date);
-            preg_match('/\d{2}-\d{2} /', $prev_post->post_date, $prev_date);
-            $unique_date = $this_date[0]!=$prev_date[0] || $each_posts->ID==$cur_posts[0]->ID ? '<div class="timeline">'.$this_date[0].'</div>' : '';
-            $cat_str = '';
-            foreach ($this_cats as $cat){
-                $cat_str .= '<span>'.$cat->name.'</span>';
-            };
-            $this_title = $this_post->post_title;
-            // array_push($res_array, $this_post);
-            $post_class = new stdClass();
-            $post_class->title = $this_cats[0]->slug==$news_temp->slug ? '<b>'.$this_title.'</b>' : $this_title;
-            $post_class->link = get_the_permalink($this_post);
-            $post_class->date = $unique_date;
-            $post_class->cat = $cat_str;
-            $post_class->mark = $this_cats[0]->slug==$news_temp->slug ? " article" : "";
-            array_push($res_array, $post_class);
-        }
-        print_r(json_encode($res_array));
-        // print_r($res_array);
-        die();
-    }
-    add_action('wp_ajax_ajaxGetArchives', 'ajaxGetArchives');
-    add_action('wp_ajax_nopriv_ajaxGetArchives', 'ajaxGetArchives');
     
     
     // 移除 URL category 目录 // https://blog.wpjam.com/function_reference/trailingslashit/
@@ -1327,10 +1318,8 @@
     }
     
     //友情链接函数
-    function site_links($links,$frame=false){
-        // if(!$orderby) $orderby='id';  //默认id排序
+    function site_links($links, $frame=false){
         global $lazysrc, $loadimg;
-    	//$links = get_bookmarks(array('orderby'=>'date','order'=>'DESC','category_name'=>$category,'hide_invisible'=>0));
         foreach ($links as $link){
             $link_notes = $link->link_notes;
             $link_target = $link->link_target;
@@ -1348,20 +1337,14 @@
             }
             switch ($frame) {
                 case 'full':
-                    // echo in_category('standby') ? 'standby' : false;
-                    // if($link->link_visible==="Y") 
                     $avatar_status = $status=='standby' ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
                     echo '<div class="inbox flexboxes '.$status.' '.$sex.'"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>'.$avatar_status_bg.'
                     break;
                 case 'half':
-                    // if($link->link_visible==="Y") 
                     echo '<div class="inbox flexboxes '.$status.' '.$sex.'">'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>
                     break;
-                case 'none':
-                    echo '<a href="'.$link->link_url.'" title="'.$link->link_name.'" target="'.$target.'" rel="followed">'.$link->link_name.'</a>';
-                    break;
                 default:
-                    echo '<a href="'.$link->link_url.'" title="'.$link->link_name.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$link->link_name.'</a>';  //$link->link_visible=="Y"
+                    echo '<a href="'.$link->link_url.'" title="'.$link->link_name.'" target="'.$target.'" rel="">'.$link->link_name.'</a>';
                     break;
             }
         }
@@ -1622,8 +1605,10 @@
         while ($acg_query->have_posts()):
             $acg_query->the_post();
             $post_feeling = get_post_meta($post->ID, "post_feeling", true);
-            $post_orderby = get_post_meta($post->ID, "post_orderby", true);
             $post_source = get_post_meta($post->ID, "post_source", true);
+            // $post_orderby = get_post_meta($post->ID, "post_orderby", true);
+            $post_rcmd = get_post_meta($post->ID, "post_rcmd", true);
+            $post_rating = get_post_meta($post->ID, "post_rating", true);
             $postimg = get_postimg(0,$post->ID,true);
             if($lazysrc!='src'){
                 $lazyhold = 'data-src="'.$postimg.'"';
@@ -1644,21 +1629,38 @@
                                     $href = $post_source ? $post_source : get_the_permalink();
                                 }else{
                                     $target = "_self";
+                                    $href = "javascript:;";
                                     if($post_source){
                                         $href = $post_source;
                                         $target = "_blank";
-                                    }else{
-                                        $href = "javascript:;";
                                     }
                                 }
                                 echo '<a href="'.$href.'" target="'.$target.'">'.get_the_title().'</a>';
-                                // echo get_option('site_single_switcher') ? '<a href="'.get_the_permalink().'" target="_blank">'.get_the_title().'</a>' : '<a href="'.($post_source ? $post_source : "javascript:;").'">'.get_the_title().'</a>';
                             ?>
                         </h4>
                     </span>
                     <span class="lowside-description">
                         <p><?php custom_excerpt(66); ?></p>
                     </span>
+                    <?php
+                        if($post_rcmd){
+                    ?>
+                            <div class="game-ratings gs<?php echo $post_rating ? ' both' : ''; ?>">
+                                <div class="gamespot" title="Personal Recommend">
+                                    <div class="range Essential RSBIndex">
+                                        <span id="before"></span>
+                                        <span id="after"></span>
+                                    </div>
+                                    <span id="spot">
+                                        <h3><?php echo $post_rating ? $post_rating : '荐'; ?></h3>
+                                    </span>
+                                </div>
+                            </div>
+                    <?php
+                        }else{
+                            if($post_rating) echo '<div class="game-ratings ign"><div class="ign hexagon" title="IGN HighGrades"><h3>'.$post_rating.'</h3></div></div>';
+                        }
+                    ?>
                 </div>
             </div>
 <?php

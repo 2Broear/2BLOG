@@ -665,13 +665,15 @@
                   menu_mask.style.display = 'block';
               }
           },
-          search_func = function(tar){
-              const search_cls = "searching";
-              if(tar.classList&&tar.classList.contains(search_cls)){
-                  tar.classList.remove(search_cls);
+          search_func = function(el,sw=true){
+              if(!el) return;
+              const search_cls = "searching",
+                    el_cls = el.classList;
+              if(!sw || !el_cls||!el_cls.contains(search_cls)){
+                  el_cls.add(search_cls);
+                  el.querySelector('.tips form input').focus();
               }else{
-                  tar.classList.add(search_cls);
-                  tar.querySelector('.tips form input').focus();
+                  el_cls.remove(search_cls);
               }
           };
     // release event
@@ -690,7 +692,7 @@
                 break;
             }else if(t.classList&&t.classList.contains("footer-tips")){
                 mobile_func(e);
-                search_func(this);
+                search_func(this,false);
                 break;
             }else{
                 t = t.parentNode;

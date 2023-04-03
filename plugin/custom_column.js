@@ -18,15 +18,18 @@
         // console.log($post_id);
         if ( $post_id > 0 ) {
             // define the edit row
-            var $edit_row = $( '#edit-' + $post_id );
-            var $post_row = $( '#post-' + $post_id );
+            const $edit_row = $( '#edit-' + $post_id ),
+                  $post_row = $( '#post-' + $post_id );
             // get the data
-            var $post_orderby = $( '.column-post_orderby', $post_row ).text();
-            // var $inprint = !! $('.column-inprint>*', $post_row ).prop('checked');
+            var $post_orderby = $( '.column-post_orderby', $post_row ).text(),
+                $post_rating = $( '.column-post_rating', $post_row ).text();
             // populate the data
-            let orderby = $( ':input[name="post_orderby"]', $edit_row );
-            !$post_orderby ? orderby.val(1) : orderby.val( $post_orderby );
-            // $( ':input[name="inprint"]', $edit_row ).prop('checked', $inprint );
+            let orderby = $( ':input[name="post_orderby"]', $edit_row ),
+                rating = $( ':input[name="post_rating"]', $edit_row ),
+                rcmd = $( ':input[name="post_rcmd"]', $edit_row );
+            $post_orderby ? orderby.val( $post_orderby ) : orderby.val(1);
+            $post_rating ? rating.val( $post_rating ) : false;
+            if($('.column-post_rcmd', $post_row).text())  rcmd[0].checked = true;
         }
     };
     

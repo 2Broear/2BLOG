@@ -10,6 +10,7 @@
         $acg_temp_id = get_cat_by_template('acg','term_id');
         if(is_single()){
             if(in_category($news_temp_id) || in_category($note_temp_id)){
+                if($vdo_poster_sw) echo 'setupVideoPoster(3);'; // 截取设置当前页面所有视频 poster
     ?>
                 //dynamicLoad
                 asyncLoad('<?php custom_cdn_src(); ?>/js/fancybox.umd.js', function(){
@@ -22,9 +23,6 @@
         }
         if($cat){
             switch ($cat) {
-               // case in_category($news_temp_id):
-                case $news_temp_id:
-                case $note_temp_id:
                 case get_cat_by_template('privacy','term_id'):
                     if($vdo_poster_sw) echo 'setupVideoPoster(1);'; // 截取设置当前页面所有视频 poster
                     break;

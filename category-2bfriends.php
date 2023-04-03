@@ -121,7 +121,7 @@
                 ?>
                             <div class="deals oldest">
             					<div class="inboxSliderCard">
-                                    <div class="slideBox flexboxes"><?php site_links($lost_links, 'none'); ?></div>
+                                    <div class="slideBox flexboxes"><?php site_links($lost_links); ?></div>
             					</div>
             				</div>
 				<?php 

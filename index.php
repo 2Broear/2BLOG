@@ -24,6 +24,9 @@
             border-radius: inherit;
             object-fit: cover;
         }
+        .acg_window-content-inside_right .tags{
+            font-family: math, serif;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

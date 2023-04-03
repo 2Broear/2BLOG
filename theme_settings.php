@@ -179,10 +179,23 @@
     }
     add_action( 'admin_enqueue_scripts', 'wp_my_admin_enqueue_scripts' );
     
-    // preview custom_column
+    
+    // 配合 custom_column.js 获取已显示列表数值填充到快速编辑栏目预览
+    parse_str($_SERVER['QUERY_STRING'], $cur_edit_queries);
+    $acg_cat = get_cat_by_template('acg','term_id');
+    $cur_cat = $cur_edit_queries['cat'];
+    $edit_acg_posts = $cur_cat==$acg_cat || cat_is_ancestor_of($acg_cat, $cur_cat);
+    // display custom_column for custom_column.js preset input-value
     add_filter('manage_posts_columns', 'wpse_3531_add_seo_columns', 10, 2);
     function wpse_3531_add_seo_columns($posts_columns, $post_type){
         $posts_columns['post_orderby'] = '排序值';
+        // $posts_columns['post_rating'] = '评分';
+        global $edit_acg_posts;
+        if($edit_acg_posts){
+            $posts_columns['post_rcmd'] = '推荐';
+            $posts_columns['post_rating'] = '评分';
+        }
+        unset($edit_acg_posts);
         return $posts_columns;
     }
     // preview custom_column-value
@@ -191,22 +204,61 @@
         if ('post_orderby' == $column_name) {
             echo get_post_meta($post_id) ? get_post_meta($post_id, 'post_orderby', true) : 1;
         }
+        global $edit_acg_posts;
+        if ($edit_acg_posts) {
+            if('post_rcmd' == $column_name){
+                $check = '';
+                if(get_post_meta($post_id)) $check = get_post_meta($post_id, 'post_rcmd', true) ? 'checked' : '';
+                echo $check;
+            }
+            if('post_rating' == $column_name){
+                echo get_post_meta($post_id) ? get_post_meta($post_id, 'post_rating', true) : '';
+            }
+        }
+        unset($edit_acg_posts);
     }
     // Add our text to the quick edit box
     add_action('quick_edit_custom_box', 'on_quick_edit_custom_box', 10, 2);
     function on_quick_edit_custom_box($column_name, $post_type){
+        global $edit_acg_posts;
+        // $status = get_post_meta($post->ID)['post_rcmd'][0] ? "checked" : "check";
         if ('post_orderby' == $column_name) {
     ?>
-            <fieldset class="inline-edit-col-right">
+            <fieldset class="inline-edit-col-left">
                 <div class="inline-edit-col">
                     <label>
     					<span class="title">排序（列表）</span>
-    				    <input type="number" name="post_orderby" class="small-text" min="0">
+    				    <input type="number" name="post_orderby" class="small-text" min="">
     				</label>
                 </div>
             </fieldset>
     <?php
         }
+        if ('post_rcmd' == $column_name && $edit_acg_posts) {
+    ?>
+            <fieldset class="inline-edit-col-center">
+                <div class="inline-edit-col">
+                    <label>
+    					<span class="title">推荐（列表）</span>
+    				    <input type="checkbox" name="post_rcmd">
+    				</label>
+                </div>
+            </fieldset>
+    <?php
+        }
+        if ('post_rating' == $column_name) {
+    ?>
+            <fieldset class="inline-edit-col-right">
+                <div class="inline-edit-col">
+                    <label>
+    					<span class="title">评分（列表）</span>
+    				    <input type="number" name="post_rating" class="small-text" min="0" max="10">
+    				</label>
+                </div>
+            </fieldset>
+    <?php
+        }
+        unset($edit_acg_posts);
     }
     
     // add to BULK-EDIT
@@ -230,18 +282,21 @@
     function save_bulk_edit_book() {
         // TODO perform nonce checking
         // get our variables
-        $post_ids           = ( ! empty( $_POST[ 'post_ids' ] ) ) ? $_POST[ 'post_ids' ] : array();
+        $post_ids = ( ! empty( $_POST[ 'post_ids' ] ) ) ? $_POST[ 'post_ids' ] : array();
         $post_orderby  = ( ! empty( $_POST[ 'post_orderby' ] ) ) ? $_POST[ 'post_orderby' ] : 1;
-        // $inprint = !! empty( $_POST[ 'inprint' ] );
+        // $post_rcmd  = ( ! empty( $_POST[ 'post_rcmd' ] ) ) ? 'checked' : 'check';
+        // $post_rating  = ( ! empty( $_POST[ 'post_rating' ] ) ) ? $_POST[ 'post_rating' ] : 1;
         // if everything is in order
         if ( ! empty( $post_ids ) && is_array( $post_ids ) ) {
             foreach( $post_ids as $post_id ) {
                 update_post_meta( $post_id, 'post_orderby', $post_orderby );
-                // update_post_meta( $post_id, 'inprint', $inprint );
+                // update_post_meta( $post_id, 'post_rcmd', $post_rcmd );
+                // update_post_meta( $post_id, 'post_rating', $post_rating );
             }
         }
         die();
     }
+    
     
     //https://wordpress.stackexchange.com/questions/8736/add-custom-field-to-category
     /* ------------------------------------------------------------------------ *
@@ -251,80 +306,136 @@
      * https://tryvary.com/wordpress-add-meta-box-to-custom-post-type-and-page/
      * ------------------------------------------------------------------------ */
      
-    function postmeta_json(){
-        return array(
-            array('title'=>'内容', 'input'=>'post_feeling', 'type'=>'text', 'select'=>false, 'textarea'=>true),
-            array('title'=>'版权', 'input'=>'post_rights', 'type'=>'', 'select'=>true, 'textarea'=>false),
-            array('title'=>'来源', 'input'=>'post_source', 'type'=>'text', 'select'=>false, 'textarea'=>false),
-            array('title'=>'排序', 'input'=>'post_orderby', 'type'=>'number', 'select'=>false, 'textarea'=>false),
-        );
-    }
     //Register POST Meta box
     add_action('add_meta_boxes',function (){
         add_meta_box(
              'post-field',
-             '文章附加选项',
+             '附加选项',
              'post_custom_fields_html',
              ['post'],
              'side'
         );
     });
-    //Meta callback function
-    function post_custom_fields_html($post){
-        $cs_meta_val = get_post_meta($post->ID);
-        function outputHTML($meta,$json){
-            $for = $json['input'];
-            $title = $json['title'];
-            $type = $json['type'];
-            $select = $json['select'];
-            $textarea = $json['textarea'];
-            if(isset($meta[$for])) $value=$meta[$for][0];elseif($for=='post_orderby') $value=1;else $value="";
-            if($select){
-                $selects = ["请选择","原创","转载","二创"];
+    function postmeta_json($posts=false){
+        global $post, $pagenow; //!!!in_category lose efficacy if $post unreachable!!!
+        $posts = $posts ? $posts : $post; // $pid = $pid ? $pid : $post->ID;
+        $acg_slug =  get_cat_by_template('acg','slug');
+        $news_slug =  get_cat_by_template('news','slug');
+        $note_slug =  get_cat_by_template('notes','slug');
+        $creating_post = in_array($pagenow, array('post-new.php'));
+        $pid = $posts->ID;
+        $preset_arr = array(
+            array('title'=>'额外内容', 'for'=>'post_feeling', 'type'=>'text', 'method'=>'textarea', 'options'=>false),
+            array('title'=>'文章排序', 'for'=>'post_orderby', 'type'=>'number', 'method'=>false, 'options'=>false),
+        );
+        if(in_category($acg_slug, $posts) || $creating_post){
+            // if(in_category('game', $posts)) array_push($preset_arr, array('title'=>'评测得分', 'for'=>'post_rating', 'type'=>'number', 'method'=>false));
+            // else array_push($preset_arr, array('title'=>'推荐内容', 'for'=>'post_rcmd', 'type'=>'checkbox', 'method'=>'checkbox'));
+            array_push($preset_arr, array('title'=>'推荐内容', 'for'=>'post_rcmd', 'type'=>'checkbox', 'method'=>'checkbox', 'options'=>false), array('title'=>'评测得分', 'for'=>'post_rating', 'type'=>'number', 'method'=>false, 'options'=>false));
+            // if(get_post_meta($pid)['post_rcmd'][0]) array_push($preset_arr, array('title'=>'推荐评分（GAMES）', 'for'=>'post_rating', 'type'=>'number', 'method'=>false));
+        };
+        if(in_category($news_slug, $posts)||in_category($note_slug, $posts) || $creating_post){
+            array_push($preset_arr, array('title'=>'文章版权', 'for'=>'post_rights', 'type'=>'', 'method'=>'select', 'options'=>["原创","转载","其他"]));
+            $post_rights = get_post_meta($pid)['post_rights'][0];
+            if($post_rights&&$post_rights!='原创') array_push($preset_arr, array('title'=>'文章来源', 'for'=>'post_source', 'type'=>'text', 'method'=>false, 'options'=>false));
+        };
+        unset($post, $pagenow);
+        return $preset_arr;
+    }
+    function postMetas($meta,$json){
+        $for = $json['for'];
+        $title = $json['title'];
+        $type = $json['type'];
+        // $select = $json['select'];
+        // $textarea = $json['textarea'];
+        $method = $json['method'];
+        // default value
+        $value = "";
+        // if(isset($meta[$for])) $value=$meta[$for][0];elseif($for=='post_orderby'||$for=='post_rating') $value=1;else $value="";
+        if(isset($meta[$for])){
+            $value = $meta[$for][0];
+        }elseif($for=='post_orderby'){
+            $value = 1;
+            global $post;
+            update_post_meta($post->ID, $for, $value);
+            unset($post);
+        }
+        switch ($method) {
+            case 'textarea':
+                echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><textarea name="'.$for.'" id="'.$for.'" placeholder="文章副标题、文章感想、文章额外内容等信息.." style="width:50%;height:70px">'.$value.'</textarea></td></tr>';
+                break;
+            case 'select':
+                $selects = $json['options'];
                 //output each selects
                 echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><select name="'.$for.'" id="'.$for.'">';
                 $selects_count = count($selects);
                 for($i=0;$i<$selects_count;$i++){
                     $each = $selects[$i];
-                    echo '<option value="'.$each.'"';
-                        if($value==$each)
-                            echo('selected="selected"');
-                    echo '>'.$each.'</option>';
+                    $selected = $value==$each ? ' selected="selected"' : '';
+                    echo '<option value="'.$each.'"'.$selected.'>'.$each.'</option>';
                 };
                 echo '</select></td></tr>';
-            }elseif($textarea){
-                echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><textarea name="'.$for.'" id="'.$for.'" placeholder="文章副标题、文章感想、文章额外内容等信息.." style="width:50%;height:70px">'.$value.'</textarea></td></tr>';
-            }else{
-                $class = $type=='number' ? 'small' : 'regular'; 
-                echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><input type="'.$type.'" name="'.$for.'" id="'.$for.'" class="'.$class.'-text" value="'.$value.'" placeholder="'.$title.'"></td></tr>';
-            }
-        };
+                break;
+            case 'checkbox':
+                $status = $value ? "checked" : "check";
+                echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><input type="checkbox" name="'.$for.'" id="'.$for.'" '.$status.'></td></tr>';
+                break;
+            default:
+                $min = 0;
+                $max = 99999;
+                $class = 'regular';
+                if($type=='number'){
+                    $class = 'small';
+                    if($for=='post_rating'){
+                        $min = 1;
+                        $max = 10;
+                    }
+                }
+                echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><input type="'.$type.'" name="'.$for.'" id="'.$for.'" class="'.$class.'-text" min="'.$min.'" max="'.$max.'" value="'.$value.'" placeholder="'.$title.'"></td></tr>';
+                break;
+        }
+    };
+    //Meta callback function
+    function post_custom_fields_html($post){
 ?>
         <table class="form-table">
 <?php 
-            $meta_json = postmeta_json();
+            $cs_meta_val = get_post_meta($post->ID);
+            $meta_json = postmeta_json($post); //inside loop
             foreach ($meta_json as $arr){
-                echo outputHTML($cs_meta_val, $arr);
+                postMetas($cs_meta_val, $arr); //echo postMetas($cs_meta_val, $arr);
             }
 ?>
         </table>
 <?php     
     }
+    
     //save meta value with save post hook
     add_action('save_post', 'post_save_custom_field_value');
     function post_save_custom_field_value($post_id){
-        $meta_json = postmeta_json();
+        $post = get_post($post_id);
+        $meta_json = postmeta_json($post); //outside loop
+        // print_r($meta_json);
         foreach ($meta_json as $arr){
-            $post_input = $arr['input'];
-            if(isset($_POST[$post_input])) update_post_meta($post_id, $post_input, sanitize_text_field($_POST[$post_input]));
+            // update_post_meta($post_id, 'post_rcmd', true);
+            $post_for = $arr['for'];
+            // https://wordpress.stackexchange.com/questions/41517/custom-post-type-how-to-get-checkbox-to-update-meta-field-to-null
+            if($arr['type']=='checkbox'){
+                update_post_meta($post_id, $post_for, isset($_POST[$post_for]));
+            }else{
+                if(isset($_POST[$post_for])) update_post_meta($post_id, $post_for, sanitize_text_field($_POST[$post_for]));
+            }
         }
     };
+    // post_save_custom_field_value(4914);  //test meta_key array
+    // Just set the last parameter ($prev) the update_post_meta to false, this enable you to insert new values to the meta_key. You can also check if the value is not already in the array before updating
+    // https://wordpress.stackexchange.com/questions/305205/updating-post-meta-for-checkbox
     
     
     function pagemeta_json(){
         return array(
-            // array('title'=>'元数据展示', 'input'=>'page_matanav', 'type'=>'checkbox', 'option'=>false),
-            array('title'=>'展示元数据分类', 'input'=>'page_metanav', 'type'=>'', 'option'=>true),
+            // array('title'=>'展示元数据分类', 'input'=>'page_metanav', 'type'=>'', 'option'=>true),
+            array('title'=>'展示元数据分类', 'for'=>'page_metanav', 'type'=>'', 'method'=>'select', 'options'=>["disabled","text","image"])
         );
     }
     //Register PAGE Meta box
@@ -339,39 +450,13 @@
     });
     //Meta callback function
     function page_custom_fields_html($post){
-        $cs_meta_val = get_post_meta($post->ID);
-        function outputHTML($meta,$json){
-            $for = $json['input'];
-            $title = $json['title'];
-            $type = $json['type'];
-            $option = $json['option'];
-            if(isset($meta[$for])) $value=$meta[$for][0];else $value="";
-            if($option){
-                $options = ["none","text","image"];
-                //output each options
-                echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><select name="'.$for.'" id="'.$for.'">';
-                $options_count = count($options);
-                for($i=0;$i<$options_count;$i++){
-                    $each = $options[$i];
-                    echo '<option value="'.$each.'"';
-                        if($value==$each)
-                            echo('selected="selected"');
-                    echo '>'.$each.'</option>';
-                };
-                echo '</select></td></tr>';
-            }else{
-                echo '<tr>
-            			<th><label for="'.$for.'">'.$title.'</label></th>
-            			<td><input type="'.$type.'" name="'.$for.'" id="'.$for.'" class="regular-text" value="'.$value.'"></td>
-            		</tr>';
-            }
-        };
 ?>
         <table class="form-table">
 <?php 
+            $cs_meta_val = get_post_meta($post->ID);
             $meta_json = pagemeta_json();
             foreach ($meta_json as $arr){
-                echo outputHTML($cs_meta_val, $arr);
+                postMetas($cs_meta_val, $arr); //echo postMetas($cs_meta_val, $arr);
             }
 ?>
         </table>
@@ -380,12 +465,19 @@
     //save meta value with save post hook
     add_action('save_post', 'page_save_custom_field_value');
     function page_save_custom_field_value($post_id){
-        $meta_json = pagemeta_json();
+        $post = get_post($post_id);
+        $meta_json = pagemeta_json($post); //outside loop
+        // print_r($meta_json);
         foreach ($meta_json as $arr){
-            $post_input = $arr['input'];
-            if(isset($_POST[$post_input])) update_post_meta($post_id, $post_input, sanitize_text_field($_POST[$post_input]));
+            $post_for = $arr['for'];
+            if($arr['method']=='checkbox'){
+                update_post_meta($post_id, $post_for, isset($_POST[$post_for]));
+            }else{
+                if(isset($_POST[$post_for])) update_post_meta($post_id, $post_for, sanitize_text_field($_POST[$post_for]));
+            }
         }
     };
+    // page_save_custom_field_value(19);
     
     
     /* ------------------------------------------------------------------------ *
@@ -840,13 +932,13 @@
                                 $opt = 'site_logo_switcher';
                                 $value = get_option($opt);
                                 // $data = get_option( 'site_logo', '' );
-                                $value ? $status="checked" : $status="closed";
+                                $status = $value ? "checked" : "check";
                                 //设置默认开启（仅适用存在默认值的checkbox）
                                 // if(!$value&&!$data){
                                 //     update_option($opt, "on_default");
                                 //     $status="checked";
                                 // }else{
-                                //     $value ? $status="checked" : $status="closed";
+                                //     $status = $value ? "checked" : "check";
                                 // };
                                 echo '<label for="'.$opt.'"><p class="description" id="site_logo_switcher_label">站点 logo 图片（默认显示文字类型的站点名称</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:steelblue;" class="btn">LOGO</span></label>';
                             ?>
@@ -888,7 +980,7 @@
                             <?php
                                 $opt = 'site_icon_switcher';
                                 $value = get_option($opt);
-                                $value ? $status="checked" : $status="closed";
+                                $status = $value ? "checked" : "check";
                                 echo '<label for="'.$opt.'"><p class="description" id="">站点导航字体图标，导航别名默认为图标css类（暂不支持创建时手动选择</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:royalblue;" class="btn">ICON</span></label>';
                             ?>
                         </td>
@@ -899,7 +991,7 @@
                             <?php
                                 $opt = 'site_single_switcher';
                                 $value = get_option($opt);
-                                $value ? $status="checked" : $status="closed";
+                                $status = $value ? "checked" : "check";
                                 echo '<label for="'.$opt.'"><p class="description" id="">展示型文章包括日志、漫游影视、资源下载页面（默认仅展示必要数据，开启后将开启对应文章链接并使用默认单页模板</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b>启用展示型单页</b></label>';
                             ?>
                         </td>
@@ -916,7 +1008,7 @@
                                     update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
-                                    $value ? $status="checked" : $status="closed";
+                                    $status = $value ? "checked" : "check";
                                 };
                                 echo '<label for="'.$opt.'"><p class="description" id="">开启后移除 url 中自带的 category 目录（默认开启，模拟相同 slug 链接 page 页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">移除 CATEGORY</b></label>';
                             ?>
@@ -960,7 +1052,7 @@
                                     update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
-                                    $value ? $status="checked" : $status="closed";
+                                    $status = $value ? "checked" : "check";
                                 };
                                 echo '<label for="'.$opt.'"><p class="description" id="site_search_style_switcher_label">搜索结果及标签内容展示列表样式，开启后将使用各页面数据列表样式（默认使用笔记栈列表样式</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>搜索列表样式</b></label>';
                             ?>
@@ -1008,7 +1100,7 @@
                                     update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
-                                    $value ? $status="checked" : $status="closed";
+                                    $status = $value ? "checked" : "check";
                                 };
                                 echo '<label for="'.$opt.'"><p class="description" id="">文章页目录索引，开启后在文章页可见（建议 notes 类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>文章目录索引</b></label>';
                             ?>
@@ -1224,7 +1316,7 @@
                                     update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
-                                    $value ? $status="checked" : $status="closed";
+                                    $status = $value ? "checked" : "check";
                                 };
                                 echo '<label for="'.$opt.'"><p class="description" id="site_map_switcher_label">生成全站站点地图（默认启用，开启后可指定生成类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:inherit;" class="btn">SITEMAP</span></label>';
                             ?>
@@ -1272,7 +1364,7 @@
                                     update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
-                                    $value ? $status="checked" : $status="closed";
+                                    $status = $value ? "checked" : "check";
                                 };
                                 echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_switcher_label">开启后将自动识别时段（晚17至早9）并切换主题为 darkmode 模式</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">自动深色模式</b></label>';
                             ?>
@@ -1626,7 +1718,7 @@
                             <?php
                                 $opt = 'site_wpwx_notify_switcher';
                                 $value = get_option($opt);
-                                $value ? $status="checked" : $status="closed";
+                                $status = $value ? "checked" : "check";
                                 echo '<label for="'.$opt.'"><p class="description" id="site_wpwx_notify_switcher_label">基于企业微信应用开发的评论推送微信通知，需填写企业ID、企业应用AgentId、企业应用Secret（微信需关注该企业应用才能收到通知<a href="https://www.jishusongshu.com/network-tech/work-weixin-push-website-comment/" target="_blank"> 相关文档 </a> 状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>评论微信提醒</b></label>';
                             ?>
                         </td>
@@ -1693,7 +1785,7 @@
                                 $opt = 'site_smtp_switcher';
                                 $value = get_option($opt);
                                 // $state = get_option( 'site_smtp_state', '' );
-                                $value ? $status="checked" : $status="closed";
+                                $status = $value ? "checked" : "check";
                                 echo '<label for="'.$opt.'"><p class="description" id="site_smtp_switcher_label">SMTP 发件服务配置（配置smtp时默认使用常规设置内的管理员邮箱（状态：'.$status;
                                 // if($state) echo '<u style="color:forestgreen">发件测试已通过</u>';else echo '<u style="color:orangered">配置未通过测试</u>';
                                 echo '，如已通过但未收到邮件请检查授权码及服务器是否全部配置正确</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>SMTP 发件配置</b></label>';
@@ -1899,7 +1991,7 @@
                                     update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
-                                    $value ? $status="checked" : $status="closed";
+                                    $status = $value ? "checked" : "check";
                                 };
                                 echo '<label for="'.$opt.'"><p class="description" id="site_techside_switcher_label">开启首页科技资讯栏目（默认开启，选择任意项后可手动关闭，支持多分类及baas数据</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">日志栏目</b></label>';
                             ?>
@@ -1949,7 +2041,7 @@
                                     update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
-                                    $value ? $status="checked" : $status="closed";
+                                    $status = $value ? "checked" : "check";
                                 };
                                 echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_switcher_label">开启首页科技资讯栏目（默认开启，选择任意项后可手动关闭，支持多分类及baas数据</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">ACGN栏目</b></label>';
                             ?>
@@ -1999,7 +2091,7 @@
                                     update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
-                                    $value ? $status="checked" : $status="closed";
+                                    $status = $value ? "checked" : "check";
                                 };
                                 echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">首页随机标签云（自带主题色，若检测到无标签将默认展示随机动漫图</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:cornflowerblue;" class="btn">标签云</span></label>';
                             ?>
@@ -2057,7 +2149,7 @@
                                     update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
-                                    $value ? $status="checked" : $status="closed";
+                                    $status = $value ? "checked" : "check";
                                 };
                                 echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">部分页面使用 ajax 异步加载数据（默认开启</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:slateblue;" class="btn">异步加载</span></label>';
                             ?>
@@ -2258,7 +2350,7 @@
                                             update_option($opt, "on_default");
                                             $status="checked";
                                         }else{
-                                            $value ? $status="checked" : $status="closed";
+                                            $status = $value ? "checked" : "check";
                                         };
                                         echo '<label for="'.$opt.'"><p class="description" id="">默认开启（在文章内页侧边栏启用谷歌广告位</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">启用文章页广告</b></label>';
                                     ?>
@@ -2279,7 +2371,7 @@
                                     update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
-                                    $value ? $status="checked" : $status="closed";
+                                    $status = $value ? "checked" : "check";
                                 };
                                 echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">p站挂件（可自定义至多展示50数量</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:green;" class="btn">PIXIV</span></label>';
                             ?>
@@ -2362,9 +2454,9 @@
                                     update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
-                                    $value ? $status="checked" : $status="closed";
+                                    $status = $value ? "checked" : "check";
                                 };
-                                // $value ? $status="checked" : $status="closed";
+                                // $status = $value ? "checked" : "check";
                                 echo '<label for="'.$opt.'"><p class="description" id="site_mostview_switcher_label">资讯、资讯文章分类页面侧边栏文章热度排行（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">侧边栏热门文章</b></label>';
                             ?>
                         </td>
@@ -2555,9 +2647,9 @@
                                     update_option($opt, "on_default");
                                     $status="checked";
                                 }else{
-                                    $value ? $status="checked" : $status="closed";
+                                    $status = $value ? "checked" : "check";
                                 };
-                                // $value ? $status="checked" : $status="closed";
+                                // $status = $value ? "checked" : "check";
                                 echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_switcher_label">页面底部展示“十年之约”图标（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">ForeverBlog 成员</b></label>';
                             ?>
                         </td>

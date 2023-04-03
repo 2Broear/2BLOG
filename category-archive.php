@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(0); ?>/style/archive.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/archive.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
         .archive-tree ul:hover{

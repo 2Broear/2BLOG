@@ -44,6 +44,33 @@
             /*transform: none;*/
             will-change: auto;
         }
+        .inbox-aside .gamespot h3{
+            margin: 5px auto 15%;
+        }
+        .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon:before,
+        .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon:after{
+            content: none;
+        }
+        .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon{
+            width: 40px;
+            height: calc(40px * 1.1547);
+            clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+            background: red;
+            margin: -12px auto auto;
+        }
+        .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon h3{
+            margin: 12px auto auto;
+        }
+        .inbox-aside .both .gamespot .range span#before{
+            background-color: currentColor;
+        }
+        .inbox-aside .gamespot .range span#after{
+            transform: rotate(270deg);
+            z-index: 4;
+        }
+        .rcmd-boxes .info .inbox .inbox-aside .game-ratings h3{
+            color: white;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -131,7 +158,25 @@
                     let each_temp = document.createElement("div");
                     each_temp.id = "pid_"+each_post.id;
                     each_temp.classList.add("inbox", "flexboxes");
-                    each_temp.innerHTML = `<div class="inbox-headside flexboxes"><span class="author">${each_post.subtitle}</span><img src="${each_post.poster}" alt="${each_post.subtitle}" crossorigin="Anonymous"></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="javascript:;" target="_self">${each_post.title}</a></h4></span><span class="lowside-description"><p>${each_post.excerpt}</p></span></div>`; //<img class="bg" src="${each_post.poster}">
+                    extra_str = "";
+                    post_rating = each_post.rating;
+                    if(each_post.rcmd){
+                        post_rating = post_rating ? post_rating : '荐';
+                        extra_str = `<div class="game-ratings gs">
+                                <div class="gamespot" title="GameSpot Ratings">
+                                    <div class="range Essential RSBIndex">
+                                        <span id="before" style=""></span>
+                                        <span id="after" style="transform: rotate(270deg); z-index: 4;"></span>
+                                    </div>
+                                    <span id="spot">
+                                        <h3 style="color: #fff;">${post_rating}</h3>
+                                    </span>
+                                </div>
+                            </div>`;
+                    }else{
+                        extra_str = post_rating ? '<div class="game-ratings ign"><div class="ign hexagon" title="Recommended"><h3 style="color: #fff;">'+post_rating+'</h3></div></div>' : '';
+                    }
+                    each_temp.innerHTML = `<div class="inbox-headside flexboxes"><span class="author">${each_post.subtitle}</span><img src="${each_post.poster}" alt="${each_post.subtitle}" crossorigin="Anonymous"></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="javascript:;" target="_self">${each_post.title}</a></h4></span><span class="lowside-description"><p>${each_post.excerpt}</p></span>${extra_str}</div>`; //<img class="bg" src="${each_post.poster}">
                     load_box.insertBefore(each_temp, load_box.lastElementChild); //lastChild
                     // setup ajax-load images blur-color
                     let tempimg = new Image();
