@@ -896,7 +896,7 @@ i.arrow-down::after{content:'\e908'}
 .friend_links li a#more:hover{text-decoration:underline;background:transparent;color:var(--theme-color)}
 .friend_links li a#more{color:var(--preset-8);border-color:transparent}
 .footer-recommend{width:8em;/*padding:0 8%*/}
-.footer-recommend a,.footer-quickway a{color:var(--preset-6);line-height:calc(2.7px * var(--size))}
+.footer-recommend a,.footer-quickway a{color:var(--preset-8);/*color:var(--preset-6);*/line-height:calc(2.7px * var(--size))}
 .footer-recommend a em,.footer-left a em{font-style:normal;display:block;position:relative;padding-right:15px;overflow:hidden;text-overflow:ellipsis;}
 .footer-recommend a sup{font-weight:bold;position:absolute;right:0;top:0}
 .footer-recommend li sup#hot{color:var(--theme-color);top:-7px;opacity:1;animation:footerHot .88s step-end infinite normal}
@@ -1329,7 +1329,7 @@ audio{width:300px;height:32px}
     .footer-contact-left ul a.hide-rcmd{display:block}
     .news-article-window div.tags ul li.tags_sentents{margin-left:0}
     .news-article-window div.tags ul li:nth-child(even){margin-left:0}
-    .download_boxes .dld_boxes{width:calc(100%)}
+    .download_boxes .dld_boxes{width:calc(100%);display:block;}
     #info-l-title h1{font-size:2.5em;letter-spacing:12px}
     #info-l-beta{left:138px;top:0}
     .body-basically .Introduce ol li{width:32%;padding:15% 0}

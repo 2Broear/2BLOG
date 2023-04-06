@@ -11,7 +11,11 @@
     <?php get_head(); ?>
     <style>
         #loading:before{top:40px}
-        .main{padding: 0 15px;}
+        .main{
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+        .scroll-inform{padding:0 15px}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

@@ -97,10 +97,11 @@
 .inbox-aside .gamespot .range:before{content:'';width:100%;height:50%;background-color:inherit;border-radius:100px 100px 0 0;position:absolute;top:0;left:0;bottom:0;right:0;z-index:2;transform-origin:bottom;-webkit-transform-origin:bottom;transform:rotate(-90deg);-webkit-transform:rotate(-90deg);transition:inherit}
 .inbox-aside .gamespot .range{width:100%;height:100%;position:relative;background-color:var(--preset-4a);transition:transform .35s linear}
 .inbox-aside .gamespot .range:after{content:'';width:100%;height:50%;background-color:inherit;border-radius:100px 100px 0 0;position:absolute;top:0;left:0;bottom:0;right:0;z-index:2;transform-origin:bottom;-webkit-transform-origin:bottom;transform:rotate(90deg);-webkit-transform:rotate(90deg);transition:inherit}
-.inbox-aside .gamespot .range span#before{width:100%;height:50%;background-color:orange;border-radius:100px 100px 0 0;position:absolute;top:0;left:0;bottom:0;right:0;z-index:3;transform-origin:bottom;-webkit-transform-origin:bottom;transform:rotate(90deg);-webkit-transform:rotate(90deg);transition:transform .45s linear}
+.inbox-aside .gamespot .range span#before{width:100%;height:50%;background-color:orange;border-radius:100px 100px 0 0;position:absolute;top:0;left:0;bottom:0;right:0;z-index:3;transform-origin:bottom;-webkit-transform-origin:bottom;transform:rotate(270deg);-webkit-transform:rotate(270deg);transition:transform .45s linear}
 .inbox-aside .gamespot .range span#after{width:100%;height:50%;background-color:currentColor;border-radius:100px 100px 0 0;position:absolute;top:0;left:0;bottom:0;right:0;z-index:3;transform-origin:bottom;-webkit-transform-origin:bottom;transform:rotate(90deg);-webkit-transform:rotate(90deg);transition:inherit}
 .rcmd-boxes .info .inbox .inbox-aside .metacritic{color:#6c3;width:40px;height:40px;border-radius:50%;background:currentColor;position:absolute;top:-10px;right:15px}
 .inbox-aside .metacritic h3{margin:7px auto}
+.rcmd-boxes .info .inbox .inbox-aside .game-ratings h3{color:white;}
 .rcmd-boxes .info .inbox .inbox-aside .game-ratings .ign:before{content:'';width:0;height:0;border-style:solid;border-width:0 20px 12px 20px;border-color:transparent transparent currentColor transparent;position:absolute;left:0;top:-12px}
 .rcmd-boxes .info .inbox .inbox-aside .game-ratings .ign{color:#e71717;width:40px;height:22px;background:currentColor;position:absolute;top:0;right:15px;z-index:9}
 .rcmd-boxes .info .inbox .inbox-aside .game-ratings .ign.query,.rcmd-boxes .info .inbox .inbox-aside .game-ratings .ign.low{color:var(--preset-2b)}

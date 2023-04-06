@@ -1658,7 +1658,7 @@
                             </div>
                     <?php
                         }else{
-                            if($post_rating) echo '<div class="game-ratings ign"><div class="ign hexagon" title="IGN HighGrades"><h3>'.$post_rating.'</h3></div></div>';
+                            if($post_rating) echo '<div class="game-ratings ign"><div class="ign hexagon" title="IGN High Grades"><h3>'.$post_rating.'</h3></div></div>';
                         }
                     ?>
                 </div>
@@ -1701,20 +1701,31 @@
                 $cat_name = $each_cat->name;
                 $cat_slug = $each_cat->slug;
                 $cat_id = $each_cat->term_id;
-                $meta_image = get_term_meta($cat_id, 'seo_image', true );
-                if(!$meta_image) $meta_image = get_option('site_bgimg');
+                // 'category='.$cat_id.'&number=1&orderby'
+                $cat_first_post = get_posts(array(
+                    'cat' => $cat_id,
+                    'meta_key' => 'post_orderby',
+                    'orderby' => array(
+                        'meta_value_num' => 'DESC',
+                        'date' => 'DESC',
+                        'modified' => 'DESC'
+                    ),
+                    'number' => 1,
+                ));
+                $cat_poster = get_term_meta($cat_id, 'seo_image', true );
+                if(!$cat_poster) $cat_poster = get_postimg(0, $cat_first_post[0]->ID, true); //get_option('site_bgimg');
 ?>
 				<div class="dld_box <?php echo $cat_slug.' '.$single ?>">
 					<div class="dld_box_wrap">
 						<div class="box_up preCover">
-							<span style="background:url(<?php echo $meta_image; ?>) center center /cover">
+							<span style="background:url(<?php echo $cat_poster; ?>) center center /cover">
 								<a href="javascript:;"><h3> <?php echo $cat_name; ?> </h3><i> <?php echo strtoupper($cat_slug) ?></i><em></em></a>
 						  	</span>
 						</div>
 						<div class="box_down">
 						    <ul>
 						        <?php 
-                                    global $post;
+                                    global $post, $lazysrc, $loadimg;
                                     $left_query = new WP_Query(array_filter(array(
                                         'cat' => $cat_id,
                                         'meta_key' => 'post_orderby',
@@ -1727,21 +1738,36 @@
                                     )));
                                     while ($left_query->have_posts()):
                                         $left_query->the_post();
+                                        $link = get_post_meta($post->ID, "post_feeling", true);
+                                        $postimg = get_postimg(0,$post->ID,true);
+                                        if($lazysrc!='src'){
+                                            $lazyhold = 'data-src="'.$postimg.'"';
+                                            $postimg = $loadimg;
+                                        }
+                                        $href = $link ? $link : 'javascript:void(0);';
+                                        $target = $link ? '_blank' : '_self';
                             ?>
-                                        <li class="<?php if(get_post_meta($post->ID, "post_orderby", true)>1) echo 'topset'; ?>">
+                                        <li class="<?php if(!$link) echo 'disabled ';if(get_post_meta($post->ID, ' post_orderby', true)>1) echo 'topset'; ?>">
                                             <div class="details">
-                                                <span style="background:url(<?php if(has_post_thumbnail()) the_post_thumbnail_url();else echo get_option('site_bgimg'); ?>) center center no-repeat"></span>
-                                                <div><?php the_title() ?><i>
-                                                    <a href="<?php echo get_post_meta($post->ID, "post_source", true); ?>" target="_blank">下载</a>
-                                                    <a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : 'javascript:;' ?>" target="_blank">查看</a>
-                                                    </i>
+                                                <!--<span style="background:url(<?php echo $postimg; ?>) center center no-repeat"></span>-->
+                                                <a href="<?php echo $href; ?>" target="<?php echo $target; ?>" rel="nofollow" title="下载附件"><?php echo '<img '.$lazyhold.' src="'.$postimg.'" alt="poster" />'; ?></a>
+                                                <div class="desc">
+                                                    <!--<p>-->
+                                                        <?php the_title() ?>
+                                                    <!--<i>-->
+                                                        <a href="<?php echo $href; ?>" target="<?php echo $target; ?>" rel="nofollow">下载附件</a>
+                                                        <?php
+                                                            if(get_option('site_single_switcher')) echo '<a href="'.get_the_permalink().'" target="_blank">查看详情</a>';
+                                                        ?>
+                                                    <!--</i>-->
+                                                    <!--</p>-->
                                                 </div>
                                             </div>
                                         </li>
                             <?php
                                     endwhile;
                                     wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
-                                    unset($post);
+                                    unset($post, $lazysrc, $loadimg);
 						        ?>
 						    </ul>
 						</div>

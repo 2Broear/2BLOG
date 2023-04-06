@@ -44,9 +44,6 @@
             /*transform: none;*/
             will-change: auto;
         }
-        .inbox-aside .gamespot h3{
-            margin: 5px auto 15%;
-        }
         .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon:before,
         .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon:after{
             content: none;
@@ -58,18 +55,27 @@
             background: red;
             margin: -12px auto auto;
         }
+        .inbox-aside .gamespot h3{
+            margin: 5px auto 15%;
+        }
         .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon h3{
             margin: 12px auto auto;
+        }
+        
+        .rcmd-boxes .info .inbox .inbox-aside .both .gamespot{
+            color: orange;
         }
         .inbox-aside .both .gamespot .range span#before{
             background-color: currentColor;
         }
-        .inbox-aside .gamespot .range span#after{
-            transform: rotate(270deg);
+        .inbox-aside .gamespot .range.RSBIndex:before{
+            z-index: inherit;
+        }
+        .inbox-aside .both .gamespot .range.RSBIndex:before{
             z-index: 4;
         }
-        .rcmd-boxes .info .inbox .inbox-aside .game-ratings h3{
-            color: white;
+        .inbox-aside .both .gamespot .range span#after{
+            z-index: -4;
         }
     </style>
 </head>
@@ -146,6 +152,44 @@
         </footer>
 	</div>
 <!-- siteJs -->
+<script>
+    function degreePercentage(range=0, after=false){  //default range 10 score
+        if(range<0) return;
+        let floats = after ? 10-range : range,
+            percent = after ? parseInt(270*(floats/10)) : parseInt(270+180*(floats/5));
+        switch(after){
+            case true:
+                if(percent<=90) return 90;
+                break;
+            default:
+                if(range<=0 || range>=5) return 270+180;
+                break;
+        }
+        return percent;
+    }
+    function execRotation(rcmd, ms=450){
+        if(!rcmd) return;
+        let rcmd_len = rcmd.length;
+        if(rcmd_len>=1){
+            for(let i=0;i<rcmd_len;i++){
+                const range = rcmd[i],
+                      score = range.querySelector("#spot h3").innerText;
+                new Promise(function(resolve,reject){
+                    // setTimeout(()=>{
+                    range.querySelector("#before").style.transform = 'rotate('+degreePercentage(score)+'deg)';
+                    score>5 ? setTimeout(()=>resolve(), ms) : reject('cancel after');
+                    // }, 100);
+                }).then(function(res){
+                    range.querySelector("#after").style.cssText = 'z-index:4;transform:rotate('+degreePercentage(10-score, true)+'deg)';
+                }).catch(function(err){
+                    console.log(err)
+                });
+            }
+        }
+    }
+    const rcmd_range = document.querySelectorAll('.inbox-aside .game-ratings.both');
+    execRotation(rcmd_range);
+</script>
 <?php
     require_once(TEMPLATEPATH. '/foot.php');
     if($async_sw&&$use_async){
@@ -158,26 +202,18 @@
                     let each_temp = document.createElement("div");
                     each_temp.id = "pid_"+each_post.id;
                     each_temp.classList.add("inbox", "flexboxes");
-                    extra_str = "";
-                    post_rating = each_post.rating;
+                    let extra_str = "",
+                        post_rating = each_post.rating;
                     if(each_post.rcmd){
-                        post_rating = post_rating ? post_rating : '荐';
-                        extra_str = `<div class="game-ratings gs">
-                                <div class="gamespot" title="GameSpot Ratings">
-                                    <div class="range Essential RSBIndex">
-                                        <span id="before" style=""></span>
-                                        <span id="after" style="transform: rotate(270deg); z-index: 4;"></span>
-                                    </div>
-                                    <span id="spot">
-                                        <h3 style="color: #fff;">${post_rating}</h3>
-                                    </span>
-                                </div>
-                            </div>`;
+                        const rcmd_rating = post_rating ? post_rating : '荐',
+                              both_class = post_rating ? " both" : "";
+                        extra_str = `<div class="game-ratings gs${both_class}"><div class="gamespot" title="GameSpot Ratings"><div class="range Essential RSBIndex"><span id="before"></span><span id="after"></span></div><span id="spot"><h3>${rcmd_rating}</h3></span></div></div>`;
                     }else{
-                        extra_str = post_rating ? '<div class="game-ratings ign"><div class="ign hexagon" title="Recommended"><h3 style="color: #fff;">'+post_rating+'</h3></div></div>' : '';
+                        extra_str = post_rating ? '<div class="game-ratings ign"><div class="ign hexagon" title="Recommended"><h3>'+post_rating+'</h3></div></div>' : '';
                     }
                     each_temp.innerHTML = `<div class="inbox-headside flexboxes"><span class="author">${each_post.subtitle}</span><img src="${each_post.poster}" alt="${each_post.subtitle}" crossorigin="Anonymous"></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="javascript:;" target="_self">${each_post.title}</a></h4></span><span class="lowside-description"><p>${each_post.excerpt}</p></span>${extra_str}</div>`; //<img class="bg" src="${each_post.poster}">
                     load_box.insertBefore(each_temp, load_box.lastElementChild); //lastChild
+                    execRotation(load_box.querySelectorAll('.inbox-aside .game-ratings.both'));
                     // setup ajax-load images blur-color
                     let tempimg = new Image();
                         tempimg.src = each_post.poster;
