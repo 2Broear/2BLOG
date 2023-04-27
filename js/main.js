@@ -181,7 +181,7 @@
     //https://www.cnblogs.com/yu01/p/15493430.html
     function raf_enqueue(enqueue=false, callback=false, ms=100, i=1, init=0){
         const exec = (rid,init)=>{
-                  callback ? callback(init) : false;
+                  callback&&typeof callback==='function' ? callback(init) : false;
                   cancelAnimationFrame(rid);
               };
         return (function raf_queue(){
@@ -199,16 +199,23 @@
     function sto_enqueue(list, enqueue=false, callback=false, ms=100){
         if(!list[0]) return;
         for(let i=0,listLen=list.length;i<listLen;i++){
-            // let each = list[i];
+            let callbacked = callback&&typeof callback==='function';
             if(enqueue){
                 var inOrder = setTimeout(()=>{
-                    callback ? callback(i) : false;
+                    callbacked ? callback(i) : false;
                     inOrder = null;
                     clearTimeout(inOrder);
                 }, i*ms);
             }else{
-                callback ? callback(i) : false;
+                callbacked ? callback(i) : false;
             }
+        }
+    }
+    // async await Promise enqueue tasks
+    async function async_enqueue(list, enqueue, callback, ms=100){
+        if(!list[0]) return;
+        for(let i=0,listLen=list.length;i<listLen;i++){
+            if(callback&&typeof callback==='function') await setTimeout(()=>callback(i), i*ms); //new Promise((resolve)=>{resolve(setTimeout(()=>callback(i), i*ms))})
         }
     }
     
@@ -307,7 +314,7 @@
             ajax.onreadystatechange=function(){
                 if(this.readyState!=4) return;
                 if(this.status==200){
-                    callback ? resolve(callback(this.responseText)) : resolve(this.responseText);
+                    callback&&typeof callback==='function' ? resolve(callback(this.responseText)) : resolve(this.responseText);
                 }else{
                     reject(this.status);
                 }
@@ -520,8 +527,8 @@
             var scrollTop = document.documentElement.scrollTop || document.body.scrollTop,
                 clientHeight = document.body.clientHeight,
                 windowHeight = window.innerHeight,
-    		    page_percent = Math.round((((scrollTop)/(clientHeight-windowHeight))*100)),
-                fixedSidebar = sidebar_window ? header.offsetHeight+(sidebar_ads ? sidebar_ads.offsetHeight+marginOffset : 0) : false,
+    		    page_percent = Math.round((scrollTop/(clientHeight-windowHeight))*100),
+                fixedSidebar = sidebar_window ? header.offsetHeight+(sidebar_ads ? sidebar_ads.offsetHeight : 0) : false, //sidebar_ads.offsetHeight+marginOffset
                 headbar_oh = headbar.querySelector('p#np') ? 100 : headbar.offsetHeight,
                 footerDetect = sidebar_window ? footer.querySelector(".footer-detector").offsetTop-(headbar_oh+sidebar_float.offsetHeight) : false;
             // https://stackoverflow.com/questions/31223341/detecting-scroll-direction

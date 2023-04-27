@@ -29,52 +29,57 @@
                     poster_sw();
                     return;
                 }
-                send_ajax_request("get", "<?php custom_cdn_src(false); ?>/plugin/html2canvas.php",
-                    'pid=<?php echo $post_ID; ?>', function(res){
-					// generate poster QRCode (async)
-					return new Promise(function(resolve,reject){
-                        let _tp = t.parentNode,
-                            div = document.createElement('DIV');;
-                        _tp.classList.add("disabled");  // incase multi click (first generating only)
-    					div.innerHTML += res;  //在valine环境直接追加到body会导致点赞元素层级错误（重绘性能问题）
-    					document.body.appendChild(div);
-                	    asyncLoad('<?php custom_cdn_src(); ?>/js/qrcode/qrcode.min.js', function(){
-                    		let url = location.href;
-                    		var qrcode = new QRCode(document.getElementById("qrcode"), {
-                    			text: url,
-                    			width: 100,
-                    			height: 100,
-                    			colorDark : "#000000",
-                    			colorLight : "#ffffff",
-                    			correctLevel : QRCode.CorrectLevel.L
-                    		});
-                	        qrcode ? resolve([_tp,"qrcode loaded."]) : reject('qrcode loading err.');
-                	    });
-					}).then(function(res){
-					    console.log(res[1]);
-                	    asyncLoad('<?php custom_cdn_src(); ?>/js/html2canvas/html2canvas.min.js', function(){
-                	       // console.log('now loading html2canvas..')
-                    		html2canvas(document.querySelector('#capture'),{
-                    		    useCORS: true,
-                    		    allowTaint: true,
-                    		    scrollX: 0,
-                    		    scrollY: 0,
-                    		    backgroundColor: null
-                    	    }).then(canvas => {
-                    	        const newImg = document.createElement("img");
-                                canvas.toBlob(function(blob){
-                        			//let baseUrl = URL.createObjectURL(blob),
-                        			//	imgDom = '<img src="'+baseUrl+'" />';
-                        			newImg.src = URL.createObjectURL(blob);
-                        			document.getElementById('poster').appendChild(newImg); //innerHTML += imgDom;
-                                },"image/png",1);
-                                res[0].classList.remove("disabled");  // remove click restrict
-				                console.log('html2canvas done.');
-                    		});
-                	    });
-					}).catch(function(err){
-					    console.log(err);
-					});
+                t.parentNode.classList.add("disabled");  // incase multi click (first generating only)
+                send_ajax_request("get", "<?php echo get_api_refrence('html2canvas',true);//echo custom_cdn_src('src',true).'/plugin/api.php?auth=html2canvas&pid='.$post_ID.'&exec=1'; ?>", false, function(res){
+                    try{
+                        if(!res) throw new Error('signature error.'); //if(sign_.err) return;
+    					// generate poster QRCode (async)
+    					return new Promise(function(resolve,reject){
+                            let _tp = t.parentNode,
+                                div = document.createElement('DIV');;
+                            // _tp.classList.add("disabled");  // incase multi click (first generating only)
+        					div.innerHTML += res;  //在valine环境直接追加到body会导致点赞元素层级错误（重绘性能问题）
+        					document.body.appendChild(div);
+                    	    asyncLoad('<?php custom_cdn_src(); ?>/js/qrcode/qrcode.min.js', function(){
+                        		let url = location.href;
+                        		var qrcode = new QRCode(document.getElementById("qrcode"), {
+                        			text: url,
+                        			width: 100,
+                        			height: 100,
+                        			colorDark : "#000000",
+                        			colorLight : "#ffffff",
+                        			correctLevel : QRCode.CorrectLevel.L
+                        		});
+                    	        qrcode ? resolve([_tp,"qrcode loaded."]) : reject('qrcode loading err.');
+                    	    });
+    					}).then(function(res){
+    					    console.log(res[1]);
+                    	    asyncLoad('<?php custom_cdn_src(); ?>/js/html2canvas/html2canvas.min.js', function(){
+                    	       // console.log('now loading html2canvas..')
+                        		html2canvas(document.querySelector('#capture'),{
+                        		    useCORS: true,
+                        		    allowTaint: true,
+                        		    scrollX: 0,
+                        		    scrollY: 0,
+                        		    backgroundColor: null
+                        	    }).then(canvas => {
+                        	        const newImg = document.createElement("img");
+                                    canvas.toBlob(function(blob){
+                            			//let baseUrl = URL.createObjectURL(blob),
+                            			//	imgDom = '<img src="'+baseUrl+'" />';
+                            			newImg.src = URL.createObjectURL(blob);
+                            			document.getElementById('poster').appendChild(newImg); //innerHTML += imgDom;
+                                    },"image/png",1);
+                                    res[0].classList.remove("disabled");  // remove click restrict
+    				                console.log('html2canvas done.');
+                        		});
+                    	    });
+    					}).catch(function(err){
+    					    console.log(err);
+    					});
+                    }catch(err){
+                        console.log(err)
+                    }
                 });
             }
         </script>

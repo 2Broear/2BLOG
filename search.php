@@ -30,7 +30,7 @@
             foreach ($res_array as $each){
                 if(trim($each)=='page') $page_flag='/页面';
             }
-            echo '<b> '.$res_num.' </b>篇有关“<span>'.$searchString.'</span>”の文章'.$page_flag;//printf(esc_html__('%d条关于“%s”的文章', ''),$res_num,'<span>'.esc_html(get_search_query()).'</span>');
+            echo '<b> '.$res_num.' </b>篇有关“<span>'.$searchString.'</span>”の内容'.$page_flag;//printf(esc_html__('%d条关于“%s”的文章', ''),$res_num,'<span>'.esc_html(get_search_query()).'</span>');
         ?>
     </h5>
 </div>

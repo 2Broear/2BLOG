@@ -81,9 +81,10 @@ var custom_initfield_adminmd5,
     custom_initfield_serverchan,
     custom_initfield_pushplus,
     // custom_initfield_listsize,
-    custom_initfield_rootpath,
+    // custom_initfield_rootpath,
     custom_initfield_srccdn,
     custom_initfield_imgcdn,
+    custom_initfield_apicdn,
     custom_initfield_lazyload,
     custom_initfield_wxnotify,
     custom_initfield_posterimg;
@@ -265,9 +266,10 @@ custom_initfield_adminmd5 = e.config.adminMd5;
 custom_initfield_pushplus = e.config.pushPlus;
 custom_initfield_serverchan = e.config.serverChan;
 // custom_initfield_listsize = e.config.listSize;
-custom_initfield_rootpath = e.config.rootPath;
-custom_initfield_imgcdn = e.config.imgCdn ? e.config.imgCdn : custom_initfield_rootpath;
-custom_initfield_srccdn = e.config.srcCdn ? e.config.srcCdn : custom_initfield_rootpath;
+// custom_initfield_rootpath = e.config.rootPath;
+custom_initfield_imgcdn = e.config.imgCdn;// ? e.config.imgCdn : custom_initfield_rootpath;
+custom_initfield_srccdn = e.config.srcCdn;// ? e.config.srcCdn : custom_initfield_rootpath;
+custom_initfield_apicdn = e.config.apiCdn;// ? e.config.apiCdn : custom_initfield_rootpath;
 custom_initfield_lazyload = e.config.lazyLoad;
 custom_initfield_wxnotify = e.config.wxNotify;
 custom_initfield_posterimg = e.config.posterImg;
@@ -369,7 +371,7 @@ if(v.comment!=""&&v.nick!="2broear"&&v.mail!="xty@2broear.com"){
         fetch('https://sc.ftqq.com/'+custom_initfield_serverchan+'.send?text='+title+' 上有新回复了！&desp='+trimRes).then(res=>{console.log(res)});
     }
     if(custom_initfield_wxnotify){
-        send_ajax_request("get", custom_initfield_rootpath+"/plugin/wpwx-notify.php", 
+        send_ajax_request("get", custom_initfield_apicdn+"/wpwx-notify.php", 
             parse_ajax_parameter({
                 'title' : "《"+title+"》上有新评论了！",
                 'content' : comment,

@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link preload type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/acg.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link preload type="text/css" rel="stylesheet" href="<?php custom_cdn_src(0); ?>/style/acg.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
         .rcmd-boxes .inbox-clip h2{
@@ -63,7 +63,11 @@
         }
         
         .rcmd-boxes .info .inbox .inbox-aside .both .gamespot{
-            color: orange;
+            color: gold;
+            /*color: orange;*/
+        }
+        .rcmd-boxes .info .inbox .inbox-aside .both .gamespot h3{
+            color: currentColor;
         }
         .inbox-aside .both .gamespot .range span#before{
             background-color: currentColor;
@@ -206,10 +210,11 @@
                         post_rating = each_post.rating;
                     if(each_post.rcmd){
                         const rcmd_rating = post_rating ? post_rating : '荐',
+                              rcmd_title = post_rating ? 'GOLD Recommendation' : 'Personal Recommends',
                               both_class = post_rating ? " both" : "";
-                        extra_str = `<div class="game-ratings gs${both_class}"><div class="gamespot" title="GameSpot Ratings"><div class="range Essential RSBIndex"><span id="before"></span><span id="after"></span></div><span id="spot"><h3>${rcmd_rating}</h3></span></div></div>`;
+                        extra_str = `<div class="game-ratings gs${both_class}"><div class="gamespot" title="${rcmd_title}"><div class="range Essential RSBIndex"><span id="before"></span><span id="after"></span></div><span id="spot"><h3>${rcmd_rating}</h3></span></div></div>`;
                     }else{
-                        extra_str = post_rating ? '<div class="game-ratings ign"><div class="ign hexagon" title="Recommended"><h3>'+post_rating+'</h3></div></div>' : '';
+                        extra_str = post_rating ? '<div class="game-ratings ign"><div class="ign hexagon" title="IGN High Grades"><h3>'+post_rating+'</h3></div></div>' : '';
                     }
                     each_temp.innerHTML = `<div class="inbox-headside flexboxes"><span class="author">${each_post.subtitle}</span><img src="${each_post.poster}" alt="${each_post.subtitle}" crossorigin="Anonymous"></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="javascript:;" target="_self">${each_post.title}</a></h4></span><span class="lowside-description"><p>${each_post.excerpt}</p></span>${extra_str}</div>`; //<img class="bg" src="${each_post.poster}">
                     load_box.insertBefore(each_temp, load_box.lastElementChild); //lastChild

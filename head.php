@@ -16,10 +16,10 @@
     <?php 
         if(get_option('site_logo_switcher')){
     ?>
-                body.dark .mobile-vision .m-logo span,
-                body.dark .logo-area span{
-                    background: url(<?php echo get_option('site_logos'); ?>) no-repeat center center /cover!important;
-                }
+            body.dark .mobile-vision .m-logo span,
+            body.dark .logo-area span{
+                background: url(<?php echo get_option('site_logos'); ?>) no-repeat center center /cover!important;
+            }
     <?php
         }
     ?>
@@ -35,7 +35,7 @@
 		head.appendChild(script);
     	script.onload = script.onreadystatechange = function(){
     		if(!this.readyState || this.readyState=='loaded' || this.readyState=='complete'){
-    			if(callback&&typeof callback=='function') callback();
+    			if(callback&&typeof callback==='function') callback();
     		}
     		script.onload = script.onreadystatechange = null;
     	};
@@ -47,7 +47,7 @@
             if(!t) return;
             while(t!=parent){
                 if(t.classList && t.classList.contains(cls)){
-                    if(callback&&typeof callback=='function') callback(t,e); //callback(t) || callback(t); // callback.apply(this, ...arguments);
+                    if(callback&&typeof callback==='function') callback(t,e); //callback(t) || callback(t); // callback.apply(this, ...arguments);
                     break;
                 }else{
                     t = t.parentNode;

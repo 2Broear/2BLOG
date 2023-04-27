@@ -1,4 +1,4 @@
-<!--<script async src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>-->
+
 <script src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <script type="text/javascript">
     <?php
@@ -46,9 +46,9 @@
                     //         }
                     //     }
                     // }else{
-                        sto_enqueue(list, true, function(i){
+                        sto_enqueue(list, true, function(i){ //async_enqueue
                             list[i].classList.add('active');
-                        }, 150);
+                        }, 200);
                     // }
     <?php
                     break;

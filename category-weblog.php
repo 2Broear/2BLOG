@@ -16,6 +16,7 @@
             position: relative;
             top: -15px;
         }
+        #comment_txt{padding:0 15px;box-sizing:border-box;}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -62,7 +63,7 @@
                         if(!$log_query->have_posts()) echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t="'.current_slug(true).'"></i><h1> 这里，<b>空空的！</b> </h1></div>';  //<b>'.current_slug(true).'</b> 
                         while ($log_query->have_posts()):
                             $log_query->the_post();
-                            $post_feeling = get_post_meta($post->ID, "post_feeling", true);
+                            // $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                             $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                 ?>
                             <div class="<?php if($post_orderby>1) echo 'topset '; ?>weblog-tree-core-record">

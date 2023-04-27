@@ -27,6 +27,13 @@
         .acg_window-content-inside_right .tags{
             font-family: math, serif;
         }
+        /*.tech_window-content{*/
+        /*    margin-top: 15px;*/
+        /*}*/
+        /*.tech_window-content li{*/
+        /*    display: inline-block;*/
+        /*    margin: auto auto 15px 15px;*/
+        /*}*/
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -187,7 +194,7 @@
             <div id="tech-acg-inside_tech" class="flexboxes wow fadeInUp" data-wow-delay="0.15s">
                 <span id="tech_window" style="width:100%">
                     <div class="newsBox-supTitle flexboxes" id="tech_window-top">
-                        <span class="newsBox-supTitle-iDescription" id="icon-technology" title="Tech | 科技资讯">
+                        <span class="newsBox-supTitle-iDescription" id="icon-technology">
                             <em>LOG</em><i class="icom icon-weblog"></i>
                         </span>
                         <h2><?php echo $blog_temp = get_cat_by_template('weblog')->name;//echo strtoupper($blog_temp->slug).'「'.$blog_temp->name.'」'; ?></h2>
@@ -195,7 +202,7 @@
                     <ul class="tech_window-content">
                         <?php 
                             $query_cid = get_option('site_techside_cid');
-                            $baas&&strpos(get_option('site_leancloud_category'), 'category-weblog.php')!==false ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid);
+                            $baas&&strpos(get_option('site_leancloud_category'), 'category-weblog.php')!==false ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid); //,false,false,9
                         ?>
                     </ul>
                     <div class="newsBox-subText-Description" id="tech_window-bottom">
@@ -216,7 +223,7 @@
                 <!-- 左图 ，右文窗-->
                 <div id="tech-acg-inside_acg-allpart">
                     <div class="newsBox-supTitle flexboxes" id="acg_window-top">
-                        <span class="newsBox-supTitle-iDescription" id="icon-acg" title="ACG 宅周报">
+                        <span class="newsBox-supTitle-iDescription" id="icon-acg">
                             <em>ACG</em><i class="icom icon-acg"></i>
                         </span>
                         <h2> ACG · TAG </h2><!--<h2> ACG はすぐに TAG CLOUDS </h2>-->
@@ -297,4 +304,15 @@
 <?php require_once(TEMPLATEPATH. '/foot.php'); ?>
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/banner.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/cursor.js"></script>-->
+<script type="module">
+    console.log('import module')
+    import { cube, foo, graph } from '<?php custom_cdn_src(); ?>/js/module.js';
+    graph.options = {
+        color:'blue',
+        thickness:'3px'
+    };
+    graph.draw();
+    console.log(cube(3)); // 27
+    console.log(foo);    // 4.555806215962888
+</script>
 </body></html>

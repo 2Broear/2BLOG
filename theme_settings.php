@@ -183,12 +183,13 @@
     // 配合 custom_column.js 获取已显示列表数值填充到快速编辑栏目预览
     parse_str($_SERVER['QUERY_STRING'], $cur_edit_queries);
     $acg_cat = get_cat_by_template('acg','term_id');
-    $cur_cat = $cur_edit_queries['cat'];
+    $cur_cat = array_key_exists('cat',$cur_edit_queries) ? $cur_edit_queries['cat'] : false;
     $edit_acg_posts = $cur_cat==$acg_cat || cat_is_ancestor_of($acg_cat, $cur_cat);
+    // $inform_post = array_key_exists('post_type', $cur_edit_queries) ? $cur_edit_queries['post_type'] : false;
     // display custom_column for custom_column.js preset input-value
     add_filter('manage_posts_columns', 'wpse_3531_add_seo_columns', 10, 2);
     function wpse_3531_add_seo_columns($posts_columns, $post_type){
-        $posts_columns['post_orderby'] = '排序值';
+        if($post_type!='inform') $posts_columns['post_orderby'] = '排序值';
         // $posts_columns['post_rating'] = '评分';
         global $edit_acg_posts;
         if($edit_acg_posts){
@@ -336,7 +337,8 @@
         };
         if(in_category($news_slug, $posts)||in_category($note_slug, $posts) || $creating_post){
             array_push($preset_arr, array('title'=>'文章版权', 'for'=>'post_rights', 'type'=>'', 'method'=>'select', 'options'=>["原创","转载","其他"]));
-            $post_rights = get_post_meta($pid)['post_rights'][0];
+            $post_meta = get_post_meta($pid);
+            $post_rights = $post_meta&&array_key_exists('post_rights',$post_meta) ? $post_meta['post_rights'][0] : false;
             if($post_rights&&$post_rights!='原创') array_push($preset_arr, array('title'=>'文章来源', 'for'=>'post_source', 'type'=>'text', 'method'=>false, 'options'=>false));
         };
         unset($post, $pagenow);
@@ -605,6 +607,13 @@
         register_setting( 'baw-settings-group', 'site_mbit_result_array' );
         register_setting( 'baw-settings-group', 'site_animated_counting_switcher' );
         
+        register_setting( 'baw-settings-group', 'site_chatgpt_switcher' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_includes' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_model' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_apikey' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_proxy' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_auth' );
+            // register_setting( 'baw-settings-group', 'site_chatgpt_require' );
         register_setting( 'baw-settings-group', 'site_async_switcher' );
             register_setting( 'baw-settings-group', 'site_async_includes' );
             register_setting( 'baw-settings-group', 'site_async_acg' );
@@ -644,6 +653,7 @@
         // if(get_option('site_cdn_switcher')){
             register_setting( 'baw-settings-group', 'site_cdn_src' );
             register_setting( 'baw-settings-group', 'site_cdn_img' );
+            register_setting( 'baw-settings-group', 'site_cdn_api' );
             // register_setting( 'baw-settings-group', 'site_cdn_vid' );
             // register_setting( 'baw-settings-group', 'site_cdn_vid_sw' );
             register_setting( 'baw-settings-group', 'site_cdn_vdo_includes' );
@@ -793,9 +803,20 @@
         if(!$opt) return;
         return get_option($opt) ? "checked" : "closed";
     }
+    $article_opts = array(get_cat_by_template('news'), get_cat_by_template('notes'), get_cat_by_template('weblog'));
+    function output_article_opts($opt, $value){
+        global $article_opts;
+        $pre_array = explode(',',trim($value));  // NO "," Array
+        // $pre_array_count = count($pre_array);
+        foreach ($article_opts as $option){
+            $opts_key = $option->name;
+            $opts_val = $option->term_id;
+            $checking = in_array($opts_val, $pre_array) ? 'checked' : '';
+            echo '<input id="'.$opt.'_'.$opts_key.'" type="checkbox" value="'.$opts_val.'" '.$checking.' /><label for="'.$opt.'_'.$opts_key.'">'.strtoupper($opts_key).'</label>';
+        }
+    }
     function add_options_submenu() {
         $theme_color = get_option('site_theme','#eb6844');
-        $article_opts = array(get_cat_by_template('news'), get_cat_by_template('notes'), get_cat_by_template('weblog'));
         $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
         $cats_haschild = array();
         $cats_seclevel = array();
@@ -810,8 +831,8 @@
             :root{
                 --panel-theme: <?php echo $theme_color; ?>;
             }
-        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(90deg,rgba(255, 255, 255, 0) 25%, currentColor 255%)}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:233px;height:18px;cursor:pointer;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme)}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text-disabled{display:none;}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:var(--panel-theme)}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
-            .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{background:purple;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
+        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(90deg,rgba(255, 255, 255, 0) 25%, currentColor 255%)}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:233px;height:18px;cursor:pointer;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme)}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text-disabled{display:none;}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:var(--panel-theme)}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+            .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{background:brown;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;color: white;font-size: smaller;text-align: center;background: rgb(0 0 0 / 52%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius:5px;position:relative;overflow:hidden;}
             .formtable{display:none;}.formtable.show{display:block;}.wrap.fixed p.submit:first-child{right:-80px}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.switchTab{background: rgb(255 255 255 / 75%);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:10px 0;top:32px;position:sticky;z-index: 9;box-sizing:border-box;/*transition: top .35s ease;top: -32px;padding: 0;*/box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:var(--panel-theme);background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:0;border-radius:25px}.switchTab li b{font-size:initial;display:block;text-shadow:1px 1px 0 white;font-style:normal}
             .smtp{margin-left:10px;vertical-align:middle;}
@@ -836,6 +857,8 @@
             #wpcontent{padding:0}
             .wrap.settings hr,
             .wrap.settings{margin:0}
+            /*.form-table tr.child_option:hover{border-left-color:darkgray}*/
+            /*.form-table tr.child_option:hover th{padding-left:0}*/
         </style>
         <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>THEME</b><p style="letter-spacing:normal;margin-bottom:auto;"> 主题部分页面提供 Leancloud 第三方 bass 数据储存服务 </p></h1>
         <!--<hr/>-->
@@ -1264,11 +1287,12 @@
                                 $preset = '//cravatar.cn/';
                                 $arrobj = array(
                                     array('name'=>'Gravatar', 'href'=>'//gravatar.com/'),
-                                    array('name'=>'极客族', 'href'=>'//sdn.geekzu.org/'),
                                     array('name'=>'Cravatar', 'href'=>'//cravatar.cn/'),
+                                    array('name'=>'Geekzu', 'href'=>'//sdn.geekzu.org/'),
                                     array('name'=>'LOLI', 'href'=>'//gravatar.loli.net/'),
                                     array('name'=>'SEP', 'href'=>'//cdn.sep.cc/'),
                                     array('name'=>'V2EX', 'href'=>'//cdn.v2ex.com/'),
+                                    array('name'=>'2Bavatar', 'href'=>'//gravatar.2broear.com/'),
                                 );
                                 // $md5mail = md5("wapuu@wordpress.example"); //get_bloginfo('admin_email')
                                 $mirror_parm = 'avatar/'.md5("wapuu@wordpress.example").'?s=100';
@@ -1426,7 +1450,7 @@
                             <tr valign="top" class="child_option dynamic_opts <?php echo $cdn = get_option('site_cdn_switcher') ? 'dynamic_optshow' : false; ?>">
                                 <th scope="row">— 文件加速域名</th>
                                 <td>
-                                    <p class="description" id="site_cdn_src_label">可选项，网站cdn（css、js）链接/标头（默认使用当前主题目录</p>
+                                    <p class="description" id="site_cdn_src_label">可选项，网站cdn（css、js）链接/标头（默认使用当前主题目录，可用于安全性考量</p>
                                     <input type="text" name="site_cdn_src" id="site_cdn_src" class="middle-text" placeholder="site_cdn_src" value="<?php echo get_option( 'site_cdn_src', '' ); ?>"/>
                                 </td>
                             </tr>
@@ -1435,6 +1459,23 @@
                                 <td>
                                     <p class="description" id="site_cdn_img_label">媒体库图片文件（存放于 wp-content/uploads 路径</p>
                                     <input type="text" name="site_cdn_img" id="site_cdn_img" class="middle-text" placeholder="site_cdn_img" value="<?php echo get_option( 'site_cdn_img', '' ) ?>"/>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $cdn; ?>">
+                                <th scope="row">— API 调用域名</th>
+                                <td>
+                                    <p class="description" id="">此域名用于调用 plugin 目录内插件（留空默认调用根目录，开启后可以在下方显示 CDN Auth Sign 调用鉴权密钥</p>
+                                    <input type="text" name="site_cdn_api" id="site_cdn_api" class="middle-text" placeholder="site_cdn_api" value="<?php echo get_option( 'site_cdn_api', '' ) ?>"/>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $cdn&&get_option('site_cdn_api') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— API Auth Sign</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_auth';
+                                        $value = get_option($opt);
+                                        echo '<p class="description" id="site_bar_pixiv_label">腾讯云CDN鉴权密钥（如 api 调用域名出现访问403可能是由于CDN服务器之前开启了鉴权但此项鉴权密钥尚未填写（无法判断远程服务器是否开启鉴权</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="normal-text array-text" placeholder="cdn authentication" value="' . $value . '"/>';
+                                    ?>
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $cdn; ?>">
@@ -2128,6 +2169,83 @@
                         // }
                     ?>
                     <tr valign="top">
+                        <th scope="row"> AI 文章摘要 - chatGPT </th>
+                        <td>
+                            <?php
+                                $opt = 'site_chatgpt_switcher';
+                                $status = check_statu($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 chatGPT AI 摘要。内建本地文件缓存机制，仅首次请求返回付费 completion 对话模型：text-davinci-003（需填写 API KEY 及 API 反代地址</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:purple" class="btn">文章摘要</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt = get_option('site_chatgpt_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— openAI Key</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_apikey';
+                                        $value = get_option($opt);
+                                        echo '<p class="description" id="site_bar_pixiv_label">API 账号密钥</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="openAI Key" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— openAI Proxy</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_proxy';
+                                        $value = get_option($opt);
+                                        echo '<p class="description" id="site_bar_pixiv_label">API 反代链接</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="openAI Proxy" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 对话模型</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_model';
+                                        $value = get_option($opt);
+                                        $models = ['text-davinci-003','gpt-3.5-turbo'];
+                                        if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
+                                        echo '<label for="'.$opt.'"><p class="description" id="">可选 chatGPT 对话模型（默认使用 text-davinci-003 </p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                            foreach ($models as $mod){
+                                                echo '<option value="'.$mod.'"';
+                                                if($value==$mod) echo('selected="selected"');
+                                                echo '>'.$mod.'</option>';
+                                            }
+                                        echo '</select></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 开启页面（多选）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_includes';
+                                        $value = get_option($opt);
+                                        if(!$value){
+                                            $preset_str = $article_opts[0]->term_id.',';
+                                            update_option($opt, $preset_str );
+                                            $value = $preset_str;
+                                        }
+                                        echo '<p class="description" id="site_bottom_nav_label">指定开启 chatGPT AI 摘要文章页面（使用逗号“ , ”分隔，可选多个分类</p><div class="checkbox">';
+                                        output_article_opts($opt, $value);
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <!--<tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">-->
+                            <!--    <th scope="row">— openAI Requirements</th>-->
+                            <!--    <td>-->
+                                    <?php
+                                        // $opt = 'site_chatgpt_require';
+                                        // $value = get_option($opt);
+                                        // $preset = '分析以上信息，简述文章用意'; 
+                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        // echo '<p class="description" id="">API 请求条件文本语句（默认：分析以上信息，简述文章用意</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $preset . '"/>';
+                                    ?>
+                            <!--    </td>-->
+                            <!--</tr>-->
+                    <tr valign="top">
                         <th scope="row">归档/漫游影视 - 计数动画</th>
                         <td>
                             <?php
@@ -2237,7 +2355,7 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">关于 - MBIT测试数据</th>
+                        <th scope="row">关于 - MBIT数据</th>
                         <td>
                             <?php
                                 $opt = 'site_mbit_array';
@@ -2261,14 +2379,14 @@
                             </td>
                         </tr>
                     <tr valign="top" class="">
-                        <th scope="row">漫游影视 - 背景视频</th>
+                        <th scope="row">关于 - 背景视频</th>
                         <td>
                             <?php
-                                $opt = 'site_acgn_video';
+                                $opt = 'site_about_video';
                                 $value = get_option($opt);
                                 $preset = '';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="">漫游影视背景视频（开启后背景图片将作为视频的poster展示</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_acgn_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
+                                echo '<p class="description" id="site_about_video_label">关于我背景视频</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_about_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2285,14 +2403,14 @@
                         </td>
                     </tr>
                     <tr valign="top" class="">
-                        <th scope="row">关于我 - 背景视频</th>
+                        <th scope="row">漫游影视 - 背景视频</th>
                         <td>
                             <?php
-                                $opt = 'site_about_video';
+                                $opt = 'site_acgn_video';
                                 $value = get_option($opt);
                                 $preset = '';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_about_video_label">关于我背景视频</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_about_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
+                                echo '<p class="description" id="">漫游影视背景视频（开启后背景图片将作为视频的poster展示</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_acgn_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2314,7 +2432,7 @@
                 <h1><b class="num" style="border-color:hotpink;box-shadow:-5px -5px 0 rgb(255 105 180 / 18%);">04</b>边栏设置<p class="en">SIDEBAR SETTINGS</p></h1>
                 <table class="form-table sidebar">
                     <tr valign="top">
-                        <th scope="row">Google Adsense 广告</th>
+                        <th scope="row">Google 广告</th>
                         <td>
                             <?php
                                 $opt = 'site_ads_switcher';
@@ -2327,7 +2445,7 @@
                         // if(get_option('site_ads_switcher')){
                     ?>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $ads = get_option('site_ads_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 广告初始化代码块</th>
+                                <th scope="row">— Adsense 初始化代码</th>
                                 <td>
                                     <?php
                                         $opt = 'site_ads_init';
@@ -2481,14 +2599,7 @@
                                             $value = $preset_str;
                                         }
                                         echo '<p class="description" id="site_bottom_nav_label">页面底部最左侧资讯栏目分类（使用逗号“ , ”分隔，可选多个分类</p><div class="checkbox">';
-                                        $pre_array = explode(',',trim($value));  // NO "," Array
-                                        $pre_array_count = count($pre_array);
-                                        foreach ($article_opts as $option){
-                                            $opts_key = $option->name;
-                                            $opts_val = $option->term_id;
-                                            $checking = in_array($opts_val, $pre_array) ? 'checked' : '';
-                                            echo '<input id="'.$opt.'_'.$opts_key.'" type="checkbox" value="'.$opts_val.'" '.$checking.' /><label for="'.$opt.'_'.$opts_key.'">'.strtoupper($opts_key).'</label>';
-                                        }
+                                        output_article_opts($opt, $value);
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';
                                     ?>
                                 </td>
@@ -2513,14 +2624,7 @@
                                     $value = $preset_str;
                                 }
                                 echo '<p class="description" id="site_bottom_nav_label">页面底部最左侧资讯栏目分类（使用逗号“ , ”分隔，可选多个分类</p><div class="checkbox">';
-                                $pre_array = explode(',',trim($value));  // NO "," Array
-                                $pre_array_count = count($pre_array);
-                                foreach ($article_opts as $option){
-                                    $opts_key = $option->name;
-                                    $opts_val = $option->term_id;
-                                    $checking = in_array($opts_val, $pre_array) ? 'checked' : '';
-                                    echo '<input id="'.$opt.'_'.$opts_key.'" type="checkbox" value="'.$opts_val.'" '.$checking.' /><label for="'.$opt.'_'.$opts_key.'">'.strtoupper($opts_key).'</label>';
-                                }
+                                output_article_opts($opt, $value);
                                 echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';
                             ?>
                         </td>

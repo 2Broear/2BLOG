@@ -268,7 +268,7 @@
                 )
             );
             // 评论邮件不为博主邮件时，返回 notify 接口（$postdata）不可使用 cdn，wpwx-notify.php 需调用 wp core
-            if($mail!=$admin_mail) return file_get_contents(get_bloginfo('template_directory') . '/plugin/wpwx-notify.php',false,stream_context_create($options));else return false;
+            if($mail!=$admin_mail) return file_get_contents(custom_cdn_src(1,true) . '/wpwx-notify.php',false,stream_context_create($options));else return false; //get_bloginfo('template_directory') custom_cdn_src('api',true)
         }
         // 挂载 WordPress 评论提交的接口
         add_action('comment_post', 'push_weixin', 19, 2);
@@ -430,6 +430,32 @@
     $images_cdn = get_option('site_cdn_img');
     $videos_cdn_page = get_option('site_cdn_vdo_includes');
     $videos_cdn_arr = explode(',',trim($videos_cdn_page));
+    
+    // API调用接口，接受三个参数：
+    // 调用 api 文件名
+    // api 代理访问（使用 api.php 文件中的 curl 携带鉴权参数二次请求（速度影响），适用前端异步调用
+    // 返回请求api或返回sign签名（如开启cdn鉴权
+    function get_api_refrence($api='', $xhr=false, $exe=1){
+        $res = 'unknown_api_refrence';
+        if($api){
+            global $post;
+            $pid = $post->ID;
+            $api_file = '/'.$api.'.php';
+            $request_url = get_option('site_cdn_api') ? custom_cdn_src('api',true) : custom_cdn_src(0,true).'/plugin/authentication';
+            $auth_url = $request_url.$api_file.'?pid='.$pid;
+            $cdn_auth = get_option('site_chatgpt_auth');
+            // 如出现访问403可能是由于CDN服务器开启了鉴权但后台面板中未填写 API Auth Sign 选项鉴权密钥（无法判断远程服务器是否开启鉴权）
+            if($cdn_auth){
+                $stamp10x = time();
+                $stamp16x = dechex($stamp10x);
+                $auth_url = $auth_url.'&sign='.md5($cdn_auth.$api_file.$stamp16x).'&t='.$stamp16x;
+            }
+            $res = $xhr ? custom_cdn_src('src',true).'/plugin/api.php?auth='.$api.'&pid='.$pid.'&exec='.$exe : $auth_url;
+        }else{
+            $res = 'unknown_api_refrence';
+        }
+        return $res;
+    }
     
     // 分类导航（PC/MOBILE）
     function category_navigation($mobile=false, $deepth=0){
@@ -1399,15 +1425,19 @@
     //启用cdn加速(指定src/img)
     function custom_cdn_src($holder='src',$var=false){
         $default_src = get_bloginfo('template_directory');
-        $cdn_img = get_option('site_cdn_img');
         $cdn_src = get_option('site_cdn_src');
+        $cdn_img = get_option('site_cdn_img');
+        $cdn_api = get_option('site_cdn_api');
         if(get_option("site_cdn_switcher")&&$holder){ // set $holder as false for $default_src manually
             switch ($holder) {
                 case 'img':
-                    $cdn_img ? $holder=$cdn_img : $holder=$default_src;
+                    $holder = $cdn_img ? $cdn_img : $default_src;
+                    break;
+                case 'api':
+                    $holder = $cdn_api ? $cdn_api : ($cdn_src ? $cdn_src.'/plugin' : $default_src.'/plugin');
                     break;
                 default:
-                    $cdn_src ? $holder=$cdn_src : $holder=$default_src;
+                    $holder = $cdn_src ? $cdn_src : $default_src;
                     break;
             };
         }else{
@@ -1556,14 +1586,15 @@
 <?php
     }
     // wp自定义（含置顶无分页）查询函数
-    function recent_posts_query($cid=0, $link=false, $detail=false, $random=false){
+    function recent_posts_query($cid=0, $link=false, $detail=false, $limit=null, $random=false){
         global $post;
         $orderby = $random ? 'rand' : array(
             'date' => 'DESC',
             'meta_value_num' => 'DESC',
             'modified' => 'DESC',
         );
-        $query_array = $cid ? array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => get_option('site_per_posts'), 'orderby' => $orderby) : array('cat' => $cid, 'posts_per_page' => get_option('site_per_posts'), 'order' => 'DESC', 'orderby' => $orderby);
+        $limit = $limit ? $limit : get_option('site_per_posts');
+        $query_array = $cid ? array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => $limit, 'orderby' => $orderby) : array('cat' => $cid, 'posts_per_page' => $limit, 'order' => 'DESC', 'orderby' => $orderby);
         $left_query = new WP_Query(array_filter($query_array));
         while ($left_query->have_posts()):
             $left_query->the_post();
@@ -1617,8 +1648,8 @@
 ?>
             <div class="inbox flexboxes" id="<?php echo 'pid_'.get_the_ID() ?>"> <!-- style="background-color:rgb(<?php //echo extract_images_rgb($postimg); ?> / 50%)"-->
                 <div class="inbox-headside flexboxes">
-                    <span class="author"><?php echo $post_feeling; ?></span>
                     <?php echo '<img '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous">'; //<img class="bg" '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'"> ?>
+                    <span class="author"><?php echo $post_feeling; ?></span>
                 </div>
                 <div class="inbox-aside">
                     <span class="lowside-title">
@@ -1644,15 +1675,23 @@
                     </span>
                     <?php
                         if($post_rcmd){
+                            $rcmd_title = 'Personal Recommends';
+                            $rcmd_class = '';
+                            $rcmd_text = '荐';
+                            if($post_rating){
+                                $rcmd_title = 'GOLD Recommendation';
+                                $rcmd_class = ' both';
+                                $rcmd_text = $post_rating;
+                            }
                     ?>
-                            <div class="game-ratings gs<?php echo $post_rating ? ' both' : ''; ?>">
-                                <div class="gamespot" title="Personal Recommend">
+                            <div class="game-ratings gs<?php echo $rcmd_class; ?>">
+                                <div class="gamespot" title="<?php echo $rcmd_title; ?>">
                                     <div class="range Essential RSBIndex">
                                         <span id="before"></span>
                                         <span id="after"></span>
                                     </div>
                                     <span id="spot">
-                                        <h3><?php echo $post_rating ? $post_rating : '荐'; ?></h3>
+                                        <h3><?php echo $rcmd_text; ?></h3>
                                     </span>
                                 </div>
                             </div>
@@ -1787,8 +1826,8 @@
             $countDate = date('Y/m/d,H:i:s',strtotime($date));
             $countTitle = explode('/', $title);
     ?>
-            <style>.news-ppt div,#countdown:before{border-radius:inherit}.countdown-box{width:100%;height:100%;min-height:160px;position:relative;}/* 新年侧边栏 */ #countdown {height:100%;padding: 1rem;box-sizing: border-box;position: absolute;top: 0;left: 0;width: 100%;background-size: cover;background-position: center;}#countdown * {position: relative;color: white;/*line-height: 1.2;*/}#countdown p,#countdown div{position:relative;z-index:9;}#countdown p{text-align: left;margin: auto;font-size: small;}#countdown p.title{font-weight:bold;}#countdown p.today{opacity: .75;font-size: 12px;position: inherit;bottom: 15px;right: 15px;}#countdown .time {font-weight: bold;text-align: center;width:100%;position: inherit;top: 50%;left: 50%;transform: translate(-50%,-50%);}#countdown .time, #countdown .timesup {font-size: 3.5rem;display: block;/*margin: 1rem 0;*/}#countdown .day {font-size: 4rem;}@keyframes typing{0%{opacity:0;}50%{opacity:1;}100%{opacity:0;}}#countdown .day .unit {font-size: 1rem;display:inline;animation: typing ease .8s infinite;-webkit-animation: typing ease .8s infinite;opacity:0;}#countdown:before{content: "";position: inherit;left: 0;top: 0;height: 100%;width: 100%;background-color: rgba(0, 0, 0, .36);z-index:1;}.countdown-box video{width: 100%;height: 100%;position: absolute!important;top: 0;left: 0;object-fit: cover;border-radius:inherit;}</style>
-            <div class="countdown-box">
+            <style>.news-ppt div,#countdown:before{border-radius:inherit}.countdown-box{width:100%;height:100%;min-height:160px;position:relative;}/* 新年侧边栏 */ #countdown {height:100%;padding: 1rem;box-sizing: border-box;position: absolute;top: 0;left: 0;width: 100%;background-size: cover;background-position: center;border-radius:var(--radius)}#countdown * {position: relative;color: white!important;/*line-height: 1.2;*/}#countdown p,#countdown div{position:relative;z-index:9;}#countdown p{text-align: left;margin: auto;font-size: small;}#countdown p.title{font-weight:bold;}#countdown p.today{opacity: .75;font-size: 12px;position: inherit;bottom: 15px;right: 15px;}#countdown .time {font-weight: bold;text-align: center;width:100%;position: inherit;top: 50%;left: 50%;transform: translate(-50%,-50%);}#countdown .time, #countdown .timesup {font-size: 3.5rem;display: block;/*margin: 1rem 0;*/}#countdown .day {font-size: 4rem;}@keyframes typing{0%{opacity:0;}50%{opacity:1;}100%{opacity:0;}}#countdown .day .unit {font-size: 1rem;display:inline;animation: typing ease .8s infinite;-webkit-animation: typing ease .8s infinite;opacity:0;}#countdown:before{content: "";position: inherit;left: 0;top: 0;height: 100%;width: 100%;background-color: rgba(0, 0, 0, .36);z-index:1;}.countdown-box video{width: 100%;height: 100%;position: absolute!important;top: 0;left: 0;object-fit: cover;border-radius:inherit;}</style>
+            <div class="countdown-box" style="margin-bottom: 15px">
                 <div id="countdown" style="background-image:url(<?php //echo $bgimg; ?>)">
                     <video src="<?php echo $bgimg; ?>" poster="<?php echo $bgimg; ?>" preload="" autoplay="" muted="muted" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
                     <p class="title"><?php echo $countTitle[0]; ?></p>
@@ -1804,7 +1843,8 @@
                       weeks = ['日','一','二','三','四','五','六'],
                       fillZero = function(i){
                           return i < 10 ? "0"+i : i;
-                      };
+                      },
+                      endup = "<?php echo $countTitle[1]; ?>";
                 var nowtime = new Date(),
                     endtime = new Date("<?php echo $countDate; ?>"),
                     result = parseInt((endtime.getTime() - nowtime.getTime()) / 1000),
@@ -1822,7 +1862,7 @@
                         target.innerHTML = '<span class="day">'+text+'</span>';
                         if(res <= 0) {
                             title.innerHTML = "TIME'S UP!";
-                            target.innerHTML = "<span class='timesup'><?php echo $countTitle[1]; ?></span>";
+                            target.innerHTML = "<span class='timesup'>"+endup+"</span>";
                             clearTimeout(countDown);
                             countDown = null;
                             return;
@@ -1833,7 +1873,7 @@
                     target.innerHTML = `<span class="day">${fillZero(day)}<span class="unit">天</span></span>`;
                     if(result <= 0) {
                         title.innerHTML = "TIME'S UP!";
-                        target.innerHTML = "<span class='timesup'><?php echo $countTitle[1]; ?></span>";
+                        target.innerHTML = "<span class='timesup'>"+endup+"</span>";
                     }
                 }
             </script>
@@ -1904,7 +1944,7 @@
                     <article class="<?php if($post_orderby>1) echo 'topset'; ?> cat-<?php echo $post->ID ?>">
                         <h1>
                             <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
-                            <?php if($post_rights&&$post_rights!="请选择") echo '<sup>'.get_post_meta($post->ID, "post_rights", true).'</sup>'; ?>
+                            <?php if($post_rights&&$post_rights!="原创") echo '<sup>'.get_post_meta($post->ID, "post_rights", true).'</sup>'; ?>
                         </h1>
                         <p><?php custom_excerpt(150); ?></p>
                         <div class="info">
@@ -2028,7 +2068,7 @@
                         <article class="<?php if($post_orderby>1) echo 'topset'; ?> cat-<?php echo $post->ID ?>">
                             <h1>
                                 <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
-                                <?php if($post_rights&&$post_rights!="请选择") echo '<sup>'.get_post_meta($post->ID, "post_rights", true).'</sup>'; ?>
+                                <?php if($post_rights&&$post_rights!="原创") echo '<sup>'.get_post_meta($post->ID, "post_rights", true).'</sup>'; ?>
                             </h1>
                             <p><?php custom_excerpt(150); ?></p>
                             <div class="info">

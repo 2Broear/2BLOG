@@ -1,6 +1,7 @@
 <?php
     define('WP_USE_THEMES', false);  // No need for the template engine
-    require_once( '../../../../wp-load.php' );  // Load WordPress Core 
+    // require_once($_SERVER['DOCUMENT_ROOT'].'/wp-load.php');  // Load WordPress Core 
+    require_once( '../../../../wp-load.php' );  // incase api DOCUMENT_ROOT
     // https://wordpress.stackexchange.com/questions/69184/how-to-load-wordpress-on-non-wp-page
     parse_str($_SERVER['QUERY_STRING'], $parameters);
     // 判断url传参或form表单参数

@@ -49,6 +49,8 @@ details{
     text-align: left;
     margin-bottom: 15px;
 }
+details:hover summary{color: var(--theme-color);}
+details summary{cursor: pointer;}
 figure{
     margin: 0 auto;
     text-align: center;
@@ -137,10 +139,10 @@ a:link{text-decoration:none}
 ::-moz-selection{background-color:var(--theme-color);color:var(--preset-f)}
 .inside-content li.news-personal_stand em::selection{background:transparent}
 .inside-content li.news-personal_stand em::-moz-selection{background:transparent}
-blockquote{border-left: 2px solid rgba(150, 150, 150, 0.36);padding-left: 15px;margin:25px 15px;}
+blockquote{border-left: 2px solid rgba(150, 150, 150, 0.36);padding-left: 10px;margin:25px 15px;}
 blockquote:first-letter{font-size: 300%;font-weight:bold;font-style:normal;float: left;padding: 5px;margin: 5px;color: inherit;}
-/*blockquote p:first-child{text-indent: initial;}*/
-blockquote p{color: var(--preset-9)!important;margin:5px auto!important;/*text-indent: 2em;*/}
+blockquote p:first-child{margin-bottom: 0;/*text-indent: initial;*/}
+blockquote p{color: var(--preset-9)!important;margin:auto auto 5px ;/*text-indent: 2em;*/}
 blockquote p#s{font-size:var(--min-size);text-align:right;position:relative}
 blockquote p#s i{position:absolute;top:-18px;right:18px;width:66px;height:66px;opacity:.36;}
 #what_says_inside::selection{background-color:transparent}
@@ -561,7 +563,7 @@ header .nav-wrap.searching form{
     display: block;
 }
 header .tips form{display: none}
-header input{width:66px;/*width:0;*/float:right;height:100%;color:inherit;transition:all .35s ease;padding:0 0 0 25px;background:transparent;}
+header input{width:66px;width:0;cursor:pointer;float:right;height:100%;color:inherit;transition:all .35s ease;padding:0 0 0 25px;background:transparent;}
 input::-webkit-input-placeholder{color:var(--preset-8)}
 header input:focus{width:150px;font-size:var(--min-size-rem);}
 header input:focus+.slider{width:100%}
@@ -622,7 +624,7 @@ header .nav-wrap.searching .m-search i::before{content:'\e91d'!important}
 .mobile-vision i{position:relative;top:-1px}
 .nav-wrap .nav-tools button{width:23px;height:23px;display:block;padding:0;position:absolute;left:5px;top:15px;/*background:url('https://img.2broear.com/css_sprites.png') -90px -178px no-repeat;*/cursor:pointer;border-radius:0 2px 2px 0;transition:right .2s ease}
 .nav-tools .m-search i::before{content:'\e919'}
-header form .m-search{display:block;font-size:17px;position:absolute;top:15px;left:-2px;opacity:.75;z-index:-1;}
+header form .m-search{display:block;font-size:17px;position:absolute;top:15px;left:-2px;opacity:.75;z-index:-1;pointer-events:none;}
 .news-cur-position{width:100%;height:auto;float:left;color:var(--preset-8);position:relative;display:none}
 .news-cur-position ul{height:100%;width:auto;border:1px solid var(--preset-s);background-color:var(--preset-f);border-radius:var(--radius);list-style-type:none;margin:0;padding:0;text-align:left;font-size:var(--min-size);overflow:hidden;display:flex;flex-flow:row nowrap;justify-content:flex-start;flex:0 1 auto;white-space:nowrap;line-height:32px;padding:0 15px}
 .news-cur-position ul li{padding:0 2px;flex-basis:36px;line-height:26px}
@@ -961,7 +963,7 @@ audio{width:300px;height:32px}
 #footer-copyright li{padding:0 5px;display:inline-block}
 /* #footer-copyright ul li{letter-spacing:1px;} */
 #footer-copyright li a:hover{text-decoration:underline;opacity: 1;}
-#footer-copyright li a{color:inherit;/*opacity: .88;*/}
+#footer-copyright li a{color:inherit;opacity: .75;}
 #footer-copyright ol img{position:relative;top:3px}
 .ForSlideToggle{position:fixed;z-index:9999;width:100%;height:118px;box-shadow:rgba(0,0,0,0.3) 0 1px 2px;transition:all .5s ease-out;margin-top:-120px;backface-visibility:hidden;-webkit-backface-visibility:hidden;-moz-backface-visibility:hidden;-ms-backface-visibility:hidden}
 .functions-tool .inside-functions.pull-up{
@@ -1005,9 +1007,9 @@ audio{width:300px;height:32px}
 .inside-functions .box .pagePer .active span.wave:after,
 .inside-functions .box .pagePer span.wave.active:before,
 .inside-functions .box .pagePer span.wave.active:after{
-    left:auto;
+    /*left:auto;*/
     animation-name:rotate;
-    -wbkit-animation-name:rotate;
+    -webkit-animation-name:rotate;
 }
 .inside-functions .box .pagePer .active span.wave:before,
 .inside-functions .box .pagePer span.wave.active:before{
@@ -1022,13 +1024,15 @@ audio{width:300px;height:32px}
     opacity:.5;
     border-radius:44%;
     animation-duration:7s;
-    -wbkit-animation-duration:7s;
+    -webkit-animation-duration:7s;
 }
-.inside-functions .box .pagePer span.wave:before,.inside-functions .box .pagePer span.wave:after{content:"";width:200%;height:200%;position:absolute;top:0%;left:0%;background-color:var(--theme-color);animation-iteration-count:infinite;animation-timing-function:linear}
-@keyframes rotate{0%{transform:translate(-50%,0) rotateZ(0deg)}
-50%{transform:translate(-50%,-3%) rotateZ(180deg)}
-100%{transform:translate(-50%,0%) rotateZ(360deg)}
-}#curPoint{margin:0 auto;position:relative;top:0;z-index:2}
+.inside-functions .box .pagePer span.wave:before,.inside-functions .box .pagePer span.wave:after{content:"";width:200%;height:200%;position:absolute;top:0%;left:0%;left:-50%;background-color:var(--theme-color);animation-iteration-count:infinite;animation-timing-function:linear}
+@keyframes rotate{
+    0%{transform:rotate(0deg)}
+    50%{transform:rotate(180deg)}
+    100%{transform:rotate(360deg)}
+}
+#curPoint{margin:0 auto;position:relative;top:0;z-index:2}
 #curPoint em.points{width:12px;height:3px;display:inline-block;background:rgba(0,0,0,0.35);margin:0 3px;cursor:pointer}
 .ppt-tools{width:100%;height:100%;position:absolute;top:0;left:0;overflow:hidden;z-index:2}
 .ppt-tools span{opacity:0;position:absolute;top:80px;transition:margin .2s ease}
@@ -1098,7 +1102,7 @@ audio{width:300px;height:32px}
 .news-content-right-download ol li{text-align:justify;border-bottom:1px dashed var(--preset-s);transition:padding .35s ease;white-space:nowrap}
 .news-content-right-download ol li a{display:block;max-width:100%;font-size:0.8rem;color:inherit;line-height:37px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .news-content-right-download ol li:hover{padding-left:10px}
-.news-content-right-download ol li:hover>a{color:var(--theme-color);text-decoration:underline}
+.news-content-right-download ol li:hover>a{text-decoration:underline;/*color:var(--theme-color);*/}
 .news-content-right-recommend:hover{box-shadow:rgba(0,0,0,0.03) 0 1px 3px}
 .news-content-right-recommend{width:100%;height:auto;border-radius:var(--radius);overflow:hidden;transition:.3s ease;transition-property:background,box-shadow;/*margin-bottom:15px;*/}
 .topic-blocker{float:left;width:100%}
@@ -1957,7 +1961,7 @@ body.dark .wp_comment_box a#cancel-comment-reply-link{
 }
 
 .pageSwitcher{font-size:14px;margin-top:15px;width:100%;display:inline-block;/*user-select: none;*/}
-.pageSwitcher a:hover{/*background: var(--preset-s);color:var(--preset-f);border-color:transparent;background-color:var(--theme-color)*/}
+.pageSwitcher a:hover{background: var(--preset-s);/*color:var(--preset-f);border-color:transparent;background-color:var(--theme-color)*/}
 .pageSwitcher span{
     color: var(--preset-9);
 }

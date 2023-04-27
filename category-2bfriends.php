@@ -27,7 +27,10 @@
             /*will-change: initial;*/
             /*transform: none;*/
         }
-        
+        .main,
+        #vcomments{
+            margin: auto!important;
+        }
         @keyframes blinker {
             0% {
                 opacity: 1;

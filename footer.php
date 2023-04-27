@@ -77,12 +77,15 @@
                             	<?php
                             	    echo get_option('site_lazyload_switcher') ? 'lazyLoad: true,' : 'lazyLoad: false,';
                             	    if(get_option('site_cdn_switcher')){
-                            	        echo 'imgCdn: "'.get_option('site_cdn_img').'", srcCdn: "'.get_option('site_cdn_src').'",';
+                            	        echo 'imgCdn: "'.custom_cdn_src('img',true).'", srcCdn: "'.custom_cdn_src('src',true).'", apiCdn: "'.custom_cdn_src(1,true).'/plugin",'; //custom_cdn_src('api',true)
                             	    }
                         	        echo get_option("site_wpwx_notify_switcher") ? 'wxNotify: true,' : 'wxNotify: false,';
+                        	       // if(get_option('site_cdn_api')){
+                        	       //     echo get_option('site_chatgpt_auth') ? 'apiCdn: "'.get_api_refrence('wpwx-notify',true).'",' : 'apiCdn: false,';
+                            	   // }
                             	?>
                             	posterImg: '<?php echo get_postimg(); ?>',
-                            	rootPath: '<?php echo get_bloginfo('template_directory'); ?>',
+                            // 	rootPath: '<?php echo false;//get_bloginfo('template_directory'); ?>',
                             	adminMd5: '<?php echo md5(get_bloginfo('admin_email')) ?>',
                             	avatarCdn: '<?php echo get_option("site_avatar_mirror") ?>avatar/',
                             	placeholder: '快来玩右下角的“涂鸦画板”！'
@@ -308,9 +311,9 @@
         <span class="what_says">
           <ul style="text-align:left">
             <li id="copy"> ©<?php calc_copyright(); ?> </li>
-            <?php $rights=get_option('site_copyright');if($rights) echo '<li id="cc"><a href="https://creativecommons.org/licenses/'.strtolower(substr($rights,strpos($rights,"-")+1)).'/4.0/" style="opacity:.88" target="_blank" rel="nofollow"> '.$rights.' </a></li>'; ?>
+            <?php $rights=get_option('site_copyright');if($rights) echo '<li id="cc"><a href="https://creativecommons.org/licenses/'.strtolower(substr($rights,strpos($rights,"-")+1)).'/4.0/" target="_blank" rel="nofollow"> '.$rights.' </a></li>'; ?>
             <li id="rights"><?php echo get_option('site_nick', get_bloginfo('name')); ?> 版权所有</li>
-            <?php if(get_option('site_beian_switcher')) echo '<li id="etc">'.get_option('site_beian').'</li>'; ?>
+            <?php if(get_option('site_beian_switcher')) echo '<li id="etc"><a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow">'.get_option('site_beian').'</a></li>'; ?>
             <p id="supports">
                 <?php 
                     if(get_option('site_monitor_switcher')) echo '<script async type="text/javascript" src="'.get_option('site_monitor').'"></script>';
@@ -340,7 +343,7 @@
                   };
                   if(get_option('site_map_switcher')) echo '<li id="sitemap"><a href="'.get_bloginfo('siteurl').'/sitemap.xml" target="_blank">站点地图</a></li>';
               ?>
-              <p style="margin:auto;opacity:.75;font-size:12px;font-style:italic"> WP Theme <a href="https://github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><ins> <b>2BLOG</b> </ins></a> openSourced via 2broear </p>
+              <p style="margin:auto;opacity:.75;font-size:12px;font-style:italic"> WP Theme <a href="https://github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><b>2BLOG</b></a>  open source via 2broear </p>
           </ul>
         </span>
       </div>
@@ -431,7 +434,7 @@
                                 // initDomArr ? imgLoadArr.push(eachimg) : false;  //判断首次加载（载入 lazyload 元素数组）
                                 resolve(imgLoadArr);
                             }).then(function(res){
-                                if(eachimg.getBoundingClientRect().top>=window.innerHeight) return;
+                                if(eachimg.getBoundingClientRect().top>=window.innerHeight || eachimg.offsetParent==null) return;
                                     eachimg.src = datasrc; // 即时更新 eachimg（设置后即可监听图片 onload 事件）
                                     // 使用 onload 事件替代定时器或Promise，判断已设置真实 src 的图片加载完成后再执行后续操作
                                     eachimg.onload=function(){

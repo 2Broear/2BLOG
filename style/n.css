@@ -203,11 +203,30 @@ figure.wp-block-table{margin:25px auto}
 	padding: 5px 15px;
 	margin: 6% auto 12%;
 	color: var(--preset-2b);
-	background: rgba(255, 255, 255, 0.88);
+	/*background: rgba(255, 255, 255, 0.88);*/
 	border-radius:var(--radius);
 	z-index: 9;
 	/* font-size: 2rem;
 	font-weight: 500; */
+}
+@keyframes slippy {
+    0% {
+        background-size: 0% 30%;
+    }
+    100% {
+        background-size: 100% 30%;
+    }
+}
+.bg h1 a{
+    background: linear-gradient(var(--theme-color), var(--theme-color)) no-repeat left 97%/0 30%;
+    background-size: 100% 30%;
+    transition: background-size .35s ease;
+    animation: slippy 1s 1 ease;
+    -webkit-animation: slippy 1s 1 ease;
+    color: inherit;
+    cursor: text;
+    user-select: text;
+    -webkit-user-drag: none;
 }
 .bg h1 span {
 	display: inherit;
@@ -420,15 +439,16 @@ table tr.openyear {
 
 
 .bg h1{
-    background: linear-gradient(var(--theme-color), var(--theme-color)) no-repeat center 100%/0 50%;
-    background-size: 88% 12%;
+    /*background: linear-gradient(var(--theme-color), var(--theme-color)) no-repeat center 100%/0 50%;*/
+    /*background-size: 88% 12%;*/
     color: white;
     padding: 5px;
     border-radius: initial;
-    transition: background-size .35s ease;
+    /*transition: background-size .35s ease;*/
 }
 .win-top em.digital_mask:before{
     content: "";
+    background-size: 2px 2px!important;
 }
 figure > figure{
     vertical-align: bottom;
@@ -447,10 +467,10 @@ pre code .copy_btn:hover{
     /*background: var(--preset-6);*/
 }
 pre code.copied .copy_btn::before{
-    content: "已复制";
+    content: "Copied";
 }
 pre code .copy_btn::before{
-    content: "复制代码";
+    content: "Copy";
 }
 pre code.copied .copy_btn,
 pre code:hover .copy_btn{

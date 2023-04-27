@@ -49,10 +49,10 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) skewX(-15deg);
     z-index: -1;
-    /*text-transform: uppercase;*/
     font-family: fantasy;
+    /*text-transform: uppercase;*/
     /*text-shadow: 3px 3px var(--preset-6);*/
 }
 .rcmd-boxes .info{width:100%;max-width:inherit;flex-wrap:wrap}
@@ -87,7 +87,7 @@
 .rcmd-boxes .info .inbox .inbox-aside .game-ratings.gs > .ign{display:none}
 .rcmd-boxes .info .inbox .inbox-aside .game-ratings.ign > .gamespot{display:none}
 .rcmd-boxes .info .inbox .inbox-aside .game-ratings{width:auto}
-.rcmd-boxes .info .inbox .inbox-aside .gamespot{color:#e03800;width:50px;height:50px;position:absolute;top:-15px;right:15px;overflow:hidden;z-index:9;background-color:var(--preset-2b);border-radius:50%;border:2px solid var(--preset-2b);box-sizing:border-box}
+.rcmd-boxes .info .inbox .inbox-aside .gamespot{color:orangered;width:50px;height:50px;position:absolute;top:-15px;right:15px;overflow:hidden;z-index:9;background-color:var(--preset-2b);border-radius:50%;border:2px solid var(--preset-2b);box-sizing:border-box}
 .inbox-aside .gamespot h3{margin:15% auto}
 .inbox-aside .gamespot span#spot{width:80%;height:80%;border-radius:inherit;background:inherit;position:absolute;top:50%;left:50%;transform:translateX(-50%) translateY(-50%);z-index:9}
 .inbox-aside .gamespot.lessHalf:after{background:none}

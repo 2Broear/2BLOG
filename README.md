@@ -32,6 +32,7 @@ __Preview Site__ ：[演示站点](http://wpk.2broear.com) （演示并不代表
 - _新增 Twikoo 评论支持_
 - _新增漫游影视异步加载（ajax）支持_
 - _修复了 Valine 存在的隐私泄漏问题_
+- _支持 chatGPT 文章 AI 摘要_
 - 支持邮件（可选模板）、自建企业微信应用（多选模版）评论推送提醒（Valine 集成 server酱、pushplus及企业微信应用推送）
 - 部分页面支持 wordpress 与 leancloud 数据切换
 - 部分页面支持使用视频替代 poster 背景
@@ -273,6 +274,7 @@ Futures todo & bugs
 - ✅ ~~集成图片懒加载~~
 - ✅ ~~视频动态预览~~
 - ✅ ~~集成 Ajax 功能到 wp 评论~~
+- ✅ ~~集成 chatGPT 文章摘要~~
 - 集成 Valine 自定义功能到 WordPress 评论
 
 ### bug

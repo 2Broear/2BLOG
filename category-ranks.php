@@ -119,7 +119,7 @@
                             // if($datalen<13) echo '<p>这里暂时没有人哦～</p>';
                             echo '<h1>游客 </h1><ul id="ranked">'; //<sup> &gt;10 </sup>
                             for($i=13;$i<50;$i++){
-                                $user = $rankdata[$i];
+                                $user = array_key_exists($i,$rankdata) ? $rankdata[$i] : false;
                                 if($user) echo '<li><p>'.$user->name.'<sup>'.$user->count.'</sup></p></li>';
                             }
                             echo '</ul>';
