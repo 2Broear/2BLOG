@@ -431,6 +431,21 @@
     $videos_cdn_page = get_option('site_cdn_vdo_includes');
     $videos_cdn_arr = explode(',',trim($videos_cdn_page));
     
+    // API接口调用验证，错误处理
+    function api_illegal_auth($auth_array=array(), $auth_string=''){
+        $is_illegal = false;
+        foreach ($auth_array as $path){
+            $is_illegal = strpos($path, $auth_string)!==false;
+        }
+        return $is_illegal;
+    }
+    function api_err_handle($msg='ok', $code=200, $var=false){
+        $err_msg = new stdClass();
+        $err_msg->code = $code;
+        $code===200 ? $err_msg->msg=$msg : $err_msg->err=$msg;
+        $res = json_encode($err_msg);
+        if($var) return $res;else print_r($res);
+    }
     // API调用接口，接受三个参数：
     // 调用 api 文件名
     // api 代理访问（使用 api.php 文件中的 curl 携带鉴权参数二次请求（速度影响），适用前端异步调用
@@ -438,14 +453,14 @@
     function get_api_refrence($api='', $xhr=false, $exe=1){
         $res = 'unknown_api_refrence';
         if($api){
-            global $post;
+            global $post,$cdn_switch;
             $pid = $post->ID;
             $api_file = '/'.$api.'.php';
-            $request_url = get_option('site_cdn_api') ? custom_cdn_src('api',true) : custom_cdn_src(0,true).'/plugin/authentication';
+            $request_url = $cdn_switch&&get_option('site_cdn_api') ? custom_cdn_src('api',true) : custom_cdn_src(0,true).'/plugin/'.get_option('site_chatgpt_dir','authentication');
             $auth_url = $request_url.$api_file.'?pid='.$pid;
             $cdn_auth = get_option('site_chatgpt_auth');
             // 如出现访问403可能是由于CDN服务器开启了鉴权但后台面板中未填写 API Auth Sign 选项鉴权密钥（无法判断远程服务器是否开启鉴权）
-            if($cdn_auth){
+            if($cdn_switch&&$cdn_auth){
                 $stamp10x = time();
                 $stamp16x = dechex($stamp10x);
                 $auth_url = $auth_url.'&sign='.md5($cdn_auth.$api_file.$stamp16x).'&t='.$stamp16x;
@@ -456,6 +471,25 @@
         }
         return $res;
     }
+    
+    // 挂载文章 chatGPT AI 摘要 mount article chatgpt
+    function article_ai_abstract($content) {
+        if(get_option('site_chatgpt_switcher')&&is_single()){
+            global $post;
+            $chatgpt_cat = false;
+            $chatgpt_array = explode(',', get_option('site_chatgpt_includes'));
+            $chatgpt_array_count = count($chatgpt_array);
+            if($chatgpt_array_count>=1){
+                for($i=0;$i<$chatgpt_array_count;$i++){
+                    if(in_category($chatgpt_array[$i])) $chatgpt_cat=true;
+                }
+            }
+            if($chatgpt_cat || $post->ID===5291 || $post->ID==286) $content = '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b> 文章摘要 AI</b><span>chatGPT</span></p><p class="response load">standby chatGPT responsing..</p></blockquote>'.$content;
+        }
+        return $content;
+    }
+    add_filter( 'the_content', 'article_ai_abstract', 10);
+    
     
     // 分类导航（PC/MOBILE）
     function category_navigation($mobile=false, $deepth=0){

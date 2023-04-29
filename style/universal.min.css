@@ -1419,7 +1419,7 @@ body.dark .rcmd-boxes .info .inbox .inbox-more{color:var(--preset-4a);background
 body.dark .win-nav .nav-header{overflow:unset}
 body.dark .win-nav .nav-header em,body.dark .main-root ul li:nth-child(even) a:hover{color:var(--preset-c);background-color:var(--preset-3a)}
 body.dark .win-nav .nav-header span,body.dark .win-nav .nav-header div,body.dark .selected,body.dark .main-root ul li:nth-child(even){background-color:#303030;}
-body.dark .win-content article .info,body.dark .win-content article .infos{border-bottom-color:var(--preset-4a)}
+body.dark .win-content article .info,body.dark .win-content article .infos{border-bottom-color:var(--preset-3a);/*border-bottom-color:var(--preset-4a)*/}
 
 body.dark .win-content article span#normal,body.dark .news-article-container span#normal{color:var(--preset-c);background-color:var(--preset-3a)}
 body.dark .pageSwitcher div:hover,body.dark .pageSwitcher a:hover{color:var(--preset-f);background-color:var(--preset-3a)}
@@ -2048,6 +2048,62 @@ body.dark .wp_comment_box a#cancel-comment-reply-link{
     top: -50px;
     visibility: hidden;
     opacity: 0;
+}
+
+
+p.response.load:after{
+    animation-duration: .35s!important;
+    -webkit-animation-duration: .35s!important;
+}
+p.response.load:after,
+p.response.done:after{
+    animation: footerHot 1s step-end infinite normal;
+    -webkit-animation: footerHot 1s step-end infinite normal;
+}
+p.response:after{
+    content: '';
+    width: 3px;
+    height: 20px;
+    display: inline-block;
+    background: currentColor;
+    vertical-align: middle;
+    margin: 0 0 2px 5px;
+    /*content: '|';*/
+}
+blockquote.chatGPT:first-letter{
+    font-size: 360%;
+    margin-top: 7px;
+}
+blockquote.chatGPT{
+    padding: 15px 15px 10px;
+    margin: 20px;
+    border-width: 3px;
+    border-top-right-radius: var(--radius);
+    border-bottom-right-radius: var(--radius);
+    background: rgb(100 100 100 / 5%);
+    background: -webkit-linear-gradient(180deg,rgba(255, 255, 255, 0) 0%,rgb(100 100 100 / 5%) 100%);
+    background: linear-gradient(-90deg,rgba(255, 255, 255, 0) 0%,rgb(100 100 100 / 5%) 100%);
+    /*box-shadow: rgb(0 0 0 / 5%) -20px 20px 20px;*/
+}
+blockquote.chatGPT p{
+    color: var(--preset-8)!important;
+}
+blockquote.chatGPT p.response{
+    font-size: var(--min-size);
+}
+blockquote.chatGPT p:first-child{
+    color: var(--preset-6)!important;
+    font-family: cursive,fangsong,serif;
+}
+blockquote.chatGPT p:first-child span{
+    border: 1px solid rgb(100 100 100 / 50%);
+    padding: 2px 4px;
+    border-radius: 5px;
+    font-size: 12px;
+    vertical-align: top;
+    margin: auto 3px;
+    display: inline;
+    opacity: .75;
 }
 
 /***  Header.php temp fix  ***/

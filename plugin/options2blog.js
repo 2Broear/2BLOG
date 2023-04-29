@@ -104,7 +104,7 @@ jQuery(document).ready(function($){
 
 // ***  ROW JAVASCRIPT FUNCTIONs (AFTER DOCUMENT LOADED) *** //
 
-    const switch_tab = document.querySelector(".switchTab"),
+    const //switch_tab = document.querySelector(".switchTab"),
           switch_offset = document.querySelector("form").offsetTop,
           blog_settings = document.querySelector(".wrap.settings"),
           theme_root = document.querySelector(":root"),
@@ -298,14 +298,53 @@ jQuery(document).ready(function($){
                       els[i].classList.remove(cls);
                   }
               },
-              formtable = document.querySelectorAll("form .formtable")[0];
-        formtable ? formtable.classList.add(switchcls) : formtable;  // auto active first formtable
+              formtable = document.querySelectorAll("form .formtable")[0],
+              pushParam = function(key,value){
+                  // THIS FUNCTION CONSTRUCTED VIA chatGPT 3.5 MODEL.
+                  const href = window.location.href;
+                  var newUrl = href;
+                  if(window.URLSearchParams){
+                      const params = new URLSearchParams(window.location.search);  // Get the current URLSearchParams object
+                      params.set(key, value);  // Update the value of a parameter
+                      newUrl = `${window.location.pathname}?${params.toString()}`;  // Create a new URL with the updated parameters
+                  }else{
+                      const url = new URL(href);  // Get the current URL as a URL object
+                      url.searchParams.delete(key);  // Remove a parameter from the query string
+                      url.searchParams.set(key, value);  // Add or update a parameter in the query string
+                      newUrl = url.toString();  // Get the updated URL string
+                  }
+                  history.pushState(null, '', newUrl);  // Update the URL without refreshing the page
+              },
+              getQueryObject = function(url) {
+                  url = url == null ? window.location.href : url;
+                  var search = url.substring(url.lastIndexOf("?") + 1);
+                  var obj = {};
+                  var reg = /([^?&=]+)=([^?&=]*)/g;
+                  search.replace(reg, function (rs, $1, $2) {
+                      var name = decodeURIComponent($1);
+                      var val = decodeURIComponent($2);
+                      val = String(val);
+                      obj[name] = val;
+                      return rs;
+                  });
+                  return obj;
+              },
+              parms = getQueryObject();
+        // console.log(parms.tab);
+        if(parms&&parms.tab){
+            document.querySelector("form ."+parms.tab).classList.add(switchcls);
+            document.querySelector(".switchTab li#"+parms.tab).classList.add(activecls);  // clearClass then active
+        }else{
+            formtable ? formtable.classList.add(switchcls) : formtable;  // auto active first formtable
+            switchtab[0].classList.add(activecls);  // clearClass then active
+        }
         for(let i=0,swtLen=switchtab.length;i<swtLen;i++){
             switchtab[i].onclick=function(){
+                pushParam('tab', this.id);
+                // location.search = '?page=2blog-settings&tab='+this.id;
                 clearClass(switchtab,activecls);  // clear actived class
                 this.classList.add(activecls);  // clearClass then active
                 clearClass(document.querySelectorAll("form ."+switchcls),switchcls);  // upadted els while click
-                console.log(this.id);
                 document.querySelector("form ."+this.id).classList.add(switchcls);  // clearClass then show
             };
         }

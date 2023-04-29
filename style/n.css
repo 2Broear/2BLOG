@@ -316,7 +316,7 @@ article a {
 	text-align: right;
 	padding: 5px 0 10px;
 	margin: 10px 0 10px auto;
-	border-bottom: 1px solid var(--preset-d);
+	border-bottom: 1px solid var(--preset-s);
 	box-sizing: border-box;
 }
 article .infos span {
@@ -433,7 +433,7 @@ table tr.openyear {
 		top: auto;
 	}
 	.win-content article .infos{
-		max-width: 66%;
+		max-width: 88%;
 	}
 }
 

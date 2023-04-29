@@ -610,9 +610,11 @@
         register_setting( 'baw-settings-group', 'site_chatgpt_switcher' );
             register_setting( 'baw-settings-group', 'site_chatgpt_includes' );
             register_setting( 'baw-settings-group', 'site_chatgpt_model' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_merge_sw' );
             register_setting( 'baw-settings-group', 'site_chatgpt_apikey' );
             register_setting( 'baw-settings-group', 'site_chatgpt_proxy' );
             register_setting( 'baw-settings-group', 'site_chatgpt_auth' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_dir' );
             // register_setting( 'baw-settings-group', 'site_chatgpt_require' );
         register_setting( 'baw-settings-group', 'site_async_switcher' );
             register_setting( 'baw-settings-group', 'site_async_includes' );
@@ -864,7 +866,7 @@
         <!--<hr/>-->
         <div class="switchTab">
             <ul>
-                <li id="basic" class="active"><b>基本信息</b></li>
+                <li id="basic" class=""><b>基本信息</b></li>
                 <li id="common"><b>通用控制</b></li>
                 <li id="index"><b>页面设置</b></li>
                 <li id="sidebar"><b>边栏设置</b></li>
@@ -2149,7 +2151,7 @@
                                         $value = get_option($opt);
                                         $preset = 32;  //默认填充数据
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label"> 最多显示数量（默认显示 32 个</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        echo '<p class="description" id=""> 最多显示数量（默认显示 32 个</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -2161,7 +2163,7 @@
                                         $value = get_option($opt);
                                         $preset = 30;  //默认填充数据
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label"> 最大显示字体（默认最大 30px，最小 10px</p><input type="number" min="11" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        echo '<p class="description" id=""> 最大显示字体（默认最大 30px，最小 10px</p><input type="number" min="11" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -2174,27 +2176,37 @@
                             <?php
                                 $opt = 'site_chatgpt_switcher';
                                 $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 chatGPT AI 摘要。内建本地文件缓存机制，仅首次请求返回付费 completion 对话模型：text-davinci-003（需填写 API KEY 及 API 反代地址</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:purple" class="btn">文章摘要</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 chatGPT AI 摘要。内建本地文件缓存机制，仅首次请求返回付费 completion 对话模型 chatGPT 3.5（需填写 API KEY 及 API 反代地址</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:purple" class="btn">文章摘要</span></label>';
                             ?>
                         </td>
                     </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt = get_option('site_chatgpt_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— openAI Key</th>
+                                <th scope="row">— openAI Key<sup>必填</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_apikey';
                                         $value = get_option($opt);
-                                        echo '<p class="description" id="site_bar_pixiv_label">API 账号密钥</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="openAI Key" value="' . $value . '"/>';
+                                        echo '<p class="description" id="">API 账号密钥</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="openAI Key" value="' . $value . '"/>';
                                     ?>
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— openAI Proxy</th>
+                                <th scope="row">— openAI Proxy<sup>必填</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_proxy';
                                         $value = get_option($opt);
-                                        echo '<p class="description" id="site_bar_pixiv_label">API 反代链接</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="openAI Proxy" value="' . $value . '"/>';
+                                        echo '<p class="description" id="">API 反代链接</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="openAI Proxy" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— auth Directory</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_dir';
+                                        $value = get_option($opt);
+                                        echo '<p class="description" id="">GPT 加密目录（留空默认 authentication</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="normal-text" placeholder="chatGPT auth directory" value="' . $value . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -2204,9 +2216,9 @@
                                     <?php
                                         $opt = 'site_chatgpt_model';
                                         $value = get_option($opt);
-                                        $models = ['text-davinci-003','gpt-3.5-turbo'];
+                                        $models = ['gpt-3.5-turbo','text-davinci-003'];
                                         if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
-                                        echo '<label for="'.$opt.'"><p class="description" id="">可选 chatGPT 对话模型（默认使用 text-davinci-003 </p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">可选 chatGPT 对话模型（默认使用 gpt-3.5-turbo，<a href="https://openai.com/pricing" target="_blank">价格参考</a> </p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
                                             foreach ($models as $mod){
                                                 echo '<option value="'.$mod.'"';
                                                 if($value==$mod) echo('selected="selected"');
@@ -2217,13 +2229,23 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 合并分割请求</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_merge_sw';
+                                        $status = check_statu($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，开启自动计算文章字符（中文*2）请求所需 token 若大于模型限制 token （GPT 3.5 默认 4096）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（正常 token 范围内仅请求一次），关闭此项时摘要可能返回 context_length_exceeded 错误代码，为节省请求及 token 此项默认关闭（免费账号每分钟限制请求为3次，务必确保文章不能太过冗长以免造成文章下半段请求失败</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
                                 <th scope="row">— 开启页面（多选）</th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_includes';
                                         $value = get_option($opt);
                                         if(!$value){
-                                            $preset_str = $article_opts[0]->term_id.',';
+                                            $preset_str = $article_opts[2]->term_id.',';
                                             update_option($opt, $preset_str );
                                             $value = $preset_str;
                                         }

@@ -13,6 +13,7 @@
     <style>
         .news-article-container figure{margin:5px}
         figure > figure{width:30%;vertical-align:middle}
+        blockquote.chatGPT{margin:15px auto 25px;}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -54,7 +55,7 @@
                     </div>
                     <div class="news-article-container<?php echo $fontsize ? " AfontPlus" : ""; ?>">
                         <div class="content">
-                            <?php the_content()//echo get_postimg(); ?>
+                            <?php the_content(); ?>
                         </div>
                         <br />
                         <h5> 本文完结 </h5>
@@ -78,5 +79,16 @@
 <!-- pluginJs-->
 <!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/s2t.js"></script>-->
 <!-- inHtmlJs -->
-<?php require_once(TEMPLATEPATH. '/foot.php'); ?>
+<?php
+    require_once(TEMPLATEPATH. '/foot.php');
+    if(get_option('site_chatgpt_switcher')){ //$chatgpt_sw&&$chatgpt_cat
+?>
+        <script type="module">
+            // chatGPT AI ARTICLE-DESCRIPTION SHORT-CUTS (Long article USE-SRC get_api_refrence('func',true))
+            const responser = document.querySelector('.chatGPT .response');
+            if(responser) import('<?php custom_cdn_src(); ?>/js/module.js').then((module)=>send_ajax_request("get", "<?php echo get_api_refrence('gpt',true); ?>", false, (res)=>module.words_typer(responser, res, 25)));
+        </script>
+<?php
+    }
+?>
 </body></html>

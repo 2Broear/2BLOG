@@ -304,15 +304,4 @@
 <?php require_once(TEMPLATEPATH. '/foot.php'); ?>
 <script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/banner.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/cursor.js"></script>-->
-<script type="module">
-    console.log('import module')
-    import { cube, foo, graph } from '<?php custom_cdn_src(); ?>/js/module.js';
-    graph.options = {
-        color:'blue',
-        thickness:'3px'
-    };
-    graph.draw();
-    console.log(cube(3)); // 27
-    console.log(foo);    // 4.555806215962888
-</script>
 </body></html>

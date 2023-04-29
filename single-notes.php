@@ -17,54 +17,6 @@
 	        animation-duration: 1.5s;
 	    }
 	    .in_dex li.child{margin-left: 15px!important;}
-	    p.response.load:after{
-	        animation-duration: .35s!important;
-	        -webkit-animation-duration: .35s!important;
-	    }
-	    p.response.load:after,
-	    p.response.done:after{
-            animation: footerHot 1s step-end infinite normal;
-            -webkit-animation: footerHot 1s step-end infinite normal;
-	    }
-	    p.response:after{
-	        content: '';
-            width: 3px;
-            height: 20px;
-            display: inline-block;
-            background: currentColor;
-            vertical-align: middle;
-            margin: 0 0 2px 5px;
-	        /*content: '|';*/
-	    }
-	    blockquote.chatGPT{
-	        padding: 15px 15px 10px;
-	        margin: 20px;
-	        border-width: 3px;
-            border-top-right-radius: var(--radius);
-            border-bottom-right-radius: var(--radius);
-	        background: rgb(100 100 100 / 5%);
-	        background: -webkit-linear-gradient(180deg,rgba(255, 255, 255, 0) -10%,rgb(100 100 100 / 5%) 100%);
-	        background: linear-gradient(-90deg,rgba(255, 255, 255, 0) -10%,rgb(100 100 100 / 5%) 100%);
-            /*box-shadow: rgb(0 0 0 / 5%) -20px 20px 20px;*/
-	    }
-	    blockquote.chatGPT p{
-	        color: var(--preset-8)!important;
-	    }
-	    blockquote.chatGPT p.response{
-	        font-size: var(--min-size);
-	    }
-	    blockquote.chatGPT p:first-child{
-	        color: var(--preset-6)!important;
-	    }
-	    blockquote.chatGPT p:first-child span{
-            border: 1px solid rgb(100 100 100 / 50%);
-            padding: 0 4px;
-            border-radius: 5px;
-            font-size: 12px;
-            vertical-align: top;
-            margin-left: 3px;
-            opacity: .75;
-	    }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -92,21 +44,7 @@
                         </div>
                         <sup>最近更新于：<?php echo $post->post_modified; ?></sup>
                         <div class="content">
-                            <?php
-                                $chatgpt_sw = get_option('site_chatgpt_switcher');
-                                $chatgpt_cat = false;
-                                if($chatgpt_sw){
-                                    $chatgpt_array = explode(',', get_option('site_chatgpt_includes'));
-                                    $chatgpt_array_count = count($chatgpt_array);
-                                    if($chatgpt_array_count>=1){
-                                        for($i=0;$i<$chatgpt_array_count;$i++){
-                                            if(in_category($chatgpt_array[$i]) || $pid===5291) $chatgpt_cat=true;
-                                        }
-                                    }
-                                    if($chatgpt_cat) echo '<blockquote class="chatGPT"><p><b> 文章摘要 </b><span>chatGPT</span></p><p class="response load">standby chatGPT responsing..</p></blockquote>';
-                                }
-                                the_content();//print_r(get_post_parent($pid));
-                            ?>
+                            <?php the_content();  ?>
                         </div>
                         <br />
                         <?php dual_data_comments();  //DO NOT INCLUDE AFTER CALLING comments_template, cause fatal error,called twice?>
@@ -161,50 +99,26 @@
 			    console.log(err);
 			});
         }
-        /*
-         *
-         * chatGPT AI ARTICLE-DESCRIPTION SHORT-CUTS
-         *
-         */
-        <?php
-            if($chatgpt_sw&&$chatgpt_cat){
-        ?>
-                function words_typer(el, str, speed=100){
-                    try{
-                        if(!str||typeof(str)!='string'||str.replace(/^\s+|\s+$/g,"").replace( /^\s*/, '')=="") throw new Error("invalid string");
-                        new Promise(function(resolve,reject){
-                            setTimeout(() => {
-                                el.classList.remove('load');
-                                for(let i=0,textLen=el.innerText.length;i<textLen;i++){
-                                    // real-time data stream
-                                    let elText = el.innerText,
-                                        elLen = elText.length-1;
-                                    setTimeout(() => {
-                                        el.innerText = elText.slice(0, elLen-i); // console.log(i+'-'+elLen);
-                                        if(i===elLen) resolve(el);
-                                    }, i*5);
-                                }
-                            }, 700);
-                        }).then((res)=>{
-                            setTimeout(() => {
-                                res.classList.remove('load');
-                                for(let i=0,strLen=str.length;i<strLen;i++){
-                                    setTimeout(() => {
-                                        res.innerText += str[i]; // console.log(str[i]);
-                                        if(i+1===strLen) res.classList.add('done');
-                                    }, i*speed);
-                                }
-                            }, 300);
-                        }).catch(function(err){
-                            console.log(err)
-                        });
-                    }catch(err){
-                        console.log(err);
-                    }
-                };
-                send_ajax_request("get", "<?php echo get_api_refrence('gpt');//echo custom_cdn_src('src',true).'/plugin/api.php?auth=gpt&pid='.$pid.'&exec=1';//$auth_url;//; ?>", false, (res)=>words_typer(document.querySelector('.chatGPT .response'), res, 25));
-        <?php
-            }
-        ?>
     </script>
+    <?php
+        if(get_option('site_chatgpt_switcher')){ //$chatgpt_sw&&$chatgpt_cat
+    ?>
+        <script type="module">
+            /*
+             *
+             * chatGPT AI ARTICLE-DESCRIPTION SHORT-CUTS
+             *
+             */
+            const responser = document.querySelector('.chatGPT .response');
+            if(responser){
+                import('<?php custom_cdn_src(); ?>/js/module.js').then((module) => {
+                    send_ajax_request("get", "<?php echo get_api_refrence('gpt'); ?>", false, (res)=>module.words_typer(responser, res, 25));
+                });
+            }
+            // import { words_typer } from '<?php //custom_cdn_src(); ?>/js/module.js';
+            // send_ajax_request("get", "<?php //echo get_api_refrence('gpt'); ?>", false, (res)=>words_typer(responser, res, 25));
+        </script>
+    <?php
+        }
+    ?>
 </body></html>
