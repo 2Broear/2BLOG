@@ -435,6 +435,7 @@
     function api_illegal_auth($auth_array=array(), $auth_string=''){
         $is_illegal = false;
         foreach ($auth_array as $path){
+            // echo $path.'<br/>';
             $is_illegal = strpos($path, $auth_string)!==false;
         }
         return $is_illegal;

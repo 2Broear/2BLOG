@@ -4,10 +4,18 @@
     define('CDN_SWITCH', get_option('site_cdn_switcher'));
     define('CDN_SRC', get_option('site_cdn_src'));
     define('CDN_API', get_option('site_cdn_api'));
-    if(CDN_SWITCH&&CDN_SRC){ //||CDN_API
+    if(CDN_SWITCH&&CDN_SRC || CDN_SWITCH&&CDN_API){ //||CDN_API
         $auth_path_array = array($_SERVER['SCRIPT_NAME'],$_SERVER['DOCUMENT_URI'],$_SERVER['REQUEST_URI']);
         $auth_host_array = array($_SERVER['HTTP_HOST'],$_SERVER['SERVER_NAME']);
-        api_illegal_auth($auth_path_array, '/wp-content/themes/') || api_illegal_auth($auth_host_array, CDN_SRC) ? api_err_handle('request illegal, cdn enabled',403) : send_auth_request();
+        switch (true) {
+            case $cdn_api:
+                $cdn_auth = api_illegal_auth($auth_host_array, $cdn_api);
+                break;
+            default:
+                $cdn_auth = api_illegal_auth($auth_host_array, $cdn_src);
+                break;
+        }
+        api_illegal_auth($auth_path_array, '/wp-content/themes/') || $cdn_auth ? api_err_handle('request illegal, cdn/api enabled',403) : send_auth_request();
     }else{
         send_auth_request();
     }

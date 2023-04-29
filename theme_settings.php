@@ -2206,6 +2206,8 @@
                                     <?php
                                         $opt = 'site_chatgpt_dir';
                                         $value = get_option($opt);
+                                        $preset = 'authentication';  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
                                         echo '<p class="description" id="">GPT 加密目录（留空默认 authentication</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="normal-text" placeholder="chatGPT auth directory" value="' . $value . '"/>';
                                     ?>
                                 </td>
