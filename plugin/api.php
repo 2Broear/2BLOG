@@ -8,14 +8,14 @@
         $auth_path_array = array($_SERVER['SCRIPT_NAME'],$_SERVER['DOCUMENT_URI'],$_SERVER['REQUEST_URI']);
         $auth_host_array = array($_SERVER['HTTP_HOST'],$_SERVER['SERVER_NAME']);
         switch (true) {
-            case $cdn_api:
-                $cdn_auth = api_illegal_auth($auth_host_array, $cdn_api);
+            case CDN_API:
+                $cdn_auth = api_illegal_auth($auth_host_array, CDN_API);
                 break;
             default:
-                $cdn_auth = api_illegal_auth($auth_host_array, $cdn_src);
+                $cdn_auth = api_illegal_auth($auth_host_array, CDN_SRC);
                 break;
         }
-        api_illegal_auth($auth_path_array, '/wp-content/themes/') || $cdn_auth ? api_err_handle('request illegal, cdn/api enabled',403) : send_auth_request();
+        api_illegal_auth($auth_path_array, '/wp-content/themes/') || $cdn_auth ? api_err_handle('request illegal, cdn/api enabled(api)',403) : send_auth_request();
     }else{
         send_auth_request();
     }

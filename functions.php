@@ -455,20 +455,23 @@
         $res = 'unknown_api_refrence';
         if($api){
             global $post,$cdn_switch;
+            $cdn_api = get_option('site_cdn_api');
             $pid = $post->ID;
             $api_file = '/'.$api.'.php';
-            $request_url = $cdn_switch&&get_option('site_cdn_api') ? custom_cdn_src('api',true) : custom_cdn_src(0,true).'/plugin/'.get_option('site_chatgpt_dir','authentication');
+            $authentication = get_option('site_chatgpt_dir','authentication');
+            $request_url = $cdn_switch&&$cdn_api ? custom_cdn_src('api',true) : custom_cdn_src('src',true).'/plugin/'.$authentication;
             $auth_url = $request_url.$api_file.'?pid='.$pid;
             $cdn_auth = get_option('site_chatgpt_auth');
             // 如出现访问403可能是由于CDN服务器开启了鉴权但后台面板中未填写 API Auth Sign 选项鉴权密钥（无法判断远程服务器是否开启鉴权）
-            if($cdn_switch&&$cdn_auth){
+            if($cdn_switch&&$cdn_api&&$cdn_auth){
                 $stamp10x = time();
                 $stamp16x = dechex($stamp10x);
                 $auth_url = $auth_url.'&sign='.md5($cdn_auth.$api_file.$stamp16x).'&t='.$stamp16x;
             }
             $res = $xhr ? custom_cdn_src('src',true).'/plugin/api.php?auth='.$api.'&pid='.$pid.'&exec='.$exe : $auth_url;
+            // $res = $xhr ? custom_cdn_src('src',true).'/plugin/'.$authentication.$api_file.'?pid='.$pid : $auth_url; //||!$cdn_api
         }else{
-            $res = 'unknown_api_refrence';
+            $res = api_err_handle(200,'unknown_api_refrence',true);
         }
         return $res;
     }
@@ -485,7 +488,7 @@
                     if(in_category($chatgpt_array[$i])) $chatgpt_cat=true;
                 }
             }
-            if($chatgpt_cat || $post->ID===5291 || $post->ID==286) $content = '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b> 文章摘要 AI</b><span>chatGPT</span></p><p class="response load">standby chatGPT responsing..</p></blockquote>'.$content;
+            if($chatgpt_cat || $post->ID===5291 || $post->ID==2872) $content = '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b> 文章摘要 AI</b><span>chatGPT</span></p><p class="response load">standby chatGPT responsing..</p></blockquote>'.$content;
         }
         return $content;
     }
