@@ -611,6 +611,7 @@
             register_setting( 'baw-settings-group', 'site_chatgpt_includes' );
             register_setting( 'baw-settings-group', 'site_chatgpt_model' );
             register_setting( 'baw-settings-group', 'site_chatgpt_merge_sw' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_merge_ingore' );
             register_setting( 'baw-settings-group', 'site_chatgpt_apikey' );
             register_setting( 'baw-settings-group', 'site_chatgpt_proxy' );
             register_setting( 'baw-settings-group', 'site_chatgpt_auth' );
@@ -2236,7 +2237,17 @@
                                     <?php
                                         $opt = 'site_chatgpt_merge_sw';
                                         $status = check_statu($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，开启自动计算文章字符（中文*2）请求所需 token 若大于模型限制 token （GPT 3.5 默认 4096）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（正常 token 范围内仅请求一次），关闭此项时摘要可能返回 context_length_exceeded 错误代码，为节省请求及 token 此项默认关闭（免费账号每分钟限制请求为3次，务必确保文章不能太过冗长以免造成文章下半段请求失败</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，开启自动计算文章字符（GPT规则中文*2）请求所需 token 若大于模型限制 token （<b>gpt-3.5 默认 4096</b>）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（正常 token 范围内仅请求一次），关闭此项时摘要可能返回 context_length_exceeded 错误代码，<b>为节省 token 请求此项默认关闭</b>（chat 模型下免费账号每分钟限制请求为3次，<a href="https://platform.openai.com/account/rate-limits" target="_blank"> 参考链接 </a>，文章太过冗长 (即下半段字数 token 合计超过 4096) 可能造成分段请求失败！<ins>（实测一篇3.5k字数 (近7k token) 左右的文章在 gpt-3.5 模型下开启综合摘要请求后消耗<b>$0.004</b>左右</ins></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 始终输出请求</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_merge_ingore';
+                                        $status = check_statu($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，当第二次请求 token 大于 4096 请求失败时直接输出第一次摘要内容，忽略后续错误代码</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Always Summarize</b></label>';
                                     ?>
                                 </td>
                             </tr>

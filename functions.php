@@ -488,7 +488,7 @@
                     if(in_category($chatgpt_array[$i])) $chatgpt_cat=true;
                 }
             }
-            if($chatgpt_cat || $post->ID===5291 || $post->ID==2872) $content = '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b> 文章摘要 AI</b><span>chatGPT</span></p><p class="response load">standby chatGPT responsing..</p></blockquote>'.$content;
+            if($chatgpt_cat || $post->ID===5291 || $post->ID==286/*2872*/) $content = '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b> 文章摘要 AI</b><span>chatGPT</span></p><p class="response load">standby chatGPT responsing..</p></blockquote>'.$content;
         }
         return $content;
     }

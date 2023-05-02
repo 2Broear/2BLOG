@@ -13,7 +13,7 @@
     <style>
         .news-article-container figure{margin:5px}
         figure > figure{width:30%;vertical-align:middle}
-        blockquote.chatGPT{margin:15px auto 25px;}
+        /*blockquote.chatGPT{margin:15px auto 25px;}*/
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

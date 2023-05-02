@@ -18,7 +18,7 @@
                 //分析以上提供的信息简述文章用意  分析梳理以上信息的逻辑与结构，简述文章用意
                 $requirements = '标题：'.$pids->post_title.'，作者：'.get_the_author_meta('display_name', get_post_field('post_author', $pid)).'，内容：'.$content.'。'.get_post_meta($pid, "post_feeling", true); //str_replace(array("\r\n", "\r", "\n"), " ", wp_strip_all_tags($pids->post_content))
                 
-                function count_chaters($str,$token=0,$endpoint=false,$prevpoint=false) {
+                function count_chaters($str,$token=0,$endpoint=false,$prevpoint=false,$text=false) {
                    $count = 0;
                    //$arr_str = '';
                    for ($i = 0; $i < mb_strlen($str, 'UTF-8'); $i++) {
@@ -30,49 +30,49 @@
                       }
                       if($endpoint){
                           if($count>CHATGPT_LIMIT){
-                              global $requirements;
-                              $left_words = mb_substr($str, $i, strlen($str), 'UTF-8');
-                              return $prevpoint ? mb_substr($str, 0, intval(count_chaters($requirements)-count_chaters($left_words)), 'UTF-8') : $left_words;//count_chaters($left_words).'(token: '.count_chaters($left_words,1).')</b><br/><br/>'.$left_words;
-                          }else{
-                            //   echo $char;
+                              $used_words = mb_substr($str, 0, $i, 'UTF-8');
+                              $left_words = mb_substr($str, $i, mb_strlen($str), 'UTF-8');
+                            //   if($text){
+                            //       return $prevpoint ? $used_words : $left_words;
+                            //   }else{
+                            //       return $prevpoint ? count_chaters($used_words,1) : count_chaters($left_words,1);
+                            //   }
+                              return $text ? ($prevpoint ? $used_words : $left_words) : ($prevpoint ? count_chaters($used_words,1) : count_chaters($left_words,1));
+                            // //   global $requirements;
+                            //   $left_words = mb_substr($str, $i, mb_strlen($str), 'UTF-8');
+                            //   return $prevpoint ? mb_substr($str, 0, intval(count_chaters($str)-count_chaters($left_words)), 'UTF-8') : $left_words;
                           }
                       }
                    }
                    return $count;
                 }
-                // define('CHARACTERS_TOTAL', count_chaters($requirements));
-                // define('CHARACTERS_TOKEN', count_chaters($requirements,1));
-                // define('CHARACTERS_LEFTS', count_chaters($requirements,1,1));
-                // define('OPENAI_API_KEY', get_option('site_chatgpt_apikey'));
-                // define('OPENAI_MERGE', get_option('site_chatgpt_merge_sw'));
-                // define('OPENAI_PROXY', get_option('site_chatgpt_proxy','https://api.openai.com'));
-                // define('OPENAI_MODEL', get_option('site_chatgpt_model'));
+                
+                
                 function get_resultText($res_cls_obj, $decode=false){
                     $formart = $decode ? json_decode($res_cls_obj) : $res_cls_obj;
                     if(isset($formart->error)) return $formart->error->message;
                     $choices = $formart->choices[0];
                     return isset($choices->message) ? $choices->message->content : $choices->text; //property_exists($choices,'message')
                 }
-                
+                // print_r('second request token: '.count_chaters($requirements,1,1)); //.count_chaters($requirements,1,1,0,true))
                 function curlRequest($question, $maxlen=1024, $recursive_request=false) {
                     $openai_model = get_option('site_chatgpt_model');
                     $openai_merge = get_option('site_chatgpt_merge_sw');
                     $openai_proxy = get_option('site_chatgpt_proxy','https://api.openai.com');
-                    $total_token = count_chaters($question,1);
-                    $gpt_turbo = $openai_model==='gpt-3.5-turbo';
+                    $chat_model = $openai_model==='gpt-3.5-turbo';
                     $post_data = array(
                         "model" => $openai_model, //ada
                         'temperature' => 0.8,
                         "max_tokens" => $maxlen,  // works for completion_tokens only
                         "prompt" => $question.'。分析上述内容，简述文章用意，注意精简字数',
                     );
-                    if($gpt_turbo){
+                    if($chat_model){
                         unset($post_data['prompt']);
                         $post_data = array_merge($post_data, array('messages' => [["role" => "system", "content" => '分析并简述文章用意，注意精简内容'],["role" => "user", "content" => $question]]));
                     }
                     $curl = curl_init();
                     curl_setopt_array($curl, array(
-                      CURLOPT_URL => $gpt_turbo ? $openai_proxy.'/v1/chat/completions' : $openai_proxy.'/v1/completions', //聊天模型
+                      CURLOPT_URL => $chat_model ? $openai_proxy.'/v1/chat/completions' : $openai_proxy.'/v1/completions', //聊天模型
                       CURLOPT_RETURNTRANSFER => true,
                       CURLOPT_ENCODING => "",
                       CURLOPT_MAXREDIRS => 10,
@@ -86,18 +86,31 @@
                         "Authorization: Bearer " . get_option('site_chatgpt_apikey')
                       ),
                     ));
-                    $res = $openai_merge ? ($total_token<=CHATGPT_LIMIT ? curl_exec($curl) : false) : curl_exec($curl);
-                    curl_close($curl);
-                    // $response = json_decode($res); || isset($response->error)&&$response->error->code==='context_length_exceeded'
-                    // USE count_chaters as current $question string, case for Recursion
-                    if($openai_merge && $total_token>CHATGPT_LIMIT){
-                        //此处已超出 4097 tokens 触发 message 没有 content 的 error
-                        // following merge-requests will cost at-least 3 times call.
-                        $previous_res = curlRequest(count_chaters($question,1,1,1));
-                        $addition_res = curlRequest(count_chaters($question,1,1));
-                        return curlRequest(get_resultText($previous_res,true).get_resultText($addition_res,true)); 
-                        //error: curlRequest(json_decode($res)->choices[0]->message->content)
+                    // $res = curl_exec($curl);
+                    $question_token = count_chaters($question,1);
+                    if($question_token>CHATGPT_LIMIT){
+                        // curl_exec($curl);
+                        // following merge-requests will cost at-least 2 times call.
+                        $used_words = count_chaters($question,1,1,1,true);
+                        if($openai_merge){
+                            // return curlRequest(count_chaters($question,1,1,0,true));
+                            $left_token = count_chaters($question,1,1);
+                            if($left_token<=CHATGPT_LIMIT){
+                                $left_words = count_chaters($question,1,1,0,true);
+                                $addition_res = curlRequest($left_words);
+                                $previous_res = curlRequest($used_words);
+                                // 3 times call
+                                return curlRequest(get_resultText($previous_res,true).get_resultText($addition_res,true));
+                            }else{
+                                $res = get_option('site_chatgpt_merge_ingore') ? curlRequest($used_words) : json_encode(array('error' => array ('message' => 'article is too long to abstract (context token: '.$question_token.', lastest token: '.$left_token.')','type' => 'request_context_too_long','created'=>time())),true);
+                            }
+                        }else{
+                            $res = curlRequest($used_words);
+                        }
+                    }else{
+                        $res = curl_exec($curl);
                     }
+                    curl_close($curl);
                     return $res;
                 }
                 
@@ -121,7 +134,7 @@
                     $request_ip = array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER["REMOTE_ADDR"] : NULL;
                     $request_ua =array_key_exists('HTTP_USER_AGENT', $_SERVER) ? $_SERVER["HTTP_USER_AGENT"] : NULL;
                     // 创建临时记录，防止多请求并发
-                        $caches['chat_pid_'.$pid] = array('error' => array ('message' => 'standby, another requesting in busy.. refresh to checkout.','type' => 'request_inqueue_busy','created'=>time(),'ip'=>$request_ip,'ua'=>$request_ua));
+                        $caches['chat_pid_'.$pid] = array('error' => array ('message' => 'standby, another requesting in busy... (refresh to check perhaps the context_length_exceeded was occured.','type' => 'request_inqueue_busy','created'=>time(),'ip'=>$request_ip,'ua'=>$request_ua));
                         $temp = '<?php'.PHP_EOL.'$cached_post = '.var_export($caches,true).';'.PHP_EOL.'?>';
                         $newfile = fopen(CACHED_PATH,"w");
                         fwrite($newfile, $temp);
