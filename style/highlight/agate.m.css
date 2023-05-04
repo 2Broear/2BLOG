@@ -38,6 +38,7 @@
   border-radius: 10px;
   padding: 3em 0 1em 0.5em;
   /*padding: 40px 0.5em 1em;*/
+  padding: 3em 0 1em 1em;
   position: relative;
 }
 .hljs ul {

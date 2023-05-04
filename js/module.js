@@ -32,7 +32,7 @@ function words_typer(el, str, speed=100){
                         // clearTimeout(timer);
                     }, i*5);
                 }
-            }, 500);
+            }, 300);
         }).then((res)=>{
             setTimeout(() => {
                 res.classList.remove('load');
@@ -42,7 +42,7 @@ function words_typer(el, str, speed=100){
                         if(i+1===strLen) res.classList.add('done');
                     }, i*speed);
                 }
-            }, 200);
+            }, 300);
         }).catch(function(err){
             console.log(err)
         });

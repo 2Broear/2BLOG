@@ -124,35 +124,34 @@ body.dark .ranking ul li span#range,body.dark .ranking ul li img{
 
 
 .ranking ul li span#range em span.wave{
-     top: -10px;
-     min-height: 32px;
+    display: block;
+    width: 100%;
+    min-height: 32px;
+    position: relative;
+    align-items: center;
+    top: -12px;
 }
+.ranking ul li span#range em .active span.wave:before,
+.ranking ul li span#range em .active span.wave:after,
 .ranking ul li span#range em span.wave.active:before,
 .ranking ul li span#range em span.wave.active:after{
-    content: "";
-    width: 200%;
-    height: 200%;
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    background-color: var(--theme-color);
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-    
-    left: auto;
-    animation-name: rotate;
-    -wbkit-animation-name: rotate;
+    /*left:auto;*/
+    animation-name:rotate;
+    -webkit-animation-name:rotate;
 }
+.ranking ul li span#range em .active span.wave:before,
 .ranking ul li span#range em span.wave.active:before{
-    top: 6px;
-    border-radius: 36%;
-    animation-duration: 10s;
-    -webkit-animation-duration: 10s;
+    top:6px;
+    border-radius:36%;
+    animation-duration:10s;
+    -webkit-animation-duration:10s;
 }
+.ranking ul li span#range em .active span.wave:after,
 .ranking ul li span#range em span.wave.active:after{
-    top: 3px;
-    opacity: .5;
-    border-radius: 44%;
-    animation-duration: 7s;
-    -wbkit-animation-duration: 7s;
+    top:3px;
+    opacity:.5;
+    border-radius:44%;
+    animation-duration:7s;
+    -webkit-animation-duration:7s;
 }
+.ranking ul li span#range em span.wave:before,.ranking ul li span#range em span.wave:after{content:"";width:200%;height:200%;position:absolute;top:0%;left:0%;left:-50%;background-color:var(--theme-color);animation-iteration-count:infinite;animation-timing-function:linear}

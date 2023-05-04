@@ -2177,7 +2177,7 @@
                             <?php
                                 $opt = 'site_chatgpt_switcher';
                                 $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 chatGPT AI 摘要。内建本地文件缓存机制，仅首次请求返回付费 completion 对话模型 chatGPT 3.5（需填写 API KEY 及 API 反代地址</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:purple" class="btn">文章摘要</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 chatGPT AI 摘要。内建本地文件缓存机制，仅首次请求返回付费 completion 对话模型 chatGPT 3.5（需填写 API KEY 及 API 反代地址，openAI 限制中文请求字符 token*2：请求 prompt 最大限制 4096，默认实际可用 3700+ prompt_token，余下 392 字符为 completion_token 响应预设占位，估算可返回150中文字符左右</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:purple" class="btn">文章摘要</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -2209,7 +2209,7 @@
                                         $value = get_option($opt);
                                         $preset = 'authentication';  //默认填充数据
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="">GPT 加密目录（留空默认 authentication</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="normal-text" placeholder="chatGPT auth directory" value="' . $value . '"/>';
+                                        echo '<p class="description" id="">GPT 文件目录（留空默认 authentication</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="normal-text" placeholder="chatGPT auth directory" value="' . $value . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -2221,7 +2221,7 @@
                                         $value = get_option($opt);
                                         $models = ['gpt-3.5-turbo','text-davinci-003'];
                                         if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
-                                        echo '<label for="'.$opt.'"><p class="description" id="">可选 chatGPT 对话模型（默认使用 gpt-3.5-turbo，<a href="https://openai.com/pricing" target="_blank">价格参考</a> </p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">可选 chatGPT 对话模型（默认使用更划算的 gpt-3.5-turbo，<a href="https://openai.com/pricing" target="_blank">价格参考</a> </p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
                                             foreach ($models as $mod){
                                                 echo '<option value="'.$mod.'"';
                                                 if($value==$mod) echo('selected="selected"');
@@ -2237,17 +2237,18 @@
                                     <?php
                                         $opt = 'site_chatgpt_merge_sw';
                                         $status = check_statu($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，开启自动计算文章字符（GPT规则中文*2）请求所需 token 若大于模型限制 token （<b>gpt-3.5 默认 4096</b>）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（正常 token 范围内仅请求一次），关闭此项时摘要可能返回 context_length_exceeded 错误代码，<b>为节省 token 请求此项默认关闭</b>（chat 模型下免费账号每分钟限制请求为3次，<a href="https://platform.openai.com/account/rate-limits" target="_blank"> 参考链接 </a>，文章太过冗长 (即下半段字数 token 合计超过 4096) 可能造成分段请求失败！<ins>（实测一篇3.5k字数 (近7k token) 左右的文章在 gpt-3.5 模型下开启综合摘要请求后消耗<b>$0.004</b>左右</ins></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，开启自动计算文章字符请求所需 token 若大于模型限制 token （<u>gpt-3.5 默认 4096，限制输入 3700+</u>）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（内容 token 小于规定内仅请求一次），chat 模型下免费账号<a href="https://platform.openai.com/account/rate-limits" target="_blank">每分钟限制请求为3次</a>（若请求文章过长返回 context_length_exceeded 错误代码时可尝试开启下方<ins>“始终合并请求”</ins>选项，<b>为节省 token 此项默认关闭</b></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
                                     ?>
+                                    <!--<ins>（实测一篇3.5k字数 (近7k token) 左右的文章在 gpt-3.5 模型下开启综合摘要请求后消耗<b>$0.004</b>左右</ins>-->
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— 始终输出请求</th>
+                                <th scope="row">— 始终合并请求</th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_merge_ingore';
                                         $status = check_statu($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，当第二次请求 token 大于 4096 请求失败时直接输出第一次摘要内容，忽略后续错误代码</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Always Summarize</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于合并分割请求失败（二次请求 token 大于 4096）时，忽略后续返回错误并追加生成文章尾段摘要（最大 4096，限制输入 3700+），再合并<b>首次+末尾</b>摘要生成综合摘要，故开启此项同样会消耗至少3次请求（不与分割请求叠加，可能丢失部分文章中段内容，但可始终保持文章首尾逻辑</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Always Summarize</b></label>';
                                     ?>
                                 </td>
                             </tr>
