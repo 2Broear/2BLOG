@@ -51,6 +51,7 @@ details{
 }
 details:hover summary{color: var(--theme-color);}
 details summary{cursor: pointer;}
+pre span{margin:auto;}
 figure{
     margin: 0 auto;
     text-align: center;

@@ -24,16 +24,18 @@
             border-radius: inherit;
             object-fit: cover;
         }
-        .acg_window-content-inside_right .tags{
-            font-family: math, serif;
+        .acg_window-content-inside_right::before{
+            opacity: .5;
+            content: none;
         }
-        /*.tech_window-content{*/
-        /*    margin-top: 15px;*/
-        /*}*/
-        /*.tech_window-content li{*/
-        /*    display: inline-block;*/
-        /*    margin: auto auto 15px 15px;*/
-        /*}*/
+        .main-bottom-ta{
+            display: block;
+        }
+        .Fresh-ImgBoxs span a{
+            font-family: cursive,monospace,serif,fangsong;
+            font-size: 4.5em;
+            padding: 17% 0;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -151,7 +153,6 @@
         <div class="special-display">
             <ul class="flexboxes">
                 <li id="special-img" style="background: url() center /cover;">
-                    <!--<a href="javascript:;" style="width:100%;height:100%;position:absolute;top:0;left:0;"></a>-->
                     <video src="<?php echo get_option('site_list_bg'); ?>" poster="<?php echo get_option('site_list_bg'); ?>" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>
                 </li>
             </ul>
@@ -208,36 +209,34 @@
                     <div class="newsBox-subText-Description" id="tech_window-bottom">
                         <?php
                             // $query_str = get_template_bind_cat('category-weblog.php')->slug;
-                            $query_slug = !get_category($query_cid)->errors ? get_category($query_cid)->slug : get_category(1)->slug;
+                            $query_slug = !isset(get_category($query_cid)->errors) ? get_category($query_cid)->slug : get_category(1)->slug;
                             echo '<a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper($query_slug).'</b></a>';
                         ?>
                     </div>
                 </span>
-                <!--<span id="tech_pic" style="background: url(<?php //echo get_option('site_techside_bg'); ?>) center /cover;"></span>-->
             </div>
         <?php
             }
-            if(get_option('site_acgnside_switcher')){
+            $acg_sw = get_option('site_acgnside_switcher');
+            $tag_sw = get_option('site_tagcloud_switcher');
+            if($acg_sw||$tag_sw){
         ?>
             <div id="tech-acg-inside_acg" class="wow fadeInUp" data-wow-delay="0.1s">
                 <!-- 左图 ，右文窗-->
                 <div id="tech-acg-inside_acg-allpart">
                     <div class="newsBox-supTitle flexboxes" id="acg_window-top">
                         <span class="newsBox-supTitle-iDescription" id="icon-acg">
-                            <em>ACG</em><i class="icom icon-acg"></i>
+                            <em><?php echo $tag_sw ? 'TAG' : 'ACG'; ?></em><i class="icom icon-acg"></i>
                         </span>
-                        <h2> ACG · TAG </h2><!--<h2> ACG はすぐに TAG CLOUDS </h2>-->
+                        <h2> ACG はすぐに TAG </h2><!-- ACG · TAG -->
                     </div>
                     <ul class="acg_window-content">
-                        <!--<div class="ajaxloadMainAcg" ajaxload="ajax/main/ajax-main-acg.html"></div>-->
-                        <li class="acg_window-content-inside_left">
+                    <?php
+                        if($acg_sw){
+                    ?>
+                        <li class="acg_window-content-inside_left"<?php if(!$tag_sw) echo ' style="width: 98%;margin: 15px auto;"'; ?>>
                         	<span id="acg_window-content-inside_left-tInfo">
-                        		<!--<span id="acg_window-content-inside_left-pic">-->
-                        		    <?php 
-                        			    $query_cid = get_option('site_acgnside_cid');
-                        			    ///echo '<em style="background:url('.cat_metabg($query_cid, custom_cdn_src('img',true).'/images/acg.jpg').') center /cover;width:100%;height:155px;display:block;"></em>';
-                    			    ?>
-                        		<!--</span>-->
+                    		    <?php $query_cid = get_option('site_acgnside_cid'); ?>
                         		<span id="acg_window-content-inside_left-txt">
                     				<!--<h2>pixivトップ50</h2>-->
                     				<p>pixivで最もホットな2Dクリエイティブドローイングコレクショントップ<span id="acg_window-content-inside_left-txt_hidden" unselectable="on"> 10 </span> &nbsp;以上.<a href="javascript:;"> 漫游影视近期动态 </a></p>
@@ -246,19 +245,14 @@
                         	<span id="acg_window-content-inside_left-bList">
                         		<ol class="acg_window-content-inside_left-list">
                                     <?php
-                                        $query_slug = !get_category($query_cid)->errors ? get_category($query_cid)->slug : get_category(1)->slug;
+                                        $query_slug = !isset(get_category($query_cid)->errors) ? get_category($query_cid)->slug : get_category(1)->slug;
                                         if($baas&&strpos(get_option('site_leancloud_category'), 'category-acg.php')!==false){
                                     ?>
                                             <script>
                                                 new AV.Query("<?php echo 'acg' ?>").addDescending("updatedAt")  // .equalTo('type_acg', 'anime')  // 当 query_slug 为 acg 时使用
-                                    <?php
-                                                // if($query_slug==get_template_bind_cat('category-acg.php')->slug) echo '.equalTo("type_acg", "anime")'
-                                    ?>
                                                 .limit(<?php echo get_option('site_per_posts', get_option('posts_per_page')); ?>).find().then(result=>{
-                                                    // console.log(result)
                                                     for (let i=0; i<result.length;i++) {
                                                         let res = result[i],
-                                                            // src = res.attributes.src,
                                                             type = res.attributes.type_acg,
                                                             title = res.attributes.title,
                                                             subtitle = res.attributes.subtitle,
@@ -275,27 +269,32 @@
                         		</ol>
                         	</span>
                         </li>
-                        <li class="acg_window-content-inside_right">
+                    <?php
+                        }else{
+                            echo '<style>.acg_window-content li.acg_window-content-inside_right{display:block}.acg_window-content-inside_right .tags{font-family: math, cursive,monospace,serif,fangsong;padding: 0 15px;margin-top: 15px;}</style>';
+                        }
+                        if($tag_sw){
+                    ?>
+                        <li class="acg_window-content-inside_right"<?php if(!$acg_sw) echo ' style="width: 100%;position: relative;"'; ?>>
                             <div class="tags">
                                 <?php the_tag_clouds('span'); ?>
                             </div>
-                        	<!--<span id="acg-content-area" style="background: url(<?php //echo get_option('site_techside_bg'); ?>) center /cover"></span>-->
-                        	<!--<span id="acg-content-area-txt"><p id="hitokoto"> ? </p></span>-->
                         </li>
+                    <?php
+                        }
+                    ?>
                     </ul>
-                    <div class="newsBox-subText-Description" id="acg_window-bottom">
-                        <?php
-                            // $query_cat = get_template_bind_cat('category-acg.php');
-                            echo '<a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper($query_slug).'</b></a>';
-                        ?>
-                    </div>
+                    <?php echo $acg_sw ? '<div class="newsBox-subText-Description" id="acg_window-bottom"><a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper($query_slug).'</b></a></div>' : ''; //<a href="javascript:;"><b>TAGCLOUDS</b></a> ?>
+                    <!--<div class="newsBox-subText-Description" id="acg_window-bottom">-->
+                    <!--    <?php //echo $acg_sw ? '<a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper($query_slug).'</b></a>' : '<a href="javascript:;"><b>CLOUDS</b></a>'; ?>-->
+                    <!--</div>-->
                 </div>
             </div>
         <?php
             }
         ?>
+        </div>
     </div>
-</div>
 </div>
 <footer>
     <?php get_footer(); ?>

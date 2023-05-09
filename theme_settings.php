@@ -612,6 +612,7 @@
             register_setting( 'baw-settings-group', 'site_chatgpt_model' );
             register_setting( 'baw-settings-group', 'site_chatgpt_merge_sw' );
             register_setting( 'baw-settings-group', 'site_chatgpt_merge_ingore' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_caches' );
             register_setting( 'baw-settings-group', 'site_chatgpt_apikey' );
             register_setting( 'baw-settings-group', 'site_chatgpt_proxy' );
             register_setting( 'baw-settings-group', 'site_chatgpt_auth' );
@@ -834,7 +835,7 @@
             :root{
                 --panel-theme: <?php echo $theme_color; ?>;
             }
-        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(90deg,rgba(255, 255, 255, 0) 25%, currentColor 255%)}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:233px;height:18px;cursor:pointer;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme)}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text-disabled{display:none;}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:var(--panel-theme)}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+        textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(90deg,rgba(255, 255, 255, 0) 25%, currentColor 255%)}label:hover input[type=checkbox]{box-shadow:0 0 0 1px #2271b1}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:233px;height:18px;cursor:pointer;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme)}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text-disabled{display:none;}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;color:var(--panel-theme)}p.submit:first-child input{font-weight:bold;padding-left:20px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;transition:padding .35s ease;}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{background:brown;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;color: white;font-size: smaller;text-align: center;background: rgb(0 0 0 / 52%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius:5px;position:relative;overflow:hidden;}
             .formtable{display:none;}.formtable.show{display:block;}.wrap.fixed p.submit:first-child{right:-80px}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.switchTab{background: rgb(255 255 255 / 75%);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:10px 0;top:32px;position:sticky;z-index: 9;box-sizing:border-box;/*transition: top .35s ease;top: -32px;padding: 0;*/box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:var(--panel-theme);background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:0;border-radius:25px}.switchTab li b{font-size:initial;display:block;text-shadow:1px 1px 0 white;font-style:normal}
@@ -847,21 +848,17 @@
             #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:0px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent!important;border-bottom-color:transparent!important;border-radius:50%;}
             @keyframes rotateloop{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg);}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg);}
             }
-            .form-table .checkbox{
-                /*margin: 10px auto;*/
-                /*margin: 10px;*/
-                display: inline-block;
-                /*border: 1px solid #ccc;*/
-                padding: 5px 5px 5px 15px;
-                border-radius: 5px;
-            }
+            .form-table .checkbox{display:inline-block;padding:5px 5px 5px 15px;border-radius:5px}
             .form-table .checkbox input[type=checkbox]{margin:auto}
-            .form-table .checkbox label{display: inline-block;padding: 1px 15px 0 5px;font-weight: bold;font-size:smaller;}
+            .form-table .checkbox label{display:inline-block;padding:1px 15px 0 5px;font-weight:bold;font-size:smaller}
             #wpcontent{padding:0}
-            .wrap.settings hr,
-            .wrap.settings{margin:0}
-            /*.form-table tr.child_option:hover{border-left-color:darkgray}*/
-            /*.form-table tr.child_option:hover th{padding-left:0}*/
+            .wrap.settings hr,.wrap.settings{margin:0}
+            ul.cached_post_list{margin:15px auto auto;padding:0}
+            ul.cached_post_list li:hover{text-decoration:line-through;opacity:.35;border-color:transparent;/*border-style:dashed;background:whitesmoke;*/}
+            ul.cached_post_list li:hover::before{content:attr(data-title)}
+            ul.cached_post_list li:hover::after{content:'×';width:15px;height:15px;position:absolute;top:5px;right:5px;border:1px solid;border-radius:50%;line-height:14px;background:whitesmoke}
+            ul.cached_post_list li:before{content:attr(data-id)}
+            ul.cached_post_list li{list-style-type:none;display:inline-block;margin-left:5px;margin-bottom:2px;border:1px solid #ccc;padding:5px;border-radius:8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:38px;text-align:center;position:relative}
         </style>
         <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>THEME</b><p style="letter-spacing:normal;margin-bottom:auto;"> 主题部分页面提供 Leancloud 第三方 bass 数据储存服务 </p></h1>
         <!--<hr/>-->
@@ -869,9 +866,9 @@
             <ul>
                 <li id="basic" class=""><b>基本信息</b></li>
                 <li id="common"><b>通用控制</b></li>
-                <li id="index"><b>页面设置</b></li>
+                <li id="index"><b>页面配置</b></li>
                 <li id="sidebar"><b>边栏设置</b></li>
-                <li id="footer"><b>页尾控制</b></li>
+                <li id="footer"><b>页尾设置</b></li>
                 <!--<li id="contact"><b>联系方式</b></li>-->
             </ul>
         </div>
@@ -1593,7 +1590,7 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $leancloud; ?>">
-                                <th scope="row">— APP ID</th>
+                                <th scope="row">— APP ID<sup id="tips">sync</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_leancloud_appid';
@@ -1602,7 +1599,7 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $leancloud; ?>">
-                                <th scope="row">— APP KEY</th>
+                                <th scope="row">— APP KEY<sup id="tips">sync</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_leancloud_appkey';
@@ -1611,7 +1608,7 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $leancloud; ?>">
-                                <th scope="row">— SERVER URL</th>
+                                <th scope="row">— SERVER URL<sup id="tips">sync</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_leancloud_server';
@@ -1702,7 +1699,7 @@
                             </tr>
                             <!-- Valine -->
                             <tr valign="top" class="child_option sync_data <?php echo $valine_statu = get_option('site_third_comments')=='Valine' ? 'dynamic_opts dynamic_optshow Valine' : 'dynamic_opts Valine'; ?>">
-                                <th scope="row">— APP ID</th>
+                                <th scope="row">— APP ID<sup id="tips">sync</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_leancloud_appid';
@@ -1711,7 +1708,7 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option sync_data <?php echo $valine_statu; ?>">
-                                <th scope="row">— APP KEY</th>
+                                <th scope="row">— APP KEY<sup id="tips">sync</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_leancloud_appkey';
@@ -1720,7 +1717,7 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option sync_data <?php echo $valine_statu; ?>">
-                                <th scope="row">— SERVER URL</th>
+                                <th scope="row">— SERVER URL<sup id="tips">sync</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_leancloud_server';
@@ -1926,7 +1923,7 @@
                 </table>
             </div>
             <div class="formtable index">
-                <h1><b class="num" style="border-color:blueviolet;box-shadow:-5px -5px 0 rgb(138 43 226 / 18%);">03</b>页面设置<p class="en">PAGES SETTINGS</p></h1>
+                <h1><b class="num" style="border-color:blueviolet;box-shadow:-5px -5px 0 rgb(138 43 226 / 18%);">03</b>页面配置<p class="en">PAGES SETTINGS</p></h1>
                 <table class="form-table">
                     <tr valign="top" class="">
                         <th scope="row">近期内容展示数量</th>
@@ -1986,7 +1983,7 @@
                         </td>
                     </tr>
                     <tr valign="top" class="">
-                        <th scope="row">首页 - 推荐栏目</th>
+                        <th scope="row">首页 - 卡片文章</th>
                         <td>
                             <?php
                                 $opt = 'site_rcmdside_cid';
@@ -2137,7 +2134,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">首页随机标签云（自带主题色，若检测到无标签将默认展示随机动漫图</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:cornflowerblue;" class="btn">标签云</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">首页随机标签云（自带主题色，若检测到无标签将默认展示随机动漫图</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:cornflowerblue;" class="btn">标签の云</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -2187,17 +2184,19 @@
                                     <?php
                                         $opt = 'site_chatgpt_apikey';
                                         $value = get_option($opt);
-                                        echo '<p class="description" id="">API 账号密钥</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="openAI Key" value="' . $value . '"/>';
+                                        echo '<p class="description" id="">API Kyes 账号密钥</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="openAI Key" value="' . $value . '"/>';
                                     ?>
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— openAI Proxy<sup>必填</sup></th>
+                                <th scope="row">— openAI Proxy</th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_proxy';
                                         $value = get_option($opt);
-                                        echo '<p class="description" id="">API 反代链接</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="openAI Proxy" value="' . $value . '"/>';
+                                        $preset = 'https://api.openai.com';  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="">API 反代链接（留空默认 https://api.openai.com</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="openAI Proxy" value="' . $value . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -2237,7 +2236,7 @@
                                     <?php
                                         $opt = 'site_chatgpt_merge_sw';
                                         $status = check_statu($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，开启自动计算文章字符请求所需 token 若大于模型限制 token （<u>gpt-3.5 默认 4096，限制输入 3700+</u>）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（内容 token 小于规定内仅请求一次），chat 模型下免费账号<a href="https://platform.openai.com/account/rate-limits" target="_blank">每分钟限制请求为3次</a>（若请求文章过长返回 context_length_exceeded 错误代码时可尝试开启下方<ins>“始终合并请求”</ins>选项，<b>为节省 token 此项默认关闭</b></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，开启自动计算文章字符请求所需 token 若大于模型限制 token （<u>gpt-3.5 默认 4096，限制输入 3700+</u>）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（内容 token 小于规定内仅请求一次），chat 模型下免费账号<a href="https://platform.openai.com/account/rate-limits" target="_blank">每分钟限制请求为3次</a>（若请求返回 context_length_exceeded 错误代码时可尝试开启下方<ins>“始终合并请求”</ins>选项，<b>为节省 token 此项默认关闭</b></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
                                     ?>
                                     <!--<ins>（实测一篇3.5k字数 (近7k token) 左右的文章在 gpt-3.5 模型下开启综合摘要请求后消耗<b>$0.004</b>左右</ins>-->
                                 </td>
@@ -2248,7 +2247,7 @@
                                     <?php
                                         $opt = 'site_chatgpt_merge_ingore';
                                         $status = check_statu($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于合并分割请求失败（二次请求 token 大于 4096）时，忽略后续返回错误并追加生成文章尾段摘要（最大 4096，限制输入 3700+），再合并<b>首次+末尾</b>摘要生成综合摘要，故开启此项同样会消耗至少3次请求（不与分割请求叠加，可能丢失部分文章中段内容，但可始终保持文章首尾逻辑</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Always Summarize</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于合并分割请求失败（二次请求 token 大于 4096）时，忽略后续返回错误并追加生成文章尾段摘要（最大 4096，限制输入 3700+），再合并<b>首次+末尾</b>摘要生成综合摘要，故开启此项同样会消耗至少3次请求（不与分割请求叠加，可能丢失部分文章中段内容，<b>但可始终保持文章首尾逻辑</b></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Always Summarize</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -2269,18 +2268,32 @@
                                     ?>
                                 </td>
                             </tr>
-                            <!--<tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">-->
-                            <!--    <th scope="row">— openAI Requirements</th>-->
-                            <!--    <td>-->
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 已缓存数据（交互）</th>
+                                <td>
                                     <?php
-                                        // $opt = 'site_chatgpt_require';
-                                        // $value = get_option($opt);
-                                        // $preset = '分析以上信息，简述文章用意'; 
-                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        // echo '<p class="description" id="">API 请求条件文本语句（默认：分析以上信息，简述文章用意</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $preset . '"/>';
+                                        $opt = 'site_chatgpt_caches';
+                                        $status = check_statu($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">本地已缓存文章数据，开启后<ins> 刷新页面 </ins>才可显示记录（倒序）<b>，点击文章ID可删除对应记录（不可逆）</b>，<ins>悬浮文章ID</ins> 可查看文章标题及摘要</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LOCAL CACHED POSTS</b></label>';
+                                        if(get_option($opt)){
+                                            include('plugin/'.get_option('site_chatgpt_dir').'/chat_data.php');
+                                            // print_r($cached_post);
+                                            $res_cls_obj = json_decode(json_encode(array_reverse($cached_post)));
+                                            echo '<ul class="cached_post_list">';
+                                            foreach ($res_cls_obj as $cached_pid => $cached_post){
+                                                $cached_post_content = preg_replace('/.*\n/','', api_get_resultText($cached_post));
+                                                $cached_post_pid = preg_replace('/[^0-9]/', '', $cached_pid);
+                                                $cached_post_title = get_the_title($cached_post_pid);
+                                                echo '<li data-id="'.$cached_post_pid.'" data-title="'.$cached_post_title.'" title="'.$cached_post_title.'&#10;'.str_replace('"',"'",$cached_post_content).'"></li>';
+                                            }
+                                            echo '</ul>';
                                     ?>
-                            <!--    </td>-->
-                            <!--</tr>-->
+                                            <script>const cached_posts=document.querySelector('.cached_post_list');cached_posts.onclick=(e)=>{e=e||window.event;let t=e.target||e.srcElement;if(!t)return;while(t!=cached_posts){if(t.nodeName.toUpperCase()==='LI'){const cached_pid=t.dataset.id;if(confirm('确认删除：'+t.dataset.title+'？')){return new Promise(function(resolve,reject){var ajax=new XMLHttpRequest();ajax.open('get',"<?php echo get_bloginfo('template_directory').'/plugin/'.get_option('site_chatgpt_dir').'/gpt.php?pid=';//.'/plugin/api.php?auth=gpt&exec=1&pid=';//get_api_refrence('gpt',true); ?>"+cached_pid+"&del=1");ajax.onreadystatechange=function(){if(this.readyState!=4)return;if(this.status==200){resolve(this.responseText);t.remove();console.log(this.responseText)}else{reject(this.status)}};ajax.withCredentials=true;ajax.send()}).catch(function(err){console.log(err)})}else{console.log(cached_pid+' canceled.')}break}else{t=t.parentNode}}}</script>
+                                    <?php
+                                        };
+                                    ?>
+                                </td>
+                            </tr>
                     <tr valign="top">
                         <th scope="row">归档/漫游影视 - 计数动画</th>
                         <td>
@@ -2292,7 +2305,7 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row"> 异步加载 - 页面设置 </th>
+                        <th scope="row"> 异步加载 - 页面配置 </th>
                         <td>
                             <?php
                                 $opt = 'site_async_switcher';
@@ -2322,53 +2335,70 @@
                                             $value = $preset_str;
                                         }
                                         echo '<p class="description" id="">指定开启 ajax 异步页面，使用逗号“ , ”分隔（默认开启漫游影视、归档页面</p><div class="checkbox">';
-                                        $pre_array = explode(',',trim($value));  // NO "," Array
-                                        $pre_array_count = count($pre_array);
+                                        $async_array = explode(',',trim($value));  // NO "," Array
+                                        $pre_array_count = count($async_array);
                                         foreach ($async_opts as $option){
                                             $opts_slug = $option->slug;
-                                            $checking = in_array($opts_slug, $pre_array) ? 'checked' : '';
+                                            $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
                                         }
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
-                                <th scope="row">— 漫游影视 加载数量</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_async_acg';
-                                        $value = get_option($opt);
-                                        $preset = 14;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">漫游影视默认/手动加载数量（默认 14</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
-                                <th scope="row">— 日志记 加载数量</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_async_weblog';
-                                        $value = get_option($opt);
-                                        $preset = 15;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">日志·记默认/手动加载数量（默认 15</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
-                                <th scope="row">— 归档 加载数量</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_async_archive';
-                                        $value = get_option($opt);
-                                        $preset = 8;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">归档默认/手动加载数量（默认 8</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
+                            <?php
+                                $archive_cat = $async_opts[0];
+                                if(in_array($archive_cat->slug, $async_array)){
+                            ?>
+                                <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
+                                    <?php echo '<th scope="row">— '.$archive_cat->name.' 数量</th>'; ?>
+                                    <td>
+                                        <?php
+                                            $opt = 'site_async_archive';
+                                            $value = get_option($opt);
+                                            $preset = 8;  //默认填充数据
+                                            if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                            echo '<p class="description" id="site_bar_pixiv_label">归档默认/手动加载数量（默认 8</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        ?>
+                                    </td>
+                                </tr>
+                            <?php
+                                }
+                                $acg_cat = $async_opts[1];
+                                if(in_array($acg_cat->slug, $async_array)){
+                            ?>
+                                <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
+                                    <?php echo '<th scope="row">— '.$acg_cat->name.' 数量</th>'; ?>
+                                    <td>
+                                        <?php
+                                            $opt = 'site_async_acg';
+                                            $value = get_option($opt);
+                                            $preset = 14;  //默认填充数据
+                                            if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                            echo '<p class="description" id="site_bar_pixiv_label">漫游影视默认/手动加载数量（默认 14</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        ?>
+                                    </td>
+                                </tr>
+                            <?php
+                                }
+                                $weblog_cat = $async_opts[2];
+                                if(in_array($weblog_cat->slug, $async_array)){
+                            ?>
+                                <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
+                                    <?php echo '<th scope="row">— '.$weblog_cat->name.' 数量</th>'; ?>
+                                    <td>
+                                        <?php
+                                            $opt = 'site_async_weblog';
+                                            $value = get_option($opt);
+                                            $preset = 15;  //默认填充数据
+                                            if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                            echo '<p class="description" id="site_bar_pixiv_label">日志·记默认/手动加载数量（默认 15</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        ?>
+                                    </td>
+                                </tr>
+                            <?php
+                                }
+                            ?>
                     <!-- Archives options -->
                     <tr valign="top">
                         <th scope="row">归档 - 分类统计</th>
@@ -2386,7 +2416,7 @@
                             <?php
                                 $opt = 'site_async_archive_contributions';
                                 $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示<b>全年</b>（去年-今年当月）热度报表（默认显示当年/月份</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Lastest Contributions</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示<b>全年</b>（去年-今年当月）热度报表（默认显示当年/月份</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Yearly Contributions</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2403,7 +2433,7 @@
                         </td>
                     </tr>
                         <tr valign="top" class="child_option">
-                            <th scope="row">MBIT测试结果</th>
+                            <th scope="row">— MBIT测试结果</th>
                             <td>
                                 <?php
                                     $opt = 'site_mbit_result_array';
@@ -2646,7 +2676,7 @@
                 </table>
             </div>
             <div class="formtable footer">
-                <h1><b class="num" style="border-color:limegreen;box-shadow:-5px -5px 0 rgb(50 205 50 / 18%);">05</b>页尾控制<p class="en">FOOTER CONTROLS</p></h1>
+                <h1><b class="num" style="border-color:limegreen;box-shadow:-5px -5px 0 rgb(50 205 50 / 18%);">05</b>页尾设置<p class="en">FOOTER CONTROLS</p></h1>
                 <table class="form-table footer">
                     <tr valign="top">
                         <th scope="row">底部近期文章</th>

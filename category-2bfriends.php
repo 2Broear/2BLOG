@@ -59,6 +59,21 @@
         .friends-boxes .deals.exchanged .inbox .inbox-aside span.lowside-title h4{
             margin: 0;
         }
+        .friends-boxes .deals .inboxSliderCard .slideBox{
+            max-height: 5em;
+            white-space: initial;
+            overflow-wrap: anywhere;
+        }
+        .friends-boxes .deals .inboxSliderCard .slideBox a{
+            margin: 0;
+            /*max-height: 80px;*/
+            /*letter-spacing: 20px;*/
+            padding: 0 20px 0 0;
+        }
+        .friends-boxes .deals .inboxSliderCard .slideBox a.standby{
+            opacity: .35;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -116,7 +131,7 @@
                         }
                         if(count($rcmd_links)>0){
                 ?>
-                            <div class="inbox-clip"><h2 id="rcmded"> 荐亦有见 </h2></div>
+                            <div class="inbox-clip"><h2 id="rcmded"> 鉴亦有荐 </h2></div>
                             <div class="deals rcmd flexboxes"><?php site_links($rcmd_links, 'half'); ?></div>
 				<?php 
                         };

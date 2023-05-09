@@ -11,7 +11,8 @@
 <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/universal.min.css?v=<?php echo get_theme_info('Version'); ?>" />
 <style>
     body.dark #supports em.warmhole{
-        background: url(<?php custom_cdn_src('img'); ?>/images/wormhole_2_tp.gif) no-repeat center center /cover!important;
+        filter: invert(1);
+        /*background: url(<?php custom_cdn_src('img'); ?>/images/wormhole_2_tp.gif) no-repeat center center /cover!important;*/
     }
     <?php 
         if(get_option('site_logo_switcher')){

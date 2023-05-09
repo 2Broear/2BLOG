@@ -447,16 +447,22 @@
         $res = json_encode($err_msg);
         if($var) return $res;else print_r($res);
     }
+    function api_get_resultText($res_cls_obj, $decode=false){
+        $formart = $decode ? json_decode($res_cls_obj) : $res_cls_obj;
+        if(isset($formart->error)) return $formart->error->message;
+        $choices = $formart->choices[0];
+        return isset($choices->message) ? $choices->message->content : $choices->text;
+    }
     // API调用接口，接受三个参数：
     // 调用 api 文件名
     // api 代理访问（使用 api.php 文件中的 curl 携带鉴权参数二次请求（速度影响），适用前端异步调用
     // 返回请求api或返回sign签名（如开启cdn鉴权
-    function get_api_refrence($api='', $xhr=false, $exe=1){
+    function get_api_refrence($api='', $xhr=false, $exe=1, $pid=false){
         $res = 'unknown_api_refrence';
         if($api){
-            global $post,$cdn_switch;
+            global $post, $cdn_switch;
             $cdn_api = get_option('site_cdn_api');
-            $pid = $post->ID;
+            $pid = $pid ? $pid : $post->ID;
             $api_file = '/'.$api.'.php';
             $authentication = get_option('site_chatgpt_dir','authentication');
             $request_url = $cdn_switch&&$cdn_api ? custom_cdn_src('api',true) : custom_cdn_src('src',true).'/plugin/'.$authentication;
@@ -468,7 +474,7 @@
                 $stamp16x = dechex($stamp10x);
                 $auth_url = $auth_url.'&sign='.md5($cdn_auth.$api_file.$stamp16x).'&t='.$stamp16x;
             }
-            $res = $xhr ? custom_cdn_src('src',true).'/plugin/api.php?auth='.$api.'&pid='.$pid.'&exec='.$exe : $auth_url;
+            $res = $xhr ? custom_cdn_src('src',true).'/plugin/api.php?auth='.$api.'&exec='.$exe.'&pid='.$pid : $auth_url;
             // $res = $xhr ? custom_cdn_src('src',true).'/plugin/'.$authentication.$api_file.'?pid='.$pid : $auth_url; //||!$cdn_api
         }else{
             $res = api_err_handle(200,'unknown_api_refrence',true);
@@ -507,6 +513,7 @@
         // print_r(get_category($cat));
         $cats = get_categories(meta_query_categories(0, 'ASC', 'seo_order'));
         if(!empty($cats)){
+            $slash_href = 'javascript:void(0)';
             foreach($cats as $the_cat){
                 $the_cat_id = $the_cat->term_id;
                 $the_cat_slug = $the_cat->slug;  //use slug compare current category
@@ -515,9 +522,9 @@
                 $slug_icon = $the_cat_slug!="/" ? $the_cat_slug : "more";
                 $level = !empty($catss) ? "sec_level" : "top_level";
                 $choosen = $the_cat_id==$cat&&!is_single() || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single() ? "choosen" : "";  // 当前选中栏目 || 当前选中栏目下子栏目 || 当前栏目下文章&&文章单页
-                // if($the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single()) $choosen="choosen";else $choosen = "";  //current category/page detect (bychild) DO NOT USE ID DETECT, because all cat are page(post) type;
                 $cur_link = get_category_link($the_cat_id);
-                $slash_link = $cur_link==get_site_url()||$cur_link==get_site_url().'/category/'||$cur_link==get_site_url().'/category' ? 'javascript:void(0)' : $cur_link;  // detect if use $slash_link
+                $slash_link = $cur_link==get_site_url()||$cur_link==get_site_url().'/category/'||$cur_link==get_site_url().'/category' ? $slash_href : $cur_link;  // detect if use $slash_link
+                // $slash_name = $slash_link===$slash_href
                 $site_icon = $use_icon ? '<i class="icom icon-'.$slug_icon.'"></i>' : '';
                 if($the_cat_slug!='uncategorized') echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.$slash_link.'" class="'.$choosen.'" rel="nofollow">' . $site_icon . $the_cat->name.'</a>';  //liwrapper
                 if(!empty($catss) && $deepth>=2){
@@ -580,7 +587,7 @@
                             }
                             $choosen = $the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single() ? "choosen 2nd" : "2nd";  // current choosen detect
                             $cur_link = get_category_link($the_cats_id);
-                            $slash_link = $cur_link==get_site_url()||$cur_link==get_site_url().'/category/'||$cur_link==get_site_url().'/category' ? 'javascript:void(0)' : $cur_link;  // detect if use $slash_link
+                            $slash_link = $cur_link==get_site_url()||$cur_link==get_site_url().'/category/'||$cur_link==get_site_url().'/category' ? $slash_href : $cur_link;  // detect if use $slash_link
                             echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent." ".$level.'"><a href="'.$slash_link.'" class="'.$choosen.'" rel="nofollow">'.$the_cats_name.'</a>';  //liwrapper
                             if(!empty($catsss) && $deepth>=3){
                                 echo $mobile ? '<ul class="links-moress">' : '<div class="sub-additional"><ol class="links-more">';
@@ -667,9 +674,7 @@
         $execmd = ['shell_exec','system','exec'];
         $shell = false;
         foreach($execmd as $cmd){
-            if(function_exists($cmd)){
-                $shell = $cmd;
-            }
+            if(function_exists($cmd)) $shell=$cmd;
         }
         if($shell){
             // https://wp-kama.com/hook/wp_embed_handler_video
@@ -1388,11 +1393,11 @@
             $link_notes = $link->link_notes;
             $link_target = $link->link_target;
             $link_rating = $link->link_rating;
-            $sex = $link_rating==1 ? 'girl' : 'boy';
+            $status = $link->link_visible!='Y' ? ' standby' : '';
+            $sex = $link_rating==1 ? ' girl' : '';
+            $ssl = $link_rating==10 ? '' : ' https';
             $target = !$link_target ? '_blank' : $link_target;
-            $status = $link->link_visible!='Y' ? 'standby' : 'standard';
-            $ssl = $link_rating==10 ? 'httpd' : 'https';
-            $impress = $link_notes&&$link_notes!='' ? '<span class="ssl '.$ssl.'"> '.$link_notes.' </span>' : false;
+            $impress = $link_notes&&$link_notes!='' ? '<span class="ssl'.$ssl.'"> '.$link_notes.' </span>' : false;
             $avatar = !$link->link_image ? 'https:' . get_option('site_avatar_mirror') . 'avatar/' . md5(mt_rand().'@rand.avatar') . '?s=300' : $link->link_image;
             $lazyhold = "";
             if($lazysrc!='src'){
@@ -1401,14 +1406,14 @@
             }
             switch ($frame) {
                 case 'full':
-                    $avatar_status = $status=='standby' ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
-                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'"><div class="inbox-headside flexboxes"><a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'">'.$avatar_status.'</a></div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>'.$avatar_status_bg.'
+                    $avatar_status = $status==' standby' ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
+                    echo '<div class="inbox flexboxes'.$status.$sex.'"><div class="inbox-headside flexboxes">'.$avatar_status.'</div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>'.$avatar_status_bg.' <a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'"></a>
                     break;
                 case 'half':
-                    echo '<div class="inbox flexboxes '.$status.' '.$sex.'">'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>
+                    echo '<div class="inbox flexboxes'.$status.$sex.'">'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>
                     break;
                 default:
-                    echo '<a href="'.$link->link_url.'" title="'.$link->link_name.'" target="'.$target.'" rel="">'.$link->link_name.'</a>';
+                    echo '<a href="'.$link->link_url.'" class="'.$status.'" title="'.$link->link_name.'" target="'.$target.'" rel="">'.$link->link_name.'</a>';
                     break;
             }
         }

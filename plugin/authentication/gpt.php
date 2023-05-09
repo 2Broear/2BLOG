@@ -1,20 +1,41 @@
 <?php
+    header("Access-Control-Allow-Credentials: true");//携带cookie
     define('WP_USE_THEMES', false);  // No need for the template engine
     require_once( '../../../../../wp-load.php' );  // incase api DOCUMENT_ROOT
-    // function send_gpt_request(){
-        $query_string = array_key_exists('QUERY_STRING', $_SERVER) ? $_SERVER['QUERY_STRING'] : false;
-        if($query_string){
-            parse_str($query_string, $params);
-            // 判断url传参或form表单参数
-            $pid = array_key_exists('pid', $params) ? $params['pid'] : ($_POST['pid']||$_GET['pid']);
-            $pids = get_post($pid);
-            $post_type = $pids->post_type;
-            $post_exist = get_post_status($pid); //!is_null(get_post($pid)); //post_exists($title);//
-            if($pid&&$post_exist){
+    $query_string = array_key_exists('QUERY_STRING', $_SERVER) ? $_SERVER['QUERY_STRING'] : false;
+    if($query_string){
+        parse_str($query_string, $params);
+        // 判断url传参或form表单参数
+        $pid = array_key_exists('pid', $params) ? $params['pid'] : ($_POST['pid']||$_GET['pid']);
+        $pids = get_post($pid);
+        $post_type = $pids->post_type;
+        $post_exist = get_post_status($pid); //!is_null(get_post($pid)); //post_exists($title);//
+        if($pid&&$post_exist){
+            define('CACHED_PATH', './chat_data.php');
+            // header("Access-Control-Allow-Credentials: true");//携带cookie
+            $del = array_key_exists('del', $params) ? $params['del'] : ($_POST['del']||$_GET['del']);
+            if($del){
+                if(is_user_logged_in()&&current_user_can('administrator')){
+                    // echo 'Logged as admin verified, Processing action.. ';
+                    include CACHED_PATH;  // 读取文件记录
+                    if(isset($cached_post['chat_pid_'.$pid])){
+                        unset($cached_post['chat_pid_'.$pid]); // 删除指定记录
+                        // 写入本地储存
+                        $temp = '<?php'.PHP_EOL.'$cached_post = '.var_export($cached_post,true).';'.PHP_EOL.'?>';
+                        $newfile = fopen(CACHED_PATH,"w");
+                        fwrite($newfile, $temp);
+                        fclose($newfile);
+                        echo 200;//'200 : chat_pid_'.$pid.' deleted.';
+                    }else{
+                        echo 404;//'404: chat_pid_'.$pid.' not found.';
+                    }
+                }else{
+                    api_err_handle('request illegal, login wordpress as admin required.',403);
+                }
+            }else{
                 define('CHATGPT_LIMIT', 4096); //296 for completion_tokens placeholder
                 define('COMPLETION_REVERSE', 196);  //preset response-token offset for merge-ingored situation.
                 define('CHATGPT_LIMIT_RESERVED', CHATGPT_LIMIT-COMPLETION_REVERSE);
-                define('CACHED_PATH', './chat_data.php');
                 $cached_post = array();
                 // $content = $pids->post_content;
                 // remove code block
@@ -58,12 +79,6 @@
                 // print_r('second request token: '.count_chaters($requirements,1,1)); //.count_chaters($requirements,1,1,0,true))
                 // print_r(count_chaters($requirements,1,1,0,true,true));
                 
-                function get_resultText($res_cls_obj, $decode=false){
-                    $formart = $decode ? json_decode($res_cls_obj) : $res_cls_obj;
-                    if(isset($formart->error)) return $formart->error->message;
-                    $choices = $formart->choices[0];
-                    return isset($choices->message) ? $choices->message->content : $choices->text; //property_exists($choices,'message')
-                }
                 function curlRequest($question, $maxlen=1024, $additional='，注意精简内容') {
                     $merge_ingore = get_option('site_chatgpt_merge_ingore');
                     $openai_model = get_option('site_chatgpt_model');
@@ -73,11 +88,17 @@
                         "model" => $openai_model, //ada
                         'temperature' => 0.8,
                         "max_tokens" => $maxlen,  // works for completion_tokens only
-                        "prompt" => $question.'。分析上述内容，简述文章用意'.$additional,
+                        "prompt" => '分析文章内容，简述文章用意'.$additional.'。文章：
+"""
+'.$question.'
+"""', //$question.'。分析上述内容，简述文章用意'.$additional
                     );
                     if($chat_model){
                         unset($post_data['prompt']);
-                        $post_data = array_merge($post_data, array('messages' => [["role" => "system", "content" => '分析并简述文章用意'.$additional],["role" => "user", "content" => $question]]));
+                        $post_data = array_merge($post_data, array('messages' => [
+                            ["role" => "system", "content" => '分析并简述文章用意'.$additional], //分析并简述文章用意
+                            ["role" => "user", "content" => $question]
+                        ]));
                     }
                     $curl = curl_init();
                     curl_setopt_array($curl, array(
@@ -104,17 +125,17 @@
                             $left_token = count_chaters($question,1,1);
                             if($merge_ingore || $left_token<=CHATGPT_LIMIT){
                                 $previous_res = curlRequest($used_words); //0-4096 context
-                                $previous_txt = get_resultText($previous_res,true).'。';
+                                $previous_txt = api_get_resultText($previous_res,true).'。';
                             }
                             if($left_token<=CHATGPT_LIMIT_RESERVED){
                                 $left_words = count_chaters($question,1,1,0,true);
                                 $addition_res = curlRequest($left_words);
-                                return curlRequest($previous_txt.get_resultText($addition_res,true)); //, 392, '。'
+                                return curlRequest($previous_txt.api_get_resultText($addition_res,true)); //, 392, '。'
                             }else{
                                 if($merge_ingore){
                                     $left_words_ingored = count_chaters($question,1,1,0,true,true);
                                     $addition_res = curlRequest($left_words_ingored); // end of context(4096-max)
-                                    return curlRequest($previous_txt.get_resultText($addition_res,true), 512, '。'); // 3 times call
+                                    return curlRequest($previous_txt.api_get_resultText($addition_res,true)); //, 512, '。'
                                 }else{
                                     $res = json_encode(array('error' => array ('message' => 'article is too long to abstract (context token: '.$question_token.', inqueue token: '.$left_token.')','type' => 'request_context_too_long','created'=>time())),true);
                                 }
@@ -182,7 +203,7 @@
                     // formart responses text-result
                     $response = json_decode($response);
                     //property_exists($response,'error') array_key_exists('error', $response)
-                    $response = isset($response->error) ? $response->error->message : preg_replace('/.*\n/','', get_resultText($response));
+                    $response = isset($response->error) ? $response->error->message : preg_replace('/.*\n/','', api_get_resultText($response));
                 }
                 
                 // overwrite_request_record();
@@ -204,29 +225,13 @@
                 }else{
                     overwrite_request_record();
                 }
-            }else{
-                $response = api_err_handle('param err, requested pid not found or exists',200,true); //'{"code":200,"msg":"param err, requested pid not found or exists"}';
-            }
-            // test only // http://www.edbiji.com/doccenter/showdoc/3572/nav/92809.html
-            if(array_key_exists('debug', $params)){
-?>
-                <style>
-                    @keyframes footerHot{50%{opacity:0}100%{opacity:1}}p.response.load:after{animation-duration:.35s!important;-webkit-animation-duration:.35s!important;}p.response.load:after,p.response.done:after{animation:footerHot 1s step-end infinite normal;-webkit-animation:footerHot 1s step-end infinite normal;}p.response:after{content:'';width:4px;height:20px;display:inline-block;background:currentColor;vertical-align:middle;margin:0 0 2px 5px;}
-                </style>
-                <blockquote class="chatGPT"><p><b>ABSTRACT</b></p><p class="response load">standby chatGPT responsing..</p></blockquote>
-                <script type="module">
-                    const responser = document.querySelector('.chatGPT .response'),
-                          result = "<?php echo $response; ?>";
-                    import('<?php custom_cdn_src(); ?>/js/module.js').then((module) => {
-                        module.words_typer(responser, result.replace(/.*\n/g,""), 25);
-                    });
-                </script>
-<?php
-            }else{
-                print_r($response); // print_r(json_encode($response));
             }
         }else{
-            api_err_handle('params missing, SERVER QUERY_STRING NOT EXISTS'); //'{"code":200,"msg":"params missing, SERVER QUERY_STRING NOT EXISTS"}';
+            $response = api_err_handle('param err, requested pid not found or exists',200,true);
         }
-    // }
+        // test only // http://www.edbiji.com/doccenter/showdoc/3572/nav/92809.html
+        print_r($response); // print_r(json_encode($response));
+    }else{
+        api_err_handle('params missing, SERVER QUERY_STRING NOT EXISTS');
+    }
 ?>

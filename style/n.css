@@ -467,10 +467,10 @@ pre code .copy_btn:hover{
     /*background: var(--preset-6);*/
 }
 pre code.copied .copy_btn::before{
-    content: "Copied";
+    content: "Copied ✔️";
 }
 pre code .copy_btn::before{
-    content: "Copy";
+    content: "🖨️ Copy";
 }
 pre code.copied .copy_btn,
 pre code:hover .copy_btn{

@@ -141,7 +141,9 @@
 	/*width: 175%;150 145 123 115%*/
 }
 .friends-boxes .deals .inboxSliderCard .slideBox a:hover{
-    text-decoration: underline;
+    /*text-decoration: underline;*/
+    color: var(--theme-color);
+    font-weight: bold;
 }
 .friends-boxes .deals .inboxSliderCard .slideBox a{
     color: var(--preset-8);
@@ -217,10 +219,10 @@
     max-width: calc(100%/5.8);
 }
 
-.friends-boxes .deals .inbox:hover > .inbox-headside img{
+.friends-boxes .deals .inbox:hover .inbox-headside img{
     border-radius: 0;
 }
-.friends-boxes .deals .inbox:hover > .inbox-headside{
+.friends-boxes .deals .inbox:hover .inbox-headside{
     display: inherit;
     width: 100%;
     position: absolute;
@@ -314,6 +316,10 @@
 }
 .friends-boxes .deals .inbox.sslerror{
 	background: #f4222c;
+}
+.friends-boxes .deals .inbox a{
+    color: inherit;
+    width: 100%;
 }
 .friends-boxes .deals .inbox .inbox-headside{
 	width: 80%;

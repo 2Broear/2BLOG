@@ -327,6 +327,7 @@
                         echo '<a href="https://www.foreverblog.cn/go.html" target="_blank" rel="nofollow"><em class="warmhole" style="background:url('.custom_cdn_src('img',true).'/images/wormhole_4_tp_ez.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
                     }
                 ?>
+                <a href="https://notbyai.fyi" target="_blank" rel="nofollow"><img src="https://notbyai.fyi/wp-content/themes/notbyai/img/not-by-ai.svg" alt="foreverblog" style="height: 15px;filter:invert(0.5);"></a>
             </p>
           </ul>
           <ul style="text-align:right">
