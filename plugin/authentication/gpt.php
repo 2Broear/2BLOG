@@ -1,19 +1,18 @@
 <?php
-    header("Access-Control-Allow-Credentials: true");//携带cookie
     define('WP_USE_THEMES', false);  // No need for the template engine
     require_once( '../../../../../wp-load.php' );  // incase api DOCUMENT_ROOT
     $query_string = array_key_exists('QUERY_STRING', $_SERVER) ? $_SERVER['QUERY_STRING'] : false;
     if($query_string){
         parse_str($query_string, $params);
         // 判断url传参或form表单参数
-        $pid = array_key_exists('pid', $params) ? $params['pid'] : ($_POST['pid']||$_GET['pid']);
+        $pid = array_key_exists('pid', $params) ? $params['pid'] : false; //($_POST['pid']||$_GET['pid'])
         $pids = get_post($pid);
         $post_type = $pids->post_type;
         $post_exist = get_post_status($pid); //!is_null(get_post($pid)); //post_exists($title);//
         if($pid&&$post_exist){
             define('CACHED_PATH', './chat_data.php');
             // header("Access-Control-Allow-Credentials: true");//携带cookie
-            $del = array_key_exists('del', $params) ? $params['del'] : ($_POST['del']||$_GET['del']);
+            $del = array_key_exists('del', $params) ? $params['del'] : false; //($_POST['del']||$_GET['del'])
             if($del){
                 if(is_user_logged_in()&&current_user_can('administrator')){
                     // echo 'Logged as admin verified, Processing action.. ';
@@ -29,6 +28,7 @@
                     }else{
                         echo 404;//'404: chat_pid_'.$pid.' not found.';
                     }
+                    return; //terminate after exec unset.
                 }else{
                     api_err_handle('request illegal, login wordpress as admin required.',403);
                 }
@@ -37,10 +37,13 @@
                 define('COMPLETION_REVERSE', 196);  //preset response-token offset for merge-ingored situation.
                 define('CHATGPT_LIMIT_RESERVED', CHATGPT_LIMIT-COMPLETION_REVERSE);
                 $cached_post = array();
-                // $content = $pids->post_content;
-                // remove code block
-                $content = preg_replace('/<pre.*?><code>(.*?)<\/code><\/pre>/s', "：<pre><code>[ code example ]</code></pre>。", $pids->post_content);
-                $content = str_replace(array("\r\n", "\r", "\n"), " ", wp_strip_all_tags($content));
+                $content = preg_replace('/<pre.*?><code>(.*?)<\/code><\/pre>/s', "：<pre><code>[ code example ]</code></pre>。", $pids->post_content); // remove code block
+                // $content = str_replace(array("\r\n", "\r", "\n"), " ", wp_strip_all_tags($content));
+                $allowed_tags = '<br>';
+                $content = preg_replace('/(<h\d.+>)/', "【$1】", $content); // 在标题标签前添加一个换行符
+                $content = str_replace($allowed_tags, "\n", strip_tags($content, $allowed_tags));  // 删除所有 HTML 标签并将保留的标签转换为换行符
+                $content = preg_replace("/\n+/", "\n", $content);  // 删除多余换行符
+                
                 //分析以上提供的信息简述文章用意  分析梳理以上信息的逻辑与结构，简述文章用意
                 $requirements = '标题：'.$pids->post_title.'，作者：'.get_the_author_meta('display_name', get_post_field('post_author', $pid)).'，内容：'.$content.'。'.get_post_meta($pid, "post_feeling", true);
                 
@@ -60,8 +63,6 @@
                               $left_token = count_chaters($left_words,1);
                               // reverse lastest words if left token over limit
                               if($ingore&&$left_token>CHATGPT_LIMIT){ //CHATGPT_LIMIT_RESERVED
-                                //   $left_words = mb_substr($str, -$i+COMPLETION_REVERSE); //reserve completion_token place(less context)
-                                //   $left_token = count_chaters($left_words,1); //update reserved left_token
                                   $left_words = mb_substr($str, -$i); //-4096
                                   $left_token = count_chaters($left_words,1);
                                   if($left_token>CHATGPT_LIMIT_RESERVED){
@@ -79,7 +80,7 @@
                 // print_r('second request token: '.count_chaters($requirements,1,1)); //.count_chaters($requirements,1,1,0,true))
                 // print_r(count_chaters($requirements,1,1,0,true,true));
                 
-                function curlRequest($question, $maxlen=1024, $additional='，注意精简内容') {
+                function curlRequest($question, $maxlen=1024, $additional='，注意精简字数') {
                     $merge_ingore = get_option('site_chatgpt_merge_ingore');
                     $openai_model = get_option('site_chatgpt_model');
                     $openai_proxy = get_option('site_chatgpt_proxy','https://api.openai.com');
@@ -88,8 +89,8 @@
                         "model" => $openai_model, //ada
                         'temperature' => 0.8,
                         "max_tokens" => $maxlen,  // works for completion_tokens only
-                        "prompt" => '分析文章内容，简述文章用意'.$additional.'。文章：
-"""
+                        "prompt" => '分析文章内容，简述文章用意'.$additional.'。
+文章："""
 '.$question.'
 """', //$question.'。分析上述内容，简述文章用意'.$additional
                     );
@@ -146,13 +147,16 @@
                         // curl_close($curl);
                     }else{
                         $res = curl_exec($curl);
+                        if ($res === false) {
+                            $errno = curl_errno($ch);
+                            $error = curl_error($ch);
+                            $res = "cURL Error ($errno): $error\n";
+                        }
                     }
                     curl_close($curl);
                     return $res;
                 }
                 
-                // print_r(json_decode(curlRequest('测试'))->choices[0]->message->content);
-                // header("Content-type:text/html;charset=utf-8");  // 声明页面header
                 
                 // 初始化php文件，返回记录
                 function chatGPT_init($caches, $new=false){

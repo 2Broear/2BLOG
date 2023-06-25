@@ -1008,6 +1008,30 @@
                             ?>
                         </td>
                     </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">分类导航层级</th>
+                        <td>
+                            <?php
+                                $opt = 'site_catnav_deepth';
+                                $value = get_option($opt);
+                                $preset = 4;  //默认填充数据
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                echo '<p class="description" id="">页面 Header 头部分类导航层级（默认最大4级</p><input type="number" max="" min="1" max="4" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">近期内容展示数量</th>
+                        <td>
+                            <?php
+                                $opt = 'site_per_posts';
+                                $value = get_option($opt);
+                                $preset = 5;  //默认填充数据
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                echo '<p class="description" id="">近期文章、笔记、日志、排行、评论等内容展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                            ?>
+                        </td>
+                    </tr>
                     <tr valign="top">
                         <th scope="row">展示型单页文章</th>
                         <td>
@@ -1016,6 +1040,16 @@
                                 $value = get_option($opt);
                                 $status = $value ? "checked" : "check";
                                 echo '<label for="'.$opt.'"><p class="description" id="">展示型文章包括日志、漫游影视、资源下载页面（默认仅展示必要数据，开启后将开启对应文章链接并使用默认单页模板</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b>启用展示型单页</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">文章列表预览图</th>
+                        <td>
+                            <?php
+                                $opt = 'site_default_postimg_switcher';
+                                $status = check_statu($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">默认当文章存在自定义 thumbnail 特色图片时才显示列表预览图，开启后将始终显示（显示优先级：自定义特色图片>文章内图片>默认图片</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">始终显示预览图</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1519,7 +1553,7 @@
                                 $opt = 'site_video_capture_switcher';
                                 $status = check_statu($opt);
                                 function funcStatus($func){
-                                    return function_exists($func) ? "<b style='color:green'>$func (已启用)</b>" : "<u style='color:red'>$func (关闭)</u>";
+                                    return function_exists($func) ? "<b style='color:green'>$func (已开启)</b>" : "<u style='color:red'>$func (已关闭)</u>";
                                 }
                                 echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">上传视频文件时自动在存放文件同目录下生成动态截图（此前上传的视频无效<br/>⚠后端环境：服务端须提前安装<b> ffmpeg </b> 扩展，并开启以下任一<b> php 函数</b>：'.funcStatus('exec').'、'.funcStatus('system').'、'.funcStatus('shell_exec').'，测试 shell_exec 暂时无法解析大文件<br/>⚠前端应用：视频元素不存在<b> autoplay </b>自动播放属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">视频片段预览</b></label>';
                             ?>
@@ -1925,40 +1959,6 @@
             <div class="formtable index">
                 <h1><b class="num" style="border-color:blueviolet;box-shadow:-5px -5px 0 rgb(138 43 226 / 18%);">03</b>页面配置<p class="en">PAGES SETTINGS</p></h1>
                 <table class="form-table">
-                    <tr valign="top" class="">
-                        <th scope="row">近期内容展示数量</th>
-                        <td>
-                            <?php
-                                $opt = 'site_per_posts';
-                                $value = get_option($opt);
-                                $preset = 5;  //默认填充数据
-                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                echo '<p class="description" id="">近期文章、笔记、日志、排行、评论等内容展示数量（默认展示显示5条</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top" class="">
-                        <th scope="row">分类导航最大层级</th>
-                        <td>
-                            <?php
-                                $opt = 'site_catnav_deepth';
-                                $value = get_option($opt);
-                                $preset = 4;  //默认填充数据
-                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                echo '<p class="description" id="">页面 Header 头部分类导航层级（默认最大4级</p><input type="number" max="" min="1" max="4" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">文章列表预览图</th>
-                        <td>
-                            <?php
-                                $opt = 'site_default_postimg_switcher';
-                                $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">默认当文章存在自定义 thumbnail 特色图片时才显示列表预览图，开启后将始终显示（显示优先级：自定义特色图片>文章内图片>默认图片</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">始终显示预览图</b></label>';
-                            ?>
-                        </td>
-                    </tr>
                     <tr valign="top">
                         <th scope="row">首页 - banner</th>
                         <td>
@@ -2218,9 +2218,9 @@
                                     <?php
                                         $opt = 'site_chatgpt_model';
                                         $value = get_option($opt);
-                                        $models = ['gpt-3.5-turbo','text-davinci-003'];
+                                        $models = ['gpt-3.5-turbo','Curie','text-davinci-003'];
                                         if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
-                                        echo '<label for="'.$opt.'"><p class="description" id="">可选 chatGPT 对话模型（默认使用更划算的 gpt-3.5-turbo，<a href="https://openai.com/pricing" target="_blank">价格参考</a> </p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">可选 chatGPT 对话模型：davinci 模型能力最强价格最贵，Curie 价格便宜且擅长文字类任务（默认使用 gpt-3.5-turbo，<a href="https://openai.com/pricing" target="_blank">价格参考</a></p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
                                             foreach ($models as $mod){
                                                 echo '<option value="'.$mod.'"';
                                                 if($value==$mod) echo('selected="selected"');
@@ -2236,9 +2236,8 @@
                                     <?php
                                         $opt = 'site_chatgpt_merge_sw';
                                         $status = check_statu($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，开启自动计算文章字符请求所需 token 若大于模型限制 token （<u>gpt-3.5 默认 4096，限制输入 3700+</u>）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（内容 token 小于规定内仅请求一次），chat 模型下免费账号<a href="https://platform.openai.com/account/rate-limits" target="_blank">每分钟限制请求为3次</a>（若请求返回 context_length_exceeded 错误代码时可尝试开启下方<ins>“始终合并请求”</ins>选项，<b>为节省 token 此项默认关闭</b></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，开启自动计算文章字符请求所需 token 若大于模型限制 token （<u>gpt-3.5 默认 4096，限制输入 3700+</u>）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（内容 token 小于规定内仅请求一次</p><p>chat 模型下免费账号<a href="https://platform.openai.com/account/rate-limits" target="_blank">每分钟限制请求为3次</a>（若请求返回 context_length_exceeded 错误代码时可尝试开启下方<b> “始终合并请求” </b>选项，<u><i>为节省 token 此项默认关闭</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
                                     ?>
-                                    <!--<ins>（实测一篇3.5k字数 (近7k token) 左右的文章在 gpt-3.5 模型下开启综合摘要请求后消耗<b>$0.004</b>左右</ins>-->
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
@@ -2247,7 +2246,7 @@
                                     <?php
                                         $opt = 'site_chatgpt_merge_ingore';
                                         $status = check_statu($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于合并分割请求失败（二次请求 token 大于 4096）时，忽略后续返回错误并追加生成文章尾段摘要（最大 4096，限制输入 3700+），再合并<b>首次+末尾</b>摘要生成综合摘要，故开启此项同样会消耗至少3次请求（不与分割请求叠加，可能丢失部分文章中段内容，<b>但可始终保持文章首尾逻辑</b></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Always Summarize</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于合并分割请求失败（二次请求 token 大于 4096）时，忽略后续返回错误并追加生成文章尾段摘要，再合并<b>首次+末尾</b>摘要生成<b>综合摘要</b></p><p>开启此项同样会消耗至少3次请求（不与分割请求叠加，可能丢失部分文章中段内容，<u><i>但可始终保持文章首尾逻辑</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Always Summarize</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -2269,12 +2268,12 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— 已缓存数据（交互）</th>
+                                <th scope="row">— 已缓存数据（更新）</th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_caches';
                                         $status = check_statu($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">本地已缓存文章数据，开启后<ins> 刷新页面 </ins>才可显示记录（倒序）<b>，点击文章ID可删除对应记录（不可逆）</b>，<ins>悬浮文章ID</ins> 可查看文章标题及摘要</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LOCAL CACHED POSTS</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">本地已缓存文章摘要数据，勾选后<ins> 提交保存 </ins>以显示记录（倒序）<b>。点击文章ID可删除对应记录（不可逆）</b>，<ins>悬浮文章ID</ins> 可查看文章标题及摘要</p><p>删除文章摘要记录后，<u><i>重新访问文章以更新摘要</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LOCAL CACHED POSTS</b></label>';
                                         if(get_option($opt)){
                                             include('plugin/'.get_option('site_chatgpt_dir').'/chat_data.php');
                                             // print_r($cached_post);
@@ -2288,7 +2287,7 @@
                                             }
                                             echo '</ul>';
                                     ?>
-                                            <script>const cached_posts=document.querySelector('.cached_post_list');cached_posts.onclick=(e)=>{e=e||window.event;let t=e.target||e.srcElement;if(!t)return;while(t!=cached_posts){if(t.nodeName.toUpperCase()==='LI'){const cached_pid=t.dataset.id;if(confirm('确认删除：'+t.dataset.title+'？')){return new Promise(function(resolve,reject){var ajax=new XMLHttpRequest();ajax.open('get',"<?php echo get_bloginfo('template_directory').'/plugin/'.get_option('site_chatgpt_dir').'/gpt.php?pid=';//.'/plugin/api.php?auth=gpt&exec=1&pid=';//get_api_refrence('gpt',true); ?>"+cached_pid+"&del=1");ajax.onreadystatechange=function(){if(this.readyState!=4)return;if(this.status==200){resolve(this.responseText);t.remove();console.log(this.responseText)}else{reject(this.status)}};ajax.withCredentials=true;ajax.send()}).catch(function(err){console.log(err)})}else{console.log(cached_pid+' canceled.')}break}else{t=t.parentNode}}}</script>
+                                            <script>const cached_posts=document.querySelector('.cached_post_list');cached_posts.onclick=(e)=>{e=e||window.event;let t=e.target||e.srcElement;if(!t)return;while(t!=cached_posts){if(t.nodeName.toUpperCase()==='LI'){const cached_pid=t.dataset.id,cached_title=t.dataset.title;if(confirm('确认删除：'+cached_title+'？')){return new Promise(function(resolve,reject){var ajax=new XMLHttpRequest();ajax.open('get',"<?php echo get_bloginfo('template_directory').'/plugin/'.get_option('site_chatgpt_dir').'/gpt.php?pid=';//.'/plugin/api.php?auth=gpt&exec=1&pid=';//get_api_refrence('gpt',true); ?>"+cached_pid+"&del=1");ajax.onreadystatechange=function(){if(this.readyState!=4)return;if(this.status==200){resolve();t.remove();if(this.responseText==404) alert('此记录先前已被清除（可能刷新过快，尝试重新刷新）');}else{reject(this.status)}};ajax.withCredentials=true;ajax.send()}).catch(function(err){console.log(err)})}else{console.log(cached_pid+' canceled.')}break}else{t=t.parentNode}}}</script>
                                     <?php
                                         };
                                     ?>

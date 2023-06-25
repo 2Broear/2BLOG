@@ -35,10 +35,21 @@
                     $ch = curl_init();
                     curl_setopt($ch, CURLOPT_URL, $auth_url);
                     curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  // 连接时间
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 10);  // 连接超时
+                    // curl_setopt($ch, CURLOPT_RETRIES, 3);  // 重试连接
                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                     $response = curl_exec($ch);
+                    // if ($response === false) {
+                    //     $errno = curl_errno($ch);
+                    //     $error = curl_error($ch);
+                    //     echo "cURL Error ($errno): $error\n";
+                    // }else{
+                    //     echo $response;
+                    // }
+                    echo $response===false ? 'cURL Error ('.curl_errno($ch).'): '.curl_error($ch).'\n' : $response;
                     curl_close($ch);
-                    echo $response;
+                    // echo $response;
                 }else{
                     print_r(json_encode($res));
                 }

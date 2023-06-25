@@ -74,6 +74,30 @@
             opacity: .35;
             pointer-events: none;
         }
+        
+        .friends-boxes .deals.rcmd .inbox.girl::after{
+            width: 66px;
+            right: -6px;
+            bottom: -6px;
+        }
+        .friends-boxes .deals.tech .inbox.girl::after{
+            width: 52px;
+            right: -6px;
+            bottom: -12px;
+        }
+        .friends-boxes .deals.tech .inbox{
+            max-width: calc(100%/5.8);
+            max-width: calc(100%/7.2);
+            /*min-height: auto;*/
+            min-height: 66px;
+        }
+        .friends-boxes .deals.tech .inbox .inbox-headside img{
+            border-top-left-radius: 50%;
+        }
+        .friends-boxes .deals.tech .inbox .inbox-aside span.lowside-description p{
+            margin-top: 5px;
+            display: none;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -126,12 +150,12 @@
                         if(count($tech_links)>0){
                 ?>
                             <div class="inbox-clip"><h2 id="exchanged"> 技术侧重 </h2></div>
-                            <div class="deals exchanged flexboxes"><?php site_links($tech_links, 'full'); ?></div>
+                            <div class="deals tech exchanged flexboxes"><?php site_links($tech_links, 'full'); ?></div>
                 <?php
                         }
                         if(count($rcmd_links)>0){
                 ?>
-                            <div class="inbox-clip"><h2 id="rcmded"> 鉴亦有荐 </h2></div>
+                            <div class="inbox-clip"><h2 id="rcmded"> 荐亦有鉴 </h2></div>
                             <div class="deals rcmd flexboxes"><?php site_links($rcmd_links, 'half'); ?></div>
 				<?php 
                         };

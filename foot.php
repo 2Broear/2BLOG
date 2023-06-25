@@ -46,7 +46,7 @@
                     //         }
                     //     }
                     // }else{
-                        sto_enqueue(list, true, function(i){ //async_enqueue
+                        async_enqueue(list, true, function(i){ //sto_enqueue
                             list[i].classList.add('active');
                         }, 200);
                     // }

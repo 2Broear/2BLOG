@@ -44,10 +44,10 @@ function words_typer(el, str, speed=100){
                 }
             }, 300);
         }).catch(function(err){
-            console.log(err)
+            console.warn(err)
         });
     }catch(err){
-        console.log(err);
+        console.warn(err);
     }
 };
 export { words_typer };

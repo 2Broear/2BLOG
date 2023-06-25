@@ -12,11 +12,15 @@
         #special-img{
             position: absolute;
             top: 0;
-            left: 15px;
-            right: auto;
+            /*left: 15px;*/
+            /*left: 0;*/
+            /*right: auto;*/
+            right: 0;
             height: 100%;
             /*animation: dancing ease-in-out 2.5s 0s infinite;*/
             /*animation-fill-mode: both;*/
+            min-width: 256px;
+            max-width: 538px;
         }
         #special-img video{
             height: 100%;
@@ -36,6 +40,38 @@
             font-size: 4.5em;
             padding: 17% 0;
         }
+        .resource-windows div{
+            /*margin: 15px 15px auto auto;*/
+            margin: 15px 25px auto auto;
+        }
+        /*.recommendation{margin-left:25px;}*/
+        /*.resource-windows div:first-child{*/
+        /*    margin-left: auto;*/
+        /*}*/
+        /*.special-display ul:hover #special-img{*/
+        /*    width: 36%;*/
+        /*}*/
+        /*body.dark .banner .banner-inside ul{*/
+        /*    filter: invert(1);*/
+        /*}*/
+        @keyframes colorfull{
+            0%{
+                filter: hue-rotate(0deg);
+            }
+            100%{
+                filter: hue-rotate(360deg);
+            }
+        }
+        .banner .banner-inside ul{
+            max-height: 268px;
+            /*filter: invert(1);*/
+            animation: colorfull ease 3s .5s;
+        }
+        <?php
+            $baas = get_option('site_leancloud_switcher');
+            $weblog = get_option('site_techside_switcher');
+            if($weblog) echo '.special-display{width:30.5%;/*width:32%*/}';
+        ?>
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -149,6 +185,27 @@
         </div>
     </div>
     <div class="main-top-part flexboxes wow fadeInUp" data-wow-delay="0.3s">
+        <!-- 右 -->
+        <div class="resource-windows flexboxes">
+            <?php
+                $load_arr = [get_cat_by_template('news'), get_cat_by_template('notes')];
+                if($weblog)  array_push($load_arr, get_cat_by_template('weblog'));
+                $load_arr_count = count($load_arr);
+                for($i=0;$i<$load_arr_count;$i++){
+            ?>
+                <div id="news-window">
+                    <span class='resource-windows-top'>
+                        <span class='resource-windows-top_inside'><!--<span id="icon-resource"></span>--></span>
+                        <h3><?php echo $load_arr[$i]->name; ?></h3>
+                    </span>
+                    <ul class="news-list" id="mainNews">
+                        <?php recent_posts_query($load_arr[$i]->term_id, true); ?>
+                    </ul>
+                </div>
+            <?php
+                }
+            ?>
+        </div>
         <!-- 左 -->
         <div class="special-display">
             <ul class="flexboxes">
@@ -157,39 +214,13 @@
                 </li>
             </ul>
         </div>
-        <!-- 右 -->
-        <div class="resource-windows flexboxes">
-            <div id="news-window">
-                <span class='resource-windows-top'>
-                <span class='resource-windows-top_inside'>
-                    <span id="icon-resource"></span>
-                </span>
-                <h3><?php $news_temp = get_cat_by_template('news');echo $news_temp ? $news_temp->name : '近期文章'; ?></h3>
-                </span>
-                <ul class="news-list" id="mainNews">
-                    <?php recent_posts_query($news_temp->term_id, true); ?>
-                </ul>
-            </div>
-            <div id="download-window">
-                <span id="download-window-top" class='resource-windows-top'>
-                <span class='resource-windows-top_inside'>
-                    <span id="icon-download"></span>
-                </span>
-                <h3><?php $note_temp = get_cat_by_template('notes');echo $note_temp ? $note_temp->name : '笔记栈'; ?></h3>
-                </span>
-                <ul class="download-list" id="rcmdNewsHside">
-                    <?php recent_posts_query($note_temp->term_id, true); ?>
-                </ul>
-            </div>
-        </div>
     </div>
     <!--<div class="main-middle-allpart"></div>-->
     <div class="main-bottom-allpart">
         <!-- 左文窗 ，右图-->
         <div class="main-bottom-ta">
         <?php
-            $baas = get_option('site_leancloud_switcher');
-            if(get_option('site_techside_switcher')){
+            if(!$weblog){
                 
         ?>
             <div id="tech-acg-inside_tech" class="flexboxes wow fadeInUp" data-wow-delay="0.15s">
@@ -226,7 +257,7 @@
                 <div id="tech-acg-inside_acg-allpart">
                     <div class="newsBox-supTitle flexboxes" id="acg_window-top">
                         <span class="newsBox-supTitle-iDescription" id="icon-acg">
-                            <em><?php echo $tag_sw ? 'TAG' : 'ACG'; ?></em><i class="icom icon-acg"></i>
+                            <em><?php echo $acg_sw ? 'ACG' : 'TAG'; ?></em><i class="icom icon-acg"></i>
                         </span>
                         <h2> ACG はすぐに TAG </h2><!-- ACG · TAG -->
                     </div>

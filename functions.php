@@ -461,6 +461,7 @@
         $res = 'unknown_api_refrence';
         if($api){
             global $post, $cdn_switch;
+            $exe = $exe ? $exe : 0;
             $cdn_api = get_option('site_cdn_api');
             $pid = $pid ? $pid : $post->ID;
             $api_file = '/'.$api.'.php';
@@ -1393,9 +1394,13 @@
             $link_notes = $link->link_notes;
             $link_target = $link->link_target;
             $link_rating = $link->link_rating;
+            $link_url = $link->link_url;
+            $link_name = $link->link_name;
+            $link_desc = $link->link_description;
             $status = $link->link_visible!='Y' ? ' standby' : '';
             $sex = $link_rating==1 ? ' girl' : '';
             $ssl = $link_rating==10 ? '' : ' https';
+            $rel = $link->link_rel ? $link->link_rel : false;
             $target = !$link_target ? '_blank' : $link_target;
             $impress = $link_notes&&$link_notes!='' ? '<span class="ssl'.$ssl.'"> '.$link_notes.' </span>' : false;
             $avatar = !$link->link_image ? 'https:' . get_option('site_avatar_mirror') . 'avatar/' . md5(mt_rand().'@rand.avatar') . '?s=300' : $link->link_image;
@@ -1406,14 +1411,17 @@
             }
             switch ($frame) {
                 case 'full':
-                    $avatar_status = $status==' standby' ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link->link_name.'" draggable="false">';
-                    echo '<div class="inbox flexboxes'.$status.$sex.'"><div class="inbox-headside flexboxes">'.$avatar_status.'</div>'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>'.$avatar_status_bg.' <a href="'.$link->link_url.'" target="'.$target.'" rel="'.$link->link_rel.'"></a>
+                    $avatar_statu = $status==' standby' ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link_name.'" draggable="false">';
+                    $rel_statu = $rel ? $rel : 'friends';
+                    echo '<div class="inbox flexboxes'.$status.$sex.'"><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span><span class="lowside-description"><p>'.$link_desc.'</p></span></a></div>';
                     break;
                 case 'half':
-                    echo '<div class="inbox flexboxes'.$status.$sex.'">'.$impress.'<a href="'.$link->link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$link->link_rel.'"><span class="lowside-title"><h4>'.$link->link_name.'</h4></span><span class="lowside-description"><p>'.$link->link_description.'</p></span></a></div>'; //<em></em>
+                    $rel_statu = $rel ? $rel : 'recommends';
+                    echo '<div class="inbox flexboxes'.$status.$sex.'">'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span><span class="lowside-description"><p>'.$link_desc.'</p></span></a></div>'; //<em></em>
                     break;
                 default:
-                    echo '<a href="'.$link->link_url.'" class="'.$status.'" title="'.$link->link_name.'" target="'.$target.'" rel="">'.$link->link_name.'</a>';
+                    $rel_statu = $status==' standby' ? 'nofollow' : 'marked';
+                    echo '<a href="'.$link_url.'" class="'.$status.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" >'.$link_name.'</a>';
                     break;
             }
         }

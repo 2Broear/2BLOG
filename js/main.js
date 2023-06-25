@@ -9,11 +9,12 @@
         console.log(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2BROEAR %c Release https://github.com/2Broear/2BLOG %c `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
     })();
     
-    
+    // if(!raf_available){
+        raf_available = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+    // }
     //https://www.jb51.net/article/216692.htm
     function loadlazy(imgs,offset=0, scroll=true){
         const imglist = document.querySelectorAll(imgs),
-            //   raf_available = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame,
               loadimg = "https://img.2broear.com/images/loading_3_color_tp.png";
         if(imglist.length<=0) return;
         var timer_throttle = null,
@@ -215,7 +216,7 @@
     async function async_enqueue(list, enqueue, callback, ms=100){
         if(!list[0]) return;
         for(let i=0,listLen=list.length;i<listLen;i++){
-            if(callback&&typeof callback==='function') await setTimeout(()=>callback(i), i*ms); //new Promise((resolve)=>{resolve(setTimeout(()=>callback(i), i*ms))})
+            if(callback&&typeof callback==='function') await setTimeout(()=>callback(i), i*ms);
         }
     }
     

@@ -30,7 +30,7 @@
                     return;
                 }
                 t.parentNode.classList.add("disabled");  // incase multi click (first generating only)
-                send_ajax_request("get", "<?php echo get_api_refrence('html2canvas',true);//echo custom_cdn_src('src',true).'/plugin/api.php?auth=html2canvas&pid='.$post_ID.'&exec=1'; ?>", false, function(res){
+                send_ajax_request("get", "<?php echo custom_cdn_src('src',true).'/plugin/html2canvas.php?pid='.$post_ID;//get_api_refrence('html2canvas',true);//echo custom_cdn_src('src',true).'/plugin/api.php?auth=html2canvas&pid='.$post_ID.'&exec=1'; ?>", false, function(res){
                     try{
                         if(!res) throw new Error('signature error.'); //if(sign_.err) return;
     					// generate poster QRCode (async)
@@ -298,6 +298,50 @@
             ?>
             </div>
             <script>
+        	    const comments = {
+                    info: document.querySelector('.wp_comment_box form .userinfo'),
+                    init: function(fields){
+                        this.fields = fields;
+                    },
+                    // test: ()=>console.log(this)
+                };
+                Object.defineProperty(comments.init.prototype, 'realtime_avatar', {
+                    value: function() {
+                        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                              email = this.fields.querySelector('input[type=email]'),
+                              avatar = this.fields.querySelector('img.avatar');
+                        if(!email || !avatar){
+                            this.realtime_fields = comments.info;
+                            throw new Error('email-field not exist, fallback to preset node..');
+                        };
+                        email.onchange = function(e){
+                            let mail = this.value;
+                            if(!regex.test(mail)){
+                                console.log('invalid email.');
+                                return;
+                            };
+                            send_ajax_request("get", '<?php echo custom_cdn_src(1,true).'/plugin/gravatar.php' ?>?jump=0&email='+mail, false, (res)=>{
+                                try{
+                                    let resed = JSON.parse(res);
+                                    resed.code==200 ? avatar.setAttribute('src',resed.msg) : console.warn(resed.err);
+                                }catch(e){
+                                    avatar.setAttribute('src',res);
+                                }
+                            });
+                        }
+                    }
+                });
+                Object.defineProperty(comments.init.prototype, 'realtime_fields', {
+                    get(){
+                        return this.fields;
+                    },
+                    set(field){
+                        this.fields = field;
+                    }
+                });
+                const comments_init = new comments.init(comments.info);
+                comments_init.realtime_avatar();
+                //..
                 const comment_box = document.querySelector(".wp_comment_box"),
                       comment_form = comment_box.querySelector("form"),
                       placeholder = comment_box.querySelector("textarea").placeholder,

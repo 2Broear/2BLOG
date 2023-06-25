@@ -76,18 +76,19 @@
                             	serverChan: '<?php echo get_option('site_comment_serverchan') ?>',
                             	<?php
                             	    echo get_option('site_lazyload_switcher') ? 'lazyLoad: true,' : 'lazyLoad: false,';
-                            	    if(get_option('site_cdn_switcher')){
-                            	        echo 'imgCdn: "'.custom_cdn_src('img',true).'", srcCdn: "'.custom_cdn_src('src',true).'", apiCdn: "'.custom_cdn_src(1,true).'/plugin",'; //custom_cdn_src('api',true)
+                            	    $cdn_sw = get_option('site_cdn_switcher');
+                            	    if($cdn_sw){
+                            	        $plugin_path = custom_cdn_src(1,true).'/plugin';
+                            	        echo 'imgCdn: "'.custom_cdn_src('img',true).'", srcCdn: "'.custom_cdn_src('src',true).'", apiCdn: "'.$plugin_path.'",'; //custom_cdn_src('api',true)
                             	    }
                         	        echo get_option("site_wpwx_notify_switcher") ? 'wxNotify: true,' : 'wxNotify: false,';
-                        	       // if(get_option('site_cdn_api')){
-                        	       //     echo get_option('site_chatgpt_auth') ? 'apiCdn: "'.get_api_refrence('wpwx-notify',true).'",' : 'apiCdn: false,';
-                            	   // }
                             	?>
                             	posterImg: '<?php echo get_postimg(); ?>',
-                            // 	rootPath: '<?php echo false;//get_bloginfo('template_directory'); ?>',
                             	adminMd5: '<?php echo md5(get_bloginfo('admin_email')) ?>',
-                            	avatarCdn: '<?php echo get_option("site_avatar_mirror") ?>avatar/',
+                            	avatarCdn: '<?php echo get_option("site_avatar_mirror").'avatar/' ?>',
+                            	<?php
+                            	    if($cdn_sw) echo 'avatarApi: "'.$plugin_path.'/gravatar.php?jump=0&email=",'; //api.paugram.com/gravatar/?email='; custom_cdn_src(0,true).'/plugin
+                            	?>
                             	placeholder: '快来玩右下角的“涂鸦画板”！'
                             });
                             // reply at current floor
@@ -222,7 +223,7 @@
                     </span>
                     <span class="preview">
                         <?php
-                            echo '<img '.$lazysrc.'="'.get_option('site_contact_wechat').'" alt="wechat" />';
+                            echo '<img src="'.get_option('site_contact_wechat').'" alt="wechat" />'; //'.$lazysrc.'
                         ?>
                     </span>
                   </a>
@@ -327,7 +328,7 @@
                         echo '<a href="https://www.foreverblog.cn/go.html" target="_blank" rel="nofollow"><em class="warmhole" style="background:url('.custom_cdn_src('img',true).'/images/wormhole_4_tp_ez.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
                     }
                 ?>
-                <a href="https://notbyai.fyi" target="_blank" rel="nofollow"><img src="https://notbyai.fyi/wp-content/themes/notbyai/img/not-by-ai.svg" alt="foreverblog" style="height: 15px;filter:invert(0.5);"></a>
+                <a href="https://notbyai.fyi" target="_blank" rel="nofollow"><img src="<?php custom_cdn_src('img'); ?>/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);"></a>
             </p>
           </ul>
           <ul style="text-align:right">
@@ -418,8 +419,8 @@
             }
     ?>
             const lazyimg = document.querySelectorAll("body img[data-src]"),
-                  loading = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png",
-                  raf_available = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+                  loading = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png";
+            var raf_available = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
             if(lazyimg[0]){
                 var timer_throttle = null,
                     time_delay = 500,
@@ -441,8 +442,10 @@
                                     eachimg.onload=function(){
                                         if(this.getAttribute('src')===datasrc){
                                             res.splice(res.indexOf(this), 1);  // 移除已加载图片数组（已赋值真实 src 情况下）
+                                            this.onload = null;  //fix bug: can't modify img-src(this.src = datasrc;)
                                         }else{
                                             this.removeAttribute('data-src'); // disable loading
+                                            // bug: can't modify img-src
                                             this.src = datasrc;  // this.src will auto-fix [http://] prefix
                                             time_delay = 1500;  //increase delay (decrease request)
                                             console.log(time_delay);

@@ -144,6 +144,7 @@
     /*text-decoration: underline;*/
     color: var(--theme-color);
     font-weight: bold;
+    opacity: 1;
 }
 .friends-boxes .deals .inboxSliderCard .slideBox a{
     color: var(--preset-8);
@@ -188,6 +189,7 @@
 	margin-left: auto;
 	text-align: left;
 	padding: 0 15px;
+	white-space: nowrap;
 }
 /* .friends-boxes .deals .inbox:hover > .inbox-headside.squared img {border-radius: 50%;} */
 /*.friends-boxes .deals .inbox:hover > .inbox-headside{*/

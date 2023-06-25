@@ -9,6 +9,14 @@
 <head>
     <link type="text/css" rel="stylesheet" href="<?php echo(custom_cdn_src()); ?>/style/news.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
+    <style>
+        body.dark .news-window:nth-child(odd){
+            box-shadow: none;
+        }
+        body.dark .news-window:nth-child(odd) .news-window-inside{
+            background: none;
+        }
+    </style>
 </head>
 <body class="<?php theme_mode(); ?>">
     <div class="content-all">

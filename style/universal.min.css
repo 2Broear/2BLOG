@@ -844,7 +844,7 @@ i.arrow-down::after{content:'\e908'}
 .article-n-only-input{background:rgba(255,255,255,0.5) !important}
 .footer-all{width:100%;height:auto;padding:50px 0 0 0;font-weight:normal;font-style:normal;/*position:relative;*/}
 .main-footer-all{width:100%;height:auto;padding-top:5%;position:relative;margin:0 auto;font-weight:normal;font-style:normal}
-.footer-detector{overflow:hidden;max-width:1102px;margin:0 auto;font-size:1.5rem;font-weight:normal;font-family:'Advent Pro Light',sans-serif;letter-spacing:10px;position:relative;opacity:.66}
+.footer-detector{font-style:italic;overflow:hidden;max-width:1102px;margin:0 auto;font-size:1.5rem;font-weight:normal;font-family:'Advent Pro Light',sans-serif;letter-spacing:10px;position:relative;opacity:.66}
 .footer-detector::before{content:'';width:25%;height:1px;background-color:currentColor;display:block;float:left;position:relative;opacity:.5;margin:15px 0 15px 36px}
 .footer-detector::after{content:'';width:25%;height:1px;background-color:var(--theme-color);display:block;float:right;position:relative;opacity:.5;margin:15px 36px 15px 0}
 .footer-detector #end-end{color:currentColor;display:inline-block}
