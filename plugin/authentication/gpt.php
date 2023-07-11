@@ -9,6 +9,7 @@
         $pids = get_post($pid);
         $post_type = $pids->post_type;
         $post_exist = get_post_status($pid); //!is_null(get_post($pid)); //post_exists($title);//
+        if(in_chatgpt_cat($pids)){
         if($pid&&$post_exist){
             define('CACHED_PATH', './chat_data.php');
             // header("Access-Control-Allow-Credentials: true");//携带cookie
@@ -30,7 +31,7 @@
                     }
                     return; //terminate after exec unset.
                 }else{
-                    api_err_handle('request illegal, login wordpress as admin required.',403);
+                    api_err_handle('request illegal, login to wordpress as admin is required.',403);
                 }
             }else{
                 define('CHATGPT_LIMIT', 4096); //296 for completion_tokens placeholder
@@ -80,7 +81,7 @@
                 // print_r('second request token: '.count_chaters($requirements,1,1)); //.count_chaters($requirements,1,1,0,true))
                 // print_r(count_chaters($requirements,1,1,0,true,true));
                 
-                function curlRequest($question, $maxlen=1024, $additional='，注意精简字数') {
+                function curlRequest($question, $maxlen=1024, $additional='，注意精简字数') { //内容
                     $merge_ingore = get_option('site_chatgpt_merge_ingore');
                     $openai_model = get_option('site_chatgpt_model');
                     $openai_proxy = get_option('site_chatgpt_proxy','https://api.openai.com');
@@ -231,11 +232,14 @@
                 }
             }
         }else{
-            $response = api_err_handle('param err, requested pid not found or exists',200,true);
+            $response = api_err_handle('request error, pid param not found or exist.',200,true);
+        }
+        }else{
+            $response = api_err_handle('request illegal, invalid post category.',400,true); //in_chatgpt_cat()
         }
         // test only // http://www.edbiji.com/doccenter/showdoc/3572/nav/92809.html
         print_r($response); // print_r(json_encode($response));
     }else{
-        api_err_handle('params missing, SERVER QUERY_STRING NOT EXISTS');
+        api_err_handle('request denied, param QUERY_STRING not found or exist.',400);
     }
 ?>

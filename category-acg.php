@@ -113,7 +113,7 @@
                                 $cat_slug = $the_cat->slug;  // print_r($the_cat);
                                 $cat_count = $the_cat->count;
                 ?>
-                                <div class="<?php echo $cat_slug ?> blink" data-count="<?php echo $cat_count; ?>">
+                                <div class="<?php echo $cat_slug;echo get_option('site_animated_counting_switcher') ? ' blink' : false; ?>" data-count="<?php echo $cat_count; ?>">
                                     <a href="<?php echo get_category_link($the_cat->term_id) ?>" rel="nofollow">
                                         <h2><?php echo $datadance ? "0" : $cat_count; ?><sup>+</sup></h2>
                                         <p><?php echo $the_cat->name.'/'.strtoupper($cat_slug); ?></p>

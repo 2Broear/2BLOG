@@ -1321,11 +1321,11 @@
                                 $preset = '//cravatar.cn/';
                                 $arrobj = array(
                                     array('name'=>'Gravatar', 'href'=>'//gravatar.com/'),
+                                    array('name'=>'V2EX', 'href'=>'//cdn.v2ex.com/'),
                                     array('name'=>'Cravatar', 'href'=>'//cravatar.cn/'),
                                     array('name'=>'Geekzu', 'href'=>'//sdn.geekzu.org/'),
                                     array('name'=>'LOLI', 'href'=>'//gravatar.loli.net/'),
                                     array('name'=>'SEP', 'href'=>'//cdn.sep.cc/'),
-                                    array('name'=>'V2EX', 'href'=>'//cdn.v2ex.com/'),
                                     array('name'=>'2Bavatar', 'href'=>'//gravatar.2broear.com/'),
                                 );
                                 // $md5mail = md5("wapuu@wordpress.example"); //get_bloginfo('admin_email')
@@ -2299,7 +2299,7 @@
                             <?php
                                 $opt = 'site_animated_counting_switcher';
                                 $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">启用位于页面背景上的数字自动递增到目标值动画（目前支持归档及漫游影视页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:teal" class="btn">计数动画</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">启用位于页面背景上的数字自动递增到目标值动画（目前支持归档及漫游影视页面，若此项修改提交后无效 可通过 更新/发布/删除 文章重建缓存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:teal" class="btn">计数动画</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -2346,23 +2346,6 @@
                                 </td>
                             </tr>
                             <?php
-                                $archive_cat = $async_opts[0];
-                                if(in_array($archive_cat->slug, $async_array)){
-                            ?>
-                                <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
-                                    <?php echo '<th scope="row">— '.$archive_cat->name.' 数量</th>'; ?>
-                                    <td>
-                                        <?php
-                                            $opt = 'site_async_archive';
-                                            $value = get_option($opt);
-                                            $preset = 8;  //默认填充数据
-                                            if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                            echo '<p class="description" id="site_bar_pixiv_label">归档默认/手动加载数量（默认 8</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                        ?>
-                                    </td>
-                                </tr>
-                            <?php
-                                }
                                 $acg_cat = $async_opts[1];
                                 if(in_array($acg_cat->slug, $async_array)){
                             ?>
@@ -2397,25 +2380,42 @@
                                 </tr>
                             <?php
                                 }
+                                $archive_cat = $async_opts[0];
+                                if(in_array($archive_cat->slug, $async_array)){
+                            ?>
+                                <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
+                                    <?php echo '<th scope="row">— '.$archive_cat->name.' 数量</th>'; ?>
+                                    <td>
+                                        <?php
+                                            $opt = 'site_async_archive';
+                                            $value = get_option($opt);
+                                            $preset = 8;  //默认填充数据
+                                            if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                            echo '<p class="description" id="site_bar_pixiv_label">归档默认/手动加载数量，默认 8（为缓解数据库请求压力，归档已启用数据库索引，若此项修改提交后无效 可通过<b> 更新/发布/删除 </b>文章重建缓存</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        ?>
+                                    </td>
+                                </tr>
+                            <?php
+                                }
                             ?>
                     <!-- Archives options -->
-                    <tr valign="top">
-                        <th scope="row">归档 - 分类统计</th>
-                        <td>
-                            <?php
-                                $opt = 'site_async_archive_stats';
-                                $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示当年已发布文章分类统计（默认开启，可能存在的性能问题</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Categorize Posts</b></label>';
-                            ?>
-                        </td>
-                    </tr>
                     <tr valign="top">
                         <th scope="row">归档 - 报表范围</th>
                         <td>
                             <?php
                                 $opt = 'site_async_archive_contributions';
                                 $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示<b>全年</b>（去年-今年当月）热度报表（默认显示当年/月份</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Yearly Contributions</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示<b>全年</b>（去年-今年当月）热度报表（默认显示当年/月份，若开启此项无效 可通过<b> 更新/发布/删除 </b>文章重建归档缓存索引，<u>或等待第二天自动刷新缓存</u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Yearly Contributions</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">归档 - 分类统计</th>
+                        <td>
+                            <?php
+                                $opt = 'site_async_archive_stats';
+                                $status = check_statu($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示当年已发布文章分类统计（默认开启，已修复可能存在的性能问题</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Categorize Posts</b></label>';
                             ?>
                         </td>
                     </tr>

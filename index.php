@@ -65,7 +65,7 @@
         .banner .banner-inside ul{
             max-height: 268px;
             /*filter: invert(1);*/
-            animation: colorfull ease 3s .5s;
+            /*animation: colorfull ease 3s .5s;*/
         }
         <?php
             $baas = get_option('site_leancloud_switcher');

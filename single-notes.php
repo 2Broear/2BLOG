@@ -2,7 +2,7 @@
 /*
     Template Name: 笔记模板
     Template Post Type: post, notes
-*/
+*///echo in_chatgpt_cat(get_post(1)) ? 1 : 0;
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -100,25 +100,4 @@
 			});
         }
     </script>
-    <?php
-        if(get_option('site_chatgpt_switcher')){ //$chatgpt_sw&&$chatgpt_cat
-    ?>
-        <script type="module">
-            /*
-             *
-             * chatGPT AI ARTICLE-DESCRIPTION SHORT-CUTS
-             *
-             */
-            const responser = document.querySelector('.chatGPT .response');
-            if(responser){
-                import('<?php custom_cdn_src(); ?>/js/module.js').then((module) => {
-                    send_ajax_request("get", "<?php echo get_api_refrence('gpt'); ?>", false, (res)=>module.words_typer(responser, res, 25));
-                });
-            }
-            // import { words_typer } from '<?php //custom_cdn_src(); ?>/js/module.js';
-            // send_ajax_request("get", "<?php //echo get_api_refrence('gpt'); ?>", false, (res)=>words_typer(responser, res, 25));
-        </script>
-    <?php
-        }
-    ?>
 </body></html>

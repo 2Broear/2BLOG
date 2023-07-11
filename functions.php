@@ -484,20 +484,23 @@
     }
     
     // 挂载文章 chatGPT AI 摘要 mount article chatgpt
-    function article_ai_abstract($content) {
-        if(get_option('site_chatgpt_switcher')&&is_single()){
-            global $post;
-            $chatgpt_cat = false;
+    function in_chatgpt_cat($post=null){
+        $chatgpt_cat = false;
+        if(get_option('site_chatgpt_switcher')){  //&&is_single() //canceled for api calling
+            if(!$post) global $post;  // global $post;
             $chatgpt_array = explode(',', get_option('site_chatgpt_includes'));
             $chatgpt_array_count = count($chatgpt_array);
             if($chatgpt_array_count>=1){
                 for($i=0;$i<$chatgpt_array_count;$i++){
-                    if(in_category($chatgpt_array[$i])) $chatgpt_cat=true;
+                    if(in_category($chatgpt_array[$i], $post)) $chatgpt_cat=true;
                 }
             }
-            if($chatgpt_cat) $content = '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b> 文章摘要 AI</b><span>chatGPT</span></p><p class="response load">standby chatGPT responsing..</p></blockquote>'.$content; // || $post->ID===5291 || $post->ID==286/*2872*/
         }
-        return $content;
+        return $chatgpt_cat;
+    }
+    function article_ai_abstract($content) {
+        $chatgpt_cat = in_chatgpt_cat();
+        return $chatgpt_cat&&is_single() ? '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b> 文章摘要 AI</b><span>chatGPT</span></p><p class="response load">standby chatGPT responsing..</p></blockquote><script type="module">const responser = document.querySelector(".chatGPT .response");try {import("'.custom_cdn_src('src',1).'/js/module.js").then((module)=>send_ajax_request("get", "'.get_api_refrence("gpt",true).'", false, (res)=>module.words_typer(responser, res, 25)));}catch(e){console.warn("dom responser not found, check backend.",e)}</script>'.$content : $content;
     }
     add_filter( 'the_content', 'article_ai_abstract', 10);
     
@@ -786,12 +789,29 @@
         unset($wpdb);
         return $res;
     }
+    function check_request_param(string $param){
+        $res = null;
+        if(!isset($_REQUEST[$param])) return $res;
+        // $req = filter_var($_REQUEST[$param], FILTER_SANITIZE_STRING);
+        switch (true) {
+            case isset($_GET[$param]):
+                $res = $_GET[$param];
+                break;
+            case isset($_POST[$param]):
+                $res = $_POST[$param];
+                break;
+            default:
+                isset($_COOKIE[$param]) ? $res = $_COOKIE[$param] : false;
+                break;
+        }
+        return $res;
+    }
     // Ajax PostData calls
     function ajaxGetPosts(){
-        $cid = $_POST['cid'];
-        $type = $_POST['type'];
-        $limit = $_POST['limit'];
-        $offset = $_POST['offset'];
+        $cid = check_request_param('cid');
+        $type = check_request_param('type');
+        $limit = check_request_param('limit');
+        $offset = check_request_param('offset');
         // $private = 'Accesing Private Content';
         $prefix = get_category($cid)->slug;
         if($type==='archive'){
@@ -801,63 +821,67 @@
         }else{
             $cur_posts = get_wpdb_pids_by_cid($cid, $limit, $offset);
         }
-        // wp_verify_nonce($_POST['_ajax_nonce']);
-        check_ajax_referer($prefix.'_posts_ajax_nonce');  // 检查 nonce
-        // check_ajax_referer('my_acg_ajax_nonce',$_POST['nonce']);
         $res_array = array();
-        $cur_posts_count = count($cur_posts);
-        for($i=0;$i<$cur_posts_count;$i++){
-            $each_posts = $cur_posts[$i];
-            $this_post = get_post($each_posts->ID);
-            $pid = $this_post->ID;
-            $post_class = new stdClass();
-            // universal
-            $post_class->id = $pid;
-            $post_class->title = $this_post->post_title;
-            $post_class->subtitle = get_post_meta($pid, "post_feeling", true);
-            switch ($type) {
-                case 'acg':
-                    $post_class->link = get_the_permalink($pid);
-                    $post_class->poster = get_postimg(0, $pid, true);
-                    $post_class->excerpt = get_the_excerpt($this_post);
-                    $post_class->rcmd = get_post_meta($pid, "post_rcmd", true);
-                    $post_class->rating = get_post_meta($pid, "post_rating", true);
-                    break;
-                case 'weblog':
-                    $post_class->tag = get_tag_list($pid);
-                    $post_class->date = date('Y年n月j日', strtotime($this_post->post_date));
-                    $post_class->content = $this_post->post_content;
-                    break;
-                case 'archive':
-                    $prev_posts = $i>0 ? $cur_posts[$i-1] : $cur_posts[$i];
-                    $prev_post = get_post($prev_posts->ID);
-                    $this_cats = get_the_category($this_post);
-                    $cur_slug = $this_cats[0]->slug;
-                    preg_match('/\d{2}-\d{2} /', $this_post->post_date, $this_date);
-                    preg_match('/\d{2}-\d{2} /', $prev_post->post_date, $prev_date);
-                    $unique_date = $this_date[0]!=$prev_date[0] || $each_posts->ID==$cur_posts[0]->ID ? '<div class="timeline">'.$this_date[0].'</div>' : '';
-                    $cat_str = '';
-                    foreach ($this_cats as $cat){
-                        $cat_str .= '<span>'.$cat->name.'</span>';
-                    };
-                    $this_title = $this_post->post_title;
-                    $post_class->title = $cur_slug==$news_temp ? '<b>'.$this_title.'</b>' : $this_title;
-                    $post_class->mark = $cur_slug==$news_temp ? " article" : "";
-                    $post_class->link = get_the_permalink($this_post);
-                    $post_class->date = $unique_date;
-                    $post_class->cat = $cat_str;
-                    break;
-                default:
-                    // code...
-                    break;
+        // wp_verify_nonce($_POST['_ajax_nonce']);
+        $ajax_referer = check_ajax_referer($prefix.'_posts_ajax_nonce');  // 检查 nonce [24h valid max]
+        // https://developer.wordpress.org/reference/functions/check_ajax_referer/
+        if(false===$ajax_referer){
+            array_push($res_array, ['ajax_nonce verification failure']);
+        }else{
+            $cur_posts_count = count($cur_posts);
+            for($i=0;$i<$cur_posts_count;$i++){
+                $each_posts = $cur_posts[$i];
+                $this_post = get_post($each_posts->ID);
+                $pid = $this_post->ID;
+                $post_class = new stdClass();
+                // universal
+                $post_class->id = $pid;
+                $post_class->title = $this_post->post_title;
+                $post_class->subtitle = get_post_meta($pid, "post_feeling", true);
+                switch ($type) {
+                    case 'acg':
+                        $post_class->link = get_the_permalink($pid);
+                        $post_class->poster = get_postimg(0, $pid, true);
+                        $post_class->excerpt = get_the_excerpt($this_post);
+                        $post_class->rcmd = get_post_meta($pid, "post_rcmd", true);
+                        $post_class->rating = get_post_meta($pid, "post_rating", true);
+                        break;
+                    case 'weblog':
+                        $post_class->tag = get_tag_list($pid);
+                        $post_class->date = date('Y年n月j日', strtotime($this_post->post_date));
+                        $post_class->content = $this_post->post_content;
+                        break;
+                    case 'archive':
+                        $prev_posts = $i>0 ? $cur_posts[$i-1] : $cur_posts[$i];
+                        $prev_post = get_post($prev_posts->ID);
+                        $this_cats = get_the_category($this_post);
+                        $cur_slug = $this_cats[0]->slug;
+                        preg_match('/\d{2}-\d{2} /', $this_post->post_date, $this_date);
+                        preg_match('/\d{2}-\d{2} /', $prev_post->post_date, $prev_date);
+                        $unique_date = $this_date[0]!=$prev_date[0] || $each_posts->ID==$cur_posts[0]->ID ? '<div class="timeline">'.$this_date[0].'</div>' : '';
+                        $cat_str = '';
+                        foreach ($this_cats as $cat){
+                            $cat_str .= '<span>'.$cat->name.'</span>';
+                        };
+                        $this_title = $this_post->post_title;
+                        $post_class->title = $cur_slug==$news_temp ? '<b>'.$this_title.'</b>' : $this_title;
+                        $post_class->mark = $cur_slug==$news_temp ? " article" : "";
+                        $post_class->link = get_the_permalink($this_post);
+                        $post_class->date = $unique_date;
+                        $post_class->cat = $cat_str;
+                        break;
+                    default:
+                        // code...
+                        break;
+                }
+                // private
+                // if($this_post->post_status==='private'){
+                //     $post_class->title = $private;
+                //     $post_class->content = $private;
+                //     $post_class->subtitle = $private;
+                // }
+                array_push($res_array, $post_class);
             }
-            // private
-            // if($this_post->post_status==='private'){
-            //     $post_class->title = $private;
-            //     $post_class->content = $private;
-            //     $post_class->subtitle = $private;
-            // }
-            array_push($res_array, $post_class);
         }
         print_r(json_encode($res_array));
         die();
@@ -936,7 +960,8 @@
     }
     add_filter( 'the_content', 'article_index');
     
-    // 自定义文章归档
+    
+    // 文章归档查询
     function get_post_archives($type="yearly", $post_type="post", $limit=""){
         $archives = wp_get_archives(
             array(
@@ -974,6 +999,197 @@
         }
         return $array;
     }
+    
+    
+    // 文章归档统计
+    function the_archive_stats(){
+        $output = get_option('site_archive_count_cache');
+        if(!$output){
+            $archive_yearly = get_post_archives('yearly');
+            $blink = get_option('site_animated_counting_switcher') ? ' blink' : false;
+            foreach ($archive_yearly as $archive){
+                $counts = $archive['count'];
+                $output .= '<div class="'.$blink.'" data-count="'.$counts.'"><a href="'.$archive['link'].'" rel="nofollow"><b>'.$archive['title'].'</b><h1>'.$counts.'</h1><p>篇发布记录</p></a></div>';
+            }
+            update_option('site_archive_count_cache', $output);
+            // unset($archive_yearly);
+        }
+        echo $output;
+    }
+    
+    //文章归档热度（每日更新一次热度表）
+    function the_archive_contributions(){
+        $output = get_option('site_archive_contributions_cache');
+        $GLOBALS['color_light'] = '#9be9a8';
+        $GLOBALS['color_middle'] = '#40c463';
+        $GLOBALS['color_heavy'] = '#30a14e';
+        $GLOBALS['color_more'] = '#216e39';
+        echo '<h5><strong> Contributions view </strong><ul class="cs_tips"><li></li><li style="color:'.$GLOBALS['color_light'].'"></li><li style="color:'.$GLOBALS['color_middle'].'"></li><li style="color:'.$GLOBALS['color_heavy'].'"></li><li style="color:'.$GLOBALS['color_more'].'"></li></ul></h5>';
+        if(!$output){
+            $GLOBALS['archive_daily'] = get_post_archives('daily','post',9999); //$archive_daily
+            global $curYear; //$curYear = gmdate('Y', time() + 3600*8);
+            $curday = gmdate('md', time() + 3600*8); //date('md'); //$today = date('d');
+            $tomon = date('m');
+            $lastYear = $curYear-1;
+            // calculate number of days in a month // https://stackoverflow.com/questions/49612838/call-to-undefined-function-cal-days-in-month-error-while-running-from-server
+            function days_in_month($month, $year){
+                return $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
+            };
+            function archive_contributions_output($days, $the_day, $compare_date, $year){
+                $output = '<span class="'.$the_day.'" data-dates="'.$compare_date.'" data-date="'.$days.'"';
+                foreach ($GLOBALS['archive_daily'] as $archive){
+                    $archive_date = $archive['title'];
+                    preg_match("/$year/", $archive_date, $res);  //output year
+                    if(array_key_exists(0,$res) && $archive_date==$compare_date){
+                        $counts = $archive['count'];
+                        $output .= ' id="edit" data-count="'.$counts.'" style="color:';
+                        if($counts>=4){
+                            $color = $GLOBALS['color_more'];
+                        }else{
+                            switch ($counts) {
+                                case 1:
+                                    $color = $GLOBALS['color_light'];
+                                    break;
+                                case 2:
+                                    $color = $GLOBALS['color_middle'];
+                                    break;
+                                case 3:
+                                    $color = $GLOBALS['color_heavy'];
+                                    break;
+                                default:
+                                    $color = $GLOBALS['color_more'];
+                            };
+                        };
+                        $output .= $color.'"';
+                    }
+                }
+                $output .= '></span>';
+                return $output;
+            }
+            // 全年报表
+            $async_fully_sw = get_option('site_async_archive_contributions');
+            if($async_fully_sw){
+                for($i=1;$i<13;$i++){
+                    $m = days_in_month($i-$tomon, $lastYear);
+                    for($j=1;$j<=$m;$j++){
+                        $days = $j<10 ? $i.'0'.$j : $i.$j;
+                        $the_day = $days==$curday ? 'today' : ($days>$curday ? 'dayto' : false);
+                        $compare_date = $lastYear.'年'.$i.'月'.$j.'日';
+                        if($lastYear<$curYear && $i>$tomon){// && $j>=$otday月份大于等于当前月份，天数大于今天
+                            $output .= archive_contributions_output($days,$the_day,$compare_date,$lastYear);
+                        }
+                    }
+                }
+            }
+            for($i=1;$i<13;$i++){
+                $m = days_in_month($i, $curYear);
+                for($j=1;$j<=$m;$j++){
+                    $days = $j<10 ? $i.'0'.$j : $i.$j;
+                    $the_day = $days==$curday ? 'today' : ($days>$curday ? 'dayto' : false);
+                    $compare_date = $curYear.'年'.$i.'月'.$j.'日';
+                    if($i<$tomon){ // && $j<=date('d')
+                        $output .= archive_contributions_output($days,$the_day,$compare_date,$curYear);
+                    }else if($i==$tomon){
+                        $output .= archive_contributions_output($days,$the_day,$compare_date,$curYear);
+                        // $j<=$today ? archive_contributions_output($days,$the_day,$compare_date,$curYear) : false;
+                    }
+                }
+            }
+            update_option('site_archive_contributions_cache', $output);
+            unset($GLOBALS['archive_daily']);
+        }
+        unset($GLOBALS['color_light'],$GLOBALS['color_middle'],$GLOBALS['color_heavy'],$GLOBALS['color_more']);
+        echo $output;
+    }
+    
+    // 文章归档列表（每日更新一次归档列表）
+    function the_archive_lists(){
+        $output = get_option('site_archive_list_cache');
+        if(!$output){
+            global $async_sw, $use_async, $async_loads, $curYear;
+            $async_stats_sw = get_option('site_async_archive_stats');
+            $news_temp = get_cat_by_template('news');
+            $note_temp = get_cat_by_template('notes');
+            $blog_temp = get_cat_by_template('weblog');
+            $news_temp_id = $news_temp->term_id;
+            $note_temp_id = $note_temp->term_id;
+            $blog_temp_id = $blog_temp->term_id;
+            $news_temp_name = $news_temp->name;
+            $note_temp_name = $note_temp->name;
+            $blog_temp_name = $blog_temp->name;
+            $output_stats = "";
+            // get years that have posts // https://wordpress.stackexchange.com/questions/46136/archive-by-year
+            global $wpdb;
+            $years = $wpdb->get_results( "SELECT YEAR(post_date) AS year FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' GROUP BY year DESC" );
+            // get posts for each year
+            foreach ($years as $year) {
+                $cur_year = $year->year;
+                $cur_posts = get_wpdb_yearly_pids($cur_year, $async_loads, 0);
+                $posts_count = count($cur_posts);
+                $all_pids = get_wpdb_yearly_pids($cur_year, 999, 0);  //list 999+posts
+                $pids_count = count($all_pids);
+                if($async_stats_sw){
+                    $news_count = get_yearly_cat_count($cur_year, $news_temp_id);
+                    $note_count = get_yearly_cat_count($cur_year, $note_temp_id);
+                    $blog_count = get_yearly_cat_count($cur_year, $blog_temp_id);
+                    $rest_count = $pids_count - ($news_count+$note_count+$blog_count);
+                    $output_stats = '<span class="stat_'.$cur_year.' stats">📈📉统计：<b>'.$news_temp_name.'</b> '.$news_count.'篇、 <b>'.$note_temp_name.'</b> '.$note_count.'篇、 <b>'.$blog_temp_name.'</b> '.$blog_count.'篇、 <b>其他类型</b> '.$rest_count.'篇。</span>';
+                }
+                // SAME COMPARE AS $found $limit
+                $load_btns = $posts_count>=$async_loads ? '<sup class="call" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="'.wp_create_nonce($cur_year."_posts_ajax_nonce").'">加载更多</sup>' : '<sup class="call disabled" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="disabled">已全部载入</sup>';
+                $load_icon = $curYear==$cur_year ? ' 🚀 ' : ' 📁 ';
+                $output .= $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$load_icon.$load_btns.'</h2>'.$output_stats.'<ul class="list_'.$cur_year.'">' : '<h2>' . $cur_year . ' 年度发布</h2>'.$output_stats.'<ul class="list_'.$cur_year.'">';
+                $output_each = '';
+                for($i=0;$i<$posts_count;$i++){
+                    $each_posts = $cur_posts[$i];
+                    $prev_posts = $i>0 ? $cur_posts[$i-1] : $cur_posts[$i]; //$i>1 ? $cur_posts[$i-1] : false;
+                    $this_post = get_post($each_posts->ID);
+                    $prev_post = get_post($prev_posts->ID);
+                    $this_cats = get_the_category($this_post);
+                    preg_match('/\d{2}-\d{2} /', $this_post->post_date, $this_date);
+                    preg_match('/\d{2}-\d{2} /', $prev_post->post_date, $prev_date);
+                    // print_r($each_posts->ID);
+                    $this_article = $this_cats[0]->slug==$news_temp->slug ? " article" : false;
+                    $unique_date = $this_date[0]!=$prev_date[0] || $each_posts->ID==$cur_posts[0]->ID ? '<div class="timeline">'.$this_date[0].'</div>' : '';
+                    // print_r($this_cats);
+                    $this_title = $this_post->post_title;
+                    $output_each .= '<li>'.$unique_date.'<a class="link'.$this_article.'" href="'.get_the_permalink($this_post).'" target="_blank">'.$this_title.'<sup>';
+                    $output_cat = '';
+                    foreach ($this_cats as $this_cat){
+                        $output_cat .= '<span id="'.$this_cat->term_id.'">'.$this_cat->name.'</span>';
+                    }
+                    $output_each .= $output_cat;
+                    $output_each .= '</sup></a></li>';
+                };
+                $output .= $output_each;
+                $output .= '</ul>';
+            }
+            update_option('site_archive_list_cache', $output);
+        }
+        echo $output;
+    }
+    
+    
+    /* ------------------------------------------------------------------------ *
+     *  wp_schedule_event 定时任务
+     * ------------------------------------------------------------------------ */
+    function schedule_my_cronjob(){
+        if(!wp_next_scheduled('archive_cronjob_hook')) { 
+            // 设定定时作业执行时间（东八区时间）
+            $timestamp = strtotime('today 00:00am Asia/Shanghai'); // 设置每天上午00点钟执行一次定时作业
+            wp_schedule_event($timestamp, 'daily', 'archive_cronjob_hook'); 
+        }
+    }
+    add_action('wp', 'schedule_my_cronjob');
+    // 自定义定时作业回调函数 //https://www.shephe.com/2023/07/no-pluglin-wordpress-archive-page/
+    function clear_archive_caches() {
+        update_option('site_archive_count_cache', '');  //清除（重建）归档统计
+        update_option('site_archive_contributions_cache', '');  //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
+        update_option('site_archive_list_cache', '');  //解决bug：data-nonce验证数据[24h有效]被db缓存导致xhr请求返回403
+    }
+    add_action('archive_cronjob_hook', 'clear_archive_caches'); //cccitu_cronjob_hook
+    add_action('save_post', 'clear_archive_caches'); // 更新/新建文章时清空 archive caches
+    
     
     // 自定义文章标签
     function get_tag_list($pid, $max=3, $dot="、"){
@@ -1397,7 +1613,8 @@
             $link_url = $link->link_url;
             $link_name = $link->link_name;
             $link_desc = $link->link_description;
-            $status = $link->link_visible!='Y' ? ' standby' : '';
+            $statu = ' standby';
+            $status = $link->link_visible!='Y' ? $statu : '';
             $sex = $link_rating==1 ? ' girl' : '';
             $ssl = $link_rating==10 ? '' : ' https';
             $rel = $link->link_rel ? $link->link_rel : false;
@@ -1411,7 +1628,7 @@
             }
             switch ($frame) {
                 case 'full':
-                    $avatar_statu = $status==' standby' ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link_name.'" draggable="false">';
+                    $avatar_statu = $status==$statu ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link_name.'" draggable="false">';
                     $rel_statu = $rel ? $rel : 'friends';
                     echo '<div class="inbox flexboxes'.$status.$sex.'"><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span><span class="lowside-description"><p>'.$link_desc.'</p></span></a></div>';
                     break;
@@ -1420,7 +1637,7 @@
                     echo '<div class="inbox flexboxes'.$status.$sex.'">'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span><span class="lowside-description"><p>'.$link_desc.'</p></span></a></div>'; //<em></em>
                     break;
                 default:
-                    $rel_statu = $status==' standby' ? 'nofollow' : 'marked';
+                    $rel_statu = $status==$statu ? 'nofollow' : 'marked';
                     echo '<a href="'.$link_url.'" class="'.$status.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" >'.$link_name.'</a>';
                     break;
             }
@@ -1584,7 +1801,7 @@
     add_action('wp_ajax_nopriv_post_like', 'post_like');
     add_action('wp_ajax_post_like', 'post_like');
     function post_like(){
-        $id = $_GET["um_id"];
+        $id = check_request_param('um_id'); //$_GET["um_id"];
         check_ajax_referer($id.'_post_like_ajax_nonce');  // 检查 nonce
         // if($_GET["um_action"]=='like'){
             $post_liked = get_post_meta($id,'post_liked',true);

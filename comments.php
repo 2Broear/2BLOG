@@ -329,7 +329,10 @@
                                 }
                             });
                         }
-                    }
+                    },
+                    writable: false,
+                    configurable: false,
+                    enumerable: false,
                 });
                 Object.defineProperty(comments.init.prototype, 'realtime_fields', {
                     get(){

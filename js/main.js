@@ -226,28 +226,30 @@
         // sto_enqueue(list, true, function(i){
         //     list[i].querySelector(target).innerHTML = (i++)+append;
         // });
+        const execDance = function(each,counter,limit){
+            each.classList.remove('blink');
+            let times = -limit-offset,
+                init = 0,
+                inOrder = function(){
+                    clearInterval(noOrder);
+                    init<=limit ? counter.innerHTML = (init++)+append : clearInterval(noOrder);
+                        times>=0 ? (times=0,clearInterval(noOrder)) : times++;
+                    noOrder = setInterval(inOrder, init+times);
+                };
+            var noOrder = setInterval(inOrder);
+        };
         for(let i=0,listLen=list.length;i<listLen;i++){
-            const counter = list[i].querySelector(target),
-                  limit = parseInt(list[i].dataset.count),
-                  exec = function(){
-                    list[i].classList.remove('blink');
-                    let times = -limit-offset,
-                        init = 0,
-                        inOrder = function(){
-                            clearInterval(noOrder);
-                            init<=limit ? counter.innerHTML = (init++)+append : clearInterval(noOrder);
-                                times>=0 ? (times=0,clearInterval(noOrder)) : times++;
-                            noOrder = setInterval(inOrder, init+times);
-                            };
-                       var noOrder = setInterval(inOrder);
-                  };
-            // requestAnimationFrame
+            let each = list[i],
+                counter = each.querySelector(target),
+                limit = parseInt(each.dataset.count);
+            counter.innerHTML = '0'+append; //init counts
             if(raf_available){
+                // requestAnimationFrame
                 raf_enqueue(true, function(){
-                    exec();
+                    execDance(each,counter,limit);
                 }, interval, i);
             }else{
-                exec();
+                execDance(each,counter,limit);
             }
         }
     }

@@ -508,7 +508,7 @@
                     return;
                 }
                 clicks++;
-                t.innerText = type===type_acg ? "Loading.." : "加载中..";
+                t.innerText = type===type_acg ? "Loading" : "加载中";
                 t.classList.add('loading','disabled');  // add-opts archive (disable click)
                 t.setAttribute('data-click', clicks);
                 send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", 
@@ -533,7 +533,7 @@
                                 load_box = getParByCls(t, 'loadbox');
                                 break;
                             case 'archive':
-                                load_box = archive_tree.querySelector('.call_'+years);
+                                load_box = archive_tree.querySelector('.list_'+years);
                                 last_offset = load_box.lastChild.offsetTop;
                                 break;
                             default:
