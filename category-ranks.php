@@ -15,6 +15,9 @@
             font-size: small;
             max-width: 6em;
         }
+        .ranking ul li span#avatar::before{
+            width: auto;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -27,109 +30,11 @@
         <?php get_inform(); ?>
         <div class="ranks">
             <div class="ranking">
-                <?php
-                    echo '<h1>常客 </h1><p>访问较频繁的童鞋</p><ul id="rankest">'; //<sup> &lt;3 </sup>
+                <?php 
                     $third_cmt = get_option('site_third_comments');
-                    $valine_sw = $third_cmt=='Valine' ? true : false;//get_option('site_valine_switcher');
-                    $twikoo_sw = $third_cmt=='Twikoo' ? true : false;//get_option('site_twikoo_switcher');
-                    if(!$valine_sw){
-                        $rankdata = get_comments_ranking();
-                        $datalen = count($rankdata);
-                        for($i=0;$i<3;$i++){
-                            if(array_key_exists($i,$rankdata)){
-                                $user = $rankdata[$i];
-                                $count = $user->count ? $user->count : 0;
-                                $link = $user->link ? $user->link : 'javascript:;';
-                                $name = $user->name ? $user->name : '???';
-                            }
-                ?>
-                            <li>
-                                <span id="avatar" data-t="<?php echo $count ?>">
-                                    <a href="<?php echo $link; ?>" target="_blank">
-                                        <?php 
-                    				        // global $lazysrc, $loadimg;
-                                            $lazyhold = "";
-                                            $avatar = get_option('site_avatar_mirror').'avatar/'.md5($user->mail).'?d=retro&s=100';
-                                            if($lazysrc!='src'){
-                                                $lazyhold = 'data-src="'.$avatar.'"';
-                                                $avatar = $loadimg;
-                                            }
-                    				        echo '<img '.$lazyhold.' src="'.$avatar.'" title="这家伙留了 '.$count.' 条评论！" alt="'.$name.'">'; 
-                				        ?>
-                                    </a>
-                                </span>
-                                <span id="range" style="">
-                                    <em style="height:<?php echo $count<50?$count*2:$count ?>%">
-                                        <span class="wave active"></span>
-                                    </em>
-                                </span>
-                                <a href="<?php echo $link; ?>" target="_self">
-                                    <b title="<?php echo $name; ?>"><?php echo $name; ?></b>
-                                </a>
-                            </li>
-                <?php
-                        }
-                    }else{
-                        echo '<span id="loading"></span>';
-                    };
-                    echo '</ul>';
-                    // top 10
-                    if(!$valine_sw){
-                        if($datalen>3){
-                            echo '<h1>稀客 </h1><p>偶尔来访的小伙伴</p><ul id="ranks"></span>'; //<sup> &lt;10 </sup>
-                            for($i=3;$i<13;$i++){
-                                $user = array_key_exists($i,$rankdata) ? $rankdata[$i] : false;
-                                if($user){
-                                    $count = $user->count;
-                                    $link = $user->link;
-                ?>
-                                    <li title="TA 在本站已有 <?php echo $count ?> 条评论">
-                                        <span id="avatar">
-                                            <a href="<?php echo $link; ?>" target="_blank">
-                                                <?php 
-                                                    $lazyhold = "";
-                                                    $avatar = get_option('site_avatar_mirror').'avatar/'.md5($user->mail).'?d=retro&s=100';
-                                                    if($lazysrc!='src'){
-                                                        $lazyhold = 'data-src="'.$avatar.'"';
-                                                        $avatar = $loadimg;
-                                                    }
-                                                    echo '<img '.$lazyhold.' src="'.$avatar.'" title="这家伙留了 '.$count.' 条评论！" alt="'.$name.'">'; 
-                                                ?>
-                                            </a>
-                                        </span>
-                                        <a href="<?php echo $link; ?>" target="_blank">
-                                            <?php echo '<b data-mail="'.$user->mail.'">'.$user->name.'</b><sup>'.$count.'+</sup>' ?>
-                                        </a>
-                                    </li>
-                <?php
-                                }
-                            }
-                            echo '</ul>';
-                        }
-                    }else{
-                ?>
-                        <h1>稀客 </h1><!--<sup> &lt;10th </sup>-->
-                        <p>偶尔来访的小伙伴</p>
-                        <ul id="ranks"><span id="loading"></ul>
-                <?php
-                    };
-                    // left 
-                    if(!$valine_sw){
-                        if($datalen>13){
-                            // if($datalen<13) echo '<p>这里暂时没有人哦～</p>';
-                            echo '<h1>游客 </h1><ul id="ranked">'; //<sup> &gt;10 </sup>
-                            for($i=13;$i<50;$i++){
-                                $user = array_key_exists($i,$rankdata) ? $rankdata[$i] : false;
-                                if($user) echo '<li><p>'.$user->name.'<sup>'.$user->count.'</sup></p></li>';
-                            }
-                            echo '</ul>';
-                        }
-                    }else{
-                ?>
-                        <h1>游客 </h1><!--<sup> &gt;10th </sup>-->
-                        <ul id="ranked"><span id="loading"></span></ul>
-                <?php
-                    };
+                    $valine_sw = $third_cmt==='Valine';
+                    $twikoo_sw = $third_cmt==='Twikoo';
+                    the_comment_ranks('常客','访问较频繁的童鞋', '稀客','偶尔来访的小伙伴', '游客',''); 
                 ?>
             </div>
             <?php the_content();  // the_page_content(current_slug()); ?>

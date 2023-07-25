@@ -258,7 +258,7 @@
 }
 
 .body-basically h1{
-    margin: 3% auto;
+    margin: 3% auto auto;
 }
 .player{ box-shadow: none!important;}
 .In-core-head .head-inside{

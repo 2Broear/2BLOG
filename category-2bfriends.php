@@ -93,6 +93,7 @@
         }
         .friends-boxes .deals.tech .inbox .inbox-headside img{
             border-top-left-radius: 50%;
+            opacity: .88;
         }
         .friends-boxes .deals.tech .inbox .inbox-aside span.lowside-description p{
             margin-top: 5px;
@@ -111,84 +112,9 @@
         <div class="content-all-windows" style="padding-top:0;">
             <div class="friends-boxes flexboxes">
                 <?php 
-                    $baas = get_option('site_leancloud_switcher')&&in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category'))); //&&strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false;
-                    if(!$baas){
-        	            $rich_links = get_bookmarks(array(
-        	                'orderby' => 'link_id',
-        	                'order' => 'ASC',  // 最新排最后
-        	                'category_name' => "standard",
-        	                'hide_invisible' => 0
-    	                ));
-        	            $rcmd_links = get_bookmarks(array(
-        	                'orderby' => 'rand',  // random orderby
-        	                'order' => 'DESC',
-        	                'category_name' => "special",
-        	                'hide_invisible' => 0
-    	                ));
-        	            $lost_links = get_bookmarks(array(
-        	                'orderby' => 'link_id',  //updated link_updated
-        	                'order' => 'DESC',  // 最新排最前
-        	                'category_name' => "missing",
-        	                'hide_invisible' => 0,
-        	               // 'show_updated' => 1
-    	                ));
-    	               // print_r($rcmd_links);
-                        if(count($rich_links)>0){
-                ?>
-                            <div class="inbox-clip"><h2 id="exchanged"> 小伙伴们 </h2></div>
-                            <div class="deals exchanged flexboxes"><?php site_links($rich_links, 'full'); ?></div>
-				<?php 
-                        }else{
-                            echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';
-                        };
-        	            $tech_links = get_bookmarks(array(
-        	                'orderby' => 'link_id',
-        	                'order' => 'ASC',  // 最新排最后
-        	                'category_name' => "technical",
-        	                'hide_invisible' => 0
-    	                ));
-                        if(count($tech_links)>0){
-                ?>
-                            <div class="inbox-clip"><h2 id="exchanged"> 技术侧重 </h2></div>
-                            <div class="deals tech exchanged flexboxes"><?php site_links($tech_links, 'full'); ?></div>
-                <?php
-                        }
-                        if(count($rcmd_links)>0){
-                ?>
-                            <div class="inbox-clip"><h2 id="rcmded"> 荐亦有鉴 </h2></div>
-                            <div class="deals rcmd flexboxes"><?php site_links($rcmd_links, 'half'); ?></div>
-				<?php 
-                        };
-                        if(count($lost_links)>0){
-                ?>
-                            <div class="deals oldest">
-            					<div class="inboxSliderCard">
-                                    <div class="slideBox flexboxes"><?php site_links($lost_links); ?></div>
-            					</div>
-            				</div>
-				<?php 
-                        }
-				    }else{
-		        ?>
-                        <div class="inbox-clip"><h2 id="exchanged"> 小伙伴们 </h2></div>
-                        <div class="deals exchanged flexboxes"></div>
-                        <!-- rcmd begain -->
-                        <div class="inbox-clip"><h2 id="rcmded"> 荐亦有见 </h2></div>
-                        <div class="deals rcmd flexboxes"></div>
-                        <!-- lost begain <div class="inbox-clip"></div> -->
-                        <div class="deals oldest">
-        					<div class="inboxSliderCard">
-                                <div class="slideBox flexboxes"></div>
-        					</div>
-        				</div>
-		        <?php
-				    }
-				?>
-                <!--<div class="inbox-clip">-->
-                <!--    <h2 id="rcmded"> 友链说明 </h2>-->
-                <!--</div>-->
-                <br />
-                <?php
+                    $baas = get_option('site_leancloud_switcher')&&in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')));
+                    $baas ? the_site_links('小伙伴们','技术侧重','荐亦有鉴',true) : the_site_links('小伙伴','技术の','荐见鉴');
+                    echo '<br />';
                     the_content();  // the_page_content(current_slug());
                     dual_data_comments();
                 ?>

@@ -139,7 +139,7 @@
                                     $addition_res = curlRequest($left_words_ingored); // end of context(4096-max)
                                     return curlRequest($previous_txt.api_get_resultText($addition_res,true)); //, 512, '。'
                                 }else{
-                                    $res = json_encode(array('error' => array ('message' => 'article is too long to abstract (context token: '.$question_token.', inqueue token: '.$left_token.')','type' => 'request_context_too_long','created'=>time())),true);
+                                    $res = json_encode(array('error' => array ('message' => 'requested content too long to abstract (context token: '.$question_token.', inqueue token: '.$left_token.')','type' => 'request_context_too_long','created'=>time())),true);
                                 }
                             }
                         }else{
@@ -149,9 +149,9 @@
                     }else{
                         $res = curl_exec($curl);
                         if ($res === false) {
-                            $errno = curl_errno($ch);
-                            $error = curl_error($ch);
-                            $res = "cURL Error ($errno): $error\n";
+                            $errno = curl_errno($curl); //$ch
+                            $error = curl_error($curl); //$ch
+                            $res = json_encode(array('error' => array ('message' => 'cURL Error ('.$errno.'): '.$error.' (check CURLOPT_URL?)','type' => 'curl_request_error','created'=>time())),true);
                         }
                     }
                     curl_close($curl);

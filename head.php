@@ -24,6 +24,11 @@
     <?php
         }
     ?>
+    iframe.bilibili_embed{
+        width: 100%;
+        min-height: 370px;
+        border-radius: var(--radius);
+    }
 </style>
 <script>
     document.documentElement.style.setProperty('--theme-color','<?php echo $theme_color; ?>');

@@ -325,7 +325,7 @@
             data ? ajax.send(data) : ajax.send();
         }).catch(function(err){
             console.log(err);
-            catchback ? catchback(err) : false; //catchback.apply(this, err);
+            if(callback&&typeof callback==='function') catchback(err); //catchback.apply(this, err);
         });
     }
     

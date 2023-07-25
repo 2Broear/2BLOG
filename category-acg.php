@@ -102,30 +102,10 @@
                     $async_loads = $async_sw&&$use_async ? get_option("site_async_acg", 14) : 999;
     		        $basename = basename(__FILE__);
                     $preset = get_cat_by_template(str_replace('.php',"",substr($basename,9)));
-                    $preslug = $preset->slug;
-                    $curslug = current_slug();
-                    $baas = get_option('site_leancloud_switcher')&&in_array($basename, explode(',', get_option('site_leancloud_category')));  //use post as category is leancloud unset //strpos(get_option('site_leancloud_category'), $basename)!==false
-                    $datadance = get_option('site_animated_counting_switcher');
+                    $baas = get_option('site_leancloud_switcher')&&in_array($basename, explode(',', get_option('site_leancloud_category')));
                     if(!$baas){
                         $cats = get_categories(meta_query_categories($preset->term_id, 'ASC', 'seo_order'));
-                        if(!empty($cats) && $curslug==$preslug){
-                            foreach($cats as $the_cat){
-                                $cat_slug = $the_cat->slug;  // print_r($the_cat);
-                                $cat_count = $the_cat->count;
-                ?>
-                                <div class="<?php echo $cat_slug;echo get_option('site_animated_counting_switcher') ? ' blink' : false; ?>" data-count="<?php echo $cat_count; ?>">
-                                    <a href="<?php echo get_category_link($the_cat->term_id) ?>" rel="nofollow">
-                                        <h2><?php echo $datadance ? "0" : $cat_count; ?><sup>+</sup></h2>
-                                        <p><?php echo $the_cat->name.'/'.strtoupper($cat_slug); ?></p>
-                                    </a>
-                                </div>
-                <?php
-                            }
-                        }else{
-                            $the_cat = get_category($cat);
-                            $cat_count = $the_cat->count;
-                            echo "<div class='blink' data-count='$cat_count'><h2 class='single'>$cat_count<sup>+</sup></h2><p>$the_cat->name/$the_cat->slug</p></div>";
-                        }
+                        the_acg_stats();
                     }
                 ?>
             </div>
@@ -133,15 +113,7 @@
         <div class="content-all-windows">
             <div class="rcmd-boxes flexboxes">
                 <?php
-                    if(!$baas){
-                        if(!empty($cats) && $curslug==$preslug){
-                            foreach($cats as $the_cat){
-                                acg_posts_query($the_cat, $preslug, $async_loads); // // if($cat_slug!=$preslug)
-                            }
-                        }else{
-                            acg_posts_query(get_category($cat), $preslug, $async_loads);  //get_category_by_slug($curslug)
-                        }
-                    }
+                    if(!$baas) the_acg_posts();
                 ?>
                 <div id="comment_txt" class="wow fadeInUp" data-wow-delay="0.25s">
                     <?php 

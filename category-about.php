@@ -56,6 +56,13 @@
             right: 3%;
             /*letter-spacing: 3px;*/
         }
+        iframe.netease_embed{
+            margin: 0 auto;
+            display: block;
+        }
+        .has-text-align-center{
+            text-align: center;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

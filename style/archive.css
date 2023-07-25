@@ -282,10 +282,10 @@ body.dark .cs-tree span.today,
 /*    margin: 2px 24px 2px 0;*/
 /*}*/
 .cs_tips::before{
-    content: 'Less';
+    content: 'Less ';
 }
 .cs_tips::after{
-    content: 'More';
+    content: ' More';
 }
 .cs_tips::before,
 .cs_tips::after{

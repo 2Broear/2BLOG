@@ -74,6 +74,11 @@ figure img{
 del,s{
     opacity: .75;
 }
+iframe.bilibili_embed{
+    width: 100%;
+    min-height: 370px;
+    border-radius: var(--radius);
+}
 .pageSwitcher.dev{
     text-align:center;
     /*padding-top: 30px;*/
@@ -1423,6 +1428,9 @@ body.dark .win-nav .nav-header span,body.dark .win-nav .nav-header div,body.dark
 body.dark .win-content article .info,body.dark .win-content article .infos{border-bottom-color:var(--preset-3a);/*border-bottom-color:var(--preset-4a)*/}
 
 body.dark .win-content article span#normal,body.dark .news-article-container span#normal{color:var(--preset-c);background-color:var(--preset-3a)}
+body.dark .win-content article span#normal.great{
+    background-color: rgb(79 195 35 / 3%);
+}
 body.dark .pageSwitcher div:hover,body.dark .pageSwitcher a:hover{color:var(--preset-f);background-color:var(--preset-3a)}
 body.dark .news-window-inside,body.dark .topic,body.dark .news-content-right-download,body.dark .news-content-right-recommend ul,body.dark .ppt-blocker{background-color:#303030;;border-color:transparent}
 body.dark #news-tail_info{color:var(--preset-6);border-color:var(--preset-3a)}

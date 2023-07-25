@@ -291,12 +291,13 @@
                             </script>
                     <?php
                         }else{
-                            site_links(get_bookmarks(array(
+                            $sitelink = get_bookmarks(array(
             	                'orderby' => 'link_id',
             	                'order' => 'DESC', //ASC
             	                'category_name' => "sitelink",
             	                'hide_invisible' => 0
-        	                )));
+        	                ));
+                            echo get_site_links($sitelink);
         	                $use_temp = get_template_bind_cat('category-2bfriends.php');
         	                $temp_link = !$use_temp->errors ? get_category_link($use_temp->term_id) : 'javascript:;';
     	                    echo '<a id="more" href="'.$temp_link.'" title="更多" target="_blank">  更多 </a>';
@@ -549,6 +550,8 @@
                             tp.classList.add(dis_class);
                             t.innerText = load_done;
                         }
+                    }, function(err){
+                        t.innerText = err+' err occured';
                     }
                 );
             };

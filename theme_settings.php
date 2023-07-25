@@ -618,6 +618,8 @@
             register_setting( 'baw-settings-group', 'site_chatgpt_auth' );
             register_setting( 'baw-settings-group', 'site_chatgpt_dir' );
             // register_setting( 'baw-settings-group', 'site_chatgpt_require' );
+        register_setting( 'baw-settings-group', 'site_cache_switcher' );
+            register_setting( 'baw-settings-group', 'site_cache_includes' );
         register_setting( 'baw-settings-group', 'site_async_switcher' );
             register_setting( 'baw-settings-group', 'site_async_includes' );
             register_setting( 'baw-settings-group', 'site_async_acg' );
@@ -1033,27 +1035,6 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">展示型单页文章</th>
-                        <td>
-                            <?php
-                                $opt = 'site_single_switcher';
-                                $value = get_option($opt);
-                                $status = $value ? "checked" : "check";
-                                echo '<label for="'.$opt.'"><p class="description" id="">展示型文章包括日志、漫游影视、资源下载页面（默认仅展示必要数据，开启后将开启对应文章链接并使用默认单页模板</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b>启用展示型单页</b></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">文章列表预览图</th>
-                        <td>
-                            <?php
-                                $opt = 'site_default_postimg_switcher';
-                                $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">默认当文章存在自定义 thumbnail 特色图片时才显示列表预览图，开启后将始终显示（显示优先级：自定义特色图片>文章内图片>默认图片</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">始终显示预览图</b></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top">
                         <th scope="row">地址栏 Category 目录</th>
                         <td>
                             <?php
@@ -1144,106 +1125,6 @@
                             </tr>
                     <?php 
                         // }
-                    ?>
-                    <tr valign="top" class="">
-                        <th scope="row">文章索引目录</th>
-                        <td>
-                            <?php
-                                $opt = 'site_indexes_switcher';
-                                $value = get_option($opt);
-                                $data = get_option( 'site_indexes_includes', '' );
-                                //设置默认开启（仅适用存在默认值的checkbox）
-                                if(!$value&&!$data){
-                                    update_option($opt, "on_default");
-                                    $status="checked";
-                                }else{
-                                    $status = $value ? "checked" : "check";
-                                };
-                                echo '<label for="'.$opt.'"><p class="description" id="">文章页目录索引，开启后在文章页可见（建议 notes 类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>文章目录索引</b></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <?php
-                        // if(get_option('site_indexes_switcher')){
-                    ?>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_indexes_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">索引目录分类（多选）</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_indexes_includes';  //unique str
-                                        $value = get_option($opt);
-                                        echo '<p class="description" id="">选定分类下文章模版将开启目录索引，使用逗号“ , ”分隔（默认 notes 类型</p><div class="checkbox">';
-                                        $news_cat =  get_cat_by_template('news');
-                                        $notes_cat =  get_cat_by_template('notes');
-                                        $arrobj = array();
-                                        if($notes_cat && $news_cat){
-                                            array_push($arrobj, array('name' => $notes_cat->name, 'slug' => $notes_cat->slug));
-                                            array_push($arrobj, array('name' => $news_cat->name, 'slug' => $news_cat->slug));
-                                        }elseif($notes_cat){
-                                            array_push($arrobj, array('name' => $notes_cat->name, 'slug' => $notes_cat->slug));
-                                        }elseif($news_cat){
-                                            array_push($arrobj, array('name' => $news_cat->name, 'slug' => $news_cat->slug));
-                                        }
-                                        if($arrobj){
-                                            $preset = $arrobj[0]['slug'].',';
-                                            if(!$value){
-                                                update_option($opt, $preset);
-                                                $value = $preset;
-                                            }
-                                            $pre_array = explode(',',trim($value));  // NO "," Array
-                                            $pre_array_count = count($pre_array);
-                                            foreach ($arrobj as $array){
-                                                $slug = $array['slug'];
-                                                $checking = in_array($slug, $pre_array) ? 'checked' : '';
-                                                echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$array['name'].'</label>';
-                                            }
-                                            echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
-                                        }else{
-                                            echo '<b> Empty Index </b>';
-                                        }
-                                    ?>
-                                </td>
-                            </tr>
-                    <?php 
-                        // }
-                    ?>
-                    <tr valign="top">
-                        <th scope="row">面包屑导航</th>
-                        <td>
-                            <?php
-                                $opt = 'site_breadcrumb_switcher';
-                                $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">页面层级导航</b></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">头部公告<sup class="dualdata" title="“多数据”">BaaS</sup></th>
-                        <td>
-                            <?php
-                                $opt = 'site_inform_switcher';
-                                $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">部分页面头部公告显示内容（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">页面头部公告</b></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <?php
-                        // if(get_option('site_inform_switcher')){
-                    ?>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_inform_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 公告展示数量</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_inform_num';
-                                        $value = get_option($opt);
-                                        $preset = 3;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">公告展示数量（默认展示 最新发布 的 3 条公告</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                    <?php 
-                        // } 
                     ?>
                     <tr valign="top">
                         <th scope="row">metaBox 元导航分类</th>
@@ -1960,6 +1841,126 @@
                 <h1><b class="num" style="border-color:blueviolet;box-shadow:-5px -5px 0 rgb(138 43 226 / 18%);">03</b>页面配置<p class="en">PAGES SETTINGS</p></h1>
                 <table class="form-table">
                     <tr valign="top">
+                        <th scope="row">头部公告<sup class="dualdata" title="“多数据”">BaaS</sup></th>
+                        <td>
+                            <?php
+                                $opt = 'site_inform_switcher';
+                                $status = check_statu($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">部分页面头部公告显示内容（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">页面头部公告</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        // if(get_option('site_inform_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_inform_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 公告展示数量</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_inform_num';
+                                        $value = get_option($opt);
+                                        $preset = 3;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">公告展示数量（默认展示 最新发布 的 3 条公告</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php 
+                        // } 
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">面包屑导航</th>
+                        <td>
+                            <?php
+                                $opt = 'site_breadcrumb_switcher';
+                                $status = check_statu($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">页面层级导航</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">文章列表预览图</th>
+                        <td>
+                            <?php
+                                $opt = 'site_default_postimg_switcher';
+                                $status = check_statu($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">默认当文章存在自定义 thumbnail 特色图片时才显示列表预览图，开启后将始终显示（显示优先级：自定义特色图片>文章内图片>默认图片</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">始终显示预览图</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">展示型单页文章</th>
+                        <td>
+                            <?php
+                                $opt = 'site_single_switcher';
+                                $status = check_statu($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">展示型文章包括日志、漫游影视、资源下载页面（默认仅展示必要数据，开启后将开启对应文章链接并使用默认单页模板</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">启用展示型单页</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">文章索引目录</th>
+                        <td>
+                            <?php
+                                $opt = 'site_indexes_switcher';
+                                $value = get_option($opt);
+                                $data = get_option( 'site_indexes_includes', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option($opt, "on_default");
+                                    $status="checked";
+                                }else{
+                                    $status = $value ? "checked" : "check";
+                                };
+                                echo '<label for="'.$opt.'"><p class="description" id="">文章页目录索引，开启后在文章页可见（建议 notes 类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>文章目录索引</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        // if(get_option('site_indexes_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_indexes_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">索引目录分类（多选）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_indexes_includes';  //unique str
+                                        $value = get_option($opt);
+                                        echo '<p class="description" id="">选定分类下文章模版将开启目录索引，使用逗号“ , ”分隔（默认 notes 类型</p><div class="checkbox">';
+                                        $news_cat =  get_cat_by_template('news');
+                                        $notes_cat =  get_cat_by_template('notes');
+                                        $arrobj = array();
+                                        if($notes_cat && $news_cat){
+                                            array_push($arrobj, array('name' => $notes_cat->name, 'slug' => $notes_cat->slug));
+                                            array_push($arrobj, array('name' => $news_cat->name, 'slug' => $news_cat->slug));
+                                        }elseif($notes_cat){
+                                            array_push($arrobj, array('name' => $notes_cat->name, 'slug' => $notes_cat->slug));
+                                        }elseif($news_cat){
+                                            array_push($arrobj, array('name' => $news_cat->name, 'slug' => $news_cat->slug));
+                                        }
+                                        if($arrobj){
+                                            $preset = $arrobj[0]['slug'].',';
+                                            if(!$value){
+                                                update_option($opt, $preset);
+                                                $value = $preset;
+                                            }
+                                            $pre_array = explode(',',trim($value));  // NO "," Array
+                                            $pre_array_count = count($pre_array);
+                                            foreach ($arrobj as $array){
+                                                $slug = $array['slug'];
+                                                $checking = in_array($slug, $pre_array) ? 'checked' : '';
+                                                echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$array['name'].'</label>';
+                                            }
+                                            echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
+                                        }else{
+                                            echo '<b> Empty Index </b>';
+                                        }
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php 
+                        // }
+                    ?>
+                    <tr valign="top">
                         <th scope="row">首页 - banner</th>
                         <td>
                             <?php
@@ -2169,6 +2170,143 @@
                         // }
                     ?>
                     <tr valign="top">
+                        <th scope="row"> 缓存索引 - 页面配置 </th>
+                        <td>
+                            <?php
+                                $opt = 'site_cache_switcher';
+                                $value = get_option($opt);
+                                $data = get_option( 'site_cache_includes', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option($opt, "on_default");
+                                    $status="checked";
+                                }else{
+                                    $status = $value ? "checked" : "check";
+                                };
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">部分页面使用 db 索引缓存数据（默认开启，开启此项可能影响 _ajax_nonce 校验</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:sienna;" class="btn">页面缓存</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $async = get_option('site_cache_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 开启页面（多选）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_cache_includes';  //unique str
+                                        $value = get_option($opt);
+                                        $async_opts = array(get_cat_by_template('archive'), get_cat_by_template('acg'), get_cat_by_template('2bfriends'), get_cat_by_template('download'), get_cat_by_template('ranks'));
+                                        if(!$value){
+                                            $preset_str = $async_opts[0]->slug.','.$async_opts[1]->slug.','.$async_opts[2]->slug.',';
+                                            update_option($opt, $preset_str);
+                                            $value = $preset_str;
+                                        }
+                                        echo '<p class="description" id="">指定开启缓存索引页面，使用逗号“ , ”分隔（默认开启归档、漫游影视及友链页面</p><div class="checkbox">';
+                                        $async_array = explode(',',trim($value));  // NO "," Array
+                                        $pre_array_count = count($async_array);
+                                        foreach ($async_opts as $option){
+                                            $opts_slug = $option->slug;
+                                            $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
+                                            echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" value="' . $value . '"/></div>';;
+                                    ?>
+                                </td>
+                            </tr>
+                    <tr valign="top">
+                        <th scope="row"> 异步加载 - 页面配置 </th>
+                        <td>
+                            <?php
+                                $opt = 'site_async_switcher';
+                                $value = get_option($opt);
+                                $data = get_option( 'site_async_archive', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$data){
+                                    update_option($opt, "on_default");
+                                    $status="checked";
+                                }else{
+                                    $status = $value ? "checked" : "check";
+                                };
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">部分页面使用 ajax 异步加载数据（默认开启</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:slateblue;" class="btn">异步加载</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $async = get_option('site_async_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 开启页面（多选）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_async_includes';  //unique str
+                                        $value = get_option($opt);
+                                        $async_opts = array(get_cat_by_template('archive'), get_cat_by_template('acg'),  get_cat_by_template('weblog'));
+                                        if(!$value){
+                                            $preset_str = $async_opts[0]->slug.','.$async_opts[1]->slug.',';
+                                            update_option($opt, $preset_str);
+                                            $value = $preset_str;
+                                        }
+                                        echo '<p class="description" id="">指定开启 ajax 异步页面，使用逗号“ , ”分隔（默认开启漫游影视、归档页面</p><div class="checkbox">';
+                                        $async_array = explode(',',trim($value));  // NO "," Array
+                                        $pre_array_count = count($async_array);
+                                        foreach ($async_opts as $option){
+                                            $opts_slug = $option->slug;
+                                            $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
+                                            echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
+                                    ?>
+                                </td>
+                            </tr>
+                            <?php
+                                $acg_cat = $async_opts[1];
+                                if(in_array($acg_cat->slug, $async_array)){
+                            ?>
+                                <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
+                                    <?php echo '<th scope="row">— '.$acg_cat->name.' 数量</th>'; ?>
+                                    <td>
+                                        <?php
+                                            $opt = 'site_async_acg';
+                                            $value = get_option($opt);
+                                            $preset = 14;  //默认填充数据
+                                            if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                            echo '<p class="description" id="site_bar_pixiv_label">漫游影视默认/手动加载数量（默认 14</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        ?>
+                                    </td>
+                                </tr>
+                            <?php
+                                }
+                                $weblog_cat = $async_opts[2];
+                                if(in_array($weblog_cat->slug, $async_array)){
+                            ?>
+                                <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
+                                    <?php echo '<th scope="row">— '.$weblog_cat->name.' 数量</th>'; ?>
+                                    <td>
+                                        <?php
+                                            $opt = 'site_async_weblog';
+                                            $value = get_option($opt);
+                                            $preset = 15;  //默认填充数据
+                                            if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                            echo '<p class="description" id="site_bar_pixiv_label">日志·记默认/手动加载数量（默认 15</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        ?>
+                                    </td>
+                                </tr>
+                            <?php
+                                }
+                                $archive_cat = $async_opts[0];
+                                if(in_array($archive_cat->slug, $async_array)){
+                            ?>
+                                <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
+                                    <?php echo '<th scope="row">— '.$archive_cat->name.' 数量</th>'; ?>
+                                    <td>
+                                        <?php
+                                            $opt = 'site_async_archive';
+                                            $value = get_option($opt);
+                                            $preset = 8;  //默认填充数据
+                                            if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                            echo '<p class="description" id="site_bar_pixiv_label">归档默认/手动加载数量，默认 8（为缓解数据库请求压力，归档已启用数据库索引，若此项修改提交后无效 可通过<b> 更新/发布/删除 </b>文章重建缓存</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        ?>
+                                    </td>
+                                </tr>
+                            <?php
+                                }
+                            ?>
+                    <tr valign="top">
                         <th scope="row"> AI 文章摘要 - chatGPT </th>
                         <td>
                             <?php
@@ -2273,17 +2411,21 @@
                                     <?php
                                         $opt = 'site_chatgpt_caches';
                                         $status = check_statu($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">本地已缓存文章摘要数据，勾选后<ins> 提交保存 </ins>以显示记录（倒序）<b>。点击文章ID可删除对应记录（不可逆）</b>，<ins>悬浮文章ID</ins> 可查看文章标题及摘要</p><p>删除文章摘要记录后，<u><i>重新访问文章以更新摘要</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LOCAL CACHED POSTS</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">本地已缓存文章摘要数据，勾选后<ins> 提交保存 </ins>以显示记录（倒序，默认最近10条）<b>。点击文章ID可删除对应记录（不可逆）</b>，<ins>悬浮文章ID</ins> 可查看文章标题及摘要</p><p>删除文章摘要记录后，<u><i>重新访问文章以更新摘要</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LOCAL CACHED POSTS</b></label>';
                                         if(get_option($opt)){
                                             include('plugin/'.get_option('site_chatgpt_dir').'/chat_data.php');
                                             // print_r($cached_post);
                                             $res_cls_obj = json_decode(json_encode(array_reverse($cached_post)));
+                                            $echo_count = 0;
+                                            $echo_limit = 10;
                                             echo '<ul class="cached_post_list">';
                                             foreach ($res_cls_obj as $cached_pid => $cached_post){
+                                                $echo_count++;
                                                 $cached_post_content = preg_replace('/.*\n/','', api_get_resultText($cached_post));
                                                 $cached_post_pid = preg_replace('/[^0-9]/', '', $cached_pid);
                                                 $cached_post_title = get_the_title($cached_post_pid);
                                                 echo '<li data-id="'.$cached_post_pid.'" data-title="'.$cached_post_title.'" title="'.$cached_post_title.'&#10;'.str_replace('"',"'",$cached_post_content).'"></li>';
+                                                if($echo_count>=$echo_limit) break;
                                             }
                                             echo '</ul>';
                                     ?>
@@ -2303,101 +2445,6 @@
                             ?>
                         </td>
                     </tr>
-                    <tr valign="top">
-                        <th scope="row"> 异步加载 - 页面配置 </th>
-                        <td>
-                            <?php
-                                $opt = 'site_async_switcher';
-                                $value = get_option($opt);
-                                $data = get_option( 'site_async_archive', '' );
-                                //设置默认开启（仅适用存在默认值的checkbox）
-                                if(!$value&&!$data){
-                                    update_option($opt, "on_default");
-                                    $status="checked";
-                                }else{
-                                    $status = $value ? "checked" : "check";
-                                };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">部分页面使用 ajax 异步加载数据（默认开启</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:slateblue;" class="btn">异步加载</span></label>';
-                            ?>
-                        </td>
-                    </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $async = get_option('site_async_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 开启页面（多选）</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_async_includes';  //unique str
-                                        $value = get_option($opt);
-                                        $async_opts = array(get_cat_by_template('archive'), get_cat_by_template('acg'),  get_cat_by_template('weblog'));
-                                        if(!$value){
-                                            $preset_str = $async_opts[0]->slug.','.$async_opts[1]->slug.',';
-                                            update_option($opt, $preset_str);
-                                            $value = $preset_str;
-                                        }
-                                        echo '<p class="description" id="">指定开启 ajax 异步页面，使用逗号“ , ”分隔（默认开启漫游影视、归档页面</p><div class="checkbox">';
-                                        $async_array = explode(',',trim($value));  // NO "," Array
-                                        $pre_array_count = count($async_array);
-                                        foreach ($async_opts as $option){
-                                            $opts_slug = $option->slug;
-                                            $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
-                                            echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
-                                        }
-                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
-                                    ?>
-                                </td>
-                            </tr>
-                            <?php
-                                $acg_cat = $async_opts[1];
-                                if(in_array($acg_cat->slug, $async_array)){
-                            ?>
-                                <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
-                                    <?php echo '<th scope="row">— '.$acg_cat->name.' 数量</th>'; ?>
-                                    <td>
-                                        <?php
-                                            $opt = 'site_async_acg';
-                                            $value = get_option($opt);
-                                            $preset = 14;  //默认填充数据
-                                            if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                            echo '<p class="description" id="site_bar_pixiv_label">漫游影视默认/手动加载数量（默认 14</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                        ?>
-                                    </td>
-                                </tr>
-                            <?php
-                                }
-                                $weblog_cat = $async_opts[2];
-                                if(in_array($weblog_cat->slug, $async_array)){
-                            ?>
-                                <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
-                                    <?php echo '<th scope="row">— '.$weblog_cat->name.' 数量</th>'; ?>
-                                    <td>
-                                        <?php
-                                            $opt = 'site_async_weblog';
-                                            $value = get_option($opt);
-                                            $preset = 15;  //默认填充数据
-                                            if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                            echo '<p class="description" id="site_bar_pixiv_label">日志·记默认/手动加载数量（默认 15</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                        ?>
-                                    </td>
-                                </tr>
-                            <?php
-                                }
-                                $archive_cat = $async_opts[0];
-                                if(in_array($archive_cat->slug, $async_array)){
-                            ?>
-                                <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
-                                    <?php echo '<th scope="row">— '.$archive_cat->name.' 数量</th>'; ?>
-                                    <td>
-                                        <?php
-                                            $opt = 'site_async_archive';
-                                            $value = get_option($opt);
-                                            $preset = 8;  //默认填充数据
-                                            if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                            echo '<p class="description" id="site_bar_pixiv_label">归档默认/手动加载数量，默认 8（为缓解数据库请求压力，归档已启用数据库索引，若此项修改提交后无效 可通过<b> 更新/发布/删除 </b>文章重建缓存</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                        ?>
-                                    </td>
-                                </tr>
-                            <?php
-                                }
-                            ?>
                     <!-- Archives options -->
                     <tr valign="top">
                         <th scope="row">归档 - 报表范围</th>

@@ -52,8 +52,9 @@
 					<div class="main-root">
                         <ul class="wp_list_cats">
                         <?php 
-                            $temp = get_cat_by_template(str_replace('.php',"",substr(basename(__FILE__),9)));
-                            $cats = get_categories(meta_query_categories($temp->term_id, 'ASC', 'seo_order'));
+                            // $temp = get_cat_by_template(str_replace('.php',"",substr(basename(__FILE__),9)));
+                            // $cats = get_categories(meta_query_categories($temp->term_id, 'ASC', 'seo_order'));
+                            $cats = get_sibling_categories();
                             if(!empty($cats)){
                                 foreach($cats as $the_cat){
                                     $the_cat_id = $the_cat->term_id;
@@ -69,17 +70,6 @@
                                             $level = !empty($catsss) ? "trdlevel" : "seclevel";
                                             $choosen = $the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single() ? "choosen 2nd" : "2nd";  // current choosen detect
                                             echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent.' '.$level.'"><a href="'.get_category_link($the_cats).'" id="'.$the_cats->slug.'" class="'.$choosen.'"> — '.$the_cats->name.'</a></li>';
-                                            // DISABLED 4 LEVLE.
-                                            // if(!empty($catsss)){
-                                            //     echo '<div class="sub-root"><ol>';
-                                            //     foreach($catsss as $the_catss){
-                                            //         $the_catss_id = $the_catss->term_id;
-                                            //         $level = !empty($catsss) ? "th_level" : "trdlevel";
-                                            //         $choosen = $the_catss_id==$cat || cat_is_ancestor_of($the_catss_id, $cat) || in_category($the_catss_id)&&is_single() ? "choosen 3rd" : "3rd";  // current choosen detect
-                                            //         echo '<li class="cat_'.$the_catss_id.' par_'.$the_catss->category_parent.'"><a href="'.get_category_link($the_catss).'" id="'.$the_catss->slug.'" class="'.$choosen.'"> — '.$the_catss->name.'</a></li>';
-                                            //     };
-                                            //     echo "</ol></div>";
-                                            // }
                                         };
                                         echo "</ol></div>";
                                     };

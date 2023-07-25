@@ -1,4 +1,59 @@
 <?php 
+    function custom_title_shortcode($atts, $content = null) {
+        $statu = isset($atts['statu']) ? $atts['statu'] : 'normal';
+        $title = isset($atts['title']) ? $atts['title'] : 'Example';
+        $tag = isset($atts['tag']) ? $atts['tag'] : 'h3';
+        return "<span id='normal' class='$statu'><$tag>$title</$tag></span>";
+    }
+    function custom_netease_shortcode($atts){
+        $id = isset($atts['id']) ? $atts['id'] : '898131683';
+        $width = isset($atts['width']) ? $atts['width'] : '';
+        $height = isset($atts['height']) ? $atts['height'] : '350';
+        $class = isset($atts['class']) ? $atts['class'] : 'netease_embed';
+        return '<iframe class="'.$class.'" src="//music.163.com/outchain/player?id='.$id.'&&type=0&auto=0" width="'.$width.'" height="'.$height.'" frameborder="no" marginwidth="0" marginheight="0" title="163"></iframe>';
+    }
+    function custom_bilibili_shortcode($atts){
+        $vid = isset($atts['vid']) ? $atts['vid'] : 'vid';
+        $class = isset($atts['class']) ? $atts['class'] : 'bilibili_embed';
+        return '<iframe id="'.$class.'" src="//player.bilibili.com/player.html?bvid='.$vid.'" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>';
+    }
+    function custom_sidebar_ad_shortcode($atts){
+        $sup = isset($atts['sup']) ? $atts['sup'] : '中意此款主题吗';
+        $title = isset($atts['title']) ? $atts['title'] : '';
+        $sub = isset($atts['sub']) ? $atts['sub'] : '现在体验<b> BETA </b>版';
+        $src= isset($atts['src']) ? $atts['src'] : 'javascript:;';
+        $img = isset($atts['img']) ? $atts['img'] : 'https://img.2broear.com/2022/08/2BLOG-rainbow666.jpg';
+        return '<div class="countdown-box" style="margin-bottom: 15px"><a href="'.$href.'" target="_blank" title="'.$title.'"><div id="countdown" class="countdowns" style="background-image:url('.$img.')"><p class="title">'.$sup.'</p><div class="time"><span class="timesup">'.$title.'</span></div><p class="today" style="text-decoration: underline;">'.$sub.'</p></div><sup id="ads">ADs</sup></a></div>';
+    }
+    // 注册短代码
+    add_shortcode('custom_title', 'custom_title_shortcode');
+    add_shortcode('netease_embed', 'custom_netease_shortcode');
+    add_shortcode('bilibili_embed', 'custom_bilibili_shortcode');
+    add_shortcode('sidebar_ads', 'custom_sidebar_ad_shortcode');
+    
+    // 注册区块
+    // function custom_bilibili_block_init() {
+    //     register_block_type( 'bilibili-block', array(
+    //         'attributes' => array(
+    //             'code' => array(
+    //                 'type' => 'string',
+    //                 'default' => '',
+    //             ),
+    //         ),
+    //         'editor_script' => get_stylesheet_directory_uri() . '/plugin/custom_blocks.js',
+    //         'render_callback' => 'custom_bilibili_shortcode',
+    //     ) );
+    // }
+    // add_action( 'init', 'custom_bilibili_block_init' );
+    function enqueue_bilibili_block_script() {
+      wp_enqueue_script(
+        'bilibili-block-script',
+        get_theme_file_uri('/plugin/custom_blocks.js'), // 替换为实际脚本文件的路径
+        array('wp-blocks', 'wp-editor', 'wp-element'),
+        filemtime(get_theme_file_path('/plugin/custom_blocks.js')) // 替换为实际脚本文件的路径
+      );
+    }
+    add_action('enqueue_block_editor_assets', 'enqueue_bilibili_block_script');
     /**
      * is_edit_page 
      * function to check if the current page is a post edit page
@@ -420,6 +475,22 @@
      *  自定义功能函数
      *  
      * ------------------------------------------------------------------------ */
+     
+    //获取同级分类（gpt）
+    function get_sibling_categories($childs=false, $exclude=false){
+        global $cat;
+        $cat = $cat ? $cat : get_page_cat_id(current_slug());
+        $current_category = get_category($cat); //get_queried_object();
+        $current_cid = $current_category->term_id;
+        $parent_cid = $current_category->parent;
+        $current_categories =  get_categories(['parent' => $current_cid]);
+        // if($parent_cid==0) return false;
+        $query_cid =  $parent_cid==0||count($current_categories)>0 ? $current_cid : $parent_cid;
+        $query_array = meta_query_categories($query_cid, 'ASC', 'seo_order');
+        if($childs) unset($query_array['parent']);
+        if($exclude) $query_array['exclude'] = $current_cid;
+        return get_categories($query_array);
+    }
      
     $lazysrc = 'src';
     $loadimg = custom_cdn_src('img',true).'/images/loading_3_color_tp.png';
@@ -1003,29 +1074,43 @@
     
     // 文章归档统计
     function the_archive_stats(){
-        $output = get_option('site_archive_count_cache');
-        if(!$output){
+        $output = '';
+        $output_sw = false;
+        if(get_option('site_cache_switcher')){
+            $caches = get_option('site_cache_includes');
+            $temp_slug = get_cat_by_template('archive','slug');
+            $output_sw = in_array($temp_slug, explode(',', $caches));
+            $output = $output_sw ? get_option('site_archive_count_cache') : '';
+        }
+        if(!$output || !$output_sw){
             $archive_yearly = get_post_archives('yearly');
             $blink = get_option('site_animated_counting_switcher') ? ' blink' : false;
             foreach ($archive_yearly as $archive){
                 $counts = $archive['count'];
                 $output .= '<div class="'.$blink.'" data-count="'.$counts.'"><a href="'.$archive['link'].'" rel="nofollow"><b>'.$archive['title'].'</b><h1>'.$counts.'</h1><p>篇发布记录</p></a></div>';
             }
-            update_option('site_archive_count_cache', $output);
+            if($output_sw) update_option('site_archive_count_cache', wp_kses_post($output));
             // unset($archive_yearly);
         }
-        echo $output;
+        echo wp_kses_post($output);
     }
     
     //文章归档热度（每日更新一次热度表）
     function the_archive_contributions(){
-        $output = get_option('site_archive_contributions_cache');
+        $output = '';
+        $output_sw = false;
+        if(get_option('site_cache_switcher')){
+            $caches = get_option('site_cache_includes');
+            $temp_slug = get_cat_by_template('archive','slug');
+            $output_sw = in_array($temp_slug, explode(',', $caches));
+            $output = $output_sw ? get_option('site_archive_contributions_cache') : '';
+        }
         $GLOBALS['color_light'] = '#9be9a8';
         $GLOBALS['color_middle'] = '#40c463';
         $GLOBALS['color_heavy'] = '#30a14e';
         $GLOBALS['color_more'] = '#216e39';
         echo '<h5><strong> Contributions view </strong><ul class="cs_tips"><li></li><li style="color:'.$GLOBALS['color_light'].'"></li><li style="color:'.$GLOBALS['color_middle'].'"></li><li style="color:'.$GLOBALS['color_heavy'].'"></li><li style="color:'.$GLOBALS['color_more'].'"></li></ul></h5>';
-        if(!$output){
+        if(!$output || !$output_sw){  // no-cache or cache-disabled
             $GLOBALS['archive_daily'] = get_post_archives('daily','post',9999); //$archive_daily
             global $curYear; //$curYear = gmdate('Y', time() + 3600*8);
             $curday = gmdate('md', time() + 3600*8); //date('md'); //$today = date('d');
@@ -1095,17 +1180,24 @@
                     }
                 }
             }
-            update_option('site_archive_contributions_cache', $output);
             unset($GLOBALS['archive_daily']);
+            if($output_sw) update_option('site_archive_contributions_cache', wp_kses_post($output));
         }
         unset($GLOBALS['color_light'],$GLOBALS['color_middle'],$GLOBALS['color_heavy'],$GLOBALS['color_more']);
-        echo $output;
+        echo wp_kses_post($output);
     }
     
     // 文章归档列表（每日更新一次归档列表）
     function the_archive_lists(){
-        $output = get_option('site_archive_list_cache');
-        if(!$output){
+        $output = '';
+        $output_sw = false;
+        if(get_option('site_cache_switcher')){
+            $caches = get_option('site_cache_includes');
+            $temp_slug = get_cat_by_template('archive','slug');
+            $output_sw = in_array($temp_slug, explode(',', $caches));
+            $output = $output_sw ? get_option('site_archive_list_cache') : '';
+        }
+        if(!$output || !$output_sw){
             global $async_sw, $use_async, $async_loads, $curYear;
             $async_stats_sw = get_option('site_async_archive_stats');
             $news_temp = get_cat_by_template('news');
@@ -1164,9 +1256,9 @@
                 $output .= $output_each;
                 $output .= '</ul>';
             }
-            update_option('site_archive_list_cache', $output);
+            if($output_sw) update_option('site_archive_list_cache', wp_kses_post($output));
         }
-        echo $output;
+        echo wp_kses_post($output);
     }
     
     
@@ -1174,22 +1266,60 @@
      *  wp_schedule_event 定时任务
      * ------------------------------------------------------------------------ */
     function schedule_my_cronjob(){
-        if(!wp_next_scheduled('archive_cronjob_hook')) { 
+        if(!wp_next_scheduled('db_caches_cronjob_hook')){
             // 设定定时作业执行时间（东八区时间）
-            $timestamp = strtotime('today 00:00am Asia/Shanghai'); // 设置每天上午00点钟执行一次定时作业
-            wp_schedule_event($timestamp, 'daily', 'archive_cronjob_hook'); 
+            $timestamp = strtotime('today 09:00am Asia/Shanghai'); // 设置每天上午执行一次定时作业
+            wp_schedule_event($timestamp, 'daily', 'db_caches_cronjob_hook'); 
         }
     }
-    add_action('wp', 'schedule_my_cronjob');
-    // 自定义定时作业回调函数 //https://www.shephe.com/2023/07/no-pluglin-wordpress-archive-page/
-    function clear_archive_caches() {
+    //定时清除（重建）缓存
+    function site_clear_timeout_caches(){
         update_option('site_archive_count_cache', '');  //清除（重建）归档统计
-        update_option('site_archive_contributions_cache', '');  //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
-        update_option('site_archive_list_cache', '');  //解决bug：data-nonce验证数据[24h有效]被db缓存导致xhr请求返回403
+        update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
+        update_option('site_acg_stats_cache', ''); //定时清除（重建）ACG 缓存
+        update_option('site_rank_list_cache', ''); //定时清除（重建）排行缓存
     }
-    add_action('archive_cronjob_hook', 'clear_archive_caches'); //cccitu_cronjob_hook
-    add_action('save_post', 'clear_archive_caches'); // 更新/新建文章时清空 archive caches
-    
+    add_action('wp', 'schedule_my_cronjob');
+    add_action('db_caches_cronjob_hook', 'site_clear_timeout_caches'); //定时更新 db caches
+    // function schedule_acg_cronjob(){
+    //     if(!wp_next_scheduled('acg_caches_cronjob_hook')){
+    //         // 晚上更新一次ACG
+    //         $timestamp = strtotime('today 17:30am Asia/Shanghai'); // 设置每天上午执行一次定时作业
+    //         wp_schedule_event($timestamp, 'daily', 'acg_caches_cronjob_hook'); 
+    //     }
+    // }
+    // add_action('wp', 'schedule_acg_cronjob');
+    // add_action('acg_caches_cronjob_hook', 'site_clear_db_caches'); //定时更新 db caches
+    // 自定义定时作业回调函数 //https://www.shephe.com/2023/07/no-pluglin-wordpress-archive-page/
+    function site_clear_db_caches() {
+        // // 仅适用于不存在 wp_ajax_nopriv_my_ajax_action 请求验证的数据
+        // remove_action('wp_ajax_my_ajax_action', 'my_ajax_callback');
+        // remove_action('wp_ajax_nopriv_my_ajax_action', 'my_ajax_callback');
+        // // 未解决BUG：data-nonce验证数据[24h有效，根据用户会话单独生成验证数据]被db缓存导致其他xhr请求会话返回403
+        // update_option('site_archive_count_cache', '');  //清除（重建）归档统计
+        // update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
+        update_option('site_archive_list_cache', '');  
+        // //清除（重建）ACG 缓存
+        // update_option('site_acg_stats_cache', '');
+        update_option('site_acg_post_cache', '');
+    }
+    add_action('save_post', 'site_clear_db_caches'); 
+    add_action('delete_post', 'site_clear_db_caches');
+    //清除（重建）更新链接
+    function site_update_link_cache(){
+        update_option('site_link_list_cache', '');  //清除（重建）友情链接
+    }
+    add_action('add_link', 'site_update_link_cache');
+    add_action('edit_link', 'site_update_link_cache');
+    add_action('delete_link', 'site_update_link_cache');
+    //清除（重建）更新下载
+    function site_update_download_cache($post_id) {
+        $download_temp = get_cat_by_template('download');
+        $categories = wp_get_post_categories($post_id);
+        if (in_array($download_temp->term_id, $categories)) update_option('site_download_list_cache', '');
+    }
+    add_action('save_post', 'site_update_download_cache');
+    add_action('delete_post', 'site_update_download_cache');
     
     // 自定义文章标签
     function get_tag_list($pid, $max=3, $dot="、"){
@@ -1272,27 +1402,6 @@
         require_once(TEMPLATEPATH. '/head.php');
     }
     
-    // WP评论统计排行 https://www.seo628.com/2685.html
-    function get_comments_ranking(){
-        global $wpdb;
-        $comments_data = array();
-        $comments_mail = $wpdb->get_results("SELECT DISTINCT comment_author_email FROM $wpdb->comments WHERE 1 ");
-        foreach($comments_mail as $email){
-            $each_mail = $email->comment_author_email;
-            $mail_data = $wpdb->get_results("SELECT * FROM $wpdb->comments WHERE comment_author_email = '$each_mail' ");
-            $comments_obj = new stdClass();
-            $comments_obj->name = $mail_data[0]->comment_author;
-            $comments_obj->mail = $each_mail;
-            $comments_obj->link = $mail_data[0]->comment_author_url;
-            $comments_obj->count = count($mail_data);
-            array_push($comments_data, $comments_obj);
-        }
-        unset($wpdb);
-        usort($comments_data,function($first,$second){
-            return $first->count < $second->count;
-        });
-        return $comments_data;
-    }
     
     // 双数据页面类型（分类、页面）切换评论
     function dual_data_comments(){
@@ -1603,9 +1712,150 @@
         add_filter('comment_text' , 'lazyload_images', 20, 2);
     }
     
+    
+    function the_comment_ranks($t1='常客',$c1='访问较频繁的童鞋',$t2='稀客',$c2='偶尔来访的小伙伴',$t3='游客',$c3=''){
+        $output = '';
+        $output_sw = false;
+        if(get_option('site_cache_switcher')){
+            $caches = get_option('site_cache_includes');
+            $temp_slug = get_cat_by_template('ranks','slug');
+            $output_sw = in_array($temp_slug, explode(',', $caches));
+            $output = $output_sw ? get_option('site_rank_list_cache') : '';
+        }
+        if(!$output || !$output_sw){
+            global $valine_sw;
+            $output .= '<h1>'.$t1.' </h1><p>'.$c1.'</p><ul id="rankest">';
+            if($valine_sw){
+                $output .= '<span id="loading"></span></ul><h1> '.$t2.' </h1><p>'.$c2.'</p><ul id="ranks"><span id="loading"></ul><h1>'.$t3.'</h1>'.$c3.'<ul id="ranked"><span id="loading"></span></ul>';
+            }else{
+                $rankdata = get_comment_ranks();
+                $datalen = count($rankdata);
+                $databox = '';
+                for($i=0;$i<3;$i++){
+                    if(array_key_exists($i,$rankdata)){
+                        $user = $rankdata[$i];
+                        $count = $user->count ? $user->count : 0;
+                        $link = $user->link ? $user->link : '#';
+                        $name = $user->name ? $user->name : '???';
+                    }
+                    $lazyhold = "";
+                    $avatar = get_option('site_avatar_mirror').'avatar/'.md5($user->mail).'?d=retro&s=100';
+                    if($lazysrc!='src'){
+                        $lazyhold = 'data-src="'.$avatar.'"';
+                        $avatar = $loadimg;
+                    }
+                    $counts = $count<50 ? $count*2 : $count;
+                    $databox .= '<li><span id="avatar" data-t="'.$count.'"><a href="'.$link.'" target="_blank"><img '.$lazyhold.' src="'.$avatar.'" title="这家伙留了 '.$count.' 条评论！" alt="'.$name.'" /></a></span><span id="range" style=""><em style="height:'.$counts.'%"><span class="wave active"></span></em></span><a href="'.$link.'" target="_self"><b title="'.$name.'">'.$name.'</b></a></li>';
+                };
+                $databox .= '</ul>';
+                // top 10
+                if($datalen>3){
+                    $databox .= '<h1>'.$t2.' </h1><p>'.$c2.'</p><ul id="ranks">';
+                    for($i=3;$i<10;$i++){
+                        $user = array_key_exists($i,$rankdata) ? $rankdata[$i] : false;
+                        if($user){
+                            $count = $user->count;
+                            $link = $user->link;
+                            $lazyhold = "";
+                            $avatar = get_option('site_avatar_mirror').'avatar/'.md5($user->mail).'?d=retro&s=100';
+                            if($lazysrc!='src'){
+                                $lazyhold = 'data-src="'.$avatar.'"';
+                                $avatar = $loadimg;
+                            }
+                            $databox .= '<li title="TA 在本站已有 '.$count.' 条评论"><span id="avatar"><a href="'.$link.'" target="_blank"><img '.$lazyhold.' src="'.$avatar.'" title="这家伙留了 '.$count.' 条评论！" alt="'.$name.'"></a></span><a href="'.$link.'" target="_blank"><b data-mail="'.$user->mail.'">'.$user->name.'</b><sup>'.$count.'+</sup></a></li>';
+                        }
+                    }
+                    $databox .= '</ul>';
+                };
+                // left 
+                if($datalen>13){
+                    $databox .= '<h1>'.$t3.' </h1><p>'.$c3.'</p><ul id="ranked">';
+                    for($i=13;$i<50;$i++){
+                        $user = array_key_exists($i,$rankdata) ? $rankdata[$i] : false;
+                        if($user) $databox .= '<li><p>'.$user->name.'<sup>'.$user->count.'</sup></p></li>';
+                    }
+                    $databox .= '</ul>';
+                };
+                $output .= $databox;
+                if($output_sw) update_option('site_rank_list_cache', wp_kses_post($output));
+            }
+        };
+        echo wp_kses_post($output);
+    }
+    // WP评论统计排行 https://www.seo628.com/2685.html
+    function get_comment_ranks(){
+        global $wpdb;
+        $comments_data = array();
+        $comments_mail = $wpdb->get_results("SELECT DISTINCT comment_author_email FROM $wpdb->comments WHERE 1 ");
+        foreach($comments_mail as $email){
+            $each_mail = $email->comment_author_email;
+            $mail_data = $wpdb->get_results("SELECT * FROM $wpdb->comments WHERE comment_author_email = '$each_mail' ");
+            $comments_obj = new stdClass();
+            $comments_obj->name = $mail_data[0]->comment_author;
+            $comments_obj->mail = $each_mail;
+            $comments_obj->link = $mail_data[0]->comment_author_url;
+            $comments_obj->count = count($mail_data);
+            array_push($comments_data, $comments_obj);
+        }
+        unset($wpdb);
+        usort($comments_data,function($first,$second){
+            return $first->count < $second->count;
+        });
+        return $comments_data;
+    }
+    
+    function the_site_links($t1='小伙伴们', $t2='技术侧重', $t3='荐亦有鉴', $baas=false){
+        $output = '';
+        $output_sw = false;
+        if(get_option('site_cache_switcher')){
+            $caches = get_option('site_cache_includes');
+            $temp_slug = get_cat_by_template('2bfriends','slug');
+            $output_sw = in_array($temp_slug, explode(',', $caches));
+            $output = $output_sw ? get_option('site_link_list_cache') : '';
+        }
+        if(!$output || !$output_sw){
+            if($baas){
+                $output .= '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes"></div><!-- rcmd begain --><div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes"></div><!-- lost begain <div class="inbox-clip"></div> --><div class="deals oldest"><div class="inboxSliderCard"><div class="slideBox flexboxes"></div></div></div>';
+            }else{
+                $rich_links = get_bookmarks(array(
+                    'orderby' => 'link_id',
+                    'order' => 'ASC',  // 最新排最后
+                    'category_name' => "standard",
+                    'hide_invisible' => 0
+                ));
+                $tech_links = get_bookmarks(array(
+                    'orderby' => 'link_id',
+                    'order' => 'ASC',  // 最新排最后
+                    'category_name' => "technical",
+                    'hide_invisible' => 0
+                ));
+                $rcmd_links = get_bookmarks(array(
+                    'orderby' => 'rand',  // random orderby
+                    'order' => 'DESC',
+                    'category_name' => "special",
+                    'hide_invisible' => 0
+                ));
+                $lost_links = get_bookmarks(array(
+                    'orderby' => 'link_id',  //updated link_updated
+                    'order' => 'DESC',  // 最新排最前
+                    'category_name' => "missing",
+                    'hide_invisible' => 0,
+                   // 'show_updated' => 1
+                ));
+                $output .= count($rich_links)>0 ? '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes">'.get_site_links($rich_links, 'full').'</div>' : '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';
+                if(count($tech_links)>0) $output .= '<div class="inbox-clip"><h2 id="exchanged"> '.$t2.' </h2></div><div class="deals tech exchanged flexboxes">'.get_site_links($tech_links, 'full').'</div>';
+                if(count($rcmd_links)>0) $output .= '<div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes">'.get_site_links($rcmd_links, 'half').'</div>';
+                if(count($lost_links)>0) $output .= '<div class="deals oldest"><div class="inboxSliderCard"><div class="slideBox flexboxes">'.get_site_links($lost_links).'</div></div></div>';
+            }
+            if($output_sw) update_option('site_link_list_cache', wp_kses_post($output));
+        }
+        echo wp_kses_post($output);
+    }
     //友情链接函数
-    function site_links($links, $frame=false){
+    function get_site_links($links, $frame=false){
+        if(!$links) return 'unreachable links provide';
         global $lazysrc, $loadimg;
+        $output = '';
         foreach ($links as $link){
             $link_notes = $link->link_notes;
             $link_target = $link->link_target;
@@ -1615,8 +1865,8 @@
             $link_desc = $link->link_description;
             $statu = ' standby';
             $status = $link->link_visible!='Y' ? $statu : '';
-            $sex = $link_rating==1 ? ' girl' : '';
-            $ssl = $link_rating==10 ? '' : ' https';
+            $sex = $link_rating==1||$link_rating==10 ? ' girl' : '';
+            $ssl = $link_rating>=9 ? ' https' : '';
             $rel = $link->link_rel ? $link->link_rel : false;
             $target = !$link_target ? '_blank' : $link_target;
             $impress = $link_notes&&$link_notes!='' ? '<span class="ssl'.$ssl.'"> '.$link_notes.' </span>' : false;
@@ -1630,19 +1880,20 @@
                 case 'full':
                     $avatar_statu = $status==$statu ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link_name.'" draggable="false">';
                     $rel_statu = $rel ? $rel : 'friends';
-                    echo '<div class="inbox flexboxes'.$status.$sex.'"><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span><span class="lowside-description"><p>'.$link_desc.'</p></span></a></div>';
+                    $output .= '<div class="inbox flexboxes'.$status.$sex.'"><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span><span class="lowside-description"><p>'.$link_desc.'</p></span></a></div>';
                     break;
                 case 'half':
                     $rel_statu = $rel ? $rel : 'recommends';
-                    echo '<div class="inbox flexboxes'.$status.$sex.'">'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span><span class="lowside-description"><p>'.$link_desc.'</p></span></a></div>'; //<em></em>
+                    $output .= '<div class="inbox flexboxes'.$status.$sex.'">'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span><span class="lowside-description"><p>'.$link_desc.'</p></span></a></div>'; //<em></em>
                     break;
                 default:
                     $rel_statu = $status==$statu ? 'nofollow' : 'marked';
-                    echo '<a href="'.$link_url.'" class="'.$status.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" >'.$link_name.'</a>';
+                    $output .= '<a href="'.$link_url.'" class="'.$status.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" >'.$link_name.'</a>';
                     break;
             }
         }
         unset($lazysrc, $loadimg);
+        return $output;
     }
     
     //分类 post metabox 信息
@@ -1882,8 +2133,69 @@
     };
     
     
-    // acg post query
-    function acg_posts_query($the_cat, $pre_cat=false, $limit=99){
+    // acg post stats
+    function the_acg_stats(){
+        global $cat, $cats, $preset;
+        $preslug = $preset->slug;
+        $output = '';
+        if(!empty($cats) && current_slug()==$preslug){
+            $output_sw = false;
+            if(get_option('site_cache_switcher')){
+                $caches = get_option('site_cache_includes');
+                $temp_slug = get_cat_by_template('acg','slug');
+                $output_sw = in_array($temp_slug, explode(',', $caches));
+                $output = $output_sw ? get_option('site_acg_stats_cache') : '';
+            }
+            if(!$output || !$output_sw){
+                $datadance = get_option('site_animated_counting_switcher');
+                foreach($cats as $the_cat){
+                    $cat_slug = $the_cat->slug;
+                    $cat_count = $the_cat->count;
+                    $cat_num = $cat_count;
+                    $dataCls = '';
+                    if($datadance){
+                        $dataCls = ' blink';
+                        $cat_num = '0';
+                    }
+                    $output .= '<div class="'.$cat_slug.$dataCls.'" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2>'.$cat_num.'<sup>+</sup></h2><p>'.$the_cat->name.'/'.strtoupper($cat_slug).'</p></a></div>';
+                }
+                if($output_sw) update_option('site_acg_stats_cache', wp_kses_post($output));
+            }
+        }else{
+            $the_cat = get_category($cat);
+            $cat_count = $the_cat->count;
+            $output .= '<div class="blink" data-count='.$cat_count.'><h2 class="single">'.$cat_count.'<sup>+</sup></h2><p>'.$the_cat->name.'/'.$the_cat->slug.'</p></div>';
+        }
+        echo wp_kses_post($output);
+    }
+    //acg post list(multi)
+    function the_acg_posts(){
+        global $cat, $cats, $preset, $async_loads;
+        $preslug = $preset->slug;
+        if(!empty($cats) && current_slug()==$preslug){
+            // cache db only if not-single sub-page
+            $output = '';
+            $output_sw = false;
+            if(get_option('site_cache_switcher')){
+                $caches = get_option('site_cache_includes');
+                $temp_slug = get_cat_by_template('acg','slug');
+                $output_sw = in_array($temp_slug, explode(',', $caches));
+                $output = $output_sw ? get_option('site_acg_post_cache') : '';
+            }
+            if(!$output || !$output_sw){
+                foreach($cats as $the_cat) $output .= get_acg_posts($the_cat, $preslug, $async_loads);
+                // wp_kses_post() filted javascript:; href
+                if($output_sw) update_option('site_acg_post_cache', $output); //wp_kses_post($output)
+            }
+            // wp_kses_post() caused setupBlurColor() unabled to setup
+            echo $output; //wp_kses_post($output)
+        }else{
+            echo get_acg_posts(get_category($cat), $preslug, $async_loads);
+        }
+    }
+    // acg post query(single)
+    function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
+        $output = '';
         global $post, $lazysrc, $loadimg;
         $acg_slug = get_cat_by_template('acg','slug');
         $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
@@ -1897,15 +2209,13 @@
                 'date' => 'DESC',
                 'modified' => 'DESC'
             ),
-            'posts_per_page' => $limit//get_option('site_techside_num', 5),
+            'posts_per_page' => $limit,
         )));
-        echo '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> '.$cat_slug.' </sup></h2></div><div class="info loadbox flexboxes">';
-        // $acg_count = $acg_query->post_count; //count($acg_query->posts); //$acg_query->found_posts
+        $output .= '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'<sup> '.$cat_slug.' </sup></h2></div><div class="info loadbox flexboxes">';
         while ($acg_query->have_posts()):
             $acg_query->the_post();
             $post_feeling = get_post_meta($post->ID, "post_feeling", true);
             $post_source = get_post_meta($post->ID, "post_source", true);
-            // $post_orderby = get_post_meta($post->ID, "post_orderby", true);
             $post_rcmd = get_post_meta($post->ID, "post_rcmd", true);
             $post_rating = get_post_meta($post->ID, "post_rating", true);
             $postimg = get_postimg(0,$post->ID,true);
@@ -1913,64 +2223,32 @@
                 $lazyhold = 'data-src="'.$postimg.'"';
                 $postimg = $loadimg;
             }
-?>
-            <div class="inbox flexboxes" id="<?php echo 'pid_'.get_the_ID() ?>"> <!-- style="background-color:rgb(<?php //echo extract_images_rgb($postimg); ?> / 50%)"-->
-                <div class="inbox-headside flexboxes">
-                    <?php echo '<img '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous">'; //<img class="bg" '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'"> ?>
-                    <span class="author"><?php echo $post_feeling; ?></span>
-                </div>
-                <div class="inbox-aside">
-                    <span class="lowside-title">
-                        <h4>
-                            <?php 
-                                if(get_option('site_single_switcher')){
-                                    $target = "_blank";
-                                    $href = $post_source ? $post_source : get_the_permalink();
-                                }else{
-                                    $target = "_self";
-                                    $href = "javascript:;";
-                                    if($post_source){
-                                        $href = $post_source;
-                                        $target = "_blank";
-                                    }
-                                }
-                                echo '<a href="'.$href.'" target="'.$target.'">'.get_the_title().'</a>';
-                            ?>
-                        </h4>
-                    </span>
-                    <span class="lowside-description">
-                        <p><?php custom_excerpt(66); ?></p>
-                    </span>
-                    <?php
-                        if($post_rcmd){
-                            $rcmd_title = 'Personal Recommends';
-                            $rcmd_class = '';
-                            $rcmd_text = '荐';
-                            if($post_rating){
-                                $rcmd_title = 'GOLD Recommendation';
-                                $rcmd_class = ' both';
-                                $rcmd_text = $post_rating;
-                            }
-                    ?>
-                            <div class="game-ratings gs<?php echo $rcmd_class; ?>">
-                                <div class="gamespot" title="<?php echo $rcmd_title; ?>">
-                                    <div class="range Essential RSBIndex">
-                                        <span id="before"></span>
-                                        <span id="after"></span>
-                                    </div>
-                                    <span id="spot">
-                                        <h3><?php echo $rcmd_text; ?></h3>
-                                    </span>
-                                </div>
-                            </div>
-                    <?php
-                        }else{
-                            if($post_rating) echo '<div class="game-ratings ign"><div class="ign hexagon" title="IGN High Grades"><h3>'.$post_rating.'</h3></div></div>';
-                        }
-                    ?>
-                </div>
-            </div>
-<?php
+            if(get_option('site_single_switcher')){
+                $target = "_blank";
+                $href = $post_source ? $post_source : get_the_permalink();
+            }else{
+                $target = "_self";
+                $href = "javascript:;";
+                if($post_source){
+                    $href = $post_source;
+                    $target = "_blank";
+                }
+            }
+            $output .= '<div class="inbox flexboxes" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><img '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /><span class="author">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(66,true).'</p></span>';
+            if($post_rcmd){
+                $rcmd_title = 'Personal Recommends';
+                $rcmd_class = '';
+                $rcmd_text = '荐';
+                if($post_rating){
+                    $rcmd_title = 'GOLD Recommendation';
+                    $rcmd_class = ' both';
+                    $rcmd_text = $post_rating;
+                }
+                $output .= '<div class="game-ratings gs'.$rcmd_class.'"><div class="gamespot" title="'.$rcmd_title.'"><div class="range Essential RSBIndex"><span id="before"></span><span id="after"></span></div><span id="spot"><h3>'.$rcmd_text.'</h3></span></div></div>';
+            }else{
+                if($post_rating) $output .=  '<div class="game-ratings ign"><div class="ign hexagon" title="IGN High Grades"><h3>'.$post_rating.'</h3></div></div>';
+            }
+            $output .= '</div></div>';
         endwhile;
         wp_reset_query();  // reset wp query incase following code occured query err
         unset($post, $lazysrc, $loadimg);
@@ -1990,15 +2268,17 @@
                 $all_count = $all_query->post_count;
                 $posts_count = $acg_query->post_count;  //count($acg_query->posts) //mailto:'.get_bloginfo("admin_email").' 发送邮件，荐你所见
                 $disable_statu = $posts_count==$all_count ? ' disabled' : false; //>=
-                echo '<div class="inbox more flexboxes"><div class="inbox-more flexboxes'.$disable_statu.'"><a class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cid.'" data-nonce="'.wp_create_nonce($slug."_posts_ajax_nonce").'" data-cat="'.strtoupper($slug).'" title="加载更多数据"></a></div></div>';
+                $output .= '<div class="inbox more flexboxes"><div class="inbox-more flexboxes'.$disable_statu.'"><a class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cid.'" data-nonce="'.wp_create_nonce($slug."_posts_ajax_nonce").'" data-cat="'.strtoupper($slug).'" title="加载更多数据"></a></div></div>';
                 unset($cid, $slug, $all_count, $posts_count, $disable_statu);
             }
         }
-        echo '</div>';
+        $output .= '</div>';
+        return $output;
     };
     
     // wp自定义（含置顶无分页）查询函数
-    function download_posts_query($cats, $order, $single=false){
+    function get_download_posts($cats, $order, $single=false){
+        $output = '';
         $cats_count = count($cats);
         for($i=0;$i<$cats_count;$i++){
             $term_order = get_term_meta($cats[$i]->term_id, 'seo_order', true);
@@ -2021,68 +2301,40 @@
                 ));
                 $cat_poster = get_term_meta($cat_id, 'seo_image', true );
                 if(!$cat_poster) $cat_poster = get_postimg(0, $cat_first_post[0]->ID, true); //get_option('site_bgimg');
-?>
-				<div class="dld_box <?php echo $cat_slug.' '.$single ?>">
-					<div class="dld_box_wrap">
-						<div class="box_up preCover">
-							<span style="background:url(<?php echo $cat_poster; ?>) center center /cover">
-								<a href="javascript:;"><h3> <?php echo $cat_name; ?> </h3><i> <?php echo strtoupper($cat_slug) ?></i><em></em></a>
-						  	</span>
-						</div>
-						<div class="box_down">
-						    <ul>
-						        <?php 
-                                    global $post, $lazysrc, $loadimg;
-                                    $left_query = new WP_Query(array_filter(array(
-                                        'cat' => $cat_id,
-                                        'meta_key' => 'post_orderby',
-                                        'orderby' => array(
-                                            'meta_value_num' => 'DESC',
-                                            'date' => 'DESC',
-                                            'modified' => 'DESC'
-                                        ),
-                                        'posts_per_page' => 99//get_option('posts_per_page'),  //use left_query counts
-                                    )));
-                                    while ($left_query->have_posts()):
-                                        $left_query->the_post();
-                                        $link = get_post_meta($post->ID, "post_feeling", true);
-                                        $postimg = get_postimg(0,$post->ID,true);
-                                        if($lazysrc!='src'){
-                                            $lazyhold = 'data-src="'.$postimg.'"';
-                                            $postimg = $loadimg;
-                                        }
-                                        $href = $link ? $link : 'javascript:void(0);';
-                                        $target = $link ? '_blank' : '_self';
-                            ?>
-                                        <li class="<?php if(!$link) echo 'disabled ';if(get_post_meta($post->ID, ' post_orderby', true)>1) echo 'topset'; ?>">
-                                            <div class="details">
-                                                <!--<span style="background:url(<?php echo $postimg; ?>) center center no-repeat"></span>-->
-                                                <a href="<?php echo $href; ?>" target="<?php echo $target; ?>" rel="nofollow" title="下载附件"><?php echo '<img '.$lazyhold.' src="'.$postimg.'" alt="poster" />'; ?></a>
-                                                <div class="desc">
-                                                    <!--<p>-->
-                                                        <?php the_title() ?>
-                                                    <!--<i>-->
-                                                        <a href="<?php echo $href; ?>" target="<?php echo $target; ?>" rel="nofollow">下载附件</a>
-                                                        <?php
-                                                            if(get_option('site_single_switcher')) echo '<a href="'.get_the_permalink().'" target="_blank">查看详情</a>';
-                                                        ?>
-                                                    <!--</i>-->
-                                                    <!--</p>-->
-                                                </div>
-                                            </div>
-                                        </li>
-                            <?php
-                                    endwhile;
-                                    wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
-                                    unset($post, $lazysrc, $loadimg);
-						        ?>
-						    </ul>
-						</div>
-					</div>
-				</div>
-<?php
+                $output .= '<div class="dld_box '.$cat_slug.' '.$single.'"><div class="dld_box_wrap"><div class="box_up preCover"><span style="background:url('.$cat_poster.') center center /cover"><a href="javascript:;"><h3> '.$cat_name.' </h3><i> '.strtoupper($cat_slug).'</i><em></em></a></span></div><div class="box_down"><ul>';
+                    //setup query
+                    global $post, $lazysrc, $loadimg;
+                    $left_query = new WP_Query(array_filter(array(
+                        'cat' => $cat_id,
+                        'meta_key' => 'post_orderby',
+                        'orderby' => array(
+                            'meta_value_num' => 'DESC',
+                            'date' => 'DESC',
+                            'modified' => 'DESC'
+                        ),
+                        'posts_per_page' => 99 //get_option('posts_per_page'),  //use left_query counts
+                    )));
+                    while ($left_query->have_posts()):
+                        $left_query->the_post();
+                        $link = get_post_meta($post->ID, "post_feeling", true);
+                        $postimg = get_postimg(0,$post->ID,true);
+                        if($lazysrc!='src'){
+                            $lazyhold = 'data-src="'.$postimg.'"';
+                            $postimg = $loadimg;
+                        }
+                        $href = $link ? $link : 'javascript:void(0);';
+                        $target = $link ? '_blank' : '_self';
+                        $class_disabled  = !$link ? 'disabled ' : false;
+                        $class_topset = get_post_meta($post->ID, 'post_orderby', true)>1 ? 'topset' : false;
+                        $single_sw = get_option('site_single_switcher') ? '<a href="'.get_the_permalink().'" target="_blank">查看详情</a>' : false;
+                        $output .= '<li class="'.$class_disabled.$class_topset.'"><div class="details"><a href="'.$href.'" target="'.$target.'" rel="nofollow" title="下载附件"><img '.$lazyhold.' src="'.$postimg.'" alt="poster" /></a><div class="desc">'.get_the_title().'<a href="'.$href.'" target="'.$target.'" rel="nofollow">下载附件</a>'.$single_sw.'</div></div></li>';
+                    endwhile;
+                    wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
+                    unset($post, $lazysrc, $loadimg);
+                $output .= '</ul></div></div></div>';
             }
-        }
+        };
+        return $output;
     };
     
     // 倒计时挂件
@@ -2252,13 +2504,7 @@
                                             <li class="tags author"><?php echo get_tag_list($post->ID); ?></li>
                                             <li title="讨论人数">
                                                 <?php 
-                                                    $third_cmt = get_option('site_third_comments');
-                                                    // $valine_sw = $third_cmt=='Valine' ? true : false;
-                                                    // $twikoo_sw = $third_cmt=='Twikoo' ? true : false;
-                                                    $count = 0;
-                                                    if(!$third_cmt){
-                                                        $count = $post->comment_count;
-                                                    }
+                                                    $count = get_option('site_third_comments') ? 0 : $post->comment_count;
                                                     echo '<span class="valine-comment-count icom" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>';
                                                 ?>
                                             </li>

@@ -91,10 +91,11 @@ body.dark .article_index a{
 }
 
 
-figure.wp-block-video,
+figure.wp-block-video video,
 figure.wp-block-image{
     max-width: 66%;
     display: inline-block;
+    border-radius: var(--radius);
 }
 figure.wp-block-table{margin:25px auto}
 .half-size video{width:720px!important}
@@ -349,14 +350,15 @@ article .infos span#slider {
 .win-content article span#normal {
 	width: 100%;
 	height: auto;
-	display: inline-block;
+	/*display: inline-block;*/
+	display: block;
 	text-align: left;
-	margin: 23px 0 0 0;
+	margin: 18px auto;
 	position: relative;
 	border-left: 3px solid;
 	border-color: var(--preset-6);
 	background-color: var(--preset-s);
-	margin-bottom: 18px;
+	/*margin-bottom: 18px;*/
 	box-sizing: border-box;
 }
 .win-content article span#normal h3 {

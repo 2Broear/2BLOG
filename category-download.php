@@ -29,27 +29,25 @@
         <div class="download_boxes">
 		    <?php 
 		        $basename = basename(__FILE__);
-                $preset = get_cat_by_template(str_replace('.php',"",substr($basename,9)));//get_template_bind_cat($basename)->slug;//'download';
+                $preset = get_cat_by_template(str_replace('.php',"",substr($basename,9))); //get_template_bind_cat($basename)->slug;//'download';
                 $preslug = $preset->slug;
+                $output = '';
+                $output_sw = false;
+                if(get_option('site_cache_switcher')){
+                    $caches = get_option('site_cache_includes');
+                    $output_sw = in_array($preslug, explode(',', $caches));
+                    $output = $output_sw ? get_option('site_download_list_cache') : '';
+                }
                 $curslug = current_slug();
                 $baas = get_option('site_leancloud_switcher')&&in_array($basename, explode(',', get_option('site_leancloud_category'))); //&&strpos(get_option('site_leancloud_category'), $basename)!==false;
                 $cats = get_categories(meta_query_categories($preset->term_id, 'ASC', 'seo_order'));
                 if(!$baas){
-                    // !empty($cats) && $curslug==$preslug ? download_posts_query($cats, 1) : download_posts_query(array(get_category($cat)), 1, 'single');
-                    if(!empty($cats) && $curslug==$preslug){
-                        echo '<div class="dld_boxes">';
-                        download_posts_query($cats, 1);
-                        echo '</div>';
-                    }else{
-                        echo '<div class="dld_boxes single">';
-                        download_posts_query(array(get_category($cat)), 1);
-                        echo '</div>';
+                    if(!$output || !$output_sw){
+                        $output .= !empty($cats) && $curslug==$preslug ? '<div class="dld_boxes">'.get_download_posts($cats, 1).'</div><div class="dld_boxes">'.get_download_posts($cats, 2).'</div><div class="dld_boxes">'.get_download_posts($cats, 3).'</div>' : '<div class="dld_boxes single">'.get_download_posts(array(get_category($cat)), 1).'</div><div class="dld_boxes single">'.get_download_posts(array(get_category($cat)), 2).'</div><div class="dld_boxes single">'.get_download_posts(array(get_category($cat)), 3).'</div>';
+                        if($output_sw) update_option('site_download_list_cache', sanitize_text_field($output));
                     }
-                    // print_r($cats);
-                    // print_r(array(get_category($cat)));
                 }else{
-            ?>
-			        <div class="dld_boxes">
+                    $output .= '<div class="dld_boxes">
         				<div class="dld_box adobe">
         					<div class="dld_box_wrap">
         						<div class="box_up preCover">
@@ -75,21 +73,7 @@
         					</div>
         				</div>
 			        </div>
-            <?php
-                };
-                if(!$baas){
-                    if(!empty($cats) && $curslug==$preslug){
-                        echo '<div class="dld_boxes">';
-                        download_posts_query($cats, 2);
-                        echo '</div>';
-                    }else{
-                        echo '<div class="dld_boxes single">';
-                        download_posts_query(array(get_category($cat)), 2);
-                        echo '</div>';
-                    }
-                }else{
-            ?>
-    		        <div class="dld_boxes">
+			        <div class="dld_boxes">
         				<div class="dld_box p2p">
         					<div class="dld_box_wrap">
         						<div class="box_up preCover">
@@ -127,20 +111,6 @@
         					</div>
         				</div>
     		        </div>
-            <?php
-                };
-                if(!$baas){
-                    if(!empty($cats) && $curslug==$preslug){
-                        echo '<div class="dld_boxes">';
-                        download_posts_query($cats, 3);
-                        echo '</div>';
-                    }else{
-                        echo '<div class="dld_boxes single">';
-                        download_posts_query(array(get_category($cat)), 3);
-                        echo '</div>';
-                    }
-                }else{
-            ?>
     		        <div class="dld_boxes">
         				<div class="dld_box tools">
         					<div class="dld_box_wrap">
@@ -178,9 +148,9 @@
         						</div>
         					</div>
         				</div>
-    		        </div>
-            <?php
-                }
+    		        </div>';
+                };
+                echo wp_kses_post($output);
 		    ?>
 		</div>
 		<div style="max-width:1102px;margin:0 auto">
