@@ -5,8 +5,13 @@
         $tag = isset($atts['tag']) ? $atts['tag'] : 'h3';
         return "<span id='normal' class='$statu'><$tag>$title</$tag></span>";
     }
+    function custom_imgbox_shortcode($atts, $content = null) {
+        $img = isset($atts['img']) ? $atts['img'] : '';
+        $title = isset($atts['title']) ? $atts['title'] : 'No Text';
+        return '<div class="ibox"><div class="iboxes"><img decoding="async" alt="qr_code" src="'.$img.'" alt="'.$title.'"><mark>'.$title.'</mark></div></div>';
+    }
     function custom_netease_shortcode($atts){
-        $id = isset($atts['id']) ? $atts['id'] : '898131683';
+        $id = isset($atts['id']) ? $atts['id'] : 'id';
         $width = isset($atts['width']) ? $atts['width'] : '';
         $height = isset($atts['height']) ? $atts['height'] : '350';
         $class = isset($atts['class']) ? $atts['class'] : 'netease_embed';
@@ -15,7 +20,7 @@
     function custom_bilibili_shortcode($atts){
         $vid = isset($atts['vid']) ? $atts['vid'] : 'vid';
         $class = isset($atts['class']) ? $atts['class'] : 'bilibili_embed';
-        return '<iframe id="'.$class.'" src="//player.bilibili.com/player.html?bvid='.$vid.'" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>';
+        return '<iframe class="'.$class.'" src="//player.bilibili.com/player.html?bvid='.$vid.'" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>';
     }
     function custom_sidebar_ad_shortcode($atts){
         $sup = isset($atts['sup']) ? $atts['sup'] : '中意此款主题吗';
@@ -23,10 +28,11 @@
         $sub = isset($atts['sub']) ? $atts['sub'] : '现在体验<b> BETA </b>版';
         $src= isset($atts['src']) ? $atts['src'] : 'javascript:;';
         $img = isset($atts['img']) ? $atts['img'] : 'https://img.2broear.com/2022/08/2BLOG-rainbow666.jpg';
-        return '<div class="countdown-box" style="margin-bottom: 15px"><a href="'.$href.'" target="_blank" title="'.$title.'"><div id="countdown" class="countdowns" style="background-image:url('.$img.')"><p class="title">'.$sup.'</p><div class="time"><span class="timesup">'.$title.'</span></div><p class="today" style="text-decoration: underline;">'.$sub.'</p></div><sup id="ads">ADs</sup></a></div>';
+        return '<div class="countdown-box" style="margin-bottom: 15px"><a href="'.$href.'" target="_blank" title="'.$title.'"><div id="countdown" class="countdowns" style="background-image:url('.$img.')"><p class="title">'.$sup.'</p><div class="time"><span class="timesup">'.$title.'</span></div><p class="today" style="text-decoration: underline;">'.$sub.'</p></div><sup id="ads">ads</sup></a></div>';
     }
     // 注册短代码
     add_shortcode('custom_title', 'custom_title_shortcode');
+    add_shortcode('custom_imgbox', 'custom_imgbox_shortcode');
     add_shortcode('netease_embed', 'custom_netease_shortcode');
     add_shortcode('bilibili_embed', 'custom_bilibili_shortcode');
     add_shortcode('sidebar_ads', 'custom_sidebar_ad_shortcode');
@@ -331,12 +337,12 @@
     
     
     /* ------------------------------------------------------------------------ *
-     * WordPress AJAX Comments Setup etc (comment reply/pagination)
+     * WordPress AJAX Comments Setup etc (comment reply/paginate)
      * ------------------------------------------------------------------------  */
      
     //***  AJAX 回复评论  ***//
     if(get_option('site_ajax_comment_switcher')){
-        // Loop-back child-comments
+        // Loop-back child-comments (recursive)
         function wp_child_comments_loop($cur_comment){
             $child_comment = $cur_comment->get_children(array(
                 'hierarchical' => 'threaded',
@@ -347,9 +353,7 @@
                 //   'order_clause' => 'comment_parent'
                 // )
             ));
-            if(count($child_comment)<=0){
-                return;
-            }
+            if(count($child_comment)<=0) return;
             foreach ($child_comment as $child) {
                 wp_comments_template($child);
                 wp_child_comments_loop($child);
@@ -406,7 +410,7 @@
     
     //***  AJAX 加载评论  ***//
     if(get_option('site_ajax_comment_paginate')){
-        // Childs comment Loop-load method
+        // Childs comment Loop-load method (recursive)
         function ajax_child_comments_loop($cur_comment){
             $child_comment = $cur_comment->get_children(array(
                 'hierarchical' => 'threaded',
@@ -417,8 +421,7 @@
                 // )
             ));
             if(count($child_comment)>=1){
-                // Objects to Array object
-                // $child_comment = json_decode(json_encode($child_comment), true);
+                // $child_comment = json_decode(json_encode($child_comment), true); // Objects to Array object
                 foreach ($child_comment as $child) {
                     if($child->comment_approved=='0') $child->comment_content = '评论未审核，通过后显示';
                     // use privacy data encryption
@@ -432,10 +435,7 @@
                 }
             }
             // return first-level(contains sub-more) only
-            if($cur_comment->comment_parent==0){
-                // print_r(json_encode($cur_comment));
-                return $cur_comment; //$child_comment
-            }
+            if($cur_comment->comment_parent==0) return $cur_comment; //$child_comment
         }
         // Ajax request comments output
         function ajaxLoadComments(){
@@ -458,9 +458,7 @@
                 $each->comment_author_email = md5($each->comment_author_email);
                 // add Objects for frontend calls
                 $each->_comment_agent = get_userAgent_info($each->comment_agent);
-                if($each->comment_parent==0){
-                    array_push($comments_array, ajax_child_comments_loop($each));
-                }
+                if($each->comment_parent==0) array_push($comments_array, ajax_child_comments_loop($each));
             }
             print_r(json_encode($comments_array));
             die();
@@ -476,6 +474,23 @@
      *  
      * ------------------------------------------------------------------------ */
      
+    //通过meta_query获取指定id自定义排序输出子级
+    function meta_query_categories($cid=0, $order='ASC', $orderby='seo_order'){
+        return array(
+            'child_of' => $cid, 'parent' => $cid, 'hide_empty' => 0, 'order'=>$order , 'orderby' => 'order_clause',
+            // 'orderby' => array(
+            //     'order_clause' => $order,
+            //     'modified' => 'DESC',
+            // ), 
+            'meta_query' => array(
+                'order_clause' => array(
+                    'key' => $orderby,
+                    'type' => 'NUMERIC'
+                )
+            )
+        );
+    }
+    
     //获取同级分类（gpt）
     function get_sibling_categories($childs=false, $exclude=false){
         global $cat;
@@ -486,7 +501,7 @@
         $current_categories =  get_categories(['parent' => $current_cid]);
         // if($parent_cid==0) return false;
         $query_cid =  $parent_cid==0||count($current_categories)>0 ? $current_cid : $parent_cid;
-        $query_array = meta_query_categories($query_cid, 'ASC', 'seo_order');
+        $query_array = meta_query_categories($query_cid);
         if($childs) unset($query_array['parent']);
         if($exclude) $query_array['exclude'] = $current_cid;
         return get_categories($query_array);
@@ -586,14 +601,14 @@
         echo '<li class="cat_0 top_level"><a href="/" class="'.$choosen.'">'.$site_icon.'首页</a></li>';
         $cat = $cat ? $cat : get_page_cat_id(current_slug());  // if is_page() then rewrite cat to cid // echo $cat;
         // print_r(get_category($cat));
-        $cats = get_categories(meta_query_categories(0, 'ASC', 'seo_order'));
+        $cats = get_categories(meta_query_categories(0));
         if(!empty($cats)){
             $slash_href = 'javascript:void(0)';
             foreach($cats as $the_cat){
                 $the_cat_id = $the_cat->term_id;
                 $the_cat_slug = $the_cat->slug;  //use slug compare current category
                 $the_cat_par = get_category($the_cat->category_parent);
-                $catss = get_categories(meta_query_categories($the_cat_id, 'ASC', 'seo_order'));
+                $catss = get_categories(meta_query_categories($the_cat_id));
                 $slug_icon = $the_cat_slug!="/" ? $the_cat_slug : "more";
                 $level = !empty($catss) ? "sec_level" : "top_level";
                 $choosen = $the_cat_id==$cat&&!is_single() || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single() ? "choosen" : "";  // 当前选中栏目 || 当前选中栏目下子栏目 || 当前栏目下文章&&文章单页
@@ -612,7 +627,7 @@
                         foreach($catss as $the_cats){
                             $the_cats_id = $the_cats->term_id;
                             $the_cats_par = $the_cats->category_parent;
-                            $catsss = get_categories(meta_query_categories($the_cats_id, 'ASC', 'seo_order'));
+                            $catsss = get_categories(meta_query_categories($the_cats_id));
                             $the_cats_name = !$mobile ? '<b>'.$the_cats->name.'</b>' : $the_cats->name;
                             $level = "sec_child";  // check level before sub-additionaln
                             if(!empty($catsss)){
@@ -630,7 +645,7 @@
                                 }else{
                                     $meta_image = custom_cdn_src('img',true).'/images/default.jpg';
                                 }
-                                echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats_par." ".$level.'"><a href="'.get_category_link($the_cats_id).'" style="background:url('.$meta_image.') center center /cover;" class="'.$choosen.'">'.$the_cats_name.'</a>';
+                                echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats_par." ".$level.'"><a href="'.get_category_link($the_cats_id).'" class="'.$choosen.'" style="background:url('.$meta_image.') center center /cover;">'.$the_cats_name.'</a>'; // style="--data-background:'.$meta_image.'" data-background="'.$meta_image.'" <style>.inside_of_block nav.main-nav .metaboxes li:hover > a{background-image: var(--data-background);}</style>
                             }else{
                                 $cats_desc = $mobile ? '' : ($the_cats->description ? '<p>'.$the_cats->description.'</p>' : "<p>Category Description</p>");
                                 echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats_par." ".$level.'"><a href="'.get_category_link($the_cats_id).'" class="'.$choosen.'">'.$the_cats_name.$cats_desc.'</a>';
@@ -640,7 +655,7 @@
                                 foreach($catsss as $the_catss){
                                     $the_catss_id = $the_catss->term_id;
                                     $the_catss_name = $mobile ? $the_catss->name : '<b>'.$the_catss->name.'</b>';
-                                    $catssss = get_categories(meta_query_categories($the_catss_id, 'ASC', 'seo_order'));
+                                    $catssss = get_categories(meta_query_categories($the_catss_id));
                                     $level = !empty($catssss) ? "th_level" : "trd_child";  // check level before sub-additionaln
                                     $choosen = $the_catss_id==$cat || cat_is_ancestor_of($the_catss_id, $cat) || in_category($the_catss_id)&&is_single() ? "choosen 3rd" : "3rd";  // current choosen detect
                                     echo '<li class="cat_'.$the_catss_id.' par_'.$the_catss->category_parent." ".$level.'"><a href="'.get_category_link($the_catss_id).'" class="'.$choosen.'">'.$the_catss_name.'</a>';  //$catss_desc
@@ -653,7 +668,7 @@
                         echo $mobile ? '<ul class="links-mores">' : '<div class="additional"><ol class="links-more">';
                         foreach($catss as $the_cats){
                             $the_cats_id = $the_cats->term_id;
-                            $catsss = get_categories(meta_query_categories($the_cats_id, 'ASC', 'seo_order'));
+                            $catsss = get_categories(meta_query_categories($the_cats_id));
                             $the_cats_name = $the_cats->name;
                             $level = "sec_child";  // check level before sub-additionaln
                             if(!empty($catsss)){
@@ -668,7 +683,7 @@
                                 echo $mobile ? '<ul class="links-moress">' : '<div class="sub-additional"><ol class="links-more">';
                                 foreach($catsss as $the_catss){
                                     $the_catss_id = $the_catss->term_id;
-                                    $catssss = get_categories(meta_query_categories($the_catss_id, 'ASC', 'seo_order'));
+                                    $catssss = get_categories(meta_query_categories($the_catss_id));
                                     $the_catss_name = $the_catss->name;
                                     $level = "trd_child";  // check level before sub-additionaln
                                     if(!empty($catssss)){
@@ -1197,6 +1212,8 @@
             $output_sw = in_array($temp_slug, explode(',', $caches));
             $output = $output_sw ? get_option('site_archive_list_cache') : '';
         }
+        global $wpdb;
+        $years = $wpdb->get_results( "SELECT YEAR(post_date) AS year FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' GROUP BY year DESC" );
         if(!$output || !$output_sw){
             global $async_sw, $use_async, $async_loads, $curYear;
             $async_stats_sw = get_option('site_async_archive_stats');
@@ -1211,9 +1228,6 @@
             $blog_temp_name = $blog_temp->name;
             $output_stats = "";
             // get years that have posts // https://wordpress.stackexchange.com/questions/46136/archive-by-year
-            global $wpdb;
-            $years = $wpdb->get_results( "SELECT YEAR(post_date) AS year FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' GROUP BY year DESC" );
-            // get posts for each year
             foreach ($years as $year) {
                 $cur_year = $year->year;
                 $cur_posts = get_wpdb_yearly_pids($cur_year, $async_loads, 0);
@@ -1250,13 +1264,19 @@
                     foreach ($this_cats as $this_cat){
                         $output_cat .= '<span id="'.$this_cat->term_id.'">'.$this_cat->name.'</span>';
                     }
-                    $output_each .= $output_cat;
-                    $output_each .= '</sup></a></li>';
+                    $output_each .= $output_cat.'</sup></a></li>';
                 };
-                $output .= $output_each;
-                $output .= '</ul>';
+                $output .= $output_each.'</ul>';
             }
             if($output_sw) update_option('site_archive_list_cache', wp_kses_post($output));
+        }else{
+            // always update wp-nonce if db-cached
+            foreach ($years as $year) {
+                $cur_year = $year->year;
+                $cur_nonce = wp_create_nonce($cur_year."_posts_ajax_nonce");
+                // 贪婪匹配(.*)有效（标识符连接处需?非贪婪匹配）
+                $output = preg_replace('/<sup(.*)data-year=("'.$cur_year.'")(.*?)data-nonce=("[^"]*")(.*)<\/sup>/i', '<sup $1data-year=$2$3data-nonce="'.$cur_nonce.'"$5</sup>', $output);
+            }
         }
         echo wp_kses_post($output);
     }
@@ -1360,13 +1380,13 @@
                 if($rand_font>=$max_font/1.25){
                     $rand_opt = mt_rand(5,10);  // highlight big_font
                     $bold_font = $rand_opt>9 || $rand_font==$max_font ? 'bold' : 'normal';  // max bold_font
-                    $color_font = $rand_opt==10 && $rand_font==$max_font ? 'var(--theme-color)' : 'inherit';
+                    $color_font = $rand_opt==10 && $rand_font==$max_font ? 'color:var(--theme-color)' : '';
                 }else{
                     $rand_opt = mt_rand(2,10);
-                    $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'var(--theme-color)' : 'inherit';
+                    $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'color:var(--theme-color)' : '';
                 }
                 $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
-                echo '<'.$html_tag.' data-count="'.$tag->count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';color:'.$color_font.'">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
+                echo '<'.$html_tag.' data-count="'.$tag->count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';'.$color_font.'">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
             }
             unset($bold_font);
         }else{
@@ -1684,22 +1704,6 @@
         if($qq_matches[0]) $avatar_src='https://q.qlogo.cn/headimg_dl?dst_uin='.$mail_account[1][0].'&spec=640';else $avatar_src='https:'.$avatar_mirror.'avatar/'.md5($user_mail).'?s=100';
         return $avatar_src;
     }
-    //通过meta_query获取指定id自定义排序输出子级
-    function meta_query_categories($cid,$order,$orderby){
-        return array(
-            'child_of' => $cid, 'parent' => $cid, 'hide_empty' => 0, 'order'=>$order , 'orderby' => 'order_clause',
-            // 'orderby' => array(
-            //     'order_clause' => $order,
-            //     'modified' => 'DESC',
-            // ), 
-            'meta_query' => array(
-                'order_clause' => array(
-                    'key' => $orderby,
-                    'type' => 'NUMERIC'
-                )
-            )
-        );
-    }
     
     //lazyload 图片<img>懒加载
     if(get_option('site_lazyload_switcher')){
@@ -1714,20 +1718,18 @@
     
     
     function the_comment_ranks($t1='常客',$c1='访问较频繁的童鞋',$t2='稀客',$c2='偶尔来访的小伙伴',$t3='游客',$c3=''){
+        global $valine_sw;
         $output = '';
-        $output_sw = false;
-        if(get_option('site_cache_switcher')){
-            $caches = get_option('site_cache_includes');
-            $temp_slug = get_cat_by_template('ranks','slug');
-            $output_sw = in_array($temp_slug, explode(',', $caches));
-            $output = $output_sw ? get_option('site_rank_list_cache') : '';
-        }
-        if(!$output || !$output_sw){
-            global $valine_sw;
-            $output .= '<h1>'.$t1.' </h1><p>'.$c1.'</p><ul id="rankest">';
-            if($valine_sw){
-                $output .= '<span id="loading"></span></ul><h1> '.$t2.' </h1><p>'.$c2.'</p><ul id="ranks"><span id="loading"></ul><h1>'.$t3.'</h1>'.$c3.'<ul id="ranked"><span id="loading"></span></ul>';
-            }else{
+        if(!$valine_sw){
+            $output_sw = false;
+            if(get_option('site_cache_switcher')){
+                $caches = get_option('site_cache_includes');
+                $temp_slug = get_cat_by_template('ranks','slug');
+                $output_sw = in_array($temp_slug, explode(',', $caches));
+                $output = $output_sw ? get_option('site_rank_list_cache') : '';
+            }
+            if(!$output || !$output_sw){
+                $output .= '<h1>'.$t1.' </h1><p>'.$c1.'</p><ul id="rankest">';
                 $rankdata = get_comment_ranks();
                 $datalen = count($rankdata);
                 $databox = '';
@@ -1779,6 +1781,8 @@
                 $output .= $databox;
                 if($output_sw) update_option('site_rank_list_cache', wp_kses_post($output));
             }
+        }else{
+            $output .= '<h1>'.$t1.' </h1><p>'.$c1.'</p><ul id="rankest"><span id="loading"></span></ul><h1> '.$t2.' </h1><p>'.$c2.'</p><ul id="ranks"><span id="loading"></ul><h1>'.$t3.'</h1>'.$c3.'<ul id="ranked"><span id="loading"></span></ul>';
         };
         echo wp_kses_post($output);
     }
@@ -1804,50 +1808,38 @@
         return $comments_data;
     }
     
-    function the_site_links($t1='小伙伴们', $t2='技术侧重', $t3='荐亦有鉴', $baas=false){
+    function get_site_bookmarks($category='standard', $orderby='link_id', $order='ASC'){
+        return get_bookmarks(array(
+            'orderby' => $orderby,
+            'order' => $order,
+            'category_name' => $category,
+            'hide_invisible' => 0
+        ));
+    }
+    function the_site_links($t1='小伙伴们', $t2='技术侧重', $t3='荐亦有鉴'){ //, $baas=false
+        global $baas;
         $output = '';
-        $output_sw = false;
-        if(get_option('site_cache_switcher')){
-            $caches = get_option('site_cache_includes');
-            $temp_slug = get_cat_by_template('2bfriends','slug');
-            $output_sw = in_array($temp_slug, explode(',', $caches));
-            $output = $output_sw ? get_option('site_link_list_cache') : '';
-        }
-        if(!$output || !$output_sw){
-            if($baas){
-                $output .= '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes"></div><!-- rcmd begain --><div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes"></div><!-- lost begain <div class="inbox-clip"></div> --><div class="deals oldest"><div class="inboxSliderCard"><div class="slideBox flexboxes"></div></div></div>';
-            }else{
-                $rich_links = get_bookmarks(array(
-                    'orderby' => 'link_id',
-                    'order' => 'ASC',  // 最新排最后
-                    'category_name' => "standard",
-                    'hide_invisible' => 0
-                ));
-                $tech_links = get_bookmarks(array(
-                    'orderby' => 'link_id',
-                    'order' => 'ASC',  // 最新排最后
-                    'category_name' => "technical",
-                    'hide_invisible' => 0
-                ));
-                $rcmd_links = get_bookmarks(array(
-                    'orderby' => 'rand',  // random orderby
-                    'order' => 'DESC',
-                    'category_name' => "special",
-                    'hide_invisible' => 0
-                ));
-                $lost_links = get_bookmarks(array(
-                    'orderby' => 'link_id',  //updated link_updated
-                    'order' => 'DESC',  // 最新排最前
-                    'category_name' => "missing",
-                    'hide_invisible' => 0,
-                   // 'show_updated' => 1
-                ));
+        if(!$baas){
+            $output_sw = false;
+            if(get_option('site_cache_switcher')){
+                $caches = get_option('site_cache_includes');
+                $temp_slug = get_cat_by_template('2bfriends','slug');
+                $output_sw = in_array($temp_slug, explode(',', $caches));
+                $output = $output_sw ? get_option('site_link_list_cache') : '';
+            }
+            if(!$output || !$output_sw){
+                $rich_links = get_site_bookmarks();
+                $tech_links = get_site_bookmarks('technical');
+                $rcmd_links = get_site_bookmarks('special','rand','DESC');
+                $lost_links = get_site_bookmarks('missing','link_id','DESC');
                 $output .= count($rich_links)>0 ? '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes">'.get_site_links($rich_links, 'full').'</div>' : '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';
                 if(count($tech_links)>0) $output .= '<div class="inbox-clip"><h2 id="exchanged"> '.$t2.' </h2></div><div class="deals tech exchanged flexboxes">'.get_site_links($tech_links, 'full').'</div>';
                 if(count($rcmd_links)>0) $output .= '<div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes">'.get_site_links($rcmd_links, 'half').'</div>';
                 if(count($lost_links)>0) $output .= '<div class="deals oldest"><div class="inboxSliderCard"><div class="slideBox flexboxes">'.get_site_links($lost_links).'</div></div></div>';
+                if($output_sw) update_option('site_link_list_cache', wp_kses_post($output));
             }
-            if($output_sw) update_option('site_link_list_cache', wp_kses_post($output));
+        }else{
+            $output .= '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes"></div><!-- rcmd begain --><div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes"></div><!-- lost begain --><div class="inbox-clip"></div><div class="deals oldest"><div class="inboxSliderCard"><div class="slideBox flexboxes"></div></div></div>';
         }
         echo wp_kses_post($output);
     }
@@ -2172,9 +2164,9 @@
     function the_acg_posts(){
         global $cat, $cats, $preset, $async_loads;
         $preslug = $preset->slug;
+        $output = '';
         if(!empty($cats) && current_slug()==$preslug){
             // cache db only if not-single sub-page
-            $output = '';
             $output_sw = false;
             if(get_option('site_cache_switcher')){
                 $caches = get_option('site_cache_includes');
@@ -2186,12 +2178,20 @@
                 foreach($cats as $the_cat) $output .= get_acg_posts($the_cat, $preslug, $async_loads);
                 // wp_kses_post() filted javascript:; href
                 if($output_sw) update_option('site_acg_post_cache', $output); //wp_kses_post($output)
+            }else{
+                // always update wp-nonce if db-cached
+                foreach($cats as $the_cat){
+                    $cat_slug = $the_cat->slug;
+                    $cur_nonce = wp_create_nonce($cat_slug."_posts_ajax_nonce");
+                    // (.*?) 会在匹配到 data-nonce 或 data-cat 属性后停止匹配
+                    $output = preg_replace('/<a(.*)data-nonce=("[^"]*")(.*)data-cat=("'.strtoupper($cat_slug).'")(.*)<\/a>/i', '<a$1data-nonce="'.$cur_nonce.'"$3data-cat=$4$5</a>', $output);
+                }
             }
-            // wp_kses_post() caused setupBlurColor() unabled to setup
-            echo $output; //wp_kses_post($output)
         }else{
-            echo get_acg_posts(get_category($cat), $preslug, $async_loads);
+            $output .= get_acg_posts(get_category($cat), $preslug, $async_loads);
         }
+        // wp_kses_post() caused setupBlurColor() unabled to setup
+        echo $output; //wp_kses_post($output)
     }
     // acg post query(single)
     function get_acg_posts($the_cat, $pre_cat=false, $limit=99){

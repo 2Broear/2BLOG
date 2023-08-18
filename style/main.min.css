@@ -445,7 +445,7 @@ i.media:before{content:"\e917"}
 }@media screen and (max-width:600px){
 .Fresh-ImgBoxs,.resource-windows{flex-wrap:wrap;margin:0 auto}
 .Fresh-ImgBoxs span{margin-right:auto}
-.resource-windows div,.Fresh-ImgBoxs span:first-child{margin-left:0}
+.resource-windows div,.Fresh-ImgBoxs span:first-child{margin-right:auto!important;}
 .Fresh-ImgBoxs{display:none}
 }@media only screen and (max-width:600px){
 .special-display,#main-middle-poster{display:none}

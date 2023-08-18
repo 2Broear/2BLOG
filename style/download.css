@@ -12,10 +12,10 @@ a:hover {
 .download_boxes {
 	max-width: 1102px;
 	margin: 10px auto;
-	/*white-space: nowrap;*/
 	/*padding: 15px 0 0 0;
 	display: flex;
 	flex-direction: row;*/
+	white-space: nowrap;
 }
 .download_boxes::after {
 	content: '';

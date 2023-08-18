@@ -114,6 +114,7 @@
             </div>
             <?php get_sidebar(); ?>
         </div>
+            <?php //dual_data_comments(); ?>
         <footer>
             <?php get_footer(); ?>
         </footer>

@@ -87,7 +87,8 @@ body.dark .ranking ul li b,body.dark .ranks .ranking h1,body.dark #comment_txt h
     font-size: 12px;
     line-height: 20px;
     /*padding: 0 3px;*/
-    width: 20px;
+    min-width: 20px;
+    width: auto;
     background: var(--preset-f);
     position: absolute;
     top: 0;
@@ -130,6 +131,7 @@ body.dark .ranking ul li span#range,body.dark .ranking ul li img{
     position: relative;
     align-items: center;
     top: -12px;
+    overflow: hidden;
 }
 .ranking ul li span#range em .active span.wave:before,
 .ranking ul li span#range em .active span.wave:after,

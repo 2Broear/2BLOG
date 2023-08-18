@@ -8,7 +8,7 @@
 <meta name="msapplication-TileColor" content="<?php echo $theme_color; ?>" />
 <meta name="msapplication-TileImage" content="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico" />
 <link rel="shortcut icon" href="<?php custom_cdn_src('img'); ?>/images/favicon/favicon.ico"/>
-<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/universal.min.css?v=<?php echo get_theme_info('Version'); ?>" />
+<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(0); ?>/style/universal.min.css?v=<?php echo get_theme_info('Version'); ?>" />
 <style>
     body.dark #supports em.warmhole{
         filter: invert(1);
@@ -24,11 +24,6 @@
     <?php
         }
     ?>
-    iframe.bilibili_embed{
-        width: 100%;
-        min-height: 370px;
-        border-radius: var(--radius);
-    }
 </style>
 <script>
     document.documentElement.style.setProperty('--theme-color','<?php echo $theme_color; ?>');
@@ -53,6 +48,7 @@
             if(!t) return;
             while(t!=parent){
                 if(t.classList && t.classList.contains(cls)){
+                    // callback?.();
                     if(callback&&typeof callback==='function') callback(t,e); //callback(t) || callback(t); // callback.apply(this, ...arguments);
                     break;
                 }else{
@@ -64,8 +60,8 @@
     function getParByCls(curEl, parCls){
         //!curEl.classList incase if dnode oes not have any classes (null occured)
         while(!curEl || !curEl.classList || !curEl.classList.contains(parCls)){
-          if(!curEl) break;  //return undefined
-          curEl = curEl.parentNode; //parentElement
+            if(!curEl) break;  //return undefined
+            curEl = curEl.parentNode; //parentElement
         };
         return curEl;
     };

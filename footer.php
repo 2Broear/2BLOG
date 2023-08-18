@@ -22,18 +22,19 @@
                         $query_array = array('cat' => [get_option('site_bottom_recent_cat')], 'posts_per_page' => $post_per, 'order' => 'DESC', 'orderby' => 'date');
                         $current_month = date('Ym');
                         $left_query = new WP_Query(array_filter($query_array));
+                        $left_count = 0;
                         while ($left_query->have_posts()):
                             $left_query->the_post();
                             $post_orderby = get_post_meta($post->ID, "post_orderby", true);
+                            $left_count++;
                     ?>
                             <li class="<?php if($post_orderby>1) echo 'topset'; ?>" title="<?php the_title(); ?>">
                                 <a href="<?php the_permalink(); ?>" target="_blank">
                                     <em><?php the_title(); ?></em>
                                     <?php 
-                                        if($post->comment_count>=50){
+                                        if($post->comment_count>=25){
                                             echo '<sup id="hot">Hot</sup>';
-                                        }else{
-                                            // if($post_orderby>1) echo '<sup id="new">new</sup>';
+                                        }elseif($left_count<=3){
                                             if(date('Ym',strtotime($post->post_date))==$current_month) echo '<sup id="new">new</sup>';
                                         }
                                     ?>
@@ -329,7 +330,14 @@
                         echo '<a href="https://www.foreverblog.cn/go.html" target="_blank" rel="nofollow"><em class="warmhole" style="background:url('.custom_cdn_src('img',true).'/images/wormhole_4_tp_ez.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
                     }
                 ?>
-                <a href="https://notbyai.fyi" target="_blank" rel="nofollow"><img src="<?php custom_cdn_src('img'); ?>/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);"></a>
+                <!--<style>@keyframes alarmLamp_bar_before{0%{opacity:.15;}2%{opacity:1;}4%{opacity:.15;}6%{opacity:1;}8%{opacity:.15;}10%{opacity:1;}12%{opacity:.15;}14%{opacity:1;}16%{opacity:.15;}18%{opacity:1;}20%{opacity:.15;}22%{opacity:1;}24%{opacity:.15;}26%{opacity:1;}28%{opacity:.15;}50%{opacity:.15;}60%{opacity:1;}61%{opacity:.15;}62%{opacity:1;}70%{opacity:.15;}80%{opacity:1;}81%{opacity:.15;}82%{opacity:1;}90%{opacity:.15;}100%{opacity:1;}}@keyframes alarmLamp_bar_after{0%{opacity:.15;}28%{opacity:.15;}30%{opacity:1;}32%{opacity:.15;}34%{opacity:1;}36%{opacity:.15;}38%{opacity:1;}39%{opacity:.15;}40%{opacity:1;}42%{opacity:.15;}44%{opacity:1;}46%{opacity:.15;}48%{opacity:1;}50%{opacity:.15;}52%{opacity:1;}54%{opacity:.15;}56%{opacity:1;}58%{opacity:.15;}60%{opacity:.15;}70%{opacity:1;}71%{opacity:.15;}72%{opacity:1;}80%{opacity:.15;}90%{opacity:1;}91%{opacity:.15;}92%{opacity:1;}100%{opacity:.15;}}@keyframes alarmLamp_spotlight{0%{filter:blur(0px);}28%{filter:blur(0px);}50%{filter:blur(0px);}60%{background:red;filter:blur(15px);}62%{background:red;filter:blur(15px);}70%{background:blue;filter:blur(15px);}72%{background:blue;filter:blur(15px);}80%{background:red;filter:blur(15px);}82%{background:red;filter:blur(15px);}90%{background:blue;filter:blur(15px);}92%{background:blue;filter:blur(15px);}100%{filter:blur(0px);}}.alarm_lamp span#spot::before,.alarm_lamp span#spot::after{content:none;}.alarm_lamp span#spot,.alarm_lamp span#bar::before,.alarm_lamp span#bar::after{content:'';width:33%;height:78%;background:red;box-shadow:rgb(255 0 0 / 80%) 0 0 20px 0px;position:absolute;top:50%;left:50%;transform:translate(0%,-50%);-webkit-transform:translate(0%,-50%);animation-duration:3s;animation-delay:0s;animation-timing-function:step-end;animation-iteration-count:infinite;animation-direction:normal;}.alarm_lamp span#bar::before{left:0%;animation-name:alarmLamp_bar_before;-webkit-animation-name:alarmLamp_bar_before;}.alarm_lamp span#bar::after{left:auto;right:0%;background:blue;box-shadow:rgb(0 0 255 / 80%) 0 0 20px 0px;animation-name:alarmLamp_bar_after;-webkit-animation-name:alarmLamp_bar_after;}.alarm_lamp{display:inline-block;padding:0 2px!important;box-sizing:border-box;position:relative;vertical-align:middle;border:1px solid transparent;}.alarm_lamp span{height:100%;display:block;position:inherit;}.alarm_lamp span#bar{width:100%;}.alarm_lamp span#spot{max-width:32%;background:white;transform:translate(-50%,-50%);-webkit-transform:translate(-50%,-50%);box-shadow:rgb(255 255 255 / 100%) 0 0 20px 0px;animation-name:alarmLamp_spotlight;-webkit-animation-name:alarmLamp_spotlight;}</style>-->
+                <!--<a class="alarm_lamp" style="width:58px;height:12px;">-->
+                <!--    <span id="bar"></span>-->
+                <!--    <span id="spot"></span>-->
+                <!--</a>-->
+                <a href="https://notbyai.fyi" target="_blank" rel="nofollow">
+                    <img src="<?php custom_cdn_src('img'); ?>/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);">
+                </a>
             </p>
           </ul>
           <ul style="text-align:right">
@@ -566,7 +574,7 @@
         <style>
             video{object-fit: initial;}
             .video_preview_hide:before,.video_preview_hide .preview_bg{content:"";display:none}
-            .video_previews:before{content:'';width:100%!important;height:52%;backdrop-filter:blur(10px);position:absolute!important;top:0!important;left:0!important;z-index:1;background:-webkit-linear-gradient(90deg,rgb(255 255 255 / 0%) 0%, rgb(0 0 0 / 25%) 100%);background:linear-gradient(0deg,rgb(255 255 255 / 0%) 0%, rgb(0 0 0 / 25%) 100%);}
+            .video_previews:before{content:'';width:100%!important;height:52%;backdrop-filter:blur(15px);position:absolute!important;top:0!important;left:0!important;z-index:1;background:-webkit-linear-gradient(90deg,rgb(255 255 255 / 0%) 0%, rgb(0 0 0 / 25%) 100%);background:linear-gradient(0deg,rgb(255 255 255 / 0%) 0%, rgb(0 0 0 / 25%) 100%);}
             .video_previews{cursor: e-resize;}
             .video_preview_hide{cursor: default;}
             .wp-block-video, .video_previews{position:relative;overflow:hidden;border-radius:10px;/*display:inline-block;*/}

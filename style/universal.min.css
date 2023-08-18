@@ -74,6 +74,7 @@ figure img{
 del,s{
     opacity: .75;
 }
+iframe#bilibili_embed,
 iframe.bilibili_embed{
     width: 100%;
     min-height: 370px;
@@ -828,7 +829,7 @@ i.arrow-down::after{content:'\e908'}
 .slider-menu_body ul li{line-height:80px;cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden;border-bottom:1px solid var(--preset-s);letter-spacing:1px}
 .slider-menu_body ul li p{margin:0;font-size:15px;transition:all .3s ease;position:relative;z-index:2}
 .slider-menu_body ul li p i{display:inline-block;position:relative;top:1px;font-size:13px}
-.slider-menu_body ul li a{display:block;color:var(--preset-6);margin:0;font-size:15px;transition:all .3s ease;position:relative;z-index:2}
+.slider-menu_body ul li a{display:block;color:var(--preset-6);margin:0;font-size:var(--min-size-rem);transition:all .3s ease;position:relative;z-index:2}
 .slider-menu_body ul li a i{
     position: relative;
     left: -5px;
@@ -1008,7 +1009,8 @@ audio{width:300px;height:32px}
 .inside-functions .box div em,.inside-functions .box div strong{color:var(--preset-s);font-style:normal;display:inline-block;padding:7px 0;margin:0 auto;user-select: none;-webkit-user-select: none;}
 .inside-functions .box div.dark.disabled{cursor:not-allowed;pointer-events:none}
 .inside-functions .box div.dark i{color:var(--preset-s);font-size:18px;padding:9px 0}
-.inside-functions .box .pagePer span.wave{display:block;width:100%;min-height:50px;position:relative;align-items:center}
+.inside-functions .box .pagePer span.wave{
+    display:block;width:100%;min-height:50px;position:relative;align-items:center;overflow:hidden;}
 .inside-functions .box .pagePer .active span.wave:before,
 .inside-functions .box .pagePer .active span.wave:after,
 .inside-functions .box .pagePer span.wave.active:before,
@@ -2023,8 +2025,8 @@ body.dark .wp_comment_box a#cancel-comment-reply-link{
 .tags span a:hover,
 .tags li a:hover{
     opacity: 1!important;
-    text-decoration: underline;
-    /*color: white;*/
+    text-decoration: overline;
+    color: var(--theme-color);
     /*background: black;*/
 }
 .tags span a,

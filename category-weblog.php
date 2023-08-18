@@ -104,7 +104,6 @@
                         endwhile;
                         wp_reset_query();
                     }
-                    if($baas) echo '<div class="weblog-tree-etc load"><button>加载更多</button></div>';
                     $async_array = explode(',', get_option('site_async_includes'));
                     if(get_option('site_async_switcher')&&in_array($weblog_slug, $async_array)){
                         // preset all acg query
@@ -117,7 +116,7 @@
                         $all_count = $all_query->post_count;
                         $posts_count = $log_query->post_count;
                         $disable_statu = $posts_count==$all_count ? ' disabled' : false; //>=
-                        echo '<div class="load'.$disable_statu.'"><button class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cat.'" data-cat="'.$weblog_slug.'" data-nonce="'.wp_create_nonce(current_slug()."_posts_ajax_nonce").'" title="加载更多">加载更多</button></div>';
+                        echo $baas ? '<div class="weblog-tree-etc load"><button>加载更多</button></div>' : '<div class="load'.$disable_statu.'"><button class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cat.'" data-cat="'.$weblog_slug.'" data-nonce="'.wp_create_nonce(current_slug()."_posts_ajax_nonce").'" title="加载更多">加载更多</button></div>';
                     }else{
                 ?>
                         <div class="pageSwitcher">
@@ -231,7 +230,7 @@
                                         each_tags = each_post.tag ? " - "+each_post.tag : "";
                                     each_temp.id = "pid_"+each_post.id;
                                     each_temp.classList.add("weblog-tree-core-record");
-                                    each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${each_post.date} ${each_tags}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="pid_4314" class="weblog-tree-box"><div class="tree-box-title"><a href="javascript:;" target="_self"><h3 class="reply_quote">${each_post.title}</h3></a></div><div class="tree-box-content"><span id="core-info"><p>${each_post.content}</p></span><span id="other-info"><h4> Ps. </h4><p class="feeling">${each_post.subtitle}</p></span><p id="sub">${each_post.date} ${each_tags}</p></div></div></div>`;
+                                    each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${each_post.date} ${each_tags}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="pid_4314" class="weblog-tree-box"><div class="tree-box-title"><a href="javascript:;" target="_self"><h3 class="reply_quote">${each_post.title}</h3></a></div><div class="tree-box-content"><span id="core-info">${each_post.content}</span><span id="other-info"><h4> Ps. </h4><p class="feeling">${each_post.subtitle}</p></span><p id="sub">${each_post.date} ${each_tags}</p></div></div></div>`;
                                     weblog.insertBefore(each_temp, load_box);
                                 });
                         <?php

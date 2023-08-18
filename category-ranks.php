@@ -18,6 +18,9 @@
         .ranking ul li span#avatar::before{
             width: auto;
         }
+        .ranking ul li span#range em span.wave{
+            overflow: hidden;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -145,7 +148,7 @@
                         link = link ? link : 'javascript:;';
                         if(i<max){
                             remove_load(rankest);
-                            temp_rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img <?php echo $lazyhold; ?> src="<?php echo $avatar; ?>" title="这家伙留了 ${times} 条评论！" alt="${name}" /></a></span><span id="range" style="height:${average}px"><em style="height:${times*2}%"><span class="wave active"></span></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>`;
+                            temp_rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img <?php echo $lazyhold; ?> src="<?php echo $avatar; ?>" title="这家伙留了 ${times} 条评论！" alt="${name}" /></a></span><span id="range" style="height:${average}px"><em style="height:${times*1}%"><span class="wave active"></span></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>`;
                             fragment_rankest.appendChild(temp_rankest);
                         }
                         if(i>=max && i<maxes){

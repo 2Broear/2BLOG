@@ -269,8 +269,8 @@
                         	<span id="acg_window-content-inside_left-tInfo">
                     		    <?php $query_cid = get_option('site_acgnside_cid'); ?>
                         		<span id="acg_window-content-inside_left-txt">
-                    				<!--<h2>pixivトップ50</h2>-->
-                    				<p>pixivで最もホットな2Dクリエイティブドローイングコレクショントップ<span id="acg_window-content-inside_left-txt_hidden" unselectable="on"> 10 </span> &nbsp;以上.<a href="javascript:;"> 漫游影视近期动态 </a></p>
+                    				<!--<h2>pixivトップ50</h2><a href="javascript:;"> 漫游影视近期动态 </a>-->
+                    				<p>pixivで最もホットな2Dクリエイティブドローイングコレクショントップ<span id="acg_window-content-inside_left-txt_hidden" unselectable="on"> 10 </span> &nbsp;以上.</p>
                         		</span>
                         	</span>
                         	<span id="acg_window-content-inside_left-bList">

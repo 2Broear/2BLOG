@@ -52,24 +52,24 @@
                     // }
     <?php
                     break;
-                case get_cat_by_template('weblog','term_id'):
-                    // code...
-                    break;
-                case get_cat_by_template('guestbook','term_id'):
-                    // code...
-                    break;
-                case get_cat_by_template('2bfriends','term_id'):
-                    // code...
-                    break;
-                case get_cat_by_template('download','term_id'):
-                    // code...
-                    break;
-                case get_cat_by_template('ranks','term_id'):
-                    // code...
-                    break;
-                default:
-                    // code...
-                    break;
+                // case get_cat_by_template('weblog','term_id'):
+                //     // code...
+                //     break;
+                // case get_cat_by_template('guestbook','term_id'):
+                //     // code...
+                //     break;
+                // case get_cat_by_template('2bfriends','term_id'):
+                //     // code...
+                //     break;
+                // case get_cat_by_template('download','term_id'):
+                //     // code...
+                //     break;
+                // case get_cat_by_template('ranks','term_id'):
+                //     // code...
+                //     break;
+                // default:
+                //     // code...
+                //     break;
             }
         }
     ?>

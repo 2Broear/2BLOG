@@ -16,6 +16,9 @@
             box-sizing: border-box;
         }
         .scroll-inform{padding:0 15px}
+        .download_boxes .dld_boxes{
+            /*width: calc(100%/3.03)!important;*/
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -32,19 +35,22 @@
                 $preset = get_cat_by_template(str_replace('.php',"",substr($basename,9))); //get_template_bind_cat($basename)->slug;//'download';
                 $preslug = $preset->slug;
                 $output = '';
-                $output_sw = false;
-                if(get_option('site_cache_switcher')){
-                    $caches = get_option('site_cache_includes');
-                    $output_sw = in_array($preslug, explode(',', $caches));
-                    $output = $output_sw ? get_option('site_download_list_cache') : '';
-                }
-                $curslug = current_slug();
                 $baas = get_option('site_leancloud_switcher')&&in_array($basename, explode(',', get_option('site_leancloud_category'))); //&&strpos(get_option('site_leancloud_category'), $basename)!==false;
-                $cats = get_categories(meta_query_categories($preset->term_id, 'ASC', 'seo_order'));
                 if(!$baas){
-                    if(!$output || !$output_sw){
-                        $output .= !empty($cats) && $curslug==$preslug ? '<div class="dld_boxes">'.get_download_posts($cats, 1).'</div><div class="dld_boxes">'.get_download_posts($cats, 2).'</div><div class="dld_boxes">'.get_download_posts($cats, 3).'</div>' : '<div class="dld_boxes single">'.get_download_posts(array(get_category($cat)), 1).'</div><div class="dld_boxes single">'.get_download_posts(array(get_category($cat)), 2).'</div><div class="dld_boxes single">'.get_download_posts(array(get_category($cat)), 3).'</div>';
-                        if($output_sw) update_option('site_download_list_cache', sanitize_text_field($output));
+                    $cats = get_categories(meta_query_categories($preset->term_id, 'ASC', 'seo_order'));
+                    $output_sw = false;
+                    if(get_option('site_cache_switcher')){
+                        $caches = get_option('site_cache_includes');
+                        $output_sw = in_array($preslug, explode(',', $caches));
+                        $output = $output_sw ? get_option('site_download_list_cache') : '';
+                    }
+                    if(!empty($cats) && current_slug()==$preslug){
+                        if(!$output || !$output_sw){
+                            $output .= '<div class="dld_boxes">'.get_download_posts($cats, 1).'</div><div class="dld_boxes">'.get_download_posts($cats, 2).'</div><div class="dld_boxes">'.get_download_posts($cats, 3).'</div>';
+                            if($output_sw) update_option('site_download_list_cache', wp_kses_post($output));
+                        }
+                    }else{
+                        $output = '<div class="dld_boxes single">'.get_download_posts(array(get_category($cat)), 1).'</div><div class="dld_boxes single">'.get_download_posts(array(get_category($cat)), 2).'</div><div class="dld_boxes single">'.get_download_posts(array(get_category($cat)), 3).'</div>';
                     }
                 }else{
                     $output .= '<div class="dld_boxes">
@@ -189,7 +195,7 @@
                         let each_load = query_tab[j];
                         if(type == each_load){
                             let curdom = document.querySelector('.'+each_load);
-                            curdom.querySelector('.box_down ul').innerHTML = '<li><div class="details"><span style="background:url('+img+') center center no-repeat"></span><div> '+title+' <i><a href="'+file+'" target="_blank">下载</a><a href="'+src+'" target="_blank">查看</a></i></div></div></li>';
+                            curdom.querySelector('.box_down ul').innerHTML = '<li class=""><div class="details"><a href="'+src+'" target="_blank" rel="nofollow" title="下载附件"><img src="'+img+'" alt="poster" /></a><div class="desc">'+title+'<a href="'+src+'" target="_blank" rel="nofollow">下载附件</a>'+file+'</div></div></li>';
                             curdom.querySelector('.box_up span').setAttribute("style",'background:url('+img+') center center /cover');
                         }
                     }

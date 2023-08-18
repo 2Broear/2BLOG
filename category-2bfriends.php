@@ -113,7 +113,8 @@
             <div class="friends-boxes flexboxes">
                 <?php 
                     $baas = get_option('site_leancloud_switcher')&&in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')));
-                    $baas ? the_site_links('小伙伴们','技术侧重','荐亦有鉴',true) : the_site_links('小伙伴','技术の','荐见鉴');
+                    // $baas ? the_site_links('小伙伴们','技术侧重','荐亦有鉴',true) : 
+                    the_site_links('小伙伴','技术の','荐见鉴');
                     echo '<br />';
                     the_content();  // the_page_content(current_slug());
                     dual_data_comments();

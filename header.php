@@ -42,74 +42,60 @@
                 </div>
             </div>
         </div>
-    <span id="doc-progress-bar"></span>
+        <span id="doc-progress-bar"></span>
     </div>
-<div class="main-header-all">
-    <div class="block_of_down_element">
-        <div class="inside_of_block" isBottom="no">
-            <div class="logo-area" title="<?php echo get_option('site_nick', get_bloginfo('name')); ?> - <?php bloginfo('name') ?>">
-                <a href="<?php bloginfo('url') ?>" aria-label="logo"><?php site_logo(); ?></a>
-            </div>
-            <nav class="main-nav">
-                <ul class="wp_list_cats">
-                    <?php category_navigation(); ?>
-                    <!--<li><small style="padding: 0 15px;display: none;">oop<strong>S</strong>ays..</small></li>-->
-                </ul>
-                <div class="nav-slider">
-                    <span id="slide-target"></span>
+    <div class="main-header-all">
+        <div class="block_of_down_element">
+            <div class="inside_of_block" isBottom="no">
+                <div class="logo-area" title="<?php echo get_option('site_nick', get_bloginfo('name')); ?> - <?php bloginfo('name') ?>">
+                    <a href="<?php bloginfo('url') ?>" aria-label="logo"><?php site_logo(); ?></a>
                 </div>
-            </nav>
-        </div>
-        <div class="mobile-vision">
-            <span class="m-menu"><i class="BBFontIcons"></i></span>
-            <a href="/" rel="nofollow" aria-label="weibo">
-                <div class="m-logo"><?php site_logo(); ?></div>
-            </a>
-            <span class="m-search search-pop"><i class="BBFontIcons"></i></span>
-            <!--<div class="mobile-search">-->
-            <!--  <div class="ms-inside-block">-->
-            <!--    <div class="ms-inside">-->
-            <!--      <div class="ms-inside-searchBox">-->
-            <!--          <form id="searchform" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">-->
-            <!--              <input type="text" class="search-field" name="s" placeholder="Searching.." value="<?php echo get_search_query(); ?>">-->
-            <!--      		<input type="submit" id="searchsubmit" value="Search" />-->
-            <!--          </form>-->
-                  <!--<span class="BBFontIcons ms-close-btn">&#xe91d;</span>-->
-            <!--      </div>-->
-            <!--    </div>-->
-            <!--  </div>-->
-            <!--</div>-->
-        </div>
-    </div>
-</div>
-<?php //require_once(TEMPLATEPATH. '/mobile.php'); ?>
-<div class="slider-menu" tabindex="1" style="background:url(<?php custom_cdn_src('img'); ?>/images/bg3.png) repeat center center">
-    <div class="slider-menu-inside">
-        <div class="slider-menu_header">
-            <span class="slider-tips">
-                <p> <?php echo get_option('site_nick', get_bloginfo('name')); ?> の <strong><?php bloginfo('name') ?></strong> </p>
-            </span>
-            <span class="slider-close" title="Close Menu">
-                <i class="BBFontIcons close-btn"></i>
-            </span>
-            <div class="slider-logo">
-                <a href="<?php bloginfo('url') ?>" data-instant style="display: inline-block;" rel="nofollow">
-                    <?php site_logo(true); ?><!--<svg class="svg-symbols" width="115px" height="41px" viewBox="0 0 115 41"></svg>-->
+                <nav class="main-nav">
+                    <ul class="wp_list_cats">
+                        <?php category_navigation(); ?>
+                        <!--<li><small style="padding: 0 15px;display: none;">oop<strong>S</strong>ays..</small></li>-->
+                    </ul>
+                    <div class="nav-slider">
+                        <span id="slide-target"></span>
+                    </div>
+                </nav>
+            </div>
+            <div class="mobile-vision">
+                <span class="m-menu"><i class="BBFontIcons"></i></span>
+                <a href="/" rel="nofollow" aria-label="weibo">
+                    <div class="m-logo"><?php site_logo(); ?></div>
                 </a>
+                <span class="m-search search-pop"><i class="BBFontIcons"></i></span>
             </div>
-        </div>
-        <div class="slider-menu_body">
-            <div class="body-main">
-                <ul>
-                    <?php category_navigation(true); ?>
-                </ul>
-            </div>
-        </div>
-        <div class="slider-menu_footer">
-            <span class="footer-tips">找什么？搜搜看<i class="BBFontIcons check-hook"></i></span>
         </div>
     </div>
-</div>
-<div class="windowmask"></div>
-<!--<div class="windowmask-s2"></div>-->
+    <?php //require_once(TEMPLATEPATH. '/mobile.php'); ?>
+    <div class="slider-menu" tabindex="1" style="background:url(<?php custom_cdn_src('img'); ?>/images/bg3.png) repeat center center">
+        <div class="slider-menu-inside">
+            <div class="slider-menu_header">
+                <span class="slider-tips">
+                    <p> <?php echo get_option('site_nick', get_bloginfo('name')); ?> の <strong><?php bloginfo('name') ?></strong> </p>
+                </span>
+                <span class="slider-close" title="Close Menu">
+                    <i class="BBFontIcons close-btn"></i>
+                </span>
+                <div class="slider-logo">
+                    <a href="<?php bloginfo('url') ?>" data-instant style="display: inline-block;" rel="nofollow">
+                        <?php site_logo(true); ?><!--<svg class="svg-symbols" width="115px" height="41px" viewBox="0 0 115 41"></svg>-->
+                    </a>
+                </div>
+            </div>
+            <div class="slider-menu_body">
+                <div class="body-main">
+                    <ul>
+                        <?php category_navigation(true); ?>
+                    </ul>
+                </div>
+            </div>
+            <div class="slider-menu_footer">
+                <span class="footer-tips">找什么？搜搜看<i class="BBFontIcons check-hook"></i></span>
+            </div>
+        </div>
+    </div>
+    <div class="windowmask"></div>
 </div>
