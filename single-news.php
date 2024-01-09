@@ -3,13 +3,14 @@
     Template Name: 文章模板
     Template Post Type: post, news
 */
+    global $src_cdn;
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/articles.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/articles.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/fancybox.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/fancybox.css?v=<?php echo get_theme_info('Version'); ?>" />
     <style>
         .news-article-container figure{margin:5px}
         figure > figure{width:30%;vertical-align:middle}
@@ -77,7 +78,7 @@
 </div>
 <!-- siteJs-->
 <!-- pluginJs-->
-<!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/s2t.js"></script>-->
+<!--<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/s2t.js"></script>-->
 <!-- inHtmlJs -->
 <?php
     require_once(TEMPLATEPATH. '/foot.php');

@@ -7,12 +7,12 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/2bfriends.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/2bfriends.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
-        .friends-boxes .deals .inbox.girl em{background: url('<?php custom_cdn_src('img'); ?>/images/girl_symbols.png') no-repeat center center /contain;}
+        .friends-boxes .deals .inbox.girl em{background: url('<?php echo $img_cdn; ?>/images/girl_symbols.png') no-repeat center center /contain;}
         .friends-boxes .deals .inbox.girl::after{
-	        background: url('<?php custom_cdn_src('img'); ?>/images/girl_symbols.png') center center /contain no-repeat;
+	        background: url('<?php echo $img_cdn; ?>/images/girl_symbols.png') center center /contain no-repeat;
         }
         .friends-boxes .deals.rcmd .inbox .inbox-aside span.lowside-description p{
             max-width: 90%;
@@ -60,7 +60,7 @@
             margin: 0;
         }
         .friends-boxes .deals .inboxSliderCard .slideBox{
-            max-height: 5em;
+            max-height: 6em;
             white-space: initial;
             overflow-wrap: anywhere;
         }
@@ -98,6 +98,9 @@
         .friends-boxes .deals.tech .inbox .inbox-aside span.lowside-description p{
             margin-top: 5px;
             display: none;
+        }
+        .friends-boxes .deals .inbox .inbox-headside img#err{
+            border-radius: unset;
         }
     </style>
 </head>
@@ -140,11 +143,11 @@
         const link_query_all = new AV.Query("link"),
               friends = document.querySelector(".friends-boxes .deals.exchanged"),
               special = document.querySelector(".friends-boxes .deals.rcmd"),
-              missing = document.querySelector(".friends-boxes .deals.oldest .inboxSliderCard .slideBox"),
-              loadlist = ["friends","special","missing"],
+              others = document.querySelector(".friends-boxes .deals.oldest .inboxSliderCard .slideBox"),
+              loadlist = ["friends","special","others"],
               fill = function() {
                 var compare = {
-                        "status": "missing",
+                        "status": "others",
                         "mark": "special"
                     };
                 for(key in compare){
@@ -157,7 +160,7 @@
               },
               template = (name,desc,avatar,link,sex,ssl,status,rel,mark)=>{
                   var templates;
-                  if(status=="missing"){
+                  if(status=="others"){
                       templates = `<a href="${link}" class="inbox-aside" target="_blank" rel="${rel||'nofollow'}">${name}</a>`
                   }else if(mark=="special"){
                       templates = `<div class="inbox flexboxes ${status} ${sex}"><a href="${link}" class="inbox-aside" target="_blank" rel="${rel||'recommend'}"><span class="lowside-title"><h4>${name}</h4></span><span class="lowside-description"><p>${desc}</p></span></a></div>`
@@ -187,9 +190,9 @@
                     mark = res.attributes.mark,
                     status = res.attributes.status,
                     sitelink = res.attributes.sitelink;
-                mark=="friends"&&status!="missing" ? marked++ : false;
-                if(status=="missing"){
-                    missing.innerHTML += template(name,desc,avatar,link,sex,ssl,status,'nofollow')
+                mark=="friends"&&status!="others" ? marked++ : false;
+                if(status=="others"){
+                    others.innerHTML += template(name,desc,avatar,link,sex,ssl,status,'nofollow')
                 }else if(mark=="special"){
                     special.innerHTML += template(name,desc,avatar,link,sex,ssl,status,'recommend',mark)
                 }else{

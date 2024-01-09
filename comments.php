@@ -1,5 +1,5 @@
 <?php
-    global $post, $lazysrc;
+    global $post, $lazysrc, $src_cdn, $img_cdn;
     $post_ID = $post->ID;
     $third_cmt = get_option('site_third_comments');
     $comment_sw = $third_cmt=='Valine' ? true : false;//get_option('site_valine_switcher');
@@ -11,15 +11,15 @@
             <a id="dislike" title="有点东西（Like）" href="javascript:;" data-action="like" data-id="<?php echo $pid=get_the_ID(); ?>" data-nonce="<?php echo wp_create_nonce($pid."_post_like_ajax_nonce"); ?>" class="<?php if(isset($_COOKIE['post_liked_'.$post_ID])) echo 'liked';?>" <?php if(!$comment_sw) echo 'onclick="postLike(this)"'; ?>><?php if($comment_sw) echo '<div class="user"><small></small><div id="list"></div></div>'; ?>
                 <span id="like" class="count">
                     <i id="counter"><?php $like=get_post_meta($post_ID,'post_liked',true);echo $like ? $like : '0'; ?></i>
-                    <em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -478px 4px"></em>
+                    <em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -478px 4px"></em>
                 </span>
             </a>
-            <a id="qq" class="disabled" title="分享QQ" href="https://connect.qq.com/widget/shareqq/index.html?<?php echo $para_str = 'url='.get_permalink().'&p='.custom_excerpt(50,true).'&title='.get_the_title().'&summary='.custom_excerpt(100,true).'&pics='.get_postimg(); ?>" target="_blank"><span><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
-            <a id="qzone" title="分享空间（QZone）" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?<?php echo $para_str; ?>" target="_blank"><span><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
-            <a id="Poster" title="图文海报（Poster）"><span id="recall" onclick="ajaxPoster(this)"><em style="background:url(<?php custom_cdn_src('img'); ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
-            <!--<img decoding="async" loading="lazy" data-src="<?php custom_cdn_src('img'); ?>/images/bilibili_wink.webp" alt="bilibili_wink" style="margin: 0 auto;">-->
+            <a id="qq" class="disabled" title="分享QQ" href="https://connect.qq.com/widget/shareqq/index.html?<?php echo $para_str = 'url='.get_permalink().'&p='.custom_excerpt(50, true).'&title='.get_the_title().'&summary='.custom_excerpt(100, true).'&pics='.get_postimg(); ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
+            <a id="qzone" title="分享空间（QZone）" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?<?php echo $para_str; ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
+            <a id="Poster" title="图文海报（Poster）"><span id="recall" onclick="ajaxPoster(this)"><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
+            <!--<img decoding="async" loading="lazy" data-src="<?php echo $img_cdn; ?>/images/bilibili_wink.webp" alt="bilibili_wink" style="margin: 0 auto;">-->
         </div>
-        <!--<script type="text/javascript" src="<?php custom_cdn_src("src"); ?>/js/jquery-1.9.1.min.js"></script>-->
+        <!--<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/jquery-1.9.1.min.js"></script>-->
         <script>
             function poster_sw(){
                 const poster = document.querySelector(".poster");
@@ -31,7 +31,7 @@
                     return;
                 }
                 t.parentNode.classList.add("disabled");  // incase multi click (first generating only)
-                send_ajax_request("get", "<?php echo custom_cdn_src('src',true).'/plugin/html2canvas.php?pid='.$post_ID;//get_api_refrence('html2canvas',true);//echo custom_cdn_src('src',true).'/plugin/api.php?auth=html2canvas&pid='.$post_ID.'&exec=1'; ?>", false, function(res){
+                send_ajax_request("get", "<?php echo $src_cdn.'/plugin/html2canvas.php?pid='.$post_ID;//get_api_refrence('html2canvas',true);//echo $src_cdn.'/plugin/api.php?auth=html2canvas&pid='.$post_ID.'&exec=1'; ?>", false, function(res){
                     try{
                         if(!res) throw new Error('signature error.'); //if(sign_.err) return;
     					// generate poster QRCode (async)
@@ -41,7 +41,7 @@
                             // _tp.classList.add("disabled");  // incase multi click (first generating only)
         					div.innerHTML += res;  //在valine环境直接追加到body会导致点赞元素层级错误（重绘性能问题）
         					document.body.appendChild(div);
-                    	    asyncLoad('<?php custom_cdn_src(); ?>/js/qrcode/qrcode.min.js', function(){
+                    	    asyncLoad("<?php echo $src_cdn; ?>/js/qrcode/qrcode.min.js", function(){
                         		let url = location.href;
                         		var qrcode = new QRCode(document.getElementById("qrcode"), {
                         			text: url,
@@ -55,7 +55,7 @@
                     	    });
     					}).then(function(res){
     					    console.log(res[1]);
-                    	    asyncLoad('<?php custom_cdn_src(); ?>/js/html2canvas/html2canvas.min.js', function(){
+                    	    asyncLoad('<?php echo $src_cdn; ?>/js/html2canvas/html2canvas.min.js', function(){
                     	       // console.log('now loading html2canvas..')
                         		html2canvas(document.querySelector('#capture'),{
                         		    useCORS: true,
@@ -321,7 +321,7 @@
                                 console.log('invalid email.');
                                 return;
                             };
-                            send_ajax_request("get", '<?php echo custom_cdn_src(1,true).'/plugin/gravatar.php' ?>?jump=0&email='+mail, false, (res)=>{
+                            send_ajax_request("get", '<?php echo custom_cdn_src('default', true).'/plugin/gravatar.php' ?>?jump=0&email='+mail, false, (res)=>{
                                 try{
                                     let resed = JSON.parse(res);
                                     resed.code==200 ? avatar.setAttribute('src',resed.msg) : console.warn(resed.err);

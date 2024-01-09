@@ -8,7 +8,7 @@
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/about.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/about.css?v=<?php echo get_theme_info('Version'); ?>" />
     <style>
         /*.about_blocks li.intro_right .mbit .mbit_range li:nth-child(1) span em,*/
         .about_blocks li.intro_right .mbit .mbit_range li:nth-child(1) span em::after{
@@ -60,8 +60,12 @@
             margin: 0 auto;
             display: block;
         }
+        .ibox mark,
         .has-text-align-center{
             text-align: center;
+        }
+        .ibox{
+            text-align: inherit;
         }
     </style>
 </head>

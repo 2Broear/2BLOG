@@ -8,7 +8,7 @@
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-	<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/notes.css?v=<?php echo get_theme_info('Version'); ?>" />
+	<link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/notes.css?v=<?php echo get_theme_info('Version'); ?>" />
 	<style> 
 	    .win-top h5{font-weight: 800;}
 	    article .info span.valine-comment-count:before{margin-right: 3px;opacity: .75}
@@ -22,8 +22,8 @@
             <?php get_header(); ?>
 		</nav>
 	</header>
-    <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
-    <video src="<?php //echo get_option('site_acgn_video'); ?>" poster="<?php echo cat_metabg($cat, custom_cdn_src('img',true).'/images/1llusion.gif'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+    <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>
+    <video src="<?php //echo get_option('site_acgn_video'); ?>" poster="<?php echo cat_metabg($cat, $img_cdn.'/images/1llusion.gif'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
 	<!--<span id="fixed" style="background:inherit"></span>-->
 	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s"><span></span> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '好记性不如烂键盘'; ?><!--<strong>烂键盘</strong>--> </h5>
 </div>
@@ -38,10 +38,8 @@
 					<em></em>
 				</span>
 				<div>
-					<h2> <?php echo get_option('site_nick'); ?> </h2>
-					<p> <?php bloginfo('description'); ?> </p>
-					<small> <?php echo get_option('site_support'); ?> </small>
 					<?php
+					    echo '<h2>'.get_option('site_nick').'</h2><p>'.get_bloginfo('description').'</p><small>'.get_option('site_support').'</small>';
                         // $tags = get_tags(array('taxonomy' => 'post_tag'));
                         // echo '<b>'.count($tags).'<small>TAG</small></b><b>'.count($tags).'<small>POST</small></b><b>'.count($tags).'<small>COMMENTS</small></b>';
 					?>
@@ -52,30 +50,26 @@
 					<div class="main-root">
                         <ul class="wp_list_cats">
                         <?php 
-                            // $temp = get_cat_by_template(str_replace('.php',"",substr(basename(__FILE__),9)));
-                            // $cats = get_categories(meta_query_categories($temp->term_id, 'ASC', 'seo_order'));
                             $cats = get_sibling_categories();
-                            if(!empty($cats)){
-                                foreach($cats as $the_cat){
-                                    $the_cat_id = $the_cat->term_id;
-                                    $catss = get_categories(meta_query_categories($the_cat_id, 'ASC', 'seo_order'));
-                                    $level = !empty($catss) ? "seclevel" : "toplevel";
-                                    $choosen = $the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single() ? "choosen" : "";  // current choosen detect
-                                    echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.get_category_link($the_cat).'" id="'.$the_cat->slug.'" class="'.$choosen.'">'.$the_cat->name.'</a>';
-                                    if(!empty($catss)){  //expect category id "notes": &&$the_cat_id!=3
-                                        echo '<div class="sub-root"><ol>';
-                                        foreach($catss as $the_cats){
-                                            $the_cats_id = $the_cats->term_id;
-                                            $catsss = get_categories(meta_query_categories($the_cats_id, 'ASC', 'seo_order'));
-                                            $level = !empty($catsss) ? "trdlevel" : "seclevel";
-                                            $choosen = $the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single() ? "choosen 2nd" : "2nd";  // current choosen detect
-                                            echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent.' '.$level.'"><a href="'.get_category_link($the_cats).'" id="'.$the_cats->slug.'" class="'.$choosen.'"> — '.$the_cats->name.'</a></li>';
+                            function sub_recursive_navigator($cats, $deepth=0){
+                                if(!empty($cats)){
+                                    $deepth++;
+                                    foreach($cats as $the_cat){
+                                        $the_cat_id = $the_cat->term_id;
+                                        $catss = get_categories(meta_query_categories($the_cat_id, 'ASC', 'seo_order'));
+                                        $deepth = !empty($catss) ? $deepth++ : $deepth; //$level = !empty($catss) ? $deepth++ : $deepth;
+                                        $choosen = $the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single() ? "choosen" : "";
+                                        echo '<li class="cat_'.$the_cat_id.' level_'.$deepth.'"><a href="'.get_category_link($the_cat).'" id="'.$the_cat->slug.'" class="'.$choosen.'">'.$the_cat->name.'</a>';
+                                        if(!empty($catss)){
+                                            echo '<div class="sub-root"><ol>';
+                                            sub_recursive_navigator($catss, $deepth);
+                                            echo "</ol></div>";
                                         };
-                                        echo "</ol></div>";
-                                    };
-                                    echo "</li>";
+                                        echo "</li>";
+                                    }
                                 }
                             }
+                            sub_recursive_navigator($cats);
                         ?>
                       </ul>
 					</div>

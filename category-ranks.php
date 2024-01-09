@@ -8,7 +8,7 @@
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/ranking.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/ranking.css?v=<?php echo get_theme_info('Version'); ?>" />
     <style>
         #ranks b{
             margin: 5px auto;
@@ -54,7 +54,7 @@
     require_once(TEMPLATEPATH. '/foot.php');
     if($valine_sw){
 ?>
-        <!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/md5.min.js"></script>-->
+        <!--<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/md5.min.js"></script>-->
         <script>
             var query = new AV.Query("Comment"),
                 rankest = document.getElementById("rankest"),

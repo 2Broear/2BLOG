@@ -1,5 +1,5 @@
 <?php
-    $im_url = "https://blog.2broear.com/wp-content/themes/2BLOG-main/plugin/univ240p/univ240p.jpg";
+    $im_url = "https://img.2broear.com/softwarebot.jpg";
     // $im_ext = str_replace('.',"",strrchr($im_url,'.')); //substr($im_url, strrpos($im_url, '.'))
     $im  =  imagecreatefromstring(file_get_contents($im_url));
     $rgb  =  imagecolorat ( $im ,  10 ,  15 );
@@ -33,7 +33,7 @@
     	return $color;
     	imagedestroy($imgccc);
     }
-    $raba = getJpgImgColor('https://blog.2broear.com/wp-content/themes/2BLOG-main/plugin/univ240p/univ240p.jpg');
+    $raba = getJpgImgColor('https://img.2broear.com/softwarebot.jpg');
     echo "<span style='background:rgb($raba[r] $raba[g] $raba[b])'>$raba[r] $raba[g] $raba[b]</span>";
     
     

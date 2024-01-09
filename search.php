@@ -7,8 +7,17 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-	<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/notes.css?v=<?php //echo(mt_rand()) ?>" />
+	<link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/notes.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
+    <style>
+        span.mark:hover{background:#ff9632}
+        span.mark{
+            color: black;
+            font-weight: bold;
+            background: #f9f900;
+            display: inline!important;
+        }
+    </style>
 </head>
 <body class="<?php theme_mode(); ?>">
 <div class="content-all">
@@ -18,8 +27,8 @@
             <?php get_header(); ?>
 		</nav>
 	</header>
-    <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
-    <video src="" poster="<?php custom_cdn_src('img'); ?>/images/search.jpg" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+    <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>
+    <video src="" poster="<?php echo $img_cdn; ?>/images/search.jpg" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
 	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s">
 	    <?php 
             global $wp_query, $page_flag;
@@ -53,6 +62,37 @@
 </footer>
 </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
+<script type="text/javascript" src="<?php custom_cdn_src(0); ?>/js/main.js"></script>
 <!-- inHtmlJs -->
+<script type="text/javascript">
+    // document.addEventListener('load', function(){
+        // 创建一个 TreeWalker 对象，选择所有文本节点
+        const text = "<?php echo trim($searchString); ?>";
+        if(text && text.trim()!=''){
+            const regex = new RegExp(text, "g"),
+                  matches = [],
+                  walker = document.createTreeWalker(
+                      document.querySelector('.win-content'),
+                      NodeFilter.SHOW_TEXT,
+                      null,
+                      false
+                  );
+            // 遍历文本节点
+            while (walker.nextNode()) {
+              const node = walker.currentNode;
+              // 检查节点的文本内容是否包含要替换的文本
+              if (node.nodeValue.includes(text)) {
+                //   nodeValue.getRangeAt(0).surroundContents(document.createElement('span'))
+                  node.textContent = node.nodeValue.replace(regex, "<span class='mark'>"+text+"</span>");
+                  matches.push(node.parentNode);
+                //   const mark = document.createElement('div');
+                //   mark.innerHTML = node.nodeValue.replace(regex, "<span class='mark'>"+text+"</span>");
+                //   node.parentNode.replaceChild(mark, node);
+              }
+            }
+            // 重写 HTML 解析
+            matches.forEach((i)=>i.innerHTML = i.innerText);
+        }
+    // }, true);
+</script>
 </body></html>

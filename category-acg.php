@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link preload type="text/css" rel="stylesheet" href="<?php custom_cdn_src(0); ?>/style/acg.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link preload type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/acg.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
         .rcmd-boxes .inbox-clip h2{
@@ -56,7 +56,12 @@
             margin: -12px auto auto;
         }
         .inbox-aside .gamespot h3{
-            margin: 5px auto 15%;
+            /*margin: 5px auto 15%;*/
+            margin: auto;
+            position: inherit;
+            top: inherit;
+            left: inherit;
+            transform: inherit;
         }
         .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon h3{
             margin: 12px auto auto;
@@ -86,13 +91,13 @@
 <body class="<?php theme_mode(); ?>">
     <div class="content-all">
         <div class="win-top bg" style="background:url() center center /cover ">
-            <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
+            <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>
             <header>
                 <nav id="tipson" class="ajaxloadon">
                     <?php get_header(); ?>
                 </nav>
             </header>
-            <video src="<?php echo $video = replace_video_url(get_option('site_acgn_video')); ?>" poster="<?php echo $video ? $video : cat_metabg($cat, custom_cdn_src('img',true).'/images/acg.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+            <video src="<?php echo $video = replace_video_url(get_option('site_acgn_video')); ?>" poster="<?php echo $video ? $video : cat_metabg($cat, $img_cdn.'/images/acg.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
             <div class="counter">
                 <?php
                     $async_sw = get_option('site_async_switcher');
@@ -143,6 +148,7 @@
         }
         return percent;
     }
+    // execRotation
     function execRotation(rcmd, ms=450){
         if(!rcmd) return;
         let rcmd_len = rcmd.length;
@@ -164,7 +170,7 @@
         }
     }
     const rcmd_range = document.querySelectorAll('.inbox-aside .game-ratings.both');
-    execRotation(rcmd_range);
+    execRotation(rcmd_range, 400);
 </script>
 <?php
     require_once(TEMPLATEPATH. '/foot.php');
@@ -201,9 +207,6 @@
         </script>
 <?php
     };
-    if($baas){
-        $cdnsrc = custom_cdn_src("src",true);
-        echo '<script type="text/javascript" src="'.$cdnsrc.'/js/jquery-1.9.1.min.js"></script><script type="text/javascript" src="'.$cdnsrc.'/js/acgn.js?v='.get_theme_info("Version").'"></script>';
-    }
+    if($baas) echo '<script type="text/javascript" src="'.$src_cdn.'/js/jquery-1.9.1.min.js"></script><script type="text/javascript" src="'.$src_cdn.'/js/acgn.js?v='.get_theme_info("Version").'"></script>';
 ?>
 </body></html>

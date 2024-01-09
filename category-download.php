@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/download.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/download.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
         #loading:before{top:40px}
@@ -46,115 +46,16 @@
                     }
                     if(!empty($cats) && current_slug()==$preslug){
                         if(!$output || !$output_sw){
-                            $output .= '<div class="dld_boxes">'.get_download_posts($cats, 1).'</div><div class="dld_boxes">'.get_download_posts($cats, 2).'</div><div class="dld_boxes">'.get_download_posts($cats, 3).'</div>';
+                            for($i=1;$i<4;$i++) $output .= '<div class="dld_boxes">'.get_download_posts($cats, $i).'</div>';
                             if($output_sw) update_option('site_download_list_cache', wp_kses_post($output));
                         }
                     }else{
-                        $output = '<div class="dld_boxes single">'.get_download_posts(array(get_category($cat)), 1).'</div><div class="dld_boxes single">'.get_download_posts(array(get_category($cat)), 2).'</div><div class="dld_boxes single">'.get_download_posts(array(get_category($cat)), 3).'</div>';
+                        $term_order = get_term_meta($cat, 'seo_order', true);
+                        // echo $cat;
+                        $output = '<div class="dld_boxes single">'.get_download_posts(array(get_category($cat)), $term_order).'</div>';
                     }
                 }else{
-                    $output .= '<div class="dld_boxes">
-        				<div class="dld_box adobe">
-        					<div class="dld_box_wrap">
-        						<div class="box_up preCover">
-        							<span>
-        								<a href="javascript:;"><h3> Adobe 2020/2021 </h3><i>ADOBE</i><em></em></a>
-        						  	</span>
-        						</div>
-        						<div class="box_down">
-        						    <ul><span id="loading"></span></ul>
-        						</div>
-        					</div>
-        				</div>
-        				<div class="dld_box soft">
-        					<div class="dld_box_wrap">
-        						<div class="box_up preCover">
-        							<span>
-        								<a href="javascript:;"><h3> 桌面软件 </h3><i>SOFT</i><em></em></a>
-        						  	</span>
-        						</div>
-        						<div class="box_down">
-        						    <ul><span id="loading"></span></ul>
-        						</div>
-        					</div>
-        				</div>
-			        </div>
-			        <div class="dld_boxes">
-        				<div class="dld_box p2p">
-        					<div class="dld_box_wrap">
-        						<div class="box_up preCover">
-        							<span>
-        								<a href="javascript:;"><h3> 下载软件 </h3><i>P2P</i><em></em></a>
-        							</span>
-        						</div>
-        						<div class="box_down">
-        						    <ul><span id="loading"></span></ul>
-        						</div>
-        					</div>
-        				</div>
-        				<div class="dld_box tool">
-        					<div class="dld_box_wrap">
-        						<div class="box_up preCover">
-        							<span>
-        								<a href="javascript:;"><h3> 实用工具 </h3><i>TOOLS</i><em></em></a>
-        							</span>
-        						</div>
-        						<div class="box_down">
-        						    <ul><span id="loading"></span></ul>
-        						</div>
-        					</div>
-        				</div>
-        				<div class="dld_box media">
-        					<div class="dld_box_wrap">
-        						<div class="box_up preCover">
-        							<span>
-        								<a href="javascript:;"><h3> 视频媒体 </h3><i>MEDIA</i><em></em></a>
-        							</span>
-        						</div>
-        						<div class="box_down">
-        						    <ul><span id="loading"></span></ul>
-        						</div>
-        					</div>
-        				</div>
-    		        </div>
-    		        <div class="dld_boxes">
-        				<div class="dld_box tools">
-        					<div class="dld_box_wrap">
-        						<div class="box_up preCover">
-        							<span>
-        								<a href="javascript:;"><h3> 辅助工具 </h3><i>SORDUM</i><em></em></a>
-        						    </span>
-        						</div>
-        						<div class="box_down">
-        						    <ul><span id="loading"></span></ul>
-        						</div>
-        					</div>
-        				</div>
-        				<div class="dld_box crack">
-        					<div class="dld_box_wrap">
-        						<div class="box_up preCover">
-        							<span>
-        								<a href="javascript:;"><h3> 破解工具 </h3><i>CRACK</i><em></em></a>
-        						    </span>
-        						</div>
-        						<div class="box_down">
-        						    <ul><span id="loading"></span></ul>
-        						</div>
-        					</div>
-        				</div>
-        				<div class="dld_box vpn">
-        					<div class="dld_box_wrap">
-        						<div class="box_up preCover">
-        							<span>
-        								<a href="javascript:;"><h3> 加速器 </h3><i>٧ρ∩</i><em></em></a>
-        						    </span>
-        						</div>
-        						<div class="box_down">
-        						    <ul><span id="loading"></span></ul>
-        						</div>
-        					</div>
-        				</div>
-    		        </div>';
+                    $output = '<div class="dld_boxes"><div class="dld_box adobe"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>Adobe 2020/2021</h3><i>ADOBE</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div><div class="dld_box soft"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>桌面软件</h3><i>SOFT</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div></div><div class="dld_boxes"><div class="dld_box p2p"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>下载软件</h3><i>P2P</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div><div class="dld_box tool"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>实用工具</h3><i>TOOLS</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div><div class="dld_box media"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>视频媒体</h3><i>MEDIA</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div></div><div class="dld_boxes"><div class="dld_box tools"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>辅助工具</h3><i>SORDUM</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div><div class="dld_box crack"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>破解工具</h3><i>CRACK</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div><div class="dld_box vpn"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>加速器</h3><i>٧ρ∩</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div></div>';
                 };
                 echo wp_kses_post($output);
 		    ?>

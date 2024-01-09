@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/weblog.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(false);//echo $src_cdn; ?>/style/weblog.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
         figure{text-align:left}
@@ -31,7 +31,7 @@
                 $winbg = get_option('site_weblog_bg');
                 if($winbg){
             ?>
-                    <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
+                    <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>
                     <video src="<?php echo get_option('site_weblog_video'); ?>" poster="<?php echo $winbg; ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
             <?php
                 }
@@ -47,6 +47,13 @@
                     $use_async = $async_sw ? in_array($weblog_slug, $async_array) : false;
                     $async_loads = $async_sw&&$use_async ? get_option("site_async_weblog", 14) : get_option('posts_per_page');
                     $baas = get_option('site_leancloud_switcher')&&in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')));  //use post as category is leancloud unset //&&strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false
+                    $log_single_sw = get_option('site_single_switcher');
+                    if($log_single_sw){
+                        $log_slug = get_cat_by_template('weblog','slug');
+                        $includes = get_option('site_single_includes');
+                        $log_single_sw = in_array($log_slug, explode(',', $includes));
+                    }
+                    $reply_quote = $log_single_sw ? 'reply_quote' : '';
                     if(!$baas){
                         $current_page = max(1, get_query_var('paged')); //current paged
                         $log_query = new WP_Query(array_filter(array(
@@ -80,9 +87,17 @@
                                     <!--<a class="anchor"></a>-->
                                     <div id="<?php echo 'pid_'.get_the_ID() ?>" class="weblog-tree-box">
                                         <div class="tree-box-title">
-                                            <a href="<?php echo get_option('site_single_switcher') ? get_the_permalink() : 'javascript:;' ?>" target="_self">
-                                                <h3 class="reply_quote"><?php the_title() ?></h3>
-                                            </a>
+                                            <?php
+                                                $target = '_blank';
+                                                $href = get_the_permalink();
+                                                $rel = '';
+                                                if($log_single_sw){
+                                                    $target = '_self';
+                                                    $href = 'javascript:;';
+                                                    $rel = 'nofollow';
+                                                }
+                                                echo '<a href="'.$href.'" target="'.$target.'" rel="'.$rel.'"><h3 class="'.$reply_quote.'">'.get_the_title().'</h3></a>';
+                                            ?>
                                         </div>
                                         <div class="tree-box-content">
                                             <span id="core-info">
@@ -178,7 +193,7 @@
                             index = res.attributes.index,
                             dates = res.attributes.dates,
                             today = res.attributes.today;
-                        loadContent.innerHTML += '<div class="weblog-tree-core-record i'+index+'" data-type="'+type+'"><div class="weblog-tree-core-l"><span id="weblog-timeline" data-year="'+today.y+'" data-month="'+today.m+'" data-day="'+today.d+'">'+dates+'</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div class="weblog-tree-box"><div class="tree-box-title"><h3 id="'+res.id+'" class="reply_quote">'+title+'</h3></div><div class="tree-box-content"><span id="core-info"><p>'+main+'</p></span><span id="other-info"><h4> Ps. </h4><p>'+ps+'</p><p id="sub">'+dates+'</p></span></div></div></div></div>';
+                        loadContent.innerHTML += '<div class="weblog-tree-core-record i'+index+'" data-type="'+type+'"><div class="weblog-tree-core-l"><span id="weblog-timeline" data-year="'+today.y+'" data-month="'+today.m+'" data-day="'+today.d+'">'+dates+'</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div class="weblog-tree-box"><div class="tree-box-title"><h3 id="'+res.id+'" class="<?php echo $reply_quote; ?>">'+title+'</h3></div><div class="tree-box-content"><span id="core-info"><p>'+main+'</p></span><span id="other-info"><h4> Ps. </h4><p>'+ps+'</p><p id="sub">'+dates+'</p></span></div></div></div></div>';
                         // loadcore.appendChild(loadContent);
                         loadcore.insertBefore(loadContent, loadbox);
                     }
@@ -199,13 +214,27 @@
             // BLOCKQUOTE Reply
             const editor = document.querySelector('textarea'),
                   weblog = document.querySelector(".weblog-tree-core"),
-                  preset_loads = <?php echo $async_loads; ?>;
+                  preset_loads = <?php echo $async_loads; ?>,
+                selectText = function(textbox=null, startIndex=0, stopIndex=0){
+                    if (textbox.setSelectionRange){
+                        textbox.setSelectionRange(startIndex, stopIndex);
+                    } else if (textbox.createTextRange){
+                        var range = textbox.createTextRange();
+                        range.collapse(true);
+                        range.moveStart("character", startIndex);
+                        range.moveEnd("character", stopIndex - startIndex);
+                        range.select();                    
+                    }
+                };
             weblog.onclick=(e)=>{
                 e = e || window.event;
                 let t = e.target || e.srcElement;
                 if(!t) return;
                 while(t!=weblog){
                     if(t.classList && t.classList.contains("reply_quote")){
+                    <?php
+                        if($log_single_sw){
+                    ?>
                         editor.focus();
                         editor.value = "";
                         editor.setAttribute('placeholder', '回复片段：'+t.innerText);
@@ -213,29 +242,32 @@
                               quote = `\n> __${t.innerText}__ \n> ${cores ? cores.innerText.replace(/\n/g,"").substr(0,88) : ".."}...`;
                         editor.style.cssText="min-height:150px;opacity:.75;";
                         editor.value = quote;//this.id; '\n'+
-                        editor.setSelectionRange(0,0);
+                        selectText(editor, 0, 0); //editor.setSelectionRange(0,0);
                         editor.oninput=function(){
                             if(this.value.indexOf(quote)==-1 || this.value.substr(this.value.length-3,this.value.length)!='...'){  //
                                 this.value = quote;
-                                editor.setSelectionRange(0,0);
+                                selectText(editor, 0, 0); //editor.setSelectionRange(0,0);
                             }
                         }
+                    <?php
+                        }
+                    ?>
                         break;
                     }else if(t.classList && t.classList.contains("load-more")){ //t.id && t.id=="load"
-                        <?php
-                            if($async_sw&&$use_async){
-                        ?>
-                                load_ajax_posts(t, 'weblog', preset_loads, function(each_post, load_box){
-                                    let each_temp = document.createElement("div"),
-                                        each_tags = each_post.tag ? " - "+each_post.tag : "";
-                                    each_temp.id = "pid_"+each_post.id;
-                                    each_temp.classList.add("weblog-tree-core-record");
-                                    each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${each_post.date} ${each_tags}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="pid_4314" class="weblog-tree-box"><div class="tree-box-title"><a href="javascript:;" target="_self"><h3 class="reply_quote">${each_post.title}</h3></a></div><div class="tree-box-content"><span id="core-info">${each_post.content}</span><span id="other-info"><h4> Ps. </h4><p class="feeling">${each_post.subtitle}</p></span><p id="sub">${each_post.date} ${each_tags}</p></div></div></div>`;
-                                    weblog.insertBefore(each_temp, load_box);
-                                });
-                        <?php
-                            }
-                        ?>
+                    <?php
+                        if($async_sw&&$use_async){
+                    ?>
+                        load_ajax_posts(t, 'weblog', preset_loads, function(each_post, load_box){
+                            let each_temp = document.createElement("div"),
+                                each_tags = each_post.tag ? " - "+each_post.tag : "";
+                            each_temp.id = "pid_"+each_post.id;
+                            each_temp.classList.add("weblog-tree-core-record");
+                            each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${each_post.date} ${each_tags}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="pid_4314" class="weblog-tree-box"><div class="tree-box-title"><a href="javascript:;" target="_self"><h3 class="<?php echo $reply_quote; ?>">${each_post.title}</h3></a></div><div class="tree-box-content"><span id="core-info">${each_post.content}</span><span id="other-info"><h4> Ps. </h4><p class="feeling">${each_post.subtitle}</p></span><p id="sub">${each_post.date} ${each_tags}</p></div></div></div>`;
+                            weblog.insertBefore(each_temp, load_box);
+                        });
+                    <?php
+                        }
+                    ?>
                         break;
                     }else{
                         t = t.parentNode;

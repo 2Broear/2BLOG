@@ -1,3 +1,6 @@
+<?php
+    global $img_cdn;
+?>
 <div class="nav-wrap">
     <div class="top-bar-tips">
         <div class="tips-switch">
@@ -70,7 +73,7 @@
         </div>
     </div>
     <?php //require_once(TEMPLATEPATH. '/mobile.php'); ?>
-    <div class="slider-menu" tabindex="1" style="background:url(<?php custom_cdn_src('img'); ?>/images/bg3.png) repeat center center">
+    <div class="slider-menu" tabindex="1" style="background:url(<?php echo $img_cdn; ?>/images/bg3.png) repeat center center">
         <div class="slider-menu-inside">
             <div class="slider-menu_header">
                 <span class="slider-tips">

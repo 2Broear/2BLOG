@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/main.min.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/main.min.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php include_once(TEMPLATEPATH. '/head.php'); ?>
     <style>
         #banner-prev,#banner-next{
             cursor: pointer;
-            background:url("<?php custom_cdn_src('img'); ?>/images/css_sprites.png") no-repeat;
+            background:url("<?php echo $img_cdn; ?>/images/css_sprites.png") no-repeat;
         }
         .banner .banner-inside ul{cursor:grab;}
         #special-img{
@@ -38,7 +38,11 @@
         .Fresh-ImgBoxs span a{
             font-family: cursive,monospace,serif,fangsong;
             font-size: 4.5em;
-            padding: 17% 0;
+            padding: 10% 0;
+        }
+        .Fresh-ImgBoxs span i{
+            font-size: 7rem;
+            right: -15%;
         }
         .resource-windows div{
             /*margin: 15px 15px auto auto;*/
@@ -199,7 +203,7 @@
                         <h3><?php echo $load_arr[$i]->name; ?></h3>
                     </span>
                     <ul class="news-list" id="mainNews">
-                        <?php recent_posts_query($load_arr[$i]->term_id, true); ?>
+                        <?php recent_posts_query($load_arr[$i]->term_id, true ,false ,6); ?>
                     </ul>
                 </div>
             <?php
@@ -234,7 +238,7 @@
                     <ul class="tech_window-content">
                         <?php 
                             $query_cid = get_option('site_techside_cid');
-                            $baas&&strpos(get_option('site_leancloud_category'), 'category-weblog.php')!==false ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid); //,false,false,9
+                            $baas&&strpos(get_option('site_leancloud_category'), 'category-weblog.php')!==false ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid);
                         ?>
                     </ul>
                     <div class="newsBox-subText-Description" id="tech_window-bottom">
@@ -332,6 +336,6 @@
 </footer>
 <?php if(get_option('site_chat_switcher')) echo '<script src="'.get_option('site_chat').'"></script>'; ?>
 <?php require_once(TEMPLATEPATH. '/foot.php'); ?>
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/banner.js?v=<?php echo get_theme_info('Version'); ?>"></script>
-<!--<script type="text/javascript" src="<?php //custom_cdn_src(); ?>/js/cursor.js"></script>-->
+<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/banner.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<!--<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/cursor.js"></script>-->
 </body></html>

@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-	<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/notes.css?v=<?php echo(mt_rand()) ?>" />
+	<link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/notes.css?v=<?php echo(mt_rand()) ?>" />
     <?php get_head(); ?>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -42,6 +42,6 @@
 </footer>
 </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(); ?>/js/main.js"></script>
+<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/main.js"></script>
 <!-- inHtmlJs -->
 </body></html>

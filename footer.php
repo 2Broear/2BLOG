@@ -1,5 +1,5 @@
 <?php
-    global $lazysrc, $cat;
+    global $lazysrc, $cat, $src_cdn, $img_cdn;
 ?>
 <div class="footer-all">
     <div class="footer-detector" id="end-news-all">
@@ -8,7 +8,7 @@
     </div>
     <div class="container">
       <div id="footer-support-board">
-        <p id="supports-txt"><?php $blogdesc=get_bloginfo('description');echo '<q>'.get_option('site_support',$blogdesc).'</q><b>'.$blogdesc.'</b>';// ?></p>
+        <p id="supports-txt"><?php $blogdesc=get_bloginfo('description');echo '<q>'.get_option('site_support',$blogdesc).'</q><b>'.$blogdesc.'</b>'; ?></p>
       </div>
       <div id="footer-contact-way">
         <ol class="footer-ul">
@@ -53,11 +53,11 @@
                     $third_cmt = get_option('site_third_comments');
                     if($third_cmt=='Valine'){    // 全站加载
                 ?>
-                        <script src="<?php custom_cdn_src(); ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+                        <script src="<?php echo $src_cdn; ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
                 <?php
                         if(!$baas){
                 ?>
-                            <script src="<?php custom_cdn_src(); ?>/js/leancloud/av-min.js?v=footcall"></script>
+                            <script src="<?php echo $src_cdn; ?>/js/leancloud/av-min.js?v=footcall"></script>
                 <?php
                         }
                 ?>
@@ -79,8 +79,8 @@
                             	    echo get_option('site_lazyload_switcher') ? 'lazyLoad: true,' : 'lazyLoad: false,';
                             	    $cdn_sw = get_option('site_cdn_switcher');
                             	    if($cdn_sw){
-                            	        $plugin_path = custom_cdn_src(1,true).'/plugin';
-                            	        echo 'imgCdn: "'.custom_cdn_src('img',true).'", srcCdn: "'.custom_cdn_src('src',true).'", apiCdn: "'.$plugin_path.'",'; //custom_cdn_src('api',true)
+                            	        $plugin_path = custom_cdn_src('default', true).'/plugin';
+                            	        echo 'imgCdn: "'.$img_cdn.'", srcCdn: "'.$src_cdn.'", apiCdn: "'.$plugin_path.'",'; //custom_cdn_src('api', true)
                             	    }
                         	        echo get_option("site_wpwx_notify_switcher") ? 'wxNotify: true,' : 'wxNotify: false,';
                             	?>
@@ -88,7 +88,7 @@
                             	adminMd5: '<?php echo md5(get_bloginfo('admin_email')) ?>',
                             	avatarCdn: '<?php echo get_option("site_avatar_mirror").'avatar/' ?>',
                             	<?php
-                            	    if($cdn_sw) echo 'avatarApi: "'.$plugin_path.'/gravatar.php?jump=0&email=",'; //api.paugram.com/gravatar/?email='; custom_cdn_src(0,true).'/plugin
+                            	    if($cdn_sw) echo 'avatarApi: "'.$plugin_path.'/gravatar.php?jump=0&email=",'; //api.paugram.com/gravatar/?email='; custom_cdn_src(0, true).'/plugin
                             	?>
                             	placeholder: '快来玩右下角的“涂鸦画板”！'
                             });
@@ -96,25 +96,31 @@
                             const vcomments = document.querySelector("#vcomments");
                             if(vcomments){
                                 const vwraps = vcomments.querySelectorAll(".vwrap"),
+                                      // origin_bak = document.importNode(origin_wrap, true),
                                       origin_wrap = vwraps[0];
+                                // origin_wrap.querySelector("textarea").setAttribute('autofocus',true);
                                 bindEventClick(vcomments, 'vat', function(t){
-                                    let adopt_node = document.adoptNode(origin_wrap),  // adopt(clone)node
-                                        adopt_area = adopt_node.querySelector("textarea");
+                                    const adopt_node = document.adoptNode(origin_wrap);
                                     if(!t.classList.contains('reply')){
-                                        const vats = vcomments.querySelectorAll(".vat");
+                                        const vats = vcomments.querySelectorAll(".vat"),
+                                              vpar = getParByCls(t, 'vh');
                                         for(let i=0,vatsLen=vats.length;i<vatsLen;i++){
                                             vats[i].classList.remove('reply');
                                             vats[i].innerText = "回复";
                                         }
                                         t.classList.add('reply');
                                         t.innerText = "取消回复";
-                                        getParByCls(t, 'vh').appendChild(adopt_node); //t.parentElement.parentElement.appendChild(adopt_node);  // append adopt node //.querySelector('.vcontent')
-                                        adopt_area.focus();
+                                        vpar.appendChild(adopt_node);
+                                        //.. vpar.querySelector("textarea")
+                                        var delay_focus = setTimeout(()=>{
+                                            adopt_node.querySelector("textarea").focus();
+                                            clearTimeout(delay_focus);
+                                            delay_focus = null;
+                                        }, 0);
                                     }else{
                                         t.classList.remove('reply');
                                         t.innerText = "回复";
-                                        vcomments.insertBefore(adopt_node, vcomments.querySelector(".vinfo"));  // reverse adopt
-                                        // adopt_area.focus();
+                                        vcomments.insertBefore(adopt_node, vcomments.querySelector(".vinfo"));  // reverse origin_bak
                                     }
                                 });
                             }
@@ -263,15 +269,13 @@
                 <?php }; ?>
                 </li>
                 <li class="rcmdBrowser">
-                  <p>最佳浏览体验
-                    <br/>推荐浏览器：</p>
+                  <p>最佳浏览体验<br/>推荐浏览器：</p>
                   <b>
-                    <a id="chrome" href="https://www.google.cn/chrome/" target="_blank" rel="nofollow" title="Chrome大法好！" aria-label="chrome">Chrome</a>/
-                    <a id="edge" href="https://www.microsoft.com/zh-cn/edge" target="_blank" rel="nofollow" title="新版Edge也不错~" aria-label="edge">Edge</a></b>
+                    <a id="chrome" href="https://www.google.cn/chrome/" target="_blank" rel="nofollow" title="Chrome大法好！" aria-label="chrome">Chrome</a> / <a id="edge" href="https://www.microsoft.com/zh-cn/edge" target="_blank" rel="nofollow" title="新版Edge也不错~" aria-label="edge">Edge</a></b>
                 </li>
                 <li class="PoweredBy2B">
                   <ins> XTyDesign </ins>
-                  <?php echo '<img src="'.custom_cdn_src('img',true).'/images/svg/XTy_.svg" style="max-width:66px" alt="XTY Design" />'; //'.$lazysrc.' ?>
+                  <?php echo '<img src="'.$img_cdn.'/images/svg/XTy_.svg" style="max-width:66px" alt="XTY Design" />'; //'.$lazysrc.' ?>
               </li>
               </ul>
               <ul class="friend_links">
@@ -320,24 +324,18 @@
             <p id="supports">
                 <?php 
                     if(get_option('site_monitor_switcher')) echo '<script async type="text/javascript" src="'.get_option('site_monitor').'"></script>';
-                    if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online" rel="nofollow"><img src="'.custom_cdn_src('img',true).'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>'; //'.$lazysrc.'
-                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank" rel="nofollow"><img src="'.custom_cdn_src('img',true).'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>'; //'.$lazysrc.'
+                    if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online" rel="nofollow"><img src="'.$img_cdn.'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>'; //'.$lazysrc.'
+                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>'; //'.$lazysrc.'
                     // if($valine_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
                     $server = get_option('site_server_side');
                     if($server) echo '<a href="javascript:;" rel="nofollow"><img src="'.$server.'" style="height: 12px;" alt="server"></a>'; //'.$lazysrc.'
                     if(get_option('site_foreverblog_wormhole')){
                         $theme = array_key_exists('theme_mode',$_COOKIE) ? $_COOKIE['theme_mode'] : false;
-                        echo '<a href="https://www.foreverblog.cn/go.html" target="_blank" rel="nofollow"><em class="warmhole" style="background:url('.custom_cdn_src('img',true).'/images/wormhole_4_tp_ez.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
+                        echo '<a href="https://www.foreverblog.cn/go.html" target="_blank" rel="nofollow"><em class="warmhole" style="background:url('.$img_cdn.'/images/wormhole_4_tp_ez.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
                     }
+                    if(get_option('site_not_ai_switcher')) echo '<a href="https://notbyai.fyi" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);"></a>';
+                    if(get_option('site_construction_switcher')) echo '<style>@keyframes alarmLamp_bar_before{0%{opacity:.15;}2%{opacity:1;}4%{opacity:.15;}6%{opacity:1;}8%{opacity:.15;}10%{opacity:1;}12%{opacity:.15;}14%{opacity:1;}16%{opacity:.15;}18%{opacity:1;}20%{opacity:.15;}22%{opacity:1;}24%{opacity:.15;}26%{opacity:1;}28%{opacity:.15;}50%{opacity:.15;}60%{opacity:1;}61%{opacity:.15;}62%{opacity:1;}70%{opacity:.15;}80%{opacity:1;}81%{opacity:.15;}82%{opacity:1;}90%{opacity:.15;}100%{opacity:1;}}@keyframes alarmLamp_bar_after{0%{opacity:.15;}28%{opacity:.15;}30%{opacity:1;}32%{opacity:.15;}34%{opacity:1;}36%{opacity:.15;}38%{opacity:1;}39%{opacity:.15;}40%{opacity:1;}42%{opacity:.15;}44%{opacity:1;}46%{opacity:.15;}48%{opacity:1;}50%{opacity:.15;}52%{opacity:1;}54%{opacity:.15;}56%{opacity:1;}58%{opacity:.15;}60%{opacity:.15;}70%{opacity:1;}71%{opacity:.15;}72%{opacity:1;}80%{opacity:.15;}90%{opacity:1;}91%{opacity:.15;}92%{opacity:1;}100%{opacity:.15;}}@keyframes alarmLamp_spotlight{0%{filter:blur(0px);}28%{filter:blur(0px);}50%{filter:blur(0px);}60%{background:red;filter:blur(15px);}62%{background:red;filter:blur(15px);}70%{background:blue;filter:blur(15px);}72%{background:blue;filter:blur(15px);}80%{background:red;filter:blur(15px);}82%{background:red;filter:blur(15px);}90%{background:blue;filter:blur(15px);}92%{background:blue;filter:blur(15px);}100%{filter:blur(0px);}}.alarm_lamp span#spot::before,.alarm_lamp span#spot::after{content:none;}.alarm_lamp span#spot,.alarm_lamp span#bar::before,.alarm_lamp span#bar::after{content:"";width:33%;height:78%;background:red;box-shadow:rgb(255 0 0 / 80%) 0 0 20px 0px;position:absolute;top:50%;left:50%;transform:translate(0%,-50%);-webkit-transform:translate(0%,-50%);animation-duration:3s;animation-delay:0s;animation-timing-function:step-end;animation-iteration-count:infinite;animation-direction:normal;}.alarm_lamp span#bar::before{left:0%;animation-name:alarmLamp_bar_before;-webkit-animation-name:alarmLamp_bar_before;}.alarm_lamp span#bar::after{left:auto;right:0%;background:blue;box-shadow:rgb(0 0 255 / 80%) 0 0 20px 0px;animation-name:alarmLamp_bar_after;-webkit-animation-name:alarmLamp_bar_after;}.alarm_lamp{display:inline-block;padding:0 2px!important;box-sizing:border-box;position:relative;vertical-align:middle;border:1px solid transparent;}.alarm_lamp span{height:100%;display:block;position:inherit;}.alarm_lamp span#bar{width:100%;}.alarm_lamp span#spot{max-width:32%;background:white;transform:translate(-50%,-50%);-webkit-transform:translate(-50%,-50%);box-shadow:rgb(255 255 255 / 100%) 0 0 20px 0px;animation-name:alarmLamp_spotlight;-webkit-animation-name:alarmLamp_spotlight;}</style><a href="javascript:void(0);" class="alarm_lamp" style="width:58px;height:12px;" title="站点正处施工中.."><span id="bar"></span><span id="spot"></span></a>';
                 ?>
-                <!--<style>@keyframes alarmLamp_bar_before{0%{opacity:.15;}2%{opacity:1;}4%{opacity:.15;}6%{opacity:1;}8%{opacity:.15;}10%{opacity:1;}12%{opacity:.15;}14%{opacity:1;}16%{opacity:.15;}18%{opacity:1;}20%{opacity:.15;}22%{opacity:1;}24%{opacity:.15;}26%{opacity:1;}28%{opacity:.15;}50%{opacity:.15;}60%{opacity:1;}61%{opacity:.15;}62%{opacity:1;}70%{opacity:.15;}80%{opacity:1;}81%{opacity:.15;}82%{opacity:1;}90%{opacity:.15;}100%{opacity:1;}}@keyframes alarmLamp_bar_after{0%{opacity:.15;}28%{opacity:.15;}30%{opacity:1;}32%{opacity:.15;}34%{opacity:1;}36%{opacity:.15;}38%{opacity:1;}39%{opacity:.15;}40%{opacity:1;}42%{opacity:.15;}44%{opacity:1;}46%{opacity:.15;}48%{opacity:1;}50%{opacity:.15;}52%{opacity:1;}54%{opacity:.15;}56%{opacity:1;}58%{opacity:.15;}60%{opacity:.15;}70%{opacity:1;}71%{opacity:.15;}72%{opacity:1;}80%{opacity:.15;}90%{opacity:1;}91%{opacity:.15;}92%{opacity:1;}100%{opacity:.15;}}@keyframes alarmLamp_spotlight{0%{filter:blur(0px);}28%{filter:blur(0px);}50%{filter:blur(0px);}60%{background:red;filter:blur(15px);}62%{background:red;filter:blur(15px);}70%{background:blue;filter:blur(15px);}72%{background:blue;filter:blur(15px);}80%{background:red;filter:blur(15px);}82%{background:red;filter:blur(15px);}90%{background:blue;filter:blur(15px);}92%{background:blue;filter:blur(15px);}100%{filter:blur(0px);}}.alarm_lamp span#spot::before,.alarm_lamp span#spot::after{content:none;}.alarm_lamp span#spot,.alarm_lamp span#bar::before,.alarm_lamp span#bar::after{content:'';width:33%;height:78%;background:red;box-shadow:rgb(255 0 0 / 80%) 0 0 20px 0px;position:absolute;top:50%;left:50%;transform:translate(0%,-50%);-webkit-transform:translate(0%,-50%);animation-duration:3s;animation-delay:0s;animation-timing-function:step-end;animation-iteration-count:infinite;animation-direction:normal;}.alarm_lamp span#bar::before{left:0%;animation-name:alarmLamp_bar_before;-webkit-animation-name:alarmLamp_bar_before;}.alarm_lamp span#bar::after{left:auto;right:0%;background:blue;box-shadow:rgb(0 0 255 / 80%) 0 0 20px 0px;animation-name:alarmLamp_bar_after;-webkit-animation-name:alarmLamp_bar_after;}.alarm_lamp{display:inline-block;padding:0 2px!important;box-sizing:border-box;position:relative;vertical-align:middle;border:1px solid transparent;}.alarm_lamp span{height:100%;display:block;position:inherit;}.alarm_lamp span#bar{width:100%;}.alarm_lamp span#spot{max-width:32%;background:white;transform:translate(-50%,-50%);-webkit-transform:translate(-50%,-50%);box-shadow:rgb(255 255 255 / 100%) 0 0 20px 0px;animation-name:alarmLamp_spotlight;-webkit-animation-name:alarmLamp_spotlight;}</style>-->
-                <!--<a class="alarm_lamp" style="width:58px;height:12px;">-->
-                <!--    <span id="bar"></span>-->
-                <!--    <span id="spot"></span>-->
-                <!--</a>-->
-                <a href="https://notbyai.fyi" target="_blank" rel="nofollow">
-                    <img src="<?php custom_cdn_src('img'); ?>/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);">
-                </a>
             </p>
           </ul>
           <ul style="text-align:right">
@@ -378,7 +376,7 @@
     </div>
 </div>
 <script type="text/javascript">
-    asyncLoad('<?php custom_cdn_src(); ?>/js/nprogress.js', function(){
+    asyncLoad("<?php echo $src_cdn; ?>/js/nprogress.js", function(){
 	    NProgress.start();
 	    const NProgressLoaded = function(){
     		NProgress.done();
@@ -428,54 +426,79 @@
             }
     ?>
             const lazyimg = document.querySelectorAll("body img[data-src]"),
-                  loading = "<?php custom_cdn_src('img') ?>/images/loading_3_color_tp.png";
+                  loading = "<?php echo $img_cdn; ?>/images/loading_3_color_tp.png";
             var raf_available = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
             if(lazyimg[0]){
-                var timer_throttle = null,
-                    time_delay = 500,
-                    loadArray = [...lazyimg], //[], 
+                var time_delay = 500,
                     msgObject = Object.create(null),
-                    autoLoad = function(imgLoadArr, initial=false){ //initDomArr=false
-                        // let tempArray = initDomArr ? initDomArr : imgLoadArr;  //判断加载数组类型，默认加载 loadArray
-                        for(let i=0,arrLen=imgLoadArr.length;i<arrLen;i++){
-                            let eachimg = imgLoadArr[i],
-                                datasrc = eachimg.dataset.src;
-                            initial ? eachimg.src = loading : false; //pre-holder (datasrc only)
-                            new Promise(function(resolve,reject){
-                                // initDomArr ? imgLoadArr.push(eachimg) : false;  //判断首次加载（载入 lazyload 元素数组）
-                                resolve(imgLoadArr);
-                            }).then(function(res){
-                                if(eachimg.getBoundingClientRect().top>=window.innerHeight || eachimg.offsetParent==null) return;
-                                    eachimg.src = datasrc; // 即时更新 eachimg（设置后即可监听图片 onload 事件）
-                                    // 使用 onload 事件替代定时器或Promise，判断已设置真实 src 的图片加载完成后再执行后续操作
-                                    eachimg.onload=function(){
-                                        if(this.getAttribute('src')===datasrc){
-                                            res.splice(res.indexOf(this), 1);  // 移除已加载图片数组（已赋值真实 src 情况下）
-                                            this.onload = null;  //fix bug: can't modify img-src(this.src = datasrc;)
-                                        }else{
-                                            this.removeAttribute('data-src'); // disable loading
-                                            // bug: can't modify img-src
-                                            this.src = datasrc;  // this.src will auto-fix [http://] prefix
-                                            time_delay = 1500;  //increase delay (decrease request)
-                                            console.log(time_delay);
-                                        }
-                                        <?php
-                                            if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
-                                                echo 'setupBlurColor(this, getParByCls(this, "inbox"));'; //this.parentNode.parentNode
-                                            }
-                                        ?>
-                                    }
-                                    // handle loading-err images eachimg.onerror=()=>this.src=loading;
-                                    eachimg.onerror=function(){
-                                        res.splice(res.indexOf(this), 1);  // 移除错误图片数组
-                                        this.removeAttribute('src');
-                                        this.removeAttribute('data-src'); // disable loading
-                                        !this.dataset.err ? this.setAttribute('alt','图片请求出现问题') : false;
-                                    }
-                            }).catch(function(err){
-                                console.log(err);
-                            });
+                    loadArray = Array.apply(null, lazyimg),  // [...lazyimg]
+                    arrayChunk = function(array, process, context=null, args){
+                        setTimeout(function(){
+                            var item = array.shift();
+                            // process.call(context, item);
+                            process.apply(context, [item, args]);
+                            // console.log(process)
+                            if (array.length > 0){
+                                setTimeout(arguments.callee, 25);
+                            }
+                        }, 100);
+                    },
+                    processImage = function(image, initial, imgList=null){
+                        const updateList = Object.prototype.toString.call(imgList)=='[object Array]';
+                        let datasrc = image.dataset.src;
+                        initial ? image.src = loading : false; //pre-holder (datasrc only)
+                        // console.debug('processing..', image, loadArray);
+                        // !!!LONG TASK engaged!!!
+                        if(image.getBoundingClientRect().top >= window.innerHeight || image.offsetParent==null || !image.src){
+                            return;
                         }
+                        // console.log('onsreen image: ',image);
+                        image.src = datasrc; // 即时更新 image（设置后即可监听图片 onload 事件）
+                        // 使用 onload 事件替代定时器或Promise，判断已设置真实 src 的图片加载完成后再执行后续操作
+                        image.onload=function(){
+                            if(this.getAttribute('src')===datasrc){
+                                if(updateList) imgList.splice(imgList.indexOf(this), 1);  // 移除已加载图片数组（已赋值真实 src 情况下）
+                                this.onload = null;  //fix bug: can't modify img-src(this.src = datasrc;)
+                            }else{
+                                this.removeAttribute('data-src'); // disable loading
+                                // bug: can't modify img-src
+                                this.src = datasrc;  // this.src will auto-fix [http://] prefix
+                                time_delay = 3*time_delay;  //increase delay (decrease request)
+                                console.log(time_delay);
+                            }
+                            <?php
+                                if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
+                                    echo 'setupBlurColor(this, getParByCls(this, "inbox"));'; //this.parentNode.parentNode
+                                }
+                            ?>
+                        }
+                        // handle loading-err images image.onerror=()=>this.src=loading;
+                        image.onerror=function(){
+                            if(updateList) imgList.splice(imgList.indexOf(this), 1);  // 移除错误图片数组
+                            this.removeAttribute('src');
+                            this.removeAttribute('data-src'); // disable loading
+                            if(!this.dataset.err){
+                                this.setAttribute('alt','图片请求出现问题');
+                                this.id = 'err';
+                            }
+                        }
+                    },
+                    autoLoad = function(imgLoadArr, initial=false){
+                        if(Object.prototype.toString.call(imgLoadArr)=='[object Array]'){
+                            let arrLen = imgLoadArr.length;
+                            for(let i=0;i<arrLen;i++){
+                                new Promise(function(resolve,reject){
+                                    resolve(imgLoadArr);
+                                }).then(function(res){
+                                    processImage(res[i], initial, res); //imgLoadArr[i]
+                                }).catch(function(err){
+                                    console.log(err);
+                                });
+                            }
+                            return;
+                        };
+                        // single image: updateList === loadArray but imgLoadArr(concated array)
+                        processImage(imgLoadArr, initial, loadArray);  // imgLoadArr
                     },
                     scrollLoad = closure_throttle((e)=>{
                         if(loadArray.length<=0){
@@ -483,7 +506,8 @@
                             window.removeEventListener('scroll', scrollForRemove, true);
                             return;
                         };
-                        autoLoad(loadArray);
+                        // autoLoad(loadArray);
+                        arrayChunk(loadArray.concat(), autoLoad);
                         // console.log('throttling..',loadArray);
                     }, time_delay),
                     scrollForRemove = function(event){
@@ -493,7 +517,8 @@
                         // requestAnimationFrame support
                         raf_available ? window.requestAnimationFrame(scrollLoad) : scrollLoad();
                     };
-                autoLoad(loadArray, true);
+                // autoLoad(loadArray, true);
+                arrayChunk(loadArray.concat(), autoLoad, this, true); // will NOT change origin chunk array(lose effect)
                 window.addEventListener('scroll', scrollForRemove, true);
             }
     <?php
@@ -517,10 +542,10 @@
                     return;
                 }
                 clicks++;
-                t.innerText = type===type_acg ? "Loading" : "加载中";
+                t.innerText = type===type_acg ? "Loading.." : "加载中..";
                 t.classList.add('loading','disabled');  // add-opts archive (disable click)
                 t.setAttribute('data-click', clicks);
-                send_ajax_request("post", "<?php echo admin_url('admin-ajax.php'); ?>", 
+                send_ajax_request("get", "<?php echo admin_url('admin-ajax.php'); ?>", 
                     parse_ajax_parameter({
                         "action": action||"ajaxGetPosts",
                         "key": years, // add-opts for archive
@@ -586,69 +611,57 @@
         </style>
         <script>
             const videos = document.querySelectorAll('video');
-            if(!videos[0]) return;
-            for(let i=0,vdosLen=videos.length;i<vdosLen;i++){
-                let video = videos[i];
-                if(video.autoplay) return;
-                let video_src = video.src,
-                    video_box = video.parentNode,
-                    video_dir = video_src.lastIndexOf('/')+1,
-                    video_url = video_src.substr(0, video_dir),
-                    video_title = video_src.substr(video_dir, video_src.length),
-                    video_name = video_title.substr(0, video_title.lastIndexOf('.')),
-                    video_path = video_url+video_name+"/"+video_name,
-                    // video_width = video_box.offsetWidth,
-                    video_gif = video_path+'.gif',
-                    video_timer = null;
-                video.addEventListener('canplay', function () {
-                    video = video_box.querySelector('video'); // canplay 内需重新声明 video，否则修改后无法应用到dom
-                    video.onplaying=()=>video_box.classList.add('video_preview_hide');
-                    video.onpause=()=>video_box.classList.remove('video_preview_hide');
-                    <?php 
-                        // if($ffmpeg_sw_gif){
-                    ?>
-                            // let gifWidth = video.videoWidth/2,  //预置gif预览宽度 this.videoWidth/2
-                            //     boxWidth = video_box.offsetWidth;
-                            // // 仅当预览gif宽度小于视频盒子宽度时设置视频宽高，防止 poster 缩小视频宽高
-                            // if(gifWidth<boxWidth){
-                            //     video.width = boxWidth;//this.videoWidth;
-                            //     video.height = video_box.offsetHeight;//this.videoHeight;
-                            // }
-                    <?php
-                        // }
-                    ?>
-                });
-                video_box.innerHTML += `<div class="preview_bg"<?php echo $ffmpeg_sw_gif ? ' data-previews="${video_gif}"' : false; ?> style="background:url(${video_path}.jpg) no-repeat 0% 0% /cover"><span class="progress"><em></em></span></div>`;
-                const preview_bg = video_box.querySelector('.preview_bg'),
-                      preview_gif = preview_bg.dataset.previews,
-                      preview_pg = video_box.querySelector('.progress em');
-                video_box.onmousemove=function(e){
-                    var _this = this,
-                        video = _this.querySelector("video"),  //update video dom
-                        video_offset = e.offsetX,
-                        video_width = video_box.offsetWidth;  //always update videoBox width
-                    return (function(){
-                        if(video_timer==null){
-                            <?php echo $ffmpeg_sw_gif ? 'video.poster!=video_gif&&preview_gif ? video.poster=preview_gif : false;' : false; ?>
-                            _this.classList.add('video_previews');
-                            video_timer = setTimeout(function(){
-                                // e.stopPropagation(); //e.preventDefault(); 
-                                let percentage = Number((Math.round(video_offset/video_width*10000)/100).toFixed(0)),
-                                    progressOffset = -100+percentage;
-                                preview_bg.style.backgroundPosition = percentage+"% 0%";
-                                preview_pg.style.transform = 'translateX('+progressOffset+'%)';
-                                // console.log(percentage);
-                                percentage>=100 ? preview_pg.classList.add('pause_move') : preview_pg.classList.remove('pause_move');
-                                _this.onmouseleave = function(){
-                                    this.classList.remove("video_previews");
-                                    preview_pg.style.transform = "";
-                                }
-                                video_timer = null;  //消除定时器
-                            }, 10);
-                        }
-                    })();
+            if(videos[0]){
+                for(let i=0,vdosLen=videos.length;i<vdosLen;i++){
+                    let video = videos[i];
+                    if(video.autoplay) break;
+                    let video_src = video.src,
+                        video_box = video.parentNode,
+                        video_dir = video_src.lastIndexOf('/')+1,
+                        video_url = video_src.substr(0, video_dir),
+                        video_title = video_src.substr(video_dir, video_src.length),
+                        video_name = video_title.substr(0, video_title.lastIndexOf('.')),
+                        video_path = video_url+video_name+"/"+video_name,
+                        // video_width = video_box.offsetWidth,
+                        video_gif = video_path+'.gif',
+                        video_timer = null;
+                    video.addEventListener('canplay', function () {
+                        video = video_box.querySelector('video'); // canplay 内需重新声明 video，否则修改后无法应用到dom
+                        video.onplaying=()=>video_box.classList.add('video_preview_hide');
+                        video.onpause=()=>video_box.classList.remove('video_preview_hide');
+                    });
+                    video_box.innerHTML += `<div class="preview_bg"<?php echo $ffmpeg_sw_gif ? ' data-previews="${video_gif}"' : false; ?> style="background:url(${video_path}.jpg) no-repeat 0% 0% /cover"><span class="progress"><em></em></span></div>`;
+                    const preview_bg = video_box.querySelector('.preview_bg'),
+                          preview_gif = preview_bg.dataset.previews,
+                          preview_pg = video_box.querySelector('.progress em');
+                    video_box.onmousemove=function(e){
+                        var _this = this,
+                            video = _this.querySelector("video"),  //update video dom
+                            video_offset = e.offsetX,
+                            video_width = video_box.offsetWidth;  //always update videoBox width
+                        return (function(){
+                            if(video_timer==null){
+                                <?php echo $ffmpeg_sw_gif ? 'video.poster!=video_gif&&preview_gif ? video.poster=preview_gif : false;' : false; ?>
+                                _this.classList.add('video_previews');
+                                video_timer = setTimeout(function(){
+                                    // e.stopPropagation(); //e.preventDefault(); 
+                                    let percentage = Number((Math.round(video_offset/video_width*10000)/100).toFixed(0)),
+                                        progressOffset = -100+percentage;
+                                    preview_bg.style.backgroundPosition = percentage+"% 0%";
+                                    preview_pg.style.transform = 'translateX('+progressOffset+'%)';
+                                    // console.log(percentage);
+                                    percentage>=100 ? preview_pg.classList.add('pause_move') : preview_pg.classList.remove('pause_move');
+                                    _this.onmouseleave = function(){
+                                        this.classList.remove("video_previews");
+                                        preview_pg.style.transform = "";
+                                    }
+                                    video_timer = null;  //消除定时器
+                                }, 10);
+                            }
+                        })();
+                    }
                 }
-            }
+            };
         </script>
 <?php
     }

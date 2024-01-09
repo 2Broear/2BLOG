@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php echo(custom_cdn_src()); ?>/style/news.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/news.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
         body.dark .news-window:nth-child(odd){
@@ -15,6 +15,10 @@
         }
         body.dark .news-window:nth-child(odd) .news-window-inside{
             background: none;
+        }
+        .news-inside-content h2 a{
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>

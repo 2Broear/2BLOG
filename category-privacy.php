@@ -8,18 +8,18 @@
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/about.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/about.css?v=<?php echo get_theme_info('Version'); ?>" />
 </head>
 <body class="<?php theme_mode(); ?>">
 <div class="content-all">
     <div class="win-top bg">
-        <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
+        <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>
         <header>
             <nav id="tipson" class="ajaxloadon">
                 <?php get_header(); ?>
             </nav>
         </header>
-        <video src="<?php echo $video = replace_video_url(get_option('site_privacy_video')); ?>" poster="<?php echo $video ? $video : cat_metabg($cat, custom_cdn_src('img',true).'/images/privacy.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+        <video src="<?php echo $video = replace_video_url(get_option('site_privacy_video')); ?>" poster="<?php echo $video ? $video : cat_metabg($cat, $img_cdn.'/images/privacy.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
 	    <h5><?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '<span> 隐私</span> 协议'; ?></h5>
     </div>
     <div class="content-all-windows">

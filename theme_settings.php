@@ -560,6 +560,7 @@
             register_setting( 'baw-settings-group', 'site_logos' );
         // }
         register_setting( 'baw-settings-group', 'site_single_switcher' );
+        register_setting( 'baw-settings-group', 'site_single_includes' );
         register_setting( 'baw-settings-group', 'site_icon_switcher' );
         register_setting( 'baw-settings-group', 'site_keywords' );
         register_setting( 'baw-settings-group', 'site_description' );
@@ -738,6 +739,8 @@
         // register_setting( 'baw-settings-group', 'site_bottom_recent_cid' );
         register_setting( 'baw-settings-group', 'site_bottom_recent_cat' );
         register_setting( 'baw-settings-group', 'site_bottom_nav' );
+        register_setting( 'baw-settings-group', 'site_construction_switcher' );
+        register_setting( 'baw-settings-group', 'site_not_ai_switcher' );
         register_setting( 'baw-settings-group', 'site_monitor_switcher' );
         // if(get_option('site_monitor_switcher')){
             register_setting( 'baw-settings-group', 'site_monitor' );
@@ -805,7 +808,7 @@
             }
         }
     }
-    function check_statu($opt){
+    function check_status($opt=''){
         if(!$opt) return;
         return get_option($opt) ? "checked" : "closed";
     }
@@ -822,6 +825,8 @@
         }
     }
     function add_options_submenu() {
+        $src_cdn = custom_cdn_src('src', true);
+        $img_cdn = custom_cdn_src('img', true);
         $theme_color = get_option('site_theme','#eb6844');
         $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
         $cats_haschild = array();
@@ -855,12 +860,37 @@
             .form-table .checkbox label{display:inline-block;padding:1px 15px 0 5px;font-weight:bold;font-size:smaller}
             #wpcontent{padding:0}
             .wrap.settings hr,.wrap.settings{margin:0}
-            ul.cached_post_list{margin:15px auto auto;padding:0}
-            ul.cached_post_list li:hover{text-decoration:line-through;opacity:.35;border-color:transparent;/*border-style:dashed;background:whitesmoke;*/}
-            ul.cached_post_list li:hover::before{content:attr(data-title)}
-            ul.cached_post_list li:hover::after{content:'×';width:15px;height:15px;position:absolute;top:5px;right:5px;border:1px solid;border-radius:50%;line-height:14px;background:whitesmoke}
-            ul.cached_post_list li:before{content:attr(data-id)}
-            ul.cached_post_list li{list-style-type:none;display:inline-block;margin-left:5px;margin-bottom:2px;border:1px solid #ccc;padding:5px;border-radius:8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:38px;text-align:center;position:relative}
+            ul.cached_post_list{margin:15px auto auto;padding:0;position:relative}
+            ul.cached_post_list li:hover{border-color:transparent;text-decoration:underline;/*opacity:.75;border-style:dashed;background:whitesmoke;*/}
+            /*ul.cached_post_list li:hover::before{content:attr(data-title)}*/
+            /*ul.cached_post_list li:hover::after{content:'×';width:15px;height:15px;position:absolute;top:5px;right:5px;border:1px solid;border-radius:50%;line-height:14px;background:whitesmoke}*/
+            ul.cached_post_list li:hover::before{content:'重新摘要';font-size:small;}
+            ul.cached_post_list li:hover::after{display:block}
+            ul.cached_post_list li:before{
+                content:attr(data-id);
+                max-width: 15em;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                display: block;
+            }
+            ul.cached_post_list li:after{
+                content: attr(data-content);
+                text-align: left;
+                font-size: smaller;
+                line-height: 1.85em;
+                padding: 10px 15px;
+                border-radius: 15px;
+                border-top-right-radius: 0;
+                background: #222;
+                position: absolute;
+                color: white;
+                bottom: -25px;
+                right: -10px;
+                transform: translate(0%, 100%);
+                display: none;
+            }
+            ul.cached_post_list li{list-style-type:none;display:inline-block;margin-left:5px;margin-bottom:2px;border:1px solid #ccc;padding:5px 10px;border-radius:8px;cursor:pointer;text-align:center;/*white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:38px;position:relative*/}
         </style>
         <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>THEME</b><p style="letter-spacing:normal;margin-bottom:auto;"> 主题部分页面提供 Leancloud 第三方 bass 数据储存服务 </p></h1>
         <!--<hr/>-->
@@ -914,7 +944,7 @@
                             <?php
                                 $opt = 'site_bgimg';
                                 $value = get_option($opt);
-                                $preset = custom_cdn_src('img',true).'/images/fox.jpg';  
+                                $preset = $img_cdn.'/images/fox.jpg';  
                                 // $preset = 'https:'.get_option('site_avatar_mirror','//sdn.geekzu.org/').'/avatar/?d=identicon&s=300';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
                                 echo '<p class="description" id="">默认背景图，用于各页面调用背景图（默认随机 gravatar 背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
@@ -978,7 +1008,7 @@
                                     <?php 
                                         $opt = 'site_logo';
                                         $value = get_option($opt);
-                                        $preset = custom_cdn_src('img',true).'/images/svg/XTy_115x35.svg';
+                                        $preset = $img_cdn.'/images/svg/XTy_115x35.svg';
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
                                         echo '<p class="description" id="site_logo_label">站点 LOGO 图片链接（应用于全站，留空默认预设LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY 矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
                                     ?>
@@ -990,7 +1020,7 @@
                                     <?php 
                                         $opt = 'site_logos';
                                         $value = get_option($opt);
-                                        $preset = get_option('site_logo',custom_cdn_src('img',true).'/images/svg/XTy_115x35_light.svg');
+                                        $preset = get_option('site_logo', $img_cdn.'/images/svg/XTy_115x35_light.svg');
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
                                         echo '<p class="description" id="site_logos_label">站点 LOGO（深色）图片链接（应用于深色模式，默认上方LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY（深色）矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
                                     ?>
@@ -1060,7 +1090,7 @@
                                 <td>
                                     <?php
                                         $opt = 'site_url_slash_sw';
-                                        $status = check_statu($opt);
+                                        $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">开启后移除站点 Permalink 超链接中的尾部"/"，URL地址中的“/”需在<a href="/wp-admin/options-permalink.php" target="_blank"> 固定链接 </a>中设置</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">去除 URL 斜杠</b></label>';
                                     ?>
                                 </td>
@@ -1073,7 +1103,7 @@
                             <!--    <td>-->
                                     <?php
                                         // $opt = 'site_sync_level_sw';
-                                        // $status = check_statu($opt);
+                                        // $status = check_status($opt);
                                         // echo '<label for="'.$opt.'"><p class="description" id="">实验性功能默认关闭，开启可使用自定义关键字“slash”将分类别名重写为“/” 以达到隐藏当前层级，将子级作为同级输出的目的（启用后将自动同步分类层级到页面。启用此项请保证分类中不存在“/”别名分类，如访问错误请检查错误页面父级别名是否为“/”并修改</b></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">同步页面层级</b></label>';
                                     ?>
                             <!--    </td>-->
@@ -1131,7 +1161,7 @@
                         <td>
                             <?php
                                 $opt = 'site_metanav_switcher';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_metanav_switcher_label">多元化展示分类导航名称、描述及背景</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">多元分类导航</b></label>';
                             ?>
                         </td>
@@ -1344,7 +1374,7 @@
                         <td>
                             <?php
                                 $opt = 'site_lazyload_switcher';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">开启文章/部分页面图片使用懒加载（默认关闭 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">图片懒加载</b></label>';
                             ?>
                         </td>
@@ -1354,7 +1384,7 @@
                         <td>
                             <?php
                                 $opt = 'site_cdn_switcher';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_cdn_switcher_label">开启后可自定义cdn加速域名（需要配置 nginx 指定域名 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">CDN加速域名</b></label>';
                             ?>
                         </td>
@@ -1418,12 +1448,12 @@
                         // }
                     ?>
                     <tr valign="top">
-                        <th scope="row">视频海报预览</th>
+                        <th scope="row">视频 Poster 海报</th>
                         <td>
                             <?php
                                 $opt = 'site_video_poster_switcher';
-                                $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">开启后自动捕获当前页面所有 未设置 autoplay 属性的视频生成并设置预览海报（仅部分页面启用，默认截取第一帧</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">视频海报生成</b></label>';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">开启后自动捕获当前页面所有 未设置 autoplay 属性的视频生成并设置预览海报（仅部分页面启用，默认截取第一帧</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">视频预览</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1432,11 +1462,11 @@
                         <td>
                             <?php
                                 $opt = 'site_video_capture_switcher';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 function funcStatus($func){
                                     return function_exists($func) ? "<b style='color:green'>$func (已开启)</b>" : "<u style='color:red'>$func (已关闭)</u>";
                                 }
-                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">上传视频文件时自动在存放文件同目录下生成动态截图（此前上传的视频无效<br/>⚠后端环境：服务端须提前安装<b> ffmpeg </b> 扩展，并开启以下任一<b> php 函数</b>：'.funcStatus('exec').'、'.funcStatus('system').'、'.funcStatus('shell_exec').'，测试 shell_exec 暂时无法解析大文件<br/>⚠前端应用：视频元素不存在<b> autoplay </b>自动播放属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">视频片段预览</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label"><b>上传视频</b>到媒体库时 自动在存放文件同目录下生成动态截图（此前上传的视频无效<br/>⚠后端环境：服务端须提前安装<b> ffmpeg </b> 扩展，并开启以下任一<b> php 函数</b>：'.funcStatus('exec').'、'.funcStatus('system').'、'.funcStatus('shell_exec').'（解除禁用后需重启nginx），测试 shell_exec 暂时无法解析大文件<br/>⚠前端应用：视频元素不存在<b> autoplay </b>自动播放属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">视频片段预览</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1445,7 +1475,7 @@
                                 <td>
                                     <?php
                                         $opt = 'site_video_capture_gif';
-                                        $status = check_statu($opt);
+                                        $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">开启后上传视频时生成 gif 动图作用于视频海报（开启视频截图捕获后默认自动生成gif预览，此处仅控制 poster 属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">GIF动图</b></label>';
                                     ?>
                                 </td>
@@ -1455,7 +1485,7 @@
                         <td>
                             <?php
                                 $opt = 'site_leancloud_switcher';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_leancloud_switcher_label">使用第三方云数据库（Serverless）接管日记、友链、公告等数据内容（需在 leancloud 中新建对应分类 slug 名称的同名CLASS类，必填项与第三方评论 valine 自动同步，开启后可单独控制 BaaS 页面数据开关</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:dodgerblue;" class="btn">LeanCloud</span></label>';
                             ?>
                         </td>
@@ -1543,7 +1573,7 @@
                                 $templates = wp_get_theme()->get_page_templates();
                                 $baasarray = array();
                                 $inform = 'site_leancloud_inform';
-                                $baastring = $inform;  //category-weblog.php
+                                $baastring = $inform.',';  //category-weblog.php
                                 foreach ($templates as $temp => $index){
                                     if(strpos($index, 'BaaS')!==false){
                                         array_push($baasarray, array($index=>$temp));
@@ -1575,7 +1605,7 @@
                                 $value = get_option($opt);
                                 $arrobj = ['Wordpress','Valine','Twikoo'];
                                 // $arrobj = array(
-                                //     // array('name'=>'Waline', 'icon'=>custom_cdn_src('img',true).'/images/settings/alicloud.png'),
+                                //     // array('name'=>'Waline', 'icon'=>$img_cdn.'/images/settings/alicloud.png'),
                                 // );
                                 if(!$value) update_option($opt, $arrobj[0]);else $preset=$value;  //auto update option to default if unset
                                 echo '<label for="'.$opt.'"><p class="description" id="">可选第三方评论系统（开启后需填配置项</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">'; //<option value="">WordPress</option>
@@ -1594,7 +1624,7 @@
                                 <td>
                                     <?php
                                         $opt = 'site_ajax_comment_switcher';
-                                        $status = check_statu($opt);
+                                        $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">开启后免刷新页面评论（提交评论及回复</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AJAX Comments</b></label>';
                                     ?>
                                 </td>
@@ -1604,7 +1634,7 @@
                                 <td>
                                     <?php
                                         $opt = 'site_ajax_comment_paginate';
-                                        $status = check_statu($opt);
+                                        $status = check_status($opt);
                                         $premise = get_option('site_ajax_comment_switcher');
                                         $tips = !$premise ? '未开启上方 Ajax 评论支持，此选项应在其开启后使用，否则可能导致无法正常评论' : '开启后免刷新加载评论（替代 PREV/NEXT 翻页按钮';
                                         $check = !$premise ? 'disabled' : '';
@@ -1722,10 +1752,10 @@
                                             array('name'=>'图文卡片', 'type'=>'news'),
                                             array('name'=>'模板卡片', 'type'=>'template_card'),
                                         );
-                                        echo '<label for="'.$opt.'"><p class="description" id="site_wpwx_type_label">文本卡片为纯文本描述，图文卡片会附一张文章或页面图片，模板则为更丰富的图文消息（注意模板卡片仅支持企业微信提醒，微信端不会收到任何推送信息</p><img src="'.custom_cdn_src('img',true).'/images/settings/'.$preset.'.png" style="vertical-align: middle;max-width: 88px;margin:auto 15px;" /><select name="'.$opt.'" id="'.$opt.'" class="select_images">';
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_wpwx_type_label">文本卡片为纯文本描述，图文卡片会附一张文章或页面图片，模板则为更丰富的图文消息（注意模板卡片仅支持企业微信提醒，微信端不会收到任何推送信息</p><img src="'.$img_cdn.'/images/settings/'.$preset.'.png" style="vertical-align: middle;max-width: 88px;margin:auto 15px;" /><select name="'.$opt.'" id="'.$opt.'" class="select_images">';
                                             foreach ($arrobj as $arr){
                                                 $type = $arr['type'];
-                                                echo '<option value="'.$type.'" preview="'.custom_cdn_src('img',true).'/images/settings/'.$type.'.png"';if($preset==$type)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
+                                                echo '<option value="'.$type.'" preview="'.$img_cdn.'/images/settings/'.$type.'.png"';if($preset==$type)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
                                             }
                                         echo '</select></label>';
                                     ?>
@@ -1810,7 +1840,7 @@
                         <td>
                             <?php
                                 $opt = 'site_wpmail_switcher';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_wpmail_switcher_label">WP自带评论审核提醒邮件，此选项为定制模板邮件（两者均需上方 SMTP 配置测试通过后才能收到邮件提醒，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>评论邮件提醒</b></label>';
                             ?>
                         </td>
@@ -1820,7 +1850,7 @@
                         <td>
                             <?php
                                 $opt = 'site_xmlrpc_switcher';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="">防止攻击者绕过 wordpress 登录限制消耗系统资源（禁用后将无法使用 wp 官方APP及相关接口</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Disable XML-RPC</b></label>';
                             ?>
                         </td>
@@ -1830,7 +1860,7 @@
                         <td>
                             <?php
                                 $opt = 'site_imgcrop_switcher';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="">一般图片上传裁剪规则可在<a href="/wp-admin/options-media.php" target="_blank"> 媒体 </a>中修改</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">禁用图片裁剪</b></label>';
                             ?>
                         </td>
@@ -1841,12 +1871,12 @@
                 <h1><b class="num" style="border-color:blueviolet;box-shadow:-5px -5px 0 rgb(138 43 226 / 18%);">03</b>页面配置<p class="en">PAGES SETTINGS</p></h1>
                 <table class="form-table">
                     <tr valign="top">
-                        <th scope="row">头部公告<sup class="dualdata" title="“多数据”">BaaS</sup></th>
+                        <th scope="row">站点头部公告<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
                             <?php
                                 $opt = 'site_inform_switcher';
-                                $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">部分页面头部公告显示内容（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">页面头部公告</b></label>';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">部分页面头部公告显示内容（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">站点公告</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1854,7 +1884,7 @@
                         // if(get_option('site_inform_switcher')){
                     ?>
                             <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_inform_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 公告展示数量</th>
+                                <th scope="row">— 公告数量</th>
                                 <td>
                                     <?php
                                         $opt = 'site_inform_num';
@@ -1873,8 +1903,8 @@
                         <td>
                             <?php
                                 $opt = 'site_breadcrumb_switcher';
-                                $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">页面层级导航</b></label>';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">页面导航</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1883,23 +1913,47 @@
                         <td>
                             <?php
                                 $opt = 'site_default_postimg_switcher';
-                                $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">默认当文章存在自定义 thumbnail 特色图片时才显示列表预览图，开启后将始终显示（显示优先级：自定义特色图片>文章内图片>默认图片</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">始终显示预览图</b></label>';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">默认当文章存在自定义 thumbnail 特色图片时才显示列表预览图，开启后将始终显示（显示优先级：自定义特色图片>文章内图片>默认图片</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">默认预览</b></label>';
                             ?>
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">展示型单页文章</th>
+                        <th scope="row">展示型分类列表</th>
                         <td>
                             <?php
                                 $opt = 'site_single_switcher';
-                                $status = check_statu($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">展示型文章包括日志、漫游影视、资源下载页面（默认仅展示必要数据，开启后将开启对应文章链接并使用默认单页模板</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">启用展示型单页</b></label>';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">非展示型分类文章默认使用相应单页模板（开启指定分类下的文章链接将不可查看文章详情</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">展示型分类</b></label>';
                             ?>
                         </td>
                     </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_single_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 开启页面（多选）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_single_includes';  //unique str
+                                        $value = get_option($opt);
+                                        $async_opts = array(get_cat_by_template('weblog'), get_cat_by_template('acg'), get_cat_by_template('download'));
+                                        if(!$value){
+                                            $preset_str = $async_opts[0]->slug.','.$async_opts[1]->slug.','.$async_opts[2]->slug.',';
+                                            update_option($opt, $preset_str);
+                                            $value = $preset_str;
+                                        }
+                                        echo '<p class="description" id="">指定开启展示单页分类，使用逗号“ , ”分隔（默认开启日志、漫游影视、资源下载页面</p><div class="checkbox">';
+                                        $async_array = explode(',',trim($value));  // NO "," Array
+                                        $pre_array_count = count($async_array);
+                                        foreach ($async_opts as $option){
+                                            $opts_slug = $option->slug;
+                                            $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
+                                            echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" value="' . $value . '"/></div>';;
+                                    ?>
+                                </td>
+                            </tr>
                     <tr valign="top" class="">
-                        <th scope="row">文章索引目录</th>
+                        <th scope="row">文章 TOC 目录</th>
                         <td>
                             <?php
                                 $opt = 'site_indexes_switcher';
@@ -1912,7 +1966,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="">文章页目录索引，开启后在文章页可见（建议 notes 类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>文章目录索引</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">文章页 table of content 目录索引，开启后在文章页可见（建议 notes 类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>文章目录</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1966,7 +2020,7 @@
                             <?php
                                 $opt = 'site_banner_array';
                                 $value = get_option($opt);
-                                $preset = custom_cdn_src('img',true).'/images/fox.jpg,';
+                                $preset = $img_cdn.'/images/fox.jpg,';
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update
                                 $arr = explode(',',trim($preset));
                                 $arr_count = count($arr);
@@ -2015,7 +2069,7 @@
                             <?php
                                 $opt = 'site_list_bg';
                                 $value = get_option( $opt, '' );
-                                // $preset = custom_cdn_src('img',true).'/images/dance.gif';
+                                // $preset = $img_cdn.'/images/dance.gif';
                                 // $value ? $preset=$value : update_option($opt, $preset);  //auto update
                                 echo '<p class="description" id="site_about_video_label">首页卡片导航下方左侧背景图（带动画</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$value.'" poster="'.$value.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="列表背景" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button multi" data-type="" value="选取文件">';
                             ?>
@@ -2062,7 +2116,7 @@
                                     <?php
                                         // $opt = 'site_techside_bg';
                                         // $value = get_option($opt);
-                                        // $preset =  custom_cdn_src('img',true).'/images/google_flush.gif';//Tech-x4.png
+                                        // $preset =  $img_cdn.'/images/google_flush.gif';//Tech-x4.png
                                         // $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
                                         // echo '<p class="description" id="site_bgimg_label">分类背景图，列表旁调用图片（默认背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
                                     ?>
@@ -2183,7 +2237,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">部分页面使用 db 索引缓存数据（默认开启，<del>开启此项可能影响 _ajax_nonce 校验</del> 已修复校验</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:sienna;" class="btn">页面缓存</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">部分页面使用 db 索引缓存数据（默认开启，<del>开启此项可能影响 _ajax_nonce 校验</del> 校验已修复</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:sienna;" class="btn">页面缓存</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -2311,7 +2365,7 @@
                         <td>
                             <?php
                                 $opt = 'site_chatgpt_switcher';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 chatGPT AI 摘要。内建本地文件缓存机制，仅首次请求返回付费 completion 对话模型 chatGPT 3.5（需填写 API KEY 及 API 反代地址，openAI 限制中文请求字符 token*2：请求 prompt 最大限制 4096，默认实际可用 3700+ prompt_token，余下 392 字符为 completion_token 响应预设占位，估算可返回150中文字符左右</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:purple" class="btn">文章摘要</span></label>';
                             ?>
                         </td>
@@ -2373,7 +2427,7 @@
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_merge_sw';
-                                        $status = check_statu($opt);
+                                        $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，开启自动计算文章字符请求所需 token 若大于模型限制 token （<u>gpt-3.5 默认 4096，限制输入 3700+</u>）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（内容 token 小于规定内仅请求一次</p><p>chat 模型下免费账号<a href="https://platform.openai.com/account/rate-limits" target="_blank">每分钟限制请求为3次</a>（若请求返回 context_length_exceeded 错误代码时可尝试开启下方<b> “始终合并请求” </b>选项，<u><i>为节省 token 此项默认关闭</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
                                     ?>
                                 </td>
@@ -2383,7 +2437,7 @@
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_merge_ingore';
-                                        $status = check_statu($opt);
+                                        $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于合并分割请求失败（二次请求 token 大于 4096）时，忽略后续返回错误并追加生成文章尾段摘要，再合并<b>首次+末尾</b>摘要生成<b>综合摘要</b></p><p>开启此项同样会消耗至少3次请求（不与分割请求叠加，可能丢失部分文章中段内容，<u><i>但可始终保持文章首尾逻辑</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Always Summarize</b></label>';
                                     ?>
                                 </td>
@@ -2410,7 +2464,7 @@
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_caches';
-                                        $status = check_statu($opt);
+                                        $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">本地已缓存文章摘要数据，勾选后<ins> 提交保存 </ins>以显示记录（倒序，默认最近10条）<b>。点击文章ID可删除对应记录（不可逆）</b>，<ins>悬浮文章ID</ins> 可查看文章标题及摘要</p><p>删除文章摘要记录后，<u><i>重新访问文章以更新摘要</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LOCAL CACHED POSTS</b></label>';
                                         if(get_option($opt)){
                                             include('plugin/'.get_option('site_chatgpt_dir').'/chat_data.php');
@@ -2421,15 +2475,19 @@
                                             echo '<ul class="cached_post_list">';
                                             foreach ($res_cls_obj as $cached_pid => $cached_post){
                                                 $echo_count++;
-                                                $cached_post_content = preg_replace('/.*\n/','', api_get_resultText($cached_post));
+                                                $text_res = api_get_resultText($cached_post);
+                                                if(!$text_res){
+                                                    $text_res = $cached_pid.' => NULL';
+                                                }
+                                                $cached_post_content = preg_replace('/.*\n/','', $text_res);
                                                 $cached_post_pid = preg_replace('/[^0-9]/', '', $cached_pid);
                                                 $cached_post_title = get_the_title($cached_post_pid);
-                                                echo '<li data-id="'.$cached_post_pid.'" data-title="'.$cached_post_title.'" title="'.$cached_post_title.'&#10;'.str_replace('"',"'",$cached_post_content).'"></li>';
+                                                echo '<li data-id="'.$cached_post_pid.'" data-content="'.str_replace('"',"'",$cached_post_content).'" title="'.$cached_post_title.'"></li>';
                                                 if($echo_count>=$echo_limit) break;
                                             }
                                             echo '</ul>';
                                     ?>
-                                            <script>const cached_posts=document.querySelector('.cached_post_list');cached_posts.onclick=(e)=>{e=e||window.event;let t=e.target||e.srcElement;if(!t)return;while(t!=cached_posts){if(t.nodeName.toUpperCase()==='LI'){const cached_pid=t.dataset.id,cached_title=t.dataset.title;if(confirm('确认删除：'+cached_title+'？')){return new Promise(function(resolve,reject){var ajax=new XMLHttpRequest();ajax.open('get',"<?php echo get_bloginfo('template_directory').'/plugin/'.get_option('site_chatgpt_dir').'/gpt.php?pid=';//.'/plugin/api.php?auth=gpt&exec=1&pid=';//get_api_refrence('gpt',true); ?>"+cached_pid+"&del=1");ajax.onreadystatechange=function(){if(this.readyState!=4)return;if(this.status==200){resolve();t.remove();if(this.responseText==404) alert('此记录先前已被清除（可能刷新过快，尝试重新刷新）');}else{reject(this.status)}};ajax.withCredentials=true;ajax.send()}).catch(function(err){console.log(err)})}else{console.log(cached_pid+' canceled.')}break}else{t=t.parentNode}}}</script>
+                                            <script>const cached_posts=document.querySelector('.cached_post_list');cached_posts.onclick=(e)=>{e=e||window.event;let t=e.target||e.srcElement;if(!t)return;while(t!=cached_posts){if(t.nodeName.toUpperCase()==='LI'){const cached_pid=t.dataset.id,cached_title=t.title;if(confirm('确认删除（更新）：'+cached_title+' 摘要内容？')){return new Promise(function(resolve,reject){var ajax=new XMLHttpRequest();ajax.open('get',"<?php echo get_bloginfo('template_directory').'/plugin/'.get_option('site_chatgpt_dir').'/gpt.php?pid='; ?>"+cached_pid+"&del=1");ajax.onreadystatechange=function(){if(this.readyState!=4)return;if(this.status==200){resolve();t.remove();if(this.responseText==404) alert('此记录先前已被清除（可能刷新过快，尝试重新刷新）');}else{reject(this.status)}};ajax.withCredentials=true;ajax.send()}).catch(function(err){console.log(err)})}else{console.log(cached_pid+' canceled.')}break}else{t=t.parentNode}}}</script>
                                     <?php
                                         };
                                     ?>
@@ -2440,7 +2498,7 @@
                         <td>
                             <?php
                                 $opt = 'site_animated_counting_switcher';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">启用位于页面背景上的数字自动递增到目标值动画（目前支持归档及漫游影视页面，若此项修改提交后无效 可通过 更新/发布/删除 文章重建缓存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:teal" class="btn">计数动画</span></label>';
                             ?>
                         </td>
@@ -2451,7 +2509,7 @@
                         <td>
                             <?php
                                 $opt = 'site_async_archive_contributions';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="">开启后显示<b>全年</b>（去年-今年当月）热度报表（默认显示当年/月份，若开启此项无效 可通过<b> 更新/发布/删除 </b>文章重建归档缓存索引，<u>或等待第二天自动刷新缓存</u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Yearly Contributions</b></label>';
                             ?>
                         </td>
@@ -2461,7 +2519,7 @@
                         <td>
                             <?php
                                 $opt = 'site_async_archive_stats';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="">开启后显示当年已发布文章分类统计（默认开启，已修复可能存在的性能问题</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Categorize Posts</b></label>';
                             ?>
                         </td>
@@ -2532,7 +2590,7 @@
                             <?php
                                 $opt = 'site_privacy_video';
                                 $value = get_option($opt);
-                                // $preset = custom_cdn_src('img',true).'/media/videos/data.mp4';
+                                // $preset = $img_cdn.'/media/videos/data.mp4';
                                 // $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
                                 echo '<p class="description" id="site_privacy_video_label">隐私政策背景视频</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$value.'" poster="'.$value.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_privacy_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
                             ?>
@@ -2548,7 +2606,7 @@
                         <td>
                             <?php
                                 $opt = 'site_ads_switcher';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_ads_switcher_label">谷歌广告（开启后需填写初始化代码</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color: orangered;" class="btn">Google Ads</span></label>';
                             ?>
                         </td>
@@ -2630,7 +2688,7 @@
                         <td>
                             <?php
                                 $opt = 'site_countdown_switcher';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="">文章列表及内页侧边栏倒计时挂件（如需在其他页面自定义定时器，只需在调用 the_countdown_widget() 函数时新增下列三个子选项作为参数即可</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'"><span style="color:inherit;" class="btn">CountDown</span></b></label>';
                             ?>
                         </td>
@@ -2666,7 +2724,7 @@
                                     <?php
                                         $opt = 'site_countdown_bgimg';
                                         $value = get_option($opt);
-                                        $preset = custom_cdn_src('img',true).'/images/newyear.gif';
+                                        $preset = $img_cdn.'/images/newyear.gif';
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
                                         echo '<p class="description" id="">倒计时背景图片/视频（默认新年 gif </p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button multi" data-type value="选取文件" />';  //<em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em>
                                     ?>
@@ -2789,9 +2847,9 @@
                                 $opt = 'site_server_side';
                                 $value = get_option($opt);
                                 $arrobj = array(
-                                    array('name'=>'阿里云', 'icon'=>custom_cdn_src('img',true).'/images/settings/alicloud.png'),
-                                    array('name'=>'腾讯云', 'icon'=>custom_cdn_src('img',true).'/images/settings/tencentcloud.svg'),
-                                    array('name'=>'华为云', 'icon'=>custom_cdn_src('img',true).'/images/settings/huaweiclouds.svg'),
+                                    array('name'=>'阿里云', 'icon'=>$img_cdn.'/images/settings/alicloud.png'),
+                                    array('name'=>'腾讯云', 'icon'=>$img_cdn.'/images/settings/tencentcloud.svg'),
+                                    array('name'=>'华为云', 'icon'=>$img_cdn.'/images/settings/huaweiclouds.svg'),
                                 );
                                 echo '<label for="'.$opt.'"><p class="description" id="">网站应用服务器（页尾图标</p><img src="'.$value.'" style="vertical-align: middle;max-width: 66px;margin:auto 15px;" /><select name="'.$opt.'" id="'.$opt.'" class="select_images"><option value="">请选择</option>';
                                     foreach ($arrobj as $arr){
@@ -2808,7 +2866,7 @@
                         <td>
                             <?php
                                 $opt = 'site_beian_switcher';
-                                $status = check_statu($opt);
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_beian_switcher_label">网站备案信息（国外服务器请无视此选项</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">网站备案号</b></label>';
                             ?>
                         </td>
@@ -2866,7 +2924,7 @@
                                     $status = $value ? "checked" : "check";
                                 };
                                 // $status = $value ? "checked" : "check";
-                                echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_switcher_label">页面底部展示“十年之约”图标（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">ForeverBlog 成员</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_switcher_label">页面底部展示“十年之约”图标（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <img src="'.$img_cdn.'/images/svg/foreverblog.svg" alt="wormhole" style="height: 15px;filter:invert(0.5); vertical-align:middle;"><!--<b class="'.$status.'">ForeverBlog 成员</b>--></label>';
                             ?>
                         </td>
                     </tr>
@@ -2889,8 +2947,8 @@
                                 <td>
                                     <?php
                                         $opt = 'site_foreverblog_wormhole';
-                                        $status = check_statu($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_wormhole_label">随机访问十年之约友链博客（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">穿梭虫洞</b></label>';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_wormhole_label">随机访问十年之约友链博客（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><!--<b class="'.$status.'">穿梭虫洞</b>--> <img src="'.$img_cdn.'/images/wormhole_4_tp_ez.gif" alt="wormhole" style="height: 22px;filter:invert(0.5); vertical-align:middle;"></label>'; 
                                     ?>
                                 </td>
                             </tr>
@@ -2899,36 +2957,31 @@
                         // }
                     ?>
                     <tr valign="top">
-                        <th scope="row">站点统计插件</th>
+                        <th scope="row">站点施工警示</th>
                         <td>
                             <?php
-                                $opt = 'site_monitor_switcher';
-                                if(get_option($opt)=="on") $status="checked";else $status="closed";
-                                echo '<label for="'.$opt.'"><p class="description" id="site_monitor_switcher_label">站点统计控制（生成 script 链接，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <span style="color:orangered;" class="btn">U.MENG</span></label>';
+                                $opt = 'site_construction_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_monitor_switcher_label">工程施工警示灯控制（开启显示🚨警示灯🚨动画，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <style>@keyframes alarmLamp_bar_before{0%{opacity:.15;}2%{opacity:1;}4%{opacity:.15;}6%{opacity:1;}8%{opacity:.15;}10%{opacity:1;}12%{opacity:.15;}14%{opacity:1;}16%{opacity:.15;}18%{opacity:1;}20%{opacity:.15;}22%{opacity:1;}24%{opacity:.15;}26%{opacity:1;}28%{opacity:.15;}50%{opacity:.15;}60%{opacity:1;}61%{opacity:.15;}62%{opacity:1;}70%{opacity:.15;}80%{opacity:1;}81%{opacity:.15;}82%{opacity:1;}90%{opacity:.15;}100%{opacity:1;}}@keyframes alarmLamp_bar_after{0%{opacity:.15;}28%{opacity:.15;}30%{opacity:1;}32%{opacity:.15;}34%{opacity:1;}36%{opacity:.15;}38%{opacity:1;}39%{opacity:.15;}40%{opacity:1;}42%{opacity:.15;}44%{opacity:1;}46%{opacity:.15;}48%{opacity:1;}50%{opacity:.15;}52%{opacity:1;}54%{opacity:.15;}56%{opacity:1;}58%{opacity:.15;}60%{opacity:.15;}70%{opacity:1;}71%{opacity:.15;}72%{opacity:1;}80%{opacity:.15;}90%{opacity:1;}91%{opacity:.15;}92%{opacity:1;}100%{opacity:.15;}}@keyframes alarmLamp_spotlight{0%{filter:blur(0px);}28%{filter:blur(0px);}50%{filter:blur(0px);}60%{background:red;filter:blur(15px);}62%{background:red;filter:blur(15px);}70%{background:blue;filter:blur(15px);}72%{background:blue;filter:blur(15px);}80%{background:red;filter:blur(15px);}82%{background:red;filter:blur(15px);}90%{background:blue;filter:blur(15px);}92%{background:blue;filter:blur(15px);}100%{filter:blur(0px);}}.alarm_lamp span#spot::before,.alarm_lamp span#spot::after{content:none;}.alarm_lamp span#spot,.alarm_lamp span#bar::before,.alarm_lamp span#bar::after{content:"";width:33%;height:78%;background:red;box-shadow:rgb(255 0 0 / 80%) 0 0 20px 0px;position:absolute;top:50%;left:50%;transform:translate(0%,-50%);-webkit-transform:translate(0%,-50%);animation-duration:3s;animation-delay:0s;animation-timing-function:step-end;animation-iteration-count:infinite;animation-direction:normal;}.alarm_lamp span#bar::before{left:0%;animation-name:alarmLamp_bar_before;-webkit-animation-name:alarmLamp_bar_before;}.alarm_lamp span#bar::after{left:auto;right:0%;background:blue;box-shadow:rgb(0 0 255 / 80%) 0 0 20px 0px;animation-name:alarmLamp_bar_after;-webkit-animation-name:alarmLamp_bar_after;}.alarm_lamp{display:inline-block;padding:0 2px!important;box-sizing:border-box;position:relative;vertical-align:middle;border:1px solid transparent;}.alarm_lamp span{height:100%;display:block;position:inherit;}.alarm_lamp span#bar{width:100%;}.alarm_lamp span#spot{max-width:32%;background:white;transform:translate(-50%,-50%);-webkit-transform:translate(-50%,-50%);box-shadow:rgb(255 255 255 / 100%) 0 0 20px 0px;animation-name:alarmLamp_spotlight;-webkit-animation-name:alarmLamp_spotlight;}</style> <a href="javascript:void(0);" class="alarm_lamp" style="width:58px;height:12px;" title="站点正处施工中.."><span id="bar"></span><span id="spot"></span></a></label>';
                             ?>
                         </td>
                     </tr>
-                    <?php
-                        // if(get_option('site_monitor_switcher')){
-                    ?>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_monitor_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 统计链接</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_monitor';
-                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="CNZZ 统计链接" value="' . get_option($opt) . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                    <?php
-                        // }
-                    ?>
+                    <tr valign="top">
+                        <th scope="row">非AI撰写声明</th>
+                        <td>
+                            <?php
+                                $opt = 'site_not_ai_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_monitor_switcher_label">非AI撰写声明（生成<a href="https://notbyai.fyi/" target="_blank"> not-by-ai </a>声明图标，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 14px;filter:invert(0.5); vertical-align:middle;"></label>';
+                            ?>
+                        </td>
+                    </tr>
                     <tr valign="top">
                         <th scope="row">在线沟通插件</th>
                         <td>
                             <?php
                                 $opt = 'site_chat_switcher';
-                                if(get_option($opt)=="on") $status="checked";else $status="closed";
+                                $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_chat_switcher_label">在线沟通控制（生成 script 链接和底部图标，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <span style="color:dodgerblue;" class="btn"> TIDIO </span></label>';
                             ?>
                         </td>
@@ -2942,6 +2995,31 @@
                                     <?php
                                         $opt = 'site_chat';
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="沟通（单页）直链" value="' . get_option($opt) . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        // }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">站点统计插件</th>
+                        <td>
+                            <?php
+                                $opt = 'site_monitor_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_monitor_switcher_label">站点统计控制（生成 script 链接，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <span style="color:orangered;" class="btn">U.MENG</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        // if(get_option('site_monitor_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_monitor_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 统计链接</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_monitor';
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="CNZZ 统计链接" value="' . get_option($opt) . '"/>';
                                     ?>
                                 </td>
                             </tr>

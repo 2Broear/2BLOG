@@ -1,10 +1,10 @@
 @charset "utf-8";
-.weblog-tree-core.reply .tree-box-title h3:hover::after{
+.weblog-tree-core.reply .tree-box-title h3.reply_quote:hover::after{
     color: inherit;
     opacity: .75;
     text-decoration: overline;
 }
-.weblog-tree-core.reply .tree-box-title h3:after{
+.weblog-tree-core.reply .tree-box-title h3.reply_quote:after{
     content: "回复此片段";
     font-size: var(--min-size);
     padding: 0 5px;

@@ -65,6 +65,7 @@ figure > figure{
 figure figcaption{
     font-size: var(--min-size);
     opacity: .75;
+    text-align: center;
 }
 figure img{
 	width: auto;
@@ -1216,8 +1217,8 @@ audio{width:300px;height:32px}
 }
 .news-article-window{width:70%}
 .fv-switch-p{width:100%}
-.news-inside-content h2 a{color:var(--preset-6);display:block;}
-.news-inside-content h2{margin:5% 0 0 0;font-size:1rem;white-space:nowrap;line-height:initial}
+.news-inside-content h2 a{color:var(--preset-6);display:block;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;}
+.news-inside-content h2{margin:5% 0 0 0;font-size:1rem;line-height:initial}
 .news-core_area{display:block}
 .news-inside-content .news-personal_stand{display:block}
 .download_boxes .dld_boxes{width:calc(100%/3);display: inline-block;vertical-align: top;/*float:left*/}
@@ -1325,6 +1326,10 @@ audio{width:300px;height:32px}
     /* article index */
     /*.article_index .in_dex{right:0!important}*/
     .vheader #avatar{border-radius:var(--radius)!important;margin-top:15px!important}
+    figure figcaption,
+    figure.wp-block-video video, figure.wp-block-image{
+        max-width: 100%;
+    }
 }
 
 @media only screen and (max-width:360px){

@@ -17,70 +17,76 @@
         const imglist = document.querySelectorAll(imgs),
               loadimg = "https://img.2broear.com/images/loading_3_color_tp.png";
         if(imglist.length<=0) return;
-        var timer_throttle = null,
-            loadArray = [...imglist],
-            time_delay = 500,
+        var time_delay = 500,
             msgObject = Object.create(null),
-            autoLoad = function(imgLoadArr){
-                for(let i=0,arrLen=imgLoadArr.length;i<arrLen;i++){
-                    let eachimg = imgLoadArr[i],
-                        datasrc = eachimg.dataset.src;
-                    eachimg.src = loadimg; //pre-holder(datasrc only)
-                    new Promise(function(resolve,reject){
-                        resolve(imgLoadArr);
-                    }).then(function(res){
-                        if(eachimg.getBoundingClientRect().top>=window.innerHeight) return;
-                        // var temp = new Image();
-                        // temp.src = datasrc;  //请求一次
-                        // temp.onload = function(){
-                            eachimg.src = datasrc; // 即时更新 eachimg（设置后即可监听图片 onload 事件）
-                            // 使用 onload 事件替代定时器或Promise，判断已设置真实 src 的图片加载完成后再执行后续操作
-                            eachimg.onload=function(){
-                                if(this.getAttribute('src')===datasrc){
-                                    res.splice(res.indexOf(this), 1);  // 移除已加载图片数组（已赋值真实 src 情况下）
-                                }else{
-                                    this.removeAttribute('data-src'); // disable loadimg
-                                    this.src = datasrc;  // this.src will auto-fix [http://] prefix
-                                    time_delay = 1500;  //increase delay (decrease request)
-                                    console.log(time_delay);
-                                }
-                            };
-                            // handle loading-err images eachimg.onerror=()=>this.src=loadimg;
-                            eachimg.onerror=function(){
-                                res.splice(res.indexOf(this), 1);  // 移除错误图片数组
-                                this.removeAttribute('src');
-                                this.removeAttribute('data-src'); // disable loadimg
-                                this.setAttribute('alt','图片请求出现问题'); // this.removeAttribute('src');
-                            };
-                        // }
-                    }).catch(function(err){
-                        console.log(err);
-                    });
-                }
-            },
-            /*scrollLoad = function(){
-                return (function(){
-                    if(timer_throttle==null){
-                        timer_throttle = setTimeout(function(){
-                            if(loadArray.length<=0){
-                                console.log(Object.assign(msgObject, {status:'lazyload done', type:'call'}));
-                                window.removeEventListener('scroll', scrollLoad, true);
-                                return;
-                            };
-                            autoLoad(loadArray);
-                            console.log('throttling..',loadArray);
-                            timer_throttle = null;  //消除定时器
-                        }, time_delay, loadArray); //重新传入array（单次）循环
+            loadArray = Array.apply(null, imglist), //[...imglist]
+            arrayChunk = function(array, process, context=null, args){
+                setTimeout(function(){
+                    var item = array.shift();
+                    process.apply(context, [item, args]);
+                    if (array.length > 0){
+                        setTimeout(arguments.callee, 50);
                     }
-                })();
-            },*/
+                }, 100);
+            },
+            processImage = function(image, imgList=null){
+                const updateList = Object.prototype.toString.call(imgList)=='[object Array]';
+                let datasrc = image.dataset.src;
+                image.src = loadimg; //pre-holder(datasrc only)
+                // console.debug('processing..', image, loadArray);
+                // !!!LONG TASK engaged!!!
+                if(image.getBoundingClientRect().top >= window.innerHeight) return;
+                // console.log('onsreen image: ',image);
+                image.src = datasrc; // 即时更新 image（设置后即可监听图片 onload 事件）
+                // 使用 onload 事件替代定时器或Promise，判断已设置真实 src 的图片加载完成后再执行后续操作
+                image.onload=function(){
+                    if(this.getAttribute('src')===datasrc){
+                        if(updateList) imgList.splice(imgList.indexOf(this), 1);  // 移除已加载图片数组（已赋值真实 src 情况下）
+                        this.onload = null;  //fix bug: can't modify img-src(this.src = datasrc;)
+                    }else{
+                        this.removeAttribute('data-src'); // disable loading
+                        // bug: can't modify img-src
+                        this.src = datasrc;  // this.src will auto-fix [http://] prefix
+                        time_delay = 3*time_delay;  //increase delay (decrease request)
+                        console.log(time_delay);
+                    }
+                };
+                // handle loading-err images image.onerror=()=>this.src=loading;
+                image.onerror=function(){
+                    if(updateList) imgList.splice(imgList.indexOf(this), 1);  // 移除错误图片数组
+                    this.removeAttribute('src');
+                    this.removeAttribute('data-src'); // disable loading
+                    if(!this.dataset.err){
+                        this.setAttribute('alt','图片请求出现问题');
+                        this.id = 'err';
+                    }
+                };
+                // image = null;
+            },
+            autoLoad = function(imgLoadArr){
+                if(Object.prototype.toString.call(imgLoadArr)=='[object Array]'){
+                    let arrLen = imgLoadArr.length;
+                    for(let i=0;i<arrLen;i++){
+                        new Promise(function(resolve,reject){
+                            resolve(imgLoadArr);
+                        }).then(function(res){
+                            processImage(res[i], res); //imgLoadArr[i]
+                        }).catch(function(err){
+                            console.log(err);
+                        });
+                    }
+                    return;
+                };
+                // single image: updateList === loadArray but imgLoadArr(concated array)
+                processImage(imgLoadArr, loadArray);  // imgLoadArr
+            },
             scrollLoad = closure_throttle((e)=>{
                 if(loadArray.length<=0){
                     console.log(Object.assign(msgObject, {status:'lazyload done', type:'call'}));
                     window.removeEventListener('scroll', scrollForRemove, true);
                     return;
                 };
-                autoLoad(loadArray);
+                arrayChunk(loadArray.concat(), autoLoad); // autoLoad(loadArray);
             }, time_delay),
             scrollForRemove = function(event){
                 let e = event || window.event,
@@ -88,7 +94,7 @@
                 if(t!==document) return;
                 raf_available ? window.requestAnimationFrame(scrollLoad) : scrollLoad();
             };
-        autoLoad(loadArray);
+        arrayChunk(loadArray.concat(), autoLoad); // autoLoad(loadArray);
         // requestAnimationFrame support
         if(!scroll) return;
         window.addEventListener('scroll', scrollForRemove, true);
@@ -200,15 +206,15 @@
     function sto_enqueue(list, enqueue=false, callback=false, ms=100){
         if(!list[0]) return;
         for(let i=0,listLen=list.length;i<listLen;i++){
-            let callbacked = callback&&typeof callback==='function';
+            let called = callback&&typeof callback==='function';
             if(enqueue){
                 var inOrder = setTimeout(()=>{
-                    callbacked ? callback(i) : false;
+                    called ? callback(i) : false;
                     inOrder = null;
                     clearTimeout(inOrder);
                 }, i*ms);
             }else{
-                callbacked ? callback(i) : false;
+                called ? callback(i) : false;
             }
         }
     }
@@ -307,8 +313,16 @@
     function send_ajax_request(method,url,data,callback=false,catchback=false){
         return new Promise(function(resolve,reject){
             var ajax = new XMLHttpRequest();
-            if(method=='get'){  // GET请求
-                data ? (url+='?',url+=data) : false;
+            if(!ajax){
+                let image = new Image();
+                image.src = url+='?'+data;
+                return;
+            }
+            if(method.toLowerCase()=='get'){  // GET请求
+                if(data){
+                    url+='?';
+                    url+=data
+                }
                 ajax.open(method,url);
             }else{  // 非GET请求
                 ajax.open(method,url);
@@ -325,7 +339,7 @@
             data ? ajax.send(data) : ajax.send();
         }).catch(function(err){
             console.log(err);
-            if(callback&&typeof callback==='function') catchback(err); //catchback.apply(this, err);
+            if(catchback&&typeof catchback==='function') catchback(err); //catchback.apply(this, err);
         });
     }
     
@@ -637,9 +651,7 @@
     if(sidebar_window){
         window.addEventListener('scroll', scroll_func, true);
     }else{
-        const scrollLoad = closure_throttle((e)=>{
-                  scroll_func();
-              }, scroll_delay),
+        const scrollLoad = closure_throttle((e)=>scroll_func(), scroll_delay),
               scrollForRemove = function(event){
                   let e = event || window.event,
                       t = e.target || e.srcElement;
@@ -675,13 +687,15 @@
                   menu_mask.style.display = 'block';
               }
           },
-          search_func = function(el,sw=true){
+          search_func = function(el, sw=true){
               if(!el) return;
               const search_cls = "searching",
                     el_cls = el.classList;
-              if(!sw || !el_cls||!el_cls.contains(search_cls)){
+              if(!sw || !el_cls || !el_cls.contains(search_cls)){
+                  const search_input = el.querySelector('.tips form input');
                   el_cls.add(search_cls);
-                  el.querySelector('.tips form input').focus();
+                  search_input.focus();
+                  search_input.setSelectionRange(0, search_input.length);
               }else{
                   el_cls.remove(search_cls);
               }
@@ -689,7 +703,7 @@
     // release event
     menu_mask.onmouseup = menu_mask.ontouchend=(e)=>mobile_func(e);
     // bind click event
-    mobile_nav.onclick=function(e){ //=> this->window
+    mobile_nav.onclick = function(e){ //=> this->window
         e = e || window.event;
         let t = e.target || e.srcElement;
         if(!t) return;
@@ -702,7 +716,7 @@
                 break;
             }else if(t.classList&&t.classList.contains("footer-tips")){
                 mobile_func(e);
-                search_func(this,false);
+                search_func(this, false);
                 break;
             }else{
                 t = t.parentNode;

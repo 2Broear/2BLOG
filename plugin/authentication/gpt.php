@@ -18,7 +18,9 @@
                 if(is_user_logged_in()&&current_user_can('administrator')){
                     // echo 'Logged as admin verified, Processing action.. ';
                     include CACHED_PATH;  // 读取文件记录
-                    if(isset($cached_post['chat_pid_'.$pid])){
+                    $chat_pid = $cached_post['chat_pid_'.$pid];
+                    // $chat_pid===null is case if chatGPT api error caused null value
+                    if(isset($chat_pid) || $chat_pid===null){
                         unset($cached_post['chat_pid_'.$pid]); // 删除指定记录
                         // 写入本地储存
                         $temp = '<?php'.PHP_EOL.'$cached_post = '.var_export($cached_post,true).';'.PHP_EOL.'?>';
@@ -81,7 +83,7 @@
                 // print_r('second request token: '.count_chaters($requirements,1,1)); //.count_chaters($requirements,1,1,0,true))
                 // print_r(count_chaters($requirements,1,1,0,true,true));
                 
-                function curlRequest($question, $maxlen=1024, $additional='，注意精简字数') { //内容
+                function curlRequest($question, $maxlen=1024, $additional='，注意精简内容') { //字数
                     $merge_ingore = get_option('site_chatgpt_merge_ingore');
                     $openai_model = get_option('site_chatgpt_model');
                     $openai_proxy = get_option('site_chatgpt_proxy','https://api.openai.com');

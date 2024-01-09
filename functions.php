@@ -26,9 +26,9 @@
         $sup = isset($atts['sup']) ? $atts['sup'] : '中意此款主题吗';
         $title = isset($atts['title']) ? $atts['title'] : '';
         $sub = isset($atts['sub']) ? $atts['sub'] : '现在体验<b> BETA </b>版';
-        $src= isset($atts['src']) ? $atts['src'] : 'javascript:;';
+        $src= isset($atts['src']) ? $atts['src'] : 'https://github.com/2Broear/2BLOG';
         $img = isset($atts['img']) ? $atts['img'] : 'https://img.2broear.com/2022/08/2BLOG-rainbow666.jpg';
-        return '<div class="countdown-box" style="margin-bottom: 15px"><a href="'.$href.'" target="_blank" title="'.$title.'"><div id="countdown" class="countdowns" style="background-image:url('.$img.')"><p class="title">'.$sup.'</p><div class="time"><span class="timesup">'.$title.'</span></div><p class="today" style="text-decoration: underline;">'.$sub.'</p></div><sup id="ads">ads</sup></a></div>';
+        return '<div class="countdown-box" style="margin-bottom: 15px"><a href="'.$src.'" target="_blank" title="'.$title.'"><div id="countdown" class="countdowns" style="background-image:url('.$img.')"><p class="title">'.$sup.'</p><div class="time"><span class="timesup">'.$title.'</span></div><p class="today" style="text-decoration: underline;">'.$sub.'</p></div><sup id="ads">ads</sup></a></div>';
     }
     // 注册短代码
     add_shortcode('custom_title', 'custom_title_shortcode');
@@ -272,11 +272,12 @@
     // wp评论邮件提醒（博主）手动开启
     if(get_option('site_wpmail_switcher')){
         function wp_notify_admin_mail( $comment_id, $comment_approved ) {
+            global $img_cdn;
             $comment = get_comment( $comment_id );
             $admin_mail = get_option('site_smtp_mail', get_bloginfo('admin_email'));
             $user_mail = $comment->comment_author_email;
             $title = ' 「' . get_the_title($comment->comment_post_ID) . '」 收到一条来自 '.$comment->comment_author.' 的留言！';
-            $body = '<style>.box{background-color:white;border-bottom:2px solid #EB6844;border-radius:10px;box-shadow:rgba(0,0,0,0.08) 0 0 18px;line-height:180%;width:500px;margin:50px auto;color:#555555;font-family:"Century Gothic","Trebuchet MS","Hiragino Sans GB",微软雅黑,"Microsoft Yahei",Tahoma,Helvetica,Arial,"SimSun",sans-serif;font-size:12px;}.box .head{border-bottom:1px solid whitesmoke;font-size:14px;font-weight:normal;padding-bottom:15px;margin-bottom:15px;text-align:center;line-height:28px;}.box .head h3{margin-bottom:0;margin:0;}.box .head .title{color:#EB6844;font-weight:bold;}.box .body{padding:0 15px;}.box .body .content{background-color:#f5f5f5;padding:10px 15px;margin:18px 0;word-wrap:break-word;border-radius:5px;}a{text-decoration:none!important;color:#EB6844;}img{max-width:100%;display:block;margin:0 auto;border-radius:inherit;border-bottom-left-radius:unset;border-bottom-right-radius:unset;}.button:hover{background:#EB6844;color:#ffffff;}.button{display:block;margin:0 auto;width:15%;line-height:35px;padding:0 15px;border:1px solid currentColor;border-radius:50px;text-align:center;font-weight:bold;}</style><div class="box"><img src="'.custom_cdn_src("img",true).'/images/google.gif"><h2 class="head"><span class="title">「'. get_option("blogname") .'」上有一条新评论！</span><p><a class="button"href="' . htmlspecialchars(get_comment_link($parent_id)) . '"target="_blank">点击查看</a></p></h2><div class="body"><p><strong>' . trim($comment->comment_author) . '：</strong></p><div class="content"><p><a class="at"href="#624a75eb1122b910ec549633">' . trim($comment->comment_content) . '</a></p></div></div></div>';
+            $body = '<style>.box{background-color:white;border-bottom:2px solid #EB6844;border-radius:10px;box-shadow:rgba(0,0,0,0.08) 0 0 18px;line-height:180%;width:500px;margin:50px auto;color:#555555;font-family:"Century Gothic","Trebuchet MS","Hiragino Sans GB",微软雅黑,"Microsoft Yahei",Tahoma,Helvetica,Arial,"SimSun",sans-serif;font-size:12px;}.box .head{border-bottom:1px solid whitesmoke;font-size:14px;font-weight:normal;padding-bottom:15px;margin-bottom:15px;text-align:center;line-height:28px;}.box .head h3{margin-bottom:0;margin:0;}.box .head .title{color:#EB6844;font-weight:bold;}.box .body{padding:0 15px;}.box .body .content{background-color:#f5f5f5;padding:10px 15px;margin:18px 0;word-wrap:break-word;border-radius:5px;}a{text-decoration:none!important;color:#EB6844;}img{max-width:100%;display:block;margin:0 auto;border-radius:inherit;border-bottom-left-radius:unset;border-bottom-right-radius:unset;}.button:hover{background:#EB6844;color:#ffffff;}.button{display:block;margin:0 auto;width:15%;line-height:35px;padding:0 15px;border:1px solid currentColor;border-radius:50px;text-align:center;font-weight:bold;}</style><div class="box"><img src="'.$img_cdn.'/images/google.gif"><h2 class="head"><span class="title">「'. get_option("blogname") .'」上有一条新评论！</span><p><a class="button"href="' . htmlspecialchars(get_comment_link($parent_id)) . '"target="_blank">点击查看</a></p></h2><div class="body"><p><strong>' . trim($comment->comment_author) . '：</strong></p><div class="content"><p><a class="at"href="#624a75eb1122b910ec549633">' . trim($comment->comment_content) . '</a></p></div></div></div>';
             $header = "\nContent-Type: text/html; charset=" . get_option('blog_charset') . "\n";
             // 当前用户不为博主时发送评论提醒邮件
             if($user_mail!=$admin_mail) wp_mail($admin_mail, $title, $body, $header);
@@ -290,9 +291,10 @@
         $comment = get_comment($comment_id);
         $parent_id = $comment->comment_parent ? $comment->comment_parent : '';
         if($parent_id!='' && $comment->comment_approved!='spam'){
+            global $img_cdn;
             $tomail = trim(get_comment($parent_id)->comment_author_email);
             $title = '👉 叮咚！您在 「' . get_option("blogname") . '」 上有一条新回复！';
-            $body = '<style>.box{background-color:white;border-bottom:2px solid #EB6844;border-radius:10px;box-shadow:rgba(0,0,0,0.08) 0 0 18px;line-height:180%;width:500px;margin:50px auto;color:#555555;font-family:"Century Gothic","Trebuchet MS","Hiragino Sans GB",微软雅黑,"Microsoft Yahei",Tahoma,Helvetica,Arial,"SimSun",sans-serif;font-size:12px;}.box .head{border-bottom:1px solid whitesmoke;font-size:14px;font-weight:normal;padding-bottom:15px;margin-bottom:15px;text-align:center;line-height:28px;}.box .head h3{margin-bottom:0;margin:0;}.box .head .title{color:#EB6844;font-weight:bold;}.box .body{padding:0 15px;}.box .body .content{background-color:#f5f5f5;padding:10px 15px;margin:18px 0;word-wrap:break-word;border-radius:5px;}a{text-decoration:none!important;color:#EB6844;}img{max-width:100%;display:block;margin:0 auto;border-radius:inherit;border-bottom-left-radius:unset;border-bottom-right-radius:unset;}.button:hover{background:#EB6844;color:#ffffff;}.button{display:block;margin:0 auto;width:15%;line-height:35px;padding:0 15px;border:1px solid currentColor;border-radius:50px;text-align:center;font-weight:bold;}</style><div class="box"><img src="'.custom_cdn_src("img",true).'/images/google_flush.gif"><div class="head"><h2>'. trim(get_comment($parent_id)->comment_author) .'，</h2>有人回复了你在《' . get_the_title($comment->comment_post_ID) . '》上的评论！</div>&nbsp;&nbsp;&nbsp;你评论的：<div class="body"><div class="content"><p>' . trim(get_comment($parent_id)->comment_content) . '</p></div><p>被<strong> ' . trim($comment->comment_author) . ' </strong>回复：</p><div class="content"><p><a class="at" href="#">' . trim($comment->comment_content) . '</a></p></div><p style="margin:20px auto"><a class="button"href="' . htmlspecialchars(get_comment_link($parent_id)) . '"target="_blank"rel="noopener">点击查看</a></p><p><center><b style="opacity:.5">此邮件由系统发送无需回复，</b>欢迎再来<a href="' . get_bloginfo('url') . '"target="_blank"rel="noopener"> '. get_option("blogname") .' </a>游玩！</center></p></div></div>';
+            $body = '<style>.box{background-color:white;border-bottom:2px solid #EB6844;border-radius:10px;box-shadow:rgba(0,0,0,0.08) 0 0 18px;line-height:180%;width:500px;margin:50px auto;color:#555555;font-family:"Century Gothic","Trebuchet MS","Hiragino Sans GB",微软雅黑,"Microsoft Yahei",Tahoma,Helvetica,Arial,"SimSun",sans-serif;font-size:12px;}.box .head{border-bottom:1px solid whitesmoke;font-size:14px;font-weight:normal;padding-bottom:15px;margin-bottom:15px;text-align:center;line-height:28px;}.box .head h3{margin-bottom:0;margin:0;}.box .head .title{color:#EB6844;font-weight:bold;}.box .body{padding:0 15px;}.box .body .content{background-color:#f5f5f5;padding:10px 15px;margin:18px 0;word-wrap:break-word;border-radius:5px;}a{text-decoration:none!important;color:#EB6844;}img{max-width:100%;display:block;margin:0 auto;border-radius:inherit;border-bottom-left-radius:unset;border-bottom-right-radius:unset;}.button:hover{background:#EB6844;color:#ffffff;}.button{display:block;margin:0 auto;width:15%;line-height:35px;padding:0 15px;border:1px solid currentColor;border-radius:50px;text-align:center;font-weight:bold;}</style><div class="box"><img src="'.$img_cdn.'/images/google_flush.gif"><div class="head"><h2>'. trim(get_comment($parent_id)->comment_author) .'，</h2>有人回复了你在《' . get_the_title($comment->comment_post_ID) . '》上的评论！</div>&nbsp;&nbsp;&nbsp;你评论的：<div class="body"><div class="content"><p>' . trim(get_comment($parent_id)->comment_content) . '</p></div><p>被<strong> ' . trim($comment->comment_author) . ' </strong>回复：</p><div class="content"><p><a class="at" href="#">' . trim($comment->comment_content) . '</a></p></div><p style="margin:20px auto"><a class="button"href="' . htmlspecialchars(get_comment_link($parent_id)) . '"target="_blank"rel="noopener">点击查看</a></p><p><center><b style="opacity:.5">此邮件由系统发送无需回复，</b>欢迎再来<a href="' . get_bloginfo('url') . '"target="_blank"rel="noopener"> '. get_option("blogname") .' </a>游玩！</center></p></div></div>';
             $headers = "From: \"" . get_option('blogname') . "\" <".$admin_mail.">\nContent-Type: text/html; charset=" . get_option('blog_charset') . "\n";
             // 博主收到评论回复时已收到评论邮件，无需重复通知（访客回复）邮件
             if($tomail!=$admin_mail) wp_mail($tomail, $title, $body, $headers);
@@ -303,6 +305,7 @@
     // 评论企业微信应用通知
     if(get_option('site_wpwx_notify_switcher')){  //微信推送消息
         function push_weixin($comment_id){
+            global $src_cdn;
             $comment = get_comment($comment_id);
             $post_id = $comment->comment_post_ID;
             $mail = $comment->comment_author_email;
@@ -329,7 +332,7 @@
                 )
             );
             // 评论邮件不为博主邮件时，返回 notify 接口（$postdata）不可使用 cdn，wpwx-notify.php 需调用 wp core
-            if($mail!=$admin_mail) return file_get_contents(custom_cdn_src(1,true) . '/wpwx-notify.php',false,stream_context_create($options));else return false; //get_bloginfo('template_directory') custom_cdn_src('api',true)
+            if($mail!=$admin_mail) return file_get_contents($src_cdn . '/wpwx-notify.php',false,stream_context_create($options));else return false; //get_bloginfo('template_directory') custom_cdn_src('api', true)
         }
         // 挂载 WordPress 评论提交的接口
         add_action('comment_post', 'push_weixin', 19, 2);
@@ -470,7 +473,7 @@
     
     /* ------------------------------------------------------------------------ *
      *  
-     *  自定义功能函数
+     *  其他自定义功能函数
      *  
      * ------------------------------------------------------------------------ */
      
@@ -506,9 +509,11 @@
         if($exclude) $query_array['exclude'] = $current_cid;
         return get_categories($query_array);
     }
-     
+    
+    $src_cdn = custom_cdn_src('src', true);
+    $img_cdn = custom_cdn_src('img', true);
     $lazysrc = 'src';
-    $loadimg = custom_cdn_src('img',true).'/images/loading_3_color_tp.png';
+    $loadimg = $img_cdn.'/images/loading_3_color_tp.png';
     // $upload_url = wp_get_upload_dir()['baseurl'];
     // $video_cdn_sw = get_option('site_cdn_vid_sw');
     $upload_url = content_url().'/uploads';
@@ -544,28 +549,28 @@
     // api 代理访问（使用 api.php 文件中的 curl 携带鉴权参数二次请求（速度影响），适用前端异步调用
     // 返回请求api或返回sign签名（如开启cdn鉴权
     function get_api_refrence($api='', $xhr=false, $exe=1, $pid=false){
+        global $src_cdn;
         $res = 'unknown_api_refrence';
-        if($api){
-            global $post, $cdn_switch;
-            $exe = $exe ? $exe : 0;
-            $cdn_api = get_option('site_cdn_api');
-            $pid = $pid ? $pid : $post->ID;
-            $api_file = '/'.$api.'.php';
-            $authentication = get_option('site_chatgpt_dir','authentication');
-            $request_url = $cdn_switch&&$cdn_api ? custom_cdn_src('api',true) : custom_cdn_src('src',true).'/plugin/'.$authentication;
-            $auth_url = $request_url.$api_file.'?pid='.$pid;
-            $cdn_auth = get_option('site_chatgpt_auth');
-            // 如出现访问403可能是由于CDN服务器开启了鉴权但后台面板中未填写 API Auth Sign 选项鉴权密钥（无法判断远程服务器是否开启鉴权）
-            if($cdn_switch&&$cdn_api&&$cdn_auth){
-                $stamp10x = time();
-                $stamp16x = dechex($stamp10x);
-                $auth_url = $auth_url.'&sign='.md5($cdn_auth.$api_file.$stamp16x).'&t='.$stamp16x;
-            }
-            $res = $xhr ? custom_cdn_src('src',true).'/plugin/api.php?auth='.$api.'&exec='.$exe.'&pid='.$pid : $auth_url;
-            // $res = $xhr ? custom_cdn_src('src',true).'/plugin/'.$authentication.$api_file.'?pid='.$pid : $auth_url; //||!$cdn_api
-        }else{
-            $res = api_err_handle(200,'unknown_api_refrence',true);
+        if(!$api){
+            return api_err_handle(200,$res,true);
         }
+        global $post, $cdn_switch;
+        $exe = $exe ? $exe : 0;
+        $cdn_api = get_option('site_cdn_api');
+        $pid = $pid ? $pid : $post->ID;
+        $api_file = '/'.$api.'.php';
+        $authentication = get_option('site_chatgpt_dir','authentication');
+        $request_url = $cdn_switch&&$cdn_api ? custom_cdn_src('api', true) : $src_cdn.'/plugin/'.$authentication;
+        $auth_url = $request_url.$api_file.'?pid='.$pid;
+        $cdn_auth = get_option('site_chatgpt_auth');
+        // 如出现访问403可能是由于CDN服务器开启了鉴权但后台面板中未填写 API Auth Sign 选项鉴权密钥（无法判断远程服务器是否开启鉴权）
+        if($cdn_switch&&$cdn_api&&$cdn_auth){
+            $stamp10x = time();
+            $stamp16x = dechex($stamp10x);
+            $auth_url = $auth_url.'&sign='.md5($cdn_auth.$api_file.$stamp16x).'&t='.$stamp16x;
+        }
+        $res = $xhr ? $src_cdn.'/plugin/api.php?auth='.$api.'&exec='.$exe.'&pid='.$pid : $auth_url;
+        // $res = $xhr ? $src_cdn.'/plugin/'.$authentication.$api_file.'?pid='.$pid : $auth_url; //||!$cdn_api
         return $res;
     }
     
@@ -585,8 +590,9 @@
         return $chatgpt_cat;
     }
     function article_ai_abstract($content) {
+        global $src_cdn; //custom_cdn_src(0, true)
         $chatgpt_cat = in_chatgpt_cat();
-        return $chatgpt_cat&&is_single() ? '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b> 文章摘要 AI</b><span>chatGPT</span></p><p class="response load">standby chatGPT responsing..</p></blockquote><script type="module">const responser = document.querySelector(".chatGPT .response");try {import("'.custom_cdn_src('src',1).'/js/module.js").then((module)=>send_ajax_request("get", "'.get_api_refrence("gpt",true).'", false, (res)=>module.words_typer(responser, res, 25)));}catch(e){console.warn("dom responser not found, check backend.",e)}</script>'.$content : $content;
+        return $chatgpt_cat&&is_single() ? '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b> 文章摘要 AI</b><span>chatGPT</span></p><p class="response load">standby chatGPT responsing..</p></blockquote><script type="module">const responser = document.querySelector(".chatGPT .response");try {import("'.$src_cdn.'/js/module.js").then((module)=>send_ajax_request("get", "'.get_api_refrence("gpt").'", false, (res)=>module.words_typer(responser, res, 25)));}catch(e){console.warn("dom responser not found, check backend.",e)}</script>'.$content : $content; //get_api_refrence("gpt", true)
     }
     add_filter( 'the_content', 'article_ai_abstract', 10);
     
@@ -603,6 +609,7 @@
         // print_r(get_category($cat));
         $cats = get_categories(meta_query_categories(0));
         if(!empty($cats)){
+            global $img_cdn;
             $slash_href = 'javascript:void(0)';
             foreach($cats as $the_cat){
                 $the_cat_id = $the_cat->term_id;
@@ -643,7 +650,7 @@
                                         $meta_image = str_replace($upload_url, get_option('site_cdn_img',$upload_url), $meta_image);
                                     }
                                 }else{
-                                    $meta_image = custom_cdn_src('img',true).'/images/default.jpg';
+                                    $meta_image = $img_cdn.'/images/default.jpg';
                                 }
                                 echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats_par." ".$level.'"><a href="'.get_category_link($the_cats_id).'" class="'.$choosen.'" style="background:url('.$meta_image.') center center /cover;">'.$the_cats_name.'</a>'; // style="--data-background:'.$meta_image.'" data-background="'.$meta_image.'" <style>.inside_of_block nav.main-nav .metaboxes li:hover > a{background-image: var(--data-background);}</style>
                             }else{
@@ -1316,7 +1323,7 @@
         // remove_action('wp_ajax_my_ajax_action', 'my_ajax_callback');
         // remove_action('wp_ajax_nopriv_my_ajax_action', 'my_ajax_callback');
         // // 未解决BUG：data-nonce验证数据[24h有效，根据用户会话单独生成验证数据]被db缓存导致其他xhr请求会话返回403
-        // update_option('site_archive_count_cache', '');  //清除（重建）归档统计
+        update_option('site_archive_count_cache', '');  //清除（重建）归档统计
         // update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
         update_option('site_archive_list_cache', '');  
         // //清除（重建）ACG 缓存
@@ -1332,14 +1339,20 @@
     add_action('add_link', 'site_update_link_cache');
     add_action('edit_link', 'site_update_link_cache');
     add_action('delete_link', 'site_update_link_cache');
-    //清除（重建）更新下载
-    function site_update_download_cache($post_id) {
-        $download_temp = get_cat_by_template('download');
-        $categories = wp_get_post_categories($post_id);
-        if (in_array($download_temp->term_id, $categories)) update_option('site_download_list_cache', '');
+    //清除（重建）指定分类
+    function update_category_post_cache($pid, $temp, $cache) {
+        $cat_temp = get_cat_by_template($temp);
+        $categories = wp_get_post_categories($pid);
+        if (in_array($cat_temp->term_id, $categories)) update_option($cache, '');
     }
-    add_action('save_post', 'site_update_download_cache');
-    add_action('delete_post', 'site_update_download_cache');
+    function site_update_specific_caches($post_id) {
+        //清除（重建）更新下载
+        update_category_post_cache($post_id, 'download', 'site_download_list_cache');
+        //清除（重建）归档统计
+        update_category_post_cache($post_id, 'acg', 'site_archive_count_cache');
+    }
+    add_action('save_post', 'site_update_specific_caches');
+    add_action('delete_post', 'site_update_specific_caches');
     
     // 自定义文章标签
     function get_tag_list($pid, $max=3, $dot="、"){
@@ -1396,8 +1409,9 @@
     
     // 分类背景图/视频海报
     function cat_metabg($cid, $preset=false){
+        global $img_cdn;
         $metaimg = get_term_meta($cid, 'seo_image', true);  //$page_cat->term_id
-        $result = $metaimg ? $metaimg : ($preset ? $preset : custom_cdn_src('img',true).'/images/default.jpg');  //get_option('site_bgimg')
+        $result = $metaimg ? $metaimg : ($preset ? $preset : $img_cdn.'/images/default.jpg');  //get_option('site_bgimg')
         global $images_cdn, $upload_url, $cdn_switch;
         $res = $result;
         if($cdn_switch){
@@ -1458,15 +1472,23 @@
     ?>
                     <script type="text/javascript">  //addAscending("createdAt")
                         new AV.Query("inform").addDescending("createdAt").limit(<?php echo $inform_max; ?>).find().then(result=>{
-                            for (let i=0,resLen=result.length; i<resLen;i++) {
-                                let res = result[i],
-                                    title = res.attributes.title,
-                                    content = res.attributes.content;
-                                document.querySelector("#informBox").innerHTML += `<span>${title}</span>`;
+                            for (let i=0,resLen=result.length,infobox=document.querySelector("#informBox"); i<resLen;i++) {
+                                infobox.innerHTML += `<span>${result[i].attributes.title}</span>`;
                             }
                             const informs = document.querySelectorAll('.scroll-inform div.scroll-block span');
                             informs[0].classList.add("showes");  //init first show(no trans)
-                            flusher&&informs.length>1 ? flusher(informs,0,3000) : false;  //scroll inform
+                            if(informs.length>1){
+                                const cls_move = "move",
+                                      cls_show = "show";
+                                (function(els,count,delay){
+                                    setInterval(() => {
+                                        declear(els, cls_move, count)
+                                        els[count].className = cls_move;  //current
+                                        els[count+1] ? els[count+1].classList.add(cls_show) : els[0].classList.add(cls_show);
+                                        count<els.length-1 ? count++ : count=0;
+                                    }, delay);
+                                })(informs, 0, 3000);
+                            }
                         });
                     </script>
     <?php
@@ -1808,15 +1830,18 @@
         return $comments_data;
     }
     
+
     function get_site_bookmarks($category='standard', $orderby='link_id', $order='ASC'){
-        return get_bookmarks(array(
+        $res = get_bookmarks(array(
             'orderby' => $orderby,
             'order' => $order,
             'category_name' => $category,
+            // 'exclude' => 60,
             'hide_invisible' => 0
         ));
+        return (count($res)>0 ? $res : false);
     }
-    function the_site_links($t1='小伙伴们', $t2='技术侧重', $t3='荐亦有鉴'){ //, $baas=false
+    function the_site_links($t1='小伙伴们', $t2='', $t3=''){ //, $baas=false
         global $baas;
         $output = '';
         if(!$baas){
@@ -1829,13 +1854,19 @@
             }
             if(!$output || !$output_sw){
                 $rich_links = get_site_bookmarks();
-                $tech_links = get_site_bookmarks('technical');
-                $rcmd_links = get_site_bookmarks('special','rand','DESC');
-                $lost_links = get_site_bookmarks('missing','link_id','DESC');
-                $output .= count($rich_links)>0 ? '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes">'.get_site_links($rich_links, 'full').'</div>' : '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';
-                if(count($tech_links)>0) $output .= '<div class="inbox-clip"><h2 id="exchanged"> '.$t2.' </h2></div><div class="deals tech exchanged flexboxes">'.get_site_links($tech_links, 'full').'</div>';
-                if(count($rcmd_links)>0) $output .= '<div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes">'.get_site_links($rcmd_links, 'half').'</div>';
-                if(count($lost_links)>0) $output .= '<div class="deals oldest"><div class="inboxSliderCard"><div class="slideBox flexboxes">'.get_site_links($lost_links).'</div></div></div>';
+                $output .= $rich_links ? '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes">'.get_site_links($rich_links, 'full').'</div>' : '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';
+                if($t2){
+                    $t2 = $t2 ? $t2 : '技术侧重';
+                    $tech_links = get_site_bookmarks('technical');  // $tech_links = get_filtered_bookmarks('technical', 'others');
+                    if($tech_links) $output .= '<div class="inbox-clip"><h2 id="exchanged"> '.$t2.' </h2></div><div class="deals tech exchanged flexboxes">'.get_site_links($tech_links, 'full').'</div>';
+                }
+                if($t3){
+                    $t3 = $t3 ? $t3 : '荐亦有鉴';
+                    $rcmd_links = get_site_bookmarks('special','rand','DESC');
+                    if($rcmd_links) $output .= '<div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes">'.get_site_links($rcmd_links, 'half').'</div>';
+                    $other_links = get_site_bookmarks('others','link_id','DESC');
+                    if($other_links) $output .= '<div class="deals oldest"><div class="inboxSliderCard"><div class="slideBox flexboxes">'.get_site_links($other_links).'</div></div></div>';
+                }
                 if($output_sw) update_option('site_link_list_cache', wp_kses_post($output));
             }
         }else{
@@ -1934,7 +1965,7 @@
     add_filter( 'max_srcset_image_width', 'remove_max_srcset_image_width' );
     
     //启用cdn加速(指定src/img)
-    function custom_cdn_src($holder='src',$var=false){
+    function custom_cdn_src($holder='src', $var=false){
         $default_src = get_bloginfo('template_directory');
         $cdn_src = get_option('site_cdn_src');
         $cdn_img = get_option('site_cdn_img');
@@ -1958,7 +1989,7 @@
     };
     //兼容gallery获取post内容指定图片（视频海报）
     function get_postimg($index=0,$postid=false,$default=false) {
-        global $post, $images_cdn, $upload_url, $cdn_switch;
+        global $post, $images_cdn, $upload_url, $cdn_switch, $img_cdn;
         $postid ? $post = get_post($postid) : $post;
         $ret = array();
         if(has_post_thumbnail()){
@@ -1975,7 +2006,7 @@
                 if($video_poster){
                     $ret = [$video_poster];
                 }else{
-                    $ret = get_option('site_default_postimg_switcher') || $default ? [custom_cdn_src('img',true) . '/images/default.jpg'] : $ret;
+                    $ret = get_option('site_default_postimg_switcher') || $default ? [$img_cdn . '/images/default.jpg'] : $ret;
                 }
                 $index = 0;
             }
@@ -2097,13 +2128,19 @@
 <?php
     }
     // wp自定义（含置顶无分页）查询函数
-    function recent_posts_query($cid=0, $link=false, $detail=false, $limit=null, $random=false){
+    function recent_posts_query($cid=0, $specific_link=false, $detail=false, $limit=null, $random=false){
         global $post;
         $orderby = $random ? 'rand' : array(
             'date' => 'DESC',
             'meta_value_num' => 'DESC',
             'modified' => 'DESC',
         );
+        $acg_single_sw = get_option('site_single_switcher');
+        if($acg_single_sw){
+            $includes = get_option('site_single_includes');
+            $acg_slug = get_cat_by_template('acg','slug');
+            $acg_single_sw = in_array($acg_slug, explode(',', $includes));
+        }
         $limit = $limit ? $limit : get_option('site_per_posts');
         $query_array = $cid ? array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => $limit, 'orderby' => $orderby) : array('cat' => $cid, 'posts_per_page' => $limit, 'order' => 'DESC', 'orderby' => $orderby);
         $left_query = new WP_Query(array_filter($query_array));
@@ -2116,8 +2153,8 @@
             $par_cid = get_category($cid)->parent;
             $par_slug = $par_cid!=0&&get_category($par_cid)->slug!='/' ? get_category($par_cid)->slug : get_category($cid)->slug;
             $post_cat = get_the_category($post->ID);
-            $loc_id = $par_slug==get_cat_by_template('acg','slug') ? ($post_cat[0]->parent!=0 ? $post_cat[0]->slug : $post_cat[1]->slug) : 'pid_'.get_the_ID();  // print_r(get_category(wp_get_post_categories($post->ID)[1])->slug);
-            $pre_link = $link||get_option('site_single_switcher') ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="'.get_category_link($cid).'#'.$loc_id.'" target="_self">';
+            $loc_id = $par_slug==get_cat_by_template('acg','slug') ? ($post_cat[0]->parent!=0 ? $post_cat[0]->slug : $post_cat[1]->slug) : 'pid_'.get_the_ID();
+            $pre_link = $specific_link || !$acg_single_sw ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="'.get_category_link($cid).'#'.$loc_id.'" target="_self" rel="nofollow">';
             echo '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
         endwhile;
         wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
@@ -2198,6 +2235,17 @@
         $output = '';
         global $post, $lazysrc, $loadimg;
         $acg_slug = get_cat_by_template('acg','slug');
+        $acg_single_sw = get_option('site_single_switcher');
+        $target = "_blank";
+        $rel = "";
+        if($acg_single_sw){
+            $includes = get_option('site_single_includes');
+            $acg_single_sw = in_array($acg_slug, explode(',', $includes));
+            if($acg_single_sw){
+                $target = "_self";
+                $rel = "nofollow";
+            }
+        }
         $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
         $cat_slug = $the_cat->slug;
         // start acg query
@@ -2223,18 +2271,8 @@
                 $lazyhold = 'data-src="'.$postimg.'"';
                 $postimg = $loadimg;
             }
-            if(get_option('site_single_switcher')){
-                $target = "_blank";
-                $href = $post_source ? $post_source : get_the_permalink();
-            }else{
-                $target = "_self";
-                $href = "javascript:;";
-                if($post_source){
-                    $href = $post_source;
-                    $target = "_blank";
-                }
-            }
-            $output .= '<div class="inbox flexboxes" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><img '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /><span class="author">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(66,true).'</p></span>';
+            $href = $post_source ? $post_source : ($acg_single_sw ? "javascript:;" : get_the_permalink());
+            $output .= '<div class="inbox flexboxes" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><img '.$lazyhold.' src="'.$postimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /><span class="author">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(66,true).'</p></span>';
             if($post_rcmd){
                 $rcmd_title = 'Personal Recommends';
                 $rcmd_class = '';
@@ -2268,7 +2306,7 @@
                 $all_count = $all_query->post_count;
                 $posts_count = $acg_query->post_count;  //count($acg_query->posts) //mailto:'.get_bloginfo("admin_email").' 发送邮件，荐你所见
                 $disable_statu = $posts_count==$all_count ? ' disabled' : false; //>=
-                $output .= '<div class="inbox more flexboxes"><div class="inbox-more flexboxes'.$disable_statu.'"><a class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cid.'" data-nonce="'.wp_create_nonce($slug."_posts_ajax_nonce").'" data-cat="'.strtoupper($slug).'" title="加载更多数据"></a></div></div>';
+                $output .= '<div class="inbox more flexboxes"><div class="inbox-more flexboxes'.$disable_statu.'"><a class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cid.'" data-nonce="'.wp_create_nonce($slug."_posts_ajax_nonce").'" data-cat="'.strtoupper($slug).'" title="加载更多 '.$the_cat->name.'"></a></div></div>';
                 unset($cid, $slug, $all_count, $posts_count, $disable_statu);
             }
         }
@@ -2277,9 +2315,15 @@
     };
     
     // wp自定义（含置顶无分页）查询函数
-    function get_download_posts($cats, $order, $single=false){
+    function get_download_posts($cats, $order=1){
         $output = '';
         $cats_count = count($cats);
+        $dload_single_sw = get_option('site_single_switcher');
+        if($dload_single_sw){
+            $includes = get_option('site_single_includes');
+            $dload_slug = get_cat_by_template('download','slug');
+            $dload_single_sw = in_array($dload_slug, explode(',', $includes));
+        }
         for($i=0;$i<$cats_count;$i++){
             $term_order = get_term_meta($cats[$i]->term_id, 'seo_order', true);
             // print_r($term_order);
@@ -2301,7 +2345,7 @@
                 ));
                 $cat_poster = get_term_meta($cat_id, 'seo_image', true );
                 if(!$cat_poster) $cat_poster = get_postimg(0, $cat_first_post[0]->ID, true); //get_option('site_bgimg');
-                $output .= '<div class="dld_box '.$cat_slug.' '.$single.'"><div class="dld_box_wrap"><div class="box_up preCover"><span style="background:url('.$cat_poster.') center center /cover"><a href="javascript:;"><h3> '.$cat_name.' </h3><i> '.strtoupper($cat_slug).'</i><em></em></a></span></div><div class="box_down"><ul>';
+                $output .= '<div class="dld_box '.$cat_slug.'"><div class="dld_box_wrap"><div class="box_up preCover"><span style="background:url('.$cat_poster.') center center /cover"><a href="javascript:;"><h3> '.$cat_name.' </h3><i> '.strtoupper($cat_slug).'</i><em></em></a></span></div><div class="box_down"><ul>';
                     //setup query
                     global $post, $lazysrc, $loadimg;
                     $left_query = new WP_Query(array_filter(array(
@@ -2326,8 +2370,8 @@
                         $target = $link ? '_blank' : '_self';
                         $class_disabled  = !$link ? 'disabled ' : false;
                         $class_topset = get_post_meta($post->ID, 'post_orderby', true)>1 ? 'topset' : false;
-                        $single_sw = get_option('site_single_switcher') ? '<a href="'.get_the_permalink().'" target="_blank">查看详情</a>' : false;
-                        $output .= '<li class="'.$class_disabled.$class_topset.'"><div class="details"><a href="'.$href.'" target="'.$target.'" rel="nofollow" title="下载附件"><img '.$lazyhold.' src="'.$postimg.'" alt="poster" /></a><div class="desc">'.get_the_title().'<a href="'.$href.'" target="'.$target.'" rel="nofollow">下载附件</a>'.$single_sw.'</div></div></li>';
+                        $single_link = !$dload_single_sw ? '<a href="'.get_the_permalink().'" target="_blank" style="right:70px;">详情</a>' : '';
+                        $output .= '<li class="'.$class_disabled.$class_topset.'"><div class="details"><a href="'.$href.'" target="'.$target.'" rel="nofollow" title="下载附件"><img '.$lazyhold.' src="'.$postimg.'" alt="poster" /></a><div class="desc">'.get_the_title().'<a href="'.$href.'" target="'.$target.'" rel="nofollow">下载附件</a>'.$single_link.'</div></div></li>';
                     endwhile;
                     wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
                     unset($post, $lazysrc, $loadimg);
@@ -2403,13 +2447,13 @@
     
     // search/tag page posts with styles
     function the_posts_with_styles($queryString){
-        global $post, $lazysrc, $loadimg, $wp_query;
+        global $post, $lazysrc, $loadimg, $wp_query, $src_cdn;
         $post_styles = get_option('site_search_style_switcher');
         if($post_styles){
     ?>
-        	<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/news.css?v=2" />
-            <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/weblog.css" />
-            <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/acg.css" />
+        	<link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/news.css?v=2" />
+            <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/weblog.css" />
+            <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/acg.css" />
     <?php
         }
     ?>
@@ -2477,7 +2521,7 @@
                                     }
                                 ?>
                             </span>
-                            <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
+                            <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"> <?php echo $post->comment_count; ?></span>
                             <span class="date"><?php the_time("d-m-Y"); ?></span>
                             <span id="slider"></span>
                         </div>
@@ -2505,7 +2549,7 @@
                                             <li title="讨论人数">
                                                 <?php 
                                                     $count = get_option('site_third_comments') ? 0 : $post->comment_count;
-                                                    echo '<span class="valine-comment-count icom" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>';
+                                                    echo '<span class="valine-comment-count icom" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'"> '.$count.'</span>';
                                                 ?>
                                             </li>
                                             <li id="post-date" class="updated" title="发布日期">
@@ -2595,7 +2639,7 @@
                                         }
                                     ?>
                                 </span>
-                                <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
+                                <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"> <?php echo $post->comment_count; ?></span>
                                 <span class="date"><?php the_time("d-m-Y"); ?></span>
                                 <span id="slider"></span>
                             </div>

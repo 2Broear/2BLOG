@@ -2,21 +2,29 @@
 /*
     Template Name: 笔记模板
     Template Post Type: post, notes
-*///echo in_chatgpt_cat(get_post(1)) ? 1 : 0;
+*/
+    global $src_cdn, $img_cdn;
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/n.css?1v=<?php echo get_theme_info('Version'); ?>" />
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/highlight/agate.m.css" />
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/fancybox.css" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/n.css?1v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/highlight/agate.m.css" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/fancybox.css" />
     <style>
 	    .bg h1 a{
 	        /*animation-delay: .5s;*/
 	        animation-duration: 1.5s;
 	    }
 	    .in_dex li.child{margin-left: 15px!important;}
+	    figure .wp-block-gallery figcaption{max-width:66%;}
+        figure{
+            /*float:left;*/
+            text-align: left;
+            /*float: right;*/
+            /*margin-left: 25px;*/
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -27,7 +35,7 @@
                     <?php get_header(); ?>
                 </nav>
             </header>
-            <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
+            <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>
             <h1><a href="javascript:;" rel="nofollow"><?php the_title(); ?></a><!--<span></span>--></h1>
         </div>
         <div class="content-all-windows">
@@ -38,13 +46,21 @@
                             <span id="classify">
                                 <?php echo get_tag_list($pid, 5); ?>
                             </span>
-                            <span id="view"><?php $cat=get_the_ID();setPostViews($cat);echo getPostViews($cat); ?>°C </span>
+                            <span id="view"><?php setPostViews($pid);echo getPostViews($pid); ?>°C </span>
                             <span id="date"><i class="icom"></i> <?php the_time('d-m-Y'); ?> </span>
                             <span id="slider"></span>
                         </div>
                         <sup>最近更新于：<?php echo $post->post_modified; ?></sup>
                         <div class="content">
-                            <?php the_content();  ?>
+                            <?php 
+                                the_content();
+                                $ps = get_post_meta($pid, "post_feeling", true);
+                                if($ps){
+                                    $weblog = get_cat_by_template('weblog');
+                                    $download = get_cat_by_template('download');
+                                    if(in_category($weblog->slug, $pid) || in_category($download->slug, $pid)) echo do_shortcode('[custom_title title="额外内容" statu]').'<p>'.$ps.'</p>';
+                                }
+                            ?>
                         </div>
                         <br />
                         <?php dual_data_comments();  //DO NOT INCLUDE AFTER CALLING comments_template, cause fatal error,called twice?>
@@ -62,7 +78,7 @@
         const codeblock = document.querySelectorAll("pre code");
         if(codeblock.length>=1){
 			new Promise(function(resolve,reject){
-        	    dynamicLoad('<?php custom_cdn_src(); ?>/js/highlight/highlight.pack.js', function(){
+        	    dynamicLoad('<?php echo $src_cdn; ?>/js/highlight/highlight.pack.js', function(){
         	        hljs ? resolve(hljs) : reject('highlight err.');
         	    });
 			}).then(function(res){

@@ -84,6 +84,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-size: small;
 }
 body.dark .article_index a{
     color: inherit;

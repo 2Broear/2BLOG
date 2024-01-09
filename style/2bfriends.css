@@ -143,8 +143,8 @@
 .friends-boxes .deals .inboxSliderCard .slideBox a:hover{
     /*text-decoration: underline;*/
     color: var(--theme-color);
-    font-weight: bold;
     opacity: 1;
+    /*font-weight: bold;*/
 }
 .friends-boxes .deals .inboxSliderCard .slideBox a{
     color: var(--preset-8);

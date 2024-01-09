@@ -139,7 +139,7 @@ jQuery(document).ready(function($){
               select_mirror = document.querySelectorAll(".select_mirror");
         for(let i=0,selImgLen=select_images.length;i<selImgLen;i++){
             select_images[i].onchange=function(e){
-                let preview = this.childNodes[this.selectedIndex].getAttribute("preview");
+                let preview = this.options[this.selectedIndex].getAttribute("preview");
                 this.parentNode.querySelector("img").src = preview ? preview : this.value;
             };
         }

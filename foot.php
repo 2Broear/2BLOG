@@ -1,5 +1,7 @@
-
-<script src="<?php custom_cdn_src(); ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<?php
+    global $src_cdn;
+?>
+<script src="<?php echo $src_cdn; //custom_cdn_src('',true) ?>/js/main.js?v=<?php echo get_theme_info('Version'); ?>"></script>
 <script type="text/javascript">
     <?php
         global $cat;
@@ -13,7 +15,7 @@
                 if($vdo_poster_sw) echo 'setupVideoPoster(3);'; // 截取设置当前页面所有视频 poster
     ?>
                 //dynamicLoad
-                asyncLoad('<?php custom_cdn_src(); ?>/js/fancybox.umd.js', function(){
+                asyncLoad('<?php echo $src_cdn; ?>/js/fancybox.umd.js', function(){
                     console.log('fancybox init.');
                     // gallery js initiate 'bodyimg' already exists in footer lazyload, use contimg insted.
                     fancyImages(document.querySelectorAll(".news-article-container .content img"));
