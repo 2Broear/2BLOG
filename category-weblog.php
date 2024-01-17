@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(false);//echo $src_cdn; ?>/style/weblog.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/weblog.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
         figure{text-align:left}
@@ -45,7 +45,7 @@
                     $weblog_slug = get_cat_by_template('weblog','slug'); //current_slug();
                     $async_array = explode(',', get_option('site_async_includes'));
                     $use_async = $async_sw ? in_array($weblog_slug, $async_array) : false;
-                    $async_loads = $async_sw&&$use_async ? get_option("site_async_weblog", 14) : get_option('posts_per_page');
+                    $async_loads = $async_sw&&$use_async ? get_option("site_async_weblog") : 15;
                     $baas = get_option('site_leancloud_switcher')&&in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')));  //use post as category is leancloud unset //&&strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false
                     $log_single_sw = get_option('site_single_switcher');
                     if($log_single_sw){
@@ -169,7 +169,7 @@
         <script type="text/javascript">
             const curTab = "<?php echo $weblog_slug; ?>",
                   loadbtn = document.querySelector(".load button");
-            var limiter = 15,
+            var limiter = <?php echo $async_loads; ?>,
                 curSkip = 0;  //preSkip = 1;
             // console.log('leancloud(weblog-page) cross-app(init) ok');
             //request AV.Query

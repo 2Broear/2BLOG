@@ -128,7 +128,7 @@
 /*设置 white-space 为：不可换行！ 禁用position:absolute自适应高度*/
 .friends-boxes .deals .inboxSliderCard{
 	width: 100%;height: auto;
-	padding: 25px 15px 0;
+	padding: 25px 15px 5px;
 	overflow-x: auto;
 	overflow-y: hidden;
 	box-sizing: border-box;
@@ -171,9 +171,9 @@
 .friends-boxes .deals .inbox:hover > .inbox-aside h4{
     /*margin-top: 15px!important;*/
 }
-.friends-boxes .deals .inbox:hover > .inbox-aside {
-    /*color: var(--theme-color)!important;*/
-}
+/*.friends-boxes .deals .inbox:hover > .inbox-aside {*/
+/*    color: var(--theme-color)!important;*/
+/*}*/
 .friends-boxes .deals.rcmd .inbox:hover > .inbox-aside .lowside-description{
     display: none;
 }
@@ -188,8 +188,8 @@
 	font-size: 20px;
 	margin-left: auto;
 	text-align: left;
-	padding: 0 15px;
 	white-space: nowrap;
+	/*padding: 0 15px;*/
 }
 /* .friends-boxes .deals .inbox:hover > .inbox-headside.squared img {border-radius: 50%;} */
 /*.friends-boxes .deals .inbox:hover > .inbox-headside{*/
@@ -236,12 +236,12 @@
 
 
 .friends-boxes .deals .inbox:hover{
-	margin: 3px;
-	/*border: 2px dashed var(--theme-color);*/
-	border: 2px solid rgb(255 255 255 / 5%);
 	transform: scale(.85);
-	-webkit-transform: scale(.85);
+	-webkit-transform: scale(.9);
+	/*margin: 3px;*/
+	/*border: 2px solid rgb(255 255 255 / 5%);*/
 	/* background-color: #fffafa;
+	border: 2px dashed var(--theme-color);
 	box-shadow: rgb(0 0 0 / 12%) 0 0 18px; */
 }
 .friends-boxes .deals .inbox.nossl:hover{
@@ -250,7 +250,7 @@
 }
 .friends-boxes .deals .inbox{
 	width: 100%;
-	max-width: calc(100%/4.52);
+	max-width: calc(100%/4.18);
 	color: var(--preset-6);
 	background: var(--preset-f);
 	padding: 10px;
@@ -264,6 +264,10 @@
 	transition: transform .35s ease;
 	will-change: transform;
 	border-radius:var(--radius);
+	border: 1px solid #fff!important;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, var(--mirror) 0, #fff)!important;
+    background: -webkit-linear-gradient(-90deg, var(--mirror) 0, #fff)!important;
 }
 .friends-boxes .deals .inbox.girl em,
 .friends-boxes .deals .inbox.girl::after{
@@ -392,6 +396,7 @@
 .friends-boxes .deals .inbox .inbox-aside span{
 	display: block;
 	max-height: 36px;/*32*/
+	max-width: 90%;
 }
 .friends-boxes .deals .inbox .inbox-aside span.lowside-title h4{
 	margin: 20px auto auto;
@@ -426,10 +431,10 @@
 @media only screen and (max-width: 760px) {
 	.friends-boxes .deals .inbox.girl::after{right: -8px;opacity:.12;/*width: 100%;*/}
 	.friends-boxes .deals .inboxSliderCard .inbox{ display: inline-block;}
-	.friends-boxes .deals .inbox{flex-flow:column;max-width:calc(100%/2.55)!important;}
+	.friends-boxes .deals .inbox{flex-flow:column;max-width:calc(100%/2.15)!important;}
 	.friends-boxes .deals .inbox .inbox-lowside span.lowside-description p{text-align:inherit}
 	.friends-boxes .deals .inboxSliderCard .slideBox{ width: 335%;/*235*/}
-	.friends-boxes .deals .inbox .inbox-aside{margin: auto}
+	.friends-boxes .deals .inbox .inbox-aside{margin: auto;padding: 15px 0;}
 }
 
 

@@ -185,6 +185,9 @@
     border-radius: inherit;
     background: -webkit-linear-gradient(180deg,rgba(255, 255, 255, 0) -10%,var(--preset-e) 100%);
     background: linear-gradient(-90deg,rgba(255, 255, 255, 0) -10%,var(--preset-e) 100%);
+    /*border: 1px solid #fff;*/
+    /*box-sizing: border-box;*/
+    background: linear-gradient(90deg, var(--mirror) 50%, #fff);
 }
 .In-core-head span{
 	display: block;
@@ -273,6 +276,9 @@
     margin-top: 15px;
     background: var(--preset-fa);
     border-radius: var(--radius);
+    background: linear-gradient(0deg, var(--mirror) 0, #fff);
+    box-shadow: rgba(0,0,0,0.08) 0 0 18px;
+    border: 2px solid #fff;
 }
 .about_blocks ul{
     padding: 0;

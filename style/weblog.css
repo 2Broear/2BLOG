@@ -206,6 +206,8 @@ option{
 }
 .weblog-tree-core-record:hover > .weblog-tree-core-r{
 	background: var(--preset-fa);
+    background: linear-gradient(0deg, var(--mirror) 0, #fff)!important;
+    background: -webkit-linear-gradient(90deg, var(--mirror) 0, #fff)!important;
 }
 .weblog-tree-core-l{
 	width: 28%;
@@ -218,6 +220,9 @@ option{
 	max-height: 100%;
 	position: relative;
 	border-radius:var(--radius);
+	border: 1px solid #fff;
+    box-sizing: border-box;
+    box-shadow: rgba(0,0,0,0.03) -20px 0 20px;
 	/* min-width: 36%; */
 }
 .weblog-tree-core-l,.weblog-tree-core-r{

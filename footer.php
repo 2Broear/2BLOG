@@ -83,21 +83,20 @@
                             	        echo 'imgCdn: "'.$img_cdn.'", srcCdn: "'.$src_cdn.'", apiCdn: "'.$plugin_path.'",'; //custom_cdn_src('api', true)
                             	    }
                         	        echo get_option("site_wpwx_notify_switcher") ? 'wxNotify: true,' : 'wxNotify: false,';
+                            	    if($cdn_sw){
+                            	        echo 'avatarApi: "'.$plugin_path.'/gravatar.php?jump=0&email=",'; //api.paugram.com/gravatar/?email='; custom_cdn_src(0, true).'/plugin
+                            	    }
                             	?>
                             	posterImg: '<?php echo get_postimg(); ?>',
                             	adminMd5: '<?php echo md5(get_bloginfo('admin_email')) ?>',
                             	avatarCdn: '<?php echo get_option("site_avatar_mirror").'avatar/' ?>',
-                            	<?php
-                            	    if($cdn_sw) echo 'avatarApi: "'.$plugin_path.'/gravatar.php?jump=0&email=",'; //api.paugram.com/gravatar/?email='; custom_cdn_src(0, true).'/plugin
-                            	?>
                             	placeholder: '快来玩右下角的“涂鸦画板”！'
                             });
                             // reply at current floor
                             const vcomments = document.querySelector("#vcomments");
                             if(vcomments){
                                 const vwraps = vcomments.querySelectorAll(".vwrap"),
-                                      // origin_bak = document.importNode(origin_wrap, true),
-                                      origin_wrap = vwraps[0];
+                                      origin_wrap = vwraps[0]; // origin_bak = document.importNode(origin_wrap, true),
                                 // origin_wrap.querySelector("textarea").setAttribute('autofocus',true);
                                 bindEventClick(vcomments, 'vat', function(t){
                                     const adopt_node = document.adoptNode(origin_wrap);
@@ -116,7 +115,7 @@
                                             adopt_node.querySelector("textarea").focus();
                                             clearTimeout(delay_focus);
                                             delay_focus = null;
-                                        }, 0);
+                                        }, 100);
                                     }else{
                                         t.classList.remove('reply');
                                         t.innerText = "回复";
@@ -147,7 +146,7 @@
                                         includeReply: false // 评论数是否包括回复，默认：false
                                     }).then(function (res) {
                                         for(let i=0,resLen=res.length;i<resLen;i++){
-                                            comment_count[i].innerHTML = res[i].count;
+                                            comment_count[i].innerHTML = `${res[i].count}`;
                                         }
                                     }).catch(function (err) {
                                         console.error(err);
@@ -439,7 +438,7 @@
                             process.apply(context, [item, args]);
                             // console.log(process)
                             if (array.length > 0){
-                                setTimeout(arguments.callee, 25);
+                                setTimeout(arguments.callee, 10);
                             }
                         }, 100);
                     },
@@ -545,7 +544,7 @@
                 t.innerText = type===type_acg ? "Loading.." : "加载中..";
                 t.classList.add('loading','disabled');  // add-opts archive (disable click)
                 t.setAttribute('data-click', clicks);
-                send_ajax_request("get", "<?php echo admin_url('admin-ajax.php'); ?>", 
+                send_ajax_request("GET", "<?php echo admin_url('admin-ajax.php'); ?>", 
                     parse_ajax_parameter({
                         "action": action||"ajaxGetPosts",
                         "key": years, // add-opts for archive

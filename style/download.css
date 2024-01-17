@@ -58,8 +58,12 @@ a:hover {
 .download_boxes .dld_box .dld_box_wrap {
 	background: var(--preset-f);
 	padding: 15px;
-	box-shadow: rgba(0, 0, 0, 0.10) 0 1px 10px;
+	box-shadow: rgba(0, 0, 0, 0.08) 0 0 18px;
 	border-radius:var(--radius);
+	border: 2px solid #fff!important;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, var(--mirror) 0, #fff)!important;
+    background: -webkit-linear-gradient(-90deg, var(--mirror) 0, #fff)!important;
 }
 .dld_box .box_up img.lazy {
 	width: 100%;
@@ -96,6 +100,7 @@ a:hover {
 }
 .dld_box .box_up span a i {
 	font-size: 12px;
+	font-weight: bold;
 	color: currentColor;
 	background: var(--theme-color);
 	position: absolute;

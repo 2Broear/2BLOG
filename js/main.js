@@ -325,6 +325,7 @@
                 }
                 ajax.open(method,url);
             }else{  // 非GET请求
+                if(method=='') method = 'post';
                 ajax.open(method,url);
                 ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");  // 设置请求报文
             }

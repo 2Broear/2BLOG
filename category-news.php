@@ -10,6 +10,10 @@
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/news.css?v=<?php echo get_theme_info('Version'); ?>" />
     <?php get_head(); ?>
     <style>
+        .news-window-img a{
+            position: relative;
+            z-index: 1;
+        }
         body.dark .news-window:nth-child(odd){
             box-shadow: none;
         }

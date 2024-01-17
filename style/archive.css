@@ -38,7 +38,7 @@ body.dark .archive-tree ul li a{
 .archive-tree h2{
     /*opacity: .75;*/
     margin: 35px auto 5px;
-    border-bottom: 1px dashed rgb(100 100 100 / 30%);
+    border-bottom: 1px dashed rgb(100 100 100 / 20%);
     padding-bottom: 5px;
 }
 h2.disabled sup,
@@ -108,7 +108,7 @@ h2 sup.loading:after{
     line-height: 2;
     padding-left: 15px;
     margin-left: 15px;
-    border-left: 2px solid var(--preset-d);
+    border-left: 2px solid var(--preset-e);
     display: inline-block;
     width: 100%;
     box-sizing: border-box;

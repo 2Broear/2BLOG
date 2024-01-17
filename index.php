@@ -48,16 +48,6 @@
             /*margin: 15px 15px auto auto;*/
             margin: 15px 25px auto auto;
         }
-        /*.recommendation{margin-left:25px;}*/
-        /*.resource-windows div:first-child{*/
-        /*    margin-left: auto;*/
-        /*}*/
-        /*.special-display ul:hover #special-img{*/
-        /*    width: 36%;*/
-        /*}*/
-        /*body.dark .banner .banner-inside ul{*/
-        /*    filter: invert(1);*/
-        /*}*/
         @keyframes colorfull{
             0%{
                 filter: hue-rotate(0deg);
@@ -76,6 +66,25 @@
             $weblog = get_option('site_techside_switcher');
             if($weblog) echo '.special-display{width:30.5%;/*width:32%*/}';
         ?>
+        body.dark{
+            --mirror-end: var(--preset-2b);
+        }
+        .Fresh-ImgBoxs span:first-child a{
+            color: #4285f4;
+            background: linear-gradient(-90deg, rgb(67 133 245 / 88%) 0, var(--mirror-end));
+        }
+        .Fresh-ImgBoxs span:nth-child(2) a{
+            color: #ea4335;
+            background: linear-gradient(-90deg, rgb(234 69 55 / 88%) 0, var(--mirror-end));
+        }
+        .Fresh-ImgBoxs span:nth-child(3) a{
+            color: #fbbc05;
+            background: linear-gradient(-90deg, rgb(251 189 7 / 88%) 0, var(--mirror-end));
+        }
+        .Fresh-ImgBoxs span:last-child a{
+            color: #34a853;
+            background: linear-gradient(-90deg, rgb(53 169 83 / 88%) 0, var(--mirror-end));
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -152,7 +161,7 @@
                       </div>
                       <div class="recommend-newsContent">
                         <span class="content-core entry-content">
-                            <p><?php custom_excerpt(150);  //echo wp_trim_words(get_the_excerpt(), 10); ?></p>
+                            <p><?php echo wp_trim_words(get_the_excerpt(), 250); //custom_excerpt(150); ?></p>
                         </span>
                         <span class="content-tail">
                           <aside class="personal_stand">
@@ -197,15 +206,18 @@
                 $load_arr_count = count($load_arr);
                 for($i=0;$i<$load_arr_count;$i++){
             ?>
-                <div id="news-window">
-                    <span class='resource-windows-top'>
-                        <span class='resource-windows-top_inside'><!--<span id="icon-resource"></span>--></span>
-                        <h3><?php echo $load_arr[$i]->name; ?></h3>
-                    </span>
-                    <ul class="news-list" id="mainNews">
-                        <?php recent_posts_query($load_arr[$i]->term_id, true ,false ,6); ?>
-                    </ul>
-                </div>
+                    <div id="news-window">
+                        <span class='resource-windows-top'>
+                            <span class='resource-windows-top_inside'></span>
+                            <h3><?php echo $load_arr[$i]->name; ?></h3>
+                        </span>
+                        <ul class="news-list" id="mainNews">
+                            <?php 
+                                $spp = get_option('site_per_posts');
+                                recent_posts_query($load_arr[$i]->term_id, true, false, mt_rand($spp, $spp+1)); //6-$i
+                            ?>
+                        </ul>
+                    </div>
             <?php
                 }
             ?>

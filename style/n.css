@@ -19,12 +19,16 @@
     right: 0;
     min-width: 165px;
     background: rgba(255,255,255,.88);
+    /*background: linear-gradient(180deg, #f5f7f9 0, #fff);*/
+    background: linear-gradient(180deg, var(--mirror-start) 0, var(--mirror-end))!important;
+    background: -webkit-linear-gradient(-90deg, var(--mirror-start) 0, var(--mirror-end))!important;backdrop-filter: blur(10px);-webkit-backdrop-filter: blur(10px);
+    border: 2px solid #fff;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     padding: 15px 20px;
     box-shadow: rgb(0 0 0 / 5%) -20px 20px 20px;
     border-radius: var(--radius);
-    margin: 25px 0 0 10px;
+    margin: 25px 0 0 15px;
 }
 .article_index .in_dex ul{
     border-top: 1px solid rgb(135 135 135 / 22%);
@@ -42,9 +46,9 @@
 .article_index .in_dex p:hover i{
     opacity: 1;
 }
-.article_index.fold{
-    /*position: relative;*/
-}
+/*.article_index.fold{*/
+/*    position: relative;*/
+/*}*/
 .article_index.fold .in_dex:hover{
     opacity: 1;
 }
@@ -100,7 +104,7 @@ figure.wp-block-image{
 }
 figure.wp-block-table{margin:25px auto}
 .half-size video{width:720px!important}
-.ibox .iboxes{max-width: 66%;}
+/*.ibox .iboxes{max-width: 66%;}*/
 .ImgWrapBox{width:100%;max-width:1102px;display:flex;flex-flow:column nowrap;justify-content:center;position:relative}
 .ImgWrapBox img{max-width:100%;max-height:100%;vertical-align:middle;transition:inherit;position:relative;box-shadow:rgba(0,0,0,0.18) 0 1px 32px}
 .ImgWrapBoxTools:hover+.ImgWrapBox:last-child .hideFuncs span#hideMenu{right:0}
@@ -246,14 +250,18 @@ figure.wp-block-table{margin:25px auto}
 	text-align: left;
 	background: var(--preset-f);
 	position: relative;
-	box-shadow: rgba(0, 0, 0, 0.12) 0px -20px 20px 0px;
+	box-shadow: rgba(0, 0, 0, 0.12) 0 -20px 20px 0;
 	border-radius: 15px;
 	z-index: 9;
+	/*overflow: hidden;*/
 }
 .win-content article {
 	/* color: var(--preset-6); */
 	padding: 15px 0;
 }
+/*.win-content article .content{*/
+/*    padding: 0 10px;*/
+/*}*/
 .win-content article .inbox img{
 	max-width: 100%!important;
 }
@@ -270,7 +278,7 @@ figure.wp-block-table{margin:25px auto}
 	_cursor: url(../../images/cursor/zoom-in.cur), pointer;*/
 }
 .win-content article sup{
-    opacity: .5;
+    opacity: .75;
 	font-size: var(--min-size);
 }
 .win-content article h2,.win-content article h3{
@@ -430,8 +438,12 @@ table tr.openyear {
 @media only screen and (max-width: 600px) {
 	.win-content {
 		padding: 0 15px;
-		margin: -25% auto 0;
+		margin: -30% auto 0;
 	}
+    blockquote.chatGPT{
+        padding-left: 15px;
+        margin-left: -15px;
+    }
 	.win-nav {
 		top: auto;
 	}

@@ -12,9 +12,11 @@
 .win-top h5:before{content:'';display:inherit;width: 38%;height: 36%;background-color: var(--theme-color);position:absolute;right: 0;bottom: 0;z-index:-1;}
 .win-nav{width:23.5%;height:auto;float:left;position:relative;top:-98px;z-index:9;}
 .win-nav .nav-fixes{width:100%;height:auto;position:relative;transition:margin .45s cubic-bezier(0,0.84,0.25,1)}
-.win-nav .nav-header{width:100%;height:auto;padding:15px 0 0;box-sizing:border-box;position:relative;background-color:var(--preset-f);/*background:url('https://img.2broear.com/pixel/4.jpg') center center /cover;*/box-shadow:rgba(0,0,0,0.08) 20px 20px 20px;border-radius:10px;overflow:hidden;z-index:9}
+.win-nav .nav-header{width:100%;height:auto;padding:15px 0 0;box-sizing:border-box;position:relative;background-color:var(--preset-f);box-shadow:rgba(0,0,0,0.05) 10px 10px 20px;border-radius:12px;z-index:9;/*background:url('https://img.2broear.com/pixel/4.jpg') center center /cover;overflow:hidden;*/}
 .win-nav .nav-header div:before{content:'';width:100%;height:18px;position:absolute;top:-18px;left:0;clip-path:ellipse(55% 100% at 50% 100%)}
-.win-nav .nav-header div{position:relative;z-index:3;background-color:var(--preset-f);padding:15% 15px;box-shadow:rgba(0,0,0,0.18) 0px -20px 20px;border-radius:var(--radius);}
+.win-nav .nav-header div{position:relative;z-index:3;background-color:var(--preset-f);padding:15% 15px;border-radius:var(--radius);border: 1px solid #fff!important;
+    box-sizing: border-box;
+    background: linear-gradient(0deg, var(--mirror) 0, #fff)!important;background: -webkit-linear-gradient(90deg, var(--mirror) 0, #fff)!important;/*box-shadow:rgba(0,0,0,0.18) 0px -20px 20px;border-top-left-radius: unset;border-top-right-radius: unset;*/}
 .win-nav .nav-header span{width:88px;height:88px;display:block;padding:5px;margin:0 auto;background-color:var(--preset-f);border-radius:50%;position:relative;top:55px;z-index:99}
 .win-nav .nav-header img{width:100%;height:100%;position:relative;z-index:1;border-radius:inherit}
 .win-nav .nav-header em{width:100%;height:100%;display:block;background-color:var(--preset-f);position:absolute;top:0;left:0;z-index:0;animation:profileScale 3.2s ease infinite normal;border-radius:inherit}
@@ -22,8 +24,8 @@
 100%{background:transparent}
 }@keyframes profileScale{0%{transform:scale(0.8);opacity:1}
 100%{transform:scale(1.3);opacity:0}
-}.win-nav .nav-header h2{font-size:1.1rem;margin:25px auto auto}
-.win-nav .nav-header p{font-weight:300;margin:5px auto 15px;font-size:var(--min-size-rem)}
+}.win-nav .nav-header h2{font-size:1.1rem;margin:30px auto auto}
+.win-nav .nav-header p{font-weight:300;font-size:var(--min-size-rem);/*margin:5px auto 15px;*/}
 .win-nav .nav-header b:last-child{
     padding: 0;
 }
@@ -36,7 +38,7 @@
     color:var(--preset-9);
     font-size: var(--min-size);
     display: block;
-    opacity: .55;
+    opacity: .35;
     line-height: 23px;
 }
 .win-nav .nav-header a:hover{text-decoration:overline}
@@ -46,8 +48,8 @@
 .main-root ul{color:var(--preset-6);padding:0;margin:inherit;box-sizing:border-box}
 .main-root ul li{width:100%;height:auto;position:relative;border-radius:10px;overflow:hidden;padding: 5px;box-sizing: border-box;}
 /*.main-root ul li a.choosen,*/
-.main-root ul li:nth-child(even) a:hover{background-color:var(--preset-s)}
-.main-root ul li:nth-child(even){background-color:var(--preset-fa)}
+.main-root ul li:nth-child(even) a:hover{background-color:var(--preset-f)}
+.main-root ul li:nth-child(even){background-color:var(--preset-fa);background:linear-gradient(90deg, var(--mirror) 0, #fff);background:-webkit-linear-gradient(0deg, var(--mirror) 0, #fff);}
 .main-root ul li a.choosen,
 .main-root ul li a:hover{color:var(--theme-color)}
 .main-root ul li:last-child a{border-style:none}
@@ -81,7 +83,7 @@
 /*.win-content article.topset > h1 a,*/
 .win-content article:hover > h1 a{color:var(--theme-color)}
 .win-content article.topset > .info::after,
-.win-content article:hover > .info::after{background: var(--theme-color);width:36%}
+.win-content article:hover > .info::after{background: var(--theme-color);width:25%}
 .win-content article h1 a{color:inherit}
 .win-content article h1 i{display:block;width:30%;height:3px;background-color:var(--theme-color);margin:5px auto}
 .win-content article.topset h1 sup{font-weight:bold;color:var(--theme-color)}

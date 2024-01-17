@@ -10,6 +10,10 @@
     <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/ranking.css?v=<?php echo get_theme_info('Version'); ?>" />
     <style>
+        .ranking ul li span#range em span.wave{
+            position: relative;
+            z-index: 1;
+        }
         #ranks b{
             margin: 5px auto;
             font-size: small;

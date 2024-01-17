@@ -28,6 +28,13 @@
             animation: blinker .5s infinite alternate ease;
             -webkit-animation: blinker .5s infinite alternate ease;
         }
+        .stats a:hover{
+            color: var(--theme-color);
+        }
+        .stats a{
+            color: inherit;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

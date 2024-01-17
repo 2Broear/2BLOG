@@ -199,7 +199,7 @@ ul li>ol li,ol li>ul li{font-size: var(--min-size)}
 .news-article-container table,caption{padding:10px 0}
 .news-article-container caption q{font-size:1rem}
 .news-article-container table,tr,th{padding:5px}
-.news-article-container table tr td{border:1px solid var(--preset-s);padding:10px;margin:0}
+.news-article-container table tr td{border:1px solid rgb(200 200 200 / 25%);padding:10px;margin:0}
 .news-article-window div.tags{width:100%;height:auto;transition:all .35s ease}
 .news-article-window div.tags ul{width:auto;height:auto;padding:10px 0 0 0;margin:0;overflow:hidden;list-style-type:none}
 .news-article-window div.tags ul div.tags-right li p{padding:5px}

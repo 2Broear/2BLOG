@@ -23,7 +23,7 @@
         }
         .friends-boxes .deals.exchanged .inbox,
         .rcmd-boxes .info .inbox{
-            min-height: 103px;
+            min-height: 123px;
             /*will-change: initial;*/
             /*transform: none;*/
         }
@@ -63,6 +63,7 @@
             max-height: 6em;
             white-space: initial;
             overflow-wrap: anywhere;
+            overflow-wrap: break-word;
         }
         .friends-boxes .deals .inboxSliderCard .slideBox a{
             margin: 0;
@@ -88,8 +89,12 @@
         .friends-boxes .deals.tech .inbox{
             max-width: calc(100%/5.8);
             max-width: calc(100%/7.2);
+            max-width: calc(100%/7.55);
             /*min-height: auto;*/
             min-height: 66px;
+        }
+        .friends-boxes .deals.rcmd .inbox{
+            max-width: calc(100%/5.25);
         }
         .friends-boxes .deals.tech .inbox .inbox-headside img{
             border-top-left-radius: 50%;
@@ -99,8 +104,11 @@
             margin-top: 5px;
             display: none;
         }
+        .friends-boxes .deals .inboxSliderCard .slideBox a,
+        .friends-boxes .deals .inbox.standby .inbox-headside img,
         .friends-boxes .deals .inbox .inbox-headside img#err{
             border-radius: unset;
+            font-size: small;
         }
     </style>
 </head>

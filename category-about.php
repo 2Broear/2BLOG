@@ -52,8 +52,8 @@
         }
         .about_blocks li.intro_right .mbit .mbit_intro p,
         .about_blocks li.intro_right .mbit:before{
-            font-style: italic;
             right: 3%;
+            /*font-style: italic;*/
             /*letter-spacing: 3px;*/
         }
         iframe.netease_embed{
