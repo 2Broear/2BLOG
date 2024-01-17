@@ -32,9 +32,9 @@
 	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s">
 	    <?php 
             global $wp_query, $page_flag;
-            $cid = esc_html($_GET['cid']);
+            $cid = isset($_GET['cid']) ? esc_html($_GET['cid']) : false;
             if($cid){
-                $year = $_GET['year'] ? esc_html($_GET['year']) : gmdate('Y', time() + 3600*8);
+                $year = isset($_GET['year']) ? esc_html($_GET['year']) : gmdate('Y', time() + 3600*8);
                 $post_per_page = get_option('posts_per_page'); //get_option('site_per_posts');
                 $real_current_page = max(1, get_query_var('paged'));
                 // print_r('before rewrite current_page: '.$real_current_page.' ,offset: '.($real_current_page-1) * $post_per_page);

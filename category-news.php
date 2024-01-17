@@ -62,7 +62,7 @@
                                 $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                                 $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                         ?>
-                                <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window icom wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
+                                <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                                     <div class="news-window-inside">
                                         <?php
                                             $lazyhold = "";
@@ -90,7 +90,7 @@
                                                         <?php 
                                                             $third_cmt = get_option('site_third_comments');
                                                             $count = $third_cmt ? 0 : $post->comment_count;
-                                                            echo '<span class="valine-comment-count" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>';
+                                                            echo '<span class="valine-comment-count icom" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>';
                                                         ?>
                                                     </li>
                                                     <li id="post-date" class="updated" title="发布日期">

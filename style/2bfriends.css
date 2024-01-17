@@ -397,6 +397,7 @@
 	display: block;
 	max-height: 36px;/*32*/
 	max-width: 90%;
+	margin: 0 auto;
 }
 .friends-boxes .deals .inbox .inbox-aside span.lowside-title h4{
 	margin: 20px auto auto;

@@ -51,8 +51,10 @@
                         <ul class="wp_list_cats">
                         <?php 
                             $cats = get_sibling_categories();
+                            $temp = get_cat_by_template(str_replace('.php',"",substr(basename(__FILE__),9)));
                             function sub_recursive_navigator($cats, $deepth=0){
                                 if(!empty($cats)){
+                                    global $cat;
                                     $deepth++;
                                     foreach($cats as $the_cat){
                                         $the_cat_id = $the_cat->term_id;

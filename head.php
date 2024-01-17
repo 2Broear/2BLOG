@@ -17,7 +17,12 @@
                     $dir = get_option('site_chatgpt_dir') ? get_option('site_chatgpt_dir').'/' : '';
                     include 'plugin/'.$dir.'chat_data.php';  // 读取文件记录
                     global $post;
-                    $desc = $cached_post['chat_pid_'.$post->ID]['choices'][0]['message']['content'];
+                    $pid = $post->ID;
+                    if($cached_post['chat_pid_'.$pid]['error']){
+                        $desc = $cached_post['chat_pid_'.$pid]['error']['message'];
+                    }else if(isset($cached_post['chat_pid_'.$pid]['choices'][0])){
+                        $desc = isset($cached_post['chat_pid_'.$pid]['choices'][0]['message']) ? $cached_post['chat_pid_'.$pid]['choices'][0]['message']['content'] : $cached_post['chat_pid_'.$pid]['choices'][0]['text'];
+                    }
                 }else{
                     $desc = custom_excerpt();
                 }
@@ -26,7 +31,7 @@
                 $desc = get_option('site_description');
                 break;
         }
-        echo $desc;
+        echo trim($desc);
     ?>">
     <meta http-equiv="Content-Type" content="text/html; charset=<?php bloginfo('charset') ?>">
     <meta name="viewport" content="width=device-width,initial-scale=1.0"><!--, maximum-scale=1.0, user-scalable=no-->

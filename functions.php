@@ -1811,6 +1811,7 @@
                 $output = $output_sw ? get_option('site_rank_list_cache') : '';
             }
             if(!$output || !$output_sw){
+                global $lazysrc, $loadimg;
                 $output .= '<h1>'.$t1.' </h1><p>'.$c1.'</p><ul id="rankest">';
                 $rankdata = get_comment_ranks();
                 $datalen = count($rankdata);
@@ -1862,6 +1863,7 @@
                 };
                 $output .= $databox;
                 if($output_sw) update_option('site_rank_list_cache', wp_kses_post($output));
+                unset($lazysrc, $loadimg);
             }
         }else{
             $output .= '<h1>'.$t1.' </h1><p>'.$c1.'</p><ul id="rankest"><span id="loading"></span></ul><h1> '.$t2.' </h1><p>'.$c2.'</p><ul id="ranks"><span id="loading"></ul><h1>'.$t3.'</h1>'.$c3.'<ul id="ranked"><span id="loading"></span></ul>';
@@ -2589,7 +2591,7 @@
                                     }
                                 ?>
                             </span>
-                            <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"> <?php echo ' '.$post->comment_count; ?></span>
+                            <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"> <?php echo $post->comment_count; ?></span>
                             <span class="date"><?php the_time("d-m-Y"); ?></span>
                             <span id="slider"></span>
                         </div>
@@ -2598,7 +2600,7 @@
                 }else{
                     if(in_category($news_slug)){
         ?>
-                        <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window icom wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
+                        <article class="<?php if($post_orderby>1) echo 'topset icom'; ?> news-window wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                             <div class="news-window-inside">
                                 <?php
                                     if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img class="lazy" '.$lazyhold.' src="'.$postimg.'" /></a></span>';
@@ -2617,7 +2619,7 @@
                                             <li title="讨论人数">
                                                 <?php 
                                                     $count = get_option('site_third_comments') ? 0 : $post->comment_count;
-                                                    echo '<span class="valine-comment-count icom" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'"> '.$count.'</span>';
+                                                    echo '<span class="valine-comment-count icom" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>';
                                                 ?>
                                             </li>
                                             <li id="post-date" class="updated" title="发布日期">
@@ -2707,7 +2709,7 @@
                                         }
                                     ?>
                                 </span>
-                                <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"> <?php echo ' '.$post->comment_count; ?></span>
+                                <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"> <?php echo $post->comment_count; ?></span>
                                 <span class="date"><?php the_time("d-m-Y"); ?></span>
                                 <span id="slider"></span>
                             </div>
