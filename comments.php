@@ -531,6 +531,47 @@
                                 }
                                 echo '<a href="javascript:;" class="'.$load_class.'" data-click="0" data-load="'.$comment_count.'" data-counts="'.$comments_all.'" data-nonce="'.wp_create_nonce($post_ID."_comment_ajax_nonce").'">'.$text_loadmore.'</a>';
                             }else{
+                                // 上一页评论
+                                function get_previous_comments_html( $label = '' ) {
+                                    if ( ! is_singular() ) {
+                                        return;
+                                    }
+                                    $page = get_query_var( 'cpage' );
+                                    if ( (int) $page <= 1 ) {
+                                        return;
+                                    }
+                                    $prevpage = (int) $page - 1;
+                                    if ( empty( $label ) ) {
+                                        $label = __( '&laquo; Older Comments' );
+                                    }
+                                    return '<a href="' . esc_url( get_comments_pagenum_link( $prevpage ) ) . '" ' . apply_filters( 'previous_comments_link_attributes', '' ) . '><i class="icom"></i>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '</a>';
+                                }
+                                // 下一页评论
+                                function get_next_comments_html( $label = '', $max_page = 0 ) {
+                                    if ( ! is_singular() ) {
+                                        return;
+                                    }
+                                    $page = get_query_var( 'cpage' );
+                                    if ( ! $page ) {
+                                        $page = 1;
+                                    }
+                                    $nextpage = (int) $page + 1;
+                                    if ( empty( $max_page ) ) {
+                                        global $wp_query;
+                                        $max_page = $wp_query->max_num_comment_pages;
+                                        unset($wp_query);
+                                    }
+                                    if ( empty( $max_page ) ) {
+                                        $max_page = get_comment_pages_count();
+                                    }
+                                    if ( $nextpage > $max_page ) {
+                                        return;
+                                    }
+                                    if ( empty( $label ) ) {
+                                        $label = __( 'Newer Comments &raquo;' );
+                                    }
+                                    return '<a href="' . esc_url( get_comments_pagenum_link( $nextpage, $max_page ) ) . '" ' . apply_filters( 'next_comments_link_attributes', '' ) . '>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '<i class="icom left"></i></a>';
+                                }
                                 echo get_previous_comments_html("PREV COMMENTS");
                                 echo get_next_comments_html("NEXT COMMENTS");
                             }

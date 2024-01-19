@@ -185,7 +185,7 @@
 }
 .friends-boxes .deals .inbox:hover > .inbox-aside {
     color: var(--theme-color)!important;
-	font-size: 20px;
+	/*font-size: 20px;*/
 	margin-left: auto;
 	text-align: left;
 	white-space: nowrap;
@@ -366,7 +366,7 @@
 	border-bottom-right-radius: var(--radius);
 	border-top-left-radius: var(--radius);
 	position: absolute;
-	background: var(--preset-3a);
+	background: var(--preset-6);
 	top: 0;
 	left: 0;
 	opacity: .75;

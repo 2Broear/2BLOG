@@ -3,11 +3,94 @@
  * Template name: 漫游影视（BaaS）
    Template Post Type: page
 */
+// acg post query(single)
+function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
+    $output = '';
+    global $post, $lazysrc, $loadimg;
+    $acg_slug = get_cat_by_template('acg','slug');
+    $acg_single_sw = get_option('site_single_switcher');
+    $target = "_blank";
+    $rel = "";
+    if($acg_single_sw){
+        $includes = get_option('site_single_includes');
+        $acg_single_sw = in_array($acg_slug, explode(',', $includes));
+        if($acg_single_sw){
+            $target = "_self";
+            $rel = "nofollow";
+        }
+    }
+    $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
+    $cat_slug = $the_cat->slug;
+    // start acg query
+    $acg_query = new WP_Query(array_filter(array(
+        'cat' => $the_cat->term_id,  //$acg_cat
+        'meta_key' => 'post_orderby',
+        'orderby' => array(
+            'meta_value_num' => 'DESC',
+            'date' => 'DESC',
+            'modified' => 'DESC'
+        ),
+        'posts_per_page' => $limit,
+    )));
+    $output .= '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'</h2></div><div class="info loadbox flexboxes">'; //'<sup> '.$cat_slug.' </sup>
+    while ($acg_query->have_posts()):
+        $acg_query->the_post();
+        $post_feeling = get_post_meta($post->ID, "post_feeling", true);
+        $post_source = get_post_meta($post->ID, "post_source", true);
+        $post_rcmd = get_post_meta($post->ID, "post_rcmd", true);
+        $post_rating = get_post_meta($post->ID, "post_rating", true);
+        $postimg = get_postimg(0, $post->ID, true);
+        if($lazysrc!='src'){
+            $lazyhold = 'data-src="'.$postimg.'"';
+            $postimg = $loadimg;
+        }
+        $href = $post_source ? $post_source : ($acg_single_sw ? "javascript:;" : get_the_permalink());
+        $output .= '<div class="inbox flexboxes" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /><span class="author">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(66,true).'</p></span>';
+        if($post_rcmd){
+            $rcmd_title = 'Personal Recommends';
+            $rcmd_class = '';
+            $rcmd_text = '荐';
+            if($post_rating){
+                $rcmd_title = 'GOLD Recommendation';
+                $rcmd_class = ' both';
+                $rcmd_text = $post_rating;
+            }
+            $output .= '<div class="game-ratings gs'.$rcmd_class.'"><div class="gamespot" title="'.$rcmd_title.'"><div class="range Essential RSBIndex"><span id="before"></span><span id="after"></span></div><span id="spot"><h3>'.$rcmd_text.'</h3></span></div></div>';
+        }else{
+            if($post_rating) $output .=  '<div class="game-ratings ign"><div class="ign hexagon" title="IGN High Grades"><h3>'.$post_rating.'</h3></div></div>';
+        }
+        $output .= '</div></div>';
+    endwhile;
+    wp_reset_query();  // reset wp query incase following code occured query err
+    unset($post, $lazysrc, $loadimg);
+    // 单独判断当前查询文章数量
+    if(get_option('site_async_switcher')){
+        $async_array = explode(',', get_option('site_async_includes'));
+        if(in_array($acg_slug, $async_array)){
+            $cid = $the_cat->term_id;// $cat_name = current_slug(); //$acg_query->query['cat']
+            $slug = $the_cat->slug;
+            // preset all acg query
+            $all_query = new WP_Query(array_filter(array(
+                'cat' => $the_cat->term_id,
+                'posts_per_page' => -1,
+                'fields' => 'ids',
+                'no_found_rows' => true,
+            )));
+            $all_count = $all_query->post_count;
+            $posts_count = $acg_query->post_count;  //count($acg_query->posts) //mailto:'.get_bloginfo("admin_email").' 发送邮件，荐你所见
+            $disable_statu = $posts_count==$all_count ? ' disabled' : false; //>=
+            $output .= '<div class="inbox more flexboxes"><div class="inbox-more flexboxes'.$disable_statu.'"><a class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cid.'" data-nonce="'.wp_create_nonce($slug."_posts_ajax_nonce").'" data-cat="'.strtoupper($slug).'" title="加载更多 '.$the_cat->name.'"></a></div></div>';
+            unset($cid, $slug, $all_count, $posts_count, $disable_statu);
+        }
+    }
+    $output .= '</div>';
+    return $output;
+};
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link preload type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/acg.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link preload type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/acg.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
     <style>
         .rcmd-boxes .inbox-clip h2{
@@ -97,7 +180,7 @@
                     <?php get_header(); ?>
                 </nav>
             </header>
-            <video src="<?php echo $video = replace_video_url(get_option('site_acgn_video')); ?>" poster="<?php echo $video ? $video : cat_metabg($cat, $img_cdn.'/images/acg.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+            <video src="<?php echo $video = replace_video_url(get_option('site_acgn_video')); ?>" poster="<?php echo $video ? $video : get_meta_image($cat, $img_cdn.'/images/acg.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
             <div class="counter">
                 <?php
                     $async_sw = get_option('site_async_switcher');
@@ -110,6 +193,41 @@
                     $baas = get_option('site_leancloud_switcher')&&in_array($basename, explode(',', get_option('site_leancloud_category')));
                     if(!$baas){
                         $cats = get_categories(meta_query_categories($preset->term_id, 'ASC', 'seo_order'));
+                        // acg post stats
+                        function the_acg_stats(){
+                            global $cat, $cats, $preset;
+                            $preslug = $preset->slug;
+                            $output = '';
+                            if(!empty($cats) && current_slug()==$preslug){
+                                $output_sw = false;
+                                if(get_option('site_cache_switcher')){
+                                    $caches = get_option('site_cache_includes');
+                                    $temp_slug = get_cat_by_template('acg','slug');
+                                    $output_sw = in_array($temp_slug, explode(',', $caches));
+                                    $output = $output_sw ? get_option('site_acg_stats_cache') : '';
+                                }
+                                if(!$output || !$output_sw){
+                                    $datadance = get_option('site_animated_counting_switcher');
+                                    foreach($cats as $the_cat){
+                                        $cat_slug = $the_cat->slug;
+                                        $cat_count = $the_cat->count;
+                                        $cat_num = $cat_count;
+                                        $dataCls = '';
+                                        if($datadance){
+                                            $dataCls = ' blink';
+                                            $cat_num = '0';
+                                        }
+                                        $output .= '<div class="'.$cat_slug.$dataCls.'" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2>'.$cat_num.'<sup>+</sup></h2><p>'.$the_cat->name.'/'.strtoupper($cat_slug).'</p></a></div>';
+                                    }
+                                    if($output_sw) update_option('site_acg_stats_cache', wp_kses_post($output));
+                                }
+                            }else{
+                                $the_cat = get_category($cat);
+                                $cat_count = $the_cat->count;
+                                $output .= '<div class="blink" data-count='.$cat_count.'><h2 class="single">'.$cat_count.'<sup>+</sup></h2><p>'.$the_cat->name.'/'.$the_cat->slug.'</p></div>';
+                            }
+                            echo wp_kses_post($output);
+                        }
                         the_acg_stats();
                     }
                 ?>
@@ -118,7 +236,42 @@
         <div class="content-all-windows">
             <div class="rcmd-boxes flexboxes">
                 <?php
-                    if(!$baas) the_acg_posts();
+                    if(!$baas){
+                        //acg post list(multi)
+                        function the_acg_posts(){
+                            global $cat, $cats, $preset, $async_loads;
+                            $preslug = $preset->slug;
+                            $output = '';
+                            if(!empty($cats) && current_slug()==$preslug){
+                                // cache db only if not-single sub-page
+                                $output_sw = false;
+                                if(get_option('site_cache_switcher')){
+                                    $caches = get_option('site_cache_includes');
+                                    $temp_slug = get_cat_by_template('acg','slug');
+                                    $output_sw = in_array($temp_slug, explode(',', $caches));
+                                    $output = $output_sw ? get_option('site_acg_post_cache') : '';
+                                }
+                                if(!$output || !$output_sw){
+                                    foreach($cats as $the_cat) $output .= get_acg_posts($the_cat, $preslug, $async_loads);
+                                    // wp_kses_post() filted javascript:; href
+                                    if($output_sw) update_option('site_acg_post_cache', $output); //wp_kses_post($output)
+                                }else{
+                                    // always update wp-nonce if db-cached
+                                    foreach($cats as $the_cat){
+                                        $cat_slug = $the_cat->slug;
+                                        $cur_nonce = wp_create_nonce($cat_slug."_posts_ajax_nonce");
+                                        // (.*?) 会在匹配到 data-nonce 或 data-cat 属性后停止匹配
+                                        $output = preg_replace('/<a(.*)data-nonce=("[^"]*")(.*)data-cat=("'.strtoupper($cat_slug).'")(.*)<\/a>/i', '<a$1data-nonce="'.$cur_nonce.'"$3data-cat=$4$5</a>', $output);
+                                    }
+                                }
+                            }else{
+                                $output .= get_acg_posts(get_category($cat), $preslug, $async_loads);
+                            }
+                            // wp_kses_post() caused setupBlurColor() unabled to setup
+                            echo $output; //wp_kses_post($output)
+                        }
+                        the_acg_posts();
+                    }
                 ?>
                 <div id="comment_txt" class="wow fadeInUp" data-wow-delay="0.25s">
                     <?php 
@@ -173,7 +326,7 @@
     execRotation(rcmd_range, 400);
 </script>
 <?php
-    require_once(TEMPLATEPATH. '/foot.php');
+    get_foot();
     if($async_sw&&$use_async){
 ?>
         <script>

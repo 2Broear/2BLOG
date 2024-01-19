@@ -1,5 +1,12 @@
 <?php
     global $lazysrc, $cat, $src_cdn, $img_cdn;
+    //计算版权时间，直接在footer使用会引发没有内容的notes子分类无法显示
+    function get_copyright(){
+        $year = gmdate('Y', time() + 3600*8);//date('Y');
+        $begain = get_option('site_begain');
+        if($begain&&$begain<$year) echo $begain."-";
+        return $year;
+    }
 ?>
 <div class="footer-all">
     <div class="footer-detector" id="end-news-all">
@@ -53,7 +60,7 @@
                     $third_cmt = get_option('site_third_comments');
                     if($third_cmt=='Valine'){    // 全站加载
                 ?>
-                        <script src="<?php echo $src_cdn; ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+                        <script src="<?php echo $src_cdn; ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info(); ?>"></script>
                 <?php
                         if(!$baas){
                 ?>
@@ -316,7 +323,7 @@
       <div id="footer-copyright">
         <span class="what_says">
           <ul style="text-align:left">
-            <li id="copy"> ©<?php calc_copyright(); ?> </li>
+            <li id="copy"> ©<?php echo get_copyright(); ?> </li>
             <?php $rights=get_option('site_copyright');if($rights) echo '<li id="cc"><a href="https://creativecommons.org/licenses/'.strtolower(substr($rights,strpos($rights,"-")+1)).'/4.0/" target="_blank" rel="nofollow"> '.$rights.' </a></li>'; ?>
             <li id="rights"><?php echo get_option('site_nick', get_bloginfo('name')); ?> 版权所有</li>
             <?php if(get_option('site_beian_switcher')) echo '<li id="etc"><a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow">'.get_option('site_beian').'</a></li>'; ?>

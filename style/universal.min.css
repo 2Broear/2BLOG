@@ -1480,8 +1480,8 @@ body.dark #tech_window,body.dark #tech-acg-inside_acg-allpart{color:var(--preset
 body.dark .Fresh-ImgBoxs span a{
     border: none!important;
 }
-body.dark #acg_window-top,body.dark .newsBox-subText-Description,
 body.dark .rcmd-boxes .info .inbox .inbox-more a,
+body.dark #acg_window-top,body.dark .newsBox-subText-Description,
 body.dark .weblog-tree-core-record:hover > .weblog-tree-core-r,
 body.dark .weblog-tree-core-r,
 body.dark .win-nav .nav-header div,body.dark .main-root ul li:nth-child(even),
@@ -1569,8 +1569,8 @@ body.dark .wp_comments .vinfo span{
     padding: 15px 15px 0;
     border: 2px solid #fff!important;
     box-sizing: border-box;
-    background: linear-gradient(180deg, var(--mirror) 50%, #fff)!important;
-    box-shadow: rgba(0,0,0,0.08) 0 1px 18px;
+    /*background: linear-gradient(180deg, var(--mirror) 50%, #fff)!important;*/
+    box-shadow: rgba(0, 0, 0, 0.05) -10px 10px 20px;
 }
 .ibox img{
     border-radius: inherit;
@@ -1615,6 +1615,9 @@ body.dark .ibox.quotes .iboxes a{
 .ibox.quotes .iboxes h3{
     margin: auto;
 }
+.ibox.quotes .iboxes .content p{
+    opacity: .75;
+}
 .ibox.quotes .iboxes mark{
     line-height: normal;
     opacity: .5;
@@ -1626,7 +1629,7 @@ body.dark .ibox.quotes .iboxes a{
     z-index: 2;
 }
 .ibox.quotes .iboxes:hover img{
-    filter: contrast(1) blur(15px) brightness(1.15);
+    filter: contrast(1.15) blur(15px);
     transform: scale(1.15);
 }
 .ibox.quotes .iboxes img,
@@ -1648,8 +1651,9 @@ body.dark .ibox.quotes .iboxes::before{
 .ibox.quotes .iboxes::before{
     width: 100%;
     height: 100%;
-    background: linear-gradient(225deg,rgb(255 255 255 / 0%) 36%,rgb(255 255 255 / 100%) 66%);
-    background: -webkit-linear-gradient(225deg,rgba(255, 255, 255, 0) 36%,rgb(255 255 255 / 100%) 66%);
+    /*background: linear-gradient(225deg,rgb(255 255 255 / 0%) 36%,rgb(255 255 255 / 100%) 66%);*/
+    /*background: -webkit-linear-gradient(225deg,rgba(255, 255, 255, 0) 36%,rgb(255 255 255 / 100%) 66%);*/
+    background: linear-gradient(45deg, var(--mirror) 36%, rgb(255 255 255 / 0%) 66%);
     z-index: 1;
     transition: opacity .5s ease;
 }

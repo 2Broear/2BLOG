@@ -75,8 +75,8 @@
 .rcmd-boxes .info .inbox:hover{transform:scale(1.25);-webkit-transform:scale(1.25);border-style:none;z-index:999;box-shadow:rgba(0,0,0,0.23) 0 0 18px}
 .rcmd-boxes .info .inbox.more:hover > .inbox-more{color:var(--preset-c)!important}
 .rcmd-boxes .info .inbox.more:hover a{
-    background: linear-gradient(0deg, var(--mirror) 0, #fff);
-    background: -webkit-linear-gradient(90deg, var(--mirror) 0, #fff);
+    background: linear-gradient(180deg, var(--mirror) 0, #fff);
+    background: -webkit-linear-gradient(-90deg, var(--mirror) 0, #fff);
 }
 .rcmd-boxes .info .inbox.more:hover{transform:none}
 .rcmd-boxes .info .inbox.more{background: none;box-shadow: rgba(0,0,0,0.08) 0 0 18px;}
@@ -93,7 +93,9 @@
 .rcmd-boxes .info .inbox .inbox-more{color:#eaeaea;width:100%;height:100%;min-height:275px;align-content:center;justify-content:center;align-items:center;box-sizing:border-box;text-align:center;vertical-align:middle;border-radius:inherit;/*border:2px dashed currentColor;*/}
 .rcmd-boxes .info .inbox .inbox-more a{display:block;width:100%;height:100%;position:relative;z-index:9;color: inherit;padding: 15% 15px;border: 1px solid #fff;
     box-sizing: border-box;
-    background: linear-gradient(180deg, var(--mirror) 0, #fff);background: -webkit-linear-gradient(-90deg, var(--mirror) 0, #fff);}
+    background: linear-gradient(0deg, var(--mirror) 0, #fff);
+    background: -webkit-linear-gradient(90deg, var(--mirror) 0, #fff);
+    }
 .rcmd-boxes .info .inbox .inbox-more h3{color:currentColor;display:none}
 .rcmd-boxes .info .inbox .inbox-headside:before{content:'';width:100%;height:100%;background:rgba(0,0,0,0.12);position:absolute;top:0;left:0;z-index:2;border-radius:var(--radius);transition:background .35s ease}
 .rcmd-boxes .info .inbox .inbox-headside{width:100%;max-width:100%;max-height:150px;align-items:flex-start;overflow:hidden;border-radius:inherit;border-bottom-left-radius:unset;border-bottom-right-radius:unset;}

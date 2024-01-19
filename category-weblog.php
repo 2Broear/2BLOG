@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/weblog.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/weblog.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
     <style>
         figure{text-align:left}
@@ -39,7 +39,7 @@
         </div>
         <?php get_inform(); ?>
         <div class="weblog-tree-all">
-            <div class="weblog-tree-core <?php $third_cmt = get_option('site_third_comments');echo $third_cmt&&$third_cmt!='' ? 'reply' : false; ?>">
+            <div class="weblog-tree-core <?php $origin_cmt='Wordpress';$third_cmt = get_option('site_third_comments');echo $third_cmt!=$origin_cmt ? 'reply' : ''; ?>">
                 <?php
                     $async_sw = get_option('site_async_switcher');
                     $weblog_slug = get_cat_by_template('weblog','slug'); //current_slug();
@@ -163,7 +163,7 @@
     </div>
 <!-- siteJs -->
 <?php
-    require_once(TEMPLATEPATH. '/foot.php');
+    get_foot();
     if($baas){
 ?>
         <script type="text/javascript">
@@ -208,7 +208,7 @@
         </script>
 <?php
     };
-    if($third_cmt && $third_cmt!=''){
+    if($third_cmt!=$origin_cmt){
 ?>
         <script>
             // BLOCKQUOTE Reply

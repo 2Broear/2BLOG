@@ -8,7 +8,7 @@
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/about.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/about.css?v=<?php echo get_theme_info(); ?>" />
     <style>
         /*.about_blocks li.intro_right .mbit .mbit_range li:nth-child(1) span em,*/
         .about_blocks li.intro_right .mbit .mbit_range li:nth-child(1) span em::after{
@@ -108,10 +108,10 @@
                                 <?php
                                     $video = replace_video_url(get_option('site_about_video'));
                                 ?>
-                                <div class="head-inside wow fadeInUp" data-wow-delay="0.15s" style="background:url(<?php echo !$video ? cat_metabg($cat, get_option('site_bgimg')) : false; ?>) center center /cover;">
+                                <div class="head-inside wow fadeInUp" data-wow-delay="0.15s" style="background:url(<?php echo !$video ? get_meta_image($cat, get_option('site_bgimg')) : false; ?>) center center /cover;">
                                     <?php
                                         if($video){
-                                            echo '<video src="'.$video.'" poster="'.cat_metabg($cat, get_option('site_bgimg')).'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>';
+                                            echo '<video src="'.$video.'" poster="'.get_meta_image($cat, get_option('site_bgimg')).'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>';
                                         }
                                     ?>
                                 </div>
@@ -179,5 +179,5 @@
     </footer>
 </div>
 <!-- siteJs -->
-<?php require_once(TEMPLATEPATH. '/foot.php'); ?>
+<?php get_foot(); ?>
 </body></html>

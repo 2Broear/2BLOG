@@ -3,11 +3,77 @@
  * Template name: 下载模板（BaaS）
    Template Post Type: page
 */
+// wp自定义（含置顶无分页）查询函数
+function get_download_posts($cats, $order=1){
+    $output = '';
+    $cats_count = count($cats);
+    $dload_single_sw = get_option('site_single_switcher');
+    if($dload_single_sw){
+        $includes = get_option('site_single_includes');
+        $dload_slug = get_cat_by_template('download','slug');
+        $dload_single_sw = in_array($dload_slug, explode(',', $includes));
+    }
+    for($i=0;$i<$cats_count;$i++){
+        $term_order = get_term_meta($cats[$i]->term_id, 'seo_order', true);
+        // print_r($term_order);
+        if($term_order==$order){
+            $each_cat = $cats[$i];
+            $cat_name = $each_cat->name;
+            $cat_slug = $each_cat->slug;
+            $cat_id = $each_cat->term_id;
+            // 'category='.$cat_id.'&number=1&orderby'
+            $cat_first_post = get_posts(array(
+                'cat' => $cat_id,
+                'meta_key' => 'post_orderby',
+                'orderby' => array(
+                    'meta_value_num' => 'DESC',
+                    'date' => 'DESC',
+                    'modified' => 'DESC'
+                ),
+                'number' => 1,
+            ));
+            $cat_poster = get_term_meta($cat_id, 'seo_image', true );
+            if(!$cat_poster) $cat_poster = get_postimg(0, $cat_first_post[0]->ID, true); //get_option('site_bgimg');
+            $output .= '<div class="dld_box '.$cat_slug.'"><div class="dld_box_wrap"><div class="box_up preCover"><span style="background:url('.$cat_poster.') center center /cover"><a href="javascript:;"><h3> '.$cat_name.' </h3><i> '.strtoupper($cat_slug).'</i><em></em></a></span></div><div class="box_down"><ul>';
+                //setup query
+                global $post, $lazysrc, $loadimg;
+                $left_query = new WP_Query(array_filter(array(
+                    'cat' => $cat_id,
+                    'meta_key' => 'post_orderby',
+                    'orderby' => array(
+                        'meta_value_num' => 'DESC',
+                        'date' => 'DESC',
+                        'modified' => 'DESC'
+                    ),
+                    'posts_per_page' => 99 //get_option('posts_per_page'),  //use left_query counts
+                )));
+                while ($left_query->have_posts()):
+                    $left_query->the_post();
+                    $link = get_post_meta($post->ID, "post_feeling", true);
+                    $postimg = get_postimg(0,$post->ID,true);
+                    if($lazysrc!='src'){
+                        $lazyhold = 'data-src="'.$postimg.'"';
+                        $postimg = $loadimg;
+                    }
+                    $href = $link ? $link : 'javascript:void(0);';
+                    $target = $link ? '_blank' : '_self';
+                    $class_disabled  = !$link ? 'disabled ' : false;
+                    $class_topset = get_post_meta($post->ID, 'post_orderby', true)>1 ? 'topset' : false;
+                    $single_link = !$dload_single_sw ? '<a href="'.get_the_permalink().'" target="_blank" style="right:70px;">详情</a>' : '';
+                    $output .= '<li class="'.$class_disabled.$class_topset.'"><div class="details"><a href="'.$href.'" target="'.$target.'" rel="nofollow" title="下载附件"><img '.$lazyhold.' src="'.$postimg.'" alt="poster" /></a><div class="desc">'.get_the_title().'<a href="'.$href.'" target="'.$target.'" rel="nofollow">下载附件</a>'.$single_link.'</div></div></li>';
+                endwhile;
+                wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
+                unset($post, $lazysrc, $loadimg);
+            $output .= '</ul></div></div></div>';
+        }
+    };
+    return $output;
+};
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/download.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/download.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
     <style>
         #loading:before{top:40px}
@@ -72,7 +138,7 @@
     </div>
 <!-- siteJs -->
 <?php
-    require_once(TEMPLATEPATH. '/foot.php');
+    get_foot();
     if($baas){
 ?>
         <script type="text/javascript">

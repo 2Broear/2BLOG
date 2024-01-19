@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-	<link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/notes.css?v=<?php echo get_theme_info('Version'); ?>" />
+	<link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/notes.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
     <style>
         span.mark:hover{background:#ff9632}
@@ -32,9 +32,9 @@
 	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s">
 	    <?php 
             global $wp_query, $page_flag;
-            $cid = isset($_GET['cid']) ? esc_html($_GET['cid']) : false;
+            $cid = check_request_param('cid');
             if($cid){
-                $year = isset($_GET['year']) ? esc_html($_GET['year']) : gmdate('Y', time() + 3600*8);
+                $year = check_request_param('year'); //gmdate('Y', time() + 3600*8)
                 $post_per_page = get_option('posts_per_page'); //get_option('site_per_posts');
                 $real_current_page = max(1, get_query_var('paged'));
                 // print_r('before rewrite current_page: '.$real_current_page.' ,offset: '.($real_current_page-1) * $post_per_page);
@@ -59,13 +59,22 @@
                 $wp_query = new WP_Query(array_filter($query_array));
             };
             $res_num = $wp_query->found_posts;
-            $queryString = esc_html(get_search_query());
-            // $page_flag = strpos(get_option('site_search_includes'), 'page')!==false ? '/page' : '';
-            $res_array = explode(',',trim(get_option('site_search_includes','post')));  // NO "," Array
-            foreach ($res_array as $each){
-                if(trim($each)=='page') $page_flag='/页面';
+            $queryString = "";
+            if(is_search()){
+                $queryString = esc_html(get_search_query());
+                if(trim($queryString)!=""){
+                    // $page_flag = strpos(get_option('site_search_includes'), 'page')!==false ? '/page' : '';
+                    $res_array = explode(',',trim(get_option('site_search_includes','post')));  // NO "," Array
+                    foreach ($res_array as $each){
+                        if(trim($each)=='page') $page_flag='/页面';
+                    }
+                    echo '<b> '.$res_num.' </b>篇有关“<span>'.$queryString.'</span>”の内容'.$page_flag;
+                }else{
+                    echo '正在浏览 <b> '.$res_num.' </b>篇<b> 全站内容.. </b>';
+                }
+            }else{
+                echo '<b> '.$res_num.' </b>'.get_category($cid)->slug.' in<b> '.$year.' </b>';
             }
-            echo $cid ? '<b> '.$res_num.' </b>'.get_category($cid)->slug.' in<b> '.$year.' </b>' : '<b> '.$res_num.' </b>篇有关“<span>'.$queryString.'</span>”の内容'.$page_flag;
         ?>
     </h5>
 </div>
@@ -74,9 +83,6 @@
 		<div class="win-content main">
 			<div class="notes notes_default" style="max-width: 100%;">
                 <?php 
-                    // $maximun_page = $wp_query -> max_num_pages;
-                    // // $current_page = max(1, get_query_var('paged'));
-                    // print_r($current_page.' / '.$maximun_page);
                     the_posts_with_styles($queryString);
                 ?>
 			</div>
@@ -88,7 +94,7 @@
 </footer>
 </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php custom_cdn_src(0); ?>/js/main.js"></script>
+<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/main.js"></script>
 <!-- inHtmlJs -->
 <script type="text/javascript">
     // document.addEventListener('load', function(){

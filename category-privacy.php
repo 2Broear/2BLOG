@@ -8,7 +8,7 @@
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/about.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/about.css?v=<?php echo get_theme_info(); ?>" />
 </head>
 <body class="<?php theme_mode(); ?>">
 <div class="content-all">
@@ -19,7 +19,7 @@
                 <?php get_header(); ?>
             </nav>
         </header>
-        <video src="<?php echo $video = replace_video_url(get_option('site_privacy_video')); ?>" poster="<?php echo $video ? $video : cat_metabg($cat, $img_cdn.'/images/privacy.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+        <video src="<?php echo $video = replace_video_url(get_option('site_privacy_video')); ?>" poster="<?php echo $video ? $video : get_meta_image($cat, $img_cdn.'/images/privacy.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
 	    <h5><?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '<span> 隐私</span> 协议'; ?></h5>
     </div>
     <div class="content-all-windows">
@@ -43,5 +43,5 @@
     </footer>
 </div>
 <!-- siteJs -->
-<?php require_once(TEMPLATEPATH. '/foot.php'); ?>
+<?php get_foot(); ?>
 </body></html>

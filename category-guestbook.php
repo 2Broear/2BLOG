@@ -27,7 +27,7 @@
                     <?php get_header(); ?>
 				</nav>
 			</header>
-            <video src="<?php echo $video = replace_video_url(get_option('site_guestbook_video')); ?>" poster="<?php echo $video ? $video : cat_metabg($cat, $img_cdn.'/images/guestbook.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+            <video src="<?php echo $video = replace_video_url(get_option('site_guestbook_video')); ?>" poster="<?php echo $video ? $video : get_meta_image($cat, $img_cdn.'/images/guestbook.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
             <h5> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? '<span>'.$cat_desc.'</span>' : '畅所<b style="font-family:sans-serif;">，</b><span>你の欲言。</span>'; ?> </h5>
         </div>
 		<div class="content-all-windows" style="padding-top:0;">
@@ -41,6 +41,6 @@
 		</footer>
 	</div>
 <!-- siteJs -->
-<?php require_once(TEMPLATEPATH. '/foot.php'); ?>
+<?php get_foot(); ?>
 <!-- pluginJs -->
 </body></html>

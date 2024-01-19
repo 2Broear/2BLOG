@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/news.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/news.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
     <style>
         .news-window-img a{
@@ -62,7 +62,7 @@
                                 $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                                 $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                         ?>
-                                <article class="<?php if($post_orderby>1) echo 'topset'; ?> news-window wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
+                                <article class="<?php if($post_orderby>1) echo 'topset icom'; ?> news-window wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                                     <div class="news-window-inside">
                                         <?php
                                             $lazyhold = "";
@@ -128,5 +128,5 @@
         </footer>
     </div>
     <!-- asyncLoadJs -->
-    <?php require_once(TEMPLATEPATH. '/foot.php'); ?>
+    <?php get_foot(); ?>
 </body></html>

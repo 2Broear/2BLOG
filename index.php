@@ -1,8 +1,94 @@
 <!DOCTYPE html>
+<?php
+    // leancloud avos（标准li结构）查询
+    function avos_posts_query($cid=0, $els=null){
+        $slug = get_category($cid)->slug;
+?>
+        <script type="text/javascript">
+            new AV.Query("<?php echo $slug; ?>").addDescending("createdAt").limit(<?php echo get_option('site_per_posts', get_option('posts_per_page')); ?>).find().then(result=>{
+                for (let i=0,resLen=result.length; i<resLen;i++) {
+                    let res = result[i],
+                        title = res.attributes.title,
+                        content = res.attributes.content.replace(/</g,"&lt;").replace(/>/g,"&gt;");
+                    document.querySelector("<?php echo $els ?>").innerHTML += `<li title='${content}'><a href="/<?php echo $slug ?>#${res.id}" target="_self" rel="nofollow">${title}</a></i>`;
+                };
+            })
+        </script>
+<?php
+    }
+    // 自定义标签云
+    function the_tag_clouds($html_tag="li"){
+        $num = get_option('site_tagcloud_num');
+        $tags = get_tags(array(
+            'taxonomy' => 'post_tag',
+            'orderby' => 'count', //name
+            'hide_empty' => true // for development,
+            // 'number' => $max_show
+        ));
+        $tag_count = count($tags);
+        $max_show = $tag_count<=$num ? $tag_count : $num;
+        $min_font = 10;
+        $max_font = get_option('site_tagcloud_max');
+        shuffle($tags);  // random tags
+        if(get_option('site_tagcloud_switcher') && $tag_count>=1){
+            global $bold_font;
+            for($i=0;$i<$max_show;$i++){
+                $tag = $tags[$i];
+                $rand_font = mt_rand($min_font, $max_font);
+                if($rand_font>=$max_font/1.25){
+                    $rand_opt = mt_rand(5,10);  // highlight big_font
+                    $bold_font = $rand_opt>9 || $rand_font==$max_font ? 'bold' : 'normal';  // max bold_font
+                    $color_font = $rand_opt==10 && $rand_font==$max_font ? 'color:var(--theme-color)' : '';
+                }else{
+                    $rand_opt = mt_rand(2,10);
+                    $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'color:var(--theme-color)' : '';
+                }
+                $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
+                echo '<'.$html_tag.' data-count="'.$tag->count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';'.$color_font.'">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
+            }
+            unset($bold_font);
+        }else{
+            echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
+        }
+    }
+    // wp自定义（含置顶无分页）查询函数
+    function recent_posts_query($cid=0, $specific_link=false, $detail=false, $limit=null, $random=false){
+        global $post;
+        $orderby = $random ? 'rand' : array(
+            'date' => 'DESC',
+            'meta_value_num' => 'DESC',
+            'modified' => 'DESC',
+        );
+        $acg_single_sw = get_option('site_single_switcher');
+        if($acg_single_sw){
+            $includes = get_option('site_single_includes');
+            $acg_slug = get_cat_by_template('acg','slug');
+            $acg_single_sw = in_array($acg_slug, explode(',', $includes));
+        }
+        $limit = $limit ? $limit : get_option('posts_per_page');
+        $query_array = $cid ? array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => $limit, 'orderby' => $orderby) : array('cat' => $cid, 'posts_per_page' => $limit, 'order' => 'DESC', 'orderby' => $orderby);
+        $left_query = new WP_Query(array_filter($query_array));
+        while ($left_query->have_posts()):
+            $left_query->the_post();
+            $topset = get_post_meta($post->ID, "post_orderby", true)>1 ? 'topset' : false;
+            $title = $detail ? trim(get_the_title()).' -（'.get_post_meta($post->ID, "post_feeling", true).'）<sup>'.$post->post_date.'</sup>' : trim(get_the_title());
+            // print_r(get_category($cid)->parent);
+            $cid = !get_category($cid)->errors ? $cid : 1; //php8
+            $par_cid = get_category($cid)->parent;
+            $par_slug = $par_cid!=0&&get_category($par_cid)->slug!='/' ? get_category($par_cid)->slug : get_category($cid)->slug;
+            $post_cat = get_the_category($post->ID);
+            $loc_id = $par_slug==get_cat_by_template('acg','slug') ? ($post_cat[0]->parent!=0 ? $post_cat[0]->slug : $post_cat[1]->slug) : 'pid_'.get_the_ID();
+            $pre_link = $specific_link || !$acg_single_sw ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="'.get_category_link($cid).'#'.$loc_id.'" target="_self" rel="nofollow">';
+            echo '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
+        endwhile;
+        wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
+        unset($post);
+    };
+?>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/main.min.css?v=<?php echo get_theme_info('Version'); ?>" />
-    <?php include_once(TEMPLATEPATH. '/head.php'); ?>
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/main.min.css?v=<?php echo get_theme_info(); ?>" />
+    <?php get_head(); ?>
     <style>
         #banner-prev,#banner-next{
             cursor: pointer;
@@ -346,8 +432,10 @@
 <footer>
     <?php get_footer(); ?>
 </footer>
-<?php if(get_option('site_chat_switcher')) echo '<script src="'.get_option('site_chat').'"></script>'; ?>
-<?php require_once(TEMPLATEPATH. '/foot.php'); ?>
-<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/banner.js?v=<?php echo get_theme_info('Version'); ?>"></script>
+<?php 
+    if(get_option('site_chat_switcher')) echo '<script src="'.get_option('site_chat').'"></script>';
+    get_foot();
+?>
+<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/banner.js?v=<?php echo get_theme_info(); ?>"></script>
 <!--<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/cursor.js"></script>-->
 </body></html>

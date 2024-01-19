@@ -9,7 +9,7 @@
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/n.css?1v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/n.css?1v=<?php echo get_theme_info(); ?>" />
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/highlight/agate.m.css" />
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/fancybox.css" />
     <style>
@@ -72,7 +72,7 @@
             <?php get_footer(); ?>
         </footer>
     </div>
-    <?php require_once(TEMPLATEPATH. '/foot.php'); ?>
+    <?php get_foot(); ?>
     <!-- plugins -->
     <script>
         const codeblock = document.querySelectorAll("pre code");

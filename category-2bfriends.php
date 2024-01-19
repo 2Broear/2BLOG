@@ -3,11 +3,22 @@
  * Template name: 友链模板（BaaS）
  * Template Post Type: page
 */
+// 返回站点标签链接
+function get_site_bookmarks($category='standard', $orderby='link_id', $order='ASC'){
+    $res = get_bookmarks(array(
+        'orderby' => $orderby,
+        'order' => $order,
+        'category_name' => $category,
+        // 'exclude' => 60,
+        'hide_invisible' => 0
+    ));
+    return (count($res)>0 ? $res : false);
+}
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/2bfriends.css?v=<?php echo get_theme_info('Version'); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/2bfriends.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
     <style>
         .friends-boxes .deals .inbox.girl em{background: url('<?php echo $img_cdn; ?>/images/girl_symbols.png') no-repeat center center /contain;}
@@ -92,6 +103,7 @@
             max-width: calc(100%/7.55);
             /*min-height: auto;*/
             min-height: 66px;
+            min-height: 74px;
         }
         .friends-boxes .deals.rcmd .inbox{
             max-width: calc(100%/5.25);
@@ -124,7 +136,40 @@
             <div class="friends-boxes flexboxes">
                 <?php 
                     $baas = get_option('site_leancloud_switcher')&&in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')));
-                    // $baas ? the_site_links('小伙伴们','技术侧重','荐亦有鉴',true) : 
+                    // 输出站点链接
+                    function the_site_links($t1='小伙伴们', $t2='', $t3=''){ //, $baas=false
+                        global $baas;
+                        $output = '';
+                        if(!$baas){
+                            $output_sw = false;
+                            if(get_option('site_cache_switcher')){
+                                $caches = get_option('site_cache_includes');
+                                $temp_slug = get_cat_by_template('2bfriends','slug');
+                                $output_sw = in_array($temp_slug, explode(',', $caches));
+                                $output = $output_sw ? get_option('site_link_list_cache') : '';
+                            }
+                            if(!$output || !$output_sw){
+                                $rich_links = get_site_bookmarks();
+                                $output .= $rich_links ? '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes">'.get_site_links($rich_links, 'full').'</div>' : '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';
+                                if($t2){
+                                    $t2 = $t2 ? $t2 : '技术侧重';
+                                    $tech_links = get_site_bookmarks('technical');  // $tech_links = get_filtered_bookmarks('technical', 'others');
+                                    if($tech_links) $output .= '<div class="inbox-clip"><h2 id="exchanged"> '.$t2.' </h2></div><div class="deals tech exchanged flexboxes">'.get_site_links($tech_links, 'full').'</div>';
+                                }
+                                if($t3){
+                                    $t3 = $t3 ? $t3 : '荐亦有鉴';
+                                    $rcmd_links = get_site_bookmarks('special','rand','DESC');
+                                    if($rcmd_links) $output .= '<div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes">'.get_site_links($rcmd_links, 'half').'</div>';
+                                    $other_links = get_site_bookmarks('others','link_id','DESC');
+                                    if($other_links) $output .= '<div class="deals oldest"><div class="inboxSliderCard"><div class="slideBox flexboxes">'.get_site_links($other_links).'</div></div></div>';
+                                }
+                                if($output_sw) update_option('site_link_list_cache', wp_kses_post($output));
+                            }
+                        }else{
+                            $output .= '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes"></div><!-- rcmd begain --><div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes"></div><!-- lost begain --><div class="inbox-clip"></div><div class="deals oldest"><div class="inboxSliderCard"><div class="slideBox flexboxes"></div></div></div>';
+                        }
+                        echo wp_kses_post($output);
+                    }
                     the_site_links('小伙伴','技术の','荐见鉴');
                     echo '<br />';
                     the_content();  // the_page_content(current_slug());
@@ -142,7 +187,7 @@
 <!--<script src="//cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js"></script>-->
 <!-- inHtmlJs -->
 <?php
-    require_once(TEMPLATEPATH. '/foot.php');
+    get_foot();
     // declear lazyLoad standby-avatar(seo-fix alt tips)
     if($baas){
 ?>

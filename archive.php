@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-	<link type="text/css" rel="stylesheet" href="<?php custom_cdn_src(); ?>/style/notes.css?v=<?php echo get_theme_info('Version'); ?>" />
+	<link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/notes.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -18,8 +18,8 @@
             <?php get_header(); ?>
 		</nav>
 	</header>
-    <em class="digital_mask" style="background: url(<?php custom_cdn_src('img'); ?>/images/svg/digital_mask.svg)"></em>
-    <video src="" poster="<?php custom_cdn_src('img'); ?>/images/archives.jpg" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+    <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>
+    <video src="" poster="<?php echo $img_cdn; ?>/images/archives.jpg" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
 	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s">
 	    <?php 
             global $wp_query;
@@ -49,6 +49,6 @@
 </footer>
 </div>
 <!-- siteJs -->
-<?php require_once(TEMPLATEPATH. '/foot.php'); ?>
+<?php get_foot(); ?>
 <!-- inHtmlJs -->
 </body></html>
