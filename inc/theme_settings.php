@@ -24,6 +24,11 @@
      * https://wpcrumbs.com/how-to-add-custom-fields-to-categories/
      * ------------------------------------------------------------------------ */
     function wcr_category_fields($term) {
+        // $templates = $GLOBALS['templates']; // global $templates
+        $templates = wp_get_theme()->get_page_templates();
+        if(count($templates)<=0){
+            $templates = scan_templates_dir($templates);
+        }
         if (current_filter() == 'category_edit_form_fields') {  //分类页详情（修改）
     ?>
             <style>input.upload_field{max-width:80%}input.upload_button{margin-left:5px}</style>
@@ -42,7 +47,6 @@
                     <select name="term_fields[seo_template]" id="term_fields[seo_template]" class="page_templates">
                         <option value="default">默认模板</option>
                         <?php 
-                            $templates = wp_get_theme()->get_page_templates();
                             foreach ($templates as $temp => $index){
                                 echo '<option value="'.$temp.'"';
                                     if(get_term_meta($term->term_id, 'seo_template', true)==$temp) echo('selected="selected"');
@@ -111,7 +115,6 @@
                 <select name="term_fields[seo_template]" id="term_fields[seo_template]" class="page_templates">
                     <option value="default">默认模板</option>
                     <?php 
-                        $templates = wp_get_theme()->get_page_templates();
                         foreach ($templates as $temp => $index){
                             echo '<option value="'.$temp.'"';
                                 // if($value==$temp) echo('selected="selected"');
@@ -160,11 +163,11 @@
     /* ------------------------------------------------------------------------ *
      * 分类与页面同步更新通信
      * ------------------------------------------------------------------------ */
-    include_once(TEMPLATEPATH . '/inc/theme_synCats.php');
+    include_once(get_template_directory() . '/inc/theme_synCats.php');
     /* ------------------------------------------------------------------------ *
      * 自定义文章排序 column（编辑、快速、批量编辑文章页）
      * ------------------------------------------------------------------------ */
-    include_once(TEMPLATEPATH . '/inc/wp_column.php');
+    include_once(get_template_directory() . '/inc/wp_column.php');
     /* ------------------------------------------------------------------------ *
      * WordPress Custom Post Type
      * Register the Product post type with a Dashicon.
@@ -454,6 +457,7 @@
         register_setting( 'baw-settings-group', 'site_contact_steam' );
     }
     function category_options($value){
+        // global $cats;
         $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
         if(!empty($cats)){
             foreach($cats as $the_cat){
@@ -508,10 +512,9 @@
         }
     }
     function add_options_submenu() {
-        $src_cdn = custom_cdn_src('src', true);
-        $img_cdn = custom_cdn_src('img', true);
-        $theme_color = get_option('site_theme','#eb6844');
+        // global get_template_directory(), $cats;
         $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+        $img_cdn = custom_cdn_src('img', true);
         $cats_haschild = array();
         $cats_seclevel = array();
         foreach($cats as $the_cat){
@@ -523,7 +526,7 @@
     <div class="wrap settings">
         <style>
             :root{
-                --panel-theme: <?php echo $theme_color; ?>;
+                --panel-theme: <?php echo get_option('site_theme','#eb6844'); ?>;
             }
         p.description code{font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(90deg,rgba(255, 255, 255, 0) 25%, currentColor 255%)}label:hover input[type=checkbox]{box-shadow:0 0 0 1px #2271b1}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:233px;height:18px;cursor:pointer;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(180deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(-90deg, #f5f7f9 0, #fff);}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text-disabled{display:none;}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{background:brown;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
@@ -851,7 +854,7 @@
                     </tr>
                     <?php
                         // if(get_option('site_metanav_switcher')){
-                            $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+                            // $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
                             $options = array();
                             foreach($cats as $the_cat){
                                 if(count(get_term_children($the_cat->term_id,$the_cat->taxonomy))>0) array_push($options, $the_cat);  // has-child category only
@@ -939,7 +942,7 @@
                             <?php
                                 $opt = 'site_rss_categories';  //unique str
                                 $value = get_option($opt);
-                                $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+                                // $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
                                 $options = array();
                                 foreach($cats as $the_cat){
                                     if($the_cat->count>=1) array_push($options, $the_cat);  // has-content category only
@@ -1112,7 +1115,7 @@
                                     <?php
                                         $opt = 'site_cdn_vdo_includes';  //unique str
                                         $value = get_option($opt);
-                                        $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
+                                        // $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
                                         $options = array('Article','Sidebar',get_cat_by_template('about'),get_cat_by_template('acg'),get_cat_by_template('guestbook'),get_cat_by_template('privacy'));
                                         echo '<p class="description" id="site_map_includes_label">开启后使用上方👆图片加速域名👆加速站内指定位置视频，常用于超小型文件（Article：文章视频，Sidebar：侧栏视频</p><div class="checkbox">';
                                         $pre_array = explode(',',trim($value));  // NO "," Array
@@ -1253,10 +1256,16 @@
                             <?php
                                 $opt = 'site_leancloud_category';  //unique str
                                 $value = get_option($opt);
-                                $templates = wp_get_theme()->get_page_templates();
                                 $baasarray = array();
                                 $inform = 'site_leancloud_inform';
                                 $baastring = $inform.',';  //category-weblog.php
+                                // global $templates;
+                                $templates = wp_get_theme()->get_page_templates();
+                                if(count($templates)<=0){
+                                    $templates = scan_templates_dir($templates);  //, get_template_directory() . $CUSTOM_TEMPLATE_PATH
+                                    unset($CUSTOM_TEMPLATE_PATH);
+                                }
+                                // print_r($templates);
                                 foreach ($templates as $temp => $index){
                                     if(strpos($index, 'BaaS')!==false){
                                         array_push($baasarray, array($index=>$temp));
@@ -2150,7 +2159,7 @@
                                         $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">本地已缓存文章摘要数据，勾选后<ins> 提交保存 </ins>以显示记录（倒序，默认最近10条）<b>。点击文章ID可删除对应记录（不可逆）</b>，<ins>悬浮文章ID</ins> 可查看文章标题及摘要</p><p>删除文章摘要记录后，<u><i>重新访问文章以更新摘要</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LOCAL CACHED POSTS</b></label>';
                                         if(get_option($opt)){
-                                            include(TEMPLATEPATH . '/plugin/'.get_option('site_chatgpt_dir').'/chat_data.php');
+                                            include(get_template_directory() . '/plugin/'.get_option('site_chatgpt_dir').'/chat_data.php');
                                             // print_r($cached_post);
                                             $res_cls_obj = json_decode(json_encode(array_reverse($cached_post)));
                                             $echo_count = 0;
@@ -2170,7 +2179,7 @@
                                             }
                                             echo '</ul>';
                                     ?>
-                                            <script>const cached_posts=document.querySelector('.cached_post_list');cached_posts.onclick=(e)=>{e=e||window.event;let t=e.target||e.srcElement;if(!t)return;while(t!=cached_posts){if(t.nodeName.toUpperCase()==='LI'){const cached_pid=t.dataset.id,cached_title=t.title;if(confirm('确认删除（更新）：'+cached_title+' 摘要内容？')){return new Promise(function(resolve,reject){var ajax=new XMLHttpRequest();ajax.open('get',"<?php echo TEMPLATEPATH.'/plugin/'.get_option('site_chatgpt_dir').'/gpt.php?pid='; ?>"+cached_pid+"&del=1");ajax.onreadystatechange=function(){if(this.readyState!=4)return;if(this.status==200){resolve();t.remove();if(this.responseText==404) alert('此记录先前已被清除（可能刷新过快，尝试重新刷新）');}else{reject(this.status)}};ajax.withCredentials=true;ajax.send()}).catch(function(err){console.log(err)})}else{console.log(cached_pid+' canceled.')}break}else{t=t.parentNode}}}</script>
+                                            <script>const cached_posts=document.querySelector('.cached_post_list');cached_posts.onclick=(e)=>{e=e||window.event;let t=e.target||e.srcElement;if(!t)return;while(t!=cached_posts){if(t.nodeName.toUpperCase()==='LI'){const cached_pid=t.dataset.id,cached_title=t.title;if(confirm('确认删除（更新）：'+cached_title+' 摘要内容？')){return new Promise(function(resolve,reject){var ajax=new XMLHttpRequest();ajax.open('get',"<?php echo get_template_directory().'/plugin/'.get_option('site_chatgpt_dir').'/gpt.php?pid='; ?>"+cached_pid+"&del=1");ajax.onreadystatechange=function(){if(this.readyState!=4)return;if(this.status==200){resolve();t.remove();if(this.responseText==404) alert('此记录先前已被清除（可能刷新过快，尝试重新刷新）');}else{reject(this.status)}};ajax.withCredentials=true;ajax.send()}).catch(function(err){console.log(err)})}else{console.log(cached_pid+' canceled.')}break}else{t=t.parentNode}}}</script>
                                     <?php
                                         };
                                     ?>

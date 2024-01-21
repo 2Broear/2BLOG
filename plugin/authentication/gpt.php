@@ -210,7 +210,7 @@
                     // formart responses text-result
                     $response = json_decode($response);
                     //property_exists($response,'error') array_key_exists('error', $response)
-                    $response = isset($response->error) ? $response->error->message : preg_replace('/.*\n/','', api_get_resultText($response));
+                    $response = isset($response->error) ? $response->error->message : preg_replace('/\n/',"", api_get_resultText($response));
                 }
                 
                 // overwrite_request_record();

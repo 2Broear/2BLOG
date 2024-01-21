@@ -71,7 +71,7 @@
                 $desc = get_option('site_description');
                 break;
         }
-        return trim($desc);
+        return preg_replace('/\n/',"", $desc); //trim($desc);
     }
     // 自定义文章摘要
     function custom_excerpt($length=88, $var=false){
@@ -289,22 +289,6 @@
      *--------------------------------------------------------------------------
     */
     
-    // 通过分类模板名称获取绑定的分类别名
-    function get_template_bind_cat($template=false){
-        global $wpdb;
-        // $template_page_id = $wpdb->get_var("SELECT post_id FROM $wpdb->postmeta WHERE meta_value = '$template'");
-        // $template_term_id = get_post_meta($template_page_id, "post_term_id", true); //SELECT *
-        $template_term_id = $wpdb->get_var("SELECT term_id FROM $wpdb->termmeta WHERE meta_value = '$template'");
-        // return !get_category($template_term_id)->errors ? get_category($template_term_id) : get_category(1);
-        unset($wpdb);
-        return get_category($template_term_id);
-    }
-    // get bind category-template cat by specific binded-temp post_id
-    function get_cat_by_template($temp='news', $parm=false){
-        $cats = get_template_bind_cat('category-'.$temp.'.php');
-        return !$cats->errors ? ($parm ? $cats->$parm : $cats) : false;
-    }
-    
     // 模糊匹配文章别名返回文章id
     function get_post_like_slug($post_slug) {
         global $wpdb;
@@ -404,9 +388,15 @@
     }
     function api_get_resultText($res_cls_obj, $decode=false){
         $formart = $decode ? json_decode($res_cls_obj) : $res_cls_obj;
-        if(isset($formart->error)) return $formart->error->message;
+        if(isset($formart->error)){
+            return $formart->error->message;
+        }
         $choices = $formart->choices[0];
         return isset($choices->message) ? $choices->message->content : $choices->text;
+        // if(!isset($choices->message)){
+        //     return trim($choices->text);
+        // }
+        // print_r(preg_replace('/\n/',"", $choices->message->content));
     }
     // API调用接口，接受三个参数：调用 api 文件名、api 代理访问（使用 api.php 文件中的 curl 携带鉴权参数二次请求（速度影响），适用前端异步调用、返回请求api或返回sign签名（如开启cdn鉴权
     function get_api_refrence($api='', $xhr=false, $exe=1, $pid=false){
@@ -547,6 +537,68 @@
      * Specified funcs.
      *--------------------------------------------------------------------------
     */
+    /* ------------------------------------------------------------------------ *
+     * Plugin Name: Link Manager
+     * Description: Enables the Link Manager that existed in WordPress until version 3.5.
+     * Author: WordPress
+     * Version: 0.1-beta
+     * See http://core.trac.wordpress.org/ticket/21307
+     * ------------------------------------------------------------------------ */
+    add_filter( 'pre_option_link_manager_enabled', '__return_true' );
+    // 启用 wordpress 特色图片（缩略图）功能
+    if(function_exists('add_theme_support')) {
+        add_theme_support('post-thumbnails');
+    };
+    // Disable SrcSet
+    function remove_max_srcset_image_width( $max_width ) {
+        return 1;
+    }
+    add_filter( 'max_srcset_image_width', 'remove_max_srcset_image_width' );
+    /**
+     * Kullanicinin kullandigi internet tarayici bilgisini alir.
+     * 
+     * @since 2.0
+     */
+    // 设置文章点赞
+    add_action('wp_ajax_nopriv_post_like', 'post_like');
+    add_action('wp_ajax_post_like', 'post_like');
+    function post_like(){
+        $id = check_request_param('um_id'); //$_GET["um_id"];
+        check_ajax_referer($id.'_post_like_ajax_nonce');  // 检查 nonce
+        // if($_GET["um_action"]=='like'){
+            $post_liked = get_post_meta($id,'post_liked',true);
+            $expire = time() + 99999999;
+            $domain = ($_SERVER['HTTP_HOST']!='localhost') ? $_SERVER['HTTP_HOST'] : false;
+            setcookie('post_liked_'.$id,$id,$expire,'/',$domain,false);
+            if (!$post_liked || !is_numeric($post_liked)) update_post_meta($id, 'post_liked', 1);else update_post_meta($id, 'post_liked', ($post_liked + 1));
+            echo get_post_meta($id,'post_liked',true);
+        // }
+        die;
+    };
+    // 设置文章浏览量
+    function setPostViews($postID) {
+        $count_key = 'post_views';
+        $count = get_post_meta($postID, $count_key, true);
+        if($count==''){
+            $count = 0;
+            delete_post_meta($postID, $count_key);
+            add_post_meta($postID, $count_key, '0');
+        }else{
+            $count++;
+            update_post_meta($postID, $count_key, $count);
+        }
+    };
+    // 获取文章浏览量
+    function getPostViews($postID){
+        $count_key = 'post_views';
+        $count = get_post_meta($postID, $count_key, true);
+        if($count==''){
+            delete_post_meta($postID, $count_key);
+            add_post_meta($postID, $count_key, '0');
+            return "0";
+        }
+        return $count.'';
+    };
     
     // 返回指定文章标签
     function get_tag_list($pid, $max=3, $dot="、"){

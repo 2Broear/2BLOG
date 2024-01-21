@@ -1,8 +1,9 @@
 <?php 
+echo get_option('site_async_archive_contributions');
     global $src_cdn, $img_cdn, $cat;
     $cat = $cat ? $cat : get_page_cat_id(current_slug());
-    $theme = get_option('site_theme','#eb6844');
     $title = get_term_meta($cat, 'seo_title', true);
+    $theme = get_option('site_theme','#eb6844');
     // 自动匹配首页、分类、文章、页面标题
     function custom_title(){
         global $wp_query;//$cat, $post;
@@ -16,6 +17,9 @@
                 $of_year = ' of '.check_request_param('year');
                 echo $cid ? get_category($cid)->slug.$of_year.$surfix : 'Search result for "' . esc_html(get_search_query()) .'"'. $surfix; //$founds . 
                 break;
+            case is_category():
+                echo single_cat_title() . $surfix;
+                break;
             case is_archive():
                 $dates = $wp_query->query;
                 $date_mon = array_key_exists('monthnum',$dates) ? ' - '.$dates['monthnum'].' ' : '';
@@ -28,9 +32,6 @@
                 echo bloginfo('name');
                 echo $surfix . " - ";
                 echo bloginfo('description');
-                break;
-            case is_category():
-                echo single_cat_title() . $surfix;
                 break;
             case is_page() || is_single()://in_category(array('news')):
                 echo the_title() . $surfix;

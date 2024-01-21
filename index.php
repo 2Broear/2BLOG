@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <?php
+    // print_r(wp_get_theme()->get_page_templates());
     // leancloud avos（标准li结构）查询
     function avos_posts_query($cid=0, $els=null){
         $slug = get_category($cid)->slug;

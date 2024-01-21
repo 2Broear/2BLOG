@@ -9,11 +9,11 @@
         // remove_action('wp_ajax_my_ajax_action', 'my_ajax_callback');
         // remove_action('wp_ajax_nopriv_my_ajax_action', 'my_ajax_callback');
         // // 未解决BUG：data-nonce验证数据[24h有效，根据用户会话单独生成验证数据]被db缓存导致其他xhr请求会话返回403
-        update_option('site_archive_count_cache', '');  //清除（重建）归档统计
-        // update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
-        update_option('site_archive_list_cache', '');  
+        update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
         // //清除（重建）ACG 缓存
         // update_option('site_acg_stats_cache', '');
+        update_option('site_archive_count_cache', '');  //清除（重建）归档统计
+        update_option('site_archive_list_cache', '');  
         update_option('site_acg_post_cache', '');
     }
     add_action('save_post', 'site_clear_db_caches'); 

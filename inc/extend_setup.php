@@ -1,4 +1,56 @@
 <?php
+    // custom_template_path for custom page templates(disable filter will NOT able to specific template in page)
+    add_filter('theme_page_templates', 'custom_template_path');
+    function custom_template_path($templates) {
+        // global $GET_TEMPLATE_DERECTORY, $CUSTOM_TEMPLATE_PATH;
+        $dir = get_template_directory() . '/inc/templates';
+        $templates = scan_templates_dir($templates, $dir);
+        return $templates;
+    }
+    function scan_templates_dir($templates, $dir=false) {
+        // global $GET_TEMPLATE_DERECTORY, $CUSTOM_TEMPLATE_PATH;
+        $dir = $dir ? $dir : get_template_directory() . '/inc/templates';
+        $files = scandir($dir);
+        foreach ($files as $file) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+            $path = $dir . '/' . $file;
+            if (is_dir($path)) {
+                $templates = scan_templates_dir($templates, $path);
+            } else {
+                $file_name = basename($file);
+                // MUST specific $template_slug for custom use
+                $template_slug = str_replace(get_template_directory(), '', $path);
+                $template_data = get_file_data($path, array('Template Name' => 'Template Name')); // 获取模板文件的头部信息
+                if (!empty($template_data['Template Name'])) {
+                    $template_name = $template_data['Template Name'];
+                    // $template_slug = sanitize_title($template_name); // 使用模板名称作为数组键
+                    $templates[$template_slug] = $template_name; // 将模板名称存储到数组中
+                }else{
+                    $templates[$template_slug] = $file_name;
+                }
+            }
+        }
+        return $templates;
+    }
+    
+    // 通过分类模板名称获取绑定的分类别名
+    function get_template_bind_cat($template=false){
+        global $wpdb;
+        $rewrite_dir = '/inc/templates/';
+        $template = $rewrite_dir . $template; //prefix for custom templates path
+        $template_term_id = $wpdb->get_var("SELECT term_id FROM $wpdb->termmeta WHERE meta_value = '$template'");
+        // return !get_category($template_term_id)->errors ? get_category($template_term_id) : get_category(1);
+        unset($wpdb);
+        return get_category($template_term_id);
+    }
+    // get bind category-template cat by specific binded-temp post_id
+    function get_cat_by_template($temp='news', $parm=false){
+        $cats = get_template_bind_cat('category-'.$temp.'.php');
+        return !$cats->errors ? ($parm ? $cats->$parm : $cats) : false;
+    }
+    
     /**
      * is_edit_page 
      * function to check if the current page is a post edit page
@@ -19,68 +71,6 @@
         else //check for either new or edit
             return in_array( $pagenow, array( 'post.php', 'post-new.php' ) );
     }
-    /* ------------------------------------------------------------------------ *
-     * Plugin Name: Link Manager
-     * Description: Enables the Link Manager that existed in WordPress until version 3.5.
-     * Author: WordPress
-     * Version: 0.1-beta
-     * See http://core.trac.wordpress.org/ticket/21307
-     * ------------------------------------------------------------------------ */
-    add_filter( 'pre_option_link_manager_enabled', '__return_true' );
-    // 启用 wordpress 特色图片（缩略图）功能
-    if(function_exists('add_theme_support')) {
-        add_theme_support('post-thumbnails');
-    };
-    // Disable SrcSet
-    function remove_max_srcset_image_width( $max_width ) {
-        return 1;
-    }
-    add_filter( 'max_srcset_image_width', 'remove_max_srcset_image_width' );
-    /**
-     * Kullanicinin kullandigi internet tarayici bilgisini alir.
-     * 
-     * @since 2.0
-     */
-    // 设置文章点赞
-    add_action('wp_ajax_nopriv_post_like', 'post_like');
-    add_action('wp_ajax_post_like', 'post_like');
-    function post_like(){
-        $id = check_request_param('um_id'); //$_GET["um_id"];
-        check_ajax_referer($id.'_post_like_ajax_nonce');  // 检查 nonce
-        // if($_GET["um_action"]=='like'){
-            $post_liked = get_post_meta($id,'post_liked',true);
-            $expire = time() + 99999999;
-            $domain = ($_SERVER['HTTP_HOST']!='localhost') ? $_SERVER['HTTP_HOST'] : false;
-            setcookie('post_liked_'.$id,$id,$expire,'/',$domain,false);
-            if (!$post_liked || !is_numeric($post_liked)) update_post_meta($id, 'post_liked', 1);else update_post_meta($id, 'post_liked', ($post_liked + 1));
-            echo get_post_meta($id,'post_liked',true);
-        // }
-        die;
-    };
-    // 设置文章浏览量
-    function setPostViews($postID) {
-        $count_key = 'post_views';
-        $count = get_post_meta($postID, $count_key, true);
-        if($count==''){
-            $count = 0;
-            delete_post_meta($postID, $count_key);
-            add_post_meta($postID, $count_key, '0');
-        }else{
-            $count++;
-            update_post_meta($postID, $count_key, $count);
-        }
-    };
-    // 获取文章浏览量
-    function getPostViews($postID){
-        $count_key = 'post_views';
-        $count = get_post_meta($postID, $count_key, true);
-        if($count==''){
-            delete_post_meta($postID, $count_key);
-            add_post_meta($postID, $count_key, '0');
-            return "0";
-        }
-        return $count.'';
-    };
     // https://journalxtra.com/php/browser-os-detection-php/
     // 浏览器user-agent信息（浏览器/版本号、系统/版本号）
     // https://gist.github.com/Balamir/4a19b3b0a4074ff113a08a92908302e2
