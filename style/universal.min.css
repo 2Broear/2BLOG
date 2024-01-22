@@ -1570,7 +1570,7 @@ body.dark .wp_comments .vinfo span{
     border: 2px solid #fff!important;
     box-sizing: border-box;
     /*background: linear-gradient(180deg, var(--mirror) 50%, #fff)!important;*/
-    box-shadow: rgba(0, 0, 0, 0.05) -10px 10px 20px;
+    box-shadow: rgba(0, 0, 0, 0.05) -5px 5px 15px;
 }
 .ibox img{
     border-radius: inherit;

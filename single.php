@@ -4,7 +4,7 @@
         $e = mb_strpos($str, $end) - $b;
         return mb_substr($str, $b, $e);
     }
-    $single_dir = '/inc/single/';
+    $single_dir = '/inc/templates/single/';
     $default_temp = "notes";
     function recursive_single_includes($cats){
         if(empty($cats)) return;
