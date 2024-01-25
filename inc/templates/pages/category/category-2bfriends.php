@@ -135,7 +135,7 @@ function get_site_bookmarks($category='standard', $orderby='link_id', $order='AS
         <div class="content-all-windows" style="padding-top:0;">
             <div class="friends-boxes flexboxes">
                 <?php 
-                    $baas = get_option('site_leancloud_switcher')&&in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')));
+                    $baas = get_option('site_leancloud_switcher') && strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false; //in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')))
                     // 输出站点链接
                     function the_site_links($t1='小伙伴们', $t2='', $t3=''){ //, $baas=false
                         global $baas;

@@ -1,4 +1,16 @@
 <?php
+
+    /***** global variables   ******/
+    $upload_url = content_url() . '/uploads';
+    $cdn_switch = get_option('site_cdn_switcher');
+    $images_cdn = get_option('site_cdn_img');
+    // !!! src_cdn & img_cdn MUST be declear after $cdn_switch & $images_cdn
+    $src_cdn = custom_cdn_src('src', true);
+    $img_cdn = custom_cdn_src('img', true);
+    $lazysrc = 'src';
+    $loadimg = $img_cdn . '/images/loading_3_color_tp.png';
+    $videos_cdn_arr = explode(',',trim(get_option('site_cdn_vdo_includes')));
+    $template_path = '/inc/templates/pages';
     
     /*
      *---------------------------------------------------------------------------------------------------------------------------------
@@ -6,56 +18,100 @@
      *---------------------------------------------------------------------------------------------------------------------------------
     */
     
-    /***** global variables   ******/
-    $upload_url = content_url().'/uploads';
-    $cdn_switch = get_option('site_cdn_switcher');
-    $images_cdn = get_option('site_cdn_img');
-    // !!! src_cdn & img_cdn MUST be declear after $cdn_switch & $images_cdn
-    $src_cdn = custom_cdn_src('src', true);
-    $img_cdn = custom_cdn_src('img', true);
-    $lazysrc = 'src';
-    $loadimg = $img_cdn.'/images/loading_3_color_tp.png';
-    $videos_cdn_page = get_option('site_cdn_vdo_includes');
-    $videos_cdn_arr = explode(',',trim($videos_cdn_page));
-    
-    /*****   Custom funcs *****/
-    
+    // 加载站点头部
+    function get_head(){
+        load_theme_partial('/inc/head.php', 'require');
+    }
+    // 加载站点尾部
+    function get_foot(){
+        load_theme_partial('/inc/foot.php', 'require');
+    }
     // 获取主题信息
     function get_theme_info($type='Version'){ //Name
         $my_theme = wp_get_theme();
         return $my_theme->get($type);
     }
-    // 加载站点头部
-    function get_head(){
-        require_once(get_template_directory() . '/inc/head.php');
-    }
-    // 加载站点尾部
-    function get_foot(){
-        require_once(get_template_directory() . '/inc/foot.php');
-    }
     // 返回站点 favicon
     function get_site_favico(){
-        global $img_cdn;
         $site_favico = get_site_icon_url();
         if($site_favico){
             global $images_cdn, $upload_url;
             $site_favico = $images_cdn ? preg_replace('/('.preg_quote($upload_url,'/').')(.*?)/i', $images_cdn."\${2}", $site_favico) : $site_favico;
         }else{
+            global $img_cdn;
             $site_favico = $img_cdn.'/images/favicon/favicon.ico';
         }
         return $site_favico;
     }
+    // 返回站点标题（分类、文章、归档、搜索..）
+    function get_site_title($surfix=true){
+        $nick = get_option('site_nick');
+        $name = !is_home() ? ' - '.get_bloginfo('name') : '';
+        $surfix = $surfix ? ($nick ? " | " . get_option('site_nick') . $name : $nick) : "";
+        $title = '';
+        switch (true) {
+            case is_search():
+                $cid = check_request_param('cid');
+                $title = $cid ? get_category($cid)->slug.' of '.check_request_param('year').$surfix : 'Search result for "' . esc_html(get_search_query()) .'"';
+                break;
+            case is_category() || is_page():
+                global $cat;
+                $seo_title = get_term_meta($cat, 'seo_title', true); //single_cat_title();
+                $title = $seo_title ? $seo_title . $surfix : get_the_title() . $surfix;
+                break;
+            case is_tag():
+                $title = 'Posts of tag "'. single_tag_title('',false) .'"' . $surfix;
+                break;
+            case is_archive():
+                global $wp_query;
+                // $founds = $wp_query->found_posts;
+                $dates = $wp_query->query;
+                $date_mon = array_key_exists('monthnum',$dates) ? ' - '.$dates['monthnum'].' ' : '';
+                $title = 'Archives of ' . $dates['year'] . $date_mon . $surfix; //$founds . 
+                break;
+            case is_home():
+                $title .= get_bloginfo('name') . $surfix . " - " . get_bloginfo('description');
+                break;
+            case is_single():
+                $the_title = get_the_title();
+                // $title = in_category(array('notes','weblog')) ? $the_title . $surfix . " - " . get_the_category()[0]->name : $the_title;
+                $title = $surfix ? $the_title . $surfix : get_between_string(0, " ", $the_title); //get_between_string('single-', '.php', 'single-notes.php'); //get_between_string(0, ' ', $the_title);
+                break;
+            default:
+                $title = "NOTHING MATCHED" . $surfix;
+                break;
+        }
+        return $title;
+    }
+    // 返回站点关键词（标签）
+    function get_site_keywords(){
+        $keywords = get_option('site_keywords', "no keywords yet");
+        switch (true) {
+            case is_category() || is_page():
+                global $cat;
+                $keywords = get_term_meta($cat, 'seo_keywords', true);
+                break;
+            case is_single():
+                global $post;
+                $keywords = get_site_title(false). ',' .get_tag_list($post->ID, 99, ',', true);
+                break;
+            default:
+                break;
+        }
+        return $keywords;
+    }
     // 返回站点描述（摘要）
     function get_site_description($cat=false){
-        $desc = "";
+        $desc = "no descriptions yet.";
         switch (true) {
             case is_category():
                 if(!$cat) global $cat;
                 $desc = get_term_meta($cat, 'seo_description', true);
                 break;
             case is_single():
-                if(in_chatgpt_cat()){
+                if(get_option('site_chatgpt_desc_sw') && in_chatgpt_cat()){
                     $dir = get_option('site_chatgpt_dir') ? get_option('site_chatgpt_dir').'/' : '';
+                    // $cached_post = load_theme_partial('/plugin/'.$dir.'chat_data.php', '', true, true);
                     include_once get_template_directory() . '/plugin/'.$dir.'chat_data.php';  // 读取文件记录
                     global $post;
                     $pid = $post->ID;
@@ -65,7 +121,7 @@
                         $desc = isset($cached_post['chat_pid_'.$pid]['choices'][0]['message']) ? $cached_post['chat_pid_'.$pid]['choices'][0]['message']['content'] : $cached_post['chat_pid_'.$pid]['choices'][0]['text'];
                     }
                 }else{
-                    $desc = custom_excerpt();
+                    $desc = get_between_string('standby chatGPT responsing..', false, custom_excerpt(999, true));
                 }
                 break;
             default:
@@ -74,6 +130,31 @@
         }
         return preg_replace('/\n/',"", $desc); //trim($desc);
     }
+    
+    // 返回指定文章标签
+    function get_tag_list($pid=0, $max=3, $slice="、", $string=false){
+        $res_list = false;
+        if(!$pid) {
+            global $post;
+            $pid = $post->ID;
+        }
+        $tags_list = get_the_tags($pid);
+        if(!$tags_list) {
+            return $res_list;
+        }
+        $tag_count = count($tags_list);
+        for($i=0;$i<$max;$i++){
+            $tag_set = isset($tags_list[$i]) ? $tags_list[$i] : false; //array_key_exists($i,$tags_list)
+            if(!$tag_set){
+                return $res_list;
+            }
+            $tag_dots = $max<$tag_count ? ($i<$max-1 ? $slice : '') : ($i<$tag_count-1 ? $slice : '');
+            $tag_name = $tag_set->name;
+            $res_list .= $string ? $tag_name.$tag_dots : '<a href="'.get_bloginfo("url").'/tag/'.$tag_name.'" data-count="'.$tag_set->count.'" target="_blank" rel="tag">'.$tag_name.'</a>'.$tag_dots;
+        }
+        return $res_list;
+    }
+    
     // 自定义文章摘要
     function custom_excerpt($length=88, $var=false){
         // $res = wp_trim_words(get_the_excerpt(), $length);
@@ -125,7 +206,7 @@
             // 控制全站视频加速开关（默认替换$images_cdn为$upload_url）
             $content = in_array('article', $videos_cdn_arr) ? preg_replace('/(<video.*src=.*)('.preg_quote($upload_url,'/').')(.*>)/i', "\${1}$images_cdn\${3}", $content) : preg_replace('/(<video.*src=.*)('.preg_quote($images_cdn,'/').')(.*>)/i', "\${1}$upload_url\${3}", $content);  // video filter works fine. //strpos($videos_cdn_page, 'article')!==false
             $res = preg_replace('/(<img.+src=\"?.+)('.preg_quote($upload_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $content);
-            unset($images_cdn, $upload_url, $videos_cdn_arr);
+            // unset($images_cdn, $upload_url, $videos_cdn_arr);
             return $res;  //http://blog.iis7.com/article/53278.html
         }
         // 替换后台媒体库图片路径（目前无法自定义每个图像url）https://wordpress.stackexchange.com/questions/189704/is-it-possible-to-change-image-urls-by-hooks
@@ -134,6 +215,22 @@
         }
         add_filter( 'pre_option_upload_url_path', 'wpse_change_featured_img_url' );
     }
+    
+    // 过滤单页视频 cdn 路径
+    function replace_video_url($url=false, $key=false){
+        if($url){
+            global $images_cdn, $upload_url, $videos_cdn_arr, $cat, $cdn_switch;
+            if($cdn_switch){
+                $key = $key ? $key : current_slug();
+                $url = in_array($key, $videos_cdn_arr) ? str_replace($upload_url, $images_cdn, $url) : str_replace($images_cdn, $upload_url, $url);
+            }else{
+                $url = str_replace($images_cdn, $upload_url, $url);
+            };
+            // unset($images_cdn, $upload_url, $videos_cdn_arr, $cat, $cdn_switch);
+            return $url;
+        }
+    }
+    // unset($videos_cdn_arr);
     
     //兼容gallery获取post内容指定图片（视频海报）
     function get_postimg($index=0, $postid=false, $default=false) {
@@ -165,7 +262,7 @@
         if($cdn_switch){
             $res = str_replace($upload_url, $images_cdn, $result);
         }
-        unset($post, $images_cdn, $upload_url, $cdn_switch);
+        // unset($post, $images_cdn, $upload_url, $cdn_switch);
         return $res;
     }
     // 分类背景图/视频海报
@@ -178,24 +275,9 @@
         if($cdn_switch){
             $res = preg_replace('/(<img.+src=\"?.+)('.preg_quote($upload_url,'/').')(.+\.*\"?.+>)/i', "\${1}".$images_cdn."\${3}", $result);
         }
-        unset($images_cdn, $upload_url, $cdn_switch);
         return $res;
     }
-    
-    // 过滤单页视频 cdn 路径
-    function replace_video_url($url=false, $key=false){
-        if($url){
-            global $images_cdn, $upload_url, $videos_cdn_arr, $cat, $cdn_switch;
-            if($cdn_switch){
-                $key = $key ? $key : current_slug();
-                $url = in_array($key, $videos_cdn_arr) ? str_replace($upload_url, $images_cdn, $url) : str_replace($images_cdn, $upload_url, $url);
-            }else{
-                $url = str_replace($images_cdn, $upload_url, $url);
-            };
-            unset($images_cdn, $upload_url, $videos_cdn_arr, $cat, $cdn_switch);
-            return $url;
-        }
-    }
+    // unset($images_cdn, $upload_url, $cdn_switch);
     
     // 获取当前分类、页面、文章slug
     function current_slug($upper=false, $cats=false, $posts=false){
@@ -228,7 +310,7 @@
             default:
                 break;
         };
-        unset($cat, $post);
+        // unset($cat, $post);
         return $slug;
     }
     
@@ -269,8 +351,12 @@
         // if($parent_cid==0) return false;
         $query_cid =  $parent_cid==0||count($current_categories)>0 ? $current_cid : $parent_cid;
         $query_array = meta_query_categories($query_cid);
-        if($childs) unset($query_array['parent']);
-        if($exclude) $query_array['exclude'] = $current_cid;
+        if($childs) {
+            unset($query_array['parent']);
+        }
+        if($exclude) {
+            $query_array['exclude'] = $current_cid;
+        }
         return get_categories($query_array);
     }
     
@@ -283,7 +369,7 @@
         global $wpdb;
         $post_slug = '%' . $post_slug . '%';
         $pid = $wpdb->get_var($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_name LIKE %s", $post_slug));
-        unset($wpdb);
+        // unset($wpdb);
         return get_post($pid);
     }
     
@@ -301,7 +387,7 @@
         global $wpdb;
         $year = $year ? $year : gmdate('Y', time() + 3600*8); //date('Y');
         $res = $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts WHERE post_type = 'post' AND post_status = 'publish' AND YEAR(post_date) = $year ORDER BY post_date DESC LIMIT $limit OFFSET $offset "); // !!!LIMIT & OFFSET must type of NUMBER!!!
-        unset($wpdb);
+        // unset($wpdb);
         return $res;
     }
     // 返回年度文章id
@@ -309,7 +395,7 @@
         global $wpdb;
         $year = $year ? $year : gmdate('Y', time() + 3600*8);
         $res = $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts,wp_term_relationships WHERE ID = object_id AND post_type = 'post' AND post_status = 'publish' AND YEAR(post_date) = $year AND wp_term_relationships.term_taxonomy_id = $cid ORDER BY post_date DESC LIMIT $limit OFFSET $offset ");
-        unset($wpdb);
+        // unset($wpdb);
         return $res;
     }
     // 返回指定分类下文章id
@@ -320,7 +406,7 @@
         }else{
             $res = $wpdb->get_results("SELECT DISTINCT ID FROM wp_posts,wp_term_relationships WHERE ID = object_id AND post_type = 'post' AND post_status = 'publish' AND wp_term_relationships.term_taxonomy_id = $cid ORDER BY post_date DESC LIMIT $limit OFFSET $offset "); //(post_status = 'publish' OR post_status = 'private') //instance_type in ("m5.4xlarge","r5.large","r5.xlarge");
         }
-        unset($wpdb);
+        // unset($wpdb);
         return $res;
     }
     
@@ -328,28 +414,28 @@
     function wpdb_postmeta_query($data, $key, $val){
         global $wpdb;
         $res = $wpdb->get_var("SELECT $data FROM $wpdb->postmeta WHERE $key = '$val'");
-        unset($wpdb);
+        // unset($wpdb);
         return $res;
     }
     // 获取自定义页面所属分类term_id
     function get_page_cat_id($slug){
         global $wpdb;
         $res = $wpdb->get_var("SELECT term_id FROM $wpdb->terms WHERE slug = '$slug'");
-        unset($wpdb);
+        // unset($wpdb);
         return $res;
     }
     // 获取自定义页面内容
     function the_page_id($slug){
         global $wpdb;
         $res = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name = '$slug'");
-        unset($wpdb);
+        // unset($wpdb);
         return $res;
     }
     // 输出指定文章别名内容
     function the_page_content($slug){
         global $wpdb;
         $id = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name = '$slug'");
-        unset($wpdb);
+        // unset($wpdb);
         echo get_page($id)->post_content;// if(is_page()) echo get_page($id)->post_content;else echo '<p style="color:red">页面 '.current_slug().' 不存在，无法调用该页面内容。</p>';
     }
     
@@ -419,23 +505,6 @@
         }
         return $count.'';
     };
-    
-    // 返回指定文章标签
-    function get_tag_list($pid, $max=3, $dot="、"){
-        $tags_list = get_the_tags($pid);
-        if(!$tags_list) return;
-        $tas_list = '';
-        $tags_count = count($tags_list);
-        for($i=0;$i<$max;$i++){
-            $tag = array_key_exists($i,$tags_list) ? $tags_list[$i] : false;
-            $dots = $max<$tags_count ? ($i<$max-1 ? $dot : false) : ($i<$tags_count-1 ? $dot : false);
-            if($tag){
-                $tag_name = $tag->name;
-                $tas_list .= '<a href="'.get_bloginfo("url").'/tag/'.$tag_name.'" data-count="'.$tag->count.'" target="_blank" rel="tag">'.$tag_name.'</a>'.$dots;
-            }
-        }
-        return $tas_list;
-    }
     
     /*
      *--------------------------------------------------------------------------
@@ -593,10 +662,9 @@
     // 更新 sitemap 站点地图
     if(get_option('site_map_switcher')){
         function update_sitemap() {
-            require_once(get_template_directory() . '/inc/themes/sitemap.php');
+            load_theme_partial('/plugin/sitemap.php');
         }
         add_action('publish_post','update_sitemap');
-        // add_action('after_setup_theme', 'update_sitemap');
     }
     // RSS 输出分类  https://www.laobuluo.com/3863.html
     function rss_category($query) {
@@ -738,28 +806,65 @@
     }
     add_action('comment_post', 'wp_notify_guest_mail', 10, 2);
     
-    
-    
-    
     /*
      *---------------------------------------------------------------------------------------------------------------------------------
      * extend_setup
      *---------------------------------------------------------------------------------------------------------------------------------
     */
     
+    function get_between_string($begin, $end, $str){
+        if(is_numeric($begin)){
+            $b = $begin;
+        }elseif(is_string($begin)){
+            $b = mb_strpos($str, $begin) + mb_strlen($begin);
+        }
+        $strlen = mb_strlen($str);
+        if(is_numeric($end)){
+            $e = $end ? $end : $strlen;
+        }elseif(is_string($end)){
+            $e_pos = $end ? mb_strpos($str, $end) : $strlen;
+            $e = $e_pos ? $e_pos - $b : $strlen;
+        }
+        // return $b.','.$e;
+        return mb_substr($str, $b, $e);
+    }
     
-    
+    // 加载主题部件（注：函数内部 include 文件内函数无法被外部作用域识别）
+    function load_theme_partial($file='/', $method='include', $relative_path=true, $output_buffer=false){
+        try {
+            $file = $relative_path ? get_template_directory() . $file : $file;
+            if($output_buffer) {
+                ob_start();
+                include $file;
+                $content = ob_get_clean();
+                print_r($content);
+                return $content;
+            }
+            switch ($method) {
+                case 'require':
+                case 'require_once':
+                    require_once($file);
+                    break;
+                case 'include':
+                default:
+                    include_once($file);
+                    break;
+            }
+        } catch (Exception $err) {
+            throw new Error($err->getMessage());
+        }
+    }
     // custom_template_path for custom page templates(disable filter will NOT able to specific template in page)
     add_filter('theme_page_templates', 'custom_template_path');
     function custom_template_path($templates) {
-        // global $GET_TEMPLATE_DERECTORY, $CUSTOM_TEMPLATE_PATH;
-        $dir = get_template_directory() . '/inc/templates/pages';
+        global $template_path;
+        $dir = get_template_directory() . $template_path;
         $templates = scan_templates_dir($templates, $dir);
         return $templates;
     }
     function scan_templates_dir($templates, $dir=false) {
-        // global $GET_TEMPLATE_DERECTORY, $CUSTOM_TEMPLATE_PATH;
-        $dir = $dir ? $dir : get_template_directory() . '/inc/templates/pages';
+        global $template_path;
+        $dir = $dir ? $dir : get_template_directory() . $template_path;
         $files = scandir($dir);
         foreach ($files as $file) {
             if ($file === '.' || $file === '..') {
@@ -782,17 +887,16 @@
                 }
             }
         }
+        asort($templates); //sort($templates); ksort($templates);
         return $templates;
     }
     
     // 通过分类模板名称获取绑定的分类别名
     function get_template_bind_cat($template=false){
-        global $wpdb;
-        $rewrite_dir = '/inc/templates/pages/category/';
-        $template = $rewrite_dir . $template; //prefix for custom templates path
+        global $wpdb, $template_path;
+        $template = $template_path . '/category/' . $template; //prefix for custom templates path
         $template_term_id = $wpdb->get_var("SELECT term_id FROM $wpdb->termmeta WHERE meta_value = '$template'");
         // return !get_category($template_term_id)->errors ? get_category($template_term_id) : get_category(1);
-        unset($wpdb);
         return get_category($template_term_id);
     }
     // get bind category-template cat by specific binded-temp post_id
@@ -890,4 +994,6 @@
     //     // list($r, $g, $b) = array_map('hexdec', str_split($hex, 2));
     //     // return "$hex";
     // }
+    
+    // unset($template_path);
 ?>

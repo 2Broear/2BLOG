@@ -163,11 +163,11 @@
     /* ------------------------------------------------------------------------ *
      * 分类与页面同步更新通信
      * ------------------------------------------------------------------------ */
-    include_once(get_template_directory() . '/inc/theme_sync.php');
+    load_theme_partial('/inc/theme_sync.php');
     /* ------------------------------------------------------------------------ *
      * 自定义文章排序 column（编辑、快速、批量编辑文章页）
      * ------------------------------------------------------------------------ */
-    include_once(get_template_directory() . '/inc/wp_column.php');
+    load_theme_partial('/inc/wp_column.php');
     /* ------------------------------------------------------------------------ *
      * WordPress Custom Post Type
      * Register the Product post type with a Dashicon.
@@ -304,6 +304,7 @@
             register_setting( 'baw-settings-group', 'site_chatgpt_proxy' );
             register_setting( 'baw-settings-group', 'site_chatgpt_auth' );
             register_setting( 'baw-settings-group', 'site_chatgpt_dir' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_desc_sw' );
             // register_setting( 'baw-settings-group', 'site_chatgpt_require' );
         register_setting( 'baw-settings-group', 'site_cache_switcher' );
             register_setting( 'baw-settings-group', 'site_cache_includes' );
@@ -1185,19 +1186,19 @@
                                     <p class="description" id="site_leancloud_appid_label">
                                         <b>LBMS 是基于 leancloud 开发的数据储存容器 <a href="<?php echo bloginfo('url') ?>/lbms" target="_blank">前往 LBMS 管理页面</a></b><br />
                                     </p>
-                                    <p>需前往<a href="https://console.leancloud.cn/" target="_blank"> Leancloud 控制台 </a>设置对应 serverurl 并创建对应页面 slug 数据表（启用后将自动新建别名为“lbms”及“lbms-login”页面</del></p>
+                                    <p>需前往<a href="https://console.leancloud.cn/" target="_blank"> Leancloud 控制台 </a>设置对应 serverurl 并创建对应页面 slug 数据表（启用后将自动新建别名为“lbms”及“login”页面</del></p>
                                     <?php
                                         $request_page = new WP_REST_Request( 'POST', '/wp/v2/pages' );
                                         $init_pages = array(
                                             array(
                                                 'title' => 'LBMS管理后台', 
                                                 'slug' => 'lbms',
-                                                'template' => 'plugin/lbms.php'
+                                                'template' => 'inc/templates/pages/lbms.php'
                                             ),
                                             array(
                                                 'title' => 'LBMS登陆页面', 
                                                 'slug' => 'lbms-login',
-                                                'template' => 'plugin/lbms-login.php'
+                                                'template' => 'inc/templates/pages/lbms-login.php'
                                             ),
                                         );
                                         global $wpdb;
@@ -1262,10 +1263,8 @@
                                 // global $templates;
                                 $templates = wp_get_theme()->get_page_templates();
                                 if(count($templates)<=0){
-                                    $templates = scan_templates_dir($templates);  //, get_template_directory() . $CUSTOM_TEMPLATE_PATH
-                                    unset($CUSTOM_TEMPLATE_PATH);
+                                    $templates = scan_templates_dir($templates);
                                 }
-                                // print_r($templates);
                                 foreach ($templates as $temp => $index){
                                     if(strpos($index, 'BaaS')!==false){
                                         array_push($baasarray, array($index=>$temp));
@@ -2182,6 +2181,16 @@
                                             <script>const cached_posts=document.querySelector('.cached_post_list');cached_posts.onclick=(e)=>{e=e||window.event;let t=e.target||e.srcElement;if(!t)return;while(t!=cached_posts){if(t.nodeName.toUpperCase()==='LI'){const cached_pid=t.dataset.id,cached_title=t.title;if(confirm('确认删除（更新）：'+cached_title+' 摘要内容？')){return new Promise(function(resolve,reject){var ajax=new XMLHttpRequest();ajax.open('get',"<?php echo get_template_directory().'/plugin/'.get_option('site_chatgpt_dir').'/gpt.php?pid='; ?>"+cached_pid+"&del=1");ajax.onreadystatechange=function(){if(this.readyState!=4)return;if(this.status==200){resolve();t.remove();if(this.responseText==404) alert('此记录先前已被清除（可能刷新过快，尝试重新刷新）');}else{reject(this.status)}};ajax.withCredentials=true;ajax.send()}).catch(function(err){console.log(err)})}else{console.log(cached_pid+' canceled.')}break}else{t=t.parentNode}}}</script>
                                     <?php
                                         };
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 动态 SEO 页面描述</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_desc_sw';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">使用文章AI摘要填充 文章页面 description 描述（引入本地缓存文件过大可能影响性能</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">文章 AI 描述</b></label>';
                                     ?>
                                 </td>
                             </tr>

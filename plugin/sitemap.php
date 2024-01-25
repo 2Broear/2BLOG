@@ -1,5 +1,4 @@
 <?php
-    // if(get_option('site_map_switcher')){
         // equire_once($_SERVER['DOCUMENT_ROOT'].'/wp-load.php');  // DO NOT Load WordPress Core!!! Caused E_COMPILE_ERROR
         $sitemap_opts = get_option('site_map_includes','');
         $async_array = explode(',', $sitemap_opts);
@@ -93,8 +92,4 @@
         $content = ob_get_contents();
         ob_end_clean();
         file_put_contents(ABSPATH . '/sitemap.xml', $content);
-    // file_put_contents(TEMPLATEPATH . '/sitemap.xml', $content);
-    // }else{
-    //     echo '<h1>Sitemap Disabled in 2blog-settings!</h1>';
-    // }
 ?>

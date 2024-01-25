@@ -32,21 +32,29 @@
         // 定义id和secret
         $corpid = get_option('site_wpwx_id');
         $corpsecret = get_option('site_wpwx_secret');
-        include './access_token.php';  // 读取access_token
+        $dir = get_option('site_chatgpt_dir') ? get_option('site_chatgpt_dir').'/' : './';
+        $file = $dir . '/access_token.php';
+        if(!file_exists($file)) {
+            // 新建 token 文件
+            ob_start();
+            echo '<?php'.PHP_EOL.'$access_token = NULL;'.PHP_EOL.'?>';
+            $content = ob_get_contents();
+            ob_end_clean();
+            file_put_contents($file, $content);
+        }
+        include $file;  // 读取access_token
         // 判断是否过期或空值token
-        if (time() > $access_token['expires'] || $access_token['access_token']==NULL){
+        if (time() > $access_token['expires'] || !isset($access_token['access_token']) || $access_token['access_token']==NULL){
             $access_token = array();
             $access_token['access_token'] = getNewToken($corpid,$corpsecret);
             $access_token['expires']=time()+7000;
             // 将数组写入php文件
             $arr = '<?php'.PHP_EOL.'$access_token = '.var_export($access_token,true).';'.PHP_EOL.'?>';
-            $arrfile = fopen("./access_token.php","w");
+            $arrfile = fopen($file, "w");
             fwrite($arrfile,$arr);
             fclose($arrfile);
-            return $access_token['access_token'];  // 返回当前的access_token
-        }else{
-            return $access_token['access_token'];  // 如果没有过期就直接读取缓存文件
         }
+        return $access_token['access_token'];  // 返回当前的access_token
     }
     // 获取新的access_token
     function getNewToken($corpid,$corpsecret){

@@ -46,7 +46,7 @@
                     $async_array = explode(',', get_option('site_async_includes'));
                     $use_async = $async_sw ? in_array($weblog_slug, $async_array) : false;
                     $async_loads = $async_sw&&$use_async ? get_option("site_async_weblog") : 15;
-                    $baas = get_option('site_leancloud_switcher')&&in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')));  //use post as category is leancloud unset //&&strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false
+                    $baas = get_option('site_leancloud_switcher') && strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false; //in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')))
                     $log_single_sw = get_option('site_single_switcher');
                     if($log_single_sw){
                         $log_slug = get_cat_by_template('weblog','slug');

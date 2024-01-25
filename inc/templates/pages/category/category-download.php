@@ -101,7 +101,7 @@ function get_download_posts($cats, $order=1){
                 $preset = get_cat_by_template(str_replace('.php',"",substr($basename,9))); //get_template_bind_cat($basename)->slug;//'download';
                 $preslug = $preset->slug;
                 $output = '';
-                $baas = get_option('site_leancloud_switcher')&&in_array($basename, explode(',', get_option('site_leancloud_category'))); //&&strpos(get_option('site_leancloud_category'), $basename)!==false;
+                $baas = get_option('site_leancloud_switcher') && strpos(get_option('site_leancloud_category'), $basename)!==false; //in_array($basename, explode(',', get_option('site_leancloud_category')))
                 if(!$baas){
                     $cats = get_categories(meta_query_categories($preset->term_id, 'ASC', 'seo_order'));
                     $output_sw = false;

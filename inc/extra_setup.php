@@ -1,6 +1,6 @@
 <?php
     // Gutenberg editor
-    include_once(get_template_directory() . '/inc/wp_blocks.php');  // if(is_edit_page() || is_single()) 
+    load_theme_partial('/inc/wp_blocks.php');  // if(is_edit_page() || is_single()) 
     /*
      *--------------------------------------------------------------------------
      * API Plugin Setup.
@@ -109,7 +109,7 @@
                     break;
             }
         }
-        unset($lazysrc, $loadimg);
+        // unset($lazysrc, $loadimg);
         return $output;
     }
     
@@ -339,7 +339,7 @@
                     'current' => $current_page, //当前页数
                 ));
                 if($pages) echo '<div class="pageSwitcher">'.$pages.'</div>';
-                unset($post, $lazysrc, $loadimg, $wp_query);
+                // unset($post, $lazysrc, $loadimg, $wp_query);
             }else{
                 echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.$queryString.' </h1></div>';  //<b>'.current_slug(true).'</b> 
             }
@@ -605,7 +605,7 @@
                         global $post;
                         $post = get_page($page_for_posts_id);
                         setup_postdata($post);
-                        unset($post);
+                        // unset($post);
                         the_title();
                         rewind_posts();
                     }
@@ -675,15 +675,15 @@
     
     // 双数据页面类型（分类、页面）切换评论
     function dual_data_comments(){
-        if(is_category()){
-            if(get_option('site_third_comments')!='Valine'){
-                echo '<div class="main"><span><h2> 评论留言 </h2></span><p>分类页面无法调用 WP 评论，<b> 开启移除 CATEGORY 后 </b>请前往页面指定当前页面父级，<small>亦可前往后台启用第三方评论。</small></p></div>';
-            }else{
-                include_once(get_template_directory() . '/comments.php');
-            }
-        }else{
+        if(!is_category()){
             comments_template();
+            return;
         }
+        if(get_option('site_third_comments')=='Wordpress'){
+            echo '<div class="main"><span><h2> 评论留言 </h2></span><p>分类页面无法调用 WP 评论，<b> 开启移除 CATEGORY 后 </b>请前往页面指定当前页面父级，<small>亦可前往后台启用第三方评论。</small></p></div>';
+            return;
+        }
+        load_theme_partial('/comments.php');
     }
     
     // 评论企业微信应用通知
@@ -788,7 +788,7 @@
                 </div>
             </div>
     <?php
-            unset($lazysrc,  $post);
+            // unset($lazysrc,  $post);
         }
     }
     

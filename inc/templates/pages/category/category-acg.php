@@ -190,7 +190,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                     $async_loads = $async_sw&&$use_async ? get_option("site_async_acg", 14) : 999;
     		        $basename = basename(__FILE__);
                     $preset = get_cat_by_template(str_replace('.php',"",substr($basename,9)));
-                    $baas = get_option('site_leancloud_switcher')&&in_array($basename, explode(',', get_option('site_leancloud_category')));
+                    $baas = get_option('site_leancloud_switcher') && strpos(get_option('site_leancloud_category'), $basename)!==false; //in_array($basename, explode(',', get_option('site_leancloud_category')))
                     if(!$baas){
                         $cats = get_categories(meta_query_categories($preset->term_id, 'ASC', 'seo_order'));
                         // acg post stats
