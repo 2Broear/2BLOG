@@ -681,10 +681,14 @@ body.dark .empty_card{
     width: 42%;
     max-width: 300px;
     margin: 5% auto;
-    background: rgb(100 100 100 / 3%);
     border-radius: var(--radius);
-    border: 1px solid rgb(150 150 150 / 5%);
-    box-shadow: 0 1px 1px rgb(0 0 0 / 15%), 0 8px 0 -3px var(--preset-fa), 0 9px 1px -3px rgb(0 0 0 / 15%), 0 16px 0 -6px var(--preset-fa), 0 17px 2px -6px rgb(0 0 0 / 15%)
+    /*background: rgb(100 100 100 / 3%);*/
+    /*border: 1px solid rgb(150 150 150 / 5%);*/
+    /*box-shadow: 0 1px 1px rgb(0 0 0 / 15%), 0 8px 0 -3px var(--preset-fa), 0 9px 1px -3px rgb(0 0 0 / 15%), 0 16px 0 -6px var(--preset-fa), 0 17px 2px -6px rgb(0 0 0 / 15%)*/
+    border: 1px solid var(--mirror-end);
+    background: linear-gradient(-90deg, var(--mirror-start) 0, var(--mirror-end));
+    background: -webkit-linear-gradient(180deg, var(--mirror-start) 0, var(--mirror-end));
+    box-shadow: rgba(0,0,0,0.05) 0 0 20px;
 }
 .empty_card i:before{
     opacity: .5;
@@ -710,10 +714,11 @@ body.dark .empty_card{
     left: 50%;
     /*right: -15%;*/
     border-radius: 5px;
-    box-shadow: rgb(55 55 55 / 15%) 0 5px 5px;
-    border: 1px solid;
+    /*box-shadow: rgb(55 55 55 / 15%) 0 5px 5px;*/
+    border: 1px dashed;
     transform: translate(-50%,-50%);
     -webkit-transform: translate(-50%,-50%);
+    opacity: .5;
 }
 .empty_card h1{
     letter-spacing: 5px;
@@ -1480,6 +1485,7 @@ body.dark #tech_window,body.dark #tech-acg-inside_acg-allpart{color:var(--preset
 body.dark .Fresh-ImgBoxs span a{
     border: none!important;
 }
+body.dark .empty_card,
 body.dark .rcmd-boxes .info .inbox .inbox-more a,
 body.dark #acg_window-top,body.dark .newsBox-subText-Description,
 body.dark .weblog-tree-core-record:hover > .weblog-tree-core-r,
@@ -1569,8 +1575,9 @@ body.dark .wp_comments .vinfo span{
     padding: 15px 15px 0;
     border: 2px solid #fff!important;
     box-sizing: border-box;
-    /*background: linear-gradient(180deg, var(--mirror) 50%, #fff)!important;*/
-    box-shadow: rgba(0, 0, 0, 0.05) -5px 5px 15px;
+    background: linear-gradient(180deg, var(--mirror) 50%, #fff);
+    background: -webkit-linear-gradient(-90deg, var(--mirror) 50%, #fff);
+    box-shadow: rgba(0, 0, 0, 0.03) -10px 10px 15px;
 }
 .ibox img{
     border-radius: inherit;

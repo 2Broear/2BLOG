@@ -260,24 +260,6 @@
         }
     }
     
-    function fancyImages(imgs){
-        if(imgs.length<=0) return;
-        // var fragment = document.createDocumentFragment();
-        for(let i=0,imgsLen=imgs.length;i<imgsLen;i++){
-            let eachimg = imgs[i],
-                eachpar = eachimg.parentNode,
-                fancybox = document.createElement("a");
-            fancybox.setAttribute("data-fancybox","gallery");
-            fancybox.setAttribute("href", eachimg.dataset.src);
-            fancybox.setAttribute("aria-label", "gallery_images");
-            // eachimg.parentNode.insertBefore(fancybox, eachimg);
-            // eachimg.parentNode.appendChild(fancybox);
-            fancybox.appendChild(eachimg);
-            eachpar.insertBefore(fancybox, eachpar.firstChild);
-        }
-        // eachimg.appendChild(fragment);
-    }
-    
     function dynamicLoad(jsUrl,fn){
     	var _doc = document.getElementsByTagName('head')[0],
     		script = document.createElement('script');

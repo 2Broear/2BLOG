@@ -34,12 +34,8 @@
 <div class="content-all-windows">
 	<div class="win-nav-content">
 		<div class="win-content main">
-			<div class="notes notes_default" style="max-width: 100%;">
-                <?php 
-                    // print_r($wp_query->posts[0]->ID);
-                    the_posts_with_styles($string);
-                    // unset($wp_query);
-                ?>
+			<div class="notes notes_default" style="max-width: 100%;min-height: 360px;">
+                <?php the_posts_with_styles($string); ?>
 			</div>
 		</div>
 	</div>

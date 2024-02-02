@@ -277,7 +277,7 @@
     background: var(--preset-fa);
     border-radius: var(--radius);
     background: linear-gradient(0deg, var(--mirror) 0, #fff);
-    box-shadow: rgba(0,0,0,0.08) 0 0 18px;
+    box-shadow: rgba(0,0,0,0.05) 0px 20px 20px;
     border: 2px solid #fff;
 }
 .about_blocks ul{

@@ -33,8 +33,8 @@
 	    <?php 
             global $wp_query, $page_flag;
             $cid = check_request_param('cid');
+            $year = check_request_param('year'); //gmdate('Y', time() + 3600*8)
             if($cid){
-                $year = check_request_param('year'); //gmdate('Y', time() + 3600*8)
                 $post_per_page = get_option('posts_per_page'); //get_option('site_per_posts');
                 $real_current_page = max(1, get_query_var('paged'));
                 // print_r('before rewrite current_page: '.$real_current_page.' ,offset: '.($real_current_page-1) * $post_per_page);
@@ -47,14 +47,19 @@
                         'meta_value_num' => 'DESC',
                         'modified' => 'DESC',
                     ),
-                    'date_query' => array(
-                        array(
-                            'year' => $year,
-                        ),
-                    ),
                     'page' => $real_current_page,  // note: MUST specific $current_page
                     'offset' => ($real_current_page-1) * $post_per_page,  // update $current_page offset
                 );
+                if($year){
+                    $date_query = array(
+                        'date_query' => array(
+                            array(
+                                'year' => $year,
+                            ),
+                        )
+                    );
+                    $query_array = array_merge($query_array, $date_query);
+                }
                 // rewrite $wp_query
                 $wp_query = new WP_Query(array_filter($query_array));
             };
@@ -73,7 +78,8 @@
                     echo '正在浏览 <b> '.$res_num.' </b>篇<b> 全站内容.. </b>';
                 }
             }else{
-                echo '<b> '.$res_num.' </b>'.get_category($cid)->slug.' in<b> '.$year.' </b>';
+                $year = $year ? ' '.$year : 'bound.';
+                echo '<b> '.$res_num.' </b>'.get_category($cid)->slug.' in<b>'.$year.'</b>';
             }
         ?>
     </h5>
@@ -81,7 +87,7 @@
 <div class="content-all-windows">
 	<div class="win-nav-content">
 		<div class="win-content main">
-			<div class="notes notes_default" style="max-width: 100%;">
+			<div class="notes notes_default" style="max-width: 100%;min-height: 360px;">
                 <?php 
                     the_posts_with_styles($queryString);
                 ?>

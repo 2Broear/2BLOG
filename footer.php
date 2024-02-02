@@ -529,7 +529,7 @@
             }
     <?php
         };
-        if(get_option('site_async_switcher')){
+        if(get_option('site_async_switcher') && !is_single()){
     ?>
             function load_ajax_posts(t,type,limit,callback,action=false){
                 const type_acg = "acg",

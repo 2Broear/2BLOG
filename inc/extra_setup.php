@@ -21,7 +21,10 @@
         $err_msg->code = $code;
         $code===200 ? $err_msg->msg=$msg : $err_msg->err=$msg;
         $res = json_encode($err_msg);
-        if($var) return $res;else print_r($res);
+        if($var) {
+            return $res;
+        }
+        print_r($res);
     }
     function api_get_resultText($res_cls_obj, $decode=false){
         $formart = $decode ? json_decode($res_cls_obj) : $res_cls_obj;
@@ -55,7 +58,7 @@
         if($cdn_switch&&$cdn_api&&$cdn_auth){
             $stamp10x = time();
             $stamp16x = dechex($stamp10x);
-            $auth_url = $auth_url.'&sign='.md5($cdn_auth.$api_file.$stamp16x).'&t='.$stamp16x;
+            $auth_url = $auth_url.'&s='.md5($cdn_auth.$api_file.$stamp16x).'&t='.$stamp16x;
         }
         $res = $xhr ? $src_cdn.'/plugin/api.php?auth='.$api.'&exec='.$exe.'&pid='.$pid : $auth_url;
         // $res = $xhr ? $src_cdn.'/plugin/'.$authentication.$api_file.'?pid='.$pid : $auth_url; //||!$cdn_api
@@ -127,46 +130,44 @@
             $maximun_page = $wp_query -> max_num_pages;  // record $maximun_page ouside the loop
             // print_r($current_page.' / '.$maximun_page);
             $post_styles = get_option('site_search_style_switcher');
-            if($post_styles){
-        ?>
-            	<link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/news.css?v=2" />
-                <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/weblog.css" />
-                <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/acg.css" />
-        <?php
-            }
-        ?>
-        	<style>
-        	    .news-inside-content h2{overflow:hidden}
-        	    .win-content.main,
-        	    .news-inside-content .news-core_area p,
-        	    .empty_card{margin:0 auto;}
-        	    .news-inside-content .news-core_area p{padding-left:0}
-            	.win-content{width:100%;padding:0;display:initial}
-                .win-top h5:before{content:none}
-                .win-top h5{font-size:3rem;color:var(--preset-e)}
-                .win-top h5 span:before{content:'';display:inherit;width:88%;height:36%;background-color:var(--theme-color);position:absolute;left:15px;bottom:1px;z-index:-1}
-                .win-top h5 span{position:relative;background:inherit;color:white;font-weight:bolder;max-width: 10em;overflow: hidden;text-overflow: ellipsis;display: inline-block;vertical-align:middle}
-                .win-top h5 b{font-family:var(--font-ms);font-weight:bolder;color:var(--preset-f);/*padding:0 10px;vertical-align:text-top;*/}
-                .win-content article{max-width:88%;margin-top:auto}
-                .win-content article.news-window{padding:0;margin-bottom:25px;/*border:1px solid rgb(100 100 100 / 10%);*/}
-                .win-content article .info span{margin-left:10px}
-                .win-content article .info span#slider{margin:auto}
-        	    .news-window-img{max-width:16%}
-        	    .rcmd-boxes{width:19%;display:inline-block;vertical-align:middle}
-        	    .empty_card h1{max-width: 88%;overflow: hidden;text-overflow: ellipsis;display: block;margin: 25px auto;}
-        	    .rcmd-boxes .info .inbox{max-width:none;margin: 5px}
-        	    .main h2{font-weight: 600;font-size:1.25rem};
-                #core-info p{padding:0}
-                @media screen and (max-width:760px){
-                    .win-content article{
-                        width: 100%;
-                    }
-                    .rcmd-boxes{width:49%!important}
-                }
-                .main h2{margin-bottom: 0}
-        	</style>
-        <?php
             if(have_posts()) {
+                if($post_styles){
+            ?>
+                	<link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/news.css?v=2" />
+                    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/weblog.css" />
+                    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/acg.css" />
+                	<style>
+                	    .news-inside-content h2{overflow:hidden}
+                	    .win-content.main,
+                	    .news-inside-content .news-core_area p,
+                	    .empty_card{margin:15px auto auto;}
+                	    .news-inside-content .news-core_area p{padding-left:0}
+                    	.win-content{width:100%;padding:0;display:initial}
+                        .win-top h5:before{content:none}
+                        .win-top h5{font-size:3rem;color:var(--preset-e)}
+                        .win-top h5 span:before{content:'';display:inherit;width:88%;height:36%;background-color:var(--theme-color);position:absolute;left:15px;bottom:1px;z-index:-1}
+                        .win-top h5 span{position:relative;background:inherit;color:white;font-weight:bolder;max-width: 10em;overflow: hidden;text-overflow: ellipsis;display: inline-block;vertical-align:middle}
+                        .win-top h5 b{font-family:var(--font-ms);font-weight:bolder;color:var(--preset-f);/*padding:0 10px;vertical-align:text-top;*/}
+                        .win-content article{max-width:88%;margin-top:auto}
+                        .win-content article.news-window{padding:0;margin-bottom:25px;/*border:1px solid rgb(100 100 100 / 10%);*/}
+                        .win-content article .info span{margin-left:10px}
+                        .win-content article .info span#slider{margin:auto}
+                	    .news-window-img{max-width:16%}
+                	    .rcmd-boxes{width:19%;display:inline-block;vertical-align:middle}
+                	    .empty_card h1{max-width: 88%;overflow: hidden;text-overflow: ellipsis;display: block;margin: 25px auto;}
+                	    .rcmd-boxes .info .inbox{max-width:none;margin: 5px}
+                	    .main h2{font-weight: 600;font-size:1.25rem};
+                        #core-info p{padding:0}
+                        @media screen and (max-width:760px){
+                            .win-content article{
+                                width: 100%;
+                            }
+                            .rcmd-boxes{width:49%!important}
+                        }
+                        .main h2{margin-bottom: 0}
+                	</style>
+            <?php
+                }
                 while (have_posts()): the_post();
                     $postimg = get_postimg(0,$post->ID,true);
                     $lazyhold = "";
@@ -355,74 +356,97 @@
     */
     
     
-    
     /*****   页面缓存刷新   *****/
-    function site_clear_db_caches() {
-        // // 仅适用于不存在 wp_ajax_nopriv_my_ajax_action 请求验证的数据
-        // remove_action('wp_ajax_my_ajax_action', 'my_ajax_callback');
-        // remove_action('wp_ajax_nopriv_my_ajax_action', 'my_ajax_callback');
-        // // 未解决BUG：data-nonce验证数据[24h有效，根据用户会话单独生成验证数据]被db缓存导致其他xhr请求会话返回403
-        update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
-        // //清除（重建）ACG 缓存
-        // update_option('site_acg_stats_cache', '');
-        update_option('site_archive_count_cache', '');  //清除（重建）归档统计
-        update_option('site_archive_list_cache', '');  
-        update_option('site_acg_post_cache', '');
-    }
-    add_action('save_post', 'site_clear_db_caches'); 
-    add_action('delete_post', 'site_clear_db_caches');
-    //清除（重建）更新链接
-    function site_update_link_cache(){
-        update_option('site_link_list_cache', '');  //清除（重建）友情链接
-    }
-    add_action('add_link', 'site_update_link_cache');
-    add_action('edit_link', 'site_update_link_cache');
-    add_action('delete_link', 'site_update_link_cache');
-    //清除（重建）指定分类
-    function update_category_post_cache($pid, $temp_slug, $cache) {
-        $cat_temp = get_cat_by_template($temp_slug);
-        $categories = wp_get_post_categories($pid);
-        if (in_array($cat_temp->term_id, $categories)) update_option($cache, '');
-    }
-    function site_update_specific_caches($post_id) {
-        //清除（重建）更新下载
-        update_category_post_cache($post_id, 'download', 'site_download_list_cache');
-        //清除（重建）归档统计
-        update_category_post_cache($post_id, 'acg', 'site_archive_count_cache');
-    }
-    add_action('save_post', 'site_update_specific_caches');
-    add_action('delete_post', 'site_update_specific_caches');
     
-    /*--------------------------------------------------------------------------
-     * wp_schedule_event 定时任务
-     *--------------------------------------------------------------------------
-    */
-    function schedule_my_cronjob(){
-        if(!wp_next_scheduled('db_caches_cronjob_hook')){
-            // 设定定时作业执行时间（东八区时间）
-            $timestamp = strtotime('today 09:00am Asia/Shanghai'); // 设置每天上午执行一次定时作业
-            wp_schedule_event($timestamp, 'daily', 'db_caches_cronjob_hook'); 
+    if(get_option('site_cache_switcher')){
+        // function site_clear_db_caches() {
+        //     // // 仅适用于不存在 wp_ajax_nopriv_my_ajax_action 请求验证的数据
+        //     // remove_action('wp_ajax_my_ajax_action', 'my_ajax_callback');
+        //     // remove_action('wp_ajax_nopriv_my_ajax_action', 'my_ajax_callback');
+        //     // // 未解决BUG：data-nonce验证数据[24h有效，根据用户会话单独生成验证数据]被db缓存导致其他xhr请求会话返回403
+        //     update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
+        //     // //清除（重建）ACG 缓存
+        //     // update_option('site_acg_stats_cache', '');
+        //     update_option('site_archive_list_cache', '');  
+        //     update_option('site_acg_post_cache', '');
+        // }
+        // add_action('save_post', 'site_clear_db_caches'); 
+        // add_action('delete_post', 'site_clear_db_caches');
+        //清除（重建）更新链接
+        function site_update_link_cache(){
+            update_option('site_link_list_cache', '');  //清除（重建）友情链接
         }
+        add_action('add_link', 'site_update_link_cache');
+        add_action('edit_link', 'site_update_link_cache');
+        add_action('delete_link', 'site_update_link_cache');
+        //清除（重建）指定分类
+        function update_category_post_cache($post_id, $temp_slug, $page_cache) {
+            $temp_info = get_cat_by_template($temp_slug);
+            if(!$post_id){
+                global $post, $cat;
+                $post_id = $post->ID;
+            }
+            $cat = $cat ? $cat : get_the_category($post_id)->term_id; // $categories = wp_get_post_categories($post_id);
+            if(in_category($temp_info->slug, get_post($post_id)) || cat_is_ancestor_of($cat, $temp_info->term_id)){ //in_array($temp_info->term_id, $categories)
+                update_option($page_cache, '');
+            }
+        }
+        function site_update_specific_caches($post_id) {
+            //清除（重建）更新ACG
+            update_category_post_cache($post_id, 'acg', 'site_acg_post_cache');
+            //清除（重建）更新下载
+            update_category_post_cache($post_id, 'download', 'site_download_list_cache');
+            //（始终）清除（重建）归档数据
+            update_option('site_archive_count_cache', '');  //update_category_post_cache($post_id, 'archive', 'site_archive_count_cache');
+            update_option('site_archive_contributions_cache', '');  //update_category_post_cache($post_id, 'archive', 'site_archive_contributions_cache');
+            update_option('site_archive_list_cache', '');  //update_category_post_cache($post_id, 'archive', 'site_archive_list_cache');
+            $output_sw = false;
+            $temp_array = array(get_cat_by_template('news')->slug, get_cat_by_template('notes')->slug, get_cat_by_template('weblog')->slug, get_cat_by_template('acg')->slug);
+            $caches = get_option('site_cache_includes');
+            foreach ($temp_array as $temp_slug) {
+                $cache = 'site_recent_'.$temp_slug.'_cache';
+                $output_sw = in_array($temp_slug, explode(',', $caches));
+                if($output_sw) update_category_post_cache($post_id, $temp_slug, $cache);
+                // if($output_sw && in_category($temp_slug, get_post($post_id))) {
+                //     update_option($cache, '');
+                //     break;
+                // }
+            }
+        }
+        add_action('save_post', 'site_update_specific_caches');
+        add_action('delete_post', 'site_update_specific_caches');
+        
+        /*--------------------------------------------------------------------------
+         * wp_schedule_event 定时任务
+         *--------------------------------------------------------------------------
+        */
+        function schedule_my_cronjob(){
+            if(!wp_next_scheduled('db_caches_cronjob_hook')){
+                // 设定定时作业执行时间（东八区时间）
+                $timestamp = strtotime('today 09:00am Asia/Shanghai'); // 设置每天上午执行一次定时作业
+                wp_schedule_event($timestamp, 'daily', 'db_caches_cronjob_hook'); 
+            }
+        }
+        //定时清除（重建）缓存
+        function site_clear_timeout_caches(){
+            update_option('site_archive_count_cache', '');  //清除（重建）归档统计
+            update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
+            update_option('site_acg_stats_cache', ''); //定时清除（重建）ACG 缓存
+            update_option('site_rank_list_cache', ''); //定时清除（重建）排行缓存
+        }
+        add_action('wp', 'schedule_my_cronjob');
+        add_action('db_caches_cronjob_hook', 'site_clear_timeout_caches'); //定时更新 db caches
+        // function schedule_acg_cronjob(){
+        //     if(!wp_next_scheduled('acg_caches_cronjob_hook')){
+        //         // 晚上更新一次ACG
+        //         $timestamp = strtotime('today 17:30am Asia/Shanghai'); // 设置每天上午执行一次定时作业
+        //         wp_schedule_event($timestamp, 'daily', 'acg_caches_cronjob_hook'); 
+        //     }
+        // }
+        // add_action('wp', 'schedule_acg_cronjob');
+        // add_action('acg_caches_cronjob_hook', 'site_clear_db_caches'); //定时更新 db caches
+        // 自定义定时作业回调函数 //https://www.shephe.com/2023/07/no-pluglin-wordpress-archive-page/
     }
-    //定时清除（重建）缓存
-    function site_clear_timeout_caches(){
-        update_option('site_archive_count_cache', '');  //清除（重建）归档统计
-        update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
-        update_option('site_acg_stats_cache', ''); //定时清除（重建）ACG 缓存
-        update_option('site_rank_list_cache', ''); //定时清除（重建）排行缓存
-    }
-    add_action('wp', 'schedule_my_cronjob');
-    add_action('db_caches_cronjob_hook', 'site_clear_timeout_caches'); //定时更新 db caches
-    // function schedule_acg_cronjob(){
-    //     if(!wp_next_scheduled('acg_caches_cronjob_hook')){
-    //         // 晚上更新一次ACG
-    //         $timestamp = strtotime('today 17:30am Asia/Shanghai'); // 设置每天上午执行一次定时作业
-    //         wp_schedule_event($timestamp, 'daily', 'acg_caches_cronjob_hook'); 
-    //     }
-    // }
-    // add_action('wp', 'schedule_acg_cronjob');
-    // add_action('acg_caches_cronjob_hook', 'site_clear_db_caches'); //定时更新 db caches
-    // 自定义定时作业回调函数 //https://www.shephe.com/2023/07/no-pluglin-wordpress-archive-page/
     
     /*
      *--------------------------------------------------------------------------
@@ -653,7 +677,9 @@
             $chatgpt_array_count = count($chatgpt_array);
             if($chatgpt_array_count>=1){
                 for($i=0;$i<$chatgpt_array_count;$i++){
-                    if(in_category($chatgpt_array[$i], $post)) $chatgpt_cat=true;
+                    if(in_category($chatgpt_array[$i], $post)) {
+                        $chatgpt_cat = true;
+                    }
                 }
             }
         }
@@ -663,7 +689,7 @@
     function article_ai_abstract($content) {
         global $src_cdn; //custom_cdn_src(0, true)
         $chatgpt_cat = in_chatgpt_cat();
-        return $chatgpt_cat&&is_single() ? '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span>chatGPT</span></p><p class="response load">standby chatGPT responsing..</p></blockquote><script type="module">const responser = document.querySelector(".chatGPT .response");try {import("'.$src_cdn.'/js/module.js").then((module)=>send_ajax_request("get", "'.get_api_refrence("gpt").'", false, (res)=>module.words_typer(responser, res, 25)));}catch(e){console.warn("dom responser not found, check backend.",e)}</script>'.$content : $content; //get_api_refrence("gpt", true)
+        return $chatgpt_cat&&is_single() ? '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span>chatGPT</span></p><p class="response load">standby chatGPT responsing..</p></blockquote><script type="module">const responser = document.querySelector(".chatGPT .response");try {import("'.$src_cdn.'/js/module.js").then((module)=>send_ajax_request("get", "'.get_api_refrence("gpt").'", false, (res)=>{let _json=JSON.parse(res),_string="No response inbound.";if(_json.choices){_string=_json.choices[0].message.content;}else if(_json.text){_string=_json.text;}else{_string=_json.error.message;}module.words_typer(responser, _string, 25);console.log(_json.error)}));}catch(e){console.warn("dom responser not found, check backend.",e)}</script>'.$content : $content; //get_api_refrence("gpt", true)
     }
     add_filter( 'the_content', 'article_ai_abstract', 10);
     

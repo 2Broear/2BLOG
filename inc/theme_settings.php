@@ -457,6 +457,19 @@
         register_setting( 'baw-settings-group', 'site_contact_twitter' );
         register_setting( 'baw-settings-group', 'site_contact_steam' );
     }
+    $templates_info = array(
+        'news' => get_cat_by_template('news'),
+        'notes' => get_cat_by_template('notes'),
+        'weblog' => get_cat_by_template('weblog'),
+        'acg' => get_cat_by_template('acg'),
+        'guestbook' => get_cat_by_template('guestbook'),
+        'about' => get_cat_by_template('about'),
+        '2bfriends' => get_cat_by_template('2bfriends'),
+        'download' => get_cat_by_template('download'),
+        'archive' => get_cat_by_template('archive'),
+        'ranks' => get_cat_by_template('ranks'),
+        'privacy' => get_cat_by_template('privacy'),
+    );
     function category_options($value){
         // global $cats;
         $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
@@ -500,9 +513,9 @@
         if(!$opt) return;
         return get_option($opt) ? "checked" : "closed";
     }
-    $article_opts = array(get_cat_by_template('news'), get_cat_by_template('notes'), get_cat_by_template('weblog'));
     function output_article_opts($opt, $value){
-        global $article_opts;
+        global $templates_info;
+        $article_opts = array($templates_info['news'], $templates_info['notes'], $templates_info['weblog']);
         $pre_array = explode(',',trim($value));  // NO "," Array
         // $pre_array_count = count($pre_array);
         foreach ($article_opts as $option){
@@ -513,7 +526,7 @@
         }
     }
     function add_options_submenu() {
-        // global get_template_directory(), $cats;
+        global $templates_info;
         $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
         $img_cdn = custom_cdn_src('img', true);
         $cats_haschild = array();
@@ -529,7 +542,7 @@
             :root{
                 --panel-theme: <?php echo get_option('site_theme','#eb6844'); ?>;
             }
-        p.description code{font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(90deg,rgba(255, 255, 255, 0) 25%, currentColor 255%)}label:hover input[type=checkbox]{box-shadow:0 0 0 1px #2271b1}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:233px;height:18px;cursor:pointer;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(180deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(-90deg, #f5f7f9 0, #fff);}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text-disabled{display:none;}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+        p.description code{font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:550px;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(90deg,rgba(255, 255, 255, 0) 25%, currentColor 255%)}label:hover input[type=checkbox]{box-shadow:0 0 0 1px #2271b1}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:233px;height:18px;cursor:pointer;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(180deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(-90deg, #f5f7f9 0, #fff);}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text-disabled{display:none;}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em{margin:auto auto 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{background:brown;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;color: white;font-size: smaller;text-align: center;background: rgb(0 0 0 / 52%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius:5px;position:relative;overflow:hidden;}
             .formtable{display:none;}.formtable.show{display:block;}.wrap.fixed p.submit:first-child{right:-80px}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.switchTab{background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);padding:10px 0;top:32px;position:sticky;z-index: 9;box-sizing:border-box;/*transition: top .35s ease;top: -32px;padding: 0;*/box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:var(--panel-theme);background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:0;border-radius:25px}.switchTab li b{font-size:initial;display:block;text-shadow:1px 1px 0 white;font-style:normal}
@@ -542,9 +555,10 @@
             #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:0px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent!important;border-bottom-color:transparent!important;border-radius:50%;}
             @keyframes rotateloop{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg);}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg);}
             }
-            .form-table .checkbox{display:inline-block;padding:5px 5px 5px 15px;border-radius:5px}
+            .form-table .checkbox{display:inline-block;border-radius:5px;padding:5px 0 5px 15px;}
             .form-table .checkbox input[type=checkbox]{margin:auto}
             .form-table .checkbox label{display:inline-block;padding:1px 15px 0 5px;font-weight:bold;font-size:smaller}
+            .form-table .checkbox label:last-of-type{padding-right:5px;}
             #wpcontent{padding:0}
             .wrap.settings hr,.wrap.settings{margin:0}
             ul.cached_post_list{margin:15px auto auto;padding:0;position:relative}
@@ -577,7 +591,7 @@
                 transform: translate(0%, 100%);
                 display: none;
             }
-            ul.cached_post_list li{list-style-type:none;display:inline-block;margin-left:5px;margin-bottom:2px;border:1px solid #ccc;padding:5px 10px;border-radius:8px;cursor:pointer;text-align:center;/*white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:38px;position:relative*/}
+            ul.cached_post_list li{list-style-type:none;display:inline-block;margin-left:5px;margin-bottom:2px;border:1px solid #ddd;padding:5px 10px;border-radius:8px;cursor:pointer;text-align:center;/*white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:38px;position:relative*/}
         </style>
         <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>THEME</b><p style="letter-spacing:normal;margin-bottom:auto;"> 主题部分页面提供 Leancloud 第三方 bass 数据储存服务 </p></h1>
         <!--<hr/>-->
@@ -1117,7 +1131,7 @@
                                         $opt = 'site_cdn_vdo_includes';  //unique str
                                         $value = get_option($opt);
                                         // $cats = get_categories(meta_query_categories(0,'ASC','seo_order'));
-                                        $options = array('Article','Sidebar',get_cat_by_template('about'),get_cat_by_template('acg'),get_cat_by_template('guestbook'),get_cat_by_template('privacy'));
+                                        $options = array('Article', 'Sidebar', $templates_info['about'], $templates_info['acg'], $templates_info['guestbook'], $templates_info['privacy']);
                                         echo '<p class="description" id="site_map_includes_label">开启后使用上方👆图片加速域名👆加速站内指定位置视频，常用于超小型文件（Article：文章视频，Sidebar：侧栏视频</p><div class="checkbox">';
                                         $pre_array = explode(',',trim($value));  // NO "," Array
                                         $pre_array_count = count($pre_array);
@@ -1625,7 +1639,7 @@
                                     <?php
                                         $opt = 'site_single_includes';  //unique str
                                         $value = get_option($opt);
-                                        $async_opts = array(get_cat_by_template('weblog'), get_cat_by_template('acg'), get_cat_by_template('download'));
+                                        $async_opts = array($templates_info['weblog'], $templates_info['acg'], $templates_info['download']);
                                         if(!$value){
                                             $preset_str = $async_opts[0]->slug.','.$async_opts[1]->slug.','.$async_opts[2]->slug.',';
                                             update_option($opt, $preset_str);
@@ -1671,8 +1685,8 @@
                                         $opt = 'site_indexes_includes';  //unique str
                                         $value = get_option($opt);
                                         echo '<p class="description" id="">选定分类下文章模版将开启目录索引，使用逗号“ , ”分隔（默认 notes 类型</p><div class="checkbox">';
-                                        $news_cat =  get_cat_by_template('news');
-                                        $notes_cat =  get_cat_by_template('notes');
+                                        $news_cat =  $templates_info['news'];
+                                        $notes_cat =  $templates_info['notes'];
                                         $arrobj = array();
                                         if($notes_cat && $news_cat){
                                             array_push($arrobj, array('name' => $notes_cat->name, 'slug' => $notes_cat->slug));
@@ -1938,9 +1952,10 @@
                                     <?php
                                         $opt = 'site_cache_includes';  //unique str
                                         $value = get_option($opt);
-                                        $async_opts = array(get_cat_by_template('archive'), get_cat_by_template('acg'), get_cat_by_template('2bfriends'), get_cat_by_template('download'), get_cat_by_template('ranks'));
+                                        $async_opts = array($templates_info['news'], $templates_info['notes'], $templates_info['weblog'], $templates_info['acg'], $templates_info['2bfriends'], $templates_info['download'], $templates_info['archive'], $templates_info['ranks']);
+                                        // print_r($async_opts);
                                         if(!$value){
-                                            $preset_str = $async_opts[0]->slug.','.$async_opts[1]->slug.','.$async_opts[2]->slug.',';
+                                            $preset_str = $async_opts[3]->slug.','.$async_opts[5]->slug.','.$async_opts[6]->slug.',';
                                             update_option($opt, $preset_str);
                                             $value = $preset_str;
                                         }
@@ -1980,7 +1995,7 @@
                                     <?php
                                         $opt = 'site_async_includes';  //unique str
                                         $value = get_option($opt);
-                                        $async_opts = array(get_cat_by_template('archive'), get_cat_by_template('acg'),  get_cat_by_template('weblog'));
+                                        $async_opts = array($templates_info['archive'], $templates_info['acg'],  $templates_info['weblog']);
                                         if(!$value){
                                             $preset_str = $async_opts[0]->slug.','.$async_opts[1]->slug.',';
                                             update_option($opt, $preset_str);
@@ -2140,7 +2155,7 @@
                                         $opt = 'site_chatgpt_includes';
                                         $value = get_option($opt);
                                         if(!$value){
-                                            $preset_str = $article_opts[2]->term_id.',';
+                                            $preset_str = $templates_info['weblog']->term_id.',';
                                             update_option($opt, $preset_str );
                                             $value = $preset_str;
                                         }
@@ -2178,7 +2193,7 @@
                                             }
                                             echo '</ul>';
                                     ?>
-                                            <script>const cached_posts=document.querySelector('.cached_post_list');cached_posts.onclick=(e)=>{e=e||window.event;let t=e.target||e.srcElement;if(!t)return;while(t!=cached_posts){if(t.nodeName.toUpperCase()==='LI'){const cached_pid=t.dataset.id,cached_title=t.title;if(confirm('确认删除（更新）：'+cached_title+' 摘要内容？')){return new Promise(function(resolve,reject){var ajax=new XMLHttpRequest();ajax.open('get',"<?php echo get_template_directory().'/plugin/'.get_option('site_chatgpt_dir').'/gpt.php?pid='; ?>"+cached_pid+"&del=1");ajax.onreadystatechange=function(){if(this.readyState!=4)return;if(this.status==200){resolve();t.remove();if(this.responseText==404) alert('此记录先前已被清除（可能刷新过快，尝试重新刷新）');}else{reject(this.status)}};ajax.withCredentials=true;ajax.send()}).catch(function(err){console.log(err)})}else{console.log(cached_pid+' canceled.')}break}else{t=t.parentNode}}}</script>
+                                            <script>const cached_posts=document.querySelector('.cached_post_list');cached_posts.onclick=(e)=>{e=e||window.event;let t=e.target||e.srcElement;if(!t)return;while(t!=cached_posts){if(t.nodeName.toUpperCase()==='LI'){const cached_pid=t.dataset.id,cached_title=t.title;if(confirm('确认删除（更新）：'+cached_title+' 摘要内容？')){return new Promise(function(resolve,reject){var ajax=new XMLHttpRequest();ajax.open('get',"<?php echo get_stylesheet_directory_uri().'/plugin/'.get_option('site_chatgpt_dir').'/gpt.php?pid='; ?>"+cached_pid+"&del=1");ajax.onreadystatechange=function(){if(this.readyState!=4)return;if(this.status==200){resolve();t.remove();if(this.responseText==404) alert('此记录先前已被清除（可能刷新过快，尝试重新刷新）');}else{reject(this.status)}};ajax.withCredentials=true;ajax.send()}).catch(function(err){console.log(err)})}else{console.log(cached_pid+' canceled.')}break}else{t=t.parentNode}}}</script>
                                     <?php
                                         };
                                     ?>
@@ -2190,7 +2205,7 @@
                                     <?php
                                         $opt = 'site_chatgpt_desc_sw';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">使用文章AI摘要填充 文章页面 description 描述（引入本地缓存文件过大可能影响性能</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">文章 AI 描述</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">使用文章AI摘要填充 文章页面 description 描述（引入本地缓存文件过大可能影响性能</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">文章 AI SEO 描述</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -2465,7 +2480,7 @@
                                         $opt = 'site_mostview_cat';
                                         $value = get_option($opt);
                                         if(!$value){
-                                            $preset_str = $article_opts[0]->term_id.','.$article_opts[1]->term_id.',';
+                                            $preset_str = $templates_info['news']->term_id.','.$templates_info['notes']->term_id.',';
                                             update_option($opt, $preset_str );
                                             $value = $preset_str;
                                         }
@@ -2490,7 +2505,7 @@
                                 $opt = 'site_bottom_recent_cat';
                                 $value = get_option($opt);
                                 if(!$value){
-                                    $preset_str = $article_opts[0]->term_id.',';
+                                    $preset_str = $templates_info['news']->term_id.',';
                                     update_option($opt, $preset_str );
                                     $value = $preset_str;
                                 }
@@ -2593,7 +2608,7 @@
                             <?php
                                 $opt = 'site_bottom_nav';  //unique str
                                 $value = get_option($opt);
-                                $options = array(get_cat_by_template('archive'), get_cat_by_template('privacy')); //array('privacy','archives');
+                                $options = array($templates_info['archive'], $templates_info['privacy']); //array('privacy','archives');
                                 if(!$value){
                                     $preset_str = $options[0]->slug.','.$options[1]->slug.',';
                                     update_option($opt, $preset_str );

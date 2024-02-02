@@ -16,28 +16,35 @@
             </a>
             <a id="qq" class="disabled" title="分享QQ" href="https://connect.qq.com/widget/shareqq/index.html?<?php echo $para_str = 'url='.get_permalink().'&p='.custom_excerpt(50, true).'&title='.get_the_title().'&summary='.custom_excerpt(100, true).'&pics='.get_postimg(); ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
             <a id="qzone" title="分享空间（QZone）" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?<?php echo $para_str; ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
-            <a id="Poster" title="图文海报（Poster）"><span id="recall" onclick="ajaxPoster(this)"><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
+            <a id="Poster" title="图文海报（Poster）"><span id="recall" onclick="getPoster(this)"><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
             <!--<img decoding="async" loading="lazy" data-src="<?php echo $img_cdn; ?>/images/bilibili_wink.webp" alt="bilibili_wink" style="margin: 0 auto;">-->
         </div>
-        <!--<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/jquery-1.9.1.min.js"></script>-->
         <script>
             function poster_sw(){
                 const poster = document.querySelector(".poster");
                 poster.classList && poster.classList.contains('active') ? poster.classList.remove('active') : poster.classList.add('active');
             };
-            function ajaxPoster(t){
+            function getPoster(t){
                 if(document.querySelector("#capture")){
                     poster_sw();
                     return;
                 }
                 t.parentNode.classList.add("disabled");  // incase multi click (first generating only)
-                send_ajax_request("get", "<?php echo $src_cdn.'/plugin/html2canvas.php?pid='.$post_ID;//get_api_refrence('html2canvas',true);//echo $src_cdn.'/plugin/api.php?auth=html2canvas&pid='.$post_ID.'&exec=1'; ?>", false, function(res){
-                    try{
+                send_ajax_request("GET", "<?php echo $src_cdn.'/plugin/html2canvas.php'; ?>", 
+                    parse_ajax_parameter({
+                        "title": "<?php the_title(); ?>",
+                        "content": "<?php custom_excerpt(50); ?>",
+                        "tags": '<?php echo get_the_tag_list('',' ',''); ?>',
+                        "author": "<?php echo get_option('site_nick'); ?>",
+                        "date": "<?php the_time('d-m-Y'); ?>",
+                        "image": "<?php echo get_postimg(0,$pid,true).'?fixed_cors_str'; ?>",
+                        "loading": "<?php custom_cdn_src('img'); ?>/images/loading_3_color_tp.png",
+                    }, true), function(res){
                         if(!res) throw new Error('signature error.'); //if(sign_.err) return;
     					// generate poster QRCode (async)
     					return new Promise(function(resolve,reject){
                             let _tp = t.parentNode,
-                                div = document.createElement('DIV');;
+                                div = document.createElement('DIV');
                             // _tp.classList.add("disabled");  // incase multi click (first generating only)
         					div.innerHTML += res;  //在valine环境直接追加到body会导致点赞元素层级错误（重绘性能问题）
         					document.body.appendChild(div);
@@ -51,10 +58,9 @@
                         			colorLight : "#ffffff",
                         			correctLevel : QRCode.CorrectLevel.L
                         		});
-                    	        qrcode ? resolve([_tp,"qrcode loaded."]) : reject('qrcode loading err.');
+                    	        qrcode ? resolve(_tp) : reject('qrcode loading err.');
                     	    });
     					}).then(function(res){
-    					    console.log(res[1]);
                     	    asyncLoad('<?php echo $src_cdn; ?>/js/html2canvas/html2canvas.min.js', function(){
                     	       // console.log('now loading html2canvas..')
                         		html2canvas(document.querySelector('#capture'),{
@@ -66,22 +72,20 @@
                         	    }).then(canvas => {
                         	        const newImg = document.createElement("img");
                                     canvas.toBlob(function(blob){
-                            			//let baseUrl = URL.createObjectURL(blob),
-                            			//	imgDom = '<img src="'+baseUrl+'" />';
                             			newImg.src = URL.createObjectURL(blob);
                             			document.getElementById('poster').appendChild(newImg); //innerHTML += imgDom;
                                     },"image/png",1);
-                                    res[0].classList.remove("disabled");  // remove click restrict
+                                    res.classList.remove("disabled");  // remove click restrict
     				                console.log('html2canvas done.');
                         		});
                     	    });
     					}).catch(function(err){
     					    console.log(err);
     					});
-                    }catch(err){
-                        console.log(err)
+                    }, function(err){
+                        t.innerText = err+' occured';
                     }
-                });
+                );
             }
         </script>
 <?php

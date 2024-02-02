@@ -147,6 +147,9 @@ figure.wp-block-table{margin:25px auto}
 .hljs-ln-code {
 	padding-left: 10px;
 }
+.hljs ul li{
+    white-space: break-spaces;
+}
 .content-all-windows, .bg h1{
 	font-family: var(--font-serif);
 	max-width: 82%;
@@ -402,6 +405,7 @@ article .infos span#slider {
 	border-collapse: collapse;
 	width: 100%;
 	margin-bottom: 10px;
+	text-align: center;
 }
 .win-content article table td{
     border: 1px solid;

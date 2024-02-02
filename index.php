@@ -1,90 +1,52 @@
 <!DOCTYPE html>
 <?php
-    // print_r(wp_get_theme()->get_page_templates());
-    // leancloud avos（标准li结构）查询
-    function avos_posts_query($cid=0, $els=null){
-        $slug = get_category($cid)->slug;
-?>
-        <script type="text/javascript">
-            new AV.Query("<?php echo $slug; ?>").addDescending("createdAt").limit(<?php echo get_option('site_per_posts', get_option('posts_per_page')); ?>).find().then(result=>{
-                for (let i=0,resLen=result.length; i<resLen;i++) {
-                    let res = result[i],
-                        title = res.attributes.title,
-                        content = res.attributes.content.replace(/</g,"&lt;").replace(/>/g,"&gt;");
-                    document.querySelector("<?php echo $els ?>").innerHTML += `<li title='${content}'><a href="/<?php echo $slug ?>#${res.id}" target="_self" rel="nofollow">${title}</a></i>`;
-                };
-            })
-        </script>
-<?php
-    }
-    // 自定义标签云
-    function the_tag_clouds($html_tag="li"){
-        $num = get_option('site_tagcloud_num');
-        $tags = get_tags(array(
-            'taxonomy' => 'post_tag',
-            'orderby' => 'count', //name
-            'hide_empty' => true // for development,
-            // 'number' => $max_show
-        ));
-        $tag_count = count($tags);
-        $max_show = $tag_count<=$num ? $tag_count : $num;
-        $min_font = 10;
-        $max_font = get_option('site_tagcloud_max');
-        shuffle($tags);  // random tags
-        if(get_option('site_tagcloud_switcher') && $tag_count>=1){
-            global $bold_font;
-            for($i=0;$i<$max_show;$i++){
-                $tag = $tags[$i];
-                $rand_font = mt_rand($min_font, $max_font);
-                if($rand_font>=$max_font/1.25){
-                    $rand_opt = mt_rand(5,10);  // highlight big_font
-                    $bold_font = $rand_opt>9 || $rand_font==$max_font ? 'bold' : 'normal';  // max bold_font
-                    $color_font = $rand_opt==10 && $rand_font==$max_font ? 'color:var(--theme-color)' : '';
-                }else{
-                    $rand_opt = mt_rand(2,10);
-                    $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'color:var(--theme-color)' : '';
-                }
-                $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
-                echo '<'.$html_tag.' data-count="'.$tag->count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';'.$color_font.'">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
-            }
-            unset($bold_font);
-        }else{
-            echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
-        }
-    }
     // wp自定义（含置顶无分页）查询函数
-    function recent_posts_query($cid=0, $specific_link=false, $detail=false, $limit=null, $random=false){
-        global $post;
-        $orderby = $random ? 'rand' : array(
-            'date' => 'DESC',
-            'meta_value_num' => 'DESC',
-            'modified' => 'DESC',
-        );
-        $acg_single_sw = get_option('site_single_switcher');
-        if($acg_single_sw){
-            $includes = get_option('site_single_includes');
-            $acg_slug = get_cat_by_template('acg','slug');
-            $acg_single_sw = in_array($acg_slug, explode(',', $includes));
+    function the_recent_posts($cid=0, $specific_link=false, $detail=false, $limit=null, $random=false){
+        // cache db only if not-single sub-page
+        $output = '';
+        $output_sw = false;
+        if(get_option('site_cache_switcher')){
+            $temp_slug = get_category($cid)->slug;
+            $cache = 'site_recent_'.$temp_slug.'_cache';
+            $caches = get_option('site_cache_includes');
+            $output_sw = in_array($temp_slug, explode(',', $caches));
+            $output = $output_sw ? get_option($cache) : '';
         }
-        $limit = $limit ? $limit : get_option('posts_per_page');
-        $query_array = $cid ? array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => $limit, 'orderby' => $orderby) : array('cat' => $cid, 'posts_per_page' => $limit, 'order' => 'DESC', 'orderby' => $orderby);
-        $left_query = new WP_Query(array_filter($query_array));
-        while ($left_query->have_posts()):
-            $left_query->the_post();
-            $topset = get_post_meta($post->ID, "post_orderby", true)>1 ? 'topset' : false;
-            $title = $detail ? trim(get_the_title()).' -（'.get_post_meta($post->ID, "post_feeling", true).'）<sup>'.$post->post_date.'</sup>' : trim(get_the_title());
-            // print_r(get_category($cid)->parent);
-            $cid = !get_category($cid)->errors ? $cid : 1; //php8
-            $par_cid = get_category($cid)->parent;
-            $par_slug = $par_cid!=0&&get_category($par_cid)->slug!='/' ? get_category($par_cid)->slug : get_category($cid)->slug;
-            $post_cat = get_the_category($post->ID);
-            $loc_id = $par_slug==get_cat_by_template('acg','slug') ? ($post_cat[0]->parent!=0 ? $post_cat[0]->slug : $post_cat[1]->slug) : 'pid_'.get_the_ID();
-            $pre_link = $specific_link || !$acg_single_sw ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="'.get_category_link($cid).'#'.$loc_id.'" target="_self" rel="nofollow">';
-            echo '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
-        endwhile;
-        wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
-        unset($post);
-    };
+        if(!$output || !$output_sw){
+            // $output = get_recent_posts($cid, $specific_link, $detail, $limit, $random);
+            global $post;
+            $acg_slug = get_cat_by_template('acg','slug');
+            $acg_single_sw = get_option('site_single_switcher');
+            if($acg_single_sw){
+                $includes = get_option('site_single_includes');
+                $acg_single_sw = in_array($acg_slug, explode(',', $includes));
+            }
+            $orderby = $random ? 'rand' : array(
+                'date' => 'DESC',
+                'meta_value_num' => 'DESC',
+                'modified' => 'DESC',
+            );
+            $limit = $limit ? $limit : get_option('posts_per_page');
+            $query_array = $cid ? array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => $limit, 'orderby' => $orderby) : array('cat' => $cid, 'posts_per_page' => $limit, 'order' => 'DESC', 'orderby' => $orderby);
+            $left_query = new WP_Query(array_filter($query_array));
+            while ($left_query->have_posts()):
+                $left_query->the_post();
+                $topset = get_post_meta($post->ID, "post_orderby", true)>1 ? 'topset' : false;
+                $title = $detail ? trim(get_the_title()).' -（'.get_post_meta($post->ID, "post_feeling", true).'）<sup>'.$post->post_date.'</sup>' : trim(get_the_title());
+                // print_r(get_category($cid)->parent);
+                $cid = !get_category($cid)->errors ? $cid : 1; //php8
+                $par_cid = get_category($cid)->parent;
+                $par_slug = $par_cid!=0&&get_category($par_cid)->slug!='/' ? get_category($par_cid)->slug : get_category($cid)->slug;
+                $post_cat = get_the_category($post->ID);
+                $loc_id = $par_slug==$acg_slug ? ($post_cat[0]->parent!=0 ? $post_cat[0]->slug : $post_cat[1]->slug) : 'pid_'.get_the_ID();
+                $pre_link = $specific_link || !$acg_single_sw ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="'.get_category_link($cid).'#'.$loc_id.'" target="_self" rel="nofollow">';
+                $output .= '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
+            endwhile;
+            wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
+            if($output_sw) update_option($cache, $output); //wp_kses_post($output)
+        }
+        echo $output;
+    }
 ?>
 <html lang="zh-CN">
 <head>
@@ -201,7 +163,6 @@
             <div class="banner">
                 <div class="banner-inside">
                     <ul>
-                        <!--<li style="background: url('https://api.luvying.com/acgimg') no-repeat center center /cover;"></li>-->
                         <?php
                             $banner_array = explode(',',get_option('site_banner_array',''));
                             $banner_array_count = count($banner_array);
@@ -210,7 +171,6 @@
                                 if($image_url) echo '<li style="background: url('.$image_url.') no-repeat center center /cover;"></li>';
                             }
                         ?>
-                        <!--<li><?php //the_countdown_widget('2023/01/14,00:00:00','自定义定时器/定时完成','https://img.2broear.com/images/1llusion.gif'); ?></li>-->
                     </ul>
                     <div class="switcher">
                         <span id="banner-prev" class="banner_prew"></span>
@@ -301,7 +261,7 @@
                         <ul class="news-list" id="mainNews">
                             <?php 
                                 $spp = get_option('site_per_posts');
-                                recent_posts_query($load_arr[$i]->term_id, true, false, mt_rand($spp, $spp+1)); //6-$i
+                                the_recent_posts($load_arr[$i]->term_id, true, false, mt_rand($spp, $spp+1)); //6-$i
                             ?>
                         </ul>
                     </div>
@@ -324,7 +284,23 @@
         <div class="main-bottom-ta">
         <?php
             if(!$weblog){
-                
+            // print_r(wp_get_theme()->get_page_templates());
+            // leancloud avos（标准li结构）查询
+            function avos_posts_query($cid=0, $els=null){
+                $slug = get_category($cid)->slug;
+        ?>
+                <script type="text/javascript">
+                    new AV.Query("<?php echo $slug; ?>").addDescending("createdAt").limit(<?php echo get_option('site_per_posts', get_option('posts_per_page')); ?>).find().then(result=>{
+                        for (let i=0,resLen=result.length; i<resLen;i++) {
+                            let res = result[i],
+                                title = res.attributes.title,
+                                content = res.attributes.content.replace(/</g,"&lt;").replace(/>/g,"&gt;");
+                            document.querySelector("<?php echo $els ?>").innerHTML += `<li title='${content}'><a href="/<?php echo $slug ?>#${res.id}" target="_self" rel="nofollow">${title}</a></i>`;
+                        };
+                    })
+                </script>
+        <?php
+            }
         ?>
             <div id="tech-acg-inside_tech" class="flexboxes wow fadeInUp" data-wow-delay="0.15s">
                 <span id="tech_window" style="width:100%">
@@ -337,7 +313,7 @@
                     <ul class="tech_window-content">
                         <?php 
                             $query_cid = get_option('site_techside_cid');
-                            $baas&&strpos(get_option('site_leancloud_category'), 'category-weblog.php')!==false ? avos_posts_query($query_cid,".tech_window-content") : recent_posts_query($query_cid);
+                            $baas&&strpos(get_option('site_leancloud_category'), 'category-weblog.php')!==false ? avos_posts_query($query_cid,".tech_window-content") : the_recent_posts($query_cid);
                         ?>
                     </ul>
                     <div class="newsBox-subText-Description" id="tech_window-bottom">
@@ -397,7 +373,7 @@
                                             </script>
                                     <?php
                                         }else{
-                                            recent_posts_query($query_cid, false, true, false);
+                                            the_recent_posts($query_cid, false, true, false);
                                         }
                                     ?>
                         		</ol>
@@ -411,7 +387,44 @@
                     ?>
                         <li class="acg_window-content-inside_right"<?php if(!$acg_sw) echo ' style="width: 100%;position: relative;"'; ?>>
                             <div class="tags">
-                                <?php the_tag_clouds('span'); ?>
+                                <?php 
+                                    // 自定义标签云
+                                    function the_tag_clouds($html_tag="li"){
+                                        $num = get_option('site_tagcloud_num');
+                                        $tags = get_tags(array(
+                                            'taxonomy' => 'post_tag',
+                                            'orderby' => 'count', //name
+                                            'hide_empty' => true // for development,
+                                            // 'number' => $max_show
+                                        ));
+                                        $tag_count = count($tags);
+                                        $max_show = $tag_count<=$num ? $tag_count : $num;
+                                        $min_font = 10;
+                                        $max_font = get_option('site_tagcloud_max');
+                                        shuffle($tags);  // random tags
+                                        if(get_option('site_tagcloud_switcher') && $tag_count>=1){
+                                            global $bold_font;
+                                            for($i=0;$i<$max_show;$i++){
+                                                $tag = $tags[$i];
+                                                $rand_font = mt_rand($min_font, $max_font);
+                                                if($rand_font>=$max_font/1.25){
+                                                    $rand_opt = mt_rand(5,10);  // highlight big_font
+                                                    $bold_font = $rand_opt>9 || $rand_font==$max_font ? 'bold' : 'normal';  // max bold_font
+                                                    $color_font = $rand_opt==10 && $rand_font==$max_font ? 'color:var(--theme-color)' : '';
+                                                }else{
+                                                    $rand_opt = mt_rand(2,10);
+                                                    $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'color:var(--theme-color)' : '';
+                                                }
+                                                $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
+                                                echo '<'.$html_tag.' data-count="'.$tag->count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';'.$color_font.'">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
+                                            }
+                                            unset($bold_font);
+                                        }else{
+                                            echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
+                                        }
+                                    }
+                                    the_tag_clouds('span'); 
+                                ?>
                             </div>
                         </li>
                     <?php

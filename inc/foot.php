@@ -1,7 +1,7 @@
 <?php
     global $src_cdn;
 ?>
-<script src="<?php echo $src_cdn; //custom_cdn_src('',true) ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
+<script src="<?php echo $src_cdn;//custom_cdn_src('',true) ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
 <script type="text/javascript">
     <?php
         global $cat;
@@ -18,6 +18,19 @@
                 asyncLoad('<?php echo $src_cdn; ?>/js/fancybox.umd.js', function(){
                     console.log('fancybox init.');
                     // gallery js initiate 'bodyimg' already exists in footer lazyload, use contimg insted.
+                    let fancyImages = function(imgs){
+                        if(imgs.length<=0) return;
+                        for(let i=0,imgsLen=imgs.length;i<imgsLen;i++){
+                            let eachimg = imgs[i],
+                                eachpar = eachimg.parentNode,
+                                fancybox = document.createElement("a");
+                            fancybox.setAttribute("data-fancybox","gallery");
+                            fancybox.setAttribute("aria-label", "gallery_images");
+                            eachimg.src ? fancybox.setAttribute("href", eachimg.src) : fancybox.setAttribute("href", eachimg.dataset.src);
+                            fancybox.appendChild(eachimg);
+                            eachpar.insertBefore(fancybox, eachpar.firstChild);
+                        }
+                    }
                     fancyImages(document.querySelectorAll(".news-article-container .content img"));
                 });
     <?php

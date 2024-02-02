@@ -52,7 +52,13 @@
         switch (true) {
             case is_search():
                 $cid = check_request_param('cid');
-                $title = $cid ? get_category($cid)->slug.' of '.check_request_param('year').$surfix : 'Search result for "' . esc_html(get_search_query()) .'"';
+                if($cid){
+                    $year = check_request_param('year');
+                    $cat_slug = get_category($cid)->slug;
+                    $title = $year ? $cat_slug.' of '.$year.$surfix : $cat_slug.' in archives'.$surfix;
+                }else{
+                    $title = 'Search result for "' . esc_html(get_search_query()) .'"';
+                }
                 break;
             case is_category() || is_page():
                 global $cat;
@@ -75,7 +81,7 @@
             case is_single():
                 $the_title = get_the_title();
                 // $title = in_category(array('notes','weblog')) ? $the_title . $surfix . " - " . get_the_category()[0]->name : $the_title;
-                $title = $surfix ? $the_title . $surfix : get_between_string(0, " ", $the_title); //get_between_string('single-', '.php', 'single-notes.php'); //get_between_string(0, ' ', $the_title);
+                $title = $surfix ? $the_title . $surfix : $the_title; // get_between_string(0, " ", $the_title)
                 break;
             default:
                 $title = "NOTHING MATCHED" . $surfix;
@@ -89,11 +95,14 @@
         switch (true) {
             case is_category() || is_page():
                 global $cat;
-                $keywords = get_term_meta($cat, 'seo_keywords', true);
+                $seo_keywords = get_term_meta($cat, 'seo_keywords', true);
+                $keywords = $seo_keywords ? $seo_keywords : $keywords;
                 break;
             case is_single():
                 global $post;
-                $keywords = get_site_title(false). ',' .get_tag_list($post->ID, 99, ',', true);
+                $site_title = get_site_title(false);
+                $seo_tags = get_tag_list($post->ID, 99, ',', true);
+                $keywords = $seo_tags ? $site_title . ',' . $seo_tags : $site_title;
                 break;
             default:
                 break;
@@ -102,33 +111,36 @@
     }
     // 返回站点描述（摘要）
     function get_site_description($cat=false){
-        $desc = "no descriptions yet.";
+        $desc = get_option('site_description', "no descriptions yet");
         switch (true) {
             case is_category():
                 if(!$cat) global $cat;
                 $desc = get_term_meta($cat, 'seo_description', true);
                 break;
             case is_single():
-                if(get_option('site_chatgpt_desc_sw') && in_chatgpt_cat()){
-                    $dir = get_option('site_chatgpt_dir') ? get_option('site_chatgpt_dir').'/' : '';
-                    // $cached_post = load_theme_partial('/plugin/'.$dir.'chat_data.php', '', true, true);
-                    include_once get_template_directory() . '/plugin/'.$dir.'chat_data.php';  // 读取文件记录
-                    global $post;
-                    $pid = $post->ID;
-                    if(isset($cached_post['chat_pid_'.$pid]['error'])){
-                        $desc = $cached_post['chat_pid_'.$pid]['error']['message'];
-                    }else if(isset($cached_post['chat_pid_'.$pid]['choices'][0])){
-                        $desc = isset($cached_post['chat_pid_'.$pid]['choices'][0]['message']) ? $cached_post['chat_pid_'.$pid]['choices'][0]['message']['content'] : $cached_post['chat_pid_'.$pid]['choices'][0]['text'];
-                    }
-                }else{
-                    $desc = get_between_string('standby chatGPT responsing..', false, custom_excerpt(999, true));
-                }
+                $desc = get_ai_abstract();
                 break;
             default:
-                $desc = get_option('site_description');
                 break;
         }
         return preg_replace('/\n/',"", $desc); //trim($desc);
+    }
+    
+    function get_ai_abstract(){
+        if(get_option('site_chatgpt_desc_sw') && in_chatgpt_cat()){
+            $dir = get_option('site_chatgpt_dir') ? get_option('site_chatgpt_dir').'/' : '';
+            include_once get_template_directory() . '/plugin/'.$dir.'chat_data.php';  // 读取文件记录
+            global $post;
+            $pid = $post->ID;
+            if(isset($cached_post['chat_pid_'.$pid]['error'])){
+                $desc = $cached_post['chat_pid_'.$pid]['error']['message'];
+            }else if(isset($cached_post['chat_pid_'.$pid]['choices'][0])){
+                $desc = isset($cached_post['chat_pid_'.$pid]['choices'][0]['message']) ? $cached_post['chat_pid_'.$pid]['choices'][0]['message']['content'] : $cached_post['chat_pid_'.$pid]['choices'][0]['text'];
+            }
+        }else{
+            $desc = custom_excerpt(999, true); //get_the_excerpt();
+        }
+        return $desc;
     }
     
     // 返回指定文章标签
@@ -157,8 +169,9 @@
     
     // 自定义文章摘要
     function custom_excerpt($length=88, $var=false){
-        // $res = wp_trim_words(get_the_excerpt(), $length);
-        $res = mb_substr(get_the_excerpt(), 0, $length).'...';  // chinese only
+        // $res = in_chatgpt_cat()&&is_single() ? get_between_string('文章摘要chatGPT standby chatGPT responsing..', $length, get_the_excerpt()) : mb_substr(get_the_excerpt(), 0, $length);
+        $res = get_between_string('standby chatGPT responsing..', $length, get_the_excerpt());  // chinese only
+        $res = trim($res) . '...';
         if($var){
             return $res;
         }
@@ -524,7 +537,7 @@
                 $res = $_POST[$param];
                 break;
             default:
-                isset($_COOKIE[$param]) ? $res = $_COOKIE[$param] : false;
+                $res = isset($_COOKIE[$param]) ? $_COOKIE[$param] : false;
                 break;
         }
         return esc_html($res);
@@ -565,7 +578,7 @@
                     case 'acg':
                         $post_class->link = get_the_permalink($pid);
                         $post_class->poster = get_postimg(0, $pid, true);
-                        $post_class->excerpt = get_the_excerpt($this_post);
+                        $post_class->excerpt = custom_excerpt(66, true); //get_the_excerpt($this_post)
                         $post_class->rcmd = get_post_meta($pid, "post_rcmd", true);
                         $post_class->rating = get_post_meta($pid, "post_rating", true);
                         break;
@@ -812,23 +825,6 @@
      *---------------------------------------------------------------------------------------------------------------------------------
     */
     
-    function get_between_string($begin, $end, $str){
-        if(is_numeric($begin)){
-            $b = $begin;
-        }elseif(is_string($begin)){
-            $b = mb_strpos($str, $begin) + mb_strlen($begin);
-        }
-        $strlen = mb_strlen($str);
-        if(is_numeric($end)){
-            $e = $end ? $end : $strlen;
-        }elseif(is_string($end)){
-            $e_pos = $end ? mb_strpos($str, $end) : $strlen;
-            $e = $e_pos ? $e_pos - $b : $strlen;
-        }
-        // return $b.','.$e;
-        return mb_substr($str, $b, $e);
-    }
-    
     // 加载主题部件（注：函数内部 include 文件内函数无法被外部作用域识别）
     function load_theme_partial($file='/', $method='include', $relative_path=true, $output_buffer=false){
         try {
@@ -903,6 +899,24 @@
     function get_cat_by_template($temp='news', $parm=false){
         $cats = get_template_bind_cat('category-'.$temp.'.php');
         return !$cats->errors ? ($parm ? $cats->$parm : $cats) : false;
+    }
+    
+    function get_between_string($begin, $end, $str){
+        if(is_numeric($begin)){
+            $b = $begin;
+        }elseif(is_string($begin)){
+            $b = strpos($str, $begin)!==false ? mb_strpos($str, $begin) + mb_strlen($begin) : 0;
+        }
+        $strlen = mb_strlen($str);
+        $e = $strlen;
+        if(is_numeric($end)){
+            $e = $end;
+        }elseif(is_string($end)){
+            $e_pos = $end ? mb_strpos($str, $end) : $strlen;
+            $e = $e_pos ? $e_pos - $b : $strlen;
+        }
+        // return $b.','.$e;
+        return mb_substr($str, $b, $e);
     }
     
     /**
