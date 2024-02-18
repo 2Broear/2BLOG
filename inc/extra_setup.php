@@ -569,10 +569,10 @@
                     'orderby' => array(
                         // 'meta_value_num' => 'DESC',
                         'date' => 'DESC',
-                        'modified' => 'DESC'
+                        // 'modified' => 'DESC'
                     ),
                     'posts_per_page' => $inform_max,  //use left_query counts
-                    'post_status' => 'publish, draft'  //including all type but trash
+                    'post_status' => 'publish'  //, draft
                 ));
                 while(have_posts()) : the_post();
                     echo '<span>'.get_the_title().'</span>';

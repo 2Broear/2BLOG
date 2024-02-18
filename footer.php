@@ -67,6 +67,8 @@
                             <script src="<?php echo $src_cdn; ?>/js/leancloud/av-min.js?v=footcall"></script>
                 <?php
                         }
+                	    $root_path = custom_cdn_src('default', true);
+            	        $plugin_path = $root_path.'/plugin';
                 ?>
                         <script type="text/javascript">
                 		    new Valine({
@@ -80,24 +82,21 @@
                             	verify: false,
                             	visitor: false,
                             	recordIP: false,
-                            	pushPlus: '<?php echo get_option('site_comment_pushplus') ?>',
-                            	serverChan: '<?php echo get_option('site_comment_serverchan') ?>',
+                            	placeholder: '快来玩右下角的“涂鸦画板”！',
                             	<?php
-                            	    echo get_option('site_lazyload_switcher') ? 'lazyLoad: true,' : 'lazyLoad: false,';
-                            	    $cdn_sw = get_option('site_cdn_switcher');
-                            	    if($cdn_sw){
-                            	        $plugin_path = custom_cdn_src('default', true).'/plugin';
-                            	        echo 'imgCdn: "'.$img_cdn.'", srcCdn: "'.$src_cdn.'", apiCdn: "'.$plugin_path.'",'; //custom_cdn_src('api', true)
+                            	    if(get_option('site_cdn_switcher')){
+                            	        echo 'imgCdn: "'.$img_cdn.'",' . PHP_EOL . ' srcCdn: "'.$src_cdn.'",' . PHP_EOL . ' apiCdn: "'.$plugin_path.'",' . PHP_EOL;
+                            	    }else{
+                            	        echo 'rootPath: "'.$root_path.'",' . PHP_EOL;
                             	    }
-                        	        echo get_option("site_wpwx_notify_switcher") ? 'wxNotify: true,' : 'wxNotify: false,';
-                            	    if($cdn_sw){
-                            	        echo 'avatarApi: "'.$plugin_path.'/gravatar.php?jump=0&email=",'; //api.paugram.com/gravatar/?email='; custom_cdn_src(0, true).'/plugin
-                            	    }
+                            	    echo get_option('site_lazyload_switcher') ? 'lazyLoad: true,' . PHP_EOL : 'lazyLoad: false,' . PHP_EOL;
+                        	        echo get_option("site_wpwx_notify_switcher") ? 'wxNotify: true,' . PHP_EOL : 'wxNotify: false,' . PHP_EOL;
                             	?>
-                            	posterImg: '<?php echo get_postimg(); ?>',
+                            	pushPlus: <?php echo get_option('site_comment_pushplus') ? "'".get_option('site_comment_pushplus')."'" : 'false'; ?>,
+                            	serverChan: <?php echo get_option('site_comment_serverchan') ? "'".get_option('site_comment_serverchan')."'" : 'false'; ?>,
                             	adminMd5: '<?php echo md5(get_bloginfo('admin_email')) ?>',
-                            	avatarCdn: '<?php echo get_option("site_avatar_mirror").'avatar/' ?>',
-                            	placeholder: '快来玩右下角的“涂鸦画板”！'
+                            	avatarCdn: '<?php echo get_option("site_avatar_mirror").'avatar/'; ?>',
+                            	avatarApi: '<?php echo $plugin_path.'/gravatar.php?jump=0&email='; ?>',
                             });
                             // reply at current floor
                             const vcomments = document.querySelector("#vcomments");
@@ -134,11 +133,11 @@
                 <?php
                     }elseif($third_cmt=='Twikoo'){
                 ?>
-                        <script src="https://cdn.staticfile.org/twikoo/1.6.4/twikoo.all.min.js"></script>
+                        <script src="<?php echo 'https://cdn.staticfile.org/twikoo/' . get_option('site_twikoo_version'). '/twikoo.all.min.js'; ?>"></script>
                         <script>
                             twikoo.init({
-                              envId: '<?php echo $twikoo_envid = get_option('site_twikoo_envid'); ?>',
-                              el: '#tcomment',
+                                envId: '<?php echo $twikoo_envid = get_option('site_twikoo_envid'); ?>',
+                                el: '#tcomment',
                             });
                             const comment_count = document.querySelectorAll('.valine-comment-count'),
                                   comments_list = document.querySelector('#comments');
@@ -277,7 +276,7 @@
                 <li class="rcmdBrowser">
                   <p>最佳浏览体验<br/>推荐浏览器：</p>
                   <b>
-                    <a id="chrome" href="https://www.google.cn/chrome/" target="_blank" rel="nofollow" title="Chrome大法好！" aria-label="chrome">Chrome</a> / <a id="edge" href="https://www.microsoft.com/zh-cn/edge" target="_blank" rel="nofollow" title="新版Edge也不错~" aria-label="edge">Edge</a></b>
+                    <a id="chrome" href="//www.google.cn/chrome/" target="_blank" rel="nofollow" title="Chrome大法好！" aria-label="chrome">Chrome</a> / <a id="edge" href="//www.microsoft.com/zh-cn/edge" target="_blank" rel="nofollow" title="新版Edge也不错~" aria-label="edge">Edge</a></b>
                 </li>
                 <li class="PoweredBy2B">
                   <ins> XTyDesign </ins>
@@ -324,22 +323,29 @@
         <span class="what_says">
           <ul style="text-align:left">
             <li id="copy"> ©<?php echo get_copyright(); ?> </li>
-            <?php $rights=get_option('site_copyright');if($rights) echo '<li id="cc"><a href="https://creativecommons.org/licenses/'.strtolower(substr($rights,strpos($rights,"-")+1)).'/4.0/" target="_blank" rel="nofollow"> '.$rights.' </a></li>'; ?>
+            <?php $rights=get_option('site_copyright');if($rights) echo '<li id="cc"><a href="//creativecommons.org/licenses/'.strtolower(substr($rights,strpos($rights,"-")+1)).'/4.0/" target="_blank" rel="nofollow"> '.$rights.' </a></li>'; ?>
             <li id="rights"><?php echo get_option('site_nick', get_bloginfo('name')); ?> 版权所有</li>
-            <?php if(get_option('site_beian_switcher')) echo '<li id="etc"><a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow">'.get_option('site_beian').'</a></li>'; ?>
+            <?php 
+                if(get_option('site_beian_switcher')) echo '<li id="etc"><a href="//beian.miit.gov.cn/" target="_blank" rel="nofollow">'.get_option('site_beian').'</a></li>';
+                $moe_beian = get_option('site_moe_beian_switcher');
+                $moe_beian_num = get_option('site_moe_beian_num');
+                if($moe_beian && $moe_beian_num) echo '<li id="etc"><a href="//icp.gov.moe/?keyword='.$moe_beian_num.'" target="_blank" rel="nofollow"><img src="//icp.gov.moe/images/ico64.png" alt="moe_beian" title="异次元之旅-跃迁" style="height: 16px;"> 萌ICP备'.$moe_beian_num.'号</a></li>';
+            ?>
             <p id="supports">
                 <?php 
                     if(get_option('site_monitor_switcher')) echo '<script async type="text/javascript" src="'.get_option('site_monitor').'"></script>';
                     if(get_option('site_chat_switcher')) echo '<a href="'.get_option("site_chat").'" target="_blank" title="Chat Online" rel="nofollow"><img src="'.$img_cdn.'/images/svg/tidio.svg" alt="tidio" style="height: 16px;opacity:.88;"></a>'; //'.$lazysrc.'
-                    echo '<a href="'.get_option('site_foreverblog').'" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>'; //'.$lazysrc.'
-                    // if($valine_sw || $baas) echo '<a href="https://leancloud.cn" target="_blank"><b style="color:#2b96e7" title="AVOS BAAS Support">LeanCloud</b></a>';
+                    if(get_option('site_foreverblog_switcher')){
+                        echo '<a href="'.get_option('site_foreverblog').'" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 16px;"></a>';
+                        if(get_option('site_foreverblog_wormhole')){
+                            // $theme = array_key_exists('theme_mode',$_COOKIE) ? $_COOKIE['theme_mode'] : false;
+                            echo '<a href="//www.foreverblog.cn/go.html" target="_blank" rel="nofollow"><em class="warmhole" style="background:url('.$img_cdn.'/images/wormhole_4_tp_ez.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
+                        }
+                    }
+                    if($moe_beian && get_option('site_moe_beian_travel')) echo '<a href="//travel.moe/go.html" target="_blank" rel="nofollow"><img src="//moe.one/upload/attach/202307/89_8TEYVRKUCP79XHG.png" alt="moe_beian" title="异次元之旅-跃迁" style=""></a>';
                     $server = get_option('site_server_side');
                     if($server) echo '<a href="javascript:;" rel="nofollow"><img src="'.$server.'" style="height: 12px;" alt="server"></a>'; //'.$lazysrc.'
-                    if(get_option('site_foreverblog_wormhole')){
-                        $theme = array_key_exists('theme_mode',$_COOKIE) ? $_COOKIE['theme_mode'] : false;
-                        echo '<a href="https://www.foreverblog.cn/go.html" target="_blank" rel="nofollow"><em class="warmhole" style="background:url('.$img_cdn.'/images/wormhole_4_tp_ez.gif) no-repeat center center /cover" title="穿梭虫洞-随机访问十年之约友链博客"></em></a>';
-                    }
-                    if(get_option('site_not_ai_switcher')) echo '<a href="https://notbyai.fyi" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);"></a>';
+                    if(get_option('site_not_ai_switcher')) echo '<a href="//notbyai.fyi" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);"></a>';
                     if(get_option('site_construction_switcher')) echo '<style>@keyframes alarmLamp_bar_before{0%{opacity:.15;}2%{opacity:1;}4%{opacity:.15;}6%{opacity:1;}8%{opacity:.15;}10%{opacity:1;}12%{opacity:.15;}14%{opacity:1;}16%{opacity:.15;}18%{opacity:1;}20%{opacity:.15;}22%{opacity:1;}24%{opacity:.15;}26%{opacity:1;}28%{opacity:.15;}50%{opacity:.15;}60%{opacity:1;}61%{opacity:.15;}62%{opacity:1;}70%{opacity:.15;}80%{opacity:1;}81%{opacity:.15;}82%{opacity:1;}90%{opacity:.15;}100%{opacity:1;}}@keyframes alarmLamp_bar_after{0%{opacity:.15;}28%{opacity:.15;}30%{opacity:1;}32%{opacity:.15;}34%{opacity:1;}36%{opacity:.15;}38%{opacity:1;}39%{opacity:.15;}40%{opacity:1;}42%{opacity:.15;}44%{opacity:1;}46%{opacity:.15;}48%{opacity:1;}50%{opacity:.15;}52%{opacity:1;}54%{opacity:.15;}56%{opacity:1;}58%{opacity:.15;}60%{opacity:.15;}70%{opacity:1;}71%{opacity:.15;}72%{opacity:1;}80%{opacity:.15;}90%{opacity:1;}91%{opacity:.15;}92%{opacity:1;}100%{opacity:.15;}}@keyframes alarmLamp_spotlight{0%{filter:blur(0px);}28%{filter:blur(0px);}50%{filter:blur(0px);}60%{background:red;filter:blur(15px);}62%{background:red;filter:blur(15px);}70%{background:blue;filter:blur(15px);}72%{background:blue;filter:blur(15px);}80%{background:red;filter:blur(15px);}82%{background:red;filter:blur(15px);}90%{background:blue;filter:blur(15px);}92%{background:blue;filter:blur(15px);}100%{filter:blur(0px);}}.alarm_lamp span#spot::before,.alarm_lamp span#spot::after{content:none;}.alarm_lamp span#spot,.alarm_lamp span#bar::before,.alarm_lamp span#bar::after{content:"";width:33%;height:78%;background:red;box-shadow:rgb(255 0 0 / 80%) 0 0 20px 0px;position:absolute;top:50%;left:50%;transform:translate(0%,-50%);-webkit-transform:translate(0%,-50%);animation-duration:3s;animation-delay:0s;animation-timing-function:step-end;animation-iteration-count:infinite;animation-direction:normal;}.alarm_lamp span#bar::before{left:0%;animation-name:alarmLamp_bar_before;-webkit-animation-name:alarmLamp_bar_before;}.alarm_lamp span#bar::after{left:auto;right:0%;background:blue;box-shadow:rgb(0 0 255 / 80%) 0 0 20px 0px;animation-name:alarmLamp_bar_after;-webkit-animation-name:alarmLamp_bar_after;}.alarm_lamp{display:inline-block;padding:0 2px!important;box-sizing:border-box;position:relative;vertical-align:middle;border:1px solid transparent;}.alarm_lamp span{height:100%;display:block;position:inherit;}.alarm_lamp span#bar{width:100%;}.alarm_lamp span#spot{max-width:32%;background:white;transform:translate(-50%,-50%);-webkit-transform:translate(-50%,-50%);box-shadow:rgb(255 255 255 / 100%) 0 0 20px 0px;animation-name:alarmLamp_spotlight;-webkit-animation-name:alarmLamp_spotlight;}</style><a href="javascript:void(0);" class="alarm_lamp" style="width:58px;height:12px;" title="站点正处施工中.."><span id="bar"></span><span id="spot"></span></a>';
                 ?>
             </p>
@@ -358,7 +364,7 @@
                   };
                   if(get_option('site_map_switcher')) echo '<li id="sitemap"><a href="'.get_bloginfo('siteurl').'/sitemap.xml" target="_blank">站点地图</a></li>';
               ?>
-              <p style="margin:auto;opacity:.75;font-size:12px;font-style:italic"> WP Theme <a href="https://github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><b>2BLOG</b></a>  open source via 2broear </p>
+              <p style="margin:auto;opacity:.75;font-size:12px;font-style:italic"> WP Theme <a href="//github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><b>2BLOG</b></a>  open source via 2broear </p>
           </ul>
         </span>
       </div>

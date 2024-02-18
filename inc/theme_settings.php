@@ -383,6 +383,7 @@
         // }
         // register_setting( 'baw-settings-group', 'site_twikoo_switcher' );
             register_setting( 'baw-settings-group', 'site_twikoo_envid' );
+            register_setting( 'baw-settings-group', 'site_twikoo_version' );
             register_setting( 'baw-settings-group', 'site_ajax_comment_switcher');
             register_setting( 'baw-settings-group', 'site_ajax_comment_paginate');
         
@@ -442,6 +443,9 @@
         // if(get_option('site_beian_switcher')){
             register_setting( 'baw-settings-group', 'site_beian' );
         // }
+        register_setting( 'baw-settings-group', 'site_moe_beian_switcher' );
+            register_setting( 'baw-settings-group', 'site_moe_beian_num' );
+            register_setting( 'baw-settings-group', 'site_moe_beian_travel' );
         register_setting( 'baw-settings-group', 'site_server_side' );
         register_setting( 'baw-settings-group', 'site_foreverblog_switcher' );
         // if(get_option('site_foreverblog_switcher')){
@@ -941,7 +945,7 @@
                                     array('name'=>'2Bavatar', 'href'=>'//gravatar.2broear.com/'),
                                 );
                                 // $md5mail = md5("wapuu@wordpress.example"); //get_bloginfo('admin_email')
-                                $mirror_parm = 'avatar/'.md5("wapuu@wordpress.example").'?s=100';
+                                $mirror_parm = 'avatar/'.md5(get_bloginfo('admin_email', "wapuu@wordpress.example")).'?s=100';
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
                                 echo '<label for="'.$opt.'"><p class="description" id="site_avatar_mirror_label">评论头像 Gravatar 国内镜像源（同时适用于 wordpress/valine 评论头像展示</p><img src="'.$preset.$mirror_parm.'" style="vertical-align: middle;max-width: 50px;margin:auto 15px;border-radius:100%;" alt="镜像已失效.." /><select name="'.$opt.'" id="'.$opt.'" class="select_mirror" parm="'.$mirror_parm.'">';
                                     foreach ($arrobj as $arr){
@@ -1394,7 +1398,29 @@
                                 </td>
                             </tr>
                             <!-- Twikoo -->
-                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_third_comments')=='Twikoo' ? 'dynamic_optshow Twikoo' : 'dynamic_opts Twikoo' ?>">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $twikoo_statu = get_option('site_third_comments')=='Twikoo' ? 'dynamic_optshow Twikoo' : 'dynamic_opts Twikoo' ?>">
+                                <th scope="row">— 版本号</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_twikoo_version';
+                                        $value = get_option($opt);
+                                        $preset = '1.6.4';  //默认
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        $status_code = 0;
+                                        $url = 'https://cdn.staticfile.org/twikoo/' . $preset . '/twikoo.all.min.js';
+                                        if(get_option('site_third_comments')=='Twikoo'){
+                                            $headers = get_headers($url);
+                                            if ($headers) {
+                                                $status_line = $headers[0];
+                                                preg_match('/\d{3}/', $status_line, $matches);
+                                                $status_code = $matches[0];
+                                            }
+                                        }
+                                        echo '<p class="description" id="site_comment_pushplus_label">twikoo.all.min.js 版本号（默认 1.6.4，当前文件（'.$url.'）状态：'.$status_code.'</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="small-text" placeholder="Twikoo Source" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $twikoo_statu; ?>">
                                 <th scope="row">— envId</th>
                                 <td>
                                     <?php
@@ -2516,6 +2542,30 @@
                         </td>
                     </tr>
                     <tr valign="top">
+                        <th scope="row">底部导航链接</th>
+                        <td>
+                            <?php
+                                $opt = 'site_bottom_nav';  //unique str
+                                $value = get_option($opt);
+                                $options = array($templates_info['archive'], $templates_info['privacy']); //array('privacy','archives');
+                                if(!$value){
+                                    $preset_str = $options[0]->slug.','.$options[1]->slug.',';
+                                    update_option($opt, $preset_str );
+                                    $value = $preset_str;
+                                }
+                                echo '<p class="description" id="site_bottom_nav_label">底部右下角导航链接（使用逗号“ , ”分隔，可选填其他分类 slug 别名</p><div class="checkbox">';
+                                $pre_array = explode(',',trim($value));  // NO "," Array
+                                $pre_array_count = count($pre_array);
+                                foreach ($options as $option){
+                                    $opts_slug = $option->slug;
+                                    $checking = in_array($opts_slug, $pre_array) ? 'checked' : '';
+                                    echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
+                                }
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
                         <th scope="row">站点启动时间</th>
                         <td>
                             <?php
@@ -2603,30 +2653,6 @@
                         // }
                     ?>
                     <tr valign="top">
-                        <th scope="row">底部导航链接（多选项）</th>
-                        <td>
-                            <?php
-                                $opt = 'site_bottom_nav';  //unique str
-                                $value = get_option($opt);
-                                $options = array($templates_info['archive'], $templates_info['privacy']); //array('privacy','archives');
-                                if(!$value){
-                                    $preset_str = $options[0]->slug.','.$options[1]->slug.',';
-                                    update_option($opt, $preset_str );
-                                    $value = $preset_str;
-                                }
-                                echo '<p class="description" id="site_bottom_nav_label">底部右下角导航链接（使用逗号“ , ”分隔，可选填其他分类 slug 别名</p><div class="checkbox">';
-                                $pre_array = explode(',',trim($value));  // NO "," Array
-                                $pre_array_count = count($pre_array);
-                                foreach ($options as $option){
-                                    $opts_slug = $option->slug;
-                                    $checking = in_array($opts_slug, $pre_array) ? 'checked' : '';
-                                    echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
-                                }
-                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top">
                         <th scope="row">十年之约</th>
                         <td>
                             <?php
@@ -2673,15 +2699,34 @@
                         // }
                     ?>
                     <tr valign="top">
-                        <th scope="row">站点施工警示</th>
+                        <th scope="row">萌备博主</th>
                         <td>
                             <?php
-                                $opt = 'site_construction_switcher';
+                                $opt = 'site_moe_beian_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_monitor_switcher_label">工程施工警示灯控制（开启显示🚨警示灯🚨动画，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <style>@keyframes alarmLamp_bar_before{0%{opacity:.15;}2%{opacity:1;}4%{opacity:.15;}6%{opacity:1;}8%{opacity:.15;}10%{opacity:1;}12%{opacity:.15;}14%{opacity:1;}16%{opacity:.15;}18%{opacity:1;}20%{opacity:.15;}22%{opacity:1;}24%{opacity:.15;}26%{opacity:1;}28%{opacity:.15;}50%{opacity:.15;}60%{opacity:1;}61%{opacity:.15;}62%{opacity:1;}70%{opacity:.15;}80%{opacity:1;}81%{opacity:.15;}82%{opacity:1;}90%{opacity:.15;}100%{opacity:1;}}@keyframes alarmLamp_bar_after{0%{opacity:.15;}28%{opacity:.15;}30%{opacity:1;}32%{opacity:.15;}34%{opacity:1;}36%{opacity:.15;}38%{opacity:1;}39%{opacity:.15;}40%{opacity:1;}42%{opacity:.15;}44%{opacity:1;}46%{opacity:.15;}48%{opacity:1;}50%{opacity:.15;}52%{opacity:1;}54%{opacity:.15;}56%{opacity:1;}58%{opacity:.15;}60%{opacity:.15;}70%{opacity:1;}71%{opacity:.15;}72%{opacity:1;}80%{opacity:.15;}90%{opacity:1;}91%{opacity:.15;}92%{opacity:1;}100%{opacity:.15;}}@keyframes alarmLamp_spotlight{0%{filter:blur(0px);}28%{filter:blur(0px);}50%{filter:blur(0px);}60%{background:red;filter:blur(15px);}62%{background:red;filter:blur(15px);}70%{background:blue;filter:blur(15px);}72%{background:blue;filter:blur(15px);}80%{background:red;filter:blur(15px);}82%{background:red;filter:blur(15px);}90%{background:blue;filter:blur(15px);}92%{background:blue;filter:blur(15px);}100%{filter:blur(0px);}}.alarm_lamp span#spot::before,.alarm_lamp span#spot::after{content:none;}.alarm_lamp span#spot,.alarm_lamp span#bar::before,.alarm_lamp span#bar::after{content:"";width:33%;height:78%;background:red;box-shadow:rgb(255 0 0 / 80%) 0 0 20px 0px;position:absolute;top:50%;left:50%;transform:translate(0%,-50%);-webkit-transform:translate(0%,-50%);animation-duration:3s;animation-delay:0s;animation-timing-function:step-end;animation-iteration-count:infinite;animation-direction:normal;}.alarm_lamp span#bar::before{left:0%;animation-name:alarmLamp_bar_before;-webkit-animation-name:alarmLamp_bar_before;}.alarm_lamp span#bar::after{left:auto;right:0%;background:blue;box-shadow:rgb(0 0 255 / 80%) 0 0 20px 0px;animation-name:alarmLamp_bar_after;-webkit-animation-name:alarmLamp_bar_after;}.alarm_lamp{display:inline-block;padding:0 2px!important;box-sizing:border-box;position:relative;vertical-align:middle;border:1px solid transparent;}.alarm_lamp span{height:100%;display:block;position:inherit;}.alarm_lamp span#bar{width:100%;}.alarm_lamp span#spot{max-width:32%;background:white;transform:translate(-50%,-50%);-webkit-transform:translate(-50%,-50%);box-shadow:rgb(255 255 255 / 100%) 0 0 20px 0px;animation-name:alarmLamp_spotlight;-webkit-animation-name:alarmLamp_spotlight;}</style> <a href="javascript:void(0);" class="alarm_lamp" style="width:58px;height:12px;" title="站点正处施工中.."><span id="bar"></span><span id="spot"></span></a></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_wormhole_label">萌国 ICP 备案（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><img src="https://icp.gov.moe/images/ico64.png" alt="moe_beian" style="height: 22px;vertical-align:middle;"></label>'; 
                             ?>
                         </td>
                     </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $moe_beian_statu = get_option('site_moe_beian_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 萌备案号</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_moe_beian_num';
+                                        echo '<input type="number" name="'.$opt.'" id="'.$opt.'" class="middle-text" value="' . get_option($opt) . '" placeholder="萌国ICP备案号（数字）"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $moe_beian_statu; ?>">
+                                <th scope="row">— 异次元之旅</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_moe_beian_travel';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">我们一起去萌站成员de星球旅行吧 ！</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><img src="//moe.one/upload/attach/202307/89_8TEYVRKUCP79XHG.png" alt="moe_beian" style="height: 22px;vertical-align:middle;"></label>';
+                                    ?>
+                                </td>
+                            </tr>
                     <tr valign="top">
                         <th scope="row">非AI撰写声明</th>
                         <td>
@@ -2689,6 +2734,16 @@
                                 $opt = 'site_not_ai_switcher';
                                 $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_monitor_switcher_label">非AI撰写声明（生成<a href="https://notbyai.fyi/" target="_blank"> not-by-ai </a>声明图标，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 14px;filter:invert(0.5); vertical-align:middle;"></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">站点施工警示</th>
+                        <td>
+                            <?php
+                                $opt = 'site_construction_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_monitor_switcher_label">工程施工警示灯控制（开启显示🚨警示灯🚨动画，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <style>@keyframes alarmLamp_bar_before{0%{opacity:.15;}2%{opacity:1;}4%{opacity:.15;}6%{opacity:1;}8%{opacity:.15;}10%{opacity:1;}12%{opacity:.15;}14%{opacity:1;}16%{opacity:.15;}18%{opacity:1;}20%{opacity:.15;}22%{opacity:1;}24%{opacity:.15;}26%{opacity:1;}28%{opacity:.15;}50%{opacity:.15;}60%{opacity:1;}61%{opacity:.15;}62%{opacity:1;}70%{opacity:.15;}80%{opacity:1;}81%{opacity:.15;}82%{opacity:1;}90%{opacity:.15;}100%{opacity:1;}}@keyframes alarmLamp_bar_after{0%{opacity:.15;}28%{opacity:.15;}30%{opacity:1;}32%{opacity:.15;}34%{opacity:1;}36%{opacity:.15;}38%{opacity:1;}39%{opacity:.15;}40%{opacity:1;}42%{opacity:.15;}44%{opacity:1;}46%{opacity:.15;}48%{opacity:1;}50%{opacity:.15;}52%{opacity:1;}54%{opacity:.15;}56%{opacity:1;}58%{opacity:.15;}60%{opacity:.15;}70%{opacity:1;}71%{opacity:.15;}72%{opacity:1;}80%{opacity:.15;}90%{opacity:1;}91%{opacity:.15;}92%{opacity:1;}100%{opacity:.15;}}@keyframes alarmLamp_spotlight{0%{filter:blur(0px);}28%{filter:blur(0px);}50%{filter:blur(0px);}60%{background:red;filter:blur(15px);}62%{background:red;filter:blur(15px);}70%{background:blue;filter:blur(15px);}72%{background:blue;filter:blur(15px);}80%{background:red;filter:blur(15px);}82%{background:red;filter:blur(15px);}90%{background:blue;filter:blur(15px);}92%{background:blue;filter:blur(15px);}100%{filter:blur(0px);}}.alarm_lamp span#spot::before,.alarm_lamp span#spot::after{content:none;}.alarm_lamp span#spot,.alarm_lamp span#bar::before,.alarm_lamp span#bar::after{content:"";width:33%;height:78%;background:red;box-shadow:rgb(255 0 0 / 80%) 0 0 20px 0px;position:absolute;top:50%;left:50%;transform:translate(0%,-50%);-webkit-transform:translate(0%,-50%);animation-duration:3s;animation-delay:0s;animation-timing-function:step-end;animation-iteration-count:infinite;animation-direction:normal;}.alarm_lamp span#bar::before{left:0%;animation-name:alarmLamp_bar_before;-webkit-animation-name:alarmLamp_bar_before;}.alarm_lamp span#bar::after{left:auto;right:0%;background:blue;box-shadow:rgb(0 0 255 / 80%) 0 0 20px 0px;animation-name:alarmLamp_bar_after;-webkit-animation-name:alarmLamp_bar_after;}.alarm_lamp{display:inline-block;padding:0 2px!important;box-sizing:border-box;position:relative;vertical-align:middle;border:1px solid transparent;}.alarm_lamp span{height:100%;display:block;position:inherit;}.alarm_lamp span#bar{width:100%;}.alarm_lamp span#spot{max-width:32%;background:white;transform:translate(-50%,-50%);-webkit-transform:translate(-50%,-50%);box-shadow:rgb(255 255 255 / 100%) 0 0 20px 0px;animation-name:alarmLamp_spotlight;-webkit-animation-name:alarmLamp_spotlight;}</style> <a href="javascript:void(0);" class="alarm_lamp" style="width:58px;height:12px;" title="站点正处施工中.."><span id="bar"></span><span id="spot"></span></a></label>';
                             ?>
                         </td>
                     </tr>

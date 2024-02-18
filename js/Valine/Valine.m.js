@@ -81,7 +81,7 @@ var custom_initfield_adminmd5,
     custom_initfield_serverchan,
     custom_initfield_pushplus,
     // custom_initfield_listsize,
-    // custom_initfield_rootpath,
+    custom_initfield_rootpath,
     custom_initfield_srccdn,
     custom_initfield_imgcdn,
     custom_initfield_apicdn,
@@ -284,10 +284,10 @@ custom_initfield_adminmd5 = e.config.adminMd5;
 custom_initfield_pushplus = e.config.pushPlus;
 custom_initfield_serverchan = e.config.serverChan;
 // custom_initfield_listsize = e.config.listSize;
-// custom_initfield_rootpath = e.config.rootPath;
-custom_initfield_imgcdn = e.config.imgCdn;// ? e.config.imgCdn : custom_initfield_rootpath;
-custom_initfield_srccdn = e.config.srcCdn;// ? e.config.srcCdn : custom_initfield_rootpath;
-custom_initfield_apicdn = e.config.apiCdn;// ? e.config.apiCdn : custom_initfield_rootpath;
+custom_initfield_rootpath = e.config.rootPath;
+custom_initfield_imgcdn = e.config.imgCdn ? e.config.imgCdn : custom_initfield_rootpath;
+custom_initfield_srccdn = e.config.srcCdn ? e.config.srcCdn : custom_initfield_rootpath;
+custom_initfield_apicdn = e.config.apiCdn ? e.config.apiCdn : custom_initfield_rootpath;
 custom_initfield_lazyload = e.config.lazyLoad;
 custom_initfield_wxnotify = e.config.wxNotify;
 custom_initfield_posterimg = e.config.posterImg;

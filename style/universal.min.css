@@ -983,6 +983,7 @@ audio{width:300px;height:32px}
 #footer-copyright li:last-of-type{padding-right:0}
 #footer-copyright li{padding:0 5px;display:inline-block}
 /* #footer-copyright ul li{letter-spacing:1px;} */
+#footer-copyright ul img{vertical-align:middle;}
 #footer-copyright li a:hover{text-decoration:underline;opacity: 1;}
 #footer-copyright li a{color:inherit;opacity: .75;}
 #footer-copyright ol img{position:relative;top:3px}
