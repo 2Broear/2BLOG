@@ -3,17 +3,6 @@
  * Template name: （BaaS）友链模板
  * Template Post Type: page
 */
-// 返回站点标签链接
-function get_site_bookmarks($category='standard', $orderby='link_id', $order='ASC'){
-    $res = get_bookmarks(array(
-        'orderby' => $orderby,
-        'order' => $order,
-        'category_name' => $category,
-        // 'exclude' => 60,
-        'hide_invisible' => 0
-    ));
-    return (count($res)>0 ? $res : false);
-}
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -22,105 +11,10 @@ function get_site_bookmarks($category='standard', $orderby='link_id', $order='AS
     <?php get_head(); ?>
     <style>
         .friends-boxes .deals .inbox.girl em{background: url('<?php echo $img_cdn; ?>/images/girl_symbols.png') no-repeat center center /contain;}
-        .friends-boxes .deals .inbox.girl::after{
-	        background: url('<?php echo $img_cdn; ?>/images/girl_symbols.png') center center /contain no-repeat;
-        }
-        .friends-boxes .deals.rcmd .inbox .inbox-aside span.lowside-description p{
-            max-width: 90%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            margin: 10px auto;
-        }
-        .friends-boxes .deals.exchanged .inbox,
-        .rcmd-boxes .info .inbox{
-            min-height: 123px;
-            /*will-change: initial;*/
-            /*transform: none;*/
-        }
+        .friends-boxes .deals .inbox.girl::after{background: url('<?php echo $img_cdn; ?>/images/girl_symbols.png') center center /contain no-repeat;}
         .main,
         #vcomments{
             margin: auto!important;
-        }
-        @keyframes blinker {
-            0% {
-                opacity: 1;
-            }
-            50% {
-                opacity: .15;
-            }
-            80% {
-                opacity: .85;
-            }
-            100% {
-                opacity: 1;
-            }
-        }
-        .friends-boxes .deals.exchanged .inbox:hover > .inbox-headside{
-            filter: saturate(5) blur(15px) opacity(.15);
-            animation: blinker 2s infinite linear;
-            -webkit-animation: blinker 2s infinite linear;
-        }
-        .friends-boxes .deals.exchanged .inbox .inbox-aside{
-            display: flex;
-            flex-flow: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .friends-boxes .deals.exchanged .inbox .inbox-aside span.lowside-title h4{
-            margin: 0;
-        }
-        .friends-boxes .deals .inboxSliderCard .slideBox{
-            max-height: 6em;
-            white-space: initial;
-            overflow-wrap: anywhere;
-            overflow-wrap: break-word;
-        }
-        .friends-boxes .deals .inboxSliderCard .slideBox a{
-            margin: 0;
-            /*max-height: 80px;*/
-            /*letter-spacing: 20px;*/
-            padding: 0 20px 0 0;
-        }
-        .friends-boxes .deals .inboxSliderCard .slideBox a.standby{
-            opacity: .35;
-            pointer-events: none;
-        }
-        
-        .friends-boxes .deals.rcmd .inbox.girl::after{
-            width: 66px;
-            right: -6px;
-            bottom: -6px;
-        }
-        .friends-boxes .deals.tech .inbox.girl::after{
-            width: 52px;
-            right: -6px;
-            bottom: -12px;
-        }
-        .friends-boxes .deals.tech .inbox{
-            max-width: calc(100%/5.8);
-            max-width: calc(100%/7.2);
-            max-width: calc(100%/7.55);
-            /*min-height: auto;*/
-            min-height: 66px;
-            min-height: 74px;
-        }
-        .friends-boxes .deals.rcmd .inbox{
-            max-width: calc(100%/5.25);
-        }
-        .friends-boxes .deals.tech .inbox .inbox-headside img{
-            border-top-left-radius: 50%;
-            opacity: .88;
-        }
-        .friends-boxes .deals.tech .inbox .inbox-aside span.lowside-description p{
-            margin-top: 5px;
-            display: none;
-        }
-        .friends-boxes .deals .inboxSliderCard .slideBox a,
-        .friends-boxes .deals .inbox.standby .inbox-headside img,
-        .friends-boxes .deals .inbox .inbox-headside img#err{
-            border-radius: unset;
-            font-size: small;
         }
     </style>
 </head>
@@ -149,7 +43,7 @@ function get_site_bookmarks($category='standard', $orderby='link_id', $order='AS
                                 $output = $output_sw ? get_option('site_link_list_cache') : '';
                             }
                             if(!$output || !$output_sw){
-                                $rich_links = get_site_bookmarks();
+                                $rich_links = get_site_bookmarks('standard');
                                 $output .= $rich_links ? '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes">'.get_site_links($rich_links, 'full').'</div>' : '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';
                                 if($t2){
                                     $t2 = $t2 ? $t2 : '技术侧重';

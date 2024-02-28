@@ -97,6 +97,7 @@
                             	adminMd5: '<?php echo md5(get_bloginfo('admin_email')) ?>',
                             	avatarCdn: '<?php echo get_option("site_avatar_mirror").'avatar/'; ?>',
                             	avatarApi: '<?php echo $plugin_path.'/gravatar.php?jump=0&email='; ?>',
+                            	posterImg: '<?php echo get_postimg(0, $post->ID, true); ?>',
                             });
                             // reply at current floor
                             const vcomments = document.querySelector("#vcomments");
@@ -292,21 +293,13 @@
                             <script type="text/javascript"> //addAscending createdAt
                                 new AV.Query("link").addDescending("updatedAt").equalTo('sitelink', 'true').find().then(result=>{
                                     for (let i=0,resLen=result.length; i<resLen;i++) {
-                                        let res = result[i],
-                                            name = res.attributes.name,
-                                            link = res.attributes.link;
-                                        document.querySelector(".friend_links li.friendsBox").innerHTML += `<a href="${link}" class="inbox-aside" target="_blank" rel="sitelink">${name}</a>`;
+                                        document.querySelector(".friend_links li.friendsBox").innerHTML += `<a href="${result[i].attributes.link}" class="inbox-aside" target="_blank" rel="sitelink">${result[i].attributes.name}</a>`;
                                     };
                                 })
                             </script>
                     <?php
                         }else{
-                            $sitelink = get_bookmarks(array(
-            	                'orderby' => 'link_id',
-            	                'order' => 'DESC', //ASC
-            	                'category_name' => "sitelink",
-            	                'hide_invisible' => 0
-        	                ));
+                            $sitelink = get_site_bookmarks('sitelink', 'rand', 'DESC');
                             echo get_site_links($sitelink);
         	                $use_temp = get_template_bind_cat('category-2bfriends.php');
         	                $temp_link = !$use_temp->errors ? get_category_link($use_temp->term_id) : 'javascript:;';
@@ -480,7 +473,7 @@
                             }
                             <?php
                                 if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
-                                    echo 'setupBlurColor(this, getParByCls(this, "inbox"));'; //this.parentNode.parentNode
+                                    echo 'setupBlurColor(this, getParByCls(this, "inbox"));'; //this.parentElement.parentElement
                                 }
                             ?>
                         }
@@ -541,7 +534,7 @@
                 const type_acg = "acg",
                       dis_class = "disabled",
                       load_done = type===type_acg ? "" : "已加载全部";
-                let tp = t.parentNode,
+                let tp = t.parentElement,
                     cid = parseInt(t.dataset.cid),
                     years = t.dataset.year, // add-opts for archive
                     loads = parseInt(t.dataset.load),
@@ -554,8 +547,13 @@
                     return;
                 }
                 clicks++;
-                t.innerText = type===type_acg ? "Loading.." : "加载中..";
-                t.classList.add('loading','disabled');  // add-opts archive (disable click)
+                if(type===type_acg){
+                    t.innerText = "Loading..";
+                    tp.parentElement.classList.add('disabled');
+                }else{
+                    t.innerText = "加载中..";
+                }
+                t.classList.add('loading');  // add-opts archive (disable click) ,'disabled'
                 t.setAttribute('data-click', clicks);
                 send_ajax_request("GET", "<?php echo admin_url('admin-ajax.php'); ?>", 
                     parse_ajax_parameter({
@@ -572,7 +570,7 @@
                         var posts_array = JSON.parse(res),
                             posts_count = posts_array.length,
                             loads_count = loads+posts_count,
-                            load_box = tp, //t.parentNode.parentNode.parentNode;
+                            load_box = tp, //t.parentElement.parentElement.parentElement;
                             last_offset = 0;
                         switch(type){
                             case type_acg:
@@ -628,7 +626,7 @@
                     let video = videos[i];
                     if(video.autoplay) break;
                     let video_src = video.src,
-                        video_box = video.parentNode,
+                        video_box = video.parentElement,
                         video_dir = video_src.lastIndexOf('/')+1,
                         video_url = video_src.substr(0, video_dir),
                         video_title = video_src.substr(video_dir, video_src.length),

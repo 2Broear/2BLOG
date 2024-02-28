@@ -139,8 +139,13 @@
 	margin: 0 auto;
 	white-space: nowrap;
 	/*width: 175%;150 145 123 115%*/
+    max-height: 6em;
+    white-space: initial;
+    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
 }
 .friends-boxes .deals .inboxSliderCard .slideBox a:hover{
+    max-width: 1rem;
     /*text-decoration: underline;*/
     color: var(--theme-color);
     opacity: 1;
@@ -151,6 +156,20 @@
     margin: auto 25px 15px 0;
     font-size: var(--min-size-rem);
     opacity: .75;
+    margin: 0;
+    /*max-height: 80px;*/
+    /*letter-spacing: 20px;*/
+    padding: 0 20px 0 0;
+}
+.friends-boxes .deals .inboxSliderCard .slideBox a.standby{
+    opacity: .35;
+    pointer-events: none;
+}
+.friends-boxes .deals .inboxSliderCard .slideBox a,
+.friends-boxes .deals .inbox.standby .inbox-headside img,
+.friends-boxes .deals .inbox .inbox-headside img#err{
+    border-radius: unset;
+    font-size: small;
 }
 /*设置 行内元素*/
 /*.friends-boxes .deals .inboxSliderCard .inbox{
@@ -171,9 +190,7 @@
 .friends-boxes .deals .inbox:hover > .inbox-aside h4{
     /*margin-top: 15px!important;*/
 }
-/*.friends-boxes .deals .inbox:hover > .inbox-aside {*/
-/*    color: var(--theme-color)!important;*/
-/*}*/
+
 .friends-boxes .deals.rcmd .inbox:hover > .inbox-aside .lowside-description{
     display: none;
 }
@@ -183,11 +200,12 @@
 .friends-boxes .deals.rcmd .inbox:hover > .inbox-aside{
     padding: 25px;
 }
+.friends-boxes .deals .inbox:hover > .inbox-inside .inbox-aside,
 .friends-boxes .deals .inbox:hover > .inbox-aside {
     color: var(--theme-color)!important;
 	/*font-size: 20px;*/
 	margin-left: auto;
-	text-align: left;
+	/*text-align: left;*/
 	white-space: nowrap;
 	/*padding: 0 15px;*/
 }
@@ -224,6 +242,9 @@
 .friends-boxes .deals .inbox:hover .inbox-headside img{
     border-radius: 0;
 }
+.friends-boxes .deals .inbox:hover .inbox-inside{
+    width: 100%;
+}
 .friends-boxes .deals .inbox:hover .inbox-headside{
     display: inherit;
     width: 100%;
@@ -235,9 +256,9 @@
 }
 
 
-.friends-boxes .deals .inbox:hover{
+.friends-boxes .deals .inbox:hover > .inbox-inside{
 	transform: scale(.85);
-	-webkit-transform: scale(.9);
+	-webkit-transform: scale(.85);
 	/*margin: 3px;*/
 	/*border: 2px solid rgb(255 255 255 / 5%);*/
 	/* background-color: #fffafa;
@@ -251,26 +272,14 @@
 .friends-boxes .deals .inbox{
 	width: 100%;
 	max-width: calc(100%/4.18);
-	color: var(--preset-6);
-	background: var(--preset-f);
-	padding: 10px;
 	margin: 5px;
 	position: relative;
-	overflow: hidden;
 	flex-flow: row nowrap;
 	justify-content: space-evenly;
 	justify-content: space-around;
-	box-shadow: rgba(0,0,0,0.08) 0 0 12px;
-	transition: transform .35s ease;
-	will-change: transform;
-	border-radius:var(--radius);
-	border: 1px solid #fff!important;
-    box-sizing: border-box;
-    background: linear-gradient(180deg, var(--mirror) 0, #fff)!important;
-    background: -webkit-linear-gradient(-90deg, var(--mirror) 0, #fff)!important;
 }
-.friends-boxes .deals .inbox.girl em,
-.friends-boxes .deals .inbox.girl::after{
+.friends-boxes .deals .inbox.girl .inbox-inside em,
+.friends-boxes .deals .inbox.girl .inbox-inside::after{
     display: block;
 	/*content: '';*/
 	width: 38%;
@@ -286,16 +295,37 @@
 	transform: rotate(-45deg);
 	-webkit-transform: rotate(-45deg);
 }
-.friends-boxes .deals .inbox.girl em{
+.friends-boxes .deals .inbox.girl .inbox-inside em{
     width: 80px;
     height: 100px;
 }
-.friends-boxes .deals .inbox.girl::after{
+.friends-boxes .deals .inbox.girl .inbox-inside::after{
     content: "";
     width: 80px;height: 100px;
     right: -12px;
 }
-.friends-boxes .deals .inbox.standby{
+.friends-boxes .deals.rcmd .inbox.girl .inbox-inside::after{
+    width: 66px;
+    right: -6px;
+    bottom: -6px;
+}
+.friends-boxes .deals.tech .inbox.girl .inbox-inside::after{
+    width: 52px;
+    right: -6px;
+    bottom: -12px;
+}
+.friends-boxes .deals.rcmd .inbox{
+    max-width: calc(100%/5.25);
+}
+.friends-boxes .deals.tech .inbox .inbox-headside img{
+    border-top-left-radius: 50%;
+    opacity: .88;
+}
+.friends-boxes .deals.tech .inbox .inbox-aside span.lowside-description p{
+    margin-top: 5px;
+    display: none;
+}
+.friends-boxes .deals .inbox.standby .inbox-inside{
 	box-shadow: none;
 }
 .friends-boxes .deals .inbox.standby::before{
@@ -312,7 +342,7 @@
 .friends-boxes .deals .inbox.standby:hover > .inbox-aside span{
     color: #f9ac1d;
 }
-.friends-boxes .deals .inbox.standby:hover{
+.friends-boxes .deals .inbox.standby:hover .inbox-inside{
 	border: 2px dashed #f9ac1d;
 	background: #fffbeb;
 }
@@ -326,6 +356,22 @@
 .friends-boxes .deals .inbox a{
     color: inherit;
     width: 100%;
+}
+.friends-boxes .deals .inbox .inbox-inside{
+	color: var(--preset-6);
+	width: 100%;
+	padding: 10px;
+	position: relative;
+	overflow: hidden;
+	background: var(--preset-f);
+	box-shadow: rgba(0,0,0,0.08) 0 0 12px;
+	border-radius:var(--radius);
+	border: 1px solid #fff!important;
+    box-sizing: border-box;
+	transition: transform .35s ease;
+    background: linear-gradient(180deg, var(--mirror) 0, #fff)!important;
+    background: -webkit-linear-gradient(-90deg, var(--mirror) 0, #fff)!important;
+	will-change: transform;
 }
 .friends-boxes .deals .inbox .inbox-headside{
 	width: 80%;
@@ -359,7 +405,7 @@
 
 .friends-boxes .deals .inbox span.ssl{
 	color: var(--preset-f);
-	font-size: 12px;
+	font-size: 10px;
 	line-height: 25px;
 	padding: 0 10px;
 	/*border-top-right-radius: 15px;*/
@@ -373,9 +419,9 @@
 	z-index: 9;
 }
 .friends-boxes .deals .inbox span.ssl.https{
-    font-weight: bold;
 	background: #4fc323;
-	opacity: .88;
+    /*font-weight: bold;*/
+	opacity: 1;
 }
 .friends-boxes .deals .inbox span.ssl.http{
 	background: #f4222c;
@@ -403,12 +449,32 @@
 	margin: 20px auto auto;
 	/*color: var(--preset-6);*/
 }
+.friends-boxes .deals.exchanged .inbox,
+.rcmd-boxes .info .inbox{
+    min-height: 125px;
+    /*will-change: initial;*/
+    /*transform: none;*/
+}
+.friends-boxes .deals.exchanged .inbox .inbox-aside{
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+}
+.friends-boxes .deals.exchanged .inbox .inbox-aside span.lowside-title h4{
+    margin: 0;
+}
 .friends-boxes .deals .inbox .inbox-aside span.lowside-title h4 a{
 	color: inherit;
 	-webkit-user-drag: none;
 }
 .friends-boxes .deals.rcmd .inbox .inbox-aside span.lowside-description p{
     margin-bottom: 20px!important;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 10px auto;
 }
 .friends-boxes .deals .inbox .inbox-aside span.lowside-description p{
 	/*color: var(--preset-9);*/
@@ -430,9 +496,10 @@
 	/* .friends-boxes .deals .inboxSliderCard .slideBox{ width: 155%;} */
 }
 @media only screen and (max-width: 760px) {
-	.friends-boxes .deals .inbox.girl::after{right: -8px;opacity:.12;/*width: 100%;*/}
+	.friends-boxes .deals .inbox.girl .inbox-inside::after{right: -8px;opacity:.12;/*width: 100%;*/}
 	.friends-boxes .deals .inboxSliderCard .inbox{ display: inline-block;}
-	.friends-boxes .deals .inbox{flex-flow:column;max-width:calc(100%/2.15)!important;}
+	.friends-boxes .deals .inbox{max-width:calc(100%/2.15)!important;}
+	.friends-boxes .deals .inbox .inbox-inside{flex-flow:column;}
 	.friends-boxes .deals .inbox .inbox-lowside span.lowside-description p{text-align:inherit}
 	.friends-boxes .deals .inboxSliderCard .slideBox{ width: 335%;/*235*/}
 	.friends-boxes .deals .inbox .inbox-aside{margin: auto;padding: 15px 0;}
@@ -444,10 +511,49 @@ details{
     text-align: left;
     margin-bottom: 15px;
 }
-@keyframes spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}
+@keyframes spin{
+    0%{
+        -webkit-transform:rotate(0deg);
+        transform:rotate(0deg)
+    }
+    100%{
+        -webkit-transform:rotate(360deg);
+        transform:rotate(360deg)
+    }
+}
 #loading{position:relative;padding:20px;display:block;height:80px;margin: 0 auto;}
 #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:20px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent;border-bottom-color:transparent;border-radius:50%;-webkit-animation:spin 1s infinite linear;animation:spin 1s infinite linear}
 .main{margin-bottom:auto}
 .friends-boxes .deals .inbox.standby .inbox-headside img{
     border-radius: 0;
 }
+.friends-boxes .deals.tech .inbox{
+    max-width: calc(100%/5.8);
+    max-width: calc(100%/7.2);
+    max-width: calc(100%/7.55);
+    /*min-height: auto;*/
+    /*min-height: 66px;*/
+    min-height: 74px!important;
+}
+.friends-boxes .deals.tech .inbox .inbox-headside{
+    width: 60%;
+}
+    @keyframes blinker {
+        0% {
+            opacity: 1;
+        }
+        50% {
+            opacity: .15;
+        }
+        80% {
+            opacity: .85;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+    .friends-boxes .deals.exchanged .inbox:hover .inbox-headside{
+        filter: saturate(5) blur(15px) opacity(.15);
+        animation: blinker 2s infinite linear;
+        -webkit-animation: blinker 2s infinite linear;
+    }

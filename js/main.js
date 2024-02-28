@@ -104,7 +104,7 @@
         const videos = document.querySelectorAll('video');
         var msgJson = Object.create(null);
         if(!videos[0]){
-            console.log(Object.assign(msgJson, {status:'setupVideoPoster NotFound', code:0}));
+            console.log(Object.assign(msgJson, {status:'setupVideoPoster Not found', code:404}));
             return;
         }
         for(let i=0,vdoLen=videos.length;i<vdoLen;i++){
@@ -112,7 +112,7 @@
             // return new Promise(function (resolve, reject) {  // RETURN caused outside-loop array length calc-err
             new Promise(function(resolve, reject){
                 if(video.autoplay){
-                    reject(Object.assign(msgJson, {status:'setupVideoPoster Abort', code:'v'+i}));
+                    reject(Object.assign(msgJson, {status:'setupVideoPoster Abort by autoplay', code:'v'+i}));
                     return;
                 }
                 let vdo = document.createElement('video');
@@ -284,7 +284,7 @@
     // };
     
     
-    function parse_ajax_parameter(data,decode){
+    function parse_ajax_parameter(data, decode=true){
         let str = "";
         for(let key in data){
             str += `${key}=${data[key]}&`;

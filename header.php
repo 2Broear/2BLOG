@@ -14,13 +14,13 @@
                 echo the_title();
                 break;
             case is_search():
-                echo 'Searchs.';
+                echo 'Searchs';
                 break;
             case is_tag():
                 echo single_tag_title('',false) . ' Tag';
                 break;
             case is_archive():
-                echo 'Archives..';
+                echo 'Archives';
                 break;
             default:
                 echo "NOT MATCHED";

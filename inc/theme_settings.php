@@ -284,7 +284,8 @@
         
         register_setting( 'baw-settings-group', 'site_rcmdside_cid' );
         register_setting( 'baw-settings-group', 'site_cardnav_array' );
-        register_setting( 'baw-settings-group', 'site_list_bg' );
+        // register_setting( 'baw-settings-group', 'site_list_bg' );
+        register_setting( 'baw-settings-group', 'site_list_links_category' );
         register_setting( 'baw-settings-group', 'site_tagcloud_switcher' );
         // if(get_option('site_tagcloud_switcher')){
             register_setting( 'baw-settings-group', 'site_tagcloud_num' );
@@ -849,7 +850,7 @@
                                         }
                                         echo '<p class="description" id="site_search_includes_label">指定搜索包含内容，使用逗号“ , ”分隔（默认 post 类型，可选 page（页面）及自定义选填类型</p><div class="checkbox">';
                                         $pre_array = explode(',',trim($value));  // NO "," Array
-                                        $pre_array_count = count($pre_array);
+                                        // $pre_array_count = count($pre_array);
                                         foreach ($options as $option){
                                             $checking = in_array($option, $pre_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
@@ -892,7 +893,7 @@
                                         // }
                                         echo '<p class="description" id="site_metanav_array_label">需要应用元导航样式的分类别名，使用逗号“ , ”分隔（仅输出存在子分类的一级分类</p><div class="checkbox">';
                                         $pre_array = explode(',',trim($value));  // NO "," Array
-                                        $pre_array_count = count($pre_array);
+                                        // $pre_array_count = count($pre_array);
                                         foreach ($cats_seclevel as $option){
                                             $slug = $option->slug;
                                             $checking = in_array($slug, $pre_array) ? 'checked' : '';
@@ -968,7 +969,7 @@
                                 }
                                 echo '<p class="description" id="site_rss_categories_label">指定站点 RSS 分类文章，使用逗号“ , ”分隔（feed将在任意文章更新后更新</p><div class="checkbox">';
                                 $pre_array = explode(',',trim($value));  // NO "," Array
-                                $pre_array_count = count($pre_array);
+                                // $pre_array_count = count($pre_array);
                                 foreach ($options as $option){
                                     $slug = $option->slug;
                                     $checking = in_array($slug, $pre_array) ? 'checked' : '';
@@ -1013,7 +1014,7 @@
                                         }
                                         echo '<p class="description" id="site_map_includes_label">指定 sitemap 生成内容，使用逗号“ , ”分隔（默认 post（文章）tag（标签）category（分类/<del>即 page 页面</del></p><div class="checkbox">';
                                         $pre_array = explode(',',trim($value));  // NO "," Array
-                                        $pre_array_count = count($pre_array);
+                                        // $pre_array_count = count($pre_array);
                                         foreach ($options as $option){
                                             $checking = in_array($option, $pre_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.strtoupper($option).'</label>';
@@ -1138,7 +1139,7 @@
                                         $options = array('Article', 'Sidebar', $templates_info['about'], $templates_info['acg'], $templates_info['guestbook'], $templates_info['privacy']);
                                         echo '<p class="description" id="site_map_includes_label">开启后使用上方👆图片加速域名👆加速站内指定位置视频，常用于超小型文件（Article：文章视频，Sidebar：侧栏视频</p><div class="checkbox">';
                                         $pre_array = explode(',',trim($value));  // NO "," Array
-                                        $pre_array_count = count($pre_array);
+                                        // $pre_array_count = count($pre_array);
                                         foreach ($options as $option){
                                             $slug = is_object($option)&&$option->slug ? strtolower($option->slug) : strtolower($option);  
                                             $name = is_object($option)&&$option->name ? $option->name : $option;
@@ -1302,7 +1303,7 @@
                                         echo '<input id="'.$opt.'_'.$index.'" type="checkbox" value="'.$index.'" '.$checking.' /><label for="'.$opt.'_'.$index.'">'.$option.'</label>';
                                     }
                                 }
-                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" style="margin:15px auto auto" value="' . $value . '"/></div>';;
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" style="" value="' . $value . '"/></div>';;
                             ?>
                         </td>
                     </tr>
@@ -1409,12 +1410,7 @@
                                         $status_code = 0;
                                         $url = 'https://cdn.staticfile.org/twikoo/' . $preset . '/twikoo.all.min.js';
                                         if(get_option('site_third_comments')=='Twikoo'){
-                                            $headers = get_headers($url);
-                                            if ($headers) {
-                                                $status_line = $headers[0];
-                                                preg_match('/\d{3}/', $status_line, $matches);
-                                                $status_code = $matches[0];
-                                            }
+                                            $status_code = get_url_status_by_curl($url, 3); //get_url_status_by_header($url);
                                         }
                                         echo '<p class="description" id="site_comment_pushplus_label">twikoo.all.min.js 版本号（默认 1.6.4，当前文件（'.$url.'）状态：'.$status_code.'</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="small-text" placeholder="Twikoo Source" value="' . $preset . '"/>';
                                     ?>
@@ -1673,7 +1669,7 @@
                                         }
                                         echo '<p class="description" id="">指定开启展示单页分类，使用逗号“ , ”分隔（默认开启日志、漫游影视、资源下载页面</p><div class="checkbox">';
                                         $async_array = explode(',',trim($value));  // NO "," Array
-                                        $pre_array_count = count($async_array);
+                                        // $pre_array_count = count($async_array);
                                         foreach ($async_opts as $option){
                                             $opts_slug = $option->slug;
                                             $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
@@ -1729,7 +1725,7 @@
                                                 $value = $preset;
                                             }
                                             $pre_array = explode(',',trim($value));  // NO "," Array
-                                            $pre_array_count = count($pre_array);
+                                            // $pre_array_count = count($pre_array);
                                             foreach ($arrobj as $array){
                                                 $slug = $array['slug'];
                                                 $checking = in_array($slug, $pre_array) ? 'checked' : '';
@@ -1795,17 +1791,38 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">首页 - 列表背景</th>
+                        <th scope="row">首页 - 友链分类</th>
                         <td>
                             <?php
-                                $opt = 'site_list_bg';
-                                $value = get_option( $opt, '' );
-                                // $preset = $img_cdn.'/images/dance.gif';
-                                // $value ? $preset=$value : update_option($opt, $preset);  //auto update
-                                echo '<p class="description" id="site_about_video_label">首页卡片导航下方左侧背景图（带动画</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$value.'" poster="'.$value.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="列表背景" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button multi" data-type="" value="选取文件">';
+                                $opt = 'site_list_links_category';
+                                $value = get_option($opt);
+                                $lists = get_links_category();
+                                $defaults = new stdClass();
+                                $defaults->name = '所有类目';
+                                $defaults->slug = '';
+                                array_unshift($lists, $defaults);
+                                // print_r($lists);
+                                if(!$value) update_option($opt, $defaults->slug);else $preset=$value;
+                                echo '<label for="'.$opt.'"><p class="description" id="">首页随机友链列表指定分类（默认显示所有类目</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                    foreach ($lists as $list){
+                                        echo '<option value="'.$list->slug.'"';
+                                        if($value==$list->slug) echo('selected="selected"');
+                                        echo '>'.$list->name.'</option>';
+                                    }
+                                echo '</select></label>';
                             ?>
                         </td>
                     </tr>
+                    <!--<tr valign="top">-->
+                    <!--    <th scope="row">首页 - 列表背景</th>-->
+                    <!--    <td>-->
+                            <?php
+                                // $opt = 'site_list_bg';
+                                // $value = get_option( $opt, '' );
+                                // echo '<p class="description" id="site_about_video_label">首页卡片导航下方左侧背景图（带动画</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$value.'" poster="'.$value.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="列表背景" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button multi" data-type="" value="选取文件">';
+                            ?>
+                    <!--    </td>-->
+                    <!--</tr>-->
                     <tr valign="top">
                         <th scope="row">首页 - 日志日记<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
@@ -1987,7 +2004,7 @@
                                         }
                                         echo '<p class="description" id="">指定开启缓存索引页面，使用逗号“ , ”分隔（默认开启归档、漫游影视及友链页面</p><div class="checkbox">';
                                         $async_array = explode(',',trim($value));  // NO "," Array
-                                        $pre_array_count = count($async_array);
+                                        // $pre_array_count = count($async_array);
                                         foreach ($async_opts as $option){
                                             $opts_slug = $option->slug;
                                             $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
@@ -2029,7 +2046,7 @@
                                         }
                                         echo '<p class="description" id="">指定开启 ajax 异步页面，使用逗号“ , ”分隔（默认开启漫游影视、归档页面</p><div class="checkbox">';
                                         $async_array = explode(',',trim($value));  // NO "," Array
-                                        $pre_array_count = count($async_array);
+                                        // $pre_array_count = count($async_array);
                                         foreach ($async_opts as $option){
                                             $opts_slug = $option->slug;
                                             $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
@@ -2555,7 +2572,7 @@
                                 }
                                 echo '<p class="description" id="site_bottom_nav_label">底部右下角导航链接（使用逗号“ , ”分隔，可选填其他分类 slug 别名</p><div class="checkbox">';
                                 $pre_array = explode(',',trim($value));  // NO "," Array
-                                $pre_array_count = count($pre_array);
+                                // $pre_array_count = count($pre_array);
                                 foreach ($options as $option){
                                     $opts_slug = $option->slug;
                                     $checking = in_array($opts_slug, $pre_array) ? 'checked' : '';

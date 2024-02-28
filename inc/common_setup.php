@@ -248,7 +248,9 @@
     //兼容gallery获取post内容指定图片（视频海报）
     function get_postimg($index=0, $postid=false, $default=false) {
         global $post, $images_cdn, $upload_url, $cdn_switch, $img_cdn;
-        $postid ? $post = get_post($postid) : $post;
+        if($postid){
+            $post = get_post($postid);
+        }
         $ret = array();
         if(has_post_thumbnail()){
             $ret = [get_the_post_thumbnail_url()];
@@ -1009,5 +1011,27 @@
     //     // return "$hex";
     // }
     
-    // unset($template_path);
+    // 检查远程url状态码（并发性能问题）
+    function get_url_status_by_header($url){
+        $headers = get_headers($url);
+        if (!$headers) {
+            return 0x0;
+        }
+        preg_match('/\d{3}/', $headers[0], $matches);
+        return $matches[0];
+    }
+    function get_url_status_by_curl($url, $timeout=5){  //with timeout
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HEADER, true);
+        curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+        curl_setopt($curl, CURLOPT_NOBODY, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $data = curl_exec($curl);
+        curl_close($curl);
+        // preg_match("/HTTP\/1\.[1|0]\s(\d{3})/",$data,$matches);
+        // return ($matches[1] == 200);
+        preg_match('/\d{3}/', $data, $matches);
+        return $matches ? $matches[0] : 0x0;
+    }
 ?>

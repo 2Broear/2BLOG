@@ -79,8 +79,8 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
             $all_count = $all_query->post_count;
             $posts_count = $acg_query->post_count;  //count($acg_query->posts) //mailto:'.get_bloginfo("admin_email").' 发送邮件，荐你所见
             $disable_statu = $posts_count==$all_count ? ' disabled' : false; //>=
-            $output .= '<div class="inbox more flexboxes"><div class="inbox-more flexboxes'.$disable_statu.'"><a class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cid.'" data-nonce="'.wp_create_nonce($slug."_posts_ajax_nonce").'" data-cat="'.strtoupper($slug).'" title="加载更多 '.$the_cat->name.'"></a></div></div>';
-            unset($cid, $slug, $all_count, $posts_count, $disable_statu);
+            $output .= '<div class="inbox more flexboxes'.$disable_statu.'"><div class="inbox-more flexboxes"><a class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cid.'" data-nonce="'.wp_create_nonce($slug."_posts_ajax_nonce").'" data-cat="'.strtoupper($slug).'" title="加载更多 '.$the_cat->name.'"></a></div></div>';
+            // unset($cid, $slug, $all_count, $posts_count, $disable_statu);
         }
     }
     $output .= '</div>';

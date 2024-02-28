@@ -1407,7 +1407,7 @@ body.dark .footer-contact-left ul h2,body.dark .news-article-container h3,body.d
 body.dark::-webkit-scrollbar-track, body.dark .v .vwrap .vedit .vemojis::-webkit-scrollbar-track,body.dark .win-top:after,body.dark .friends-boxes .deals .inbox.standby::before{background-color:var(--preset-2b)}
 
 /* edge winPad fixes(no:: + background-color) */
-body.dark, body.dark #footer-contact-way,body.dark .weblog-tree-core-l #weblog-circle,body.dark .friends-boxes .deals .inbox.standby{background-color:var(--preset-2b)!important;}
+body.dark, body.dark #footer-contact-way,body.dark .weblog-tree-core-l #weblog-circle,body.dark .friends-boxes .deals .inbox.standby .inbox-inside{background-color:var(--preset-2b)!important;}
 body.dark .inside-functions .box,body.dark .vheader #avatar{color:var(--preset-3a)}
 body.dark .v .vlist .vcard .vcontent.expand:after{background:-webkit-linear-gradient(180deg,hsla(0,0%,100%,0),rgb(48, 48, 48));background:linear-gradient(180deg,hsla(0,0%,100%,0),rgb(48, 48, 48))}
 body.dark .v .vlist .vcard .vquote.overview:before{background:-webkit-gradient(linear,left top,left bottom,from(rgba(255, 255, 255, 0)),to(#303030));background:-webkit-gradient(linear,left top,left bottom,from(rgba(255, 255, 255, 0)),to(#303030))}
@@ -1441,9 +1441,9 @@ body.dark .inside-functions span,body.dark .friend_links li a:hover{/*color:var(
 body.dark #special-img,body.dark .Fresh-ImgBoxs span,body.dark .friends-boxes .deals .inbox .inbox-headside img,body.dark .box_down ul li .details span,body.dark .banner .banner-inside ul li,body.dark span#lowerbg,body.dark span#acg-content-area,body.dark .news-window-img img,body.dark .news-article-container img,body.dark .win-content article img,body.dark .rcmd-boxes .info .inbox .inbox-headside img,body.dark #tech_pic img,body.dark #acg_window-content-inside_left-pic,body.dark .news-content-right-recommend ul{opacity: .66;}
 body.dark #footer-support-board,body.dark #footer-copyright,body.dark .win-content{background-color:#303030;}
 
-body.dark .friends-boxes .deals .inbox:hover,body.dark .friends-boxes .deals .inbox.standby:hover{background-color:transparent}
+body.dark .friends-boxes .deals .inbox:hover .inbox-inside,body.dark .friends-boxes .deals .inbox.standby:hover .inbox-inside{background-color:transparent}
 body.dark .friends-boxes .inbox-clip h2, body.dark .friends-boxes h3,bory.dark .wp_comments img{color:var(--preset-c);border-color:var(--preset-3a)}
-body.dark .friends-boxes .deals .inbox{color:var(--preset-c);background:#303030!important;border-color:#3a3a3a!important;}
+body.dark .friends-boxes .deals .inbox .inbox-inside{color:var(--preset-c);background:#303030!important;border-color:#3a3a3a!important;}
 body.dark .pageSwitcher a,
 body.dark .weblog-tree-core-l .missing-part,body.dark .news-window-img,body.dark .slider-menu_body ul li,body.dark .topic-inside,body.dark .news-content-right-download ol li,body.dark .tech_window-content li.normal-li,body.dark #acg_window-content-inside_left-bList,body.dark .acg_window-content-inside_left-list li a,body.dark #acg_window-content-inside_left-txt,body.dark #acg_window-content-inside_left-txt h2{border-color:var(--preset-3a)}
 

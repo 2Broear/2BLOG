@@ -32,14 +32,13 @@
             $posts_columns['post_rcmd'] = '推荐';
             $posts_columns['post_rating'] = '评分';
         }
-        unset($edit_acg_posts);
         return $posts_columns;
     }
     // preview custom_column-value
     add_action('manage_posts_custom_column', 'wpse_3531_display_seo_columns', 10, 2);
     function wpse_3531_display_seo_columns($column_name, $post_id){
         if ('post_orderby' == $column_name) {
-            echo get_post_meta($post_id) ? get_post_meta($post_id, 'post_orderby', true) : 1;
+            echo get_post_meta($post_id) ? get_post_meta($post_id, 'post_orderby', true) : '0（edit required）';
         }
         global $edit_acg_posts;
         if ($edit_acg_posts) {
@@ -52,7 +51,6 @@
                 echo get_post_meta($post_id) ? get_post_meta($post_id, 'post_rating', true) : '';
             }
         }
-        unset($edit_acg_posts);
     }
     // Add our text to the quick edit box
     add_action('quick_edit_custom_box', 'on_quick_edit_custom_box', 10, 2);
@@ -95,7 +93,6 @@
             </fieldset>
     <?php
         }
-        unset($edit_acg_posts);
     }
     
     // add to BULK-EDIT
@@ -177,7 +174,6 @@
             $post_rights = $post_meta&&array_key_exists('post_rights',$post_meta) ? $post_meta['post_rights'][0] : false;
             if($post_rights&&$post_rights!='原创') array_push($preset_arr, array('title'=>'文章来源', 'for'=>'post_source', 'type'=>'text', 'method'=>false, 'options'=>false));
         };
-        unset($post, $pagenow);
         return $preset_arr;
     }
     function postMetas($meta,$json){
@@ -196,7 +192,6 @@
             $value = 1;
             global $post;
             update_post_meta($post->ID, $for, $value);
-            unset($post);
         }
         switch ($method) {
             case 'textarea':

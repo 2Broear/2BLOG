@@ -71,7 +71,7 @@
                                                 $lazyhold = 'data-src="'.$postimg.'"';
                                                 $postimg = $loadimg;
                                             }
-                                            if(get_postimg() || has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img '.$lazyhold.' src="'.$postimg.'" alt="'.get_the_title().'" /></a></span>';
+                                            if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img '.$lazyhold.' src="'.$postimg.'" alt="'.get_the_title().'" /></a></span>'; //get_postimg() || 
                                         ?>
                                         <div class="news-inside-content" style="<?php //echo $hasimg_style; ?>">
                                             <h2 class="entry-title">

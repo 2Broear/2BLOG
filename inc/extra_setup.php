@@ -70,9 +70,33 @@
      * custom site query
      *--------------------------------------------------------------------------
     */
-    
+    function get_links_category(){
+        $bookmark_categories = get_terms('link_category');
+        if (!empty( $bookmark_categories ) && !is_wp_error($bookmark_categories)){
+            return $bookmark_categories;
+            // foreach ($bookmark_categories as $category) {
+            //     echo '分类名称：' . $category->name . '<br>';
+            //     echo '分类 ID：' . $category->term_id . '<br>';
+            // }
+        } else {
+            echo 'No bookmark categories found.';
+        }
+    }
+    // 返回站点标签链接
+    function get_site_bookmarks($category='', $orderby='link_id', $order='ASC', $limit=-1){
+        $category_by_slug = $category ? get_term_by('slug', $category, 'link_category') : false;
+        $res = get_bookmarks(array(
+            'orderby' => $orderby,
+            'order' => $order,
+            'category_name' => $category_by_slug ? $category_by_slug->name : '',
+            'hide_invisible' => 0,
+            'limit' => $limit,
+            // 'exclude' => 60,
+        ));
+        return (count($res)>0 ? $res : false);
+    }
     // 返回友链指定分类 html
-    function get_site_links($links, $frame=false){
+    function get_site_links($links, $frame=false, $strict=false){
         if(!$links) return 'unreachable links provide';
         global $lazysrc, $loadimg;
         $output = '';
@@ -80,11 +104,16 @@
             $link_notes = $link->link_notes;
             $link_target = $link->link_target;
             $link_rating = $link->link_rating;
+            $link_accessable = $link->link_visible=='Y';
+            // if($strict && !$link_accessable){
+            //     continue;
+            // }
             $link_url = $link->link_url;
             $link_name = $link->link_name;
             $link_desc = $link->link_description;
-            $statu = ' standby';
-            $status = $link->link_visible!='Y' ? $statu : '';
+            $link_descs = $link_desc ? '<span class="lowside-description"><p>'.$link_desc.'</p></span>' : '';
+            $statu = 'standby';
+            $status = !$link_accessable ? ' '.$statu : '';
             $sex = $link_rating==1||$link_rating==10 ? ' girl' : '';
             $ssl = $link_rating>=9 ? ' https' : '';
             $rel = $link->link_rel ? $link->link_rel : false;
@@ -100,15 +129,19 @@
                 case 'full':
                     $avatar_statu = $status==$statu ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link_name.'" draggable="false">';
                     $rel_statu = $rel ? $rel : 'friends';
-                    $output .= '<div class="inbox flexboxes'.$status.$sex.'"><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span><span class="lowside-description"><p>'.$link_desc.'</p></span></a></div>';
+                    $output .= '<div class="inbox flexboxes'.$status.$sex.'"><div class="inbox-inside flexboxes"><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div></div>';
                     break;
                 case 'half':
                     $rel_statu = $rel ? $rel : 'recommends';
-                    $output .= '<div class="inbox flexboxes'.$status.$sex.'">'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span><span class="lowside-description"><p>'.$link_desc.'</p></span></a></div>'; //<em></em>
+                    $output .= '<div class="inbox'.$status.$sex.'"><div class="inbox-inside flexboxes">'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div></div>'; //<em></em>
+                    break;
+                case 'list':
+                    $rel_statu = $rel ? $rel : 'random';
+                    $output .= '<li><a href="'.$link_url.'" class="'.$status.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'">'.$link_name.'</a></li>';
                     break;
                 default:
                     $rel_statu = $status==$statu ? 'nofollow' : 'marked';
-                    $output .= '<a href="'.$link_url.'" class="'.$status.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" >'.$link_name.'</a>';
+                    $output .= '<a href="'.$link_url.'" class="'.$status.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'">'.$link_name.'</a>'; // data-status="'.get_url_status_by_curl($link_url, 3).'"
                     break;
             }
         }
@@ -139,7 +172,7 @@
                 	<style>
                 	    .news-inside-content h2{overflow:hidden}
                 	    .win-content.main,
-                	    .news-inside-content .news-core_area p,
+                	    /*.news-inside-content .news-core_area p,*/
                 	    .empty_card{margin:15px auto auto;}
                 	    .news-inside-content .news-core_area p{padding-left:0}
                     	.win-content{width:100%;padding:0;display:initial}
@@ -356,22 +389,11 @@
     */
     
     
-    /*****   页面缓存刷新   *****/
-    
+    /*--------------------------------------------------------------------------
+     * 页面缓存刷新
+     *--------------------------------------------------------------------------
+    */
     if(get_option('site_cache_switcher')){
-        // function site_clear_db_caches() {
-        //     // // 仅适用于不存在 wp_ajax_nopriv_my_ajax_action 请求验证的数据
-        //     // remove_action('wp_ajax_my_ajax_action', 'my_ajax_callback');
-        //     // remove_action('wp_ajax_nopriv_my_ajax_action', 'my_ajax_callback');
-        //     // // 未解决BUG：data-nonce验证数据[24h有效，根据用户会话单独生成验证数据]被db缓存导致其他xhr请求会话返回403
-        //     update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
-        //     // //清除（重建）ACG 缓存
-        //     // update_option('site_acg_stats_cache', '');
-        //     update_option('site_archive_list_cache', '');  
-        //     update_option('site_acg_post_cache', '');
-        // }
-        // add_action('save_post', 'site_clear_db_caches'); 
-        // add_action('delete_post', 'site_clear_db_caches');
         //清除（重建）更新链接
         function site_update_link_cache(){
             update_option('site_link_list_cache', '');  //清除（重建）友情链接
@@ -380,46 +402,46 @@
         add_action('edit_link', 'site_update_link_cache');
         add_action('delete_link', 'site_update_link_cache');
         //清除（重建）指定分类
-        function update_category_post_cache($post_id, $temp_slug, $page_cache) {
+        function update_category_post_cache($post, $temp_slug, $page_cache) {
             $temp_info = get_cat_by_template($temp_slug);
-            if(!$post_id){
-                global $post, $cat;
-                $post_id = $post->ID;
+            if(!$cat){
+                global $cat;
             }
-            $cat = $cat ? $cat : get_the_category($post_id)->term_id; // $categories = wp_get_post_categories($post_id);
-            if(in_category($temp_info->slug, get_post($post_id)) || cat_is_ancestor_of($cat, $temp_info->term_id)){ //in_array($temp_info->term_id, $categories)
+            $pid = $post->ID;
+            $cat = $cat ? $cat : get_the_category($pid)->term_id; // $categories = wp_get_post_categories($pid);
+            if(in_category($temp_info->slug, $post) || cat_is_ancestor_of($cat, $temp_info->term_id)){ //in_array($temp_info->term_id, $categories)
                 update_option($page_cache, '');
             }
         }
         function site_update_specific_caches($post_id) {
+            $post = get_post($post_id);
+            if($post->post_type != 'post') {
+                return;  // update post only(no inform)
+            }
             //清除（重建）更新ACG
-            update_category_post_cache($post_id, 'acg', 'site_acg_post_cache');
+            update_category_post_cache($post, 'acg', 'site_acg_post_cache');
             //清除（重建）更新下载
-            update_category_post_cache($post_id, 'download', 'site_download_list_cache');
+            update_category_post_cache($post, 'download', 'site_download_list_cache');
             //（始终）清除（重建）归档数据
-            update_option('site_archive_count_cache', '');  //update_category_post_cache($post_id, 'archive', 'site_archive_count_cache');
-            update_option('site_archive_contributions_cache', '');  //update_category_post_cache($post_id, 'archive', 'site_archive_contributions_cache');
-            update_option('site_archive_list_cache', '');  //update_category_post_cache($post_id, 'archive', 'site_archive_list_cache');
+            update_option('site_archive_count_cache', '');
+            update_option('site_archive_contributions_cache', '');
+            update_option('site_archive_list_cache', '');
             $output_sw = false;
             $temp_array = array(get_cat_by_template('news')->slug, get_cat_by_template('notes')->slug, get_cat_by_template('weblog')->slug, get_cat_by_template('acg')->slug);
             $caches = get_option('site_cache_includes');
             foreach ($temp_array as $temp_slug) {
                 $cache = 'site_recent_'.$temp_slug.'_cache';
                 $output_sw = in_array($temp_slug, explode(',', $caches));
-                if($output_sw) update_category_post_cache($post_id, $temp_slug, $cache);
-                // if($output_sw && in_category($temp_slug, get_post($post_id))) {
-                //     update_option($cache, '');
-                //     break;
-                // }
+                if($output_sw) {
+                    update_category_post_cache($post_id, $temp_slug, $cache);
+                }
             }
         }
         add_action('save_post', 'site_update_specific_caches');
         add_action('delete_post', 'site_update_specific_caches');
         
-        /*--------------------------------------------------------------------------
-         * wp_schedule_event 定时任务
-         *--------------------------------------------------------------------------
-        */
+        /*****   wp_schedule_event 定时任务   *****/
+
         function schedule_my_cronjob(){
             if(!wp_next_scheduled('db_caches_cronjob_hook')){
                 // 设定定时作业执行时间（东八区时间）
@@ -436,16 +458,6 @@
         }
         add_action('wp', 'schedule_my_cronjob');
         add_action('db_caches_cronjob_hook', 'site_clear_timeout_caches'); //定时更新 db caches
-        // function schedule_acg_cronjob(){
-        //     if(!wp_next_scheduled('acg_caches_cronjob_hook')){
-        //         // 晚上更新一次ACG
-        //         $timestamp = strtotime('today 17:30am Asia/Shanghai'); // 设置每天上午执行一次定时作业
-        //         wp_schedule_event($timestamp, 'daily', 'acg_caches_cronjob_hook'); 
-        //     }
-        // }
-        // add_action('wp', 'schedule_acg_cronjob');
-        // add_action('acg_caches_cronjob_hook', 'site_clear_db_caches'); //定时更新 db caches
-        // 自定义定时作业回调函数 //https://www.shephe.com/2023/07/no-pluglin-wordpress-archive-page/
     }
     
     /*
@@ -718,8 +730,11 @@
             global $src_cdn;
             $comment = get_comment($comment_id);
             $post_id = $comment->comment_post_ID;
-            $mail = $comment->comment_author_email;
             $admin_mail = get_option('site_smtp_mail', get_bloginfo('admin_email'));
+            $comment_mail = $comment->comment_author_email;
+            $comment_author = $comment->comment_author;
+            $comment_title = '《' . get_the_title($post_id) . '》 上有新评论啦~';
+            $comment_content = strip_tags($comment->comment_content);
             // 一个 POST 请求
             $options = array(
                 'http' => array(
@@ -727,22 +742,19 @@
                     'header' => 'Content-type: application/x-www-form-urlencoded',
                     'content' => http_build_query(
                         array(
-                            'name' => $comment->comment_author,
-                            'mail' => $mail,  // 'avatar' => match_mail_avatar($mail),
-                            'content' => strip_tags($comment->comment_content),
-                            'title' => '《' . get_the_title($post_id) . '》 上有新评论啦~',
-                            'url' => get_bloginfo('url')."/?p=$post_id#comments",
-                            'image' => get_postimg(0,$post_id,true),
-                            // 'corpid' => get_option('site_wpwx_id'),  // id
-                            // 'corpsecret' => get_option('site_wpwx_secret'),  // secret
-                            // 'msgtype' => get_option('site_wpwx_type'),  //type
-                            // 'agentid' => get_option('site_wpwx_agentid'),  //aid
+                            'name' => $comment_author,
+                            'mail' => $comment_mail,  // 'avatar' => match_mail_avatar($comment_mail),
+                            'title' => $comment_title,
+                            'content' => $comment_content,
+                            // 'description' => $comment_author.' 在 '.$comment_title.' 上回复道: '.$comment_content,
+                            'image' => get_postimg(0, $post_id, true),
+                            'url' => urlencode(get_bloginfo('url')."/?p=$post_id#comments"),
                         )
                     )
                 )
             );
             // 评论邮件不为博主邮件时，返回 notify 接口（$postdata）不可使用 cdn，wpwx-notify.php 需调用 wp core
-            if($mail!=$admin_mail) return file_get_contents($src_cdn . '/wpwx-notify.php',false,stream_context_create($options));else return false; //get_bloginfo('template_directory') custom_cdn_src('api', true)
+            if($comment_mail!=$admin_mail) return file_get_contents($src_cdn . '/wpwx-notify.php',false,stream_context_create($options));else return false; //get_bloginfo('template_directory') custom_cdn_src('api', true)
         }
         // 挂载 WordPress 评论提交的接口
         add_action('comment_post', 'push_weixin', 19, 2);

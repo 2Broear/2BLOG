@@ -111,7 +111,7 @@
                                 <div class="head-inside wow fadeInUp" data-wow-delay="0.15s" style="background:url(<?php echo !$video ? get_meta_image($cat, get_option('site_bgimg')) : false; ?>) center center /cover;">
                                     <?php
                                         if($video){
-                                            echo '<video src="'.$video.'" poster="'.get_meta_image($cat, get_option('site_bgimg')).'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>';
+                                            echo '<video src="'.$video.'" poster="" preload="auto" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>'; //'.get_meta_image($cat, get_option('site_bgimg')).'
                                         }
                                     ?>
                                 </div>

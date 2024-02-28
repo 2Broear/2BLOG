@@ -12,18 +12,15 @@
         $name = $parameters['name'];
         $mail = $parameters['mail'];
         $content = $parameters['content'];
+        // $description = $parameters['description'];
     }else{
-        $url = $_POST['url'];
-        $title = $_POST['title'];
-        $image = $_POST['image'];
-        $name = $_POST['name'];
-        $mail = $_POST['mail'];
-        $content = $_POST['content'];
-        // 定义id和secret
-        // $corpid = $_POST['site_wpwx_id'];
-        // $corpsecret = $_POST['site_wpwx_secret'];
-        // $msgtype = $_POST['site_wpwx_type'];
-        // $agentid = $_POST['site_wpwx_agentid'];
+        $url = $_POST['url'] ? $_POST['url'] : $_GET['url'];
+        $title = $_POST['title'] ? $_POST['title'] : $_GET['title'];
+        $image = $_POST['image'] ? $_POST['image'] : $_GET['image'];
+        $name = $_POST['name'] ? $_POST['name'] : $_GET['name'];
+        $mail = $_POST['mail'] ? $_POST['mail'] : $_GET['mail'];
+        $content = $_POST['content'] ? $_POST['content'] : $_GET['content'];
+        // $description = $_POST['description'] ? $_POST['description'] : $_GET['description'];
     }
     $avatar = match_mail_avatar($mail);
     $description = "昵称: $name \n邮箱: $mail \n评论: $content";
