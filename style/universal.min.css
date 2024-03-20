@@ -57,23 +57,64 @@ details summary{cursor: pointer;}
 pre span{margin:auto;}
 figure{
     margin: 0 auto;
+    margin: 4px;
     text-align: center;
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
 }
-figure > figure{
+figure.wp-block-gallery{
+    margin: auto;
+    display: flex;
+    flex-flow: wrap;
+    align-items: stretch;
+    justify-content: space-evenly;
+    /*text-align: left;*/
+}
+figure.wp-block-gallery > figure:hover img{
+    transform: scale(1.15);
+    -webkit-transform: scale(1.15);
+}
+figure.wp-block-gallery > figure:nth-child(3n),
+figure.wp-block-gallery > figure:last-of-type{
+    /*margin-right: 0;*/
+}
+figure.wp-block-gallery > figure{
+    width: 32.23%;
     width: 32%;
+    min-height: 150px;
+    height: 23vh;
+    height: auto;
+    margin: 10px 6px 0 0;
+    margin: 4px 3px;
     display: inline-block;
-    margin: 5px;
-    vertical-align: middle;
+    /*float: left;*/
 }
-figure figcaption{
-    font-size: var(--min-size);
-    opacity: .75;
-    text-align: center;
+figure.wp-block-gallery > figure a,
+figure img{
+    min-height: inherit;
+    display: block;
+    height: 100%;
 }
 figure img{
 	width: auto;
 	height: auto;
 	max-width: 100%;
+    margin: auto!important;
+	width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+figure > figcaption{
+    color: white;
+    font-size: var(--min-size);
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 20px 10px 15px;
+    box-sizing: border-box;
+    background: linear-gradient(0deg, #000 0%, transparent);
 }
 del,s{
     opacity: .75;
@@ -1706,6 +1747,9 @@ body.dark .ibox.quotes .iboxes::before{
 .share span {width:50px;height:50px;display:inherit;border:2px solid;padding:5px;margin:0 auto;border-radius:50%;transition:all .15s ease;position:relative;cursor:pointer;}
 .share #dislike span.zan::after,
 .share #dislike span.zan em {background-position:-404px 4px!important}
+.share #dislike span.zan{
+    pointer-events: none;
+}
 body.dark .share #dislike span #counter {color:#303030}
 .share #dislike span #counter {min-width:30%;min-height:32%;padding:0 1px;color:#fff;font-style:normal;font-weight:800;font-family:var(--font-ms);text-align:center;border:2px solid;background:#c0545f;border-radius:50px;position:absolute;top:-15px;right:5px;display:block;/*letter-spacing:-1px;*/}
 .share #dislike span {color:#c0545f}

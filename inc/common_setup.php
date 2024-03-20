@@ -129,7 +129,7 @@
     function get_ai_abstract(){
         if(get_option('site_chatgpt_desc_sw') && in_chatgpt_cat()){
             $dir = get_option('site_chatgpt_dir') ? get_option('site_chatgpt_dir').'/' : '';
-            include_once get_template_directory() . '/plugin/'.$dir.'chat_data.php';  // 读取文件记录
+            include_once get_template_directory() . '/plugin/'.$dir.'gpt_data.php';  // 读取文件记录
             global $post;
             $pid = $post->ID;
             if(isset($cached_post['chat_pid_'.$pid]['error'])){
@@ -168,9 +168,10 @@
     }
     
     // 自定义文章摘要
-    function custom_excerpt($length=88, $var=false){
+    function custom_excerpt($length=88, $var=false, $pid=0){
         // $res = in_chatgpt_cat()&&is_single() ? get_between_string('文章摘要chatGPT standby chatGPT responsing..', $length, get_the_excerpt()) : mb_substr(get_the_excerpt(), 0, $length);
-        $res = get_between_string('standby chatGPT responsing..', $length, get_the_excerpt());  // chinese only
+        $excerpt = $pid ? get_the_excerpt($pid) : get_the_excerpt();
+        $res = get_between_string('standby chatGPT responsing..', $length, $excerpt);  // chinese only
         $res = trim($res) . '...';
         if($var){
             return $res;
@@ -246,22 +247,21 @@
     // unset($videos_cdn_arr);
     
     //兼容gallery获取post内容指定图片（视频海报）
-    function get_postimg($index=0, $postid=false, $default=false) {
+    function get_postimg($index=0, $pid=0, $default=false) {
         global $post, $images_cdn, $upload_url, $cdn_switch, $img_cdn;
-        if($postid){
-            $post = get_post($postid);
-        }
+        $_posts = $pid ? get_post($pid) : $post;
         $ret = array();
-        if(has_post_thumbnail()){
-            $ret = [get_the_post_thumbnail_url()];
+        if(has_post_thumbnail($_posts)){
+            $ret = [get_the_post_thumbnail_url($_posts)];
         }else{
-            preg_match_all('/\<img.*src=("[^"]*")/i', $post->post_content, $image);
+            $posts_content = $_posts->post_content;
+            preg_match_all('/\<img.*src=("[^"]*")/i', $posts_content, $image);
             foreach($image[0] as $i => $v) {
                 $ret[] = trim($image[1][$i],'"');
             };
             //未匹配到图片或调用值超出图片数量范围则输出（视频海报或）默认图
             if(count($ret)<=0 || count($ret)<=$index) {
-                preg_match_all('/\<video.*poster=("[^"]*")/i', $post->post_content, $video);
+                preg_match_all('/\<video.*poster=("[^"]*")/i', $posts_content, $video);
                 $video_poster = $video[1] ? trim($video[1][0],'"') : false;
                 if($video_poster){
                     $ret = [$video_poster];
@@ -277,7 +277,7 @@
         if($cdn_switch){
             $res = str_replace($upload_url, $images_cdn, $result);
         }
-        // unset($post, $images_cdn, $upload_url, $cdn_switch);
+        unset($post, $images_cdn, $upload_url, $cdn_switch);
         return $res;
     }
     // 分类背景图/视频海报
@@ -580,7 +580,7 @@
                     case 'acg':
                         $post_class->link = get_the_permalink($pid);
                         $post_class->poster = get_postimg(0, $pid, true);
-                        $post_class->excerpt = custom_excerpt(66, true); //get_the_excerpt($this_post)
+                        $post_class->excerpt = custom_excerpt(66, true, $pid); // get_the_excerpt($pid)
                         $post_class->rcmd = get_post_meta($pid, "post_rcmd", true);
                         $post_class->rating = get_post_meta($pid, "post_rating", true);
                         break;

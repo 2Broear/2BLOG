@@ -57,7 +57,7 @@
                 $pid = $post->ID;
                 break;
         }
-        $len = isset($atts['length']) ? $atts['length'] : 80;
+        $len = isset($atts['len']) ? $atts['len'] : 80;
         $title = get_the_title($pid);
         $content = get_post($pid)->post_content; //get_the_excerpt($pid); //custom_excerpt(99, true);
         $excerpt = mb_substr(strip_tags($content), 0, $len).'...';

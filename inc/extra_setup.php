@@ -39,7 +39,7 @@
         // print_r(preg_replace('/\n/',"", $choices->message->content));
     }
     // API调用接口，接受三个参数：调用 api 文件名、api 代理访问（使用 api.php 文件中的 curl 携带鉴权参数二次请求（速度影响），适用前端异步调用、返回请求api或返回sign签名（如开启cdn鉴权
-    function get_api_refrence($api='', $xhr=false, $exe=1, $pid=false){
+    function get_api_refrence($api='', $xhr=false, $exe=1, $pid=0){
         global $src_cdn;
         $res = 'unknown_api_refrence';
         if(!$api){
@@ -50,7 +50,7 @@
         $cdn_api = get_option('site_cdn_api');
         $pid = $pid ? $pid : $post->ID;
         $api_file = '/'.$api.'.php';
-        $authentication = get_option('site_chatgpt_dir','authentication');
+        $authentication = get_option('site_chatgpt_dir', 'authentication');
         $request_url = $cdn_switch&&$cdn_api ? custom_cdn_src('api', true) : $src_cdn.'/plugin/'.$authentication;
         $auth_url = $request_url.$api_file.'?pid='.$pid;
         $cdn_auth = get_option('site_chatgpt_auth');
@@ -112,8 +112,8 @@
             $link_name = $link->link_name;
             $link_desc = $link->link_description;
             $link_descs = $link_desc ? '<span class="lowside-description"><p>'.$link_desc.'</p></span>' : '';
-            $statu = 'standby';
-            $status = !$link_accessable ? ' '.$statu : '';
+            $standby = 'standby';
+            $status = !$link_accessable ? $standby : '';
             $sex = $link_rating==1||$link_rating==10 ? ' girl' : '';
             $ssl = $link_rating>=9 ? ' https' : '';
             $rel = $link->link_rel ? $link->link_rel : false;
@@ -127,20 +127,20 @@
             }
             switch ($frame) {
                 case 'full':
-                    $avatar_statu = $status==$statu ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link_name.'" draggable="false">';
+                    $avatar_statu = $status==$standby ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link_name.'" draggable="false">';
                     $rel_statu = $rel ? $rel : 'friends';
-                    $output .= '<div class="inbox flexboxes'.$status.$sex.'"><div class="inbox-inside flexboxes"><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div></div>';
+                    $output .= '<div class="inbox flexboxes '.$status.$sex.'"><div class="inbox-inside flexboxes"><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div></div>';
                     break;
                 case 'half':
                     $rel_statu = $rel ? $rel : 'recommends';
-                    $output .= '<div class="inbox'.$status.$sex.'"><div class="inbox-inside flexboxes">'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div></div>'; //<em></em>
+                    $output .= '<div class="inbox '.$status.$sex.'"><div class="inbox-inside flexboxes">'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div></div>'; //<em></em>
                     break;
                 case 'list':
                     $rel_statu = $rel ? $rel : 'random';
                     $output .= '<li><a href="'.$link_url.'" class="'.$status.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'">'.$link_name.'</a></li>';
                     break;
                 default:
-                    $rel_statu = $status==$statu ? 'nofollow' : 'marked';
+                    $rel_statu = $status==$standby ? 'nofollow' : 'marked';
                     $output .= '<a href="'.$link_url.'" class="'.$status.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'">'.$link_name.'</a>'; // data-status="'.get_url_status_by_curl($link_url, 3).'"
                     break;
             }
@@ -185,7 +185,15 @@
                         .win-content article.news-window{padding:0;margin-bottom:25px;/*border:1px solid rgb(100 100 100 / 10%);*/}
                         .win-content article .info span{margin-left:10px}
                         .win-content article .info span#slider{margin:auto}
-                	    .news-window-img{max-width:16%}
+                	    .news-window-img{max-width:15%}
+                        .news-window-img a{
+                            width: 100%;
+                            height: 100%;
+                        }
+                        .news-window-img img{
+                            object-fit: cover;
+                            min-height: 123px;
+                        }
                 	    .rcmd-boxes{width:19%;display:inline-block;vertical-align:middle}
                 	    .empty_card h1{max-width: 88%;overflow: hidden;text-overflow: ellipsis;display: block;margin: 25px auto;}
                 	    .rcmd-boxes .info .inbox{max-width:none;margin: 5px}

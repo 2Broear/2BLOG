@@ -82,7 +82,7 @@
             },
             scrollLoad = closure_throttle((e)=>{
                 if(loadArray.length<=0){
-                    console.log(Object.assign(msgObject, {status:'lazyload done', type:'call'}));
+                    console.log(Object.assign(msgObject, {msg:'lazyload done', code:200}));
                     window.removeEventListener('scroll', scrollForRemove, true);
                     return;
                 };
@@ -104,7 +104,7 @@
         const videos = document.querySelectorAll('video');
         var msgJson = Object.create(null);
         if(!videos[0]){
-            console.log(Object.assign(msgJson, {status:'setupVideoPoster Not found', code:404}));
+            console.log(Object.assign(msgJson, {msg:'setupVideoPoster Not found', code:404}));
             return;
         }
         for(let i=0,vdoLen=videos.length;i<vdoLen;i++){
@@ -112,7 +112,7 @@
             // return new Promise(function (resolve, reject) {  // RETURN caused outside-loop array length calc-err
             new Promise(function(resolve, reject){
                 if(video.autoplay){
-                    reject(Object.assign(msgJson, {status:'setupVideoPoster Abort by autoplay', code:'v'+i}));
+                    reject(Object.assign(msgJson, {msg:'setupVideoPoster Abort by autoplay', code:'v'+i}));
                     return;
                 }
                 let vdo = document.createElement('video');
@@ -144,11 +144,11 @@
                 let video = res[0],
                     check = video.src.match(/\.(?:avi|mp4|mov|mpg|mpeg|flv|swf|wmv|wma|rmvb|mkv)$/i);
                 if(!video || !check){
-                    console.log(Object.assign(msgJson, {status:'setupVideoPoster Error', code:'v'+i}));
+                    console.log(Object.assign(msgJson, {msg:'setupVideoPoster Error', code:'v'+i}));
                     return;
                 }
                 video.setAttribute('poster', res[1]);
-                console.log(Object.assign(msgJson, {status:'setupVideoPoster Done', code:'v'+i}));
+                console.log(Object.assign(msgJson, {msg:'setupVideoPoster Done', code:'v'+i}));
             }).catch(function(err){
                 console.log(err);
             });
@@ -326,12 +326,11 @@
         });
     }
     
-    function setCookie(name,value,path,days){
+    function setCookie(name,value,path='/',days=0){
         let exp = new Date();
-        days = !days ? 30 : days;
-        path = !path ? ";path=/" : path;
-        exp.setTime(exp.getTime() + days*24*60*60);
-        document.cookie = name+"="+escape(value)+";expires="+exp.toGMTString()+path;
+        let exp_time = typeof days=='number'&&days>=1 ? days*(24*60*60*1000) : 24*60*60*500;
+        exp.setTime(exp.getTime() + exp_time);
+        document.cookie = name+"="+escape(value)+";expires="+exp.toGMTString()+";path=/";
     }
     function getCookie(cname){
         var name = cname+"=";
@@ -351,8 +350,8 @@
     }
     
     function darkmode(){
-        setCookie('theme_manual',1,false);  // set cookie to manual (disable auto detect)
-        getCookie('theme_mode')!="dark" ? setCookie('theme_mode','dark',false) : setCookie('theme_mode','light',false);
+        setCookie('theme_manual',1);  // set cookie to manual (disable auto detect)
+        getCookie('theme_mode')!="dark" ? setCookie('theme_mode','dark','/',1) : setCookie('theme_mode','light','/',1);
         document.body.className = getCookie('theme_mode');  //change apperance after cookie updated
         console.warn(`theme_mode has changed: ${getCookie('theme_mode')}`);
     }

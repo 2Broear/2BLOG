@@ -11,7 +11,7 @@
         $post_exist = get_post_status($pid); //!is_null(get_post($pid)); //post_exists($title);//
         if(in_chatgpt_cat($pids)){
         if($pid&&$post_exist){
-            define('CACHED_PATH', './chat_data.php');
+            define('CACHED_PATH', './gpt_data.php');
             // header("Access-Control-Allow-Credentials: true");//携带cookie
             $del = array_key_exists('del', $params) ? $params['del'] : false; //($_POST['del']||$_GET['del'])
             if($del){

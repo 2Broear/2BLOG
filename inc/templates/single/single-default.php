@@ -25,6 +25,13 @@
 	        animation-duration: 1.5s;
 	        /*animation-delay: .5s;*/
 	    }
+	    figure.wp-block-gallery > figure{
+	        min-height: 222px;
+	    }
+	    figure.wp-block-gallery{
+	        max-width: 88%;
+	        margin: 0;
+	    }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

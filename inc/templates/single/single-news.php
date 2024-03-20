@@ -12,10 +12,12 @@
     <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/fancybox.css?v=<?php echo get_theme_info(); ?>" />
     <style>
-        .news-article-container figure{margin:5px}
         figure > figure{width:30%;vertical-align:middle}
         blockquote.chatGPT{
             margin-left: -15px;
+        }
+        p.has-text-align-right{
+            text-align: right;
         }
     </style>
 </head>

@@ -403,14 +403,14 @@
     }
     // 自动根据时段设置主题
     function automode(){
-        getCookie('theme_manual') ? setCookie('theme_manual',0,0,1) : false;  // disable manual mode
+        getCookie('theme_manual') ? setCookie('theme_manual',0) : false;  // disable manual mode
         let date = new Date(),
             hour = date.getHours(),
             min = date.getMinutes(),
             sec = date.getSeconds(),
             start = <?php echo get_option('site_darkmode_start',17); ?>,
             end = <?php echo get_option('site_darkmode_end',9); ?>;
-        hour>=end&&hour<start || hour==end&&min>=0&&sec>=0 ? setCookie('theme_mode','light',0,1) : setCookie('theme_mode','dark',0,1);
+        hour>=end&&hour<start || hour==end&&min>=0&&sec>=0 ? setCookie('theme_mode','light') : setCookie('theme_mode','dark');
         document.body.className = getCookie('theme_mode');  //change apperance after cookie updated
     };
     <?php
@@ -507,7 +507,7 @@
                     },
                     scrollLoad = closure_throttle((e)=>{
                         if(loadArray.length<=0){
-                            console.log(Object.assign(msgObject, {status:'lazyload done', type:'scroll'}));
+                            console.log(Object.assign(msgObject, {msg:'lazyload done', code:200}), loadArray);
                             window.removeEventListener('scroll', scrollForRemove, true);
                             return;
                         };
@@ -535,38 +535,35 @@
                       dis_class = "disabled",
                       load_done = type===type_acg ? "" : "已加载全部";
                 let tp = t.parentElement,
+                    tpp = tp.parentElement,
                     cid = parseInt(t.dataset.cid),
                     years = t.dataset.year, // add-opts for archive
                     loads = parseInt(t.dataset.load),
                     counts = parseInt(t.dataset.counts),
                     clicks = parseInt(t.dataset.click);
+                console.log(loads>=counts)
                 if(loads>=counts){
                     t.innerText = load_done;
                     t.classList.add(dis_class);  // add-opts for weblog
-                    tp.classList.add(dis_class);
+                    tpp.classList.add(dis_class);
                     return;
                 }
                 clicks++;
-                if(type===type_acg){
-                    t.innerText = "Loading..";
-                    tp.parentElement.classList.add('disabled');
-                }else{
-                    t.innerText = "加载中..";
-                }
-                t.classList.add('loading');  // add-opts archive (disable click) ,'disabled'
+                t.innerText = type===type_acg ? "Loading.." : "加载中..";
+                t.classList.add('loading', dis_class);  // add-opts archive (disable click)
                 t.setAttribute('data-click', clicks);
                 send_ajax_request("GET", "<?php echo admin_url('admin-ajax.php'); ?>", 
                     parse_ajax_parameter({
-                        "action": action||"ajaxGetPosts",
+                        "action": action || "ajaxGetPosts",
                         "key": years, // add-opts for archive
-                        "cid": cid||0,
+                        "cid": cid || 0,
                         "limit": limit,
                         "offset": limit*clicks,
                         "type": type,
                         _ajax_nonce: t.dataset.nonce,
                     }, true), function(res){
                         t.innerText = type===type_acg ? "" : "加载更多";
-                        t.classList.remove('disabled','loading');  // add-opts for archive (enable click)
+                        t.classList.remove('loading', dis_class);  // add-opts for archive (enable click)
                         var posts_array = JSON.parse(res),
                             posts_count = posts_array.length,
                             loads_count = loads+posts_count,
@@ -589,8 +586,8 @@
                             callback ? callback(each_post, load_box, last_offset) : false;
                         };
                         // compare updated load counts
-                        if(parseInt(t.dataset.load)>=counts){
-                            tp.classList.add(dis_class);
+                        if(parseInt(t.dataset.load) >= counts){
+                            tpp.classList.add(dis_class);
                             t.innerText = load_done;
                         }
                     }, function(err){

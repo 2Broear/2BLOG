@@ -148,7 +148,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 .main-top-inside_right{position:relative;float:right;width:48.75%;height:auto;display:block}
 .main-top-part:first-child{margin:0}
 .main-top-part{width:100%;flex-flow:row nowrap;justify-content:space-between;align-items:stretch}
-.weBlog-banner{position:relative;max-width:66.6%;flex-flow:column wrap;-ms-flex:6 1 0;-moz-box-flex:6 1 0;-webkit-box-flex:6 1 0;-webkit-flex:6 1 0;flex:6 1 0}
+.weBlog-banner{position:relative;max-width:66.6%;flex-flow:column wrap;-ms-flex:6 1 0;-moz-box-flex:6 1 0;-webkit-box-flex:6 1 0;-webkit-flex:6 1 0;flex:7 1 0}
 .weBlog-Description{width:100%;height:auto;display:block;margin-bottom:15px;position:relative}
 .weBlog-Description .weBlog-Description-inside{color:var(--preset-6);/*background-color:var(--preset-fa);*/overflow:hidden;border-radius:var(--radius)}
 .weBlog-Description .weBlog-Description-inside::before{content:"";width:0;height:0;display:block;position:absolute;}
@@ -177,7 +177,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 .recommendation #recommend-inside span.content-tail{width:100%;display:block;padding:10px 0;border-top:1px solid var(--preset-s);position:absolute;bottom:0;left:0}
 .recommendation #recommend-inside span.content-tail aside{max-width:100%;height:auto}
 .recommendation #recommend-inside span.content-tail aside.personal_stand{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.recommendation #recommend-inside span.content-tail aside.personal_stand p{margin:0 auto;;font-weight:bold;opacity:.75;/*letter-spacing:1px;*/}
+.recommendation #recommend-inside span.content-tail aside.personal_stand p{margin:0 auto;;font-style:italic;opacity:.75;/*font-weight:bold;letter-spacing:1px;*/}
 .recommendation #recommend-inside span.content-tail aside.hatom-updated-author{float:right}
 .recommendation #recommend-inside span.content-tail aside.hatom-updated-author address{float:inherit}
 .recommendation #recommend-inside span h2{margin:0 auto;padding:0 15px;line-height:43px;font-size:1rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

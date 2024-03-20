@@ -295,6 +295,8 @@
         register_setting( 'baw-settings-group', 'site_mbit_result_array' );
         register_setting( 'baw-settings-group', 'site_animated_counting_switcher' );
         
+        register_setting( 'baw-settings-group', 'site_marker_switcher' );
+            // register_setting( 'baw-settings-group', 'site_marker_news' );
         register_setting( 'baw-settings-group', 'site_chatgpt_switcher' );
             register_setting( 'baw-settings-group', 'site_chatgpt_includes' );
             register_setting( 'baw-settings-group', 'site_chatgpt_model' );
@@ -2216,7 +2218,7 @@
                                         $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">本地已缓存文章摘要数据，勾选后<ins> 提交保存 </ins>以显示记录（倒序，默认最近10条）<b>。点击文章ID可删除对应记录（不可逆）</b>，<ins>悬浮文章ID</ins> 可查看文章标题及摘要</p><p>删除文章摘要记录后，<u><i>重新访问文章以更新摘要</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LOCAL CACHED POSTS</b></label>';
                                         if(get_option($opt)){
-                                            include(get_template_directory() . '/plugin/'.get_option('site_chatgpt_dir').'/chat_data.php');
+                                            include(get_template_directory() . '/plugin/'.get_option('site_chatgpt_dir').'/gpt_data.php');
                                             // print_r($cached_post);
                                             $res_cls_obj = json_decode(json_encode(array_reverse($cached_post)));
                                             $echo_count = 0;
@@ -2252,6 +2254,26 @@
                                     ?>
                                 </td>
                             </tr>
+                    <tr valign="top">
+                        <th scope="row"> 文章页面 - 划线标记 <sup>Beta</sup> </th>
+                        <td>
+                            <?php
+                                $opt = 'site_marker_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">开启后<del>默认通用</del>文章模板页面<del>（可禁用文章模板）</del>使用划线标记功能（该功能目前仅限评论用户使用，用户信息自动与 <u>通用控制->评论系统</u> 同步获取</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:forestgreen" class="btn">划线标记</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <!--<tr valign="top" class="child_option dynamic_opts <?php //echo get_option('site_marker_switcher') ? 'dynamic_optshow' : false; ?>">-->
+                            <!--    <th scope="row">— 文章模板</th>-->
+                            <!--    <td>-->
+                                    <?php
+                                        // $opt = 'site_marker_news_disabled';
+                                        // $status = check_status($opt);
+                                        // echo '<label for="'.$opt.'"><p class="description" id="">开启后可 禁用 文章模板内使用划线标记功能（默认关闭</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">文章划线</b></label>';
+                                    ?>
+                            <!--    </td>-->
+                            <!--</tr>-->
                     <tr valign="top">
                         <th scope="row">归档/漫游影视 - 计数动画</th>
                         <td>

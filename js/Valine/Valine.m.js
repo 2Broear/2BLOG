@@ -102,9 +102,9 @@ user_init = function(user){
     obj.link = "";
     return obj;//JSON.stringify(obj)
 },
-user_data = localStorage.ValineCache,
 // user_info = user_data ? JSON.parse(user_data) : user_init("匿名者"),
 user_info = (function(){
+    let user_data = localStorage.ValineCache;
     if(user_data){
         let temp_obj = JSON.parse(user_data);
         // console.log(temp_obj.mail)
@@ -113,7 +113,8 @@ user_info = (function(){
             user_data = temp_obj;
         // });
     }else{
-        user_data = user_init("匿名者");
+        // user_data = user_init("匿名者");
+        return false;
     }
     return user_data;
 })(),
@@ -194,60 +195,65 @@ if (el_ != null && el_ != undefined) {
             viewNum++;
             el != null && likeNum != undefined ? el.innerHTML = likeNum: el.innerHTML = 0;
             updateAttr(objId, 'view'); //updateAttr(objId, 'view', 'from');
-            els != null ? els.innerHTML = viewNum: false
+            els != null ? els.innerHTML = viewNum: false;
         } else {
             let likeNum = 0,
             viewNum = 0;
             viewNum++;
             el.innerHTML = likeNum;
             els != null ? els.innerHTML = viewNum: false;
-            saveAttr(likeNum, viewNum)
+            saveAttr(likeNum, viewNum);
         }
     });
-    var timer;
     el_.onclick = function() {
-        const zanAnimation = () =>{
+        // this.style.pointerEvents = 'none';
+        var timer,
+            zanAnimation = (callback) =>{
             let t = this;
             t.classList.add("zan");
             setTimeout(function() {
-                t.classList.remove("zan")
-            },
-            1000)
+                t.classList.remove("zan");
+                if(callback&&typeof callback=='function') callback();
+            }, 1000);
         };
-        zanAnimation();
-        timer ? clearTimeout(timer) : timer;
-        timer = setTimeout(function() {
-            let likes = Number(el.innerText);
-            likes++;
-            //响应dom操作
-            el.innerHTML = likes;
-            likes==0||els_s.children.length==0 ? els_s.innerHTML = `等<strong></strong>人应该觉得这篇文章biu星⭐️~` : false;/*<strong>${likes||''}</strong>*/
-            let temp = document.createElement("b"),
-                numb = els_s.querySelector("strong"),
-                list = els_s.children,  //querySelectorAll("a");
-                // userdate = user_info(),
-                last = list.length-2;
-            temp.innerHTML = `<a href="${user_info.link||'javascript:;'}" title="${user_info.mail}" target="_blank" rel="nofollow">${user_info.nick}、</a>`;
-            console.log(list[last])
-            els_s.children.length>els_max ? list[last].remove() : false;  //删除末端（大于3后才执行删除，否则默认新增）
-            //执行删除后再执行插入操作
-            els_s.insertBefore(temp,els_s.firstChild);  //新增前端（在text“等”后插入）
-            likes>=els_max ? numb.innerText = likes-(list.length-1) : false;  //计数递增Number(numb.innerText)+1 修复 -2/-1 
-            //写入数据库
-            urlCheck.find().then(results =>{
-                if (results.length >= 1) {
-                    let upAttr = 'like',
-                    objId = results[0].id;
-                    /*,likeNum=results[0].attributes.like;likeNum++;el.innerHTML=likeNum;*/
-                    updateAttr(objId, 'like');
-                    updateAttr(objId, '', '', 'user')
-                } else {
-                    console.log("empty data returned, cheack data init.")
-                }
-            })
-        },
-        1000)
-    }
+        zanAnimation(()=>{
+            if(!user_info){
+                alert('当前已关闭匿名点赞，请评论后再试。');
+                return;
+            }
+            timer ? clearTimeout(timer) : timer;
+            timer = setTimeout(function() {
+                let likes = Number(el.innerText);
+                likes++;
+                //响应dom操作
+                el.innerHTML = likes;
+                likes==0||els_s.children.length==0 ? els_s.innerHTML = `等<strong></strong>人应该觉得这篇文章biu星⭐️~` : false;/*<strong>${likes||''}</strong>*/
+                let temp = document.createElement("b"),
+                    numb = els_s.querySelector("strong"),
+                    list = els_s.children,  //querySelectorAll("a");
+                    // userdate = user_info(),
+                    last = list.length-2;
+                temp.innerHTML = `<a href="${user_info.link||'javascript:;'}" title="${user_info.mail}" target="_blank" rel="nofollow">${user_info.nick}、</a>`;
+                console.log(list[last])
+                els_s.children.length>els_max ? list[last].remove() : false;  //删除末端（大于3后才执行删除，否则默认新增）
+                //执行删除后再执行插入操作
+                els_s.insertBefore(temp,els_s.firstChild);  //新增前端（在text“等”后插入）
+                likes>=els_max ? numb.innerText = likes-(list.length-1) : false;  //计数递增Number(numb.innerText)+1 修复 -2/-1 
+                //写入数据库
+                urlCheck.find().then(results =>{
+                    if (results.length >= 1) {
+                        let upAttr = 'like',
+                        objId = results[0].id;
+                        /*,likeNum=results[0].attributes.like;likeNum++;el.innerHTML=likeNum;*/
+                        updateAttr(objId, 'like');
+                        updateAttr(objId, '', '', 'user');
+                    } else {
+                        console.log("empty data returned, cheack data init.");
+                    }
+                });
+            },1000);
+        });
+    };
 }
 
 const raf_available = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;

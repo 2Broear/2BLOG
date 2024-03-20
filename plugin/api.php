@@ -15,9 +15,10 @@
                 $res = new stdClass();
                 $api_file = '/'.$auth_api.'.php';
                 $cdn_auth = get_option('site_chatgpt_auth');
-                $request_url = custom_cdn_src(0,true).'/plugin/'.get_option('site_chatgpt_dir');
+                $request_url = custom_cdn_src(0, true).'/plugin/'.get_option('site_chatgpt_dir');
                 if($cdn_auth){
-                    $request_url = CDN_SWITCH&&CDN_API ? custom_cdn_src('api',true) : $request_url;
+                    // 覆写 api 路径可能导致请求鉴权失败（时效过期）
+                    // $request_url = CDN_SWITCH&&CDN_API ? custom_cdn_src('api',true) : $request_url;
                     $stamp10x = time();
                     $stamp16x = dechex($stamp10x);
                     $signature = md5($cdn_auth.$api_file.$stamp16x);
@@ -28,11 +29,28 @@
                 }
                 $exec = array_key_exists('exec', $params) ? $params['exec'] : $_POST['exec'];
                 if($exec){
-                    $pid = array_key_exists('pid', $params) ? $params['pid'] : $_POST['pid'];
-                    $auth_url = $request_url.$api_file.'?pid='.$pid;
-                    if($cdn_auth) $auth_url = $auth_url.'&sign='.$signature.'&t='.$stamp16x;
-                    // curl request
                     $ch = curl_init();
+                    $auth_url = $request_url.$api_file;
+                    switch ($_SERVER['REQUEST_METHOD']) {
+                        case 'POST':
+                            $params = $_POST;
+                            if($cdn_auth){
+                                $params['sign'] = $signature;
+                                $params['t'] = $stamp16x;
+                            }
+                            // 设置 cURL 选项
+                            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // 允许 cURL 自动跳转
+                            curl_setopt($ch, CURLOPT_POST, true); // 设置为 POST 请求
+                            curl_setopt($ch, CURLOPT_POSTFIELDS, $params); // 设置 POST 数据
+                            break;
+                        case 'GET':
+                        default:
+                            // cdn_auth MIGHT caused api call failure.
+                            $auth_url = $auth_url.'?'.http_build_query($params);
+                            if($cdn_auth) $auth_url = $auth_url.'&sign='.$signature.'&t='.$stamp16x;
+                            // curl request
+                            break;
+                    }
                     curl_setopt($ch, CURLOPT_URL, $auth_url);
                     curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
                     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  // 连接时间
@@ -40,16 +58,9 @@
                     // curl_setopt($ch, CURLOPT_RETRIES, 3);  // 重试连接
                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                     $response = curl_exec($ch);
-                    // if ($response === false) {
-                    //     $errno = curl_errno($ch);
-                    //     $error = curl_error($ch);
-                    //     echo "cURL Error ($errno): $error\n";
-                    // }else{
-                    //     echo $response;
-                    // }
+                    // print_r($params);
                     echo $response===false ? 'cURL Error ('.curl_errno($ch).'): '.curl_error($ch).'\n' : $response;
                     curl_close($ch);
-                    // echo $response;
                 }else{
                     print_r(json_encode($res));
                 }

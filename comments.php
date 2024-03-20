@@ -151,8 +151,8 @@
                 	<textarea name="comment" cols="30" rows="10" placeholder="<?php $replytocom = array_key_exists('replytocom',$parameters) ? $parameters['replytocom'] : false;echo $replytocom ? '正在回复给：@'.get_comment_author($replytocom) : '畅所，你的欲言..'; ?>"></textarea>
                     <div class="userinfo">
                         <img class="avatar user" <?php echo $lazysrc.'="'.$avatar_src.'"';unset($lazysrc); ?> />
-                    	<input type="text" name="author" placeholder="昵称" value="<?php echo $user_name; ?>" />
-                    	<input type="email" name="email" placeholder="邮箱" value="<?php echo $user_mail; ?>" />
+                    	<input type="text" name="nick" placeholder="昵称" value="<?php echo $user_name; ?>" />
+                    	<input type="email" name="mail" placeholder="邮箱" value="<?php echo $user_mail; ?>" />
                     	<input type="url" name="url" placeholder="网址" value="<?php echo $user_link; ?>" />
                     	<div class="submit">
                     	    <input type="submit" class="submit_btn" value="<?php echo $text_submit; ?>" data-pid="<?php echo $post_ID; ?>" data-cid="0" /> <!-- onclick="return false;"-->

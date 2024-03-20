@@ -121,7 +121,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         .rcmd-boxes .info .inbox,
         .rcmd-boxes .info .inbox .inbox-headside img{
             /*transform: none;*/
-            /*will-change: initial;*/
+            will-change: initial;
         }
         .rcmd-boxes .info .inbox .inbox-headside img{
             /*transform: none;*/

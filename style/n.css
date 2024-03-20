@@ -98,7 +98,7 @@ body.dark .article_index a{
 
 figure.wp-block-video video,
 figure.wp-block-image{
-    max-width: 66%;
+    max-width: 65%;
     display: inline-block;
     border-radius: var(--radius);
 }

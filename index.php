@@ -257,8 +257,8 @@
                 $load_arr = [get_cat_by_template('news'), get_cat_by_template('notes')];
                 if($weblog)  array_push($load_arr, get_cat_by_template('weblog'));
                 $load_arr_count = count($load_arr);
-                $spp = get_option('site_per_posts');
-                $rand_count = mt_rand($spp, $spp+1);
+                $site_per_posts = get_option('site_per_posts');
+                $rand_count = mt_rand($site_per_posts, $site_per_posts+1);
                 for($i=0;$i<$load_arr_count;$i++){
             ?>
                     <div id="news-window">
@@ -280,14 +280,14 @@
                     <span class='resource-windows-top_inside'></span>
                     <h3>随机 · 链</h3>
                 </span>
-                <ul class="news-list special-display" id="mainNews">
+                <ul class="news-list special_display" id="mainNews">
                     <?php 
                         if($baas && strpos(get_option('site_leancloud_category'), 'category-2bfriends.php')!==false){
                     ?>
                             <script type="text/javascript"> //addAscending createdAt
                                 new AV.Query("link").addDescending("updatedAt").equalTo('mark','friends').find().then(result=>{
-                                    for (let i=0,resLen=<?php echo $spp; ?>; i<resLen;i++) {
-                                        document.querySelector(".special-display").innerHTML += `<li><a href="${result[i].attributes.link}" class="inbox-aside" target="_blank" rel="randlink">${result[i].attributes.name}</a></li>`;
+                                    for (let i=0,resLen=<?php echo $site_per_posts; ?>; i<resLen;i++) {
+                                        document.querySelector(".special_display").innerHTML += `<li><a href="${result[i].attributes.link}" class="inbox-aside" target="_blank" rel="randlink">${result[i].attributes.name}</a></li>`;
                                     };
                                 })
                             </script>
@@ -408,7 +408,7 @@
                                             </script>
                                     <?php
                                         }else{
-                                            the_recent_posts($query_cid, false, true, false);
+                                            the_recent_posts($query_cid, false, true, get_option('site_per_posts'));
                                         }
                                     ?>
                         		</ol>

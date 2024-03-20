@@ -145,7 +145,6 @@
     overflow-wrap: break-word;
 }
 .friends-boxes .deals .inboxSliderCard .slideBox a:hover{
-    max-width: 1rem;
     /*text-decoration: underline;*/
     color: var(--theme-color);
     opacity: 1;
@@ -157,9 +156,10 @@
     font-size: var(--min-size-rem);
     opacity: .75;
     margin: 0;
+    padding: 0 20px 0 0;
     /*max-height: 80px;*/
     /*letter-spacing: 20px;*/
-    padding: 0 20px 0 0;
+    /*max-width: 1em;*/
 }
 .friends-boxes .deals .inboxSliderCard .slideBox a.standby{
     opacity: .35;
@@ -496,13 +496,15 @@
 	/* .friends-boxes .deals .inboxSliderCard .slideBox{ width: 155%;} */
 }
 @media only screen and (max-width: 760px) {
+    .friends-boxes .deals{justify-content: space-between;}
 	.friends-boxes .deals .inbox.girl .inbox-inside::after{right: -8px;opacity:.12;/*width: 100%;*/}
 	.friends-boxes .deals .inboxSliderCard .inbox{ display: inline-block;}
 	.friends-boxes .deals .inbox{max-width:calc(100%/2.15)!important;}
 	.friends-boxes .deals .inbox .inbox-inside{flex-flow:column;}
+	.friends-boxes .deals.tech .inbox .inbox-inside{flex-flow:inherit;}
 	.friends-boxes .deals .inbox .inbox-lowside span.lowside-description p{text-align:inherit}
 	.friends-boxes .deals .inboxSliderCard .slideBox{ width: 335%;/*235*/}
-	.friends-boxes .deals .inbox .inbox-aside{margin: auto;padding: 15px 0;}
+	.friends-boxes .deals.exchanged .inbox .inbox-aside{margin: auto;padding: 15px 0;}
 }
 
 

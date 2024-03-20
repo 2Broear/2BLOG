@@ -7,22 +7,22 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/news.css?v=<?php echo get_theme_info(); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo custom_cdn_src(0,1);//$src_cdn ?>/style/news.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
     <style>
-        .news-window-img a{
-            position: relative;
-            z-index: 1;
-        }
         body.dark .news-window:nth-child(odd){
             box-shadow: none;
         }
         body.dark .news-window:nth-child(odd) .news-window-inside{
             background: none;
         }
-        .news-inside-content h2 a{
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .news-window:nth-child(even) span.news-window-img::after{
+            background: linear-gradient(45deg, rgba(255,255,255,1) 36%, rgba(255,255,255,0.15) 66%, rgba(255,255,255,1) 90%);
+            background: -webkit-linear-gradient(45deg, rgba(255,255,255,1) 36%, rgba(255,255,255,0.15) 66%, rgba(255,255,255,1) 90%);
+        }
+        body.dark .news-window:nth-child(even) span.news-window-img::after{
+            background: linear-gradient(45deg, rgba(48, 48, 48, 1) 36%, rgba(48, 48, 48, 0.15) 66%, rgba(48, 48, 48, 1) 90%);
+            background: -webkit-linear-gradient(45deg, rgba(48, 48, 48, 1) 36%, rgba(48, 48, 48, 0.15) 66%, rgba(48, 48, 48, 1) 90%);
         }
     </style>
 </head>

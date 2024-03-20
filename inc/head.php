@@ -7,7 +7,7 @@
     <meta name="keywords" content="<?php echo get_site_keywords(); ?>">
     <meta name="description" content="<?php echo get_site_description(); ?>">
     <meta http-equiv="Content-Type" content="text/html; charset=<?php bloginfo('charset') ?>">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0"><!--, maximum-scale=1.0, user-scalable=no-->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><!---->
     <meta name="theme-color" content="<?php echo $theme; ?>">
     <meta name="renderer" content="webkit">
     <meta name="msapplication-TileColor" content="<?php echo $theme; ?>" />
