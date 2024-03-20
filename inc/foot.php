@@ -94,83 +94,104 @@
                                     if(res.code && res.code!==200) {
                                         return; // throw new Error(res.code+' ('+res.msg+')');
                                     }
-                                    Object.keys(res).forEach(key=> {
-                                        let each_val = res[key];
-                                        if(each_val==null) {
-                                            return;
-                                        }
-                                        each_val.forEach(item=> {
-                                            // console.log(key, item);
-                                            let frag_mark = mark.cloneNode(true),
-                                                frag_tool = tool.cloneNode(true),
-                                                tool_inside = frag_tool.querySelector('.'+_cls.toolInside),
-                                                tool_mark = frag_tool.querySelector('.'+_cls.mark),
-                                                tool_avatar = new Image(), //document.createElement('img'),
-                                                mark_nick = item.nick,
-                                                mark_text = item.text,
-                                                mark_uid = item.uid,
-                                                mark_indexes = mark_uid.match('(\\d+)-(\\d+)'),
-                                                mark_index = mark_indexes[1],
-                                                mark_paragraph = _els.effectsArea.children[mark_index];
-                                            if(!mark_paragraph.textContent.includes(mark_text)){
-                                                console.log('mark_uid('+mark_index+') with diff records(perhaps content changed), traversal all nodes..');
-                                                const effectsArea_childs = _els.effectsArea.children;
-                                                for (let i=0;i<effectsArea_childs.length;i++) {
-                                                    if(effectsArea_childs[i].textContent.includes(mark_text)) {
-                                                        mark_index = i;
-                                                        break;
+                                    // user identification.. (MUST before output all keys for the first-time user-mid gets)
+                                    let _status = marker.status,
+                                        commentInfo = _els.commentInfo,
+                                        _md5update = (callback)=> {
+                                            let userinfo = {
+                                                    nick: commentInfo.userNick.value,
+                                                    mail: commentInfo.userMail.value,
+                                                },
+                                                execUpdate = (userinfo, cbk)=> {
+                                                    userinfo.mid = md5(userinfo.mail);
+                                			        // store userinfo(marker.data.user.mid for currentUserCounts verification
+                            			            marker.data = {user: userinfo};
+                                                    // store to local cookies
+                                                    let _cookies = marker._utils._cookies;
+                                                    _cookies.set(_static.userNick, userinfo.nick);
+                                                    _cookies.set(_static.userMail, userinfo.mail);
+                                                    _cookies.set(_static.userMid, userinfo.mid);
+                                                    if(marker._utils.funValidator(cbk)) {
+                                                        cbk();
                                                     }
                                                 };
-                                                mark_paragraph = effectsArea_childs[mark_index];
-                                                console.log('search done! found(firstIndexOf) on mark_uid('+mark_index+')');
-                                            }
-                                            tool_avatar.alt = 'marker avatar';
-                                            tool_avatar.src = `<?php echo get_option("site_avatar_mirror").'avatar/'; ?>${key}?d=mp&s=100&v=1.3.10`;
-                                            tool_inside.insertBefore(tool_avatar, tool_inside.firstChild);
-                                            frag_mark.classList.add(_cls.done);
-                                            frag_mark.textContent = mark_text;
-                                            frag_mark.dataset.uid = mark_uid;
-                                            frag_mark.dataset.rid = item.rid;
-                                            frag_mark.title = `${mark_nick} created at ${item.date}`;
-                                            tool_mark.className = `${_cls.mark} ${_cls.disabled}`;
-                                            tool_mark.textContent = `${_static.ctxMarked}（${mark_nick}）`;
-                                            frag_mark.appendChild(frag_tool);
-                                            let specific_chars = mark_text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-                                            mark_paragraph.innerHTML = mark_paragraph.innerHTML.replace(specific_chars, frag_mark.outerHTML);
-                                        });
-                                    });
+                                            if(typeof md5 === 'undefined') {
+                                                console.log('init md5..');
+                                                dynamicLoad('<?php echo $src_cdn; ?>/js/md5.min.js', ()=>execUpdate(userinfo, callback));
+                                            }else{
+                                                console.log('md5 initiated, updating records..');
+                                                execUpdate(userinfo, callback);
+                                            };
+                                        },
+                                        _outputMarkers = ()=> {
+                                            let currentUserMid = marker.data.user.mid; // get currentUserMid after marker user inited.
+                                            Object.keys(res).forEach(key=> {
+                                                let each_val = res[key];
+                                                if(each_val==null) {
+                                                    return;
+                                                }
+                                                // update currentUserCounts
+                                                if(currentUserMid === key){
+                                                    marker.data = {counts: res[key].length};
+                                                }
+                                                // console.log(key, currentUserMid, res[key].length, marker.data.counts);
+                                                each_val.forEach(item=> {
+                                                    // console.log(key, item);
+                                                    let frag_mark = mark.cloneNode(true),
+                                                        frag_tool = tool.cloneNode(true),
+                                                        tool_inside = frag_tool.querySelector('.'+_cls.toolInside),
+                                                        tool_mark = frag_tool.querySelector('.'+_cls.mark),
+                                                        tool_avatar = new Image(), //document.createElement('img'),
+                                                        mark_nick = item.nick,
+                                                        mark_text = item.text,
+                                                        mark_uid = item.uid,
+                                                        mark_indexes = mark_uid.match('(\\d+)-(\\d+)'),
+                                                        mark_index = mark_indexes[1],
+                                                        mark_paragraph = _els.effectsArea.children[mark_index];
+                                                    if(!mark_paragraph.textContent.includes(mark_text)){
+                                                        console.log('mark_uid('+mark_index+') with diff records(perhaps content changed), traversal all nodes..');
+                                                        const effectsArea_childs = _els.effectsArea.children;
+                                                        for (let i=0;i<effectsArea_childs.length;i++) {
+                                                            if(effectsArea_childs[i].textContent.includes(mark_text)) {
+                                                                mark_index = i;
+                                                                break;
+                                                            }
+                                                        };
+                                                        mark_paragraph = effectsArea_childs[mark_index];
+                                                        console.log('search done! found(firstIndexOf) on mark_uid('+mark_index+')');
+                                                    }
+                                                    tool_avatar.alt = 'marker avatar';
+                                                    tool_avatar.src = `<?php echo get_option("site_avatar_mirror").'avatar/'; ?>${key}?d=mp&s=100&v=1.3.10`;
+                                                    tool_inside.insertBefore(tool_avatar, tool_inside.firstChild);
+                                                    frag_mark.classList.add(_cls.done);
+                                                    frag_mark.textContent = mark_text;
+                                                    frag_mark.dataset.uid = mark_uid;
+                                                    frag_mark.dataset.rid = item.rid;
+                                                    frag_mark.title = `${mark_nick} created at ${item.date}`;
+                                                    tool_mark.className = `${_cls.mark} ${_cls.disabled}`;
+                                                    tool_mark.textContent = `${_static.ctxMarked}（${mark_nick}）`;
+                                                    frag_mark.appendChild(frag_tool);
+                                                    let specific_chars = mark_text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+                                                    mark_paragraph.innerHTML = mark_paragraph.innerHTML.replace(specific_chars, frag_mark.outerHTML);
+                                                });
+                                            });
+                                        };
+                                    // re-update on userinfo->mail changed.
+                                    if(_status.isMarkerUserUpdated()) {
+                                        _md5update(_outputMarkers);
+                                        console.log(`updating marker user: ${commentInfo.userMail.value} (marked counts: ${marker.data.counts})`);
+                                    }else{
+                                        // abort on userinfo exists
+                                        if(!_status.isMarkerAccessable() && commentInfo.userMail.value){
+                                            _md5update(_outputMarkers);
+                                            console.log(`marker user inited. (marked counts: ${marker.data.counts})`);
+                                        }
+                                    }
+                                    _outputMarkers();
                                 }, (err)=> {
                                     // load data from local cookies
                                     console.warn(err);
                                 });
-                                // user identification..
-                                let _status = marker.status,
-                                    commentInfo = _els.commentInfo,
-                                    _md5update = ()=> {
-                                        let _cookies = marker._utils._cookies,
-                                            userinfo = {
-                                                nick: commentInfo.userNick.value,
-                                                mail: commentInfo.userMail.value,
-                                            };
-                    			        // store userinfo(marker.data.user) to cookies(global) instantlly
-                			            marker.data = {user: userinfo};
-                			            // store to cookies
-                        			    _cookies.set(_static.userNick, userinfo.nick);
-                        			    _cookies.set(_static.userMail, userinfo.mail);
-                                    };
-                                // re-update on userinfo->mail changed.
-                                if(_status.isMarkerUserUpdated()) {
-                                    console.log(`updating marker user: ${commentInfo.userMail.value}`); //from ${marker.data.user.mail} to 
-                                    _md5update();
-                                    return;
-                                }
-                                // abort on userinfo exists
-                                if(_status.isMarkerAccessable() || !commentInfo.userMail.value){ //!_status.isMarkerAvailable()
-                                    return;
-                                }
-                                // init update userinfo
-                                _md5update();
-                                console.log('marker user init.');
                             },
                         },
                         _utils: {
@@ -410,7 +431,11 @@
                                 return decodeURIComponent(marker.data.user.mail)!==marker.init._conf.element.commentInfo.userMail.value;
                             },
                             isMarkerSelectable: ()=> {
-                                return Object.keys(marker.data.list).length < marker.init._conf.static.dataMax;
+                                let maxDataLen = marker.init._conf.static.dataMax,
+                                    userMarkedCounts = marker.data.counts,
+                                    localCompare = Object.keys(marker.data.list).length < maxDataLen,
+                                    remoteCompare = userMarkedCounts < maxDataLen;
+                                return localCompare && remoteCompare;
                             },
                             isNodeMarkable: (node)=> {
                                 return node&&node.classList&&node.classList.contains(marker.init._conf.class.line);
@@ -582,6 +607,8 @@
                                     // update(timestamp) to local.
                                     _util._cookies.set(mark_cname, res.ts, marker.data.path, 365); // 储存在本地的 ts 验证必须与发送 update 请求验证保持一致（当前生成将延迟于服务端记录）
                                     console.log(`${mark_cname} updated(ts): ${res.ts}`, res.msg);
+                                    // update currentUserCounts(for no-refresh page max-mark limitation)
+                                    marker.data = {counts: marker.data.counts+1};
                                 });
                             },
                             quote: function(node) {
@@ -644,6 +671,8 @@
                                             update_dom();
                                             _util._cookies.del(marker.init._conf.static.dataPrefix + mark_rid, marker.data.path);
                                             console.log(res.msg);
+                                            // update currentUserCounts(for no-refresh page max-mark limitation)
+                                            marker.data = {counts: marker.data.counts-1};
                                         }, true);
                                     }else{
                                         mark_node.classList.remove(processing);
@@ -762,21 +791,20 @@
                             }
                             return {
                                 // 'selection': window.getSelection(),
-                                'path': window.location.pathname,
-                                'offset': setter.offset || [],
-                                'cname': setter.cname || '',
                                 'user': setter.user || {
                                     nick: _cookies.get(_static.userNick),
                                     mail: _cookies.get(_static.userMail),
+                                    mid: _cookies.get(_static.userMid),
                                 },
+                                'counts': setter.counts || 0,
                                 'list': result, //stored
+                                'path': window.location.pathname,
                             };
                         },
                         set data(obj){
                             if(!obj) return false;
                             let setter = this.init._conf.setter;
-                            setter.offset = obj.offset;
-                            setter.cname = obj.cname;
+                            setter.counts = obj.counts;
                             setter.user = obj.user;
                         },
                     };
@@ -795,11 +823,12 @@
                                             ctxMark: '标记',
                                             ctxQuote: '引用',
                                             ctxMarked: '已标记',
-                                            ctxMarkMax: '标记已满',
+                                            ctxMarkMax: '用户标记已满',
                                             ctxCancel: '取消选中/删除',
                                             // userinfo do NOT use the same prefix as dataPrefix
                                             userNick: 'marker_userNick',
                                             userMail: 'marker_userMail',
+                                            userMid: 'marker_userMid',
                                         },
                                         class: {
                                             line: 'markable',

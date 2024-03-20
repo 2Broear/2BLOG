@@ -21,9 +21,9 @@
     define('REQUEST_rid', get_request_param('rid'));
     define('REQUEST_uid', get_request_param('uid'));
     define('REQUEST_ts', get_request_param('ts'));
+    define('SECURED_ts', md5(REQUEST_ts));  // secure REQUEST_ts for local SECURED_ts compare
     define('REQUEST_mail', get_request_param('mail')); // local compare for mail-requests
     define('SECURED_mid', md5(REQUEST_mail));  // Exposed on public
-    // define('SECURED_tid', md5(REQUEST_ts . REQUEST_mail));
     define('REQUEST_text', get_request_param('text'));
     define('SAVE_prefix', 'marker-' . REQUEST_pid);
     define('EXEC_fetch', get_request_param('fetch'));
@@ -75,47 +75,49 @@
         $_marker = &$memory_caches[SAVE_prefix];
         $result_stats = get_update_status('marker #' . SAVE_prefix . ' not found.', 404);
         // 存在记录
-        if(isset($_marker) && LEGAL_request){
-            $result_stats = get_update_status('request failed! you can ONLY delete the mark that you owned', 403);; //get_update_status('marker user authentication failure.', 400); //get_update_status('requested user found no records on rid#'. REQUEST_rid, 403)
-            $marked_secured = &$_marker[SECURED_mid];
-            if(isset($marked_secured)){
-                foreach ($marked_secured as $index => &$obj) {
-                    if(!is_object($obj)) continue;
-                    // 用户校验（用户存在，本地ts验证 / 远程mail验证）
-                    if(REQUEST_ts==$obj->ts && REQUEST_mail==$obj->mail){ //SECURED_tid === $obj->tid
-                        // 标记检查（使用 $index 确定标记用户）
-                        if(REQUEST_rid === $obj->rid){
-                            unset($marked_secured[$index]); // 移除标记用户
-                            $marked_secured = array_values($marked_secured); // 重新索引数组（避免二次新增 array_push 覆盖现有数据）
-                            update_marker_records(CACHED_PATH, $memory_caches); // 写入记录
-                            $result_stats = get_update_status(SAVE_prefix . '-' . SECURED_mid . '['.$index.'] deleted.');
-                            break;
-                        }
-                    }
-                }
-            }else{
-                foreach ($_marker as $key => &$item) {
-                    if(!is_array($item)) continue;
-                    // print_r($item);
-                    foreach ($item as $index => &$obj) {
+        if(isset($_marker)){
+            $result_stats = get_update_status('request failed! user identification failure. (note that if you are the ownner, then you might want to exec this deletion on the browser-environment that you marked before)', 403);; //get_update_status('marker user authentication failure.', 400); //get_update_status('requested user found no records on rid#'. REQUEST_rid, 403)
+            if(LEGAL_request){
+                $marked_secured = &$_marker[SECURED_mid];
+                if(isset($marked_secured)){
+                    foreach ($marked_secured as $index => &$obj) {
                         if(!is_object($obj)) continue;
-                        // 用户校验（用户匿名，本地ts验证 / 远程mail验证）
-                        if(REQUEST_ts==$obj->ts && REQUEST_mail==$obj->mail){ //SECURED_tid === $obj->tid
-                            // 标记检查（使用 $key 确定标记范围）
+                        // 用户校验（用户存在，本地ts验证 / 远程mail验证）
+                        if(SECURED_ts==$obj->ts && REQUEST_mail==$obj->mail){ //SECURED_tid === $obj->tid
+                            // 标记检查（使用 $index 确定标记用户）
                             if(REQUEST_rid === $obj->rid){
-                                // print_r($key);
-                                unset($_marker[$key][$index]);
-                                $_marker[$key] = array_values($_marker[$key]);
-                                update_marker_records(CACHED_PATH, $memory_caches);
-                                $result_stats = get_update_status('marker #' . SAVE_prefix . '-' . '['.$index.'] deleted.');
-                                break 2; // 退出二级循环（避免向后查询）
+                                unset($marked_secured[$index]); // 移除标记用户
+                                $marked_secured = array_values($marked_secured); // 重新索引数组（避免二次新增 array_push 覆盖现有数据）
+                                update_marker_records(CACHED_PATH, $memory_caches); // 写入记录
+                                $result_stats = get_update_status(SAVE_prefix . '-' . SECURED_mid . '['.$index.'] deleted.');
+                                break;
                             }
-                        }else{
-                            $result_stats = get_update_status('request user('.REQUEST_mail.') not exist', 404);
                         }
                     }
+                }else{
+                    foreach ($_marker as $key => &$item) {
+                        if(!is_array($item)) continue;
+                        // print_r($item);
+                        foreach ($item as $index => &$obj) {
+                            if(!is_object($obj)) continue;
+                            // 用户校验（用户匿名，本地ts验证 / 远程mail验证）
+                            if(SECURED_ts==$obj->ts && REQUEST_mail==$obj->mail){ //SECURED_tid === $obj->tid
+                                // 标记检查（使用 $key 确定标记范围）
+                                if(REQUEST_rid === $obj->rid){
+                                    // print_r($key);
+                                    unset($_marker[$key][$index]);
+                                    $_marker[$key] = array_values($_marker[$key]);
+                                    update_marker_records(CACHED_PATH, $memory_caches);
+                                    $result_stats = get_update_status('marker #' . SAVE_prefix . '-' . '['.$index.'] deleted.');
+                                    break 2; // 退出二级循环（避免向后查询）
+                                }
+                            }else{
+                                $result_stats = get_update_status('request user('.REQUEST_mail.') not exist', 404);
+                            }
+                        }
+                    }
+                    $result_stats['msg'] .= ' #unidentified user#';
                 }
-                $result_stats['msg'] .= ' #unidentified user#';
             }
         }
     }else{
@@ -140,7 +142,7 @@
                     $new_mark->mail = REQUEST_mail;
                     $new_mark->text = REQUEST_text;
                     $new_mark->date = date('Y-m-d'); //date('Y-m-d H:i:s')
-                    $new_mark->ts = REQUEST_ts;
+                    $new_mark->ts = SECURED_ts;
                     // add new RECORD TO 'menmory quotes'
                     $memory_caches = &$cached_mark;
                     $_marker = &$memory_caches[SAVE_prefix]; // post records
