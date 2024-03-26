@@ -176,7 +176,7 @@
                             break;
                     }
                     $request_ip = array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER["REMOTE_ADDR"] : NULL;
-                    $request_ua =array_key_exists('HTTP_USER_AGENT', $_SERVER) ? $_SERVER["HTTP_USER_AGENT"] : NULL;
+                    $request_ua = array_key_exists('HTTP_USER_AGENT', $_SERVER) ? $_SERVER["HTTP_USER_AGENT"] : NULL;
                     // 创建临时记录，防止多请求并发
                         $caches['chat_pid_'.$pid] = array('error' => array ('message' => 'standby, another requesting in busy... (refresh to check perhaps the context_length_exceeded was occured.','type' => 'request_inqueue_busy','created'=>time(),'ip'=>$request_ip,'ua'=>$request_ua));
                         $temp = '<?php'.PHP_EOL.'$cached_post = '.var_export($caches,true).';'.PHP_EOL.'?>';

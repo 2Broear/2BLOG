@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link type="text/css" rel="stylesheet" href="<?php echo custom_cdn_src(0,1);//$src_cdn ?>/style/news.css?v=<?php echo get_theme_info(); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/news.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
     <style>
         body.dark .news-window:nth-child(odd){
