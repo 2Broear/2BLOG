@@ -959,6 +959,8 @@
     		'/win98/i'              =>  'Windows 98',
     		'/win95/i'              =>  'Windows 95',
     		'/win16/i'              =>  'Windows 3.11',
+            '/windows nt 11/i'      =>  'Windows 11', // 添加对Windows 11的检测
+            '/mac os x 10[\._\d]+/i' => 'macOS', // 添加对macOS的检测
     		'/macintosh|mac os x/i' =>  'Mac OS X',
     		'/mac_powerpc/i'        =>  'Mac OS 9',
     		'/linux/i'              =>  'Linux',
@@ -983,14 +985,20 @@
     		'/mobile/i'     =>  'Handheld Browser'
     	);
     	$os_platform = "Unknown";
-    	$browser = "Unknown";
-    	foreach($os_array as $regex => $value){ 
-    		if(preg_match($regex, $user_agent)) $os_platform = $value;
-    	}
-    	foreach($browser_array as $regex => $value ) {
-    		if(preg_match( $regex, $user_agent)) $browser = $value;
-    	}
-        return ['browser'=>$browser,'system'=>$os_platform];
+        $browser = "Unknown";
+        foreach($os_array as $regex => $value){ 
+            if(preg_match($regex, $user_agent)) {
+                $os_platform = $value;
+                break;
+            }
+        }
+        foreach($browser_array as $regex => $value ) {
+            if(preg_match($regex, $user_agent)) {
+                $browser = $value;
+                break;
+            }
+        }
+        return ['browser' => $browser, 'system' => $os_platform];
     }
     // // 提取图片平均色值(耗时)
     // function extract_images_rgb($url){

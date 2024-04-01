@@ -152,7 +152,8 @@
                     $new_mark->text = REQUEST_text;
                     $new_mark->date = date('Y-m-d'); //date('Y-m-d H:i:s')
                     $new_mark->ts = SECURED_ts;
-                    $new_mark->ip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : '0.0.0.0';
+                    // $new_mark->server = $_SERVER;
+                    $new_mark->ip = isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : $_SERVER["REMOTE_ADDR"];
                     $new_mark->ua = isset($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"] : (get_request_param('ua') ? get_request_param('ua') : NULL);
                     // add new RECORD TO 'menmory quotes'
                     $memory_caches = &$cached_mark;

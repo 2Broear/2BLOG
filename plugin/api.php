@@ -29,6 +29,7 @@
                 }
                 $exec = array_key_exists('exec', $params) ? $params['exec'] : $_POST['exec'];
                 if($exec){
+                    // 通过此 api 发送代理请求，返回客户端为 server 端（custom server request-header）
                     $ch = curl_init();
                     $auth_url = $request_url.$api_file;
                     switch ($_SERVER['REQUEST_METHOD']) {
@@ -57,6 +58,22 @@
                     curl_setopt($ch, CURLOPT_TIMEOUT, 10);  // 连接超时
                     // curl_setopt($ch, CURLOPT_RETRIES, 3);  // 重试连接
                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    // custom server request-header
+                    $ip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : $_SERVER["HTTP_X_FORWARDED_FOR"];
+                    $ua = isset($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"] : $params['ua'];
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                        "X-Forwarded-For: $ip",
+                        "User-Agent: $ua"
+                    ));
+                    // // 传递当前 $_SERVER 所有请求头部信息
+                    // $current_server = $_SERVER;
+                    // curl_setopt($ch, CURLOPT_HTTPHEADER, array_map(
+                    //     function ($key, $value) {
+                    //         return "$key: $value";
+                    //     },
+                    //     array_keys($current_server),
+                    //     $current_server
+                    // ));
                     $response = curl_exec($ch);
                     // print_r($params);
                     echo $response===false ? 'cURL Error ('.curl_errno($ch).'): '.curl_error($ch).'\n' : $response;

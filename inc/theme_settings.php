@@ -296,6 +296,7 @@
         register_setting( 'baw-settings-group', 'site_animated_counting_switcher' );
         
         register_setting( 'baw-settings-group', 'site_marker_switcher' );
+            register_setting( 'baw-settings-group', 'site_marker_max' );
             // register_setting( 'baw-settings-group', 'site_marker_news' );
         register_setting( 'baw-settings-group', 'site_chatgpt_switcher' );
             register_setting( 'baw-settings-group', 'site_chatgpt_includes' );
@@ -2264,6 +2265,18 @@
                             ?>
                         </td>
                     </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $marker_sw = get_option('site_marker_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 最大标记数量</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_marker_max';
+                                        $value = get_option($opt);
+                                        $preset = 3;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">Marker 最大标记数量（最大展示10个，默认开启 3 个</p><input type="number" max="10" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
                             <!--<tr valign="top" class="child_option dynamic_opts <?php //echo get_option('site_marker_switcher') ? 'dynamic_optshow' : false; ?>">-->
                             <!--    <th scope="row">— 文章模板</th>-->
                             <!--    <td>-->

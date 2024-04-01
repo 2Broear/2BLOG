@@ -120,7 +120,7 @@
                                                 };
                                             if(typeof md5 === 'undefined') {
                                                 console.log('init md5..');
-                                                marker._utils.dynamicLoad(_static.md5src, ()=>execUpdate(userinfo, callback));
+                                                marker._utils.dynamicLoad(_static.md5Url, ()=>execUpdate(userinfo, callback));
                                             }else{
                                                 console.log('md5 initiated, updating records..');
                                                 execUpdate(userinfo, callback);
@@ -131,63 +131,82 @@
                                                 console.log('canceled on _outputMarkers:', res.msg);
                                                 return;
                                             }
-                                            let remoteMarks = Object.keys(res),
-                                                currentUserMid = marker.data.user.mid, // get currentUserMid after marker user init.
-                                                currentUserMarks = res[currentUserMid];
-                                            if(currentUserMarks) {
+                                            let curUserMid = marker.data.user.mid, // get curUserMid after marker user init.
+                                                curUserMarks = res[curUserMid];
+                                            if(curUserMarks) {
                                                 let dataList = marker.data.list,
                                                     dataPrefix = _static.dataPrefix,
                                                     localMarks = Object.keys(dataList);
-                                                // localNotInRemote: delete local marks which is non-existent from remote
-                                                const existNonUpdatedMarks = localMarks.filter(local => !currentUserMarks.some(remote => dataPrefix+remote.rid === local)); // 返回本地记录中不存在于远程记录的元素
-                                                if(existNonUpdatedMarks.length >= 1) {
-                                                    existNonUpdatedMarks.forEach(marks=> {
-                                                        console.log('local marker('+marks+') not update to remote, try to Re-mark after refresh.. (existNonUpdatedMarks: slow-down the frequency of marking-off)', marks);
-                                                        delete dataList[marks];
-                                                        marker.data = {list: dataList}; // update data instantly
-                                                        _util._cookies.del(marks, marker.data.path); // update local cookies
+                                                // 返回本地记录中不存在于远程记录的元素
+                                                if(localMarks.length>0) {
+                                                    const existNonUpdatedMarks = localMarks.filter(local => {
+                                                        // localNotInRemote: delete local marks which is non-existent from remote
+                                                        let localNotInRemote = !curUserMarks.some(remote => {
+                                                                return local === dataPrefix + remote.rid;
+                                                            });
+                                                        console.log('localNotInRemote:', localNotInRemote)
+                                                        return localNotInRemote;
                                                     });
+                                                    if(existNonUpdatedMarks.length>0) {
+                                                        existNonUpdatedMarks.forEach(marks=> {
+                                                            console.log(`a non-updated local-marker(${marks}: ${_util._cookies.get(marks)}) was found, try to refresh then re-mark again .. (existNonUpdatedMarks: slow-down the frequency of marking-off)`);
+                                                            delete dataList[marks];
+                                                            marker.data = {list: dataList}; // update data instantly
+                                                            _util._cookies.del(marks, marker.data.path); // update local cookies
+                                                        });
+                                                    }
                                                 }
-                                                // remoteNotInLocal: delete remote marks which is non-existent from local
-                                                const existNonDeletedMarks = currentUserMarks.filter(remote => !localMarks.some(local => local === dataPrefix+remote.rid)); // 返回远程记录中不存在于本地记录的元素
-                                                if(existNonDeletedMarks.length >= 1) {
-                                                    existNonDeletedMarks.forEach(marks=> {
-                                                        const mark_rid = marks.rid,
-                                                              ts_caches = JSON.parse(marker.data.caches),
-                                                              cached_ts = ts_caches[dataPrefix + mark_rid];
-                                                        // console.log(ts_caches, cached_ts);
-                                                        if(cached_ts) {
-                                                            console.log('remote marker matched non-existent local user record, updating remote from localStorage.. (existNonDeletedMarks: slow-down the frequency of marking-off)', marks);
-                                                            // dom changes
-                                                            _status.adjustPending(1, ()=> {
-                                                                let exec_node = _els.effectsArea.querySelector('a[data-rid="'+mark_rid+'"]');
-                                                                _mods.close(exec_node);
-                                                                _status.adjustPending(0);
-                                                            }, 1);
-                                                            // request del update via localStorage timestamp
-                                                            _mods.update({
-                                                                ts: cached_ts,
-                                                                rid: mark_rid,
-                                                            }, (res)=> {
-                                                                console.log(`remote marker ${res.cname}(ts: ${cached_ts}) deleted..`, res);
-                                                            }, true);
-                                                        }else{
-                                                            console.log(`marker(${mark_rid}) belongs to another device(not found on localStorage!)`, ts_caches);
-                                                        }
+                                                // 对比返回的远程用户标记与本地记录，当 dataList 相关记录不存在（即 cookie 被删除）时触发  macOS Safari bugs..
+                                                if(curUserMarks.length>0) {
+                                                    const existNonDeletedMarks = curUserMarks.filter(remote => {
+                                                        let remote_mark = dataPrefix + remote.rid;
+                                                        // remoteNotInLocal: delete remote marks which is non-existent from local
+                                                        let remoteNotInLocal = !localMarks.some(local_mark => {
+                                                                // console.log(local_mark, remote.rid)
+                                                                return remote_mark === local_mark;
+                                                            });
+                                                        console.log('remoteNotInLocal:', remoteNotInLocal)
+                                                        return remoteNotInLocal;
                                                     });
+                                                    // console.log('check existNonDeletedMarks', existNonDeletedMarks);
+                                                    if(existNonDeletedMarks.length>0) {
+                                                        existNonDeletedMarks.forEach(marks=> {
+                                                            const mark_rid = marks.rid,
+                                                                  ts_caches = JSON.parse(marker.data._caches),
+                                                                  cached_ts = ts_caches[dataPrefix + mark_rid];
+                                                            // console.log(ts_caches, cached_ts);
+                                                            if(cached_ts) {
+                                                                console.log(`a non-existent local-record matched with remote-marker(${mark_rid}). updating(del remote) via local-caches(${cached_ts}) now.. (existNonDeletedMarks: slow-down the frequency of marking-off)`, marks);
+                                                                // dom changes
+                                                                _status.adjustPending(1, ()=> {
+                                                                    _mods.close(_els.effectsArea.querySelector('a[data-rid="'+mark_rid+'"]'));
+                                                                    _status.adjustPending(0);
+                                                                }, 1);
+                                                                // request del update via localStorage timestamp
+                                                                _mods.update({
+                                                                    ts: cached_ts,
+                                                                    rid: mark_rid,
+                                                                }, (res)=> {
+                                                                    console.log(`remote marker ${res.cname}(ts: ${cached_ts}) deleted..`, res);
+                                                                }, true);
+                                                            }else{
+                                                                console.log(`marker(${mark_rid}) belongs to another device(not found on localStorage!)`, ts_caches);
+                                                            }
+                                                        });
+                                                    }
                                                 }
                                             }
                                             // load available remote marks
-                                            remoteMarks.forEach(key=> {
+                                            Object.keys(res).forEach(key=> {
                                                 let each_val = res[key];
                                                 if(each_val==null) {
                                                     return;
                                                 }
                                                 // update currentUserCounts
-                                                if(currentUserMid === key){
+                                                if(curUserMid === key){
                                                     marker.data = {counts: res[key].length};
                                                 }
-                                                // console.log(key, currentUserMid, res[key].length, marker.data.stat.counts);
+                                                // console.log(key, curUserMid, res[key].length, marker.data.stat.counts);
                                                 each_val.forEach(item=> {
                                                     // console.log(key, item);
                                                     // console.log(dataPrefix+item.rid, localMarks)
@@ -214,8 +233,8 @@
                                                         mark_paragraph = effectsArea_childs[mark_index];
                                                         console.log('search done! found(firstIndexOf) on mark_uid('+mark_index+')');
                                                     }
-                                                    tool_avatar.alt = 'marker avatar';
-                                                    tool_avatar.src = `<?php echo get_option("site_avatar_mirror").'avatar/'; ?>${key}?d=mp&s=100&v=1.3.10`;
+                                                    tool_avatar.alt = 'avatar';
+                                                    tool_avatar.src = `${_static.avatar}avatar/${key}?d=mp&s=100&v=1.3.10`;
                                                     tool_inside.insertBefore(tool_avatar, tool_inside.firstChild);
                                                     frag_mark.classList.add(_cls.done);
                                                     frag_mark.textContent = mark_text;
@@ -437,12 +456,12 @@
                                         return childElements.length>0 ? childElements : null;
                                     case 0:
                                     default:
-                                        let parentElement = element.parentNode;
-                                        while (parentElement&&parentElement.classList) {
-                                            if (parentElement.classList.contains(className)) {
-                                                return parentElement;
+                                        let parent = element.parentElement;
+                                        while (parent&&parent.classList) {
+                                            if (parent.classList.contains(className)) {
+                                                return parent;
                                             }
-                                            parentElement = parentElement.parentNode;
+                                            parent = parent.parentElement;
                                         }
                                         return null; // 如果未找到匹配的父级元素
                                 }
@@ -498,13 +517,6 @@
                                 const user_updated = decodeURIComponent(marker.data.user.mail)!==marker.init._conf.element.commentInfo.userMail.value;
                                 return this.isMarkerAccessable() && user_updated;
                             },
-                            isMarkerReachedMax: ()=> {
-                                let maxDataLen = marker.init._conf.static.dataMax,
-                                    userMarkedCounts = marker.data.stat.counts,
-                                    localCompare = Object.keys(marker.data.list).length < maxDataLen,
-                                    remoteCompare = userMarkedCounts < maxDataLen;
-                                return localCompare && remoteCompare;
-                            },
                             isMarkerSelectable: (node)=> {
                                 if(!node instanceof HTMLElement || !node.classList) {
                                     console.warn('invalid nodes', node);
@@ -530,13 +542,20 @@
                                 }
                                 return notOnList;
                             },
-                            isNodeMarkable: (node)=> {
+                            isMarkerReachedMax: ()=> {
+                                // front-end verify only(backend as mark.php require mysql-data verification)
+                                let maxDataLen = marker.init._conf.static.dataMax,
+                                    localCompare = Object.keys(marker.data.list).length >= maxDataLen,
+                                    remoteCompare = marker.data.stat.counts >= maxDataLen;
+                                return localCompare && remoteCompare;
+                            },
+                            isNodeMarkAble: (node)=> {
                                 return node&&node.classList&&node.classList.contains(marker.init._conf.class.line);
                             },
                             isNodeMarkDone: (node)=> {
                                 return node&&node.classList&&node.classList.contains(marker.init._conf.class.done);
                             },
-                            isTextWrapOnly: (node)=> {
+                            isNodeTextOnly: (node)=> {
                                 let node_child = node.children;
                                 switch(true){
                                     case !node:
@@ -601,7 +620,7 @@
                                     if(!_status.isMarkerSelectable(contains_node)) {
                                         return;
                                     }
-                                    if(_status.isNodeMarkable(contains_node) && _status.isNodeMarkDone(contains_node)) {
+                                    if(_status.isNodeMarkAble(contains_node) && _status.isNodeMarkDone(contains_node)) {
                                         console.warn('selection contains marked-parent content, canceling..', contains_node);
                                         return;
                                     }
@@ -614,15 +633,15 @@
                                     const tool_mark = tool.querySelector('.'+_class.mark),
                                           tool_disabled = tool_mark.classList.contains(_class.disabled);
                                     if(_status.isMarkerReachedMax()){
-                                        if(tool_disabled) {
-                                            tool_mark.classList.remove(_class.disabled);
-                                            tool_mark.textContent = _static.ctxMark;
-                                        }
-                                    }else{
                                         // rewrite stored tool context only if tool_mark on enabled statu.(decreasing origin_mark dom edit)
                                         if(!tool_disabled) {
                                             tool_mark.classList.add(_class.disabled);
                                             tool_mark.textContent = _static.ctxMarkMax;
+                                        }
+                                    }else{
+                                        if(tool_disabled) {
+                                            tool_mark.classList.remove(_class.disabled);
+                                            tool_mark.textContent = _static.ctxMark;
                                         }
                                     }
                                     tool = tool.cloneNode(true);
@@ -674,16 +693,16 @@
                             },
                             down: function(node) {
                                 const pending_statu = marker.data.stat.pending;
-                                console.log('pending_statu: '+pending_statu)
+                                // console.log('pending_statu: '+pending_statu);
                                 if(pending_statu) {
-                                    console.warn('Abort on too-fast marking off! (please wait for a few seconds then re-mark again.)');
+                                    console.warn('Abort on too-fast marking off! (wait a second then try to re-mark again.)');
                                     return;
                                 }
                                 const _util = marker._utils,
                                       _status = marker.status,
                                       _static = marker.init._conf.static;
                                 // _util.assert(marker.data.list.length < _static.dataMax, 'Reaching maximum data length.');
-                                if(!_status.isMarkerReachedMax()){
+                                if(_status.isMarkerReachedMax()){
                                     alert('Abort on reaching maximum data-list length!');
                                     this.close(node);
                                     return;
@@ -714,22 +733,7 @@
                                     uid: mark_indexes,
                                     text: mark_text,
                                 }, (res)=> {
-                                    // local updates
-                                    let _ts = res.ts,
-                                        _cname = res.cname,
-                                        _cnames = _static.dataCaches,
-                                        ts_caches = window.localStorage.getItem(_cnames);
-                                    // record ts caches to localStorage(for ever del)
-                                    ts_caches = ts_caches ? JSON.parse(ts_caches) : {};
-                                    ts_caches[_cname] = _ts;
-                                    console.log(ts_caches)
-                                    window.localStorage.setItem(_cnames, JSON.stringify(ts_caches));
-                                    // record cookies
-                                    _util._cookies.set(_cname, _ts, marker.data.path, 365); 
-                                    // update currentUserCounts(for no-refresh page max-mark limitation)
-                                    marker.data = {counts: res.counts + 1};  // increase counts
-                                    console.log(`${_cname} updated(ts: ${_ts}) `, res.msg);
-                                    // dom changes
+                                    // local updates (dom changes)
                                     mark_node.classList.add(_class.done);
                                     node.innerHTML = `<small>${marker.init._conf.static.ctxMarked}（${mark_rid}）</small>`;
                                     node.classList.add(_class.disabled);
@@ -757,7 +761,7 @@
                                 const _util = marker._utils,
                                       _class = marker.init._conf.class,
                                       _status = marker.status,
-                                      mark_node = _status.isNodeMarkable(node) ? node : _util.elementFinder(node, _class.line),
+                                      mark_node = _status.isNodeMarkAble(node) ? node : _util.elementFinder(node, _class.line),
                                       mark_dataset = mark_node.dataset,
                                       mark_rid = mark_dataset.rid,
                                       mark_uid = mark_dataset.uid;
@@ -771,7 +775,7 @@
                                     if(mark_tools.length >= 1) {
                                         mark_tools[mark_tools.length-1].remove();  // mark_tools[0].remove();
                                     }
-                                    let replace_content = _status.isTextWrapOnly(mark_node) ? mark_node.firstChild.textContent : mark_node.innerHTML;
+                                    let replace_content = _status.isNodeTextOnly(mark_node) ? mark_node.firstChild.textContent : mark_node.innerHTML;
                                     if(!mark_node.parentElement) {
                                         console.log('mark parent NOT found while closing', mark_node);
                                         return;
@@ -789,11 +793,7 @@
                                             node: mark_node,
                                             cls: processing,
                                         }, (res)=> {
-                                            _util._cookies.del(res.cname, marker.data.path); // local updates
-                                            // update currentUserCounts(for no-refresh page max-mark limitation)
-                                            marker.data = {counts: res.counts - 1}; // decrease counts
-                                            console.log(`${res.cname} deleted(ts: ${res.ts}) `, res.msg);
-                                            // dom changes
+                                            // local updates (dom changes)
                                             update_dom();
                                         }, true);
                                     }else{
@@ -808,41 +808,60 @@
                                     console.warn('remote updates failed, invalid updateObject.', updObj);
                                     return;
                                 }
-                                const marker_rid = updObj.rid,
+                                const _util = marker._utils,
+                                      _static = marker.init._conf.static,
+                                      marker_rid = updObj.rid,
                                       marker_uid = updObj.uid,
+                                      mark_node = updObj.node,
                                       marker_num = marker.data.stat.counts,
-                                      mark_cname = marker.init._conf.static.dataPrefix + marker_rid,
+                                      mark_cname = _static.dataPrefix + marker_rid,
                                       _valid_cbk = marker._utils.funValidator(cbk),
-                                      _status = marker.status;
+                                      _status = marker.status,
+                                      _api_url = _static.apiUrl;
                                 // start pending..
                                 _status.adjustPending(1);
                                 // deletion load ts from local
                                 if(del) {
                                     let local_ts = marker.data.list[mark_cname];
-                                    this.fetch("<?php echo $mark_url = get_api_refrence('mark', true); ?>", {
+                                    // update local data Immediately no mater backend-saved or not. (add/del dual check supported)
+                                    _util._cookies.del(mark_cname, marker.data.path); // local updates
+                                    // update currentUserCounts(for no-refresh page max-mark limitation)
+                                    marker.data = {counts: marker_num - 1}; // decrease counts
+                                    this.fetch(_api_url, {
                                         'del': 1,
-                                        // 'uid': marker_uid,
                                         'rid': marker_rid,
                                         'ts': updObj.ts ? updObj.ts : local_ts,
                                     }, (res)=> {
                                         if(res.code && res.code!==200){
                                             alert(`${res.msg}（err#${res.code}）`);
-                                            if(updObj.node&&updObj.node.classList) updObj.node.classList.remove(updObj.cls);
+                                            if(mark_node&&mark_node.classList) mark_node.classList.remove(updObj.cls);
+                                            _status.adjustPending(0);  // pending abort..
                                             return;
                                         }
+                                        console.log(`${mark_cname} deleted(ts: ${local_ts}) `, res.msg);
+                                        // pending stop..
                                         _status.adjustPending(0, ()=> {
-                                            // delete from local.
-                                            res.ts = local_ts;
-                                            res.cname = mark_cname;
-                                            res.counts = marker_num;
                                             _valid_cbk ? cbk(res) : console.log('update(del) succesed(no calls)', res.msg);
                                         }); //, 1000
                                     });
                                     return;
                                 }
+                                
                                 // addition load ts via real-time
                                 let realtime_ts = Date.now();
-                                this.fetch("<?php echo $mark_url; ?>", {
+                                // update local data Immediately no mater backend-saved or not. (add/del dual check supported)
+                                let _cnames = _static.dataCaches,
+                                    ts_caches = window.localStorage.getItem(_cnames);
+                                // record of localStorage(ts caches for del)
+                                ts_caches = ts_caches ? JSON.parse(ts_caches) : {};
+                                ts_caches[mark_cname] = realtime_ts;
+                                window.localStorage.setItem(_cnames, JSON.stringify(ts_caches));
+                                // records of cookies
+                                _util._cookies.set(mark_cname, realtime_ts, marker.data.path, 365); 
+                                // update currentUserCounts(for no-refresh page max-mark limitation)
+                                marker.data = {counts: marker_num + 1};  // increase counts
+                                // exec backend-dom updates
+                                this.fetch(_api_url, {
                                     'rid': marker_rid,
                                     'uid': updObj.uid,
                                     "text": updObj.text,
@@ -850,24 +869,22 @@
                                 }, (res)=> {
                                     if(res.code && res.code!==200){
                                         alert(`${res.msg}（err#${res.code}）`);
+                                        _status.adjustPending(0);  // pending abort..
                                         return;
                                     }
+                                    console.log(`${mark_cname} updated(ts: ${realtime_ts}) `, res.msg);
                                     // _status.adjustPending(0);
                                     _status.adjustPending(0, ()=> {
-                                        // 储存在本地的 ts 验证必须与发送 update 请求验证保持一致（当前生成将延迟于服务端记录）
-                                        res.ts = realtime_ts; // update realtime_ts
-                                        res.cname = mark_cname;
-                                        res.counts = marker_num;
                                         _valid_cbk ? cbk(res) : console.log('update(add) succesed(no calls)', res.msg);
                                     });
                                 });
                             },
                             fetch: (url='', _obj={}, cbk=false, cbks=false)=> {
-                                url = url || "<?php echo get_api_refrence('mark'); ?>";
+                                url = url || marker.init._conf.static.apiUrl;
                                 const _util = marker._utils,
                                       _data = marker.data;
                                 _util.argsRewriter.call(marker, _obj, {
-                                    <?php parse_str($mark_url, $mark_params);if(!isset($mark_params['pid'])) echo "'pid': $pid,"; ?>
+                                    'pid': marker.init._conf.static.postId,
                                     'fetch': 0,
                                     'del': 0,
                                     'ts': 0,
@@ -890,8 +907,11 @@
                             init: function(user_conf = {}){
                                 let _this = Object.getPrototypeOf(this)!==marker.init.prototype ? marker.init.prototype : this;
                                 try {
-                                    // rewrite user-conf.
-                                    marker.init._conf = _this._singleton_conf._rewriter.call(_this, user_conf);
+                                    // rewrite user-conf
+                                    let res_conf = _this._singleton_conf._rewriter.call(_this, user_conf);
+                                    // marker._conf = res_conf; //marker.init._conf;
+                                    // marker.data = {conf: res_conf};
+                                    marker.init._conf =res_conf;
                                     // init&load dom..
                                     marker.dom.initiate();
                                     // check marker status before initiate.(prevent mouseup events exec mark())
@@ -914,8 +934,8 @@
                             },
                         },
                         get data(){
-                            let _static = marker.init._conf.static,
-                                _cookies = marker._utils._cookies,
+                            let _static = this.init._conf.static,
+                                _cookies = this._utils._cookies,
                                 regExp = new RegExp(`${_static.dataPrefix}(.*?)=(.*?);`, 'g'),
                                 stored = document.cookie.match(regExp) || [],
                                 setter = this.init._conf.setter,
@@ -940,15 +960,18 @@
                                     pending: setter.pending || 0,
                                 },
                                 'list': result,
-                                'caches': window.localStorage.getItem('markerCaches') || '{}', //JSON.parse()
+                                // '_conf': marker._conf,
+                                '_caches': window.localStorage.getItem('markerCaches') || '{}', //JSON.parse()
                                 'path': window.location.pathname,
                             };
                         },
                         set data(obj){
-                            if(!marker._utils.isObject(obj)) {
+                            if(!this._utils.isObject(obj)) {
+                                console.warn('set data error: typeof obj is not an Object!', obj);
                                 return;
                             }
                             let setter = this.init._conf.setter;
+                            // setter.conf = obj.conf;
                             setter.nick = obj.nick;
                             setter.mail = obj.mail;
                             setter.mid = obj.mid;
@@ -967,7 +990,7 @@
                                             dataPrefix: 'marker-',
                                             dataCaches: 'markerCaches',
                                             lineBold: 10,
-                                            lineColor: 'var(--theme-color)',
+                                            lineColor: 'red',
                                             lineBoldMax: 30,
                                             lineAnimate: true,
                                             ctxMark: '标记',
@@ -980,7 +1003,11 @@
                                             userNick: 'marker_userNick',
                                             userMail: 'marker_userMail',
                                             userMid: 'marker_userMid',
-                                            md5src: "<?php echo $src_cdn; ?>/js/md5.min.js",
+                                            // request resources
+                                            md5Url: "/md5.js",
+                                            apiUrl: "/mark.php",
+                                            avatar: "//cravatar.com/",
+                                            postId: 0,
                                         },
                                         class: {
                                             line: 'markable',
@@ -994,7 +1021,7 @@
                                             disabled: 'disabled',
                                             aniUnderline: 'underline',
                                             aniProcess: 'processing',
-                                            blackList: ['chatGPT', 'article_index', 'wp-block-code'],
+                                            blackList: ['wp-block-quote','wp-block-code','wp-block-table','wp-element-caption'],
                                         },
                                         element: {
                                             effectsArea: document,
@@ -1013,9 +1040,19 @@
                                         if(!marker._utils.isObject(opts)) return;
                                         for(const [key, val] of Object.entries(opts)){
                                             // back-write (mark non-existent property)
-                                            conf[key] ??= val; //conf[key] ||= val;
+                                            let custom_conf = conf[key];
+                                            if(Array.isArray(val)){
+                                                if(Array.isArray(custom_conf)){
+                                                    conf[key] = custom_conf.concat(val);
+                                                }else{
+                                                    let _val = custom_conf ? custom_conf : val;
+                                                    conf[key] = custom_conf ? val.concat(_val.toString().split(",")) : _val;
+                                                }
+                                            }else{
+                                                conf[key] ??= val; //conf[key] ||= val;
+                                            }
                                             // recursion-loop (use fn call-stack for recursion-func)
-                                            fn.apply(this, [conf[key], val]);
+                                            fn.apply(this, [custom_conf, val]);
                                         }
                                         // clear closure recycle-quotes
                                         opts = privatePresets = null;
@@ -1028,10 +1065,19 @@
                     });
                 }).call(window);
                 // use keyword "new" to point to init method.
+                // custom_conf
                 new marker.init({
                     static: {
+                        dataMax: <?php echo get_option('site_marker_max', 3); ?>,
                         lineBold: 10,
-                        // dataDelay: 1000,
+                        lineColor: "var(--theme-color)",
+                        postId: "<?php global $post;echo $post->ID; ?>",
+                        apiUrl: "<?php echo get_api_refrence('mark', true); //get_api_refrence('mark'); ?>",
+                        md5Url: "<?php echo $src_cdn; ?>/js/md5.min.js",
+                        avatar: "<?php echo get_option("site_avatar_mirror"); ?>",
+                    },
+                    class: {
+                        blackList: ['chatGPT','article_index','ibox'], //'', 'chatGPT,article_index',
                     },
                     element: {
                         effectsArea: document.querySelector('.content'),
