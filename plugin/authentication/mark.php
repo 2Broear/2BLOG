@@ -28,6 +28,7 @@
     define('REQUEST_text', get_request_param('text'));
     define('SAVE_prefix', 'marker-' . REQUEST_pid);
     define('EXEC_fetch', get_request_param('fetch'));
+    define('EXEC_count', get_request_param('count'));
     define('EXEC_delete', get_request_param('del'));
     define('LEGAL_request', REQUEST_ts && REQUEST_mail);
     function get_update_status($msg='okay', $code=200){
@@ -141,7 +142,15 @@
             include CACHED_PATH; // 加载文件
             if(EXEC_fetch){
                 $cached_mark = purify_marker_data($cached_mark); // clear all unique id (no public exposed vars)
-                $result_stats = isset($cached_mark[SAVE_prefix]) ? $cached_mark[SAVE_prefix] : get_update_status('no records found on #'.SAVE_prefix, 404); //$cached_mark
+                if(isset($cached_mark[SAVE_prefix])){
+                    if(EXEC_count) {
+                        $result_stats = isset($cached_mark[SAVE_prefix][SECURED_mid]) ? get_update_status(count($cached_mark[SAVE_prefix][SECURED_mid])) : get_update_status('no records found on #'.SAVE_prefix.'['.SECURED_mid.']', 404);
+                    }else{
+                        $result_stats = $cached_mark[SAVE_prefix];
+                    }
+                }else{
+                    $result_stats = get_update_status('no records found on #'.SAVE_prefix, 404);
+                }
             }else{
                 if(LEGAL_request){
                     $new_mark = new stdClass();
