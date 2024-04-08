@@ -3,63 +3,60 @@
     const marker = {
         dom: {
             initiate: (marker)=> {
-                const _conf = marker.init?._conf,
-                      _mods = marker.mods,
-                      _static = _conf.static,
-                      _util = marker._utils,
-                      _els = _conf.element,
-                      _cls = _conf.class,
-                      mark = document.createElement("a"),
-                      tool = document.createElement("div"),
+                const {mods: _mods, _utils: {_cookie}} = marker,
+                      {static: _static, class: _class, element} = marker.init._conf,
+                      marks = document.createElement("a"),
+                      tools = document.createElement("div"),
                       sty = document.createElement('style');
-                mark.className = _cls.line;
-                mark.href = 'javascript:;';
-                mark.rel = 'nofollow';
-                tool.className = _cls.tool;
-                // tool.setAttribute('onselectstart','return false;');
-                tool.innerHTML = `<div class="${_cls.toolInside}"><span class="${_cls.mark}" style="" title="划线${_static.ctxMark}">${_static.ctxMark}</span><i>&nbsp;|&nbsp;</i><span class="${_cls.quote}" title="评论${_static.ctxQuote}" onclick="marker.mods.quote(this)">${_static.ctxQuote}</span><i>&nbsp;|&nbsp;</i><span class="${_cls.copy}" title="${_static.ctxCopy}内容" onclick="marker.mods.copy(this)">${_static.ctxCopy}</span><span class="${_cls.close}" title="${_static.ctxCancel}"></span></div>`; // onclick="marker.mods.close(this, true)" onclick="marker.mods.down(this)" <img src="" alt="avatar" />
+                marks.className = _class.line;
+                marks.href = 'javascript:;';
+                marks.rel = 'nofollow';
+                tools.className = _class.tool; // tools.setAttribute('onselectstart','return false;');
+                tools.innerHTML = `<div class="${_class.toolIn}"><span class="${_class.mark}" style="" title="划线${_static.ctxMark}">${_static.ctxMark}</span><i>&nbsp;|&nbsp;</i><span class="${_class.quote}" title="评论${_static.ctxQuote}" onclick="marker.mods.quote(this)">${_static.ctxQuote}</span><i>&nbsp;|&nbsp;</i><span class="${_class.copy}" title="${_static.ctxCopy}内容" onclick="marker.mods.copy(this)">${_static.ctxCopy}</span><span class="${_class.close}" title="${_static.ctxCancel}"></span></div>`; // onclick="marker.mods.close(this, true)" onclick="marker.mods.down(this)" <img src="" alt="avatar" />
                 if(_static.lineAnimate) {
-                    sty.textContent = `@keyframes ${_cls.aniUnderline}{0%{background-size:0% ${_static.lineBold}%;}100%{background-size:100% ${_static.lineBold}%;}}@keyframes ${_cls.aniProcess}{0%{transform:rotate(0deg)}100%{transform:rotate(360deg);}}`;
+                    sty.textContent = `@keyframes ${_class.aniUnderline}{0%{background-size:0% ${_static.lineBold}%;}100%{background-size:100% ${_static.lineBold}%;}}@keyframes ${_class.aniProcess}{0%{transform:rotate(0deg)}100%{transform:rotate(360deg);}}`;
                 }
                 sty.textContent += `
-                    a.${_cls.line}.${_cls.done}{animation:none;-webkit-animation:none;transition:none;}
-                    a.${_cls.line}:hover,a.${_cls.line}.${_cls.done}{background-size:100% ${_static.lineBoldMax}%;}
-                    a.${_cls.line}:hover{color:inherit!important;}
-                    a.${_cls.line}{color:inherit;text-decoration:none!important;background:linear-gradient(${_static.lineColor},${_static.lineColor}) no-repeat left 100%/0 ${_static.lineBold}%;background-size:100% ${_static.lineBold}%;transition:background-size .15s ease;animation:${_cls.aniUnderline} 1s 1 ease;-webkit-animation:${_cls.aniUnderline} 1s 1 ease;cursor:text;user-select:text;-webkit-user-drag:none;position:relative;}
-                    a.${_cls.line}.${_cls.aniProcess} .${_cls.tool},
-                    a.${_cls.line}:hover .${_cls.tool}{padding-bottom:35px;opacity:1;}
-                    a.${_cls.line} .${_cls.tool}{padding-bottom:15px;position:absolute;top:0%;left:50%;transform:translate(-50%,-50%);opacity:0;transition:all .15s ease;font-family:auto;}
-                    a.${_cls.line} .${_cls.tool} .${_cls.toolInside}{color:black;line-height:27px;font-size:11px;font-weight:normal;font-style:normal;white-space:nowrap;padding:0 5px;border:1px solid #fff;border-radius:5px;box-sizing:border-box;background:linear-gradient(0deg,rgb(245 247 249 / 88%) 0,rgb(255 255 255 / 100%));background:-webkit-linear-gradient(90deg,rgb(245 247 249 / 88%) 0,rgb(255 255 255 / 100%));box-shadow:rgba(0,0,0,0.12) 0 1px 18px;position:relative;user-select:none;-webkit-user-select:none;}
-                    a.${_cls.line} .${_cls.tool} img{max-width: 23px;border-radius: 50%;margin: 5px 5px 5px 0!important;}
-                    a.${_cls.line} .${_cls.tool} i{font-style:normal;}
-                    a.${_cls.line} .${_cls.tool} i,
-                    a.${_cls.line} .${_cls.tool} img,
-                    a.${_cls.line} .${_cls.tool} span{display: inline-block;vertical-align: middle;margin:auto;}
-                    a.${_cls.line} .${_cls.tool} span:hover{font-weight:bold;}
-                    a.${_cls.line} .${_cls.tool} i,
-                    a.${_cls.line}.${_cls.disabled} .${_cls.tool} span,
-                    a.${_cls.line} .${_cls.tool} span.${_cls.disabled}{opacity:.75;pointer-events:none;}
-                    a.${_cls.line} .${_cls.tool} span{cursor:pointer;}
-                    a.${_cls.line} .${_cls.tool} span.${_cls.close}::before,a.${_cls.line} .${_cls.tool} span.${_cls.close}::after{content:'';width:68%;height:12%;display:block;background:currentColor;position:inherit;top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg);margin:inherit;border:none;}
-                    a.${_cls.line} .${_cls.tool} span.${_cls.close}::after{transform:translate(-50%,-50%) rotate(-45deg);}
-                    a.${_cls.line} .${_cls.tool} span.${_cls.close}:hover::before,a.${_cls.line} .${_cls.tool} span.${_cls.close}:hover::after{height:18%;}
-                    a.${_cls.line}.${_cls.aniProcess} .${_cls.tool} span.${_cls.close}{animation:${_cls.aniProcess} linear 1s infinite;-webkit-animation:${_cls.aniProcess} linear 1s infinite;pointer-events:none;}
-                    /*a.${_cls.line}.${_cls.aniProcess} .${_cls.tool} span.${_cls.close},*/
-                    a.${_cls.line} .${_cls.tool} span.${_cls.close}:hover{transform:scale(1.25);-webkit-transform:scale(1.25)}
-                    a.${_cls.line} .${_cls.tool} span.${_cls.close}{width:10px;height:10px;color:white;background:${_static.lineColor};padding:1px;border-radius:50%;position:absolute;top:-5px;right:-5px;}
+                    a.${_class.line}.${_class.done}{animation:none;-webkit-animation:none;transition:none;}
+                    a.${_class.line}:hover,a.${_class.line}.${_class.done}{background-size:100% ${_static.lineBoldMax}%;}
+                    a.${_class.line}:hover{color:inherit!important;}
+                    a.${_class.line}{color:inherit;text-decoration:none!important;background:-webkit-linear-gradient(${_static.lineDegrees}deg, ${_static.lineColor} 0%, ${_static.lineColors} 100%) no-repeat left 100%/0 ${_static.lineBold}%;background:linear-gradient(${_static.lineDegrees}deg, ${_static.lineColor} 0%, ${_static.lineColors} 100%) no-repeat left 100%/0 ${_static.lineBold}%;background-size:100% ${_static.lineBold}%;transition:background-size .15s ease;animation:${_class.aniUnderline} 1s 1 ease;-webkit-animation:${_class.aniUnderline} 1s 1 ease;cursor:text;user-select:text;-webkit-user-drag:none;position:relative;}
+                    a.${_class.line}.${_class.aniProcess} .${_class.tool},
+                    a.${_class.line}:hover .${_class.tool}{padding-bottom:40px;opacity:1;}
+                    a.${_class.line} .${_class.tool}{padding-bottom:15px;position:absolute;top:0%;left:50%;transform:translate(-50%,-50%);opacity:0;transition:all .15s ease;font-family:auto;}
+                    a.${_class.line} .${_class.tool} .${_class.toolIn}{color:black;line-height:27px;font-size:11px;font-weight:normal;font-style:normal;white-space:nowrap;padding:0 5px;border:1px solid #fff;border-radius:5px;box-sizing:border-box;background:linear-gradient(0deg,rgb(245 247 249 / 88%) 0,rgb(255 255 255 / 100%));background:-webkit-linear-gradient(90deg,rgb(245 247 249 / 88%) 0,rgb(255 255 255 / 100%));box-shadow:rgba(0,0,0,0.12) 0 1px 18px;position:relative;user-select:none;-webkit-user-select:none;}
+                    a.${_class.line} .${_class.tool} img{max-width: 23px;border-radius: 50%;margin: 5px 5px 5px 0!important;}
+                    a.${_class.line} .${_class.tool} i{font-style:normal;}
+                    a.${_class.line} .${_class.tool} i,
+                    a.${_class.line} .${_class.tool} img,
+                    a.${_class.line} .${_class.tool} span{display: inline-block;vertical-align: middle;margin:auto;}
+                    a.${_class.line} .${_class.tool} span:hover{font-weight:bold;}
+                    a.${_class.line} .${_class.tool} i,
+                    a.${_class.line}.${_class.disabled} .${_class.tool} span,
+                    a.${_class.line} .${_class.tool} span.${_class.disabled}{opacity:.75;pointer-events:none;}
+                    a.${_class.line} .${_class.tool} span{cursor:pointer;}
+                    a.${_class.line} .${_class.tool} span.${_class.close}::before,a.${_class.line} .${_class.tool} span.${_class.close}::after{content:'';width:68%;height:12%;display:block;background:currentColor;position:inherit;top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg);margin:inherit;border:none;}
+                    a.${_class.line} .${_class.tool} span.${_class.close}::after{transform:translate(-50%,-50%) rotate(-45deg);}
+                    a.${_class.line} .${_class.tool} span.${_class.close}:hover::before,a.${_class.line} .${_class.tool} span.${_class.close}:hover::after{height:18%;}
+                    a.${_class.line}.${_class.aniProcess} .${_class.tool} span.${_class.close}{animation:${_class.aniProcess} linear 1s infinite;-webkit-animation:${_class.aniProcess} linear 1s infinite;pointer-events:none;}
+                    /*a.${_class.line}.${_class.aniProcess} .${_class.tool} span.${_class.close},*/
+                    a.${_class.line} .${_class.tool} span.${_class.close}:hover{transform:scale(1.25);-webkit-transform:scale(1.25)}
+                    a.${_class.line} .${_class.tool} span.${_class.close}{width:10px;height:10px;color:white;background:${_static.lineColor};padding:1px;border-radius:50%;position:absolute;top:-5px;right:-5px;}
                 `;
                 document.head.appendChild(sty);
-                _els.tool = tool;
-                _els.line = mark;
+                element.tool = tools;
+                element.line = marks;
                 // fetch data.
                 _mods.fetch("", {
                     'fetch': 1,
                 }, (res)=> {
                     console.log('load marker from remote', res);
                     // user identification.. (MUST before output all keys for the first-time user-mid gets)
-                    let _res_failure = res.code && res.code!==200,
+                    const {code, msg = 'no message found.'} = res,
+                          {_utils: {_etc}} = marker;
+                    let _res_failure = code && code!==200,
                         _status = marker.status,
-                        commentInfo = _els.commentInfo,
+                        commentInfo = element.commentInfo,
                         _md5update = (callback)=> {
                             let userinfo = {
                                     nick: commentInfo.userNick.value,
@@ -70,69 +67,63 @@
                 			        // store userinfo(marker.data.user.mid for currentUserCounts verification
             			            marker.data = userinfo;
                                     // store to local cookies
-                                    let _cookie = _util._cookie;
                                     _cookie.set(_static.userNick, userinfo.nick);
                                     _cookie.set(_static.userMail, userinfo.mail);
                                     _cookie.set(_static.userMid, userinfo.mid);
-                                    if(_util._etc.funValidator(cbk)) {
+                                    if(_etc.funValidator(cbk)) {
                                         cbk();
                                     }
                                 };
                             if(typeof md5 === 'undefined') {
                                 console.log('init md5..');
-                                marker._utils._etc.dynamicLoad(_static.md5Url, ()=>execUpdate(userinfo, callback));
+                                _etc.dynamicLoad(_static.md5Url, ()=>execUpdate(userinfo, callback));
                             }else{
                                 console.log('md5 initiated, updating records..');
                                 execUpdate(userinfo, callback);
                             }
                         },
                         _outputMarkers = ()=> {
-                            let dataList = marker.data.list,
-                                localMarks = Object.keys(dataList);
+                            const dataList = marker.data.list,
+                                  localMarks = Object.keys(dataList);
                             if(_res_failure) {
-                                console.log('Abort on _outputMarkers:', res.msg);
+                                console.log('Abort on _outputMarkers:', msg);
                                 if(localMarks.length > 0) {
                                     // clear all local-data
                                     Object.keys(dataList).forEach(mark=> {
-                                        console.log(`a non-updated local-marker(${mark}: ${_util._cookie.get(mark)}) was found, deleting.. (this mark should not be exists, perhaps caused by deletion failure)`);
-                                        _util._cookie.del(mark, marker.data.path);
+                                        console.log(`a non-updated local-marker(${mark}: ${_cookie.get(mark)}) was found, deleting.. (this mark should not be exists, perhaps caused by deletion failure)`);
+                                        _cookie.del(mark, marker.data.path);
                                     });
                                 }
                                 return;
                             }
-                            let curUserMid = marker.data.user.mid; // get curUserMid after marker user init.
                             // 输出所有服务端标记（未检验）
-                            Object.keys(res).forEach(key=> {
-                                let each_val = res[key];
-                                if(each_val==null) {
-                                    return;
-                                }
+                            const curUserMid = marker.data.user.mid; // get curUserMid after marker user init.
+                            Object.keys(res).forEach(user=> {
+                                let each_mark = res[user];
+                                if(each_mark==null) return;
                                 // update currentUserCounts from remote
-                                if(curUserMid === key){
-                                    let remote_counts = res[key].length;
-                                    _static.dataCounts = remote_counts;
-                                    // 冻结 _conf 对象 static 成员
-                                    Object.freeze(_static); //for dataCounts edit limitation
-                                    marker.data = {counts: _static.dataCounts};
+                                if(curUserMid === user){
+                                    _static.dataCount = res[user].length;
+                                    marker.data = {counts: _static.dataCount};
                                 }
-                                each_val.forEach(item=> {
-                                    // console.log(key, item);
-                                    let frag_mark = mark.cloneNode(true),
-                                        frag_tool = tool.cloneNode(true),
-                                        tool_inside = frag_tool.querySelector('.'+_cls.toolInside),
-                                        tool_mark = frag_tool.querySelector('.'+_cls.mark),
+                                // 冻结 _conf 对象 static 成员
+                                Object.freeze(_static); // for dataCount edit limitation
+                                each_mark.forEach(mark=> {
+                                    const {nick, text, date, uid, rid} = mark;
+                                    // console.log(user, mark);
+                                    let frag_mark = marks.cloneNode(true),
+                                        frag_tool = tools.cloneNode(true),
+                                        tool_inside = frag_tool.querySelector('.'+_class.toolIn),
+                                        tool_mark = frag_tool.querySelector('.'+_class.mark),
                                         tool_avatar = new Image(), //document.createElement('img'),
-                                        mark_nick = item.nick,
-                                        mark_text = item.text,
-                                        mark_uid = item.uid,
-                                        mark_indexes = mark_uid.match('(\\d+)-(\\d+)'),
+                                        mark_indexes = uid.match('(\\d+)-(\\d+)'),
                                         mark_index = mark_indexes[1],
-                                        mark_paragraph = _els.effectsArea.children[mark_index];
-                                    if(!mark_paragraph.textContent.includes(mark_text)){
+                                        mark_paragraph = element.effectsArea.children[mark_index];
+                                    if(!mark_paragraph.textContent.includes(text)){
                                         console.log('mark_uid('+mark_index+') with diff records(perhaps content changed), traversal all nodes..');
-                                        const effectsArea_childs = _els.effectsArea.children;
+                                        const effectsArea_childs = element.effectsArea.children;
                                         for (let i=0;i<effectsArea_childs.length;i++) {
-                                            if(effectsArea_childs[i].textContent.includes(mark_text)) {
+                                            if(effectsArea_childs[i].textContent.includes(text)) {
                                                 mark_index = i;
                                                 break;
                                             }
@@ -141,22 +132,23 @@
                                         console.log('search done! found(firstIndexOf) on mark_uid('+mark_index+')');
                                     }
                                     tool_avatar.alt = 'avatar';
-                                    tool_avatar.src = `${_static.avatar}avatar/${key}?d=mp&s=100&v=1.3.10`;
+                                    tool_avatar.src = `${_static.avatar}avatar/${user}?d=mp&s=100&v=1.3.10`;
                                     tool_inside.insertBefore(tool_avatar, tool_inside.firstChild);
-                                    frag_mark.classList.add(_cls.done);
-                                    frag_mark.textContent = mark_text;
-                                    frag_mark.dataset.uid = mark_uid;
-                                    frag_mark.dataset.rid = item.rid;
-                                    frag_mark.title = `marked at ${item.date}`;
-                                    tool_mark.className = `${_cls.mark} ${_cls.disabled}`;
-                                    tool_mark.textContent = `${mark_nick} ${_static.ctxMarked}`;
+                                    frag_mark.classList.add(_class.done);
+                                    frag_mark.textContent = text;
+                                    frag_mark.dataset.uid = uid;
+                                    frag_mark.dataset.rid = rid;
+                                    frag_mark.title = `marked at ${date}`;
+                                    tool_mark.className = `${_class.mark} ${_class.disabled}`;
+                                    tool_mark.textContent = `${nick} ${_static.ctxMarked}`;
                                     frag_mark.appendChild(frag_tool);
-                                    let specific_chars = mark_text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+                                    // write in
+                                    const specific_chars = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
                                     mark_paragraph.innerHTML = mark_paragraph.innerHTML.replace(specific_chars, frag_mark.outerHTML);
                                 });
                             });
-                            let curUserMarks = res[curUserMid],
-                                dataPrefix = _static.dataPrefix;
+                            const curUserMarks = res[curUserMid],
+                                  dataPrefix = _static.dataPrefix;
                             // 返回本地记录中不存在于远程记录的元素（始终检验）
                             if(localMarks.length > 0) {
                                 const existNonDeletedMarks = localMarks.filter(local => {
@@ -169,9 +161,9 @@
                                 });
                                 if(existNonDeletedMarks.length > 0) {
                                     existNonDeletedMarks.forEach(mark=> {
-                                        console.log(`a local marker was found on non-existent remoteMarks(perhaps server delays), del cookie(${mark}: ${_util._cookie.get(mark)}) from local..`, '(existNonDeletedMarks: slow-down the frequency!)');
+                                        console.log(`a local marker was found on non-existent remoteMarks(perhaps server delays), del cookie(${mark}: ${_cookie.get(mark)}) from local..`, '(existNonDeletedMarks: slow-down the frequency!)');
                                         // update(del) local-record
-                                        _util._cookie.del(mark, marker.data.path);
+                                        _cookie.del(mark, marker.data.path);
                                         // no need for dom changes
                                     });
                                 }else{
@@ -201,10 +193,8 @@
                                             if(cached_ts) {
                                                 console.log(`a remote marker(${mark_cname}: ${cached_ts}) was found on non-existent localMarks(perhaps server delays), add cookie to local..`, '(existNonUpdatedMarks: slow-down the frequency!)');
                                                 // update(add) local-data instantly
-                                                _util._cookie.set(mark_cname, cached_ts, marker.data.path, 365);
-                                                // marker.data = {counts: marker_num - 1}; // decrease counts
+                                                _cookie.set(mark_cname, cached_ts, marker.data.path, _static.dataAlive);
                                                 // dom changes(no longer needed)
-                                                // _mods.close(_els.effectsArea.querySelector('a[data-rid="'+mark_rid+'"]'));
                                             }else{
                                                 console.log(`marker(${mark_rid}) belongs to another device(not found on localStorage!)`, ts_caches);
                                             }
@@ -364,16 +354,13 @@
                     }
                 },
                 clicker: function(parent, cls, callback, tag=null) {
-                    const _util = marker._utils,
-                          _event = _util._event; //this
+                    const {_utils: {_event, _dom, _etc}} = marker;
                     _event.add(parent, 'click', function(e) {
                         let event = _event.get(e),
                             target = _event.getTarget(event);
                         target = tag ? target.closest(tag) : target.closest('.' + cls);
-                        if (!_util._dom.valider(target)) {
-                            return;
-                        }
-                        if(_util._etc.funValidator(callback)) {
+                        if (!_dom.valider(target)) return;
+                        if(_etc.funValidator(callback)) {
                             callback(target, event);
                         }else{
                             console.log('invalid clicker callback', callback);
@@ -382,11 +369,18 @@
                 },
             },
             _diy: {
-                randomString: function(num=16) {
-                    const rs = Math.random().toString(num);
-                    return rs.substring(2, rs.length);
+                strGenerator: function(num=16, useCrypto=false) {
+                    if(useCrypto && crypto && crypto instanceof Object){
+                        const randomBytes = new Uint8Array(num);
+                        crypto.getRandomValues(randomBytes);
+                        return Array.from(randomBytes, byte => ('0' + byte.toString(16)).slice(-2)).join('');
+                    }else{
+                        const randomMix = Math.random() + parseFloat('0.' + Date.now()), // Math.random().toString(num)
+                              randomStr = randomMix.toString(num);
+                        return randomStr.substring(2, randomStr.length);
+                    }
                 },
-                parseParameters: function(obj, post=false) {
+                paramsParser: function(obj, post=false) {
                     // console.log(this);
                     if(post && this.isObject(obj)) {
                         return obj;
@@ -398,7 +392,7 @@
                     str = str.substr(0,str.lastIndexOf("&"));
                     return decodeURIComponent(str);
                 },
-                contextIndexes: (context, keyword)=> {
+                ctxIndexer: (context, keyword)=> {
                     if(!context || !keyword) return;
                     let indexes = [],
                         index = context.indexOf(keyword);
@@ -435,11 +429,11 @@
                 argsRewriter: function(args={}, presets={}, callback=false) {
                     try {
                         const _this = this._utils ? this : marker,
-                              _util = _this._utils._etc;
-                        _util.assert(Object.prototype.toString.call(args)==='[object Object]', 'invalid arguments provided!');
+                              {assert, funValidator} = _this._utils._etc;
+                        assert(Object.prototype.toString.call(args)==='[object Object]', 'invalid arguments provided!');
                         // rewrite conf
                         _this.init.prototype._singleton_conf._rewriter(args, presets);
-                        if(!_util.funValidator(callback)){
+                        if(!funValidator(callback)){
                             return args;
                         }
                         // callback returns
@@ -482,9 +476,7 @@
                 let valid_status = true;
                 if(!anonymous) {
                     const commentInfo = marker.init._conf.element.commentInfo,
-                          userinfo = Object.entries(commentInfo),
-                          userKeys = Object.keys(commentInfo),
-                          userVals = Object.values(commentInfo);
+                          userinfo = Object.entries(commentInfo);
                     for(let i=0;i<userinfo.length;i++){
                         let key = userinfo[i][0],
                             val = userinfo[i][1];
@@ -507,17 +499,18 @@
                 return this.isMarkerAccessable() && user_updated;
             },
             isMarkerReachedMax: (server_verify = false)=> {
-                const _static = marker.init._conf.static,
+                const {static: _static} = marker.init._conf,
                       maxDataLength = parseInt(_static.dataMax);
                 // auto-exec server_verify if un-editable server-counts reached_max
-                if(server_verify) { //_static.dataCounts >= maxDataLength
+                if(server_verify) { //_static.dataCount >= maxDataLength
                     return new Promise((resolve, reject) => {
-                        marker.mods.fetch(marker.init._conf.static.apiUrl, {
+                        marker.mods.fetch(_static.apiUrl, {
                             'fetch': 1,
                             'count': 1,
                         }, (res) => {
-                            if(res.code&&res.code==200) {
-                                let res_counts = parseInt(res.msg),
+                            const {code, msg = 'no message found.'} = res;
+                            if(code&&code==200) {
+                                let res_counts = parseInt(msg),
                                     max_reached = res_counts >= maxDataLength;
                                 if(max_reached) {
                                     marker.data = {counts: res_counts};
@@ -539,15 +532,14 @@
                 return marker.data.stat.counts >= maxDataLength || Object.keys(marker.data.list).length >= maxDataLength;
             },
             isMarkerSelectable: (node = null)=> {
-                let notOnList = true,
-                    _dom = marker._utils._dom;
+                const {_utils: {_dom}} = marker;
+                let notOnList = true;
                 if(!_dom.valider(node) || !node.classList) {
                     console.warn('invalid nodes or classList', node);
                     return notOnList;
                 }
-                let _conf = marker.init._conf,
-                    blackList = _conf.class.blackList,
-                    blackTags = ['h1','h2','h3','h4','h5','h6','details','summary','code','mark','del'];
+                let blackTags = ['h1','h2','h3','h4','h5','h6','details','summary','code','mark','del'],
+                    {blackList} = marker.init._conf.class;
                 for(let i=0;i<blackTags.length;i++){
                     let blackTag = blackTags[i].toUpperCase();
                     if(node.tagName===blackTag || _dom.finder(node, '', 0, blackTag)) {
@@ -591,7 +583,7 @@
                 return child_classes&&child_classes.contains(marker.init._conf.class.tool);
             },
             isMultiSameChar: (paragraph, context, vars=false)=> {
-                let uniqune_char = marker._utils._diy.contextIndexes(paragraph, context);
+                let uniqune_char = marker._utils._diy.ctxIndexer(paragraph, context);
                 return vars ? uniqune_char : uniqune_char.length > 1;
             },
             _adjustPending: (status=0, callback=false, delay=0)=> {
@@ -612,12 +604,8 @@
         },
         mods: {
             mark: function(){
-                const _util = marker._utils,
-                      _status = marker.status,
-                      _conf = marker.init._conf,
-                      _static = _conf.static,
-                      _class = _conf.class,
-                      _element = _conf.element;
+                const {static: _static, class: _class, element} = marker.init._conf,
+                      {_utils: {_dom, _diy}, status} = marker;
                 let selectedText = this.toString(),
                     selectedLen = selectedText.length,
                     selectedMin = parseInt(_static.dataMin);
@@ -638,22 +626,23 @@
                             contains_node = focus_parent;
                             break;
                     }
-                    if(!_status.isMarkerSelectable(contains_node)) {
+                    if(!status.isMarkerSelectable(contains_node)) {
+                        console.warn('unSelectable node.', contains_node);
                         return;
                     }
-                    if(_status.isNodeMarkAble(contains_node) && _status.isNodeMarkDone(contains_node)) {
+                    if(status.isNodeMarkAble(contains_node) && status.isNodeMarkDone(contains_node)) {
                         console.warn('selection contains marked-parent content, canceling..', contains_node);
                         return;
                     }
-                    let marks = _element.line.cloneNode(true),
-                        tool = _element.tool,
-                        rid = _util._diy.randomString(); 
+                    let marks = element.line.cloneNode(true),
+                        tool = element.tool,
+                        rid = _diy.strGenerator(); 
                     marks.dataset.rid = rid;
                     range.surroundContents(marks);
                     // check marker is selectable
                     const tool_mark = tool.querySelector('.'+_class.mark),
                           tool_disabled = tool_mark.classList.contains(_class.disabled);
-                    if(_status.isMarkerReachedMax()){
+                    if(status.isMarkerReachedMax()){
                         // rewrite stored tool context only if tool_mark on enabled statu.(decreasing origin_mark dom edit)
                         if(!tool_disabled) {
                             tool_mark.classList.add(_class.disabled);
@@ -669,20 +658,17 @@
                     marks.appendChild(tool);
                     this.removeRange(range); //this.removeAllRanges();
                     // close mark it-self if selections under markable-parent
-                    const _dom = _util._dom,
-                          marks_parents = _dom.finder(marks, _class.line);
+                    const marks_parents = _dom.finder(marks, _class.line);
                     if(marks_parents != null){
                         console.warn('markable-parent (deep-level) exists, unwrapping self marks', marks);
                         marker.mods.close(marks);  // marker.mods.close(marks_parents);
                         return;
                     }
                     const marks_children = marks.querySelectorAll('.' + _class.line); // marks.children;
-                    if(marks_children.length <= 0){
-                        return;
-                    }
+                    if(marks_children.length <= 0) return;
                     // console.log(marks_children);
                     marks_children.forEach((each_line)=>{
-                        let dynamic_line = _element.effectsArea.querySelector('[data-rid="'+each_line.dataset.rid+'"]'),
+                        let dynamic_line = element.effectsArea.querySelector('[data-rid="'+each_line.dataset.rid+'"]'),
                             line_child = _dom.finder(each_line, _class.line, 1);
                         // close inside wrapped child
                         if(line_child && line_child.length >= 1){
@@ -692,7 +678,7 @@
                             return;
                         }
                         // close inside wrapped parent
-                        if(_status.isNodeMarkDone(each_line)){
+                        if(status.isNodeMarkDone(each_line)){
                             let line_parent = _dom.finder(each_line, _class.line);
                             if(line_parent != null){
                                 console.warn('selection contains marked-parents content, unwrapping line_parent..', line_parent);
@@ -718,49 +704,52 @@
                     console.warn('Abort on too-fast marking off! (wait a second then try to re-mark again.)');
                     return;
                 }
-                const _util = marker._utils,
-                      _status = marker.status,
-                      _static = marker.init._conf.static;
-                if(!_util._dom.valider(node)) {
-                    return node;
+                const {static: _static, class: _class, element} = marker.init._conf,
+                      {_utils: {_dom}, status} = marker;
+                if(!_dom.valider(node)) {
+                    console.warn('invalid node.', node);
+                    return;
                 }
                 node.textContent = _static.ctxMarking;
+                const mark_node = _dom.finder(node, _class.line);
+                if(status.isNodeMarkDone(mark_node)) {
+                    alert('Abort on marked-done node!');
+                    mark_node.classList.add(_class.disabled);
+                    return;
+                }
+                // loop on mark_nodes
+                let mark_paragraph = mark_node;
+                while(mark_paragraph.parentElement != element.effectsArea){
+                    mark_paragraph = mark_paragraph.parentElement;
+                }
+                // check on same-chars
+                let paragraph_context = mark_paragraph.textContent,
+                    mark_text = mark_node.firstChild.nodeValue;
+                if(status.isMultiSameChar(paragraph_context, mark_text)){
+                    alert('Abort on multi Same-chars on current paragraph!'+status.isMultiSameChar(paragraph_context, mark_text, true));
+                    return;
+                }
                 // compare local-counts(read only) for decreasing server_verify requests. (bug: read-only variables can not be updated instantly, always use server_verify)
-                const ifServerReachedMax = _status.isMarkerReachedMax(true);
-                ifServerReachedMax.then(res=>{
+                const ifServerReachedMax = status.isMarkerReachedMax(true);
+                ifServerReachedMax.then(res=> {
                     if(res) {
                         alert('Abort on reaching(server side) dataMax!');
-                        this.close(node);
-                        return;
-                    }
-                    const _class = marker.init._conf.class,
-                          mark_node = _util._dom.finder(node, _class.line),
-                          mark_text = mark_node.firstChild.nodeValue,
-                          mark_rid = mark_node.dataset.rid;
-                    if(_status.isNodeMarkDone(mark_node)) {
-                        console.warn('Abort on marked-done node!', mark_node);
-                        mark_node.classList.add(_class.disabled);
-                        return;
-                    }
-                    let mark_paragraph = mark_node;
-                    while(mark_paragraph.parentElement != marker.init._conf.element.effectsArea){
-                        mark_paragraph = mark_paragraph.parentElement;
-                    }
-                    let paragraph_context = mark_paragraph.textContent;
-                    if(_status.isMultiSameChar(paragraph_context, mark_text)){
-                        alert('Abort on multi Same-chars on current paragraph!'+_status.isMultiSameChar(paragraph_context, mark_text, true));
+                        node.textContent = _static.ctxMarkMax;
+                        node.classList.add(_class.disabled);
+                        // this.close(node);
                         return;
                     }
                     // update to remote.
-                    const mark_indexes = _util._dom.indexer(mark_paragraph) + '-' + paragraph_context.indexOf(mark_text);
+                    const {rid} = mark_node.dataset,
+                          mark_indexes = _dom.indexer(mark_paragraph) + '-' + paragraph_context.indexOf(mark_text);
                     this.update({
-                        rid: mark_rid,
+                        rid: rid,
                         uid: mark_indexes,
                         text: mark_text,
                     }, (res)=> {
                         // local updates (dom changes)
                         mark_node.classList.add(_class.done);
-                        node.innerHTML = `<small>${marker.init._conf.static.ctxMarked}（${mark_rid}）</small>`;
+                        node.innerHTML = `<small>${_static.ctxMarked}（${rid}）</small>`;
                         node.classList.add(_class.disabled);
                         mark_node.dataset.uid = mark_indexes;
                     });
@@ -769,14 +758,16 @@
                 });
             },
             quote: function(node) {
-                if(!marker._utils._dom.valider(node)) return node;
-                const _class = marker.init._conf.class,
-                      mark_node = marker._utils._dom.finder(node, _class.line),
-                      comment_box = marker.init._conf.element.commentArea;
+                const {_utils: {_dom}} = marker;
+                if(!_dom.valider(node)) return node;
+                const {static: _static, class: _class, element} = marker.init._conf,
+                      mark_node = _dom.finder(node, _class.line),
+                      comment_box = element.commentArea;
                 if(!comment_box) {
                     console.warn('Quote abort on invalid commentArea!', comment_box);
                     return;
                 }
+                node.textContent = _static.ctxQuoted;
                 comment_box.value = `\n> ${mark_node.firstChild.nodeValue} ...`;
                 comment_box.setSelectionRange(0,0);
                 comment_box.focus();
@@ -786,31 +777,26 @@
             },
             copy: function(node) {
                 if(!marker._utils._dom.valider(node)) return node;
-                const _conf = marker.init._conf,
-                      copy_mark = marker._utils._dom.finder(node, _conf.class.line),
+                const {static: _static, class: _class} = marker.init._conf,
                       range = document.createRange(),
                       selection = window.getSelection();
-                range.selectNodeContents(copy_mark.firstChild);
+                range.selectNodeContents(marker._utils._dom.finder(node, _class.line).firstChild);
                 selection.removeAllRanges();
                 selection.addRange(range);
                 //exec copy..
                 document.execCommand('copy');
                 selection.removeAllRanges();
-                node.textContent = _conf.static.ctxCopied;
+                node.textContent = _static.ctxCopied;
             },
             close: function(node, update=false) {
                 if(!marker._utils._dom.valider(node)) return node;
                 // 执行 close() 操作后将打乱标记点父级（bug：无法再次找到已定义的子级元素，已通过动态选择each_line解决）
-                const _util = marker._utils,
-                      _dom = _util._dom,
-                      _class = marker.init._conf.class,
-                      _status = marker.status,
-                      mark_node = _status.isNodeMarkAble(node) ? node : _dom.finder(node, _class.line),
-                      mark_dataset = mark_node.dataset,
-                      mark_rid = mark_dataset.rid,
-                      mark_uid = mark_dataset.uid;
+                const {class: _class} = marker.init._conf,
+                      {_utils: {_dom}, status} = marker,
+                      mark_node = status.isNodeMarkAble(node) ? node : _dom.finder(node, _class.line),
+                      {rid, uid} = mark_node.dataset;
                 // deletion auth.
-                if(!_status.isMarkerAccessable()){
+                if(!status.isMarkerAccessable()){
                     alert('marker deletion failure, anonymous not allowed..');
                     return;
                 }
@@ -819,21 +805,21 @@
                     if(mark_tools.length >= 1) {
                         mark_tools[mark_tools.length-1].remove();  // mark_tools[0].remove();
                     }
-                    let replace_content = _status.isNodeTextOnly(mark_node) ? mark_node.firstChild.textContent : mark_node.innerHTML;
+                    let replace_content = status.isNodeTextOnly(mark_node) ? mark_node.firstChild.textContent : mark_node.innerHTML;
                     if(!mark_node.parentElement) {
                         console.log('mark parent NOT found while closing', mark_node);
                         return;
                     }
                     mark_node.parentElement.innerHTML = mark_node.parentElement.innerHTML.replace(mark_node.outerHTML, replace_content);
                 };
-                if(update && _status.isNodeMarkDone(mark_node)){
+                if(update && status.isNodeMarkDone(mark_node)){
                     const processing = _class.aniProcess;
-                    if(confirm('deleting rid#' + mark_rid + '?')) {
+                    if(confirm('deleting rid#' + rid + '?')) {
                         mark_node.classList.add(processing);
                         // delete from remote.
                         this.update({
-                            rid: mark_rid,
-                            uid: mark_uid,
+                            rid: rid,
+                            uid: uid,
                             node: mark_node,
                             cls: processing,
                         }, (res)=> {
@@ -851,40 +837,41 @@
                     console.warn('remote updates failed, invalid updateObject.', updObj);
                     return;
                 }
-                const _util = marker._utils,
-                      _static = marker.init._conf.static,
-                      marker_rid = updObj.rid,
-                      marker_uid = updObj.uid,
-                      mark_node = updObj.node,
+                const {rid, uid, node, ts, cls, text} = updObj,
+                      {_utils, status} = marker,
+                      {static: _static} = marker.init._conf,
                       marker_num = marker.data.stat.counts,
-                      mark_cname = _static.dataPrefix + marker_rid,
-                      _valid_cbk = marker._utils._etc.funValidator(cbk),
-                      _status = marker.status,
-                      _apiUrl = _static.apiUrl;
+                      mark_cname = _static.dataPrefix + rid,
+                      _apiUrl = _static.apiUrl,
+                      _valid_cbk = _utils._etc.funValidator(cbk);
                 // start pending(exec immediately without callback)..
-                _status._adjustPending(1);
+                status._adjustPending(1);
                 // deletion load ts from local
                 if(del) {
                     let local_ts = marker.data.list[mark_cname];
                     // update(del) cookies Immediately(dual-check insurance)
-                    _util._cookie.del(mark_cname, marker.data.path); // local updates
+                    _utils._cookie.del(mark_cname, marker.data.path); // local updates
                     // update currentUserCounts(for no-refresh page max-mark limitation)
                     marker.data = {counts: marker_num - 1}; // decrease counts
                     this.fetch(_apiUrl, {
                         'del': 1,
-                        'rid': marker_rid,
-                        'ts': updObj.ts ? updObj.ts : local_ts,
+                        'rid': rid,
+                        'ts': ts ? ts : local_ts,
                     }, (res)=> {
-                        if(res.code && res.code!==200){
-                            alert(`${res.msg}（err#${res.code}）`);
-                            if(mark_node&&mark_node.classList) mark_node.classList.remove(updObj.cls);
-                            _status._adjustPending(0);  // pending abort..
+                        const {code, msg = 'no message found.'} = res;
+                        if(code && code!==200){
+                            alert(`${msg}（err#${code}）`);
+                            if(node&&node.classList) {
+                                node.classList.remove(cls);
+                            }
+                            marker.data = {counts: marker_num}; // restore counts on error
+                            status._adjustPending(0);  // pending abort..
                             return;
                         }
-                        console.log(`${mark_cname} deleted(ts: ${local_ts}) `, res.msg);
+                        console.log(`${mark_cname} deleted(ts: ${local_ts}) `, msg);
                         // pending stop..
-                        _status._adjustPending(0, ()=> {
-                            _valid_cbk ? cbk(res) : console.log('update(del) succesed(no calls)', res.msg);
+                        status._adjustPending(0, ()=> {
+                            _valid_cbk ? cbk(res) : console.log('update(del) succesed(no calls)', msg);
                         });
                     });
                     return;
@@ -900,49 +887,51 @@
                 ts_caches[mark_cname] = realtime_ts;
                 window.localStorage.setItem(_cnames, JSON.stringify(ts_caches));
                 // update(add) cookies Immediately(dual-check insurance)
-                _util._cookie.set(mark_cname, realtime_ts, marker.data.path, 365);
+                _utils._cookie.set(mark_cname, realtime_ts, marker.data.path, _static.dataAlive);
                 // update currentUserCounts(for no-refresh page max-mark limitation)
                 marker.data = {counts: marker_num + 1};  // increase counts 
                 // exec backend-dom updates
                 this.fetch(_apiUrl, {
-                    'rid': marker_rid,
-                    'uid': updObj.uid,
-                    "text": updObj.text,
+                    'rid': rid,
+                    'uid': uid,
+                    "text": text,
                     'ts': realtime_ts,
                 }, (res)=> {
-                    if(res.code && res.code!==200){
-                        alert(`${res.msg}（err#${res.code}）`);
-                        _status._adjustPending(0);  // pending abort..
+                    const {code, msg = 'no message found.'} = res;
+                    if(code && code!==200){
+                        alert(`${msg}（err#${code}）`);
+                        marker.data = {counts: marker_num}; // restore counts on error
+                        status._adjustPending(0);  // pending abort..
                         return;
                     }
-                    console.log(`${mark_cname} updated(ts: ${realtime_ts}) `, res.msg);
-                    _status._adjustPending(0, ()=> {
-                        _valid_cbk ? cbk(res) : console.log('update(add) succesed(no calls)', res.msg);
+                    console.log(`${mark_cname} updated(ts: ${realtime_ts}) `, msg);
+                    status._adjustPending(0, ()=> {
+                        _valid_cbk ? cbk(res) : console.log('update(add) succesed(no calls)', msg);
                     });
                 });
             },
             fetch: (url='', _obj={}, cbk=false, cbks=false)=> {
-                url = url || marker.init._conf.static.apiUrl;
-                const _utils = marker._utils,
-                      _util = _utils._etc,
+                const {_utils: {_etc, _diy}} = marker,
+                      {static: _static} = marker.init._conf,
                       _data = marker.data;
-                _util.argsRewriter.call(marker, _obj, {
-                    'pid': marker.init._conf.static.postId,
+                _etc.argsRewriter.call(marker, _obj, {
+                    'pid': _static.postId,
                     'fetch': 0,
-                    'counts': 0,
+                    'count': 0,
                     'del': 0,
                     'ts': 0,
                     "nick": _data.user.nick,
                     "mail": _data.user.mail,
                 }, (obj_)=> {
-                    fetch(`${url}&${_utils._diy.parseParameters(obj_)}`, {}).then(response => {
+                    url = url || _static.apiUrl;
+                    fetch(`${url}&${_diy.paramsParser(obj_)}`, {}).then(response => {
                         if(!response.ok) throw new Error('Network err');
                         return response.json();
                     }).then(data => {
-                        if(_util.funValidator(cbk)) cbk(data);
+                        if(_etc.funValidator(cbk)) cbk(data);
                     }).catch(error => {
                         console.warn('fetch '+error);
-                        if(_util.funValidator(cbks)) cbks(error);
+                        if(_etc.funValidator(cbks)) cbks(error);
                     });
                 });
             },
@@ -968,14 +957,12 @@
                         throw new Error('marker unavailable, register init failed..');
                     }
                     // bind events
-                    const _conf = marker.init._conf,
-                          _dom = marker._utils._dom,
-                          _closure = marker._utils._closure,
+                    const {_closure, _dom, _event} = marker._utils,
                           method = marker.mods,
-                          effect = _conf.element.effectsArea;
-                    marker._utils._event.add(effect, 'mouseup', _closure.debouncer(method.mark.bind(window.getSelection()), 100)); //marker.mods.mark.bind(window.getSelection())
-                    _dom.clicker(effect, _conf.class.close, _closure.debouncer((t)=>method.close(t, true), 150));
-                    _dom.clicker(effect, _conf.class.mark, _closure.debouncer((t)=>method.down(t), 200));
+                          effect = _conf_res.element.effectsArea;
+                    _event.add(effect, 'mouseup', _closure.debouncer(method.mark.bind(window.getSelection()), 100)); //marker.mods.mark.bind(window.getSelection())
+                    _dom.clicker(effect, _conf_res.class.close, _closure.debouncer((t)=>method.close(t, true), 150));
+                    _dom.clicker(effect, _conf_res.class.mark, _closure.debouncer((t)=>method.down(t), 200));
                     // _dom.clicker(effect, '', (t)=>console.log('h2 clicked.',t), 'h2');
                     console.log('marker initialized.', marker);
                 } catch (error) {
@@ -984,15 +971,14 @@
             },
         },
         get data(){
-            let _static = this.init._conf.static,
-                _setter = this.init._conf.setter,
-                _cookie = this._utils._cookie,
-                regExp = new RegExp(`${_static.dataPrefix}(.*?)=(.*?);`, 'g'),
-                stored = document.cookie.match(regExp) || [],
-                result = {};
-            if(_setter.list){
-                result = _setter.list;
+            const {static: _static, setter} = this.init._conf,
+                  {_cookie: {get: _get}} = this._utils;
+            let result = {};
+            if(setter.list){
+                result = setter.list;
             }else{
+                const regExp = new RegExp(`${_static.dataPrefix}(.*?)=(.*?);`, 'g'),
+                      stored = document.cookie.match(regExp) || [];
                 if(stored.length>=1){
                     stored.map(item => {
                         let pair = item.split("="),
@@ -1005,18 +991,18 @@
             }
             return {
                 'user': {
-                    nick: _cookie.get(_static.userNick) || _setter.nick,
-                    mail: _cookie.get(_static.userMail) || _setter.mail,
-                    mid: _cookie.get(_static.userMid) || _setter.mid,
+                    nick: _get(_static.userNick) || setter.nick,
+                    mail: _get(_static.userMail) || setter.mail,
+                    mid: _get(_static.userMid) || setter.mid,
                 },
                 'stat': {
-                    counts: _setter.counts || 0,
-                    pending: _setter.pending || 0,
+                    counts: setter.counts || 0,
+                    pending: setter.pending || 0,
                 },
                 'list': result,
                 'path': window.location.pathname,
                 '_caches': window.localStorage.getItem('markerCaches') || '{}',
-                '_counts': _static.dataCounts, // freezed
+                '_counts': _static.dataCount, // freezed
             };
         },
         set data(obj){
@@ -1031,13 +1017,6 @@
                     setter[item] = set_val; // setter[item] ??= set_val;
                 }
             });
-            // 冻结 setter 成员
-            // Object.freeze(setter);
-            // 防止重写对象
-            // Object.defineProperty(this.init._conf, 'setter', {
-            //     value: setter,
-            //     writable: false
-            // });
         },
     };
     // 冻结对象成员
@@ -1051,25 +1030,29 @@
     Object.defineProperties(marker.init.prototype, {
         _singleton_conf: {
             value: function(){
-                let privatePresets = {
+                let presetConfs = {
                         static: {
                             dataMin: 2,
                             dataMax: 3,
-                            dataCounts: 0,
                             dataDelay: 1000,
+                            dataAlive: 365,
+                            dataCount: 0,
                             dataPrefix: 'marker-',
                             dataCaches: 'markerCaches',
-                            lineColor: 'red',
-                            lineBold: 10,
+                            lineColor: 'orange',
+                            lineColors: 'red',
+                            lineDegrees: 0,
+                            lineBold: 15,
                             lineBoldMax: 30,
                             lineAnimate: true,
                             ctxMark: '标记',
-                            ctxMarking: '标记中...',
+                            ctxMarking: '标记中..',
                             ctxMarked: '已标记',
+                            ctxMarkMax: '用户标记已满',
                             ctxCopy: '复制',
                             ctxCopied: '已复制',
                             ctxQuote: '引用',
-                            ctxMarkMax: '用户标记已满',
+                            ctxQuoted: '已引用',
                             ctxCancel: '取消选中/删除',
                             // userinfo do NOT use the same prefix as dataPrefix
                             userNick: 'marker_userNick',
@@ -1084,7 +1067,7 @@
                         class: {
                             line: 'markable',
                             tool: 'tools',
-                            toolInside: 'tool-inside',
+                            toolIn: 'toolInside',
                             mark: 'mark',
                             copy: 'copy',
                             quote: 'quote',
@@ -1098,7 +1081,7 @@
                         },
                         element: {
                             effectsArea: document,
-                            commentArea: document.querySelector('textarea'),
+                            commentArea: null,
                             commentInfo: {
                                 userNick: null,
                                 userMail: null,
@@ -1108,7 +1091,7 @@
                     };
                 return {
                     publicDefault: Object.create(null),
-                    _rewriter: function fn(conf=this.publicDefault, opts=privatePresets) {
+                    _rewriter: function fn(conf=this.publicDefault, opts=presetConfs) {
                         if(!marker._utils._etc.isObject(opts)) return;
                         for(const [key, val] of Object.entries(opts)){
                             // back-write (mark non-existent property)
@@ -1126,10 +1109,8 @@
                             // recursion-loop (use fn call-stack for recursion-func)
                             fn.apply(this, [custom_conf, val]);
                         }
-                        // clear closure recycle-quotes
-                        opts = privatePresets = null;
-                        // 冻结 conf 对象 static 成员
-                        // Object.freeze(conf.static);
+                        opts = presetConfs = null; // clear closure recycle-quotes
+                        // Object.freeze(conf.static); // 冻结 conf 对象 static 成员
                         return conf;
                     },
                 };

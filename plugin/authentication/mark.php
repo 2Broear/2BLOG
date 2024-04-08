@@ -182,7 +182,7 @@
                         }
                         // check exists content on post records
                         if($records_exists){
-                            $result_stats = get_update_status('exists records #'.$records_exists.' on '.SAVE_prefix, 400);
+                            $result_stats = get_update_status('Exists record #'.$records_exists.' of context: '.REQUEST_text.' on '.SAVE_prefix, 400);
                         }else{
                             $exists_marker = &$_marker[SECURED_mid]; // user records(local compare)
                             // 已存在用户（mid）且不为“空”

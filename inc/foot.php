@@ -44,6 +44,8 @@
                         static: {
                             // dataDelay: 3000,
                             lineColor: "var(--theme-color)",
+                            lineColors: "transparent",
+                            lineDegrees: "8",
                             dataMax: "<?php echo get_option('site_marker_max', 3); ?>",
                             postId: "<?php global $post;echo $post->ID; ?>",
                             apiUrl: "<?php echo get_api_refrence('mark', true); //get_api_refrence('mark'); ?>",
