@@ -354,8 +354,8 @@
                       comment_form = comment_box.querySelector("form"),
                       placeholder = comment_box.querySelector("textarea").placeholder,
                       comment = comment_form.querySelector("textarea[name=comment]"),
-                      author = comment_form.querySelector("input[name=author]"),
-                      email = comment_form.querySelector("input[name=email]"),
+                      author = comment_form.querySelector("input[name=nick]"),
+                      email = comment_form.querySelector("input[name=mail]"),
                       admin_md5mail = "<?php echo md5(get_option('site_smtp_mail', get_bloginfo('admin_email'))); ?>", //preset for wp_comment
                       url = comment_form.querySelector("input[name=url]"),
                       comment_count = document.querySelector(".wp_comment_count"),
@@ -372,14 +372,6 @@
                               disabled ? els[i].classList.add(cls) : els[i].classList.remove(cls);
                           }
                       };
-                    //   getParentElement = function(curEl, parCls){
-                    //       //!curEl.classList incase if dnode oes not have any classes (null occured)
-                    //       while(!curEl || !curEl.classList || !curEl.classList.contains(parCls)){
-                    //           if(!curEl) break;  //return undefined
-                    //           curEl = curEl.parentNode; //parentElement
-                    //       };
-                    //       return curEl;
-                    //   };
                 //*** Submit comments logic ***//
                 bindEventClick(comment_box, 'submit_btn', function(t, e){
                     e.preventDefault();  // prevent form submit

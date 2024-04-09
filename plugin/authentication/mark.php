@@ -73,7 +73,7 @@
             // sleep(1); // wait for 1 second then unlock file.
             flock($file, LOCK_UN); // 释放文件锁
         } else {
-            $res_stats = get_update_status('standby for seconds, another progress(previous updates) on processing..', 500);
+            $res_stats = get_update_status('Standby for a few seconds, another progress(previous updates) on processing..', 500);
         }
         fclose($file); // 关闭文件
         if($res_stats) {
@@ -169,20 +169,33 @@
                     $_marker = &$memory_caches[SAVE_prefix]; // post records
                     // 已标记文章
                     if(isset($_marker)){
-                        $records_exists = false;
+                        $exists_records = false; // not exist
+                        $exists_code = 403; // guest
                         foreach ($_marker as $index => &$item) {
                             if(!is_array($item)) continue;
                             foreach ($item as &$obj) {
                                 if(!is_object($obj)) continue;
                                 if(REQUEST_text === $obj->text) {
-                                    $records_exists = $obj->rid;
+                                    if(REQUEST_mail === $obj->mail) $exists_code = 400; // admin
+                                    $exists_records = $obj;
                                     break;
                                 }
                             }
                         }
                         // check exists content on post records
-                        if($records_exists){
-                            $result_stats = get_update_status('Exists record #'.$records_exists.' of context: '.REQUEST_text.' on '.SAVE_prefix, 400);
+                        if($exists_records){
+                            $exists_rid = $exists_records->rid;
+                            $exists_date = $exists_records->date;
+                            switch ($exists_code) {
+                                case 400:
+                                    $exists_msg = 'you might marked this content already? (rid#'.$exists_rid.' in '.$exists_date.')';
+                                    break;
+                                case 403:
+                                default:
+                                    $exists_msg = 'record (#'.$exists_rid.'): "'.$exists_records->text.'" has already marked by '.$exists_records->nick.' at '.$exists_date.' on '.SAVE_prefix;
+                                    break;
+                            }
+                            $result_stats = get_update_status('Exists context detected! '.$exists_msg, $exists_code);
                         }else{
                             $exists_marker = &$_marker[SECURED_mid]; // user records(local compare)
                             // 已存在用户（mid）且不为“空”

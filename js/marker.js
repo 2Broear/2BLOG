@@ -105,9 +105,9 @@
                                 if(curUserMid === user){
                                     _static.dataCount = res[user].length;
                                     marker.data = {counts: _static.dataCount};
+                                    // 冻结 _conf 对象 static 成员
+                                    Object.freeze(_static); // for dataCount edit limitation
                                 }
-                                // 冻结 _conf 对象 static 成员
-                                Object.freeze(_static); // for dataCount edit limitation
                                 each_mark.forEach(mark=> {
                                     const {nick, text, date, uid, rid} = mark;
                                     // console.log(user, mark);
@@ -714,6 +714,7 @@
                 const mark_node = _dom.finder(node, _class.line);
                 if(status.isNodeMarkDone(mark_node)) {
                     alert('Abort on marked-done node!');
+                    node.textContent = _static.ctxMarked;
                     mark_node.classList.add(_class.disabled);
                     return;
                 }
@@ -746,6 +747,7 @@
                         rid: rid,
                         uid: mark_indexes,
                         text: mark_text,
+                        node: node,
                     }, (res)=> {
                         // local updates (dom changes)
                         mark_node.classList.add(_class.done);
@@ -833,33 +835,31 @@
                 }
             },
             update: function(updObj={}, cbk=false, del=false) {
-                if(!marker._utils._etc.isObject(updObj) || Object.keys(updObj).length<1) {
+                const {_utils: {_cookie, _etc}, status} = marker;
+                if(!_etc.isObject(updObj) || Object.keys(updObj).length<1) {
                     console.warn('remote updates failed, invalid updateObject.', updObj);
                     return;
                 }
-                const {rid, uid, node, ts, cls, text} = updObj,
-                      {_utils, status} = marker,
+                const {node, text, rid, uid, cls, ts} = updObj,
                       {static: _static} = marker.init._conf,
                       marker_num = marker.data.stat.counts,
                       mark_cname = _static.dataPrefix + rid,
                       _apiUrl = _static.apiUrl,
-                      _valid_cbk = _utils._etc.funValidator(cbk);
+                      _valid_cbk = _etc.funValidator(cbk);
                 // start pending(exec immediately without callback)..
                 status._adjustPending(1);
                 // deletion load ts from local
                 if(del) {
-                    let local_ts = marker.data.list[mark_cname];
-                    // update(del) cookies Immediately(dual-check insurance)
-                    _utils._cookie.del(mark_cname, marker.data.path); // local updates
-                    // update currentUserCounts(for no-refresh page max-mark limitation)
+                    const stored_ts = marker.data.list[mark_cname];
+                    // update currentUserCounts Immediately no mater backend-saved or not. (add/del dual check supported)
                     marker.data = {counts: marker_num - 1}; // decrease counts
                     this.fetch(_apiUrl, {
                         'del': 1,
                         'rid': rid,
-                        'ts': ts ? ts : local_ts,
+                        'ts': stored_ts, //ts ? ts : stored_ts,
                     }, (res)=> {
                         const {code, msg = 'no message found.'} = res;
-                        if(code && code!==200){
+                        if(code && code!=200){
                             alert(`${msg}（err#${code}）`);
                             if(node&&node.classList) {
                                 node.classList.remove(cls);
@@ -868,7 +868,9 @@
                             status._adjustPending(0);  // pending abort..
                             return;
                         }
-                        console.log(`${mark_cname} deleted(ts: ${local_ts}) `, msg);
+                        // update(del) cookies Immediately(dual-check insurance)
+                        _cookie.del(mark_cname, marker.data.path); // local updates
+                        console.log(`${mark_cname} deleted(ts: ${stored_ts}) `, msg);
                         // pending stop..
                         status._adjustPending(0, ()=> {
                             _valid_cbk ? cbk(res) : console.log('update(del) succesed(no calls)', msg);
@@ -878,17 +880,9 @@
                 }
                 
                 // addition load ts via real-time
-                let realtime_ts = Date.now();
-                // update local data Immediately no mater backend-saved or not. (add/del dual check supported)
-                let _cnames = _static.dataCaches,
-                    ts_caches = window.localStorage.getItem(_cnames);
-                // record of localStorage(ts caches for del)
-                ts_caches = ts_caches ? JSON.parse(ts_caches) : {};
-                ts_caches[mark_cname] = realtime_ts;
-                window.localStorage.setItem(_cnames, JSON.stringify(ts_caches));
-                // update(add) cookies Immediately(dual-check insurance)
-                _utils._cookie.set(mark_cname, realtime_ts, marker.data.path, _static.dataAlive);
-                // update currentUserCounts(for no-refresh page max-mark limitation)
+                const realtime_ts = Date.now(),
+                      _cnames = _static.dataCaches;
+                // update currentUserCounts Immediately no mater backend-saved or not. (add/del dual check supported)
                 marker.data = {counts: marker_num + 1};  // increase counts 
                 // exec backend-dom updates
                 this.fetch(_apiUrl, {
@@ -898,12 +892,22 @@
                     'ts': realtime_ts,
                 }, (res)=> {
                     const {code, msg = 'no message found.'} = res;
-                    if(code && code!==200){
+                    if(code && code!=200){
                         alert(`${msg}（err#${code}）`);
+                        if(node) {
+                            node.textContent = _static.ctxMarked;
+                        }
                         marker.data = {counts: marker_num}; // restore counts on error
                         status._adjustPending(0);  // pending abort..
                         return;
                     }
+                    // record of localStorage(ts caches for del)
+                    let ts_caches = window.localStorage.getItem(_cnames);
+                    ts_caches = ts_caches ? JSON.parse(ts_caches) : {};
+                    ts_caches[mark_cname] = realtime_ts;
+                    window.localStorage.setItem(_cnames, JSON.stringify(ts_caches));
+                    // update(add) cookies Immediately(dual-check insurance)
+                    _cookie.set(mark_cname, realtime_ts, marker.data.path, _static.dataAlive);
                     console.log(`${mark_cname} updated(ts: ${realtime_ts}) `, msg);
                     status._adjustPending(0, ()=> {
                         _valid_cbk ? cbk(res) : console.log('update(add) succesed(no calls)', msg);
@@ -1001,7 +1005,7 @@
                 },
                 'list': result,
                 'path': window.location.pathname,
-                '_caches': window.localStorage.getItem('markerCaches') || '{}',
+                '_caches': window.localStorage.getItem(_static.dataCaches) || '{}',
                 '_counts': _static.dataCount, // freezed
             };
         },
