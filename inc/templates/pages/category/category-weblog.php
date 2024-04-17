@@ -17,6 +17,26 @@
             top: -15px;
         }
         #comment_txt{padding:0 15px;box-sizing:border-box;}
+        button.switch-to-memos{
+            font-size: var(--min-size);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .memos-tree-core{
+            padding: 3% 15px 0;
+            display: none;
+        }
+        .memos-tree-core .weblog-tree-core-l{
+            max-width: 12%;
+        }
+        .weblog-tree-all.useMemos .weblog-tree-core{
+            display: none;
+        }
+        .weblog-tree-all.useMemos .memos-tree-core{
+            display: block;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -39,7 +59,22 @@
         </div>
         <?php get_inform(); ?>
         <div class="weblog-tree-all">
-            <div class="weblog-tree-core <?php $origin_cmt='Wordpress';$third_cmt = get_option('site_third_comments');echo $third_cmt!=$origin_cmt ? 'reply' : ''; ?>">
+            <?php
+                $memos_sw = get_option('site_memos_switcher');
+                if($memos_sw) {
+            ?>
+                <div style="width:100%;text-align: right;padding: 10px 20px 5px 15px;box-sizing: border-box;">
+                    <button class="switch-to-memos" href="javascript:;" title="加载更多">切换 Memos 记录</button>
+                </div>
+                <div class="memos-tree-core">
+                    <div class="load">
+                        <button class="load-more load-memos" href="javascript:;" data-click="0">加载更多</button>
+                    </div>
+                </div>
+            <?php
+                }
+            ?>
+            <div class="weblog-tree-core <?php $origin_cmt='Wordpress';$third_cmt = get_option('site_third_comments');echo $third_cmt!=$origin_cmt ? 'reply' : ''; ?>" style="padding-top:15px;">
                 <?php
                     $async_sw = get_option('site_async_switcher');
                     $weblog_slug = get_cat_by_template('weblog','slug'); //current_slug();
@@ -207,14 +242,37 @@
             }
         </script>
 <?php
-    };
+    }
+?>
+    <script>
+        const weblog = document.querySelector(".weblog-tree-all"),
+              preset_loads = <?php echo $async_loads; ?>;
+<?php
+    if($memos_sw){
+?>
+        const memosClass = "useMemos",
+              memoLoaded = "usedMemos";
+        let memos_tree = weblog.querySelector('.memos-tree-core'),
+            memos_load = memos_tree.querySelector('.load'),
+            memos_more = memos_load.querySelector('.load-more'),
+            memos_url = "<?php echo get_api_refrence('memos', true); ?>",
+            memos_params = {
+                'creatorId': 1,
+                'rowStatus': "", //ARCHIVED
+                'tag': "",
+                'limit': preset_loads,
+                'offset': 0,
+            };
+<?php
+    }
+?>
+    </script>
+<?php
     if($third_cmt!=$origin_cmt){
 ?>
         <script>
             // BLOCKQUOTE Reply
             const editor = document.querySelector('textarea'),
-                  weblog = document.querySelector(".weblog-tree-core"),
-                  preset_loads = <?php echo $async_loads; ?>,
                 selectText = function(textbox=null, startIndex=0, stopIndex=0){
                     if (textbox.setSelectionRange){
                         textbox.setSelectionRange(startIndex, stopIndex);
@@ -223,7 +281,7 @@
                         range.collapse(true);
                         range.moveStart("character", startIndex);
                         range.moveEnd("character", stopIndex - startIndex);
-                        range.select();                    
+                        range.select();
                     }
                 };
             weblog.onclick=(e)=>{
@@ -244,7 +302,7 @@
                         editor.value = quote;//this.id; '\n'+
                         selectText(editor, 0, 0); //editor.setSelectionRange(0,0);
                         editor.oninput=function(){
-                            if(this.value.indexOf(quote)==-1 || this.value.substr(this.value.length-3,this.value.length)!='...'){  //
+                            if(this.value.indexOf(quote)==-1 || this.value.substr(this.value.length-3,this.value.length)!='...'){
                                 this.value = quote;
                                 selectText(editor, 0, 0); //editor.setSelectionRange(0,0);
                             }
@@ -253,8 +311,25 @@
                         }
                     ?>
                         break;
-                    }else if(t.classList && t.classList.contains("load-more")){ //t.id && t.id=="load"
+                    }else if(t.classList && t.classList.contains("load-more")){
                     <?php
+                        if($memos_sw){
+                    ?>
+                        if(t.classList && t.classList.contains("load-memos")){
+                            // update offsets
+                            memos_params.offset = preset_loads*parseInt(memos_more.dataset.click);
+                            // exec updates
+                            load_ajax_posts(t, 'weblog', preset_loads, function(each_post){
+                                let each_temp = document.createElement("div");
+                                each_temp.id = "pid_"+each_post.id;
+                                each_temp.classList.add("weblog-tree-core-record");
+                                each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${each_post.creatorName}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="${each_post.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${each_post.content}</span><p id="sub">${each_post.createdTs}</p></div></div></div>`;
+                                memos_tree.insertBefore(each_temp, memos_load);
+                            }, false, memos_url, parse_ajax_parameter(memos_params, true));
+                            break;
+                        }
+                    <?php
+                        }
                         if($async_sw&&$use_async){
                     ?>
                         load_ajax_posts(t, 'weblog', preset_loads, function(each_post, load_box){
@@ -262,12 +337,72 @@
                                 each_tags = each_post.tag ? " - "+each_post.tag : "";
                             each_temp.id = "pid_"+each_post.id;
                             each_temp.classList.add("weblog-tree-core-record");
-                            each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${each_post.date} ${each_tags}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="pid_4314" class="weblog-tree-box"><div class="tree-box-title"><a href="javascript:;" target="_self"><h3 class="<?php echo $reply_quote; ?>">${each_post.title}</h3></a></div><div class="tree-box-content"><span id="core-info">${each_post.content}</span><span id="other-info"><h4> Ps. </h4><p class="feeling">${each_post.subtitle}</p></span><p id="sub">${each_post.date} ${each_tags}</p></div></div></div>`;
-                            weblog.insertBefore(each_temp, load_box);
+                            each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${each_post.date} ${each_tags}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="${each_post.id}" class="weblog-tree-box"><div class="tree-box-title"><a href="javascript:;" target="_self"><h3 class="<?php echo $reply_quote; ?>">${each_post.title}</h3></a></div><div class="tree-box-content"><span id="core-info">${each_post.content}</span><span id="other-info"><h4> Ps. </h4><p class="feeling">${each_post.subtitle}</p></span><p id="sub">${each_post.date} ${each_tags}</p></div></div></div>`;
+                            document.querySelector('.weblog-tree-core').insertBefore(each_temp, load_box);
                         });
                     <?php
                         }
                     ?>
+                        break;
+                    }else{
+                        t = t.parentNode;
+                    }
+                }
+            }
+        </script>
+<?php
+    }
+    if($memos_sw){
+?>
+        <script>
+            weblog.onclick=(e)=>{
+                e = e || window.event;
+                let t = e.target || e.srcElement;
+                if(!t) return;
+                while(t!=weblog){
+                    if(t.classList && t.classList.contains("load-memos")){
+                        // update offsets
+                        memos_params.offset = preset_loads*parseInt(memos_more.dataset.click);
+                        // exec updates
+                        load_ajax_posts(t, 'weblog', preset_loads, function(each_post){
+                            let each_temp = document.createElement("div");
+                            each_temp.id = "pid_"+each_post.id;
+                            each_temp.classList.add("weblog-tree-core-record");
+                            each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${each_post.creatorName}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="${each_post.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${each_post.content}</span><p id="sub">${each_post.createdTs}</p></div></div></div>`;
+                            memos_tree.insertBefore(each_temp, memos_load);
+                        }, false, memos_url, parse_ajax_parameter(memos_params, true));
+                        break;
+                    }else if(t.classList && t.classList.contains("switch-to-memos")){
+                        // t.textContent = "正在切换记录..";
+                        if(weblog.classList.contains(memosClass)) {
+                            weblog.classList.remove(memosClass);
+                            t.textContent = "切换 Memos 记录";
+                            return;
+                        }else{
+                            weblog.classList.add(memosClass);
+                            if(weblog.classList.contains(memoLoaded)) {
+                                t.textContent = "返回 Weblog 记录";
+                                console.debug(memoLoaded);
+                                return;
+                            }
+                            send_ajax_request("GET", memos_url, '', function(res){
+                                memos_more.dataset.counts = JSON.parse(res).length;
+                            }, function(err){
+                                t.innerText = err+' err occured';
+                            });
+                            load_ajax_posts(t, 'weblog', preset_loads, function(each_post){
+                                memos_more.dataset.load = preset_loads;
+                                memos_more.dataset.click = 1;
+                                weblog.classList.add(memoLoaded);
+                                t.textContent = "返回 Weblog 记录";
+                                let each_temp = document.createElement("div");
+                                each_temp.id = "pid_"+each_post.id;
+                                each_temp.classList.add("weblog-tree-core-record");
+                                each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${each_post.creatorName}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="${each_post.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${each_post.content}</span><p id="sub">${each_post.createdTs}</p></div></div></div>`;
+                                memos_tree.insertBefore(each_temp, memos_load);
+                                // memos_tree.appendChild(each_temp);
+                            }, false, memos_url, parse_ajax_parameter(memos_params, true));
+                        }
                         break;
                     }else{
                         t = t.parentNode;

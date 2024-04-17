@@ -140,7 +140,7 @@ iframe.bilibili_embed{
 .pageSwitcher.dev a.disabled{
     pointer-events: none;
     opacity: .5;
-    border: 0;
+    border: 0!important;
 }
 .pageSwitcher.dev a:active{
     background-color: var(--theme-color);

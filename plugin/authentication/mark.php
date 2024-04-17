@@ -1,6 +1,6 @@
 <?php
     // 检查并返回 xhr 请求携带参数
-    function get_request_param(string $param){
+    function get_request_param(string $param) {
         $res = null;
         if(!isset($_REQUEST[$param])) return $res;
         switch (true) {
@@ -26,6 +26,7 @@
     define('SECURED_mid', md5(REQUEST_mail));  // Exposed on public
     define('REQUEST_nick', get_request_param('nick'));
     define('REQUEST_text', get_request_param('text'));
+    define('REQUEST_note', get_request_param('note'));
     define('SAVE_prefix', 'marker-' . REQUEST_pid);
     define('EXEC_fetch', get_request_param('fetch'));
     define('EXEC_count', get_request_param('count'));
@@ -141,6 +142,7 @@
         }else{
             include CACHED_PATH; // 加载文件
             if(EXEC_fetch){
+                // sleep(1);
                 $cached_mark = purify_marker_data($cached_mark); // clear all unique id (no public exposed vars)
                 if(isset($cached_mark[SAVE_prefix])){
                     if(EXEC_count) {
@@ -159,6 +161,7 @@
                     $new_mark->nick = REQUEST_nick;
                     $new_mark->mail = REQUEST_mail;
                     $new_mark->text = REQUEST_text;
+                    $new_mark->note = REQUEST_note;
                     $new_mark->date = date('Y-m-d'); //date('Y-m-d H:i:s')
                     $new_mark->ts = SECURED_ts;
                     // $new_mark->server = $_SERVER;

@@ -6,7 +6,7 @@
               styleLight = `color:#3a3a3a;background:rgb(235,235,235);padding:5px 0;`,
               styleDark = `color:white;background:#3a3a3a;padding:5px 0;margin-bottom:10px`,
               title2 = `A wordpress theme Design & Devoloped via 2BROEAR open source in 2022`;
-        console.log(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2BROEAR %c Release https://github.com/2Broear/2BLOG %c `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
+        console.debug(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2BROEAR %c Release https://github.com/2Broear/2BLOG %c `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
     })();
     
     // if(!raf_available){
@@ -285,7 +285,7 @@
     
     
     function parse_ajax_parameter(data, decode=true){
-        let str = "";
+        let str = "&";
         for(let key in data){
             str += `${key}=${data[key]}&`;
         }

@@ -1,7 +1,7 @@
 <?php
     global $src_cdn;
 ?>
-<script src="<?php echo $src_cdn;//custom_cdn_src(0,1) ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
+<script src="<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
 <script type="text/javascript">
     <?php
         global $cat;
@@ -84,19 +84,7 @@
                     if($vdo_poster_sw) echo 'setupVideoPoster(2);';  // 截取设置当前页面所有视频 poster 
     ?>
                     const list = document.querySelectorAll('.mbit .mbit_range li');
-                    // if(raf_available){
-                    //     if(list[0]){
-                    //         for(let i=0,listLen=list.length;i<listLen;i++){
-                    //             raf_enqueue(true, function(init){
-                    //                 list[i].classList.add('active');
-                    //             }, 25, i);
-                    //         }
-                    //     }
-                    // }else{
-                        async_enqueue(list, true, function(i){ //sto_enqueue
-                            list[i].classList.add('active');
-                        }, 200);
-                    // }
+                    async_enqueue(list, true, ()=>list[i].classList.add('active'), 200);
     <?php
                     break;
             }

@@ -530,19 +530,19 @@
         };
         if(get_option('site_async_switcher') && !is_single()){
     ?>
-            function load_ajax_posts(t,type,limit,callback,action=false){
+            function load_ajax_posts(t,type,limit,callback,action=false,url=false,params=false){
                 const type_acg = "acg",
                       dis_class = "disabled",
                       load_done = type===type_acg ? "" : "已加载全部";
                 let tp = t.parentElement,
                     tpp = tp.parentElement,
                     cid = parseInt(t.dataset.cid),
-                    years = t.dataset.year, // add-opts for archive
+                    years = parseInt(t.dataset.year), // add-opts for archive
                     loads = parseInt(t.dataset.load),
-                    counts = parseInt(t.dataset.counts),
-                    clicks = parseInt(t.dataset.click);
-                console.log(loads>=counts)
-                if(loads>=counts){
+                    counts = parseInt(t.dataset.counts) || 0,
+                    clicks = parseInt(t.dataset.click) || 0;
+                // console.log(loads, counts);
+                if(loads >= counts){
                     t.innerText = load_done;
                     t.classList.add(dis_class);  // add-opts for weblog
                     tpp.classList.add(dis_class);
@@ -552,23 +552,25 @@
                 t.innerText = type===type_acg ? "Loading.." : "加载中..";
                 t.classList.add('loading', dis_class);  // add-opts archive (disable click)
                 t.setAttribute('data-click', clicks);
-                send_ajax_request("GET", "<?php echo admin_url('admin-ajax.php'); ?>", 
-                    parse_ajax_parameter({
-                        "action": action || "ajaxGetPosts",
-                        "key": years, // add-opts for archive
-                        "cid": cid || 0,
-                        "limit": limit,
-                        "offset": limit*clicks,
-                        "type": type,
-                        _ajax_nonce: t.dataset.nonce,
-                    }, true), function(res){
+                url = url ? url : "<?php echo admin_url('admin-ajax.php'); ?>";
+                params = params ? params : parse_ajax_parameter({
+                    "action": action || "ajaxGetPosts",
+                    "key": years, // add-opts for archive
+                    "cid": cid || 0,
+                    "limit": limit,
+                    "offset": limit*clicks,
+                    "type": type,
+                    _ajax_nonce: t.dataset.nonce,
+                }, true);
+                send_ajax_request("GET", url, params, function(res){
                         t.innerText = type===type_acg ? "" : "加载更多";
                         t.classList.remove('loading', dis_class);  // add-opts for archive (enable click)
                         var posts_array = JSON.parse(res),
                             posts_count = posts_array.length,
-                            loads_count = loads+posts_count,
+                            loads_count = loads + posts_count,
                             load_box = tp, //t.parentElement.parentElement.parentElement;
                             last_offset = 0;
+                        // console.log(loads, posts_count)
                         switch(type){
                             case type_acg:
                                 load_box = getParByCls(t, 'loadbox');
@@ -594,7 +596,7 @@
                         t.innerText = err+' err occured';
                     }
                 );
-            };
+            }
     <?php
         }
     ?>

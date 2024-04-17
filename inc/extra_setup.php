@@ -60,7 +60,7 @@
             $stamp16x = dechex($stamp10x);
             $auth_url = $auth_url.'&s='.md5($cdn_auth.$api_file.$stamp16x).'&t='.$stamp16x;
         }
-        $res = $xhr ? $src_cdn.'/plugin/api.php?auth='.$api.'&exec='.$exe.'&pid='.$pid : $auth_url;
+        $res = $xhr ? $src_cdn.'/plugin/api.php?auth='.$api.'&exec='.$exe.'&pid='.$pid.'&' : $auth_url;
         // $res = $xhr ? $src_cdn.'/plugin/'.$authentication.$api_file.'?pid='.$pid : $auth_url; //||!$cdn_api
         return $res;
     }

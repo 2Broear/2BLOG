@@ -61,19 +61,14 @@
                     // custom server request-header
                     $ip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : $_SERVER["HTTP_X_FORWARDED_FOR"];
                     $ua = isset($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"] : $params['ua'];
-                    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                    $headers = array(
                         "X-Forwarded-For: $ip",
-                        "User-Agent: $ua"
-                    ));
-                    // // 传递当前 $_SERVER 所有请求头部信息
-                    // $current_server = $_SERVER;
-                    // curl_setopt($ch, CURLOPT_HTTPHEADER, array_map(
-                    //     function ($key, $value) {
-                    //         return "$key: $value";
-                    //     },
-                    //     array_keys($current_server),
-                    //     $current_server
-                    // ));
+                        "User-Agent: $ua",
+                    );
+                    // if($params['usememos']) {
+                    //     array_push($headers, ['Authorization: Bearer ' . get_option('site_memos_apikey')]);
+                    // }
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
                     $response = curl_exec($ch);
                     // print_r($params);
                     echo $response===false ? 'cURL Error ('.curl_errno($ch).'): '.curl_error($ch).'\n' : $response;

@@ -34,6 +34,8 @@ __Preview Site__ ：[演示站点](http://wpk.2broear.com) （演示并不代表
 - _新增漫游影视异步加载（ajax）支持_
 - _修复了 Valine 存在的隐私泄漏问题_
 - _支持 chatGPT 文章 AI 摘要_
+- _支持 Memos 日记切换_
+- _支持文章 Marker 多人标记_
 - 支持邮件（可选模板）、自建企业微信应用（多选模版）评论推送提醒（Valine 集成 server酱、pushplus及企业微信应用推送）
 - 部分页面支持 wordpress 与 leancloud 数据切换
 - 部分页面支持使用视频替代 poster 背景
@@ -266,7 +268,7 @@ __更新:__ 现已在 wp 初始化时自动设置 `permalink_structure` 默认�
 - marked.js（markdown文档解析）
 - md5.js（md5邮件解析）
 - nprogress.js（文档进度条）
-- ~~jquery.js（部分依赖）~~
+- ~~jquery.js（）~~
 - ...
   
 外网有些很棒的 WordPress 主题开发文档教程，这些文档一定程度上提升了开发进度，后续将在此补上相关链接。
@@ -300,6 +302,7 @@ Futures todo & bugs
 - ✅ ~~视频动态预览~~
 - ✅ ~~集成 Ajax 功能到 wp 评论~~
 - ✅ ~~集成 chatGPT 文章摘要~~
+- ✅ ~~新增 Marker 文章标记~~
 - 集成 Valine 自定义功能到 WordPress 评论
 
 ### bug
