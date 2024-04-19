@@ -165,7 +165,11 @@
                 let video = videos[i],
                     check = video.src.match(/\.(?:avi|mp4|mov|mpg|mpeg|flv|swf|wmv|wma|rmvb|mkv)$/i), //video.src.match(/^(.*)(\.)(.{1,8})$/)[3],
                     dataURL = await this.getVideoFrames(video.src,curTime,imgSize,imgType); // video的url
-                check ? video.setAttribute('poster', dataURL) : console.log('video Extention err');
+                if(check) {
+                    video.setAttribute('poster', dataURL);
+                    return;
+                }
+                console.log('video Extention err');
             }
         })();
     }

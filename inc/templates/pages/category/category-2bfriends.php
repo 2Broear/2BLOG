@@ -16,6 +16,11 @@
         #vcomments{
             margin: auto!important;
         }
+        .friends-boxes .deals.tech .inbox .inbox-aside span.lowside-title h4{
+            max-width: 4em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

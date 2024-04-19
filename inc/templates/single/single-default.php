@@ -29,8 +29,9 @@
 	        min-height: 222px;
 	    }
 	    figure.wp-block-gallery{
-	        max-width: 88%;
 	        margin: 0;
+	        /*max-width: 88%;*/
+	        justify-content: start;
 	    }
     </style>
 </head>

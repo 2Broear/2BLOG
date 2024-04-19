@@ -140,6 +140,17 @@
         .resource-windows div:last-of-type{
             margin-right: auto;
         }
+        .weBlog-Description .weBlog-Description-inside-content span{
+            margin-bottom: 5px;
+        }
+        .weBlog-Description .weBlog-Description-inside-content span strong{
+            letter-spacing: 15px;
+            font-family: math;
+            font-size: 150%;
+        }
+        .weBlog-Description .weBlog-Description-inside-content span p{
+            display: none;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

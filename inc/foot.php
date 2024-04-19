@@ -43,6 +43,8 @@
                     new marker.init({
                         static: {
                             // dataDelay: 3000,
+                            // lineKeepUp: true,
+                            // lineAnimate: false,
                             lineColor: "var(--theme-color)",
                             lineColors: "transparent",
                             lineDegrees: "6",

@@ -3,7 +3,7 @@
     const marker = {
         dom: {
             initiate: (marker)=> {
-                const {init: {_conf: {static: {ctxMark:s_ctxMark, ctxMarked:s_ctxMarked, ctxQuote:s_ctxQuote, ctxCopy:s_ctxCopy, ctxNote:s_ctxNote, ctxCancel:s_ctxCancel, lineAnimate:s_lineAnimate, lineColor:s_lineColor, lineColors:s_lineColors, lineBold:s_lineBold, lineBoldMax:s_lineBoldMax, lineDegrees:s_lineDegrees, userNick:s_userNick, userMail:s_userMail, userMid:s_userMid, md5Url:s_md5Url, dataAlive:s_dataAlive, dataPrefix:s_dataPrefix, avatar:s_avatar, }, class: {line:c_line, tool:c_tool, toolIn:c_toolIn, mark:c_mark, done:c_done, note:c_note, quote:c_quote, copy:c_copy, close:c_close, aniUnderline:c_aniUnderline, aniProcess:c_aniProcess, disabled:c_disabled, }, element: {commentInfo: {userNick:e_userNick, userMail:e_userMail}, effectsArea:e_effectsArea}}}, data: {list:d_list, path:d_path, user: {mid:d_mid}, stat:{counts:d_counts}, _caches:d_caches,}, _utils: {_cookie: {get:getCookie, set:setCookie, del:delCookie}, _etc: {funValidator, dynamicLoad}, _dom: {finder}}, status: {isMarkerUserUpdate, isMarkerAccessable}, mods: {fetch}} = marker;
+                const {init: {_conf: {static: {ctxMark:s_ctxMark, ctxMarked:s_ctxMarked, ctxQuote:s_ctxQuote, ctxCopy:s_ctxCopy, ctxNote:s_ctxNote, ctxCancel:s_ctxCancel, lineAnimate:s_lineAnimate, lineKeepUp:s_lineKeepUp, lineColor:s_lineColor, lineColors:s_lineColors, lineBold:s_lineBold, lineBoldMax:s_lineBoldMax, lineDegrees:s_lineDegrees, userNick:s_userNick, userMail:s_userMail, userMid:s_userMid, md5Url:s_md5Url, dataAlive:s_dataAlive, dataPrefix:s_dataPrefix, avatar:s_avatar, }, class: {line:c_line, tool:c_tool, toolIn:c_toolIn, mark:c_mark, done:c_done, note:c_note, quote:c_quote, copy:c_copy, close:c_close, underline:c_underline, processing:c_processing, disabled:c_disabled, }, element: {commentInfo: {userNick:e_userNick, userMail:e_userMail}, effectsArea:e_effectsArea}}}, data: {list:d_list, path:d_path, user: {mid:d_mid}, stat:{counts:d_counts}, _caches:d_caches,}, _utils: {_cookie: {get:getCookie, set:setCookie, del:delCookie}, _etc: {funValidator, dynamicLoad}, _dom: {finder}}, status: {isMarkerUserUpdate, isMarkerAccessable}, mods: {fetch}} = marker;
                 // changes required
                 let _conf = marker.init._conf,// {static: {dataCount:s_dataCount}, element: {line:e_line, tool:e_tool}} = _conf,
                     _element = _conf.element,
@@ -14,28 +14,41 @@
                 marks.href = 'javascript:;';
                 marks.rel = 'nofollow';
                 tools.className = c_tool; // tools.setAttribute('onselectstart','return false;');
-                tools.innerHTML = `<div class="${c_toolIn}"><span class="${c_mark}" style="" title="划线${s_ctxMark}">${s_ctxMark}</span><i>&nbsp;|&nbsp;</i><span class="${c_note}" title="${s_ctxNote}内容"><label>${s_ctxNote}</label><input type="text" placeholder="输入注释内容.." max="50" /></span><i>&nbsp;|&nbsp;</i><span class="${c_quote}" title="评论${s_ctxQuote}" onclick="marker.mods.quote(this)">${s_ctxQuote}</span><i>&nbsp;|&nbsp;</i><span class="${c_copy}" title="${s_ctxCopy}内容" onclick="marker.mods.copy(this)">${s_ctxCopy}</span><span class="${c_close}" title="${s_ctxCancel}"></span></div>`; // onclick="marker.mods.close(this, true)" onclick="marker.mods.down(this)" <img src="" alt="avatar" />
+                tools.innerHTML = `<div class="${c_toolIn}"><span class="${c_mark}" style="" title="划线${s_ctxMark}">${s_ctxMark}</span><i>&nbsp;|&nbsp;</i><span class="${c_note}" title="${s_ctxNote}内容"><label>${s_ctxNote}</label><input type="text" placeholder="输入注释.." max="50" /></span><i>&nbsp;|&nbsp;</i><span class="${c_quote}" title="评论${s_ctxQuote}" onclick="marker.mods.quote(this)">${s_ctxQuote}</span><i>&nbsp;|&nbsp;</i><span class="${c_copy}" title="${s_ctxCopy}内容" onclick="marker.mods.copy(this)">${s_ctxCopy}</span><span class="${c_close}" title="${s_ctxCancel}"></span></div>`; // onclick="marker.mods.close(this, true)" onclick="marker.mods.down(this)" <img src="" alt="avatar" />
                 if(s_lineAnimate) {
-                    style.textContent = `@keyframes ${c_aniUnderline}{0%{background-size:0% ${s_lineBold}%;}100%{background-size:100% ${s_lineBold}%;}}@keyframes ${c_aniProcess}{0%{transform:rotate(0deg)}100%{transform:rotate(360deg);}}`;
+                    style.textContent = `@keyframes ${c_underline}{0%{background-size:0% ${s_lineBold}%;}100%{background-size:100% ${s_lineBold}%;}}@keyframes ${c_processing}{0%{transform:rotate(0deg)}100%{transform:rotate(360deg);}}`;
+                }
+                if(s_lineKeepUp) {
+                    style.textContent += `a.${c_line} .${c_tool}{padding:10px 0 50px!important;opacity:1!important;}a.${c_line}.${c_done} .${c_tool} .${c_note}{margin:0 0 10px 10px!important;}`;
                 }
                 style.textContent += `
                     a.${c_line}.${c_done}{animation:none;-webkit-animation:none;transition:none;}
                     a.${c_line}:hover,a.${c_line}.${c_done}{background-size:100% ${s_lineBoldMax}%;}
-                    a.${c_line}:hover{color:inherit!important;}
-                    a.${c_line}{color:inherit;text-decoration:none!important;background:-webkit-linear-gradient(${s_lineDegrees}deg, ${s_lineColor} 0%, ${s_lineColors} 100%) no-repeat left 100%/0 ${s_lineBold}%;background:linear-gradient(${s_lineDegrees}deg, ${s_lineColor} 0%, ${s_lineColors} 100%) no-repeat left 100%/0 ${s_lineBold}%;background-size:100% ${s_lineBold}%;transition:background-size .15s ease;animation:${c_aniUnderline} 1s 1 ease;-webkit-animation:${c_aniUnderline} 1s 1 ease;cursor:text;user-select:text;-webkit-user-drag:none;position:relative;}
-                    a.${c_line}.${c_aniProcess} .${c_tool},
+                    a.${c_line}:hover{color:inherit!important;z-index:1!important;}
+                    a.${c_line}{color:inherit;text-decoration:none!important;background:-webkit-linear-gradient(${s_lineDegrees}deg, ${s_lineColor} 0%, ${s_lineColors} 100%) no-repeat left 100%/0 ${s_lineBold}%;background:linear-gradient(${s_lineDegrees}deg, ${s_lineColor} 0%, ${s_lineColors} 100%) no-repeat left 100%/0 ${s_lineBold}%;background-size:100% ${s_lineBold}%;transition:background-size .15s ease;animation:${c_underline} 1s 1 ease;-webkit-animation:${c_underline} 1s 1 ease;cursor:text;user-select:text;-webkit-user-drag:none;position:relative;}
+                    a.${c_line}.${c_processing} .${c_tool},
                     a.${c_line}:hover .${c_tool}{padding:10px 0 50px;opacity:1;}
                     a.${c_line} .${c_tool}{padding-bottom:15px;position:absolute;top:0%;left:50%;transform:translate(-50%,-50%);opacity:0;transition:all .15s ease;font-family:auto;}
-                    body.dark a.${c_line} .${c_tool} .${c_toolIn}{color: white;border-color: var(--preset-4a);background: -webkit-linear-gradient(90deg, var(--preset-3a) 0, var(--preset-4a));background: linear-gradient(0deg, var(--preset-3a) 0, var(--preset-4a));}
+                    body.dark a.${c_line} .${c_tool} .${c_note}{color: #4a4a4a;}
+                    body.dark a.${c_line} .${c_tool} .${c_note} label{color: white;}
+                    body.dark a.${c_line} .${c_tool} .${c_toolIn}{color: white;border-color: #4a4a4a;background: -webkit-linear-gradient(90deg, #3a3a3a 0, #4a4a4a);background: linear-gradient(0deg, #3a3a3a 0, #4a4a4a);}
+                    @media (prefers-color-scheme: dark) {
+                        a.${c_line} .${c_tool} .${c_note}{color: #4a4a4a;}
+                        a.${c_line} .${c_tool} .${c_note} label{color: white;}
+                        a.${c_line} .${c_tool} .${c_toolIn}{color: white;border-color: #4a4a4a;background: -webkit-linear-gradient(90deg, #3a3a3a 0, #4a4a4a);background: linear-gradient(0deg, #3a3a3a 0, #4a4a4a);}
+                    }
                     a.${c_line} .${c_tool} .${c_toolIn}{color:black;line-height:27px;font-size:11px;font-weight:normal;font-style:normal;white-space:nowrap;padding:0 5px;border:1px solid #fff;border-radius:5px;box-sizing:border-box;background:linear-gradient(0deg,rgb(245 247 249 / 88%) 0,rgb(255 255 255 / 100%));background:-webkit-linear-gradient(90deg,rgb(245 247 249 / 88%) 0,rgb(255 255 255 / 100%));box-shadow:rgba(0,0,0,0.12) 0 1px 18px;position:relative;user-select:none;-webkit-user-select:none;}
-                    a.${c_line}.${c_done} .${c_tool} .${c_note}{position:absolute;bottom:100%;left:0;min-width:2em;max-width:100%;white-space:normal;margin:auto auto 10px;padding: 5px;color:gray;line-height:18px;font-weight:normal;}
-                    a.${c_line}.${c_done} .${c_tool} .${c_note}:after{content: "";width: 0;height: 0;border-style: solid;border-color: lightgray transparent transparent transparent;border-width: 6px 10px 0px 0px;position: inherit;left: 12px;bottom: -6px;z-index: 1;right:auto;margin:auto;}
+                    a.${c_line}.${c_processing} .${c_tool} .${c_note},
+                    a.${c_line}.${c_done}:hover .${c_tool} .${c_note}{margin:0 0 10px 10px;}
+                    a.${c_line}.${c_done} .${c_tool} .${c_note}{position:absolute;bottom:100%;left:0;min-width:2em;max-width:100%;white-space:normal;padding: 5px 10px;color:gray;line-height:18px;font-weight:normal;margin:0px;transition:margin .15s linear;}
+                    a.${c_line}.${c_done} .${c_tool} .${c_note}:after{content: "";width: 0;height: 0;border-style: solid;border-color: currentColor transparent transparent transparent;border-width: 7px 10px 0px 0px;position: inherit;left: 16px;bottom: -6px;z-index: 1;right:auto;margin:auto;}
                     a.${c_line}.${c_done} .${c_tool} .${c_note},
                     a.${c_line} .${c_tool} .${c_note} input,
-                    a.${c_line} .${c_tool} .${c_note}:hover input{border: 1px solid lightgray;border-radius:5px;background:inherit;}
-                    a.${c_line} .${c_tool} .${c_note}:hover input{width: 100px;margin: auto 5px;padding: 3px 5px 2px;}
-                    a.${c_line} .${c_tool} .${c_note} input{width: 0px;padding:0px;font-size: 10px;box-sizing: border-box;transition: all .35s ease;border:none;}
-                    a.${c_line}.${c_done} .${c_tool} .${c_note} input{border-color:lightgray!important;display:none;}
+                    a.${c_line} .${c_tool} .${c_note}:hover input{border-radius:50px;color:white;background:currentColor;box-shadow:inherit;/*border: 1px solid currentColor;background:inherit;*/}
+                    a.${c_line} .${c_tool} .${c_note}:hover input{width: 100px;margin: auto 5px;padding: 2px 8px;color: inherit;border: 1px solid currentColor;background: transparent;}
+                    a.${c_line} .${c_tool} .${c_note} input{width: 0px;padding:0px;font-size: 10px;box-sizing: border-box;transition: all .15s ease;border:none;}
+                    a.${c_line}.${c_done} .${c_tool} .${c_note} label{color:black;font-style: italic;}
+                    a.${c_line}.${c_done} .${c_tool} .${c_note} input{border-color:currentColor!important;display:none;}
                     a.${c_line} .${c_tool} img{max-width: 23px;border-radius: 50%;margin: 5px 5px 5px 0!important;}
                     a.${c_line} .${c_tool} i{font-style:normal;}
                     a.${c_line} .${c_tool} i,
@@ -49,8 +62,8 @@
                     a.${c_line} .${c_tool} span.${c_close}::before,a.${c_line} .${c_tool} span.${c_close}::after{content:'';width:68%;height:12%;display:block;background:currentColor;position:inherit;top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg);margin:inherit;border:none;}
                     a.${c_line} .${c_tool} span.${c_close}::after{transform:translate(-50%,-50%) rotate(-45deg);}
                     a.${c_line} .${c_tool} span.${c_close}:hover::before,a.${c_line} .${c_tool} span.${c_close}:hover::after{height:18%;}
-                    a.${c_line}.${c_aniProcess} .${c_tool} span.${c_close}{animation:${c_aniProcess} linear 1s infinite;-webkit-animation:${c_aniProcess} linear 1s infinite;pointer-events:none;}
-                    /*a.${c_line}.${c_aniProcess} .${c_tool} span.${c_close},*/
+                    a.${c_line}.${c_processing} .${c_tool} span.${c_close}{animation:${c_processing} linear 1s infinite;-webkit-animation:${c_processing} linear 1s infinite;pointer-events:none;}
+                    /*a.${c_line}.${c_processing} .${c_tool} span.${c_close},*/
                     a.${c_line} .${c_tool} span.${c_close}:hover{transform:scale(1.25);-webkit-transform:scale(1.25)}
                     a.${c_line} .${c_tool} span.${c_close}{width:10px;height:10px;color:white;background:${s_lineColor};padding:1px;border-radius:50%;position:absolute;top:-5px;right:-5px;}
                 `;
@@ -69,7 +82,7 @@
                                     mail: e_userMail.value,
                                 },
                                 _execUpdate = (userinfo, cbk)=> {
-                                    userinfo.mid = md5(userinfo.mail);
+                                    userinfo.mid = userinfo.mail ? md5(userinfo.mail) : "";
                 			        // store userinfo(d_mid for currentUserCounts verification
             			            marker.data = userinfo;
                                     // store to local cookies
@@ -100,8 +113,8 @@
                                 }
                                 return;
                             }
+                            // 输出 所有用户标记
                             let _static = _conf.static;
-                            // 输出所有服务端标记（未校验）
                             Object.keys(res).forEach(user=> {
                                 let userMarks = Object.values(res[user]); // 重新索引数组对象（避免手动删除 mark_data 索引混乱
                                 // console.log(userMarks)
@@ -147,24 +160,31 @@
                                     frag_mark.dataset.rid = rid;
                                     frag_mark.title = `${nick} marked at ${date}`;
                                     tool_mark.className = `${c_mark} ${c_disabled}`;
-                                    tool_mark.textContent = `${nick} ${s_ctxMarked}`;
+                                    let markedContext = `${nick} ${s_ctxMarked}`;
                                     if(note&&note.length >= 1) {
                                         tool_mark.nextElementSibling.remove(); // "|"
                                         finder(tool_note, "", 1, "label").textContent = note;
                                         finder(tool_note, "", 1, "input").remove();
+                                        markedContext = nick;
                                     }else{
                                         tool_note.previousElementSibling.remove(); // "|"
                                         tool_note.remove();
                                     }
+                                    tool_mark.textContent = markedContext;
                                     frag_mark.appendChild(frag_tool);
                                     // write in
                                     const specific_chars = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
                                     mark_paragraph.innerHTML = mark_paragraph.innerHTML.replace(specific_chars, frag_mark.outerHTML);
                                 });
                             });
-                            const curUserMarks = res[d_mid];
-                            // 返回本地记录中不存在于远程记录的元素（始终检验）
+                            // 校验 当前用户标记
+                            let curUserMarks = res[d_mid];
+                            if(!curUserMarks) {
+                                return;
+                            }
+                            curUserMarks = Object.values(curUserMarks); // 重新索引数组对象（避免手动删除 mark_data 索引混乱
                             if(localMarks.length > 0) {
+                                // 返回本地记录中不存在于远程记录的元素（始终检验）
                                 let existNonDeletedMarks = localMarks.filter(local => {
                                     // localNotInRemote: delete local marks which is non-existent from remote
                                     const localNotInRemote = !curUserMarks.some(remote => {
@@ -179,39 +199,37 @@
                                         delCookie(mark, d_path); // no need for dom changes
                                     });
                                 }else{
-                                    console.log('remoteMarks: ALL MATCHED');
+                                    console.debug('remoteMarks: ALL MATCHED');
                                 }
                             }
                             // 对比返回的远程用户标记与本地记录（仅存在记录检查）
-                            if(curUserMarks) {
-                                // 返回数据（已响应）——>对比本地记录（未匹配到本地记录）——>新增本地记录
-                                if(curUserMarks.length > 0) {
-                                    let existNonUpdatedMarks = curUserMarks.filter(remote => {
-                                        // remoteNotInLocal: delete remote marks which is non-existent from local
-                                        const remote_mark = s_dataPrefix + remote.rid,
-                                              remoteNotInLocal = !localMarks.some(local_mark => {
-                                                  return remote_mark === local_mark;
-                                              });
-                                        return remoteNotInLocal;
+                            // 返回数据（已响应）——>对比本地记录（未匹配到本地记录）——>新增本地记录
+                            if(curUserMarks.length > 0) {
+                                let existNonUpdatedMarks = curUserMarks.filter(remote => {
+                                    // remoteNotInLocal: delete remote marks which is non-existent from local
+                                    const remote_mark = s_dataPrefix + remote.rid,
+                                          remoteNotInLocal = !localMarks.some(local_mark => {
+                                              return remote_mark === local_mark;
+                                          });
+                                    return remoteNotInLocal;
+                                });
+                                if(existNonUpdatedMarks.length > 0) {
+                                    existNonUpdatedMarks.forEach(marks=> {
+                                        const mark_rid = marks.rid,
+                                              mark_cname = s_dataPrefix + mark_rid,
+                                              ts_caches = JSON.parse(d_caches),
+                                              cached_ts = ts_caches[mark_cname];
+                                        // update localMarks only if localStorage exists(incase of any other user device get involved)
+                                        if(cached_ts) {
+                                            console.log(`a remote marker(${mark_cname}: ${cached_ts}) was found on non-existent localMarks(perhaps server delays), add cookie to local..`, '(existNonUpdatedMarks: slow-down the frequency!)');
+                                            // update(add) local-data instantly
+                                            setCookie(mark_cname, cached_ts, d_path, s_dataAlive); // dom changes(no longer needed)
+                                        }else{
+                                            console.log(`marker(${mark_rid}) belongs to another device(localStorage not found)`);
+                                        }
                                     });
-                                    if(existNonUpdatedMarks.length > 0) {
-                                        existNonUpdatedMarks.forEach(marks=> {
-                                            const mark_rid = marks.rid,
-                                                  mark_cname = s_dataPrefix + mark_rid,
-                                                  ts_caches = JSON.parse(d_caches),
-                                                  cached_ts = ts_caches[mark_cname];
-                                            // update localMarks only if localStorage exists(incase of any other user device get involved)
-                                            if(cached_ts) {
-                                                console.log(`a remote marker(${mark_cname}: ${cached_ts}) was found on non-existent localMarks(perhaps server delays), add cookie to local..`, '(existNonUpdatedMarks: slow-down the frequency!)');
-                                                // update(add) local-data instantly
-                                                setCookie(mark_cname, cached_ts, d_path, s_dataAlive); // dom changes(no longer needed)
-                                            }else{
-                                                console.log(`marker(${mark_rid}) belongs to another device(localStorage not found)`);
-                                            }
-                                        });
-                                    }else{
-                                        console.log('localMarks: ALL MATCHED');
-                                    }
+                                }else{
+                                    console.debug('localMarks: ALL MATCHED');
                                 }
                             }
                         };
@@ -507,7 +525,7 @@
             isMarkerUserUpdate: function() {
                 const {init: {_conf: {element: {commentInfo: {userMail:e_userMail}}}}, data: {user: {mail:d_mail}}, status:{isMarkerAccessable}} = marker;
                 const user_updated = decodeURIComponent(d_mail) !== e_userMail.value;
-                return isMarkerAccessable() && user_updated; // let that = this&&this.status ? this : status;
+                return isMarkerAccessable() && user_updated;
             },
             isMarkerReachedMax: (server_verify = false)=> {
                 const {init: {_conf: {static: {dataMax:s_dataMax, apiUrl:s_apiUrl}}}, data: {list:d_list, stat: {counts:d_counts_}, _counts:d_counts}, mods: {fetch}} = marker;
@@ -630,7 +648,8 @@
                     const range = that.getRangeAt(0),
                           anchor_parent = that.anchorNode.parentElement,
                           focus_parent = that.focusNode.parentElement;
-                    let contains_node = null;
+                    /*** close switch for wrap-selects ***/
+                    let contains_node = null; //anchor_parent || focus_parent
                     switch(true) {
                         case anchor_parent != range.commonAncestorContainer:
                             contains_node = anchor_parent;
@@ -639,10 +658,8 @@
                             contains_node = focus_parent;
                             break;
                     }
-                    if(!isMarkerSelectable(contains_node)) {
-                        // console.warn('unSelectable node.', contains_node);
-                        return;
-                    }
+                    if(!isMarkerSelectable(contains_node)) return;
+                    /*** close switch for wrap-selects ***/
                     if(isNodeMarkAble(contains_node) && isNodeMarkDone(contains_node)) {
                         console.warn('selection contains marked-parent content, canceling..', contains_node);
                         return;
@@ -768,7 +785,7 @@
                         mark_node.classList.add(c_done);
                         mark_node.dataset.uid = mark_indexes;
                         node.classList.add(c_disabled);
-                        node.textContent = `${d_nick} ${s_ctxMarked}`;
+                        let markedContext = `${d_nick} ${s_ctxMarked}`;
                         // mark "done"
                         let user_avatar = new Image();
                         user_avatar.alt = d_nick;
@@ -778,27 +795,31 @@
                         if(valider(mark_input)&&mark_inputs.length >= 1) {
                             finder(mark_note, "", 1, "label").textContent = mark_inputs;
                             mark_input.remove();
+                            markedContext = d_nick;
                         }else{
                             mark_note.remove();
                         }
+                        node.textContent = markedContext;
                     });
                 }).catch(err=>console.warn(err));
             },
             note: function(node) {
-                const {init: {_conf: {static: {ctxCopied:s_ctxCopied, ctxNote:s_ctxNote, ctxNoted:s_ctxNoted}, class: {line:c_line, note:c_note}}}, _utils: {_dom: {valider, finder}}, status: {isNodeMarkDone}, mods: {close}} = marker;
+                const {init: {_conf: {static: {ctxNote:s_ctxNote, ctxNoted:s_ctxNoted}, class: {line:c_line}}}, _utils: {_dom: {valider, finder}}, status: {isNodeMarkDone}} = marker;
                 if(!valider(node)) {
                     return node;
                 }
                 const mark_node = finder(node, c_line),
-                      input_box = finder(mark_node, "", 1, "input"),
-                      note_ctx = finder(mark_node, "", 1, "label");
+                      input_box = finder(mark_node, "", 1, "input");
+                if(!valider(input_box)  || isNodeMarkDone(mark_node)){
+                    return;
+                }
                 input_box.focus();
                 if(input_box.oninput) {
-                    console.log('oninput registed.');
+                    console.debug('on-input has registered!');
                     return;
                 }
                 input_box.oninput = input_box.onpropertychange = function() {
-                    note_ctx.textContent = this.value.length>=1 ? s_ctxNoted : s_ctxNote;
+                    finder(mark_node, "", 1, "label").textContent = this.value.length>=1 ? s_ctxNoted : s_ctxNote;
                 };
             },
             quote: function(node) {
@@ -842,7 +863,7 @@
                 node.textContent = s_ctxCopied;
             },
             close: function(node, execUpdate=false) {
-                const {init: {_conf: {class: {line:c_line, tool:c_tool, aniProcess:c_aniProcess}}}, _utils: {_dom: {valider, finder}}, status: {isNodeMarkAble, isMarkerAccessable, isNodeTextOnly, isNodeMarkDone}, mods: {update}} = marker;
+                const {init: {_conf: {class: {line:c_line, tool:c_tool, processing:c_processing}}}, _utils: {_dom: {valider, finder}}, status: {isNodeMarkAble, isMarkerAccessable, isNodeTextOnly, isNodeMarkDone}, mods: {update}} = marker;
                 if(!valider(node)) return node;
                 // 执行 close() 操作后将打乱标记点父级（bug：无法再次找到已定义的子级元素，已通过动态选择each_line解决）
                 const mark_node = isNodeMarkAble(node) ? node : finder(node, c_line);
@@ -852,10 +873,8 @@
                     return;
                 }
                 let update_dom = ()=> {
-                    let mark_tools = finder(mark_node, c_tool, 1);
-                    if(mark_tools.length >= 1) {
-                        mark_tools[mark_tools.length-1].remove();  // mark_tools[0].remove();
-                    }
+                    let mark_tools = mark_node.querySelectorAll(`.${c_tool}`); //finder(mark_node, c_tool, 1);
+                    if(mark_tools.length >= 1) mark_tools[mark_tools.length-1].remove();
                     let replace_content = isNodeTextOnly(mark_node) ? mark_node.firstChild.textContent : mark_node.innerHTML;
                     if(!mark_node.parentElement) {
                         console.log('mark parent NOT found while closing', mark_node);
@@ -863,25 +882,22 @@
                     }
                     mark_node.parentElement.innerHTML = mark_node.parentElement.innerHTML.replace(mark_node.outerHTML, replace_content);
                 };
-                if(execUpdate && isNodeMarkDone(mark_node)){
+                if(execUpdate && isNodeMarkDone(mark_node)) {
                     const {rid, uid} = mark_node.dataset;
                     if(confirm('deleting rid#' + rid + '?')) {
-                        mark_node.classList.add(c_aniProcess);
-                        // let that = this&&this.update ? this : mods; // delete from remote.
+                        mark_node.classList.add(c_processing);
                         update({
                             rid: rid,
                             uid: uid,
                             node: mark_node,
-                            cls: c_aniProcess,
-                        }, (res)=> {
-                            update_dom(); // local updates (dom changes)
-                        }, true);
+                            cls: c_processing,
+                        }, (res)=> update_dom(), true);
                     }else{
-                        mark_node.classList.remove(c_aniProcess);
+                        mark_node.classList.remove(c_processing);
                     }
-                }else{
-                    update_dom();
+                    return;
                 }
+                update_dom();
             },
             update: function(updObj={}, cbk=false, del=false) {
                 const {init: {_conf: {static: {apiUrl:s_apiUrl, dataPrefix:s_dataPrefix, dataCaches:s_dataCaches, dataAlive:s_dataAlive, ctxMarked:s_ctxMarked}, class: {note:c_note}}}, data: {list:d_list, path:d_path}, _utils: {_cookie: {set: setCookie, del: delCookie}, _etc: {isObject, funValidator}, _dom: {finder}}, status: {_adjustPending}, mods: {fetch}} = marker;
@@ -1003,11 +1019,11 @@
         },
         __proto__: {
             init: function(user_conf = {}){
-                const _this = Object.getPrototypeOf(this)!==marker.init.prototype ? marker.init.prototype : this;
                 try {
-                    const _conf_res = _this._singleton_conf._rewriter.call(_this, user_conf);
+                    const that = Object.getPrototypeOf(this)!==marker.init.prototype ? marker.init.prototype : this,
+                          _conf_res = that._singleton_conf._rewriter.call(that, user_conf);
                     // 冻结 _conf、_conf.static 对象成员（）
-                    Object.freeze(_conf_res); // Object.freeze(_conf_res.static); //for dataMax limitation
+                    Object.freeze(_conf_res);
                     // rewrite user-conf
                     marker.init._conf = _conf_res;
                     // 防止重写 _conf 对象
@@ -1019,11 +1035,8 @@
                     marker.dom.initiate(marker);
                     // check marker status before initiate.(prevent mouseup events exec mark())
                     const {init: {_conf: {class: {close:c_close, mark:c_mark, note:c_note}, element: {effectsArea:e_effectsArea}}}, _utils: {_closure: {debouncer}, _dom: {clicker}, _event: {add:addEvent}}, status: {isMarkerAvailable}, mods: {mark, down, note, close}} = marker; // _event
-                    if(!isMarkerAvailable()) {
-                        throw new Error('marker unavailable, register init failed..');
-                    }
+                    if(!isMarkerAvailable()) throw new Error('marker unavailable, register init failed..');
                     // bind events
-                    // _event.add(e_effectsArea, 'mouseup', debouncer(mark.bind(window.getSelection()), 100));
                     addEvent(e_effectsArea, 'mouseup', debouncer(mark.bind(window.getSelection()), 100)); // addEvent this enviroument changed!!
                     clicker(e_effectsArea, c_close, debouncer((t)=>close(t, true), 150));
                     clicker(e_effectsArea, c_mark, debouncer((t)=>down(t), 200));
@@ -1035,7 +1048,7 @@
                 }
             },
         },
-        get data(){
+        get data() {
             const {init: {_conf: {static: {dataPrefix:s_dataPrefix, dataCaches:s_dataCaches, dataCount:s_dataCount, userNick:s_userNick, userMail:s_userMail, userMid:s_userMid}, setter: {nick, mail, counts, pending, promised}}}, _utils: {_cookie: {get: getCookie}}} = this;
             const regExp = new RegExp(`${s_dataPrefix}(.*?)=(.*?);`, 'g'),
                   stored = document.cookie.match(regExp) || [];
@@ -1062,10 +1075,10 @@
                 'list': result,
                 'path': window.location.pathname,
                 '_caches': window.localStorage.getItem(s_dataCaches) || '{}',
-                '_counts': s_dataCount, // freezed
+                '_counts': s_dataCount,
             };
         },
-        set data(obj){
+        set data(obj) {
             const {init: {_conf: {setter}}, _utils: {_etc: {isObject}}} = this;
             if(!isObject(obj)) {
                 console.warn('set data error: typeof obj is not an Object!', obj);
@@ -1074,7 +1087,7 @@
             Object.keys(obj).forEach(item=> {
                 let set_val = obj[item];
                 if(set_val || set_val===0) {
-                    setter[item] = set_val; // setter[item] ??= set_val;
+                    setter[item] = set_val; // ??= set_val;
                 }
             });
         },
@@ -1105,6 +1118,7 @@
                             lineBold: 15,
                             lineBoldMax: 30,
                             lineAnimate: true,
+                            lineKeepUp: false,
                             ctxMark: '标记',
                             ctxMarking: '标记中..',
                             ctxMarked: '已标记',
@@ -1138,9 +1152,9 @@
                             close: 'close',
                             done: 'done',
                             disabled: 'disabled',
-                            aniUnderline: 'underline',
-                            aniProcess: 'processing',
-                            blackList: ['wp-block-quote','wp-block-code','wp-block-table','wp-element-caption'],
+                            underline: 'underline',
+                            processing: 'processing',
+                            blackList: ['markable','wp-block-quote','wp-block-code','wp-block-table','wp-element-caption'],
                         },
                         element: {
                             effectsArea: document,

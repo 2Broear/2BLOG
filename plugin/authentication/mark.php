@@ -201,6 +201,7 @@
                             $result_stats = get_update_status('Exists context detected! '.$exists_msg, $exists_code);
                         }else{
                             $exists_marker = &$_marker[SECURED_mid]; // user records(local compare)
+                            $exists_marker = array_values($exists_marker); // 重新索引数组，避免数组索引混乱（手动删除 mark_data ）时导致新增用户数据被覆盖
                             // 已存在用户（mid）且不为“空”
                             if(isset($exists_marker) && isset($exists_marker[0]->mail)){
                                 // 请求 mail 参数匹配本地用户 mail
