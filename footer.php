@@ -583,13 +583,17 @@
                                 break;
                         }
                         loads_count>=counts ? t.setAttribute('data-load', counts) :  t.setAttribute('data-load', loads_count);  // update current loaded(limit judge)
-                        for(let i=0;i<posts_count;i++){
-                            let each_post = posts_array[i];
-                            callback ? callback(each_post, load_box, last_offset) : false;
-                        };
-                        // compare updated load counts
+                        if(callback&&typeof callback === 'function') {
+                            if(posts_count>=1) callback(posts_array, load_box, last_offset);
+                        }
+                        // for(let i=0;i<posts_count;i++){
+                        //     let each_post = posts_array[i];
+                        //     callback ? callback(each_post, load_box, last_offset) : false;
+                        // };
+                        // compare updated loads
                         if(parseInt(t.dataset.load) >= counts){
-                            tpp.classList.add(dis_class);
+                            t.classList.add(dis_class); // for archive
+                            tpp.classList.add(dis_class); // for weblog/acg
                             t.innerText = load_done;
                         }
                     }, function(err){

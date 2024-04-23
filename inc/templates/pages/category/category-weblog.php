@@ -319,12 +319,16 @@
                             // update offsets
                             memos_params.offset = preset_loads*parseInt(memos_more.dataset.click);
                             // exec updates
-                            load_ajax_posts(t, 'weblog', preset_loads, function(each_post){
-                                let each_temp = document.createElement("div");
-                                each_temp.id = "pid_"+each_post.id;
-                                each_temp.classList.add("weblog-tree-core-record");
-                                each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${each_post.creatorName}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="${each_post.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${each_post.content}</span><p id="sub">${each_post.createdTs}</p></div></div></div>`;
-                                memos_tree.insertBefore(each_temp, memos_load);
+                            load_ajax_posts(t, 'weblog', preset_loads, function(res){
+                                let fragment = document.createDocumentFragment();
+                                res.forEach(item=> {
+                                    let each_temp = document.createElement("DIV");
+                                    each_temp.id = "pid_"+item.id;
+                                    each_temp.classList.add("weblog-tree-core-record");
+                                    each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${item.creatorName}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${item.content}</span><p id="sub">${item.createdTs}</p></div></div></div>`;
+                                    fragment.appendChild(each_temp);
+                                });
+                                memos_tree.insertBefore(fragment, memos_load);
                             }, false, memos_url, parse_ajax_parameter(memos_params, true));
                             break;
                         }
@@ -332,13 +336,17 @@
                         }
                         if($async_sw&&$use_async){
                     ?>
-                        load_ajax_posts(t, 'weblog', preset_loads, function(each_post, load_box){
-                            let each_temp = document.createElement("div"),
-                                each_tags = each_post.tag ? " - "+each_post.tag : "";
-                            each_temp.id = "pid_"+each_post.id;
-                            each_temp.classList.add("weblog-tree-core-record");
-                            each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${each_post.date} ${each_tags}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="${each_post.id}" class="weblog-tree-box"><div class="tree-box-title"><a href="javascript:;" target="_self"><h3 class="<?php echo $reply_quote; ?>">${each_post.title}</h3></a></div><div class="tree-box-content"><span id="core-info">${each_post.content}</span><span id="other-info"><h4> Ps. </h4><p class="feeling">${each_post.subtitle}</p></span><p id="sub">${each_post.date} ${each_tags}</p></div></div></div>`;
-                            document.querySelector('.weblog-tree-core').insertBefore(each_temp, load_box);
+                        load_ajax_posts(t, 'weblog', preset_loads, function(res, load_box){
+                            let fragment = document.createDocumentFragment();
+                            res.forEach(item=> {
+                                let temp = document.createElement("DIV"),
+                                    tags = item.tag ? " - "+item.tag : "";
+                                temp.id = "pid_"+item.id;
+                                temp.classList.add("weblog-tree-core-record");
+                                temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${item.date} ${tags}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-title"><a href="javascript:;" target="_self"><h3 class="<?php echo $reply_quote; ?>">${item.title}</h3></a></div><div class="tree-box-content"><span id="core-info">${item.content}</span><span id="other-info"><h4> Ps. </h4><p class="feeling">${item.subtitle}</p></span><p id="sub">${item.date} ${tags}</p></div></div></div>`;
+                                fragment.appendChild(temp);
+                            });
+                            document.querySelector('.weblog-tree-core').insertBefore(fragment, load_box);
                         });
                         break;
                     <?php
@@ -370,20 +378,24 @@
                                     console.warn('an error occured', memos_res);
                                     return;
                                 }
-                                // preload loads before load_ajax_posts(loads required)
-                                memos_more.dataset.load = preset_loads;
-                                load_ajax_posts(t, 'weblog', preset_loads, function(each_post){
-                                    memos_more.dataset.click = 1;
-                                    weblog.classList.add(memoLoaded);
-                                    t.textContent = memos_ctx;
-                                    let each_temp = document.createElement("div");
-                                    each_temp.id = "pid_"+each_post.id;
-                                    each_temp.classList.add("weblog-tree-core-record");
-                                    each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${each_post.creatorName}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="${each_post.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${each_post.content}</span><p id="sub">${each_post.createdTs}</p></div></div></div>`;
-                                    memos_tree.insertBefore(each_temp, memos_load);
-                                    // memos_tree.appendChild(each_temp);
-                                }, false, memos_url, parse_ajax_parameter(memos_params, true));
                             }, (err)=>console.warn(err));
+                            // preload loads before load_ajax_posts(loads required)
+                            memos_more.dataset.load = preset_loads;
+                            load_ajax_posts(t, 'weblog', preset_loads, function(res){
+                                memos_more.dataset.click = 1;
+                                weblog.classList.add(memoLoaded);
+                                t.textContent = memos_ctx;
+                                let fragment = document.createDocumentFragment();
+                                res.forEach(item=> {
+                                    let temp = document.createElement("DIV"),
+                                        tags = item.tag ? " - "+item.tag : "";
+                                    temp.id = "pid_"+item.id;
+                                    temp.classList.add("weblog-tree-core-record");
+                                    temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${item.creatorName}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${item.content}</span><p id="sub">${item.createdTs}</p></div></div></div>`;
+                                    fragment.appendChild(temp);
+                                });
+                                memos_tree.insertBefore(fragment, memos_load);
+                            }, false, memos_url, parse_ajax_parameter(memos_params, true));
                         }
                     <?php
                         }

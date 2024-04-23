@@ -333,10 +333,14 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
             const archive_tree = document.querySelector(".archive-tree"),
                   preset_loads = <?php echo $async_loads; ?>;
             bindEventClick(archive_tree, 'call', function(t){
-                load_ajax_posts(t, 'archive', preset_loads, function(each_post, load_box, last_offset){
-                    let each_temp = document.createElement("LI");
-                    each_temp.innerHTML = `${each_post.date}<a class="link${each_post.mark}" href="${each_post.link}" target="_blank">${each_post.title}<sup>${each_post.cat}</sup></a>`;
-                    load_box.appendChild(each_temp);
+                load_ajax_posts(t, 'archive', preset_loads, function(res, load_box, last_offset){
+                    let fragment = document.createDocumentFragment();
+                    res.forEach(item=> {
+                        let temp = document.createElement("LI");
+                        temp.innerHTML = `${item.date}<a class="link${item.mark}" href="${item.link}" target="_blank">${item.title}<sup>${item.cat}</sup></a>`;
+                        fragment.appendChild(temp);
+                    });
+                    load_box.appendChild(fragment);
                     // scrollTo lastest (archive only)
                     load_box.scrollTo(0, last_offset);
                 });

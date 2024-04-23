@@ -333,28 +333,34 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
             const rcmd_boxes = document.querySelector(".rcmd-boxes"),
                   preset_loads = <?php echo $async_loads; ?>;
             bindEventClick(rcmd_boxes, 'load-more', function(t){
-                load_ajax_posts(t, 'acg', preset_loads, function(each_post, load_box){
-                    let each_temp = document.createElement("div");
-                    each_temp.id = "pid_"+each_post.id;
-                    each_temp.classList.add("inbox", "flexboxes");
-                    let extra_str = "",
-                        post_rating = each_post.rating;
-                    if(each_post.rcmd){
-                        const rcmd_rating = post_rating ? post_rating : '荐',
-                              rcmd_title = post_rating ? 'GOLD Recommendation' : 'Personal Recommends',
-                              both_class = post_rating ? " both" : "";
-                        extra_str = `<div class="game-ratings gs${both_class}"><div class="gamespot" title="${rcmd_title}"><div class="range Essential RSBIndex"><span id="before"></span><span id="after"></span></div><span id="spot"><h3>${rcmd_rating}</h3></span></div></div>`;
-                    }else{
-                        extra_str = post_rating ? '<div class="game-ratings ign"><div class="ign hexagon" title="IGN High Grades"><h3>'+post_rating+'</h3></div></div>' : '';
-                    }
-                    each_temp.innerHTML = `<div class="inbox-headside flexboxes"><span class="author">${each_post.subtitle}</span><img src="${each_post.poster}" alt="${each_post.subtitle}" crossorigin="Anonymous"></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="${each_post.link || 'javascript:void(0);'}" target="_self">${each_post.title}</a></h4></span><span class="lowside-description"><p>${each_post.excerpt}</p></span>${extra_str}</div>`; //<img class="bg" src="${each_post.poster}">
-                    load_box.insertBefore(each_temp, load_box.lastElementChild); //lastChild
+                load_ajax_posts(t, 'acg', preset_loads, function(res, load_box){
+                    let fragment = document.createDocumentFragment();
+                    res.forEach(item=> {
+                        let temp = document.createElement("DIV"),
+                            extra_str = "",
+                            post_rating = item.rating;
+                        temp.id = "pid_"+item.id;
+                        temp.classList.add("inbox", "flexboxes");
+                        if(item.rcmd){
+                            const both_class = post_rating ? " both" : "",
+                                  rcmd_title = post_rating ? 'GOLD Recommendation' : 'Personal Recommends'
+                                  rcmd_rating = post_rating ? post_rating : '荐';
+                            extra_str = `<div class="game-ratings gs${both_class}"><div class="gamespot" title="${rcmd_title}"><div class="range Essential RSBIndex"><span id="before"></span><span id="after"></span></div><span id="spot"><h3>${rcmd_rating}</h3></span></div></div>`;
+                        }else{
+                            extra_str = post_rating ? '<div class="game-ratings ign"><div class="ign hexagon" title="IGN High Grades"><h3>'+post_rating+'</h3></div></div>' : '';
+                        }
+                        temp.innerHTML = `<div class="inbox-headside flexboxes"><span class="author">${item.subtitle}</span><img src="${item.poster}" alt="${item.subtitle}" crossorigin="Anonymous"></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="${item.link || 'javascript:void(0);'}" target="_self">${item.title}</a></h4></span><span class="lowside-description"><p>${item.excerpt}</p></span>${extra_str}</div>`; //<img class="bg" src="${item.poster}">
+                        fragment.appendChild(temp);
+                        // setup ajax-load images blur-color
+                        if(item.poster) {
+                            let tempimg = new Image();
+                            tempimg.src = item.poster;
+                            tempimg.setAttribute('crossorigin','Anonymous');
+                            tempimg.onload=()=>setupBlurColor(tempimg, temp);
+                        }
+                    });
+                    load_box.insertBefore(fragment, load_box.lastElementChild); //lastChild
                     execRotation(load_box.querySelectorAll('.inbox-aside .game-ratings.both'));
-                    // setup ajax-load images blur-color
-                    let tempimg = new Image();
-                        tempimg.src = each_post.poster;
-                        tempimg.setAttribute('crossorigin','Anonymous');
-                    tempimg.onload=()=>setupBlurColor(tempimg, each_temp);
                 });
             });
         </script>

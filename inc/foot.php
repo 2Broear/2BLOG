@@ -45,6 +45,7 @@
                             // dataDelay: 3000,
                             // lineKeepUp: true,
                             // lineAnimate: false,
+                            // useQuote: false,
                             lineColor: "var(--theme-color)",
                             lineColors: "transparent",
                             lineDegrees: "6",
