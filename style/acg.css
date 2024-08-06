@@ -166,9 +166,8 @@
 }
 .rcmd-boxes .info .inbox.disabled .inbox-more a:before,
 .rcmd-boxes .info .inbox.disabled .inbox-more a:after{
-    content: attr(data-load)' 'attr(data-cat)'S LOAD ';
-    /*content: 'LOAD 'attr(data-cat);*/
-    /*content: "LOADS";*/
+    content: attr(data-load)' 'attr(data-cat)'S ';
+    /*content: attr(data-load)' 'attr(data-cat)'S LOAD ';*/
     font-size: 3rem;
     font-weight: bold;
     color: inherit;
@@ -183,7 +182,8 @@
     font-size: 1rem;
 }
 .rcmd-boxes .info .inbox.disabled .inbox-more a:after{
-    content: "DONE";
+    content: "LOAD";
+    /*content: "DONE";*/
     letter-spacing: 5px;
     top: 55%;
     /*bottom: 0;*/

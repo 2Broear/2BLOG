@@ -322,7 +322,7 @@
                 if(get_option('site_beian_switcher')) echo '<li id="etc"><a href="//beian.miit.gov.cn/" target="_blank" rel="nofollow">'.get_option('site_beian').'</a></li>';
                 $moe_beian = get_option('site_moe_beian_switcher');
                 $moe_beian_num = get_option('site_moe_beian_num');
-                if($moe_beian && $moe_beian_num) echo '<li id="etc"><a href="//icp.gov.moe/?keyword='.$moe_beian_num.'" target="_blank" rel="nofollow"><img src="//icp.gov.moe/images/ico64.png" alt="moe_beian" title="异次元之旅-跃迁" style="height: 16px;"> 萌ICP备'.$moe_beian_num.'号</a></li>';
+                if($moe_beian) echo '<li id="etc"><a href="//icp.gov.moe/?keyword='.$moe_beian_num.'" target="_blank" rel="nofollow"><img src="//icp.gov.moe/images/ico64.png" alt="moe_beian" title="异次元之旅-跃迁" style="height: 16px;"> 萌ICP备'.$moe_beian_num.'号</a></li>';
             ?>
             <p id="supports">
                 <?php 
@@ -381,6 +381,7 @@
     </div>
 </div>
 <script type="text/javascript">
+    console.info("<?php echo get_num_queries().'次查询，耗时'.timer_stop(0).'秒。'; ?>");
     asyncLoad("<?php echo $src_cdn; ?>/js/nprogress.js", function(){
 	    NProgress.start();
 	    const NProgressLoaded = function(){
@@ -415,18 +416,38 @@
     };
     <?php
         // lazyLoad images
-        if(get_option('site_lazyload_switcher')){
+        if(get_option('site_lazyload_switcher')) {
             $acgcid = get_cat_by_template('acg','term_id');
-            if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
+            if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)) {
     ?>
-                //https://qa.1r1g.com/sf/ask/177903701/
-                var getAverageRGB = function(imgEl){var blockSize=5,defaultRGB={r:255,g:255,b:255},canvas=document.createElement('canvas'),context=canvas.getContext&&canvas.getContext('2d'),data,width,height,i=-4,length,rgb={r:0,g:0,b:0},count=0;if(!context){return defaultRGB}height=canvas.height=imgEl.naturalHeight||imgEl.offsetHeight||imgEl.height;width=canvas.width=imgEl.naturalWidth||imgEl.offsetWidth||imgEl.width;context.drawImage(imgEl,0,0);try{data=context.getImageData(0,0,width,height)}catch(e){return defaultRGB}length=data.data.length;while((i+=blockSize*4)<length){++count;rgb.r+=data.data[i];rgb.g+=data.data[i+1];rgb.b+=data.data[i+2]}rgb.r=~~(rgb.r/count);rgb.g=~~(rgb.g/count);rgb.b=~~(rgb.b/count);return rgb},
-                    setupBlurColor = function(imgEl, tarEl){
-                        if(!tarEl) return;
-                        let rgb = getAverageRGB(imgEl),
-                            rgba = rgb['r']+' '+rgb['g']+' '+rgb['b']+' / 50%';
-                        tarEl.setAttribute('style','background:rgb('+rgba+')');
-                    };
+                const worker = new Worker('<?php echo custom_cdn_src(0,1); ?>/js/worker.js');
+                const getAverageRGB = function(imgEl){var blockSize=5,defaultRGB={r:255,g:255,b:255},canvas=document.createElement('canvas'),context=canvas.getContext&&canvas.getContext('2d'),data,width,height,i=-4,length,rgb={r:0,g:0,b:0},count=0;if(!context){return defaultRGB}height=canvas.height=imgEl.naturalHeight||imgEl.offsetHeight||imgEl.height;width=canvas.width=imgEl.naturalWidth||imgEl.offsetWidth||imgEl.width;context.drawImage(imgEl,0,0);try{data=context.getImageData(0,0,width,height)}catch(e){return defaultRGB}length=data.data.length;while((i+=blockSize*4)<length){++count;rgb.r+=data.data[i];rgb.g+=data.data[i+1];rgb.b+=data.data[i+2]}rgb.r=~~(rgb.r/count);rgb.g=~~(rgb.g/count);rgb.b=~~(rgb.b/count);return rgb},
+                    setupBlurColor = function(img, tarEl) {
+                        if (!tarEl) return;
+                        if (img instanceof HTMLImageElement) {
+                            const rgb = getAverageRGB(img);
+                            const rgba = rgb['r']+' '+rgb['g']+' '+rgb['b']+' / 50%';
+                            tarEl.setAttribute('style','background:rgb('+rgba+')');
+                            return;
+                        }
+                        worker.postMessage({
+                            img: img,  // HTMLImageElement object could not be cloned on 'Worker'
+                        });
+                        worker.onmessage = function(event) {
+                            const { url: objectURL } = event.data;
+                            let tempimg = new Image();
+                            tempimg.src = objectURL;
+                            tempimg.setAttribute('crossorigin', 'Anonymous');
+                            const rgb = getAverageRGB(tempimg);
+                            const rgba = rgb['r']+' '+rgb['g']+' '+rgb['b']+' / 50%';
+                            tarEl.setAttribute('style','background:rgb('+rgba+')');
+                            // URL.revokeObjectURL(objectURL);
+                        }
+                        worker.onerror = function(event){
+                            console.warn("ERROR: " + event.filename + " (" + event.lineno + "): " +
+                                        event.message);
+                        }
+                    }
     <?php
             }
     ?>
@@ -586,10 +607,6 @@
                         if(callback&&typeof callback === 'function') {
                             if(posts_count>=1) callback(posts_array, load_box, last_offset);
                         }
-                        // for(let i=0;i<posts_count;i++){
-                        //     let each_post = posts_array[i];
-                        //     callback ? callback(each_post, load_box, last_offset) : false;
-                        // };
                         // compare updated loads
                         if(parseInt(t.dataset.load) >= counts){
                             t.classList.add(dis_class); // for archive

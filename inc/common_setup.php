@@ -114,8 +114,10 @@
         $desc = get_option('site_description', "no descriptions yet");
         switch (true) {
             case is_category():
-                if(!$cat) global $cat;
-                $desc = get_term_meta($cat, 'seo_description', true);
+                if(get_term_meta($cat, 'seo_description', true)) {
+                    if(!$cat) global $cat;
+                    $desc = get_term_meta($cat, 'seo_description', true);
+                }
                 break;
             case is_single():
                 $desc = get_ai_abstract();
@@ -171,7 +173,7 @@
     function custom_excerpt($length=88, $var=false, $pid=0){
         // $res = in_chatgpt_cat()&&is_single() ? get_between_string('文章摘要chatGPT standby chatGPT responsing..', $length, get_the_excerpt()) : mb_substr(get_the_excerpt(), 0, $length);
         $excerpt = $pid ? get_the_excerpt($pid) : get_the_excerpt();
-        $res = get_between_string('standby chatGPT responsing..', $length, $excerpt);  // chinese only
+        $res = get_between_string('Standby API Responsing..', $length, $excerpt);  // chinese only
         $res = trim($res) . '...';
         if($var){
             return $res;
@@ -225,7 +227,8 @@
         }
         // 替换后台媒体库图片路径（目前无法自定义每个图像url）https://wordpress.stackexchange.com/questions/189704/is-it-possible-to-change-image-urls-by-hooks
         function wpse_change_featured_img_url(){
-            return $images_cdn;  //'http://www.example.com/media/uploads';
+            global $images_cdn;
+            return $images_cdn ? $images_cdn : $upload_url;  //get_option('site_cdn_img')
         }
         add_filter( 'pre_option_upload_url_path', 'wpse_change_featured_img_url' );
     }
@@ -577,6 +580,7 @@
                 $post_class->title = $this_post->post_title;
                 $post_class->subtitle = get_post_meta($pid, "post_feeling", true);
                 switch ($type) {
+                    case 'goods':
                     case 'acg':
                         $post_class->link = get_the_permalink($pid);
                         $post_class->poster = get_postimg(0, $pid, true);
@@ -745,13 +749,13 @@
     if(get_option('site_smtp_switcher')){
         add_action('phpmailer_init', 'mail_smtp');
         function mail_smtp( $phpmailer ) {
-            $email = get_option('site_smtp_mail');
+            $senderEmail = get_option('site_smtp_mail');
         	$phpmailer->FromName = get_bloginfo('name'); // 发件人昵称
         	$phpmailer->Host = get_option('site_smtp_host'); // 邮箱SMTP服务器
         	$phpmailer->Port = 465; // SMTP端口，不需要改
-        	$phpmailer->Username = $email; // 邮箱账户
+        	$phpmailer->Username = $senderEmail; // 邮箱账户
         	$phpmailer->Password = get_option('site_smtp_pswd'); // 此处填写邮箱生成的授权码 u5LZ4xWEuuoJdZJX
-        	$phpmailer->From = $email; // 邮箱账户同上
+        	$phpmailer->From = $senderEmail; // 邮箱账户同上
         	$phpmailer->SMTPAuth = true;
         	$phpmailer->SMTPSecure = 'ssl'; // 端口25时 留空，465时 ssl，不需要改
         	$phpmailer->IsSMTP();
@@ -762,6 +766,13 @@
         function mycustomtheme_send_mail_before_submit(){
             check_ajax_referer('my_email_ajax_nonce');
             if(isset($_POST['action']) && $_POST['action'] == "mail_before_submit"){
+// show wp_mail() errors
+add_action( 'wp_mail_failed', 'onMailError', 10, 1 );
+function onMailError( $wp_error ) {
+	echo "<pre>";
+    print_r($wp_error);
+    echo "</pre>";
+} 
                 wp_mail($_POST['toemail'],'ajax e-mail sent ok','this mail sent from 2blog-settings SMTP e-mail sending test.');
                 echo '测试邮件已发送';
                 update_option('site_smtp_state', 1);
@@ -788,11 +799,11 @@
     add_filter('comment_text' , 'wp_comment_at', 20, 2);
     
     // wp评论邮件提醒（博主）手动开启
-    if(get_option('site_wpmail_switcher')){
+    if(get_option('site_wpmail_switcher') && get_option('site_third_comments')=='Wordpress'){
         function wp_notify_admin_mail( $comment_id, $comment_approved ) {
             global $img_cdn;
             $comment = get_comment( $comment_id );
-            $admin_mail = get_option('site_smtp_mail', get_bloginfo('admin_email'));
+            $admin_mail = get_bloginfo('admin_email'); //get_option('site_smtp_mail', get_bloginfo('admin_email'));
             $user_mail = $comment->comment_author_email;
             $title = ' 「' . get_the_title($comment->comment_post_ID) . '」 收到一条来自 '.$comment->comment_author.' 的留言！';
             $body = '<style>.box{background-color:white;border-bottom:2px solid #EB6844;border-radius:10px;box-shadow:rgba(0,0,0,0.08) 0 0 18px;line-height:180%;width:500px;margin:50px auto;color:#555555;font-family:"Century Gothic","Trebuchet MS","Hiragino Sans GB",微软雅黑,"Microsoft Yahei",Tahoma,Helvetica,Arial,"SimSun",sans-serif;font-size:12px;}.box .head{border-bottom:1px solid whitesmoke;font-size:14px;font-weight:normal;padding-bottom:15px;margin-bottom:15px;text-align:center;line-height:28px;}.box .head h3{margin-bottom:0;margin:0;}.box .head .title{color:#EB6844;font-weight:bold;}.box .body{padding:0 15px;}.box .body .content{background-color:#f5f5f5;padding:10px 15px;margin:18px 0;word-wrap:break-word;border-radius:5px;}a{text-decoration:none!important;color:#EB6844;}img{max-width:100%;display:block;margin:0 auto;border-radius:inherit;border-bottom-left-radius:unset;border-bottom-right-radius:unset;}.button:hover{background:#EB6844;color:#ffffff;}.button{display:block;margin:0 auto;width:15%;line-height:35px;padding:0 15px;border:1px solid currentColor;border-radius:50px;text-align:center;font-weight:bold;}</style><div class="box"><img src="'.$img_cdn.'/images/google.gif"><h2 class="head"><span class="title">「'. get_option("blogname") .'」上有一条新评论！</span><p><a class="button"href="' . htmlspecialchars(get_comment_link($parent_id)) . '"target="_blank">点击查看</a></p></h2><div class="body"><p><strong>' . trim($comment->comment_author) . '：</strong></p><div class="content"><p><a class="at"href="#624a75eb1122b910ec549633">' . trim($comment->comment_content) . '</a></p></div></div></div>';
@@ -804,9 +815,9 @@
         add_action('comment_post', 'wp_notify_admin_mail', 10, 2);
     }
     
-    // wp评论邮件提醒（访客）自动开启 // https://www.ziyouwu.com/archives/1615.html
+    // wp评论邮件提醒（访客）始终开启 // https://www.ziyouwu.com/archives/1615.html
     function wp_notify_guest_mail($comment_id) {
-        $admin_mail = get_option('site_smtp_mail', get_bloginfo('admin_email'));
+        $admin_mail = get_bloginfo('admin_email'); //get_option('site_smtp_mail', get_bloginfo('admin_email'));
         $comment = get_comment($comment_id);
         $parent_id = $comment->comment_parent ? $comment->comment_parent : '';
         if($parent_id!='' && $comment->comment_approved!='spam'){

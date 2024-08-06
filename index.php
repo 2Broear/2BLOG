@@ -75,8 +75,8 @@
             right: -15%;
         }
         .resource-windows div{
-            /*margin: 15px 15px auto auto;*/
-            margin: 15px 25px auto auto;
+            /*margin: 15px 25px auto auto;*/
+            margin: 5px 25px auto auto;
         }
         @keyframes colorfull{
             0%{
@@ -88,6 +88,7 @@
         }
         .banner .banner-inside ul{
             max-height: 268px;
+            filter: opacity(0.15);
             /*filter: invert(1);*/
             /*animation: colorfull ease 3s .5s;*/
         }
@@ -101,19 +102,19 @@
         }
         .Fresh-ImgBoxs span:first-child a{
             color: #4285f4;
-            background: linear-gradient(-90deg, rgb(67 133 245 / 88%) 0, var(--mirror-end));
+            background: linear-gradient(-90deg, rgb(67 133 245 / 99%) 0, var(--mirror-end));
         }
         .Fresh-ImgBoxs span:nth-child(2) a{
             color: #ea4335;
-            background: linear-gradient(-90deg, rgb(234 69 55 / 88%) 0, var(--mirror-end));
+            background: linear-gradient(-90deg, rgb(234 69 55 / 99%) 0, var(--mirror-end));
         }
         .Fresh-ImgBoxs span:nth-child(3) a{
             color: #fbbc05;
-            background: linear-gradient(-90deg, rgb(251 189 7 / 88%) 0, var(--mirror-end));
+            background: linear-gradient(-90deg, rgb(251 189 7 / 99%) 0, var(--mirror-end));
         }
         .Fresh-ImgBoxs span:last-child a{
             color: #34a853;
-            background: linear-gradient(-90deg, rgb(53 169 83 / 88%) 0, var(--mirror-end));
+            background: linear-gradient(-90deg, rgb(53 169 83 / 99%) 0, var(--mirror-end));
         }
         #special-img{
             position: absolute;
@@ -144,7 +145,7 @@
             margin-bottom: 5px;
         }
         .weBlog-Description .weBlog-Description-inside-content span strong{
-            letter-spacing: 15px;
+            letter-spacing: 5px;
             font-family: math;
             font-size: 150%;
         }
@@ -435,23 +436,24 @@
                             <div class="tags">
                                 <?php 
                                     // 自定义标签云
-                                    function the_tag_clouds($html_tag="li"){
+                                    function the_tag_clouds($html_tag="li") {
+                                        $min_font = 10;
+                                        $max_font = get_option('site_tagcloud_max');
                                         $num = get_option('site_tagcloud_num');
                                         $tags = get_tags(array(
                                             'taxonomy' => 'post_tag',
                                             'orderby' => 'count', //name
                                             'hide_empty' => true // for development,
-                                            // 'number' => $max_show
+                                            // 'number' => $num
                                         ));
-                                        $tag_count = count($tags);
-                                        $max_show = $tag_count<=$num ? $tag_count : $num;
-                                        $min_font = 10;
-                                        $max_font = get_option('site_tagcloud_max');
+                                        $tags_count = count($tags);
+                                        $tags_count = $tags_count<=$num ? $tags_count : $num;
                                         shuffle($tags);  // random tags
-                                        if(get_option('site_tagcloud_switcher') && $tag_count>=1){
+                                        if(get_option('site_tagcloud_switcher') && $tags_count>0){
                                             global $bold_font;
-                                            for($i=0;$i<$max_show;$i++){
+                                            for($i=0;$i<$tags_count;$i++) {
                                                 $tag = $tags[$i];
+                                                $tag_count = $tag->count;
                                                 $rand_font = mt_rand($min_font, $max_font);
                                                 if($rand_font>=$max_font/1.25){
                                                     $rand_opt = mt_rand(5,10);  // highlight big_font
@@ -462,12 +464,11 @@
                                                     $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'color:var(--theme-color)' : '';
                                                 }
                                                 $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
-                                                echo '<'.$html_tag.' data-count="'.$tag->count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';'.$color_font.'">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
+                                                echo '<'.$html_tag.' data-count="'.$tag_count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';'.$color_font.'" title="'.$tag_count.' 篇标签文章">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
                                             }
-                                            unset($bold_font);
-                                        }else{
-                                            echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
+                                            return;
                                         }
+                                        echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
                                     }
                                     the_tag_clouds('span'); 
                                 ?>

@@ -13,6 +13,9 @@
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/fancybox.css?v=<?php echo get_theme_info(); ?>" />
     <style>
         figure > figure{width:30%;vertical-align:middle}
+        .news-article-container img {
+            height: auto;
+        }
         blockquote.chatGPT{
             margin-left: -15px;
         }

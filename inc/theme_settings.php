@@ -291,6 +291,7 @@
             register_setting( 'baw-settings-group', 'site_tagcloud_num' );
             register_setting( 'baw-settings-group', 'site_tagcloud_max' );
         // }
+        register_setting( 'baw-settings-group', 'site_stream_switcher' );
         register_setting( 'baw-settings-group', 'site_mbit_array' );
         register_setting( 'baw-settings-group', 'site_mbit_result_array' );
         register_setting( 'baw-settings-group', 'site_animated_counting_switcher' );
@@ -301,7 +302,10 @@
             register_setting( 'baw-settings-group', 'site_memos_pattern' );
         register_setting( 'baw-settings-group', 'site_chatgpt_switcher' );
             register_setting( 'baw-settings-group', 'site_chatgpt_includes' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_temper' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_tokens' );
             register_setting( 'baw-settings-group', 'site_chatgpt_model' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_apis' );
             register_setting( 'baw-settings-group', 'site_chatgpt_merge_sw' );
             register_setting( 'baw-settings-group', 'site_chatgpt_merge_ingore' );
             register_setting( 'baw-settings-group', 'site_chatgpt_caches' );
@@ -481,6 +485,7 @@
         'archive' => get_cat_by_template('archive'),
         'ranks' => get_cat_by_template('ranks'),
         'privacy' => get_cat_by_template('privacy'),
+        'goods' => get_cat_by_template('goods'),
     );
     function category_options($value){
         // global $cats;
@@ -1570,7 +1575,7 @@
                         // }
                     ?>
                     <tr valign="top" class="">
-                        <th scope="row">WP评论邮件模板</th>
+                        <th scope="row">WP评论邮件提醒（博主</th>
                         <td>
                             <?php
                                 $opt = 'site_wpmail_switcher';
@@ -2002,7 +2007,7 @@
                                     <?php
                                         $opt = 'site_cache_includes';  //unique str
                                         $value = get_option($opt);
-                                        $async_opts = array($templates_info['news'], $templates_info['notes'], $templates_info['weblog'], $templates_info['acg'], $templates_info['2bfriends'], $templates_info['download'], $templates_info['archive'], $templates_info['ranks']);
+                                        $async_opts = array($templates_info['news'], $templates_info['notes'], $templates_info['weblog'], $templates_info['acg'], $templates_info['2bfriends'], $templates_info['download'], $templates_info['archive'], $templates_info['ranks'], $templates_info['goods']);
                                         // print_r($async_opts);
                                         if(!$value){
                                             $preset_str = $async_opts[3]->slug.','.$async_opts[5]->slug.','.$async_opts[6]->slug.',';
@@ -2117,58 +2122,64 @@
                                 }
                             ?>
                     <tr valign="top">
-                        <th scope="row"> AI 文章摘要 - chatGPT </th>
+                        <th scope="row"> AI 文章摘要 </th>
                         <td>
                             <?php
                                 $opt = 'site_chatgpt_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 chatGPT AI 摘要。内建本地文件缓存机制，仅首次请求返回付费 completion 对话模型 chatGPT 3.5（需填写 API KEY 及 API 反代地址，openAI 限制中文请求字符 token*2：请求 prompt 最大限制 4096，默认实际可用 3700+ prompt_token，余下 392 字符为 completion_token 响应预设占位，估算可返回150中文字符左右</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:purple" class="btn">文章摘要</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 AI 摘要。内建本地文件缓存机制，仅首次请求返回付费 completion 对话模型 chatGPT 3.5（需填写 API KEY 及 API 反代地址，openAI 限制中文请求字符 token*2：请求 prompt 最大限制 4096，默认实际可用 3700+ prompt_token，余下 392 字符为 completion_token 响应预设占位，估算可返回150中文字符左右</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:purple" class="btn">文章摘要</span></label>';
                             ?>
                         </td>
                     </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt = get_option('site_chatgpt_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— openAI Key<sup>必填</sup></th>
+                                <th scope="row">— API Key <sup title="兼容 Moonshot KIMI">兼容</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_apikey';
                                         $value = get_option($opt);
-                                        echo '<p class="description" id="">API Kyes 账号密钥</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="openAI Key" value="' . $value . '"/>';
+                                        echo '<p class="description" id="">API Kyes 账号密钥（兼容 Moonshot API</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="openAI Key" value="' . $value . '"/>';
                                     ?>
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— openAI Proxy</th>
+                                <th scope="row">— API Proxy <sup title="兼容 Moonshot KIMI">兼容</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_proxy';
                                         $value = get_option($opt);
                                         $preset = 'https://api.openai.com';  //默认填充数据
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="">API 反代链接（留空默认 https://api.openai.com</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="openAI Proxy" value="' . $value . '"/>';
+                                        echo '<p class="description" id="">API 反代链接（留空默认 https://api.openai.com，兼容 Moonshot 接口 https://api.moonshot.cn</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Proxy URL" value="' . $value . '"/>';
                                     ?>
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— auth Directory</th>
+                                <th scope="row">— APIs List <sup title="兼容 Moonshot KIMI">兼容</sup></th>
                                 <td>
                                     <?php
-                                        $opt = 'site_chatgpt_dir';
+                                        $opt = 'site_chatgpt_apis';
                                         $value = get_option($opt);
-                                        $preset = 'authentication';  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="">GPT 文件目录（留空默认 authentication</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="normal-text" placeholder="chatGPT auth directory" value="' . $value . '"/>';
+                                        $models = ['/v1/chat/completions', '/v1/completions'];
+                                        if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
+                                        echo '<label for="'.$opt.'"><p class="description" id="">API 接口列表，/v1/completions 接口会调用 prompt（默认 /v1/chat/completions</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                            foreach ($models as $mod) {
+                                                echo '<option value="'.$mod.'"';
+                                                if($value==$mod) echo('selected="selected"');
+                                                echo '>'.$mod.'</option>';
+                                            }
+                                        echo '</select></label>';
                                     ?>
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— 对话模型</th>
+                                <th scope="row">— API Module <sup title="兼容 Moonshot KIMI">兼容</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_model';
                                         $value = get_option($opt);
-                                        $models = ['gpt-3.5-turbo','Curie','text-davinci-003'];
+                                        $models = ['gpt-3.5-turbo','text-davinci-003','Curie', 'moonshot-v1-8k','moonshot-v1-32k','moonshot-v1-128k'];
                                         if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
-                                        echo '<label for="'.$opt.'"><p class="description" id="">可选 chatGPT 对话模型：davinci 模型能力最强价格最贵，Curie 价格便宜且擅长文字类任务（默认使用 gpt-3.5-turbo，<a href="https://openai.com/pricing" target="_blank">价格参考</a></p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">可选 AI 对话模型：davinci 模型能力最强价格最贵，Curie 价格便宜且擅长文字类任务（默认使用 gpt-3.5-turbo，<a href="https://openai.com/pricing" target="_blank">价格参考</a>，可选 Moonshot 系列模型，<a href="https://platform.moonshot.cn/docs/pricing/chat" target="_blank">价格参考</a></p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
                                             foreach ($models as $mod){
                                                 echo '<option value="'.$mod.'"';
                                                 if($value==$mod) echo('selected="selected"');
@@ -2179,12 +2190,36 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— Max Token</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_tokens';
+                                        $value = get_option($opt);
+                                        $preset = 4096;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">限制消耗 token 总数，根据 Module 模型填写（默认4096，预留（减少）196</p><input type="number" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— Temperature</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_temper';
+                                        $value = get_option($opt);
+                                        $preset = 0.8;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">返回内容随机程度（最大1，最小0.1，默认0.8</p><input type="number" max="1" min="0.1" step="0.1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
                                 <th scope="row">— 合并分割请求</th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_merge_sw';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，开启自动计算文章字符请求所需 token 若大于模型限制 token （<u>gpt-3.5 默认 4096，限制输入 3700+</u>）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（内容 token 小于规定内仅请求一次</p><p>chat 模型下免费账号<a href="https://platform.openai.com/account/rate-limits" target="_blank">每分钟限制请求为3次</a>（若请求返回 context_length_exceeded 错误代码时可尝试开启下方<b> “始终合并请求” </b>选项，<u><i>为节省 token 此项默认关闭</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景，开启自动计算文章字符请求所需 token 若大于模型限制 token （<u>gpt-3.5 默认 4096，限制输入 3700+</u>）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（内容 token 小于规定内仅请求一次</p><p>chat 模型下免费账号<a href="https://platform.openai.com/account/rate-limits" target="_blank">每分钟限制请求（RPM）为3次</a>（若请求返回 context_length_exceeded 错误代码时可尝试开启下方<b> “始终合并请求” </b>选项，<u><i>为节省 token 此项默认关闭</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -2250,12 +2285,24 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— 动态 SEO 页面描述</th>
+                                <th scope="row">— 同步页面 SEO 描述</th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_desc_sw';
                                         $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">使用文章AI摘要填充 文章页面 description 描述（引入本地缓存文件过大可能影响性能</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">文章 AI SEO 描述</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— auth Directory</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_dir';
+                                        $value = get_option($opt);
+                                        $preset = 'authentication';  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="">GPT 文件目录（留空默认 authentication</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="normal-text" placeholder="chatGPT auth directory" value="' . $value . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -2310,7 +2357,7 @@
                                 </td>
                             </tr>
                     <tr valign="top">
-                        <th scope="row"> 文章页面 - 划线标记 <sup>Beta</sup> </th>
+                        <th scope="row"> 文章页面 - 划线标记 <sup>Alpha</sup> </th>
                         <td>
                             <?php
                                 $opt = 'site_marker_switcher';
@@ -2341,6 +2388,16 @@
                                     ?>
                             <!--    </td>-->
                             <!--</tr>-->
+                    <tr valign="top">
+                        <th scope="row"> 流式传输 API <sup>SSE</sup> </th>
+                        <td>
+                            <?php
+                                $opt = 'site_stream_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_switcher_label">后端 api 数据流式传输至前端（EventStream 接收输出，支持marker、gpt..</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">EventStream</b></label>';
+                            ?>
+                        </td>
+                    </tr>
                     <tr valign="top">
                         <th scope="row">归档/漫游影视 - 计数动画</th>
                         <td>

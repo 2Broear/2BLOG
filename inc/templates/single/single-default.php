@@ -66,7 +66,7 @@
                                 if($ps){
                                     $weblog = get_cat_by_template('weblog');
                                     $download = get_cat_by_template('download');
-                                    if(in_category($weblog->slug, $pid) || in_category($download->slug, $pid)) echo do_shortcode('[custom_title title="额外内容" statu]').'<p>'.$ps.'</p>';
+                                    if(in_category($weblog->slug, $pid) || in_category($download->slug, $pid)) echo do_shortcode('[custom_title title="其他" statu]').'<p>'.$ps.'</p>';
                                 }
                             ?>
                         </div>

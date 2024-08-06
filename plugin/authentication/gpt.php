@@ -36,20 +36,20 @@
                     api_err_handle('request illegal, login to wordpress as admin is required.',403);
                 }
             }else{
-                define('CHATGPT_LIMIT', 4096); //296 for completion_tokens placeholder
+                define('CHATGPT_LIMIT', get_option('site_chatgpt_tokens', 4096)); //296 for completion_tokens placeholder
                 define('COMPLETION_REVERSE', 196);  //preset response-token offset for merge-ingored situation.
                 define('CHATGPT_LIMIT_RESERVED', CHATGPT_LIMIT-COMPLETION_REVERSE);
                 $cached_post = array();
-                $content = preg_replace('/<pre.*?><code>(.*?)<\/code><\/pre>/s', "：<pre><code>[ code example ]</code></pre>。", $pids->post_content); // remove code block
+                $content = preg_replace('/<pre.*?><code>(.*?)<\/code><\/pre>/s', "：<pre><code>[ code example ]</code></pre>。", $pids->post_content . '<br>' . get_post_meta($pid, "post_feeling", true)); // remove code block
                 // $content = str_replace(array("\r\n", "\r", "\n"), " ", wp_strip_all_tags($content));
                 $allowed_tags = '<br>';
                 $content = preg_replace('/(<h\d.+>)/', "【$1】", $content); // 在标题标签前添加一个换行符
                 $content = str_replace($allowed_tags, "\n", strip_tags($content, $allowed_tags));  // 删除所有 HTML 标签并将保留的标签转换为换行符
                 $content = preg_replace("/\n+/", "\n", $content);  // 删除多余换行符
-                
                 //分析以上提供的信息简述文章用意  分析梳理以上信息的逻辑与结构，简述文章用意
-                $requirements = '标题：'.$pids->post_title.'，作者：'.get_the_author_meta('display_name', get_post_field('post_author', $pid)).'，内容：'.$content.'。'.get_post_meta($pid, "post_feeling", true);
+                $requirements = '标题：'.$pids->post_title.'；作者：'.get_the_author_meta('display_name', get_post_field('post_author', $pid)).'；内容：'.$content.'。';
                 
+                // print_r($requirements);
                 function count_chaters($str,$token=0,$endpoint=false,$prevpoint=false,$text=false,$ingore=false) {
                    $count = 0;
                    for ($i = 0; $i < mb_strlen($str, 'UTF-8'); $i++) {
@@ -83,42 +83,43 @@
                 // print_r('second request token: '.count_chaters($requirements,1,1)); //.count_chaters($requirements,1,1,0,true))
                 // print_r(count_chaters($requirements,1,1,0,true,true));
                 
-                function curlRequest($question, $maxlen=1024, $additional='，注意精简内容') { //字数
+                function curlRequest($question, $maxlen=1024, $additional='，注意精简内容') { //注意字数不宜过长
                     $merge_ingore = get_option('site_chatgpt_merge_ingore');
-                    $openai_model = get_option('site_chatgpt_model');
-                    $openai_proxy = get_option('site_chatgpt_proxy','https://api.openai.com');
-                    $chat_model = $openai_model==='gpt-3.5-turbo';
+                    $openai_proxy = get_option('site_chatgpt_proxy');
+                    $openai_key = get_option('site_chatgpt_apikey');
+                    $openai_apis = get_option('site_chatgpt_apis');
                     $post_data = array(
-                        "model" => $openai_model, //ada
-                        'temperature' => 0.8,
+                        "model" => get_option('site_chatgpt_model'), //ada
+                        'temperature' => get_option('site_chatgpt_temper', 0.8),
                         "max_tokens" => $maxlen,  // works for completion_tokens only
                         "prompt" => '分析文章内容，简述文章用意'.$additional.'。
 文章："""
 '.$question.'
 """', //$question.'。分析上述内容，简述文章用意'.$additional
                     );
-                    if($chat_model){
+                    if($openai_apis == '/v1/chat/completions') {
                         unset($post_data['prompt']);
                         $post_data = array_merge($post_data, array('messages' => [
                             ["role" => "system", "content" => '分析并简述文章用意'.$additional], //分析并简述文章用意
                             ["role" => "user", "content" => $question]
                         ]));
                     }
+                    // print_r($post_data);
                     $curl = curl_init();
                     curl_setopt_array($curl, array(
-                      CURLOPT_URL => $chat_model ? $openai_proxy.'/v1/chat/completions' : $openai_proxy.'/v1/completions', //聊天模型
-                      CURLOPT_RETURNTRANSFER => true,
-                      CURLOPT_ENCODING => "",
-                      CURLOPT_MAXREDIRS => 10,
-                      CURLOPT_TIMEOUT => 0,
-                      CURLOPT_FOLLOWLOCATION => true,
-                      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                      CURLOPT_CUSTOMREQUEST => "POST",
-                      CURLOPT_POSTFIELDS => json_encode($post_data),
-                      CURLOPT_HTTPHEADER => array(
-                        "Content-Type: application/json",
-                        "Authorization: Bearer " . get_option('site_chatgpt_apikey')
-                      ),
+                        CURLOPT_URL => $openai_proxy . $openai_apis,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => "",
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => "POST",
+                        CURLOPT_POSTFIELDS => json_encode($post_data),
+                        CURLOPT_HTTPHEADER => array(
+                            "Content-Type: application/json",
+                            "Authorization: Bearer " . $openai_key
+                        ),
                     ));
                     // $res = curl_exec($curl);
                     $question_token = count_chaters($question,1);

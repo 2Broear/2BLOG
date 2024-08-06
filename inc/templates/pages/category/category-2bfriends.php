@@ -16,10 +16,16 @@
         #vcomments{
             margin: auto!important;
         }
+        .friends-boxes .deals.tech .inbox {
+            max-width: calc(100% / 6.35);
+        }
         .friends-boxes .deals.tech .inbox .inbox-aside span.lowside-title h4{
             max-width: 4em;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+        .friends-boxes .deals.tech .inbox:hover .inbox-aside span.lowside-title h4{
+            max-width: 100%;
         }
     </style>
 </head>

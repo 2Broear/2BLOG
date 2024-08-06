@@ -4,6 +4,27 @@
     define('CDN_SWITCH', get_option('site_cdn_switcher'));
     define('CDN_SRC', get_option('site_cdn_src'));
     define('CDN_API', get_option('site_cdn_api'));
+    $USE_SSE = isset($_GET['sse'])&&$_GET['sse'] || isset($_POST['sse'])&&$_POST['sse'];
+    define('USE_STREAM', get_option('site_stream_switcher') && $USE_SSE);
+    if(USE_STREAM) {
+        header('X-Accel-Buffering: no');
+        header('Content-Type: text/event-stream');
+        header('Cache-Control: no-cache');
+        set_time_limit(0); //防止超时
+        ob_end_clean(); //清空（擦除）缓冲区并关闭输出缓冲
+        ob_implicit_flush(1); //这个函数强制每当有输出的时候，即刻把输出发送到浏览器。这样就不需要每次输出（echo）后，都用flush()来发送到浏览器了
+        function returnEventData($returnData, $event='message', $id=0, $retry=0, $delay=0){
+            // if(!$returnData) return;
+            $id = $id ? $id : time();
+            $str = "id: {$id}" . PHP_EOL;
+            if($event) $str.= "event: {$event}" . PHP_EOL;
+            if($retry>0) $str .= "retry: {$retry}" . PHP_EOL;
+            if(is_array($returnData) || is_object($returnData)) $returnData = json_encode($returnData);
+            $str .= "data: " . $returnData . PHP_EOL;
+            echo $str . PHP_EOL;
+            if($delay>0) usleep($delay*1000*1000);
+        }
+    }
     $QSTR = array_key_exists('QUERY_STRING', $_SERVER) ? $_SERVER['QUERY_STRING'] : false;
     if($QSTR){
         parse_str($QSTR, $params);
@@ -53,7 +74,7 @@
                             break;
                     }
                     curl_setopt($ch, CURLOPT_URL, $auth_url);
-                    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
                     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  // 连接时间
                     curl_setopt($ch, CURLOPT_TIMEOUT, 10);  // 连接超时
                     // curl_setopt($ch, CURLOPT_RETRIES, 3);  // 重试连接
@@ -71,10 +92,32 @@
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
                     $response = curl_exec($ch);
                     // print_r($params);
-                    echo $response===false ? 'cURL Error ('.curl_errno($ch).'): '.curl_error($ch).'\n' : $response;
+                    $response = $response===false ? 'cURL Error ('.curl_errno($ch).'): '.curl_error($ch).'\n' : $response;
+                    if(USE_STREAM) {
+                        if(json_decode($response)!==null) $response = json_decode($response);
+                        // print_r($response);
+                        if(isset($response) && empty($response->code)) {
+                            foreach($response as $key => $value) {
+                                if(!$value) continue; // ingore empty data
+                                // returnEventData($value, 'message', $key, 0, 1); // $md5.'!=='.$res_md5
+                                // output each-single-data
+                                foreach($value as $k => $val) {
+                                    returnEventData($val, 'message', $key, 0, 1);
+                                }
+                            }
+                        }else{
+                            returnEventData('null');
+                        }
+                    }else{
+                        echo $response;
+                    }
                     curl_close($ch);
                 }else{
-                    print_r(json_encode($res));
+                    if(USE_STREAM) {
+                        returnEventData($res);
+                    }else{
+                        print_r(json_encode($res));
+                    }
                 }
             }else{
                 api_err_handle('param missing, requested api not found');

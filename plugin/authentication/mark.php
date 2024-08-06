@@ -1,4 +1,10 @@
 <?php
+    $USE_SSE = isset($_GET['sse'])&&$_GET['sse'] || isset($_POST['sse'])&&$_POST['sse'];
+    if($USE_SSE) {
+        define('WP_USE_THEMES', false);  // No need for the template engine
+        require_once( '../../../../../wp-load.php' );  // incase api DOCUMENT_ROOT
+        // define('USE_STREAM', get_option('site_stream_switcher'));
+    }
     // 检查并返回 xhr 请求携带参数
     function get_request_param(string $param) {
         $res = null;
@@ -241,5 +247,41 @@
         return update_marker_record(CACHED_PATH, $memory_caches, get_update_status('marker(new) saved on #'.SAVE_prefix.' by '.SECURED_mid));
     }
     
-    print_r(json_encode(output_marker_records()));
+    $response = output_marker_records();
+    print_r(json_encode($response));
+    // if(USE_STREAM) {
+    //     header('X-Accel-Buffering: no');
+    //     header('Content-Type: text/event-stream');
+    //     header('Cache-Control: no-cache');
+    //     set_time_limit(0); //防止超时
+    //     ob_end_clean(); //清空（擦除）缓冲区并关闭输出缓冲
+    //     ob_implicit_flush(1); //这个函数强制每当有输出的时候，即刻把输出发送到浏览器。这样就不需要每次输出（echo）后，都用flush()来发送到浏览器了
+    //     function returnEventData($returnData, $event='message', $id=0, $retry=0, $delay=0){
+    //         // if(!$returnData) return;
+    //         $id = $id ? $id : time();
+    //         $str = "id: {$id}".PHP_EOL;
+    //         if($event) $str.= "event: {$event}".PHP_EOL;
+    //         if($retry>0) $str .= "retry: {$retry}".PHP_EOL;
+    //         if(is_array($returnData) || is_object($returnData)) $returnData = json_encode($returnData);
+    //         $str .= "data: " . $returnData . PHP_EOL;
+    //         $str .= PHP_EOL;
+    //         echo $str;
+    //         if($delay>0) usleep($delay*1000*1000);
+    //     }
+    //     if(isset($response)) {
+    //         foreach($response as $key => $value) {
+    //             if(!$value) continue; // ingore empty data
+    //             // output each-data-list
+    //             // returnEventData($value, 'message', $key, 0, 1); // $md5.'!=='.$res_md5
+    //             // output each-single-data
+    //             foreach($value as $k => $val) {
+    //                 returnEventData($val, 'message', $key, 0, 1);
+    //             }
+    //         }
+    //     }else{
+    //         returnEventData('[null]');
+    //     }
+    // }else{
+    //     print_r(json_encode($response));
+    // }
 ?>

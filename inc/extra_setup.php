@@ -482,6 +482,9 @@
             setcookie('theme_manual', 0, $expire, COOKIEPATH, COOKIE_DOMAIN, false);
         };
         if(!$theme_manual){  //if theme_manual actived
+            if(get_option('timezone_string')!='Asia/Shanghai') {
+                update_option('timezone_string', 'Asia/Shanghai'); // update local timezone for 24 hours offset fixes
+            }
             $hour = current_time('G');
             $start = get_option('site_darkmode_start');
             $end = get_option('site_darkmode_end');
@@ -709,7 +712,7 @@
     function article_ai_abstract($content) {
         global $src_cdn; //custom_cdn_src(0, true)
         $chatgpt_cat = in_chatgpt_cat();
-        return $chatgpt_cat&&is_single() ? '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span>chatGPT</span></p><p class="response load">standby chatGPT responsing..</p></blockquote><script type="module">const responser = document.querySelector(".chatGPT .response");try {import("'.$src_cdn.'/js/module.js").then((module)=>send_ajax_request("get", "'.get_api_refrence("gpt").'", false, (res)=>{let _json=JSON.parse(res),_string="No response inbound.";if(_json.choices){_string=_json.choices[0].message.content;}else if(_json.text){_string=_json.text;}else{_string=_json.error.message;}module.words_typer(responser, _string, 25);console.log(_json.error)}));}catch(e){console.warn("dom responser not found, check backend.",e)}</script>'.$content : $content; //get_api_refrence("gpt", true)
+        return $chatgpt_cat&&is_single() ? '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span>AI</span></p><p class="response load">Standby API Responsing..</p></blockquote><script type="module">const responser = document.querySelector(".chatGPT .response");try {import("'.$src_cdn.'/js/module.js").then((module)=>send_ajax_request("get", "'.get_api_refrence("gpt").'", false, (res)=>{let _json=JSON.parse(res),_string="No response inbound.";if(_json.choices){_string=_json.choices[0].message.content;}else if(_json.text){_string=_json.text;}else{_string=_json.error.message;}module.words_typer(responser, _string, 25);console.log(_json.error)}));}catch(e){console.warn("dom responser not found, check backend.",e)}</script>'.$content : $content; //get_api_refrence("gpt", true)
     }
     add_filter( 'the_content', 'article_ai_abstract', 10);
     
@@ -733,12 +736,12 @@
     }
     
     // 评论企业微信应用通知
-    if(get_option('site_wpwx_notify_switcher')){  //微信推送消息
+    if(get_option('site_wpwx_notify_switcher') && get_option('site_third_comments')=='Wordpress'){  //微信推送消息
         function push_weixin($comment_id){
             global $src_cdn;
             $comment = get_comment($comment_id);
             $post_id = $comment->comment_post_ID;
-            $admin_mail = get_option('site_smtp_mail', get_bloginfo('admin_email'));
+            $admin_mail = get_bloginfo('admin_email'); //get_option('site_smtp_mail', get_bloginfo('admin_email'));
             $comment_mail = $comment->comment_author_email;
             $comment_author = $comment->comment_author;
             $comment_title = '《' . get_the_title($post_id) . '》 上有新评论啦~';
@@ -761,11 +764,11 @@
                     )
                 )
             );
-            // 评论邮件不为博主邮件时，返回 notify 接口（$postdata）不可使用 cdn，wpwx-notify.php 需调用 wp core
-            if($comment_mail!=$admin_mail) return file_get_contents($src_cdn . '/wpwx-notify.php',false,stream_context_create($options));else return false; //get_bloginfo('template_directory') custom_cdn_src('api', true)
+            // 评论邮件不为博主邮件时，因 wpwx-notify.php 内部需调用 wp core，故不可使用 cdn('src'/'api') 相对路径
+            if($comment_mail!=$admin_mail) return file_get_contents(custom_cdn_src(0, 1) . '/plugin/wpwx-notify.php',false,stream_context_create($options));else return false; // $src_cdn custom_cdn_src('api', true)
         }
         // 挂载 WordPress 评论提交的接口
-        add_action('comment_post', 'push_weixin', 19, 2);
+        add_action('comment_post', 'push_weixin', 10, 2);
     }
     
     //*****  WordPress AJAX Comments Setup etc (comment reply/paginate)  *****//

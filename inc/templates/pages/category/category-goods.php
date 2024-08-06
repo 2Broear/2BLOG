@@ -1,20 +1,20 @@
 <?php
 /*
- * Template name: （BaaS）漫游影视
+ * Template name: 得物好物
    Template Post Type: page
 */
 // acg post query(single)
-function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
+function get_cat_posts($the_cat, $pre_cat=false, $limit=99){
     $output = '';
     global $post, $lazysrc, $loadimg;
-    $acg_slug = get_cat_by_template('acg','slug');
-    $acg_single_sw = get_option('site_single_switcher');
+    $cat_slug = get_cat_by_template('goods','slug');
+    $cat_single_sw = get_option('site_single_switcher');
     $target = "_blank";
     $rel = "";
-    if($acg_single_sw){
+    if($cat_single_sw){
         $includes = get_option('site_single_includes');
-        $acg_single_sw = in_array($acg_slug, explode(',', $includes));
-        if($acg_single_sw){
+        $cat_single_sw = in_array($cat_slug, explode(',', $includes));
+        if($cat_single_sw){
             $target = "_self";
             $rel = "nofollow";
         }
@@ -22,8 +22,8 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
     $sub_cat = current_slug()!=$pre_cat ? 'subcat' : '';
     $cat_slug = $the_cat->slug;
     // start acg query
-    $acg_query = new WP_Query(array_filter(array(
-        'cat' => $the_cat->term_id,  //$acg_cat
+    $cat_query = new WP_Query(array_filter(array(
+        'cat' => $the_cat->term_id,  //$cat_cat
         'meta_key' => 'post_orderby',
         'orderby' => array(
             'meta_value_num' => 'DESC',
@@ -33,8 +33,8 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         'posts_per_page' => $limit,
     )));
     $output .= '<div class="inbox-clip wow fadeInUp '.$sub_cat.'"><h2 id="'.$cat_slug.'">'.$the_cat->name.'</h2></div><div class="info loadbox flexboxes">'; //'<sup> '.$cat_slug.' </sup>
-    while ($acg_query->have_posts()):
-        $acg_query->the_post();
+    while ($cat_query->have_posts()):
+        $cat_query->the_post();
         $post_feeling = get_post_meta($post->ID, "post_feeling", true);
         $post_source = get_post_meta($post->ID, "post_source", true);
         $post_rcmd = get_post_meta($post->ID, "post_rcmd", true);
@@ -44,7 +44,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
             $lazyhold = 'data-src="'.$postimg.'"';
             $postimg = $loadimg;
         }
-        $href = $post_source ? $post_source : ($acg_single_sw ? "javascript:;" : get_the_permalink());
+        $href = $post_source ? $post_source : ($cat_single_sw ? "javascript:;" : get_the_permalink());
         $output .= '<div class="inbox flexboxes" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /><span class="author">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(66,true).'</p></span>';
         if($post_rcmd){
             $rcmd_title = 'Personal Recommends';
@@ -66,8 +66,8 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
     // 单独判断当前查询文章数量
     if(get_option('site_async_switcher')){
         $async_array = explode(',', get_option('site_async_includes'));
-        if(in_array($acg_slug, $async_array)){
-            $cid = $the_cat->term_id;// $cat_name = current_slug(); //$acg_query->query['cat']
+        if(in_array($cat_slug, $async_array)){
+            $cid = $the_cat->term_id;// $cat_name = current_slug(); //$cat_query->query['cat']
             $slug = $the_cat->slug;
             // preset all acg query
             $all_query = new WP_Query(array_filter(array(
@@ -77,7 +77,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                 'no_found_rows' => true,
             )));
             $all_count = $all_query->post_count;
-            $posts_count = $acg_query->post_count;  //count($acg_query->posts) //mailto:'.get_bloginfo("admin_email").' 发送邮件，荐你所见
+            $posts_count = $cat_query->post_count;  //count($cat_query->posts) //mailto:'.get_bloginfo("admin_email").' 发送邮件，荐你所见
             $disable_statu = $posts_count==$all_count ? ' disabled' : false; //>=
             $output .= '<div class="inbox more flexboxes'.$disable_statu.'"><div class="inbox-more flexboxes"><a class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cid.'" data-nonce="'.wp_create_nonce($slug."_posts_ajax_nonce").'" data-cat="'.strtoupper($slug).'" title="加载更多 '.$the_cat->name.'"></a></div></div>';
             // unset($cid, $slug, $all_count, $posts_count, $disable_statu);
@@ -169,76 +169,37 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         .inbox-aside .both .gamespot .range span#after{
             z-index: -4;
         }
+        .container {
+            width: 50vw;
+            height: 200px;
+        }
+        .container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
     <div class="content-all">
-        <div class="win-top bg" style="background:url() center center /cover ">
-            <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>
-            <header>
-                <nav id="tipson" class="ajaxloadon">
+        <div class="win-top bg" style="background: url() center center /cover">
+        	<header>
+        		<nav id="tipson" class="ajaxloadon">
                     <?php get_header(); ?>
-                </nav>
-            </header>
-            <video src="<?php echo $video = replace_video_url(get_option('site_acgn_video')); ?>" poster="<?php echo $video ? $video : get_meta_image($cat, $img_cdn.'/images/acg.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
-            <div class="counter">
-                <?php
-                    $async_sw = get_option('site_async_switcher');
-                    $acg_temp_slug = get_cat_by_template('acg','slug');
-                    $async_array = explode(',', get_option('site_async_includes'));
-                    $use_async = $async_sw ? in_array($acg_temp_slug, $async_array) : false;
-                    $async_loads = $async_sw&&$use_async ? get_option("site_async_acg", 14) : 999;
-    		        $basename = basename(__FILE__);
-                    $preset = get_cat_by_template(str_replace('.php',"",substr($basename,9)));
-                    $baas = get_option('site_leancloud_switcher') && strpos(get_option('site_leancloud_category'), $basename)!==false; //in_array($basename, explode(',', get_option('site_leancloud_category')))
-                    if(!$baas){
-                        $cats = get_categories(meta_query_categories($preset->term_id, 'ASC', 'seo_order'));
-                        // acg post stats
-                        function the_acg_stats(){
-                            global $cat, $cats, $preset;
-                            $preslug = $preset->slug;
-                            $output = '';
-                            if(!empty($cats) && current_slug()==$preslug){
-                                $output_sw = false;
-                                if(get_option('site_cache_switcher')){
-                                    $caches = get_option('site_cache_includes');
-                                    $temp_slug = get_cat_by_template('acg','slug');
-                                    $output_sw = in_array($temp_slug, explode(',', $caches));
-                                    $output = $output_sw ? get_option('site_acg_stats_cache') : '';
-                                }
-                                if(!$output || !$output_sw){
-                                    $datadance = get_option('site_animated_counting_switcher');
-                                    foreach($cats as $the_cat){
-                                        $cat_slug = $the_cat->slug;
-                                        $cat_count = $the_cat->count;
-                                        $cat_num = $cat_count;
-                                        $dataCls = '';
-                                        if($datadance){
-                                            $dataCls = ' blink';
-                                            $cat_num = '0';
-                                        }
-                                        $output .= '<div class="'.$cat_slug.$dataCls.'" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2>'.$cat_num.'<sup>+</sup></h2><p>'.$the_cat->name.'/'.strtoupper($cat_slug).'</p></a></div>';
-                                    }
-                                    if($output_sw) update_option('site_acg_stats_cache', wp_kses_post($output));
-                                }
-                            }else{
-                                $the_cat = get_category($cat);
-                                $cat_count = $the_cat->count;
-                                $output .= '<div class="blink" data-count='.$cat_count.'><h2 class="single">'.$cat_count.'<sup>+</sup></h2><p>'.$the_cat->name.'/'.$the_cat->slug.'</p></div>';
-                            }
-                            echo wp_kses_post($output);
-                        }
-                        the_acg_stats();
-                    }
-                ?>
-            </div>
+        		</nav>
+        	</header>
+            <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>
+            <video src="<?php echo get_option('site_acgn_video'); ?>" poster="<?php echo get_meta_image($cat, $img_cdn.'/images/1llusion.gif'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+        	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s"><span></span> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '...'; ?> </h5>
         </div>
         <div class="content-all-windows">
+            <!--<div class="intro-boxes">-->
+            <!--    <p><?php echo get_term_meta($cid, 'seo_description', true); ?></p>-->
+            <!--</div>-->
             <div class="rcmd-boxes flexboxes">
                 <?php
                     if(!$baas){
                         //acg post list(multi)
-                        function the_acg_posts(){
+                        function the_cat_posts(){
                             global $cat, $cats, $preset, $async_loads;
                             $preslug = $preset->slug;
                             $output = '';
@@ -247,14 +208,14 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                                 $output_sw = false;
                                 if(get_option('site_cache_switcher')){
                                     $caches = get_option('site_cache_includes');
-                                    $temp_slug = get_cat_by_template('acg','slug');
+                                    $temp_slug = get_cat_by_template('goods','slug');
                                     $output_sw = in_array($temp_slug, explode(',', $caches));
-                                    $output = $output_sw ? get_option('site_acg_post_cache') : '';
+                                    $output = $output_sw ? get_option('site_cat_post_cache') : '';
                                 }
                                 if(!$output || !$output_sw){
-                                    foreach($cats as $the_cat) $output .= get_acg_posts($the_cat, $preslug, $async_loads);
+                                    foreach($cats as $the_cat) $output .= get_cat_posts($the_cat, $preslug, $async_loads);
                                     // wp_kses_post() filted javascript:; href
-                                    if($output_sw) update_option('site_acg_post_cache', $output); //wp_kses_post($output)
+                                    if($output_sw) update_option('site_cat_post_cache', $output); //wp_kses_post($output)
                                 }else{
                                     // always update wp-nonce if db-cached
                                     foreach($cats as $the_cat){
@@ -265,15 +226,16 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                                     }
                                 }
                             }else{
-                                $output .= get_acg_posts(get_category($cat), $preslug, $async_loads);
+                                $output .= get_cat_posts(get_category($cat), $preslug, $async_loads);
                             }
                             // wp_kses_post() caused setupBlurColor() unabled to setup
                             echo $output; //wp_kses_post($output)
                         }
-                        the_acg_posts();
+                        the_cat_posts();
                     }
                 ?>
-                <div id="comment_txt" class="wow fadeInUp" data-wow-delay="0.25s">
+                <div class="container module"></div>
+                <div id="comment_txt">
                     <?php 
                         the_page_content(current_slug());  //the_content();
                         dual_data_comments();  // query comments from database before include
@@ -286,87 +248,56 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         </footer>
 	</div>
 <!-- siteJs -->
-<script>
-    function easeCounter (from = 0, to = 1, speed = 0.1, delta = 1, callback = false, easingFn = false, max = 100, min = 1) {
-        let timer;
-        let progress = 0, 
-            direction = 1; // 1 for increasing progress, -1 for decreasing
-        const deltaSpeed = speed * delta;
-        const totalSteps = Math.abs((to - from) / deltaSpeed);
-        return (function runCounter() {
-            if (from === to) {
-                if (timer) clearTimeout(timer);
-                return from;
-            }
-            // Update the value
-            if (from < to) {
-                from += deltaSpeed;
-                if (from > to) from = to;
-            } else {
-                from -= deltaSpeed;
-                if (from < to) from = to;
-            }
-            
-            // Update progress
-            progress += direction;
-            if (progress >= totalSteps || progress <= 0) {
-                direction *= -1; // Reverse direction
-            }
-            /* easing effects: 
-             / slow-fast-slow: (x) => Math.sin(x * Math.PI);
-             / slow-fast: (x) => Math.pow(1 - x, 2);
-             / fast-slow: (x) => Math.pow(x, 2);
-            */
-            if (typeof easingFn !== 'function') easingFn = (x) => Math.sin(x * Math.PI);
-            // Calculate delay using a sine wave to create a slow-fast-slow effect
-            const normalizedProgress = progress / totalSteps;
-            const delay = min + (max - min) * (1 - easingFn(normalizedProgress));
-            // Set the next timer
-            timer = setTimeout(runCounter, delay);
-            callback?.(from, delay);
-        })();
-    }
-    // easeCounter(0, 100, 1, 0.5, (from, delay)=> {
-    //     console.log(from, delay)
-    // })
-    
-    function degreePercentage(range=0, after=false){  //default range 10 score
-        if(range<0) return;
-        let floats = after ? 10-range : range,
-            percent = after ? parseInt(270*(floats/10)) : parseInt(270+180*(floats/5));
-        switch(after){
-            case true:
-                if(percent<=90) return 90;
-                break;
-            default:
-                if(range<=0 || range>=5) return 270+180;
-                break;
-        }
-        return percent;
-    }
-    // execRotation
-    function execRotation(rcmd, ms=450){
-        if(!rcmd) return;
-        let rcmd_len = rcmd.length;
-        if(rcmd_len>=1){
-            for(let i=0;i<rcmd_len;i++){
-                const range = rcmd[i],
-                      score = range.querySelector("#spot h3").innerText;
-                new Promise(function(resolve,reject){
-                    // setTimeout(()=>{
-                    range.querySelector("#before").style.transform = 'rotate('+degreePercentage(score)+'deg)';
-                    score>5 ? setTimeout(()=>resolve(), ms) : reject('cancel after');
-                    // }, 100);
-                }).then(function(res){
-                    range.querySelector("#after").style.cssText = 'z-index:4;transform:rotate('+degreePercentage(10-score, true)+'deg)';
-                }).catch(function(err){
-                    console.log(err)
-                });
-            }
+<script type="importmap">
+    {
+        "imports": {
+            "three": "../wp-content/themes/2BLOG-main/js/threejs/node_modules/three/build/three.module.js",
+            "three/addons/": "../wp-content/themes/2BLOG-main/js/threejs/node_modules/three/examples/jsm/",
+            "three/source/": "../wp-content/themes/2BLOG-main/js/threejs/src/"
         }
     }
-    const rcmd_range = document.querySelectorAll('.inbox-aside .game-ratings.both');
-    execRotation(rcmd_range, 400);
+</script>
+<script type="module">
+    import * as THREE from 'three';
+    import { three_obj, _utilBasics, _utilEvents, _utilClosure } from 'three/source/three.js';
+    const module = new three_obj();
+    // console.log(module);
+    module.init({
+        _scene: {
+            antialias: true,
+        },
+        _camera: {
+            far: 1500,
+            // fov: 90,
+        },
+        _lights: {
+            hemisphere: {
+                intensity: 2,
+            },
+        },
+        _control: {
+            enablePan: false,
+            // enableRotate: false,
+            autoRotateSpeed: 1,
+            maxPolarAngle: Math.PI / 2, //0.95 * 
+        },
+        map: {
+            x: 1,
+            y: 500,
+            z: 0,
+        },
+        load: {
+            container: document.querySelector('.container'),
+            module: '<?php echo $src_cdn; ?>/js/threejs/dist/assets/3d/tesla_2018_model_3/scene.gltf', //apple_macbook_pro_16_inch_2021
+            texture: {
+                cubeImgs: ['px.png','nx.png','ny.png','py.png','pz.png','nz.png'],
+            }
+        },
+        animation: {
+        }
+    }, (three, target)=> {
+        console.log(three);
+    });
 </script>
 <?php
     get_foot();
@@ -376,7 +307,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
             const rcmd_boxes = document.querySelector(".rcmd-boxes"),
                   preset_loads = <?php echo $async_loads; ?>;
             bindEventClick(rcmd_boxes, 'load-more', function(t){
-                load_ajax_posts(t, 'acg', preset_loads, function(res, load_box){
+                load_ajax_posts(t, 'goods', preset_loads, function(res, load_box){
                     let fragment = document.createDocumentFragment();
                     res.forEach(item=> {
                         let temp = document.createElement("DIV"),
@@ -384,14 +315,6 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                             post_rating = item.rating;
                         temp.id = "pid_"+item.id;
                         temp.classList.add("inbox", "flexboxes");
-                        if(item.rcmd){
-                            const both_class = post_rating ? " both" : "",
-                                  rcmd_title = post_rating ? 'GOLD Recommendation' : 'Personal Recommends'
-                                  rcmd_rating = post_rating ? post_rating : '荐';
-                            extra_str = `<div class="game-ratings gs${both_class}"><div class="gamespot" title="${rcmd_title}"><div class="range Essential RSBIndex"><span id="before"></span><span id="after"></span></div><span id="spot"><h3>${rcmd_rating}</h3></span></div></div>`;
-                        }else{
-                            extra_str = post_rating ? '<div class="game-ratings ign"><div class="ign hexagon" title="IGN High Grades"><h3>'+post_rating+'</h3></div></div>' : '';
-                        }
                         temp.innerHTML = `<div class="inbox-headside flexboxes"><span class="author">${item.subtitle}</span><img src="${item.poster}" alt="${item.subtitle}" crossorigin="Anonymous"></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="${item.link || 'javascript:void(0);'}" target="_self">${item.title}</a></h4></span><span class="lowside-description"><p>${item.excerpt}</p></span>${extra_str}</div>`; //<img class="bg" src="${item.poster}">
                         fragment.appendChild(temp);
                         // setup ajax-load images blur-color
@@ -400,16 +323,13 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                             tempimg.src = item.poster;
                             tempimg.setAttribute('crossorigin','Anonymous');
                             tempimg.onload=()=>setupBlurColor(tempimg, temp);
-                            // setupBlurColor(item.poster, temp);
                         }
                     });
                     load_box.insertBefore(fragment, load_box.lastElementChild); //lastChild
-                    execRotation(load_box.querySelectorAll('.inbox-aside .game-ratings.both'));
                 });
             });
         </script>
 <?php
     };
-    if($baas) echo '<script type="text/javascript" src="'.$src_cdn.'/js/jquery-1.9.1.min.js"></script><script type="text/javascript" src="'.$src_cdn.'/js/acgn.js?v='.get_theme_info("Version").'"></script>';
 ?>
 </body></html>

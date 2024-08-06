@@ -443,6 +443,7 @@ table tr.openyear {
 	.win-content {
 		padding: 0 15px;
 		margin: -30% auto 0;
+		overflow-x: auto;
 	}
     blockquote.chatGPT{
         padding-left: 15px;

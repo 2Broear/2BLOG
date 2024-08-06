@@ -29,7 +29,18 @@
             display: none;
         }
         .memos-tree-core .weblog-tree-core-l{
-            max-width: 12%;
+            max-width: 18%;
+        }
+        .memos-tree-core figure.wp-block-gallery{
+            justify-content: start;
+            margin-top: 15px;
+        }
+        .memos-tree-core video,.memos-tree-core img{
+            display: block;
+            width: auto;
+            max-width: 100%;
+            border-radius: var(--radius);
+            transition: transform .5s ease;
         }
         .weblog-tree-all.useMemos .weblog-tree-core{
             display: none;
@@ -63,14 +74,14 @@
                 $memos_sw = get_option('site_memos_switcher');
                 if($memos_sw) {
             ?>
-                <div style="width:100%;text-align: right;padding: 10px 20px 5px 15px;box-sizing: border-box;">
-                    <button class="switch-to-memos" href="javascript:;" title="加载更多">切换 Memos 记录</button>
-                </div>
-                <div class="memos-tree-core">
-                    <div class="load">
-                        <button class="load-more load-memos" href="javascript:;" data-click="0">加载更多</button>
+                    <div style="width:100%;text-align: right;padding: 10px 20px 5px 15px;box-sizing: border-box;">
+                        <button class="switch-to-memos" href="javascript:;" title="加载更多">切换 Memos 记录</button>
                     </div>
-                </div>
+                    <div class="memos-tree-core">
+                        <div class="load">
+                            <button class="load-more load-memos" href="javascript:;" data-click="0">加载更多</button>
+                        </div>
+                    </div>
             <?php
                 }
             ?>
@@ -250,18 +261,69 @@
 <?php
     if($memos_sw){
 ?>
-        const memosClass = "useMemos",
-              memoLoaded = "usedMemos";
-        let memos_tree = weblog.querySelector('.memos-tree-core'),
+        let memosClass = "useMemos",
+            memoLoaded = "usedMemos",
+            memos_tree = weblog.querySelector('.memos-tree-core'),
             memos_load = memos_tree.querySelector('.load'),
             memos_more = memos_load.querySelector('.load-more'),
             memos_url = "<?php echo get_api_refrence('memos', true); ?>",
             memos_params = {
                 'creatorId': 1,
                 'rowStatus': "", //ARCHIVED
+                'Visibility' : "PUBLIC",
                 'tag': "",
                 'limit': preset_loads,
                 'offset': 0,
+
+            },
+            ts2date = (ts, hms=true)=> {
+                var date = new Date(ts*1000); //如果date为13位不需要乘1000
+                var Y = date.getFullYear() + '-';
+                var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+                var D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
+                var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+                var m = (date.getMinutes() <10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+                var s = (date.getSeconds() <10 ? '0' + date.getSeconds() : date.getSeconds());
+                return hms ? Y+M+D+h+m+s : Y+M+D;
+            },
+            memos_fetch = (t, cbk=false)=> {
+                load_ajax_posts(t, 'weblog', preset_loads, function(res) {
+                    if(cbk&&typeof cbk==='function') cbk();
+                    let fragment = document.createDocumentFragment();
+                    res.forEach(item=> {
+                        let resourceList = item.resourceList,
+                            temp = document.createElement("DIV");
+                        temp.id = "pid_"+item.id;
+                        temp.classList.add("weblog-tree-core-record");
+                        if(resourceList.length>0) {
+                            let fragments = document.createDocumentFragment(),
+                                container = document.createElement('FIGURE');
+                            container.className = "wp-block-gallery";
+                            for(let i=0;i<resourceList.length;i++) {
+                                let resourceItem = resourceList[i],
+                                    resourceTag = new Image(),
+                                    resourceBox = document.createElement('FIGURE'),
+                                    resourceSrc = `<?php echo get_option('site_memos_proxy'); ?>/o/r/${resourceItem.uid}`;
+                                resourceBox.className = "wp-block-image";
+                                // resourceTag.setAttribute('crossorigin', 'anonymous'); // HEAD request caused CORS err but GET
+                                if(resourceItem.type.includes('video')) {
+                                    resourceTag = document.createElement('VIDEO');
+                                    resourceTag.setAttribute('controls','');
+                                    resourceTag.dataset.src = resourceSrc;
+                                }else{
+                                    resourceTag.src = resourceSrc;
+                                }
+                                resourceBox.appendChild(resourceTag);
+                                fragments.appendChild(resourceBox);
+                            }
+                            container.appendChild(fragments);
+                            resourceList = container.outerHTML;
+                        }
+                        temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline"><a href="javascript:;">${item.creatorName}</a> - ${ts2date(item.createdTs, false)}</span></div><div class="weblog-tree-core-r"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${item.content} ${resourceList}</span><p id="sub"><sup style="float:right;">最后编辑于 ${ts2date(item.updatedTs)}</sup></p></div></div></div>`;
+                        fragment.appendChild(temp);
+                    });
+                    memos_tree.insertBefore(fragment, memos_load);
+                }, false, memos_url, parse_ajax_parameter(memos_params, true));
             };
 <?php
     }
@@ -316,20 +378,8 @@
                         if($memos_sw){
                     ?>
                         if(t.classList && t.classList.contains("load-memos")){
-                            // update offsets
-                            memos_params.offset = preset_loads*parseInt(memos_more.dataset.click);
-                            // exec updates
-                            load_ajax_posts(t, 'weblog', preset_loads, function(res){
-                                let fragment = document.createDocumentFragment();
-                                res.forEach(item=> {
-                                    let each_temp = document.createElement("DIV");
-                                    each_temp.id = "pid_"+item.id;
-                                    each_temp.classList.add("weblog-tree-core-record");
-                                    each_temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${item.creatorName}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${item.content}</span><p id="sub">${item.createdTs}</p></div></div></div>`;
-                                    fragment.appendChild(each_temp);
-                                });
-                                memos_tree.insertBefore(fragment, memos_load);
-                            }, false, memos_url, parse_ajax_parameter(memos_params, true));
+                            memos_params.offset = preset_loads*parseInt(memos_more.dataset.click); // update offsets
+                            memos_fetch(t); // exec fetchs
                             break;
                         }
                     <?php
@@ -356,47 +406,37 @@
                     <?php
                         if($memos_sw){
                     ?>
-                        t.style.pointerEvents = "none"; // t.textContent = "正在切换记录..";
-                        if(weblog.classList.contains(memosClass)) {
-                            weblog.classList.remove(memosClass);
-                            t.textContent = "切换 Memos 记录";
-                            t.style.pointerEvents = "";
-                            return;
-                        }else{
-                            t.style.pointerEvents = "";
-                            const memos_ctx = "返回 Weblog 记录";
-                            weblog.classList.add(memosClass);
-                            if(weblog.classList.contains(memoLoaded)) {
-                                t.textContent = memos_ctx;
-                                console.debug(memoLoaded);
+                            t.style.pointerEvents = "none"; // t.textContent = "正在切换记录..";
+                            if(weblog.classList.contains(memosClass)) {
+                                weblog.classList.remove(memosClass);
+                                t.textContent = "切换 Memos 记录";
+                                t.style.pointerEvents = "";
                                 return;
-                            }
-                            send_ajax_request("GET", memos_url, '', function(res){
-                                const memos_res = JSON.parse(res);
-                                memos_more.dataset.counts = memos_res.length;
-                                if(memos_res.error) {
-                                    console.warn('an error occured', memos_res);
+                            }else{
+                                t.style.pointerEvents = "";
+                                const memos_ctx = "返回 Weblog 记录";
+                                weblog.classList.add(memosClass);
+                                if(weblog.classList.contains(memoLoaded)) {
+                                    t.textContent = memos_ctx;
+                                    console.debug(memoLoaded);
                                     return;
                                 }
-                            }, (err)=>console.warn(err));
-                            // preload loads before load_ajax_posts(loads required)
-                            memos_more.dataset.load = preset_loads;
-                            load_ajax_posts(t, 'weblog', preset_loads, function(res){
-                                memos_more.dataset.click = 1;
-                                weblog.classList.add(memoLoaded);
-                                t.textContent = memos_ctx;
-                                let fragment = document.createDocumentFragment();
-                                res.forEach(item=> {
-                                    let temp = document.createElement("DIV"),
-                                        tags = item.tag ? " - "+item.tag : "";
-                                    temp.id = "pid_"+item.id;
-                                    temp.classList.add("weblog-tree-core-record");
-                                    temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${item.creatorName}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${item.content}</span><p id="sub">${item.createdTs}</p></div></div></div>`;
-                                    fragment.appendChild(temp);
+                                send_ajax_request("GET", memos_url, '', function(res){
+                                    const memos_res = JSON.parse(res);
+                                    memos_more.dataset.counts = memos_res.length;
+                                    if(memos_res.error) {
+                                        console.warn('an error occured', memos_res);
+                                        return;
+                                    }
+                                }, (err)=>console.warn(err));
+                                // preload loads before load_ajax_posts(loads required)
+                                memos_more.dataset.load = preset_loads;
+                                memos_fetch(t, ()=> {
+                                    memos_more.dataset.click = 1;
+                                    weblog.classList.add(memoLoaded);
+                                    t.textContent = memos_ctx;
                                 });
-                                memos_tree.insertBefore(fragment, memos_load);
-                            }, false, memos_url, parse_ajax_parameter(memos_params, true));
-                        }
+                            }
                     <?php
                         }
                     ?>
