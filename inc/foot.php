@@ -1,7 +1,7 @@
 <?php
     global $src_cdn;
 ?>
-<script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
+<script src="<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
 <script type="text/javascript">
     <?php
         global $cat;
@@ -69,24 +69,6 @@
                         },
                     });
                 });
-                // // dynamicLoad("https://blog.2broear.com/wp-content/themes/2BLOG-main/plugin/test.php");
-                // if(typeof(EventSource) !== "undefined") {
-                //     var source = new EventSource("<?php echo $src_cdn; ?>/plugin/sse.php");
-                //     //监听事件
-                //     source.addEventListener('open', function (event) {
-                //         console.log('SSE Open Connected.');
-                //     });
-                //     source.addEventListener('message', function (event) {
-                //          // if (event.origin != 'https://blog.2broear.com') return;
-                //         console.log('Reciving SSE Data..', JSON.parse(event.data));
-                //     });
-                //     source.addEventListener('error', function (event) {
-                //         console.log(`SSE Error Closed. (statu: ${event.target.readyState})`, event);
-                //         source.close();
-                //     });
-                // } else {
-                //     console.warn("您的浏览器不支持SSE");
-                // }
     <?php
             }
         }
@@ -123,7 +105,16 @@
                     if($vdo_poster_sw) echo 'setupVideoPoster(2);';  // 截取设置当前页面所有视频 poster 
     ?>
                     const list = document.querySelectorAll('.mbit .mbit_range li');
-                    async_enqueue(list, true, (i)=>list[i].classList.add('active'), 200);
+                    async_enqueue(list, true, (i)=>{
+                        const item = list[i];
+                        const span = item.querySelector('span');
+                        const data = item.classList.contains('before') ? 'before' : 'after';
+                        item.classList.add('active');
+                        easeCounter(0, parseInt(span.dataset[data]), 3, 1, (num)=> {
+                            // console.log(counted, item)
+                            span.dataset[data] = parseInt(num);
+                        }, (x) => Math.pow(1 - x, 2));
+                    }, 200);
     <?php
                     break;
             }

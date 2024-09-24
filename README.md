@@ -303,6 +303,7 @@ Futures todo & bugs
 - ✅ ~~集成 Ajax 功能到 wp 评论~~
 - ✅ ~~集成 chatGPT 文章摘要~~
 - ✅ ~~新增 Marker 文章标记~~
+- ✅ ~~新增 RSS 友链阅读器~
 - 集成 Valine 自定义功能到 WordPress 评论
 
 ### bug

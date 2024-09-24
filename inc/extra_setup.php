@@ -1,4 +1,345 @@
 <?php
+    /*
+     *--------------------------------------------------------------------------
+     * RSS Feed Generator.
+     *--------------------------------------------------------------------------
+    */
+    // fetch_rss
+    function wp_feed_cache_transient_expire_instantly( $seconds ) {
+      return 0;  // set the default feed cache recreation period
+    }
+    function fetch_rss_feeds($rssUrl, $rssLink, $rssMax = 1) {
+        // 检查fetch_feed是否可用 // https://developer.wordpress.org/reference/functions/fetch_feed/
+        if (!function_exists('fetch_feed')) {
+            echo "fetch_feed 不可用，无法解析RSS feed。";
+            exit;
+        }
+        $linkUrl = $rssLink->link_url;
+        $linkAuthor = $rssLink->link_name;
+        $linkAvatar = $rssLink->link_image ? $rssLink->link_image : '//cravatar.cn/avatar/?d=mp&s=50';
+        // delete_transient('feed_' . md5($rssUrl));  // delete_transient immediately
+        add_filter( 'wp_feed_cache_transient_lifetime' , 'wp_feed_cache_transient_expire_instantly' );
+        $feed_data = fetch_feed($rssUrl);
+        remove_filter( 'wp_feed_cache_transient_lifetime' , 'wp_feed_cache_transient_expire_instantly' );
+        if (is_wp_error($feed_data)) {
+            $error_class = new stdClass();
+            $error_class->title = ''; //RSS 内容抓取失败！
+            $error_class->desc = '无法获取 ta 的 rss 内容，请检查：' . $rssUrl;
+            $error_class->date = '0000-00-00'; //date("Y-m-d");
+            $error_class->link = 'javascript:;';
+            $error_class->url = $linkUrl;
+            $error_class->rss = $rssUrl;
+            $error_class->author = $linkAuthor;
+            $error_class->avatar = $linkAvatar;
+            // array_push($output_array, $error_class);
+            return $error_class;
+        }
+        // Figure out how many total items there are, then limit
+    	$maxitems = $feed_data->get_item_quantity($rssMax); 
+    	// Build an array of all the items, starting with element 0 (first element).
+    	$rss_items = $feed_data->get_items(0, $maxitems);
+        $recent_post = $rss_items[0];
+        // 回传数据
+        $output_class = new stdClass();
+        $output_class->title = (string)$recent_post->get_title();
+        $output_class->desc = (string)mb_substr(strip_tags($recent_post->get_description()), 0, 200);
+        $output_class->link = (string)$recent_post->get_permalink();
+        $output_class->date = $recent_post->get_date("Y-m-d");
+        $output_class->url = $linkUrl;
+        $output_class->rss = $rssUrl;
+        $output_class->author = $linkAuthor;
+        $output_class->avatar = $linkAvatar;
+        // output child only if multiple items(output-limit depends on real-rssCount but manual-rssMax)
+    	$rss_count = count($rss_items);
+        if ($rss_count > 1) {
+            $output_class->child = array();
+            for ($i=1; $i<$rss_count; $i++) {
+                $item = $rss_items[$i];
+                // if (!is_callable($item->get_title)) break;
+                $child_class = new stdClass();
+                $child_class->title = (string)$item->get_title();
+                $child_class->desc = mb_substr(strip_tags((string)$item->get_description()), 0, 200);
+                $child_class->date = date('Y-m-d', strtotime((string)$item->get_date("Y-m-d")));
+                $child_class->link = (string)$item->get_permalink();
+                array_push($output_class->child, $child_class);
+            }
+        }
+        return $output_class;
+    }
+    function parse_rss_urls($link_marks, $output_limit) {
+        // $output_array required to return in function (record lastUpdate date)
+        date_default_timezone_set('Asia/Shanghai');
+        $output_object = new stdClass();
+        $output_object->lastUpdate = date("Y-m-d H:i:s");
+        $output_array = array( 0 => $output_object );
+        foreach ($link_marks as $link_mark) {
+            $link_rss = $link_mark->link_rss;
+            // echo "$link_rss <br/>";
+            // $feed_data = get_rss_feeds($link_rss, $link_mark, $output_limit);
+            // $feed_data = get_rss_feeds($link_rss, $link_mark, $output_limit, true);
+            // $feed_data = fetch_rss_feeds($link_rss, $link_mark, $output_limit);
+            for ($i=0; $i<1; $i++) {
+                $feed_data = fetch_rss_feeds($link_rss, $link_mark, $output_limit);
+                if ($feed_data !== null) break; // 成功获取结果，跳出重试循环
+                // sleep(1); // 等待后重试
+            }
+            array_push($output_array, $feed_data);
+        }
+        return $output_array; //json_encode($output_array);
+    }
+    function parse_rss_data($link_marks, $output_limit, $output_chunk = 10) {
+        $marks_count = count($link_marks);
+        
+        if ($marks_count <= $output_chunk) {
+            $feed_data = parse_rss_urls($link_marks, $output_limit);
+            return json_encode($feed_data);
+        }
+        
+        echo "request urls overflow($output_chunk/$marks_count), chucking requests..";
+        // request each chunk of array step by step
+        $output_arraies = array();
+        $chunk_array = array_chunk($link_marks, $output_chunk);
+        $chunk_count = count($chunk_array);
+        // print_r($chunk_array);
+        for ($i=0; $i<$chunk_count; $i++) {
+            $feed_data = parse_rss_urls($chunk_array[$i], $output_limit);
+            // array_push($output_arraies, $feed_data);  // original data construction($chunk_array Array list in Array)
+            foreach ($feed_data as $data) {
+                array_push($output_arraies, $data);  // data deconstruction of $feed_data Array
+            }
+            // wait a sec for next round..
+            // sleep(1);
+        }
+        // $i = 0;
+        // for (;$i<$chunk_count;) {
+        //     $feed_data = parse_rss_urls($chunk_array[$i], $output_limit);
+        //     if ($feed_data && is_array($feed_data)) {
+        //         foreach ($feed_data as $data) {
+        //             array_push($output_arraies, $data);  // data deconstruction of $feed_data Array
+        //         }
+        //         $i++; // jump to next round after data received.
+        //     }
+        // }
+        return json_encode($output_arraies);
+    }
+    function the_rss_feeds($output_data, $order=SORT_DESC) {
+        // print_r($output_data);
+        $output_date = isset($output_data[0]->lastUpdate) ? $output_data[0]->lastUpdate : '0000-00-00';
+        if (!$output_data || count($output_data) <= 1) {
+            echo 'Empty RSS Data!! (lastUpdate: ' . $output_date . ')';
+        } else {
+            array_shift($output_data);  // no lastUpdate
+            // 首先按日期降序排序，如果日期相同，则按标题升序排序
+            array_multisort(array_map(function($item) {
+                return $item->date;
+            }, $output_data), $order, array_map(function($item) {
+                return $item->title;
+            }, $output_data), SORT_ASC, $output_data);
+            // // 按标题字母升序排序（如果日期相同）
+            // usort($output_data, function($a, $b) {
+            //     $dateComparison = strtotime($b->date) - strtotime($a->date);
+            //     if ($dateComparison == 0) {
+            //         return strcmp($a->title, $b->title);
+            //     }
+            //     return $dateComparison;
+            // });
+            echo '<style>
+            .feeds{margin:15px auto}
+            .feeds a{font-size:medium}
+            .feeds .info{margin-bottom:15px}
+            .feeds .info img,
+            .feeds .info i,
+            .feeds .info b{vertical-align:middle}
+            .feeds .info a{display:inline-block;color: initial;text-decoration: none;font-size: small;}
+            .feeds .info img{width:25px;height:25px;border-radius:50%}
+            .feeds .info b{margin:auto 7px auto 5px;opacity:.75}
+            .feeds .pub{opacity: .75;font-style:italic}
+            /*.feeds .rest .content{text-indent:2em}*/
+            .feeds .rest ol{margin-left:3rem}
+            .feeds details summary:hover{text-decoration:underline}
+            .feeds details summary{cursor:pointer;user-select:none;-webkit-user-select:none;}</style>';
+            foreach ($output_data as $data) {
+    ?>
+                <div class="feeds">
+                    <a href="<?php echo $data->link; ?>" target="_blank"><?php echo $data->title; ?></a>
+                    <p><?php echo $data->desc; ?>...</p>
+                    <div class="info">
+                        <a href="<?php echo $data->rss; ?>" target="_blank">
+                            <img src="<?php echo $data->avatar; ?>" alt="<?php echo $data->author; ?>" />
+                        </a>
+                        <a href="<?php echo $data->url; ?>" target="_blank">
+                            <b><?php echo $data->author; ?></b>
+                        </a>
+                        <i class="pub">published at <?php echo $data->date; ?></i>
+                    </div>
+                    <?php
+                        $output_child = $data->child;
+                        if (isset($output_child)) {
+                            $output_limit = count($output_child);
+                    ?>
+                            <details class="rest">
+                                <summary> 浏览其余 <?php echo $output_limit; ?> 篇文章 </summary>
+                                <ol>
+                                    <?php
+                                        foreach ($output_child as $child) {
+                                    ?>
+                                            <li>
+                                                <a href="<?php echo $child->link; ?>" target="_blank"><?php echo $child->title; ?></a>
+                                                <p class="content"><?php echo $child->desc; ?>...</p>
+                                                <p class="pub">Published at <?php echo $child->date; ?></p>
+                                            </li>
+                                    <?php
+                                        }
+                                    ?>
+                                </ol>
+                            </details>
+                    <?php
+                        }
+                    ?>
+                </div>
+                <hr />
+    <?php
+            }
+        }
+    }
+    
+    // SimpleXML
+    function get_rss_feeds($rssUrl, $rssLink, $rssMax = 1, $curlMulti = false) {
+        // 检查 SimpleXML 扩展是否可用
+        if (!extension_loaded('simplexml')) {
+            echo "SimpleXML 扩展未启用，无法解析RSS feed。";
+            exit;
+        }
+        
+        // $context = stream_context_create(array(
+        //     'http' => array(
+        //         'method' => 'GET',
+        //         'header' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+        //     )
+        // ));
+        // $response = file_get_contents($rssUrl, false, $context);
+        // if ($response === false) {
+        //     echo "RSS 请求失败！（$rssUrl）";
+        //     return; // 或者处理错误
+        // }
+        if ($curlMulti) {
+             // 初始化 cURL 多句柄
+            $mh = curl_multi_init();
+            $ch = curl_init($rssUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36');
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        
+            // 将 cURL 句柄添加到多句柄中
+            curl_multi_add_handle($mh, $ch);
+        
+            // 执行多句柄中的所有 cURL 请求
+            $active = null;
+            do {
+                $status = curl_multi_exec($mh, $active);
+                curl_multi_select($mh);
+            } while ($active && $status == CURLM_OK);
+        
+            // 获取请求结果
+            $response = curl_multi_getcontent($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_multi_close($mh);
+        } else {
+            $ch = curl_init($rssUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36');
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+            // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+            
+            // for ($i=0; $i<$rssRetry; $i++) {
+            //     $response = curl_exec($ch);
+            //     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            //     if ($response === false) {
+            //         echo "CURL 请求失败：" . curl_error($ch) . "（$rssUrl）";
+            //         curl_close($ch);
+            //         return null;
+            //     }
+            //     if ($httpCode == 200) {
+            //         break;
+            //     } else {
+            //         echo "HTTP 请求失败，状态码：$httpCode（$rssUrl）";
+            //         sleep(1); // 等待1秒后重试
+            //     }
+            // }
+            // curl_close($ch);
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+        }
+        if ($response === false || $httpCode != 200) {
+            echo "RSS 请求失败！code: $httpCode（$rssUrl）";
+            return; // 或者处理错误
+        }
+        
+        libxml_use_internal_errors(true);
+        $xml = simplexml_load_string($response);
+        libxml_clear_errors();
+        
+        if ($xml === false) {
+            echo "SimpleXML扩展无法加载RSS feed（$rssUrl）";
+            return; // 或者处理错误
+        }
+    
+        // 获取item节点并限制数量
+        $classical_rss = isset($xml->channel);
+        // 确定是哪种类型的feed并获取条目
+        if ($classical_rss) {
+            $entries = $xml->channel->item;
+            $entries = array_slice($xml->xpath('/rss/channel/item'), 0, $rssMax);
+        }else{
+            //atom.xml
+            $entries = is_array($xml->entry) ? $xml->entry : [$xml->entry];
+            $entries = array_slice($entries, 0, $rssMax); // 限制加载的文章数量
+        }
+        $recent_post = $entries[0];
+        if ($classical_rss) {
+            $post_desc = $recent_post->description;
+            $post_date = $recent_post->pubDate;
+            $post_link = $recent_post->link;
+            $post_author = $xml->channel->title;
+        }else{
+            // atom.xml
+            $post_desc = $recent_post->content; //summary
+            $post_date = $recent_post->published;
+            $post_link = $recent_post->link['href'];
+            $post_author = $xml->title;
+        }
+        // 回传数据
+        $output_class = new stdClass();
+        $output_class->title = (string)$recent_post->title;
+        $output_class->desc = (string)mb_substr(strip_tags($post_desc), 0, 200);
+        $output_class->date = date("Y-m-d", strtotime($post_date));
+        $output_class->link = (string)$post_link;
+        $output_class->url = $rssLink->link_url;
+        $output_class->author = (string)$post_author;
+        $output_class->avatar = (string)$rssLink->link_image ?? '//cravatar.cn/avatar/?d=mp&s=50';
+        if ($rssMax > 1) {
+            $output_class->child = array();
+            for ($i=1; $i<$rssMax; $i++) {
+                $item = $classical_rss ? $entries[$i] : $xml->entry[$i];  //atom adaption
+                $desc = isset($item->description) ? $item->description : $item->content; //summary
+                $date = isset($item->pubDate) ? $item->pubDate : $item->published;
+                $link = isset($item->link['href']) ? $item->link['href'] : $item->link;
+                $child_class = new stdClass();
+                $child_class->title = (string)$item->title;
+                $child_class->desc = mb_substr(strip_tags((string)$desc), 0, 200);
+                $child_class->date = date('Y-m-d', strtotime((string)$date));
+                $child_class->link = (string)$link;
+                array_push($output_class->child, $child_class);
+            }
+        }
+        return $output_class;
+        // return $xml;
+    }
+    
     // Gutenberg editor
     load_theme_partial('/inc/wp_blocks.php');  // if(is_edit_page() || is_single()) 
     /*
@@ -39,7 +380,7 @@
         // print_r(preg_replace('/\n/',"", $choices->message->content));
     }
     // API调用接口，接受三个参数：调用 api 文件名、api 代理访问（使用 api.php 文件中的 curl 携带鉴权参数二次请求（速度影响），适用前端异步调用、返回请求api或返回sign签名（如开启cdn鉴权
-    function get_api_refrence($api='', $xhr=false, $exe=1, $pid=0){
+    function get_api_refrence($api='', $xhr=false, $cdn=true, $exe=1, $pid=0){
         global $src_cdn;
         $res = 'unknown_api_refrence';
         if(!$api){
@@ -51,7 +392,8 @@
         $pid = $pid ? $pid : $post->ID;
         $api_file = '/'.$api.'.php';
         $authentication = get_option('site_chatgpt_dir', 'authentication');
-        $request_url = $cdn_switch&&$cdn_api ? custom_cdn_src('api', true) : $src_cdn.'/plugin/'.$authentication;
+        $cdn_src = $cdn ? $src_cdn : custom_cdn_src(0, 1);
+        $request_url = $cdn_switch&&$cdn_api ? custom_cdn_src('api', true) : $cdn_src.'/plugin/'.$authentication;
         $auth_url = $request_url.$api_file.'?pid='.$pid;
         $cdn_auth = get_option('site_chatgpt_auth');
         // 如出现访问403可能是由于CDN服务器开启了鉴权但后台面板中未填写 API Auth Sign 选项鉴权密钥（无法判断远程服务器是否开启鉴权）
@@ -60,16 +402,22 @@
             $stamp16x = dechex($stamp10x);
             $auth_url = $auth_url.'&s='.md5($cdn_auth.$api_file.$stamp16x).'&t='.$stamp16x;
         }
-        $res = $xhr ? $src_cdn.'/plugin/api.php?auth='.$api.'&exec='.$exe.'&pid='.$pid.'&' : $auth_url;
-        // $res = $xhr ? $src_cdn.'/plugin/'.$authentication.$api_file.'?pid='.$pid : $auth_url; //||!$cdn_api
+        $res = $xhr ? $cdn_src.'/plugin/api.php?auth='.$api.'&exec='.$exe.'&pid='.$pid.'&' : $auth_url;
+        // $res = $xhr ? $cdn_src.'/plugin/'.$authentication.$api_file.'?pid='.$pid : $auth_url; //||!$cdn_api
         return $res;
     }
-    
+    function get_plugin_refrence($apiFile = '', $authDir = false, $cdnPath = false) {
+        if ($authDir) $authDir = get_option('site_chatgpt_dir') . '/';
+        $cdnPath = $cdnPath ? custom_cdn_src('src', 1) : custom_cdn_src(0, 1);
+        $plugin_path = $cdnPath . '/plugin/' . $authDir . $apiFile . '.php?';
+        return $plugin_path;
+    }
     /*
      *--------------------------------------------------------------------------
      * custom site query
      *--------------------------------------------------------------------------
     */
+    
     function get_links_category(){
         $bookmark_categories = get_terms('link_category');
         if (!empty( $bookmark_categories ) && !is_wp_error($bookmark_categories)){
@@ -396,19 +744,44 @@
      *---------------------------------------------------------------------------------------------------------------------------------
     */
     
+    // 日志记录函数
+    function log_to_file($message, $file = 'log.txt') {
+        $log_file = WP_CONTENT_DIR . '/uploads/' . $file; // 确保 uploads 目录存在且可写
+        if (!file_exists($log_file)) {
+            touch($log_file); // 如果文件不存在，则创建文件
+        }
+        date_default_timezone_set('Asia/Shanghai');
+        $time = date('Y-m-d H:i:s'); // 获取当前时间
+        $log_message = "[$time] $message\n"; // 格式化日志信息
+        file_put_contents($log_file, $log_message, FILE_APPEND); // 将日志信息追加到文件
+    }
     
     /*--------------------------------------------------------------------------
      * 页面缓存刷新
      *--------------------------------------------------------------------------
     */
-    if(get_option('site_cache_switcher')){
+    if(get_option('site_cache_switcher')) {
         //清除（重建）更新链接
-        function site_update_link_cache(){
-            update_option('site_link_list_cache', '');  //清除（重建）友情链接
+        function site_update_link_cache($link_id) {
+            //清除（重建）友情链接
+            update_option('site_link_list_cache', '');
+            
+            $link_category = wp_get_link_cats($link_id);
+            // 更新（唯一最近分类）rss 订阅
+            // update_option(get_term_field('slug', $link_category[0], 'link_category'), '');  // 清除（重建）聚合内容
+            // 更新（所有包含分类） rss 订阅
+            foreach ($link_category as $category) {
+                $each_category = get_term_field('slug', $category, 'link_category', 'raw');
+                update_option('site_rss_' . $each_category . '_cache', '');  // 清除（所有分类）聚合内容
+            }
         }
+        // add_action('wp_insert_link', 'site_update_link_cache');
+        // add_action('wp_update_link', 'site_update_link_cache');
+        // add_action('wp_delete_link', 'site_update_link_cache');
         add_action('add_link', 'site_update_link_cache');
         add_action('edit_link', 'site_update_link_cache');
         add_action('delete_link', 'site_update_link_cache');
+        
         //清除（重建）指定分类
         function update_category_post_cache($post, $temp_slug, $page_cache) {
             $temp_info = get_cat_by_template($temp_slug);
@@ -423,20 +796,30 @@
         }
         function site_update_specific_caches($post_id) {
             $post = get_post($post_id);
-            if($post->post_type != 'post') {
-                return;  // update post only(no inform)
-            }
-            //清除（重建）更新ACG
+            if($post->post_type != 'post') return;  // update post only(no inform)
+            
+            // 清除（重建）更新ACG
+            update_category_post_cache($post, 'acg', 'site_acg_stats_cache');
             update_category_post_cache($post, 'acg', 'site_acg_post_cache');
-            //清除（重建）更新下载
+            
+            // 清除（重建）更新下载
             update_category_post_cache($post, 'download', 'site_download_list_cache');
-            //（始终）清除（重建）归档数据
+            
+            // 清除（当前）归档数据
             update_option('site_archive_count_cache', '');
             update_option('site_archive_contributions_cache', '');
-            update_option('site_archive_list_cache', '');
-            $output_sw = false;
+            // update_option('site_archive_list_cache', '');
+            $post_year = date('Y', strtotime($post->post_date));
+            $archive_years = json_decode(get_option('site_archive_years_cache'));
+            if (in_array($post_year, $archive_years)) {
+                update_option('site_archive_' . $post_year . '_cache', '');
+                // update_option('site_archive_years_cache', '');
+            }
+            
+            // 清除对应文章分类缓存
             $temp_array = array(get_cat_by_template('news')->slug, get_cat_by_template('notes')->slug, get_cat_by_template('weblog')->slug, get_cat_by_template('acg')->slug);
             $caches = get_option('site_cache_includes');
+            $output_sw = false;
             foreach ($temp_array as $temp_slug) {
                 $cache = 'site_recent_'.$temp_slug.'_cache';
                 $output_sw = in_array($temp_slug, explode(',', $caches));
@@ -449,23 +832,64 @@
         add_action('delete_post', 'site_update_specific_caches');
         
         /*****   wp_schedule_event 定时任务   *****/
-
-        function schedule_my_cronjob(){
+        
+        add_action('wp', 'schedule_my_cronjob');
+        function schedule_my_cronjob() {
+            // date_default_timezone_set('Asia/Shanghai');
+            // $now = time(); // 获取当前时间
             if(!wp_next_scheduled('db_caches_cronjob_hook')){
                 // 设定定时作业执行时间（东八区时间）
-                $timestamp = strtotime('today 09:00am Asia/Shanghai'); // 设置每天上午执行一次定时作业
+                $timestamp = strtotime('today 06:00 Asia/Shanghai'); // 设置每天上午执行一次定时作业
                 wp_schedule_event($timestamp, 'daily', 'db_caches_cronjob_hook'); 
             }
         }
         //定时清除（重建）缓存
-        function site_clear_timeout_caches(){
-            update_option('site_archive_count_cache', '');  //清除（重建）归档统计
-            update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
-            update_option('site_acg_stats_cache', ''); //定时清除（重建）ACG 缓存
-            update_option('site_rank_list_cache', ''); //定时清除（重建）排行缓存
-        }
-        add_action('wp', 'schedule_my_cronjob');
         add_action('db_caches_cronjob_hook', 'site_clear_timeout_caches'); //定时更新 db caches
+        function site_clear_timeout_caches() {
+            // 定时清除（重建）ACG 缓存
+            update_option('site_acg_stats_cache', '');
+            update_option('site_rank_list_cache', '');
+            // 清除（重建）归档数据
+            update_option('site_archive_count_cache', '');
+            update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
+            $archive_years = json_decode(get_option('site_archive_years_cache'));
+            foreach ($archive_years as $archive_year) {
+                update_option('site_archive_' . $archive_year . '_cache', '');
+            }
+            update_option('site_archive_years_cache', '');
+            
+            // 触发 api 更新（全部） rss 订阅
+            log_to_file('（定时任务）开始更新缓存..'); // 记录日志
+            $link_cats = get_links_category();
+            foreach ($link_cats as $link_cat) {
+                $link_slug = $link_cat->slug;
+                // update_option('site_rss_' . $link_slug . '_cache', $link_slug);  // 清除（重建）所有聚合内容
+                $api_url = get_plugin_refrence('rss', true) . "cat=$link_slug&limit=3&output=0&cache=0&clear=0";  // 注：服务端请求无法使用cdn，客户端可用 get_api_refrence
+                log_to_file("（定时任务）正在更新：$api_url"); // 记录日志
+                
+                // 触发 API（更新）聚合内容
+                $response = wp_remote_get($api_url);
+                if (!is_wp_error($response)) {
+                    $body = wp_remote_retrieve_body($response);
+                    log_to_file('（定时任务）已更新 ' . $link_slug . '：' . json_decode($body)[0]->lastUpdate); // 记录日志
+                    continue;
+                }
+                
+                // 触发 curl 重试（一次）
+                $error_message = $response->get_error_message();
+                log_to_file('（定时任务）重试更新：' . $error_message); // 记录错误日志
+                $ch = curl_init($api_url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // 返回响应，而不是直接输出
+                curl_setopt($ch, CURLOPT_HEADER, false); // 不需要返回响应头
+                $res = curl_exec($ch);
+                if (curl_errno($ch)) log_to_file('（定时任务）重试失败： ' . $link_slug . '：' . curl_error($ch)); // 记录错误日志
+                curl_close($ch);
+                if ($res) log_to_file('（定时任务）已更新 ' . $link_slug . '：' . json_decode($res)[0]->lastUpdate); // 记录日志
+            }
+            
+            log_to_file("（定时任务）所有缓存已更新。\n\n"); // 记录日志
+            wp_cache_flush(); // bug: to clear wp_options caches
+        }
     }
     
     /*
@@ -712,7 +1136,7 @@
     function article_ai_abstract($content) {
         global $src_cdn; //custom_cdn_src(0, true)
         $chatgpt_cat = in_chatgpt_cat();
-        return $chatgpt_cat&&is_single() ? '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span>AI</span></p><p class="response load">Standby API Responsing..</p></blockquote><script type="module">const responser = document.querySelector(".chatGPT .response");try {import("'.$src_cdn.'/js/module.js").then((module)=>send_ajax_request("get", "'.get_api_refrence("gpt").'", false, (res)=>{let _json=JSON.parse(res),_string="No response inbound.";if(_json.choices){_string=_json.choices[0].message.content;}else if(_json.text){_string=_json.text;}else{_string=_json.error.message;}module.words_typer(responser, _string, 25);console.log(_json.error)}));}catch(e){console.warn("dom responser not found, check backend.",e)}</script>'.$content : $content; //get_api_refrence("gpt", true)
+        return $chatgpt_cat&&is_single() ? '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span>OPENAI</span></p><p class="response load">Standby API Responsing..</p></blockquote><script type="module">const responser = document.querySelector(".chatGPT .response");try {import("'.$src_cdn.'/js/module.js").then((module)=>send_ajax_request("get", "'.get_api_refrence("gpt").'", false, (res)=>{let _json=JSON.parse(res),_string="No response inbound.";if(_json.choices){_string=_json.choices[0].message.content;}else if(_json.text){_string=_json.text;}else{_string=_json.error.message;}module.words_typer(responser, _string, 25);console.log(_json.error)}));}catch(e){console.warn("dom responser not found, check backend.",e)}</script>'.$content : $content; //get_api_refrence("gpt", true)
     }
     add_filter( 'the_content', 'article_ai_abstract', 10);
     

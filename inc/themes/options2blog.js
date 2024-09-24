@@ -1,11 +1,20 @@
 jQuery(document).ready(function($){
-    function bindEventClick(parent, cls, callback=false){
+    function bindEventClick(parent, cls, callback){
         parent.onclick=(e)=>{
             e = e || window.event;
             let t = e.target || e.srcElement;
-            if(!t || !t.classList.contains(cls)) return;
-            callback ? callback(t) : false; //callback(t) || callback(t);
-        };
+            if(!t) return;
+            while(t!=parent){
+                if(!t) break;
+                if(t.classList && t.classList.contains(cls) || t.nodeName.toUpperCase()===cls.toUpperCase()){
+                    // callback?.();
+                    if(callback&&typeof callback==='function') callback(t,e); //callback(t) || callback(t); // callback.apply(this, ...arguments);
+                    break;
+                }else{
+                    t = t.parentNode;
+                }
+            }
+        }
     }
     
     function getParentElement(curEl, parCls){
@@ -289,64 +298,112 @@ jQuery(document).ready(function($){
                 };
             }
         }
-        // switch tabs & active class
-        const activecls = "active",
-              switchcls = "show",
-              switchtab = document.querySelectorAll(".switchTab li"),
-              clearClass = function(els,cls){
-                  for(let i=0,elsLen=els.length;i<elsLen;i++){
-                      els[i].classList.remove(cls);
-                  }
-              },
-              formtable = document.querySelectorAll("form .formtable")[0],
-              pushParam = function(key,value){
-                  // THIS FUNCTION CONSTRUCTED VIA chatGPT 3.5 MODEL.
-                  const href = window.location.href;
-                  var newUrl = href;
-                  if(window.URLSearchParams){
-                      const params = new URLSearchParams(window.location.search);  // Get the current URLSearchParams object
-                      params.set(key, value);  // Update the value of a parameter
-                      newUrl = `${window.location.pathname}?${params.toString()}`;  // Create a new URL with the updated parameters
-                  }else{
-                      const url = new URL(href);  // Get the current URL as a URL object
-                      url.searchParams.delete(key);  // Remove a parameter from the query string
-                      url.searchParams.set(key, value);  // Add or update a parameter in the query string
-                      newUrl = url.toString();  // Get the updated URL string
-                  }
-                  history.pushState(null, '', newUrl);  // Update the URL without refreshing the page
-              },
-              getQueryObject = function(url) {
-                  url = url == null ? window.location.href : url;
-                  var search = url.substring(url.lastIndexOf("?") + 1);
-                  var obj = {};
-                  var reg = /([^?&=]+)=([^?&=]*)/g;
-                  search.replace(reg, function (rs, $1, $2) {
-                      var name = decodeURIComponent($1);
-                      var val = decodeURIComponent($2);
-                      val = String(val);
-                      obj[name] = val;
-                      return rs;
-                  });
-                  return obj;
-              },
-              parms = getQueryObject();
-        // console.log(parms.tab);
-        if(parms&&parms.tab){
-            document.querySelector("form ."+parms.tab).classList.add(switchcls);
-            document.querySelector(".switchTab li#"+parms.tab).classList.add(activecls);  // clearClass then active
-        }else{
-            formtable ? formtable.classList.add(switchcls) : formtable;  // auto active first formtable
-            switchtab[0].classList.add(activecls);  // clearClass then active
-        }
-        for(let i=0,swtLen=switchtab.length;i<swtLen;i++){
-            switchtab[i].onclick=function(){
-                pushParam('tab', this.id);
-                // location.search = '?page=2blog-settings&tab='+this.id;
-                clearClass(switchtab,activecls);  // clear actived class
-                this.classList.add(activecls);  // clearClass then active
-                clearClass(document.querySelectorAll("form ."+switchcls),switchcls);  // upadted els while click
-                document.querySelector("form ."+this.id).classList.add(switchcls);  // clearClass then show
-            };
-        }
+    }
+    // switch tabs & active class
+    const activecls = "active",
+          switchcls = "show",
+          switchtab = document.querySelectorAll(".switchTab li"),
+          clearClass = function(els,cls){
+              for(let i=0,elsLen=els.length;i<elsLen;i++){
+                  els[i].classList.remove(cls);
+              }
+          },
+          formtable = document.querySelectorAll("form .formtable")[0],
+          pushParam = function(key,value){
+              // THIS FUNCTION CONSTRUCTED VIA chatGPT 3.5 MODEL.
+              const href = window.location.href;
+              var newUrl = href;
+              if(window.URLSearchParams){
+                  const params = new URLSearchParams(window.location.search);  // Get the current URLSearchParams object
+                  params.set(key, value);  // Update the value of a parameter
+                  newUrl = `${window.location.pathname}?${params.toString()}`;  // Create a new URL with the updated parameters
+              }else{
+                  const url = new URL(href);  // Get the current URL as a URL object
+                  url.searchParams.delete(key);  // Remove a parameter from the query string
+                  url.searchParams.set(key, value);  // Add or update a parameter in the query string
+                  newUrl = url.toString();  // Get the updated URL string
+              }
+              history.pushState(null, '', newUrl);  // Update the URL without refreshing the page
+          },
+          getQueryObject = function(url) {
+              url = url == null ? window.location.href : url;
+              var search = url.substring(url.lastIndexOf("?") + 1);
+              var obj = {};
+              var reg = /([^?&=]+)=([^?&=]*)/g;
+              search.replace(reg, function (rs, $1, $2) {
+                  var name = decodeURIComponent($1);
+                  var val = decodeURIComponent($2);
+                  val = String(val);
+                  obj[name] = val;
+                  return rs;
+              });
+              return obj;
+          },
+          parms = getQueryObject();
+    // console.log(switchtab);
+    if(parms&&parms.tab){
+        document.querySelector("form ."+parms.tab).classList.add(switchcls);
+        document.querySelector(".switchTab li#"+parms.tab).classList.add(activecls);  // clearClass then active
+    }else{
+        formtable ? formtable.classList.add(switchcls) : formtable;  // auto active first formtable
+        switchtab[0].classList.add(activecls);  // clearClass then active
+    }
+    bindEventClick(document.querySelector(".switchTab"), 'li', (t)=> {
+        pushParam('tab', t.id);
+        // location.search = '?page=2blog-settings&tab='+t.id;
+        clearClass(switchtab, activecls);  // clear actived class
+        t.classList.add(activecls);  // clearClass then active
+        clearClass(document.querySelectorAll("form ."+switchcls),switchcls);  // upadted els while click
+        document.querySelector("form ."+t.id).classList.add(switchcls);  // clearClass then show
+    });
+        
+        
+    // rss fetch feeds reloader
+    const contents = document.querySelector('#contents');
+    const reloader = 'reloadFeeds';
+    if (contents) {
+        bindEventClick(contents, reloader, (t)=> {
+            const dataset = t.dataset;
+            const container = contents.querySelector(`.formtable.${dataset.cat}.${switchcls}`);
+            if (!confirm(`重新拉取 ${dataset.cat} 中所有 rss 数据？`)) return;
+            t.textContent = `fetching ${dataset.cat}...`;
+            t.classList.remove(reloader);
+            console.log('loading url: ', dataset.api);
+            fetch(`${dataset.api}&cat=${dataset.cat}&limit=${dataset.limit}&output=${dataset.output}&cache=${dataset.cache}&clear=${dataset.clear}`, {
+                method: 'GET',
+            })
+            .then(res=> {
+                if (res.ok) {
+                    console.log('data loaded.', res);
+                    return res.text(); //json()
+                }
+                console.warn('request failed.')
+                // const reader = res.body.getReader();
+                // let receivedLength = 0; // 已接收的数据长度
+                
+                // reader.read().then(function processText({ done, value }) {
+                //     if (done) {
+                //         console.log('Stream complete');
+                //         return;
+                //     }
+                //     receivedLength += value.length;
+                //     const totalLength = res.headers.get('Content-Length');
+                //     const progress = Math.round((receivedLength / totalLength) * 100);
+                    
+                //     console.log(progress + '%');
+                    
+                //     return reader.read().then(processText);
+                // });
+            })
+            .then(data=> {
+                container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ data }`;
+                console.log('data fullfilled.');
+                alert(`${dataset.cat} rss data loaded.`);
+            })
+            .catch(error => {
+                container.querySelector('p').innerHTML = `Reload site_rss_${dataset.cat}_cache failed, <u>${ error }!</u>`;
+                console.error('Error fetching progress:', error);
+            });
+        });
     }
 });

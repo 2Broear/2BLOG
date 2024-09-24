@@ -63,7 +63,7 @@
                 if($winbg){
             ?>
                     <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>
-                    <video src="<?php echo get_option('site_weblog_video'); ?>" poster="<?php echo $winbg; ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+                    <video src="<?php echo get_option('site_weblog_video'); ?>" poster="<?php echo $winbg; ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload" playsinline -webkit-playsinline></video>
             <?php
                 }
             ?>

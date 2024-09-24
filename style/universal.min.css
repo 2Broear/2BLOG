@@ -1025,7 +1025,7 @@ audio{width:300px;height:32px}
 #footer-copyright li{padding:0 5px;display:inline-block}
 /* #footer-copyright ul li{letter-spacing:1px;} */
 #footer-copyright ul img{vertical-align:middle;}
-#footer-copyright li a:hover{text-decoration:underline;opacity: 1;}
+#footer-copyright li a:hover{text-decoration:underline;/*opacity: 1;*/}
 #footer-copyright li a{color:inherit;opacity: .75;}
 #footer-copyright ol img{position:relative;top:3px}
 .ForSlideToggle{position:fixed;z-index:9999;width:100%;height:118px;box-shadow:rgba(0,0,0,0.3) 0 1px 2px;transition:all .5s ease-out;margin-top:-120px;backface-visibility:hidden;-webkit-backface-visibility:hidden;-moz-backface-visibility:hidden;-ms-backface-visibility:hidden}
@@ -1167,7 +1167,7 @@ audio{width:300px;height:32px}
 .news-content-right-download,.news-content-right-recommend{margin-top:15px;}
 /* .news-content-right-download:hover{box-shadow:rgba(0,0,0,0.03) 0 1px 3px} */
 .news-content-right-download{width:100%;height:auto;border-radius:var(--radius);overflow:hidden;background-color:var(--preset-f);/*transition:.3s ease;transition-property:background,box-shadow*/}
-.news-content-right-download ol{list-style-type:none;border:1px solid var(--preset-s);border-top-style:none;color:var(--preset-9);;margin:0;padding:5px 15px;}
+.news-content-right-download ol{list-style-type:none;border:1px solid var(--preset-s);border-top-style:none;color:var(--preset-6);;margin:0;padding:5px 15px;}
 .news-content-right-download ol li:last-child{border-style:none}
 .news-content-right-download ol li{text-align:justify;border-bottom:1px dashed var(--preset-s);transition:padding .35s ease;white-space:nowrap}
 .news-content-right-download ol li a{display:block;max-width:100%;font-size:0.8rem;color:inherit;line-height:37px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1428,7 +1428,7 @@ audio{width:300px;height:32px}
     /*.wp_comments_list .wp_comment_box{max-width: 88%;}*/
     .wp_comments .vh{padding: 10px;}
 }
-#comment_txt{width:100%;max-width:1102px;text-align:left;margin:0 auto 15px;}#comment_txt h2{color:var(--preset-6);font-weight:500;margin:25px auto 15px;font-size:1.35rem;}#comment_txt p{color:var(--preset-6);padding:0 2px;/*font-size:var(--min-size);*/}
+#comment_txt{width:100%;max-width:1102px;text-align:left;margin:0 auto 15px;}#comment_txt h2{color:var(--preset-6);font-weight:500;margin:25px auto 15px;font-size:1.35rem;}#comment_txt p{color:var(--preset-8);padding:0 2px;/*font-size:var(--min-size);*/}
 
 body.dark::-webkit-scrollbar-thumb,body.dark .v .vwrap .vedit .vemojis::-webkit-scrollbar-thumb{background-color:var(--preset-6)}
 body.dark::-webkit-scrollbar-thumb:hover,body.dark .v .vwrap .vedit .vemojis::-webkit-scrollbar-thumb:hover{background:#777777}
@@ -1448,7 +1448,7 @@ body.dark .footer-contact-left ul h2,body.dark .news-article-container h3,body.d
 body.dark::-webkit-scrollbar-track, body.dark .v .vwrap .vedit .vemojis::-webkit-scrollbar-track,body.dark .win-top:after,body.dark .friends-boxes .deals .inbox.standby::before{background-color:var(--preset-2b)}
 
 /* edge winPad fixes(no:: + background-color) */
-body.dark, body.dark #footer-contact-way,body.dark .weblog-tree-core-l #weblog-circle,body.dark .friends-boxes .deals .inbox.standby .inbox-inside{background-color:var(--preset-2b)!important;}
+body.dark, body.dark #footer-contact-way,body.dark .weblog-tree-core-l #weblog-circle,body.dark .friends-boxes .deals .inbox.standby .inbox-inside{background-color:var(--preset-2b)!important;border-color:transparent!important;}
 body.dark .inside-functions .box,body.dark .vheader #avatar{color:var(--preset-3a)}
 body.dark .v .vlist .vcard .vcontent.expand:after{background:-webkit-linear-gradient(180deg,hsla(0,0%,100%,0),rgb(48, 48, 48));background:linear-gradient(180deg,hsla(0,0%,100%,0),rgb(48, 48, 48))}
 body.dark .v .vlist .vcard .vquote.overview:before{background:-webkit-gradient(linear,left top,left bottom,from(rgba(255, 255, 255, 0)),to(#303030));background:-webkit-gradient(linear,left top,left bottom,from(rgba(255, 255, 255, 0)),to(#303030))}

@@ -188,7 +188,7 @@ function get_cat_posts($the_cat, $pre_cat=false, $limit=99){
         		</nav>
         	</header>
             <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>
-            <video src="<?php echo get_option('site_acgn_video'); ?>" poster="<?php echo get_meta_image($cat, $img_cdn.'/images/1llusion.gif'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+            <video src="<?php echo get_option('site_acgn_video'); ?>" poster="<?php echo get_meta_image($cat, $img_cdn.'/images/1llusion.gif'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload" playsinline -webkit-playsinline></video>
         	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s"><span></span> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '...'; ?> </h5>
         </div>
         <div class="content-all-windows">

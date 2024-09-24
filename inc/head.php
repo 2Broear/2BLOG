@@ -7,9 +7,13 @@
     <meta name="keywords" content="<?php echo get_site_keywords(); ?>">
     <meta name="description" content="<?php echo get_site_description(); ?>">
     <meta http-equiv="Content-Type" content="text/html; charset=<?php bloginfo('charset') ?>">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><!---->
-    <meta name="theme-color" content="<?php echo $theme; ?>">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 如果有安装 Google Chrome Frame 插件则强制为Chromium内核，否则强制本机支持的最高版本IE内核，作用于IE浏览器 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <!-- 强制Chromium内核，作用于360浏览器、QQ浏览器等国产双核浏览器 -->
     <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit" />
+    <meta name="theme-color" content="<?php echo $theme; ?>">
     <meta name="msapplication-TileColor" content="<?php echo $theme; ?>" />
     <meta name="msapplication-TileImage" content="<?php echo get_site_favico(); ?>" />
     <link rel="shortcut icon" href="<?php echo get_site_favico(); ?>"/>

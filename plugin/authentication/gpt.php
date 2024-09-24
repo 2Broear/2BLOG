@@ -83,16 +83,16 @@
                 // print_r('second request token: '.count_chaters($requirements,1,1)); //.count_chaters($requirements,1,1,0,true))
                 // print_r(count_chaters($requirements,1,1,0,true,true));
                 
-                function curlRequest($question, $maxlen=1024, $additional='，注意精简内容') { //注意字数不宜过长
+                function curlRequest($question, $maxlen=1024, $additional='，注意不要换行，不要超过200个字符') { //注意字数不宜过长
                     $merge_ingore = get_option('site_chatgpt_merge_ingore');
                     $openai_proxy = get_option('site_chatgpt_proxy');
                     $openai_key = get_option('site_chatgpt_apikey');
                     $openai_apis = get_option('site_chatgpt_apis');
                     $post_data = array(
                         "model" => get_option('site_chatgpt_model'), //ada
-                        'temperature' => get_option('site_chatgpt_temper', 0.8),
+                        'temperature' => floatval(get_option('site_chatgpt_temper')),
                         "max_tokens" => $maxlen,  // works for completion_tokens only
-                        "prompt" => '分析文章内容，简述文章用意'.$additional.'。
+                        "prompt" => '分析并简述文章用意'.$additional.'。
 文章："""
 '.$question.'
 """', //$question.'。分析上述内容，简述文章用意'.$additional

@@ -22,6 +22,18 @@
         p.has-text-align-right{
             text-align: right;
         }
+        figure.wp-block-gallery img {
+            width: 100%;
+            height: 100%!important;
+        }
+        figure.wp-block-gallery > figure {
+            max-height: 50vh;
+        }
+        /*@media screen and (max-width:600px){*/
+        /*    figure.wp-block-gallery img {*/
+        /*        max-height: 300px!important;*/
+        /*    }*/
+        /*}*/
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

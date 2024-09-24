@@ -103,6 +103,7 @@ h2 sup.loading:after{
 .archive-tree ul li a.link:hover{
     color: var(--theme-color);
     border-color: currentColor!important;
+    text-decoration: underline;
 }
 .archive-tree ul li a.link{
     line-height: 2;

@@ -215,25 +215,138 @@
     add_action( 'init', 'wpdocs_create_post_type', 0 );
     
     //  新增（顶级）主菜单/子菜单/图标
-    add_action('admin_menu','add_settings_menu',1);
+    add_action('admin_menu','add_settings_menu', 1);
     function add_settings_menu() {
         // add_menu_page(__('自定义菜单标题'), __('测试菜单'), 'administrator',  __FILE__, 'my_function_menu', false, 100);
         // add_submenu_page(__FILE__,'子菜单1','测试子菜单1', 'administrator', 'your-admin-sub-menu1', 'my_function_submenu1');
         add_menu_page(__('2BLOG - 主题设置页面'), __('2BLOG 主题设置'), 'read', '2blog-settings', 'add_options_submenu');  // 创建新的顶级菜单
         add_action( 'admin_init', 'register_mysettings' );  // 调用注册设置函数
     }
-    // function my_function_menu() {
-    //   echo "<h2>测试菜单设置</h2>";
-    // }
-    // function my_function_submenu1() {
-    //   echo "<h2>测试子菜单设置一</h2>";
-    // }
-    // WordPress后台添加 general 设置子菜单
-    // add_action('admin_menu', 'options_submenu', 1);
-    // function options_submenu() {
-    //     add_options_page(__('2BLOG - 主题设置页面'), __('2BLOG 主题预设'), 'read', '2blog-settings', 'add_options_submenu');  // 创建新的顶级菜单
-    //     add_action( 'admin_init', 'register_mysettings' );  // 调用注册设置函数
-    // }
+    
+    add_action('admin_menu','add_settings_menus', 0);
+    function add_settings_menus() {
+        add_menu_page(__('2BLOG - RSS 订阅聚合'), __('RSS 友链订阅'), 'read', 'rss-feeds', 'add_options_submenu_rss', 'dashicons-rss');  // 创建新的顶级菜单
+    }
+    function add_options_submenu_rss() {
+?>
+        <style>
+            :root{
+                --panel-theme: <?php echo get_option('site_theme','#eb6844'); ?>;
+            }
+            .formtable{display:none;}.formtable.show{display:block;}.wrap.fixed p.submit:first-child{right:-80px}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.switchTab{background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);padding:10px 0;top:32px;position:sticky;z-index: 9;box-sizing:border-box;/*transition: top .35s ease;top: -32px;padding: 0;*/box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:var(--panel-theme);background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:0;border-radius:25px}.switchTab li b{font-size:initial;display:block;text-shadow:1px 1px 0 white;font-style:normal}
+            h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0}
+        </style>
+        <!--<h1 style="text-align: center;font-size: 4rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> RSS <b>Feeds</b></h1>-->
+        <h1 style="text-align: center;font-size: 4rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b>RSS Feeder</b></h1>
+        <div class="switchTab">
+            <ul>
+                <?php
+                    $link_cats = get_links_category();
+                    asort($link_cats);
+                    foreach ($link_cats as $link_cat) {
+                        echo '<li id="' . $link_cat->slug . '"><b>' . $link_cat->name . '</b></li>';
+                    }
+                ?>
+            </ul>
+        </div>
+        <form method id="contents" style="margin-top:50px;padding:0 5%">
+            <?php
+                // wp_cache_flush(); // bug: to clear wp_options caches
+                // $output_retry = 2;
+                $output_limit = 3;
+                $output_chunk = 10;  // bigger for better performance
+                $output_sw = false;
+                $caches_sw = get_option('site_cache_switcher');
+                $caches_inc = get_option('site_cache_includes');
+                foreach ($link_cats as $link_cat) {
+                    $link_slug = $link_cat->slug;
+                    // if ($link_slug!=='technical') {
+                    //     // single category debug mod
+                    //     continue;
+                    // }
+                    $link_marks = get_site_bookmarks($link_slug);
+            ?>
+                    <div class="formtable <?php echo $link_slug; ?>">
+                        <?php
+                            // use of mysql caches
+                            $output_json = '';
+                            $caches_name = 'site_rss_' . $link_slug . '_cache';
+                            if($caches_sw) {
+                                $output_sw = in_array('rssfeeds', explode(',', $caches_inc));
+                                $output_caches = get_option($caches_name);
+                                if ($output_sw && $output_caches) {
+                                    $output_json = $output_caches;
+                                    $output_data = json_decode($output_json);
+                                    $output_date = isset($output_data[0]->lastUpdate) ? $output_data[0]->lastUpdate : '0000-00-00';
+                                    // $link_api = get_api_refrence('rss', true);  // failed to fetch
+                                    $link_api = get_plugin_refrence('rss', true);
+                                    date_default_timezone_set('Asia/Shanghai');
+                                    // print_r('(' . date('Y-m-d H:i:s', strtotime('today 06:00 Asia/Shanghai')) . ') ' . strtotime('today 06:00 Asia/Shanghai'));
+                                    $scheduled_ts = wp_next_scheduled('db_caches_cronjob_hook');
+                                    if($scheduled_ts) {
+                                        // wp_unschedule_event($scheduled_ts, 'db_caches_cronjob_hook');
+                                        $scheduled_ts = 'Scheduled updates: ' . date('Y-m-d H:i:s', $scheduled_ts) . ' (' . time() .' -> ' . $scheduled_ts . ')<br/>';
+                                        print_r("<i style='float:left;opacity:.75;'>$scheduled_ts</i>");
+                                    }
+                                    echo "<p style='text-align:right;margin-bottom:35px;'>$caches_name ($output_date) <a href='javascript:;' class='reloadFeeds' data-cat='$link_slug' data-limit='3' data-output=1 data-cache=0 data-clear=0 data-api='$link_api'>reload $link_slug?</a></p>"; //
+                                }
+                            }
+                            // $output_json length will be 0 if non-caches loaded
+                            if(strlen($output_json)===0 || !$output_sw) {
+                                // $output_array = array();
+                                $subscribed_urls = array();
+                                foreach ($link_marks as $link_mark) {
+                                    $rss_url = $link_mark->link_rss;
+                                    if ($rss_url && $link_mark->link_visible==='Y') {
+                                        array_push($subscribed_urls, $link_mark);
+                                        // $feed_data = get_rss_feeds($rss_url, $link_mark, $output_limit, true);
+                                        // // $feed_data = get_rss_feeds($rss_url, $link_mark, $output_limit);
+                                        // // $feed_data = fetch_rss_feeds($rss_url, $link_mark, $output_limit);
+                                        // // for ($i=0; $i<$output_retry; $i++) {
+                                        // //     $feed_data = get_rss_feeds($rss_url, $link_mark, $output_limit);
+                                        // //     if ($feed_data !== null) break; // 成功获取结果，跳出重试循环
+                                        // //     sleep(1); // 等待5秒后重试
+                                        // // }
+                                        // if (empty($feed_data) || $feed_data === null) {
+                                        //     $error_class = new stdClass();
+                                        //     $error_class->title = ''; //RSS 内容抓取失败！
+                                        //     $error_class->desc = '无法获取 ta 的 rss 内容，请检查：' . $rss_url;
+                                        //     $error_class->date = '0000-00-00'; //date("Y-m-d");
+                                        //     $error_class->link = 'javascript:;';
+                                        //     $error_class->url = $link_mark->link_url;
+                                        //     $error_class->author = $rss_author;
+                                        //     $error_class->avatar = $link_mark->link_image ?? '//cravatar.cn/avatar/?d=mp&s=50';
+                                        //     array_push($output_array, $error_class);
+                                        //     continue;
+                                        // }
+                                        // array_push($output_array, $feed_data);
+                                        // $output_json = json_encode($output_array);
+                                    }
+                                }
+                                
+                                // fetch_rss_feeds_via_url plus array_chunk limits
+                                $output_json = parse_rss_data($subscribed_urls, $output_limit, $output_chunk);
+                                
+                                if($output_json && $output_sw) {
+                                    echo 'updating caches..';
+                                    update_option($caches_name, wp_kses_post(preg_replace( "/\s(?=\s)/","\1", $output_json )));
+                                    // update_option($caches_name, $output_json);
+                                } else {
+                                    echo '<p style="text-align:center">No rss feeds/caches found on category ' . $link_slug . '</p>';
+                                }
+                            }
+                            // print_r($output_json);
+                            $output_data = json_decode($output_json);
+                            the_rss_feeds($output_data);
+                        ?>
+                    </div>
+            <?php
+                }
+            ?>
+        </form>
+<?php
+    }
+    
     // 注册设置
     function register_mysettings() {
         register_setting( 'baw-settings-group', 'site_nick' );
@@ -582,7 +695,7 @@
             ul.cached_post_list li:hover{border-color:transparent;text-decoration:underline;/*opacity:.75;border-style:dashed;background:whitesmoke;*/}
             /*ul.cached_post_list li:hover::before{content:attr(data-title)}*/
             /*ul.cached_post_list li:hover::after{content:'×';width:15px;height:15px;position:absolute;top:5px;right:5px;border:1px solid;border-radius:50%;line-height:14px;background:whitesmoke}*/
-            ul.cached_post_list li:hover::before{content:'重新摘要';font-size:small;}
+            ul.cached_post_list li:hover::before{content:attr(title);content:'重新摘要';font-size:small;}
             ul.cached_post_list li:hover::after{display:block}
             ul.cached_post_list li:before{
                 content:attr(data-id);
@@ -2007,7 +2120,10 @@
                                     <?php
                                         $opt = 'site_cache_includes';  //unique str
                                         $value = get_option($opt);
-                                        $async_opts = array($templates_info['news'], $templates_info['notes'], $templates_info['weblog'], $templates_info['acg'], $templates_info['2bfriends'], $templates_info['download'], $templates_info['archive'], $templates_info['ranks'], $templates_info['goods']);
+                                        $rss_feeds = new stdClass();
+                                        $rss_feeds->name = 'RSS 订阅';
+                                        $rss_feeds->slug = 'rssfeeds';
+                                        $async_opts = array($templates_info['news'], $templates_info['notes'], $templates_info['weblog'], $templates_info['acg'], $templates_info['2bfriends'], $templates_info['download'], $templates_info['archive'], $templates_info['ranks'], $templates_info['goods'], $rss_feeds);
                                         // print_r($async_opts);
                                         if(!$value){
                                             $preset_str = $async_opts[3]->slug.','.$async_opts[5]->slug.','.$async_opts[6]->slug.',';
@@ -2132,7 +2248,7 @@
                         </td>
                     </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt = get_option('site_chatgpt_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— API Key <sup title="兼容 Moonshot KIMI">兼容</sup></th>
+                                <th scope="row">— API Key <sup title="兼容 Moonshot KIMI">OPEN AI</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_apikey';
@@ -2142,7 +2258,7 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— API Proxy <sup title="兼容 Moonshot KIMI">兼容</sup></th>
+                                <th scope="row">— API Proxy <sup title="兼容 Moonshot KIMI">OPEN AI</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_proxy';
@@ -2154,7 +2270,7 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— APIs List <sup title="兼容 Moonshot KIMI">兼容</sup></th>
+                                <th scope="row">— APIs List <sup title="兼容 Moonshot KIMI">OPEN AI</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_apis';
@@ -2172,7 +2288,7 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— API Module <sup title="兼容 Moonshot KIMI">兼容</sup></th>
+                                <th scope="row">— API Module <sup title="兼容 Moonshot KIMI">OPEN AI</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_model';

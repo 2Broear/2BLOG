@@ -112,7 +112,7 @@
             // return new Promise(function (resolve, reject) {  // RETURN caused outside-loop array length calc-err
             new Promise(function(resolve, reject){
                 if(video.autoplay){
-                    reject(Object.assign(msgJson, {msg:'setupVideoPoster Abort by autoplay', code:'v'+i}));
+                    reject(Object.assign(msgJson, {msg:'setupVideoPoster Abort on autoplay', code:'v'+i}));
                     return;
                 }
                 let vdo = document.createElement('video');
@@ -262,6 +262,46 @@
                 execDance(each,counter,limit);
             }
         }
+    }
+    
+    function easeCounter (from = 0, to = 1, speed = 0.1, delta = 1, callback = false, easingFn = false, max = 100, min = 1) {
+        let timer;
+        let progress = 0, 
+            direction = 1; // 1 for increasing progress, -1 for decreasing
+        const deltaSpeed = speed * delta;
+        const totalSteps = Math.abs((to - from) / deltaSpeed);
+        return (function runCounter() {
+            if (from === to) {
+                if (timer) clearTimeout(timer);
+                return from;
+            }
+            // Update the value
+            if (from < to) {
+                from += deltaSpeed;
+                if (from > to) from = to;
+            } else {
+                from -= deltaSpeed;
+                if (from < to) from = to;
+            }
+            
+            // Update progress
+            progress += direction;
+            if (progress >= totalSteps || progress <= 0) {
+                direction *= -1; // Reverse direction
+            }
+            /* easing effects: 
+             / slow-fast-slow: (x) => Math.sin(x * Math.PI);
+             / slow-fast: (x) => Math.pow(1 - x, 2);
+             / fast-slow: (x) => Math.pow(x, 2);
+            */
+            if (typeof easingFn !== 'function') easingFn = (x) => Math.sin(x * Math.PI);
+            // Calculate delay using a sine wave to create a slow-fast-slow effect
+            const normalizedProgress = progress / totalSteps;
+            const delay = min + (max - min) * (1 - easingFn(normalizedProgress));
+            // Set the next timer
+            timer = setTimeout(runCounter, delay);
+            callback?.(from, delay);
+        })();
     }
     
     function dynamicLoad(jsUrl,fn){

@@ -43,7 +43,7 @@
                 $output .= '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
             endwhile;
             wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
-            if($output_sw) update_option($cache, $output); //wp_kses_post($output)
+            if($output_sw) update_option($cache, wp_kses_post($output)); //wp_kses_post($output)
         }
         echo $output;
     }
@@ -88,8 +88,8 @@
         }
         .banner .banner-inside ul{
             max-height: 268px;
-            filter: opacity(0.15);
-            /*filter: invert(1);*/
+            /*filter: opacity(0.15);*/
+            filter: invert(1);
             /*animation: colorfull ease 3s .5s;*/
         }
         <?php
@@ -148,6 +148,7 @@
             letter-spacing: 5px;
             font-family: math;
             font-size: 150%;
+            font-weight: 100;
         }
         .weBlog-Description .weBlog-Description-inside-content span p{
             display: none;

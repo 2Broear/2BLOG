@@ -26,7 +26,7 @@
         }
     }
     $QSTR = array_key_exists('QUERY_STRING', $_SERVER) ? $_SERVER['QUERY_STRING'] : false;
-    if($QSTR){
+    if($QSTR) {
         parse_str($QSTR, $params);
         function send_auth_request(){
             global $params;
@@ -73,10 +73,11 @@
                             // curl request
                             break;
                     }
+                    // print_r($auth_url);
                     curl_setopt($ch, CURLOPT_URL, $auth_url);
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  // 连接时间
-                    curl_setopt($ch, CURLOPT_TIMEOUT, 10);  // 连接超时
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);  // 连接时间
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 60);  // 连接超时
                     // curl_setopt($ch, CURLOPT_RETRIES, 3);  // 重试连接
                     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                     // custom server request-header

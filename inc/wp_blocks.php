@@ -9,7 +9,7 @@
     function custom_bilibili_shortcode($atts){
         $vid = isset($atts['vid']) ? $atts['vid'] : 'vid';
         $class = isset($atts['class']) ? $atts['class'] : 'bilibili_embed';
-        return '<iframe class="'.$class.'" src="//player.bilibili.com/player.html?bvid='.$vid.'&autoplay=0&t=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>';
+        return '<iframe class="'.$class.'" src="//bilibili.com/blackboard/html5mobileplayer.html?bvid='.$vid.'&t=0&hideCoverInfo=1&danmaku=0" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>';
     }
     function custom_title_shortcode($atts, $content = null) {
         $statu = isset($atts['statu']) ? $atts['statu'] : 'normal';

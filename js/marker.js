@@ -50,7 +50,7 @@
                     a.${c_line}{color:inherit;text-decoration:none!important;background:-webkit-linear-gradient(${s_lineDegrees}deg, ${s_lineColor} 0%, ${s_lineColors} 100%) no-repeat left 100%/0 ${s_lineBold}%;background:linear-gradient(${s_lineDegrees}deg, ${s_lineColor} 0%, ${s_lineColors} 100%) no-repeat left 100%/0 ${s_lineBold}%;background-size:100% ${s_lineBold}%;transition:background-size .15s ease;animation:${c_underline} 1s 1 ease;-webkit-animation:${c_underline} 1s 1 ease;cursor:text;user-select:text;-webkit-user-drag:none;position:relative;}
                     a.${c_line}.${c_processing} .${c_tool},
                     a.${c_line}:hover .${c_tool}{padding:10px 0 50px;opacity:1;z-index:1;}
-                    a.${c_line} .${c_tool}{padding-bottom:15px;position:absolute;top:0%;left:50%;transform:translate(-50%,-50%);opacity:0;z-index:-1;transition:all .15s ease;font-family:auto;}
+                    a.${c_line} .${c_tool}{padding-bottom:15px;position:absolute;top:0;left:0;transform:translate(0,-50%);opacity:0;z-index:-1;transition:all .15s ease;font-family:auto;}
                     a.${c_line} .${c_tool} .${c_toolIn}{color:black;line-height:27px;font-size:11px;font-weight:normal;font-style:normal;white-space:nowrap;padding:0 5px;border:1px solid #fff;border-radius:5px;box-sizing:border-box;background:linear-gradient(0deg,#f5f7f9 0,#ffffff);background:-webkit-linear-gradient(90deg,#f5f7f9 0,#ffffff);box-shadow:rgba(0,0,0,0.12) 0 1px 18px;position:relative;user-select:none;-webkit-user-select:none;}
                     a.${c_line}.${c_processing} .${c_tool} .${c_note},
                     a.${c_line}.${c_done}:hover .${c_tool} .${c_note}{margin:0 0 10px 10px;}
@@ -61,7 +61,7 @@
                     a.${c_line} .${c_tool} .${c_note}:hover input{border-radius:50px;color:white;background:currentColor;box-shadow:inherit;/*border: 1px solid currentColor;background:inherit;*/}
                     a.${c_line} .${c_tool} .${c_note}:hover input{width: 100px;margin: auto 5px;padding: 2px 8px;color: inherit;border: 1px solid currentColor;background: transparent;}
                     a.${c_line} .${c_tool} .${c_note} input{width: 0px;padding:0px;font-size: 10px;box-sizing: border-box;transition:all .15s ease;border:none;}
-                    a.${c_line}.${c_done} .${c_tool} .${c_note} label{color:black;font-style: italic;}
+                    a.${c_line}.${c_done} .${c_tool} .${c_note} label{color:black;/*font-style: italic;*/}
                     a.${c_line} .${c_tool} i:first-of-type,
                     a.${c_line}.${c_done} .${c_tool} .${c_note} input{border-color:currentColor!important;display:none;}
                     a.${c_line}.${c_done} .${c_tool} .${c_avatars}{margin:2px 5px 3px 10px;}
@@ -366,14 +366,15 @@
                     return event ? event : window.event;
                 },
                 add: function(element=null, type='', handler=false, cb=false) {
-                    let {_utils: {_event: {add:addEvent}, _etc: {assert}}} = marker,
+                    let {_utils: {_event: {add:addEvent}, _etc: {assert}, _dom: {valider}}} = marker,
                         init_func = function(element=null, type='', handler=false, callback=false){
-                            if(!element || !type) return;
+                            if(!type) return;
                             assert(handler && typeof handler==='function', 'addEvent callback err.');
                             callback();
                             console.debug(type, 'event loaded.');
                         }; // _that = this&&this.add ? this : marker._utils._event;
                     try {
+                        if (!valider(element)) throw new Error('invalid element provided', valider);
                         if(element.addEventListener){
                             addEvent = function(element=null, type='', handler=false, cb=false){
                                 init_func(element, type, handler, ()=>{
@@ -394,7 +395,9 @@
                             };
                         }
                         addEvent(element, type, handler, cb);
-                    } catch (error) {}
+                    } catch (error) {
+                        console.warn(error);
+                    }
                 },
                 getTarget: (event)=> {
                     return event.target || window.srcElement;
@@ -714,7 +717,7 @@
                     console.warn('invalid nodes or classList', node);
                     return false;
                 }
-                let blackTags = ['h1','h2','h3','h4','h5','h6','a','s','del','code','mark','details','summary'],
+                let blackTags = ['h1','h2','h3','h4','h5','h6','a','s','del','code','mark','details','summary', 'blockquote'],
                     blackList = c_blackList instanceof Array ? c_blackList : [];
                 for(let i=0;i<blackTags.length;i++){
                     let blackTag = blackTags[i].toUpperCase();
@@ -1222,8 +1225,11 @@
         __proto__: {
             init: function(user_conf = {}){
                 try {
-                    const that = Object.getPrototypeOf(this)!==marker.init.prototype ? marker.init.prototype : this,
-                          _conf_res = that._singleton_conf._rewriter.call(that, user_conf);
+                    const that = Object.getPrototypeOf(this)!==marker.init.prototype ? marker.init.prototype : this;
+                    // console.log('publicDefault', that._singleton_conf.publicDefault)
+                    const _conf_res = that._singleton_conf._rewriter(user_conf, that._singleton_conf.publicDefault);
+                    // console.log('_rewriter', _conf_res);
+                    // console.log('_rewriters', that._singleton_conf._rewriters(user_conf, that._singleton_conf.publicDefault, true));
                     // 冻结 _conf、_conf.static 对象成员（）
                     Object.freeze(_conf_res);
                     // rewrite user-conf
@@ -1388,29 +1394,64 @@
                         setter: {},
                     };
                 return {
-                    publicDefault: Object.create(null),
-                    _rewriter: function fn(rewrites=this.publicDefault, presets=presetConfs, merge=false) {
-                        if (!marker._utils._etc.isObject(presets)) return;
-                        for (const property in rewrites) {
-                            if (!rewrites.hasOwnProperty(property)) continue;
-                            const rewrite_conf = rewrites[property];
-                            if (marker._utils._etc.isObject(rewrite_conf) && Reflect.ownKeys(rewrite_conf).length === 0) continue;
-                            if (marker._utils._etc.isObject(rewrite_conf)) {
-                                if (merge) {
-                                    // merge both of {rewrites} and {presets}
-                                    if (!marker._utils._etc.isObject(presets[property])) {
-                                        presets[property] = {};
+                    // publicDefault: presetConfs, //Object.create(null),
+                    // _rewriters: function fn(rewrites={}, presets=this.publicDefault, merge=false) {
+                    //     if (!marker._utils._etc.isObject(presets)) return;
+                    //     for (const property in rewrites) {
+                    //         if (!rewrites.hasOwnProperty(property)) continue;
+                    //         const rewrite_conf = rewrites[property];
+                    //         if (marker._utils._etc.isObject(rewrite_conf) && Reflect.ownKeys(rewrite_conf).length === 0) continue;
+                    //         if (marker._utils._etc.isObject(rewrite_conf)) {
+                    //             if (merge) {
+                    //                 // merge both of {rewrites} and {presets}
+                    //                 if (!marker._utils._etc.isObject(presets[property])) {
+                    //                     // presets[property] = {};
+                    //                     presets[property] = [...new Set([...presets[property], ...rewrite_conf])];
+                    //                 }else{
+                    //                     presets[property] = fn(rewrite_conf, presets[property], merge);
+                    //                 }
+                    //             }else{
+                    //                 // rewrite only if {rewrites} exists in {presets}!!!
+                    //                 presets[property] = fn(rewrite_conf, presets[property] || {}, merge); //this.confRewriter
+                    //             }
+                    //         } else {
+                    //             presets[property] = rewrite_conf;
+                    //         }
+                    //     }
+                    //     return presets;
+                    // },
+                    _rewriter: function mergeObjects(rewrite = {}, preset = presetConfs, merge = true) {
+                        const result = { ...preset };
+                        for (const key in rewrite) {
+                            if (rewrite.hasOwnProperty(key)) {
+                                const validObjects = marker._utils._etc.isObject(result[key]) && marker._utils._etc.isObject(rewrite[key]);
+                                if (merge) { // && marker._utils._etc.isObject(result[key])
+                                    if (Array.isArray(result[key]) && Array.isArray(rewrite[key])) {
+                                        // 合并数组
+                                        result[key] = [...new Set([...result[key], ...rewrite[key]])];
+                                    } else if (marker._utils._dom.valider(rewrite[key])) {
+                                        // 覆盖元素
+                                        result[key] = rewrite[key];
+                                    } else {
+                                        // 递归合并对象
+                                        if (validObjects) {
+                                            result[key] = mergeObjects(rewrite[key], result[key] || {}, merge);
+                                        } else {
+                                            // 直接覆盖
+                                            result[key] = rewrite[key];
+                                        }
                                     }
-                                    presets[property] = fn(rewrite_conf, presets[property]);
-                                }else{
-                                    // rewrite only if {rewrites} exists in {presets}!!!
-                                    presets[property] = fn(rewrite_conf, presets[property] || {}); //this.confRewriter
+                                } else {
+                                    if (validObjects) {
+                                        result[key] = mergeObjects(rewrite[key], result[key] || {}, merge);
+                                    } else {
+                                        // 直接覆盖
+                                        result[key] = rewrite[key];
+                                    }
                                 }
-                            } else {
-                                presets[property] = rewrite_conf;
                             }
                         }
-                        return presets;
+                        return result;
                     },
                 };
             }(),

@@ -180,7 +180,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                     <?php get_header(); ?>
                 </nav>
             </header>
-            <video src="<?php echo $video = replace_video_url(get_option('site_acgn_video')); ?>" poster="<?php echo $video ? $video : get_meta_image($cat, $img_cdn.'/images/acg.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+            <video src="<?php echo $video = replace_video_url(get_option('site_acgn_video')); ?>" poster="<?php echo $video ? $video : get_meta_image($cat, $img_cdn.'/images/acg.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload" playsinline -webkit-playsinline></video>
             <div class="counter">
                 <?php
                     $async_sw = get_option('site_async_switcher');
@@ -204,6 +204,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                                     $caches = get_option('site_cache_includes');
                                     $temp_slug = get_cat_by_template('acg','slug');
                                     $output_sw = in_array($temp_slug, explode(',', $caches));
+                                    // echo $output_sw;
                                     $output = $output_sw ? get_option('site_acg_stats_cache') : '';
                                 }
                                 if(!$output || !$output_sw){
@@ -238,24 +239,26 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                 <?php
                     if(!$baas){
                         //acg post list(multi)
-                        function the_acg_posts(){
+                        function the_acg_posts() {
                             global $cat, $cats, $preset, $async_loads;
                             $preslug = $preset->slug;
                             $output = '';
-                            if(!empty($cats) && current_slug()==$preslug){
+                            if(!empty($cats) && current_slug()==$preslug) {
                                 // cache db only if not-single sub-page
                                 $output_sw = false;
-                                if(get_option('site_cache_switcher')){
+                                if(get_option('site_cache_switcher')) {
                                     $caches = get_option('site_cache_includes');
                                     $temp_slug = get_cat_by_template('acg','slug');
                                     $output_sw = in_array($temp_slug, explode(',', $caches));
                                     $output = $output_sw ? get_option('site_acg_post_cache') : '';
                                 }
-                                if(!$output || !$output_sw){
-                                    foreach($cats as $the_cat) $output .= get_acg_posts($the_cat, $preslug, $async_loads);
+                                if(!$output || !$output_sw) {
+                                    foreach($cats as $the_cat) {
+                                        $output .= get_acg_posts($the_cat, $preslug, $async_loads);
+                                    }
                                     // wp_kses_post() filted javascript:; href
                                     if($output_sw) update_option('site_acg_post_cache', $output); //wp_kses_post($output)
-                                }else{
+                                } else {
                                     // always update wp-nonce if db-cached
                                     foreach($cats as $the_cat){
                                         $cat_slug = $the_cat->slug;
@@ -264,7 +267,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                                         $output = preg_replace('/<a(.*)data-nonce=("[^"]*")(.*)data-cat=("'.strtoupper($cat_slug).'")(.*)<\/a>/i', '<a$1data-nonce="'.$cur_nonce.'"$3data-cat=$4$5</a>', $output);
                                     }
                                 }
-                            }else{
+                            } else {
                                 $output .= get_acg_posts(get_category($cat), $preslug, $async_loads);
                             }
                             // wp_kses_post() caused setupBlurColor() unabled to setup
@@ -287,45 +290,6 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
 	</div>
 <!-- siteJs -->
 <script>
-    function easeCounter (from = 0, to = 1, speed = 0.1, delta = 1, callback = false, easingFn = false, max = 100, min = 1) {
-        let timer;
-        let progress = 0, 
-            direction = 1; // 1 for increasing progress, -1 for decreasing
-        const deltaSpeed = speed * delta;
-        const totalSteps = Math.abs((to - from) / deltaSpeed);
-        return (function runCounter() {
-            if (from === to) {
-                if (timer) clearTimeout(timer);
-                return from;
-            }
-            // Update the value
-            if (from < to) {
-                from += deltaSpeed;
-                if (from > to) from = to;
-            } else {
-                from -= deltaSpeed;
-                if (from < to) from = to;
-            }
-            
-            // Update progress
-            progress += direction;
-            if (progress >= totalSteps || progress <= 0) {
-                direction *= -1; // Reverse direction
-            }
-            /* easing effects: 
-             / slow-fast-slow: (x) => Math.sin(x * Math.PI);
-             / slow-fast: (x) => Math.pow(1 - x, 2);
-             / fast-slow: (x) => Math.pow(x, 2);
-            */
-            if (typeof easingFn !== 'function') easingFn = (x) => Math.sin(x * Math.PI);
-            // Calculate delay using a sine wave to create a slow-fast-slow effect
-            const normalizedProgress = progress / totalSteps;
-            const delay = min + (max - min) * (1 - easingFn(normalizedProgress));
-            // Set the next timer
-            timer = setTimeout(runCounter, delay);
-            callback?.(from, delay);
-        })();
-    }
     // easeCounter(0, 100, 1, 0.5, (from, delay)=> {
     //     console.log(from, delay)
     // })

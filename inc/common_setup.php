@@ -139,6 +139,7 @@
             }else if(isset($cached_post['chat_pid_'.$pid]['choices'][0])){
                 $desc = isset($cached_post['chat_pid_'.$pid]['choices'][0]['message']) ? $cached_post['chat_pid_'.$pid]['choices'][0]['message']['content'] : $cached_post['chat_pid_'.$pid]['choices'][0]['text'];
             }
+            $desc = mb_substr($desc, 0, 666) . '...';
         }else{
             $desc = custom_excerpt(999, true); //get_the_excerpt();
         }
