@@ -139,7 +139,7 @@
 	margin: 0 auto;
 	white-space: nowrap;
 	/*width: 175%;150 145 123 115%*/
-    max-height: 6em;
+    /*max-height: 6em;*/
     white-space: initial;
     overflow-wrap: anywhere;
     overflow-wrap: break-word;

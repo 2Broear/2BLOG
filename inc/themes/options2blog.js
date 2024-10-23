@@ -1,20 +1,23 @@
 jQuery(document).ready(function($){
-    function bindEventClick(parent, cls, callback){
+    function bindEventClick(parent, ids, callback){
         parent.onclick=(e)=>{
             e = e || window.event;
             let t = e.target || e.srcElement;
             if(!t) return;
             while(t!=parent){
-                if(!t) break;
-                if(t.classList && t.classList.contains(cls) || t.nodeName.toUpperCase()===cls.toUpperCase()){
+                if(!ids || ids==="") {
+                    callback(t,e);
+                    break;
+                }
+                if(t.id===ids || t.classList && t.classList.contains(ids) || t.nodeName.toUpperCase()===ids.toUpperCase()){
                     // callback?.();
                     if(callback&&typeof callback==='function') callback(t,e); //callback(t) || callback(t); // callback.apply(this, ...arguments);
                     break;
-                }else{
-                    t = t.parentNode;
                 }
+                // console.log('origin', t);
+                t = t.parentNode;
             }
-        }
+        };
     }
     
     function getParentElement(curEl, parCls){
@@ -356,8 +359,68 @@ jQuery(document).ready(function($){
         clearClass(document.querySelectorAll("form ."+switchcls),switchcls);  // upadted els while click
         document.querySelector("form ."+t.id).classList.add(switchcls);  // clearClass then show
     });
-        
-        
+    
+
+    bindEventClick(blog_settings, '', (t)=> {
+        if (t.id!=='updateSchedule') return;
+        // console.log(t)
+        if (confirm(`Updating Scheduled Tasks(scheduled_rss_feeds_updates)?`)) {
+            const updateScheduleInput = blog_settings.querySelector('#updateSchedules');
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', t.dataset.adminUrl, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        t.disabled = true;
+                        alert('updating status: ' + response.data + ' Standby cronjob-redepoly..'); // + ', Locate to rss-feeds now..'
+                        let counter = 3;
+                        t.value = 'Standby ' + counter;
+                        let countdown = setInterval(()=> {
+                            if (counter<=1) {
+                                clearInterval(countdown);
+                                t.value = 'Schedules updated';
+                                updateScheduleInput.disabled = false;
+                                updateScheduleInput.focus();
+                                return;
+                            }
+                            counter--;
+                            t.value = 'Standby ' + counter;
+                        }, 1000);
+                        // location.replace(location.origin + location.pathname + "?page=" + t.dataset.page);
+                        // location.reload(true);
+                    } else {
+                        console.error('Error:', response.data);
+                    }
+                } else {
+                    console.error('Request failed with status:', xhr.status);
+                }
+            };
+            xhr.send('action=update_cronjobs&nonce=' + t.dataset.nonce + '&interval=' + updateScheduleInput.value);
+            // fetch(`${t.dataset.api}refresh=1`, {
+            //     method: 'GET',
+            // })
+            // .then(res=> {
+            //     if (res.ok) {
+            //         return res.text(); //json()
+            //     }
+            //     console.warn('request failed.')
+            // })
+            // .then(data=> {
+            //     t.disabled = 'disabled';
+            //     alert(data + ', Locate to rss-feeds now..');
+            //     location.replace(location.origin + location.pathname + "?page=" + t.dataset.page);
+            //     // location.reload(true);
+            // })
+            // .catch(error => {
+            //     container.querySelector('p').innerHTML = `Reload site_rss_${dataset.cat}_cache failed, <u>${ error }!</u>`;
+            //     console.error('Error fetching progress:', error);
+            // });
+        }
+    });
+    
+    
     // rss fetch feeds reloader
     const contents = document.querySelector('#contents');
     const reloader = 'reloadFeeds';
@@ -369,7 +432,7 @@ jQuery(document).ready(function($){
             t.textContent = `fetching ${dataset.cat}...`;
             t.classList.remove(reloader);
             console.log('loading url: ', dataset.api);
-            fetch(`${dataset.api}&cat=${dataset.cat}&limit=${dataset.limit}&output=${dataset.output}&cache=${dataset.cache}&clear=${dataset.clear}`, {
+            fetch(`${dataset.api}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, {
                 method: 'GET',
             })
             .then(res=> {

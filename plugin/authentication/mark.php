@@ -35,6 +35,7 @@
     define('REQUEST_text', get_request_param('text'));
     define('REQUEST_note', get_request_param('note'));
     define('REQUEST_like', get_request_param('like'));
+    define('REQUEST_liked', get_request_param('liked'));
     define('SAVE_prefix', 'marker-' . REQUEST_pid);
     define('EXEC_fetch', get_request_param('fetch'));
     define('EXEC_count', get_request_param('count'));
@@ -203,23 +204,34 @@
                     case 403:
                     default:
                         $exists_nick = $exists_records->nick;
-                        $exists_msg = 'mark already exists! record (#'.$exists_rid.'): "'.$exists_records->text.'" has already marked by '.$exists_nick.' at '.$exists_date.' on '.SAVE_prefix;
+                        $exists_msg = 'mark already exists! record (#'.$exists_rid.'): "'.rawurldecode($exists_records->text).'" has already marked by '.$exists_nick.' at '.$exists_date.' on '.SAVE_prefix;
                         // non-notes requires..
-                        if(REQUEST_like && !isset($exists_records->note)) {
+                        // additional like button no longer required noted marks
+                        if(REQUEST_like) { // && !isset($exists_records->note)
                             $exists_like = &$exists_records->like; // $memory_quote of like
-                            if(isset($exists_like)) {
-                                if(in_array(REQUEST_like, $exists_like)) {
-                                    $exists_code = 400; // permission granted but server rejected
-                                    $exists_msg = 'you liked this mark(#'.$exists_rid.') already!';
-                                }
-                                break;
-                            }
-                            $exists_like = array();
-                            array_push($exists_like, REQUEST_like);
                             $exists_code = 200; // no alert on abort
                             $exists_msg = 'you liked the mark(#'.$exists_rid.') by '.$exists_nick;
+                            if (REQUEST_liked) {
+                                $exists_like = array_filter($exists_like, function($value) {
+                                    return $value !== REQUEST_like;
+                                });
+                                $exists_msg = 'you dis-liked the mark(#'.$exists_rid.')';
+                                break;
+                            }
+                            if(!isset($exists_like) || !is_array($exists_like)) {
+                                $exists_like = array();
+                                array_push($exists_like, REQUEST_like);
+                                break;
+                            }
+                            if(in_array(REQUEST_like, $exists_like)) {
+                                $exists_code = 400; // permission granted but server rejected
+                                $exists_msg = 'you liked this mark(#'.$exists_rid.') already!';
+                                break;
+                            }
+                            array_push($exists_like, REQUEST_like);
+                            break;
                         }
-                        break;
+                        // break;
                 }
                 return update_marker_record(CACHED_PATH, $memory_caches, get_update_status($exists_msg, $exists_code));
             };

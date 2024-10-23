@@ -418,14 +418,17 @@
      *--------------------------------------------------------------------------
     */
     
-    function get_links_category(){
+    function get_links_category($param = false) {
         $bookmark_categories = get_terms('link_category');
         if (!empty( $bookmark_categories ) && !is_wp_error($bookmark_categories)){
+            if ($param) {
+                $param_array = array();
+                foreach ($bookmark_categories as $bookmark_category) {
+                    array_push($param_array, $bookmark_category->$param);
+                }
+                return $param_array;
+            }
             return $bookmark_categories;
-            // foreach ($bookmark_categories as $category) {
-            //     echo '分类名称：' . $category->name . '<br>';
-            //     echo '分类 ID：' . $category->term_id . '<br>';
-            // }
         } else {
             echo 'No bookmark categories found.';
         }
@@ -745,7 +748,7 @@
     */
     
     // 日志记录函数
-    function log_to_file($message, $file = 'log.txt') {
+    function report_logs($message, $file = 'log.txt') {
         $log_file = WP_CONTENT_DIR . '/uploads/' . $file; // 确保 uploads 目录存在且可写
         if (!file_exists($log_file)) {
             touch($log_file); // 如果文件不存在，则创建文件
@@ -766,10 +769,8 @@
             //清除（重建）友情链接
             update_option('site_link_list_cache', '');
             
+            // 更新（指定所有包含分类） rss 订阅
             $link_category = wp_get_link_cats($link_id);
-            // 更新（唯一最近分类）rss 订阅
-            // update_option(get_term_field('slug', $link_category[0], 'link_category'), '');  // 清除（重建）聚合内容
-            // 更新（所有包含分类） rss 订阅
             foreach ($link_category as $category) {
                 $each_category = get_term_field('slug', $category, 'link_category', 'raw');
                 update_option('site_rss_' . $each_category . '_cache', '');  // 清除（所有分类）聚合内容
@@ -831,24 +832,67 @@
         add_action('save_post', 'site_update_specific_caches');
         add_action('delete_post', 'site_update_specific_caches');
         
+        
         /*****   wp_schedule_event 定时任务   *****/
         
-        add_action('wp', 'schedule_my_cronjob');
-        function schedule_my_cronjob() {
-            // date_default_timezone_set('Asia/Shanghai');
-            // $now = time(); // 获取当前时间
+        add_filter( 'cron_schedules', 'custom_add_cron_interval' );
+        function custom_add_cron_interval( $schedules ) {
+            $update_hours = get_option('site_rss_update_interval', 12);
+            $schedules[$update_hours . 'hours'] = array(
+                'interval' => $update_hours * HOUR_IN_SECONDS, //600
+                'display'  => esc_html__( "Every $update_hours Hours" ), );
+            return $schedules;
+        }
+        
+        // 刷新定时任务AJAX动作
+        add_action('wp_ajax_update_cronjobs', 'update_all_cronjobs');
+        // _ajax_nonce 校验
+        add_action('wp_ajax_nopriv_update_cronjobs', 'update_all_cronjobs');
+        function update_all_cronjobs() {
+            // 安全检查
+            check_ajax_referer('update_cronjobs', 'nonce');
+            // 取消定时任务
+            wp_clear_scheduled_hook('scheduled_rss_feeds_updates_hook');
+            // 调用安排定时任务的函数
+            $param_interval = isset($_GET['interval']) ? $_GET['interval'] : $_POST['interval'];
+            schedule_all_cronjob($param_interval);
+            // 返回一个响应
+            wp_send_json_success('200');
+        }
+
+        add_action('wp', 'schedule_all_cronjob');
+        function schedule_all_cronjob($param_interval = 0) {
             if(!wp_next_scheduled('db_caches_cronjob_hook')){
                 // 设定定时作业执行时间（东八区时间）
                 $timestamp = strtotime('today 06:00 Asia/Shanghai'); // 设置每天上午执行一次定时作业
                 wp_schedule_event($timestamp, 'daily', 'db_caches_cronjob_hook'); 
             }
+            // 检查是否已经安排了事件，避免重复安排
+            if ( ! wp_next_scheduled( 'scheduled_rss_feeds_updates_hook' ) ) {
+                date_default_timezone_set('Asia/Shanghai');
+                // 当前时间的时间戳
+                $timestamp = time(); //current_time( 'timestamp' ); //
+                $hours_interval = $param_interval ? $param_interval : get_option('site_rss_update_interval', 12) . 'hours';
+                // 安排事件，每隔$interval小时执行一次
+                wp_schedule_event( $timestamp, $hours_interval, 'scheduled_rss_feeds_updates_hook' );
+            }
         }
+        
         //定时清除（重建）缓存
         add_action('db_caches_cronjob_hook', 'site_clear_timeout_caches'); //定时更新 db caches
         function site_clear_timeout_caches() {
             // 定时清除（重建）ACG 缓存
             update_option('site_acg_stats_cache', '');
             update_option('site_rank_list_cache', '');
+            // 触发更新
+            report_logs("（定时任务）开始更新 ACG 数据..."); // 记录日志
+            $response = wp_remote_get(get_category_link(get_cat_by_template('acg', 'term_id')));
+            if (!is_wp_error($response)) {
+                report_logs("（定时任务）ACG 已更新。\n"); // $body = wp_remote_retrieve_body($response);
+            } else {
+                report_logs('（定时任务）ACG 更新失败：' . $response->get_error_message() . '）'); // 记录错误日志
+            }
+            
             // 清除（重建）归档数据
             update_option('site_archive_count_cache', '');
             update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
@@ -857,40 +901,51 @@
                 update_option('site_archive_' . $archive_year . '_cache', '');
             }
             update_option('site_archive_years_cache', '');
-            
-            // 触发 api 更新（全部） rss 订阅
-            log_to_file('（定时任务）开始更新缓存..'); // 记录日志
-            $link_cats = get_links_category();
-            foreach ($link_cats as $link_cat) {
-                $link_slug = $link_cat->slug;
+            // 触发更新
+            report_logs("（定时任务）开始更新归档数据..."); // 记录日志
+            $response = wp_remote_get(get_category_link(get_cat_by_template('archive', 'term_id')));
+            if (!is_wp_error($response)) {
+                report_logs("（定时任务）归档已更新。\n"); // $body = wp_remote_retrieve_body($response);
+            } else {
+                report_logs('（定时任务）归档更新失败：' . $response->get_error_message() . '）'); // 记录错误日志
+            }
+        }
+        
+        // 定时事件安排
+        add_action( 'scheduled_rss_feeds_updates_hook', 'scheduled_rss_feeds_updates' );
+        // 触发 api 更新（全部） rss 订阅
+        function scheduled_rss_feeds_updates() {
+            report_logs("（定时任务）开始更新 RSS 缓存....................."); // 记录日志
+            date_default_timezone_set('Asia/Shanghai');
+            $links_slug = get_links_category('slug');
+            foreach ($links_slug as $link_slug) {
+                report_logs('（定时任务）正在更新 ' . $link_slug . '..'); // 记录日志
                 // update_option('site_rss_' . $link_slug . '_cache', $link_slug);  // 清除（重建）所有聚合内容
-                $api_url = get_plugin_refrence('rss', true) . "cat=$link_slug&limit=3&output=0&cache=0&clear=0";  // 注：服务端请求无法使用cdn，客户端可用 get_api_refrence
-                log_to_file("（定时任务）正在更新：$api_url"); // 记录日志
-                
+                $api_url = get_plugin_refrence('rss', true) . "cat=$link_slug&limit=3&update=1&output=0&clear=0";  // 注：服务端请求无法使用cdn，客户端可用 get_api_refrence
                 // 触发 API（更新）聚合内容
-                $response = wp_remote_get($api_url);
-                if (!is_wp_error($response)) {
-                    $body = wp_remote_retrieve_body($response);
-                    log_to_file('（定时任务）已更新 ' . $link_slug . '：' . json_decode($body)[0]->lastUpdate); // 记录日志
-                    continue;
-                }
-                
-                // 触发 curl 重试（一次）
-                $error_message = $response->get_error_message();
-                log_to_file('（定时任务）重试更新：' . $error_message); // 记录错误日志
                 $ch = curl_init($api_url);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // 返回响应，而不是直接输出
                 curl_setopt($ch, CURLOPT_HEADER, false); // 不需要返回响应头
                 $res = curl_exec($ch);
-                if (curl_errno($ch)) log_to_file('（定时任务）重试失败： ' . $link_slug . '：' . curl_error($ch)); // 记录错误日志
+                if (curl_errno($ch)) {
+                    // 触发 curl 重试（一次）
+                    report_logs('（定时任务）重试更新：' . curl_error($ch)); // 记录错误日志
+                    $response = wp_remote_get($api_url);
+                    if (is_wp_error($response)) {
+                        report_logs('（定时任务）重试更新 ' . $link_slug . ' 失败！（' . $response->get_error_message() . '）'); // 记录错误日志
+                        continue;
+                    }
+                    $body = wp_remote_retrieve_body($response);
+                    report_logs('（定时任务）' . $link_slug . ' 已（重试）更新于：' . date("Y-m-d H:i:s")); // json_decode($body)[0]->lastUpdate
+                }
                 curl_close($ch);
-                if ($res) log_to_file('（定时任务）已更新 ' . $link_slug . '：' . json_decode($res)[0]->lastUpdate); // 记录日志
+                if ($res) report_logs('（定时任务）' . $link_slug . ' 已更新于：' . date("Y-m-d H:i:s")); // json_decode($res)[0]->lastUpdate
             }
-            
-            log_to_file("（定时任务）所有缓存已更新。\n\n"); // 记录日志
+            report_logs("（定时任务）所有 RSS 缓存已更新.....................\n\n\n"); // 记录日志
             wp_cache_flush(); // bug: to clear wp_options caches
         }
     }
+    
     
     /*
      *--------------------------------------------------------------------------
@@ -1136,7 +1191,7 @@
     function article_ai_abstract($content) {
         global $src_cdn; //custom_cdn_src(0, true)
         $chatgpt_cat = in_chatgpt_cat();
-        return $chatgpt_cat&&is_single() ? '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span>OPENAI</span></p><p class="response load">Standby API Responsing..</p></blockquote><script type="module">const responser = document.querySelector(".chatGPT .response");try {import("'.$src_cdn.'/js/module.js").then((module)=>send_ajax_request("get", "'.get_api_refrence("gpt").'", false, (res)=>{let _json=JSON.parse(res),_string="No response inbound.";if(_json.choices){_string=_json.choices[0].message.content;}else if(_json.text){_string=_json.text;}else{_string=_json.error.message;}module.words_typer(responser, _string, 25);console.log(_json.error)}));}catch(e){console.warn("dom responser not found, check backend.",e)}</script>'.$content : $content; //get_api_refrence("gpt", true)
+        return $chatgpt_cat&&is_single() ? '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span title="对话模型">' . get_option('site_chatgpt_model', 'OPENAI') . '</span></p><p class="response load">Standby API Responsing..</p></blockquote><script type="module">const responser = document.querySelector(".chatGPT .response");try {import("'.$src_cdn.'/js/module.js").then((module)=>send_ajax_request("get", "'.get_api_refrence("gpt").'", false, (res)=>{let _json=JSON.parse(res),_string="No response inbound.";if(_json.choices){_string=_json.choices[0].message.content;}else if(_json.text){_string=_json.text;}else{_string=_json.error.message;}module.words_typer(responser, _string, 25);console.log(_json.error)}));}catch(e){console.warn("dom responser not found, check backend.",e)}</script>'.$content : $content; //get_api_refrence("gpt", true)
     }
     add_filter( 'the_content', 'article_ai_abstract', 10);
     

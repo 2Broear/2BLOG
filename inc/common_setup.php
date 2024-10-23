@@ -902,7 +902,7 @@ function onMailError( $wp_error ) {
     }
     
     // 通过分类模板名称获取绑定的分类别名
-    function get_template_bind_cat($template=false){
+    function get_template_bind_cat($template=false) {
         global $wpdb, $template_path;
         $template = $template_path . '/category/' . $template; //prefix for custom templates path
         $template_term_id = $wpdb->get_var("SELECT term_id FROM $wpdb->termmeta WHERE meta_value = '$template'");
@@ -910,22 +910,22 @@ function onMailError( $wp_error ) {
         return get_category($template_term_id);
     }
     // get bind category-template cat by specific binded-temp post_id
-    function get_cat_by_template($temp='news', $parm=false){
+    function get_cat_by_template($temp='news', $parm=false) {
         $cats = get_template_bind_cat('category-'.$temp.'.php');
         return !$cats->errors ? ($parm ? $cats->$parm : $cats) : false;
     }
     
-    function get_between_string($begin, $end, $str){
-        if(is_numeric($begin)){
+    function get_between_string($begin, $end, $str) {
+        if(is_numeric($begin)) {
             $b = $begin;
-        }elseif(is_string($begin)){
+        } elseif (is_string($begin)) {
             $b = strpos($str, $begin)!==false ? mb_strpos($str, $begin) + mb_strlen($begin) : 0;
         }
         $strlen = mb_strlen($str);
         $e = $strlen;
-        if(is_numeric($end)){
+        if (is_numeric($end)) {
             $e = $end;
-        }elseif(is_string($end)){
+        } elseif (is_string($end)) {
             $e_pos = $end ? mb_strpos($str, $end) : $strlen;
             $e = $e_pos ? $e_pos - $b : $strlen;
         }

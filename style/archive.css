@@ -82,7 +82,7 @@ h2 sup.loading:after{
 }
 .archive-tree ul{
     padding: 0;
-    max-height: 318px;
+    max-height: 36vh;
     overflow: auto;
     position: relative;
     scroll-behavior: smooth;

@@ -43,7 +43,7 @@
                 $output .= '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
             endwhile;
             wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
-            if($output_sw) update_option($cache, wp_kses_post($output)); //wp_kses_post($output)
+            if($output_sw) update_option($cache, $output); //wp_kses_post($output) caused parse issue
         }
         echo $output;
     }

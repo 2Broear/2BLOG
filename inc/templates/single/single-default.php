@@ -56,6 +56,7 @@
                             </span>
                             <span id="view"><?php setPostViews($pid);echo getPostViews($pid); ?>°C </span>
                             <span id="date"><i class="icom"></i> <?php the_time('d-m-Y'); ?> </span>
+                            <?php if(get_option('site_not_ai_switcher')) global $img_cdn;echo '<span><a href="//notbyai.fyi" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);margin: auto 5px;border-radius: 0;"></a></span>'; ?>
                             <span id="slider"></span>
                         </div>
                         <sup>最近更新于：<?php echo $post->post_modified; ?></sup>

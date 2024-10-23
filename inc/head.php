@@ -38,22 +38,25 @@
         		script.onload = script.onreadystatechange = null;
         	};
         };
-        function bindEventClick(parent, cls, callback){
+        function bindEventClick(parent, ids, callback){
             parent.onclick=(e)=>{
                 e = e || window.event;
                 let t = e.target || e.srcElement;
                 if(!t) return;
                 while(t!=parent){
-                    if(!t) break;
-                    if(t.classList && t.classList.contains(cls)){
+                    if(!ids || ids==="") {
+                        callback(t,e);
+                        break;
+                    }
+                    if(t.id===ids || t.classList && t.classList.contains(ids) || t.nodeName.toUpperCase()===ids.toUpperCase()){
                         // callback?.();
                         if(callback&&typeof callback==='function') callback(t,e); //callback(t) || callback(t); // callback.apply(this, ...arguments);
                         break;
-                    }else{
-                        t = t.parentNode;
                     }
+                    // console.log('origin', t);
+                    t = t.parentNode;
                 }
-            }
+            };
         }
         function getParByCls(curEl, parCls){ //!curEl.classList incase if dnode oes not have any classes (null occured)
             while(!curEl || !curEl.classList || !curEl.classList.contains(parCls)){

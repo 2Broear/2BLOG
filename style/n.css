@@ -335,6 +335,7 @@ article a {
 article .infos span {
 	display: inline-block;
 	padding-left: 3px;
+	vertical-align: middle;
 }
 article .infos span#keywords {
 	color: var(--preset-8);

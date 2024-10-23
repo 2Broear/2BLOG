@@ -52,6 +52,7 @@
                     <div id="news-article-head">
                         <div class="news-article-head-tools">
                             <div class="tools-inside-block">
+                                <?php if(get_option('site_not_ai_switcher')) global $img_cdn;echo '<span><a href="//notbyai.fyi" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);padding:5px"></a></span>'; ?>
                                 <span id="full-view" title="满屏切换" style="<?php echo !$sidebar ? 'pointer-events:none;opacity:.5;' : false; ?>">
                                     <em><?php echo $sidebar  ? "全屏阅读" : "展开边栏"; ?></em>
                                 </span>
