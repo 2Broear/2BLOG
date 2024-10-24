@@ -242,9 +242,11 @@
             <ul>
                 <?php
                     $link_cats = get_links_category();
-                    asort($link_cats);
-                    foreach ($link_cats as $link_cat) {
-                        echo '<li id="' . $link_cat->slug . '">' . $link_cat->name . '</li>';
+                    if (!empty($link_cats)) {
+                        asort($link_cats);
+                        foreach ($link_cats as $link_cat) {
+                            echo '<li id="' . $link_cat->slug . '">' . $link_cat->name . '</li>';
+                        }
                     }
                 ?>
             </ul>
@@ -258,101 +260,102 @@
                 $output_sw = false;
                 $caches_sw = get_option('site_cache_switcher');
                 $caches_inc = get_option('site_cache_includes');
-                foreach ($link_cats as $link_cat) {
-                    $link_slug = $link_cat->slug;
-                    // if ($link_slug!=='technical') {
-                    //     // single category debug mod
-                    //     continue;
-                    // }
-                    $link_marks = get_site_bookmarks($link_slug);
-            ?>
-                    <div class="formtable <?php echo $link_slug; ?>">
-                        <?php
-                            // use of mysql caches
-                            $output_json = '';
-                            $caches_name = 'site_rss_' . $link_slug . '_cache';
-                            if($caches_sw) {
-                                $output_sw = in_array('rssfeeds', explode(',', $caches_inc));
-                                $output_caches = get_option($caches_name);
-                                if ($output_sw && $output_caches) {
-                                    $output_json = $output_caches;
-                                    $output_data = json_decode($output_json);
-                                    $output_date = isset($output_data[0]->lastUpdate) ? $output_data[0]->lastUpdate : '0000-00-00';
-                                    // $link_api = get_api_refrence('rss', true);  // failed to fetch
-                                    $link_api = get_plugin_refrence('rss', true);
-                                    date_default_timezone_set('Asia/Shanghai');
-                                    // print_r('(' . date('Y-m-d H:i:s', strtotime('today 06:00 Asia/Shanghai')) . ') ' . strtotime('today 06:00 Asia/Shanghai'));
-                                    // print_r(wp_get_schedules());
-                                    // wp_clear_scheduled_hook('scheduled_rss_feeds_updates_hook');
-                                    $scheduled_ts = wp_next_scheduled('scheduled_rss_feeds_updates_hook');
-                                    if($scheduled_ts) {
-                                        // wp_unschedule_event($scheduled_ts, 'scheduled_rss_feeds_updates_hook');
-                                        $scheduled_ts = 'Scheduled updates: ' . date('Y-m-d H:i:s', $scheduled_ts) . ' (' . time() .' -> ' . $scheduled_ts . ')<br/>';
-                                        print_r("<i style='float:left;opacity:.75;'>$scheduled_ts</i>");
+                if (!empty($link_cats)) {
+                    foreach ($link_cats as $link_cat) {
+                        $link_slug = $link_cat->slug;
+                        $link_marks = get_site_bookmarks($link_slug);
+                ?>
+                        <div class="formtable <?php echo $link_slug; ?>">
+                            <?php
+                                // use of mysql caches
+                                $output_json = '';
+                                $caches_name = 'site_rss_' . $link_slug . '_cache';
+                                if($caches_sw) {
+                                    $output_sw = in_array('rssfeeds', explode(',', $caches_inc));
+                                    $output_caches = get_option($caches_name);
+                                    if ($output_sw && $output_caches) {
+                                        $output_json = $output_caches;
+                                        $output_data = json_decode($output_json);
+                                        $output_date = isset($output_data[0]->lastUpdate) ? $output_data[0]->lastUpdate : '0000-00-00';
+                                        // $link_api = get_api_refrence('rss', true);  // failed to fetch
+                                        $link_api = get_plugin_refrence('rss', true);
+                                        date_default_timezone_set('Asia/Shanghai');
+                                        // print_r('(' . date('Y-m-d H:i:s', strtotime('today 06:00 Asia/Shanghai')) . ') ' . strtotime('today 06:00 Asia/Shanghai'));
+                                        // print_r(wp_get_schedules());
+                                        // wp_clear_scheduled_hook('scheduled_rss_feeds_updates_hook');
+                                        $scheduled_ts = wp_next_scheduled('scheduled_rss_feeds_updates_hook');
+                                        if($scheduled_ts) {
+                                            // wp_unschedule_event($scheduled_ts, 'scheduled_rss_feeds_updates_hook');
+                                            $scheduled_ts = 'Scheduled updates: ' . date('Y-m-d H:i:s', $scheduled_ts) . ' (' . time() .' -> ' . $scheduled_ts . ')<br/>';
+                                            print_r("<i style='float:left;opacity:.75;'>$scheduled_ts</i>");
+                                        }
+                                        echo "<p style='text-align:right;margin-bottom:35px;'>$caches_name ($output_date) <a href='javascript:;' class='reloadFeeds' data-cat='$link_slug' data-limit=3 data-update=1 data-output=1 data-clear=0 data-api='$link_api'>reload $link_slug?</a></p>"; //
                                     }
-                                    echo "<p style='text-align:right;margin-bottom:35px;'>$caches_name ($output_date) <a href='javascript:;' class='reloadFeeds' data-cat='$link_slug' data-limit=3 data-update=1 data-output=1 data-clear=0 data-api='$link_api'>reload $link_slug?</a></p>"; //
                                 }
-                            }
-                            // $output_json length will be 0 if non-caches loaded
-                            if(strlen($output_json)===0 || !$output_sw) {
-                                // $output_array = array();
+                                // $output_json length will be 0 if non-caches loaded
+                                if(strlen($output_json)===0 || !$output_sw) {
+                                    // $output_array = array();
+                                    $subscribed_urls = array();
+                                    foreach ($link_marks as $link_mark) {
+                                        $rss_url = $link_mark->link_rss;
+                                        if ($rss_url && $link_mark->link_visible==='Y') {
+                                            array_push($subscribed_urls, $link_mark);
+                                            // $feed_data = get_rss_feeds($rss_url, $link_mark, $output_limit, true);
+                                            // // $feed_data = get_rss_feeds($rss_url, $link_mark, $output_limit);
+                                            // // $feed_data = fetch_rss_feeds($rss_url, $link_mark, $output_limit);
+                                            // // for ($i=0; $i<$output_retry; $i++) {
+                                            // //     $feed_data = get_rss_feeds($rss_url, $link_mark, $output_limit);
+                                            // //     if ($feed_data !== null) break; // 成功获取结果，跳出重试循环
+                                            // //     sleep(1); // 等待5秒后重试
+                                            // // }
+                                            // if (empty($feed_data) || $feed_data === null) {
+                                            //     $error_class = new stdClass();
+                                            //     $error_class->title = ''; //RSS 内容抓取失败！
+                                            //     $error_class->desc = '无法获取 ta 的 rss 内容，请检查：' . $rss_url;
+                                            //     $error_class->date = '0000-00-00'; //date("Y-m-d");
+                                            //     $error_class->link = 'javascript:;';
+                                            //     $error_class->url = $link_mark->link_url;
+                                            //     $error_class->author = $rss_author;
+                                            //     $error_class->avatar = $link_mark->link_image ?? '//cravatar.cn/avatar/?d=mp&s=50';
+                                            //     array_push($output_array, $error_class);
+                                            //     continue;
+                                            // }
+                                            // array_push($output_array, $feed_data);
+                                            // $output_json = json_encode($output_array);
+                                        }
+                                    }
+                                    
+                                    // fetch_rss_feeds_via_url plus array_chunk limits
+                                    $output_json = parse_rss_data($subscribed_urls, $output_limit, $output_chunk);
+                                    
+                                    if($output_json && $output_sw) {
+                                        echo 'updating caches..';
+                                        update_option($caches_name, wp_kses_post(preg_replace( "/\s(?=\s)/","\1", $output_json )));
+                                        // update_option($caches_name, $output_json);
+                                    } else {
+                                        if($caches_sw) {
+                                            // if (in_array('rssfeeds', explode(',', $caches_inc)))
+                                            echo '<p style="text-align:center">No rss feeds/caches found on category ' . $link_slug . ' or cache disabled</p>';
+                                        }
+                                    }
+                                }
                                 $subscribed_urls = array();
                                 foreach ($link_marks as $link_mark) {
-                                    $rss_url = $link_mark->link_rss;
-                                    if ($rss_url && $link_mark->link_visible==='Y') {
-                                        array_push($subscribed_urls, $link_mark);
-                                        // $feed_data = get_rss_feeds($rss_url, $link_mark, $output_limit, true);
-                                        // // $feed_data = get_rss_feeds($rss_url, $link_mark, $output_limit);
-                                        // // $feed_data = fetch_rss_feeds($rss_url, $link_mark, $output_limit);
-                                        // // for ($i=0; $i<$output_retry; $i++) {
-                                        // //     $feed_data = get_rss_feeds($rss_url, $link_mark, $output_limit);
-                                        // //     if ($feed_data !== null) break; // 成功获取结果，跳出重试循环
-                                        // //     sleep(1); // 等待5秒后重试
-                                        // // }
-                                        // if (empty($feed_data) || $feed_data === null) {
-                                        //     $error_class = new stdClass();
-                                        //     $error_class->title = ''; //RSS 内容抓取失败！
-                                        //     $error_class->desc = '无法获取 ta 的 rss 内容，请检查：' . $rss_url;
-                                        //     $error_class->date = '0000-00-00'; //date("Y-m-d");
-                                        //     $error_class->link = 'javascript:;';
-                                        //     $error_class->url = $link_mark->link_url;
-                                        //     $error_class->author = $rss_author;
-                                        //     $error_class->avatar = $link_mark->link_image ?? '//cravatar.cn/avatar/?d=mp&s=50';
-                                        //     array_push($output_array, $error_class);
-                                        //     continue;
-                                        // }
-                                        // array_push($output_array, $feed_data);
-                                        // $output_json = json_encode($output_array);
-                                    }
+                                    // $rss_url = $link_mark->link_rss;
+                                    // if ($rss_url && $link_mark->link_visible==='Y') {
+                                        array_push($subscribed_urls, $link_mark->link_url);
+                                    // }
                                 }
-                                
-                                // fetch_rss_feeds_via_url plus array_chunk limits
-                                $output_json = parse_rss_data($subscribed_urls, $output_limit, $output_chunk);
-                                
-                                if($output_json && $output_sw) {
-                                    echo 'updating caches..';
-                                    update_option($caches_name, wp_kses_post(preg_replace( "/\s(?=\s)/","\1", $output_json )));
-                                    // update_option($caches_name, $output_json);
-                                } else {
-                                    echo '<p style="text-align:center">No rss feeds/caches found on category ' . $link_slug . '</p>';
-                                }
-                            }
-                            $subscribed_urls = array();
-                            foreach ($link_marks as $link_mark) {
-                                // $rss_url = $link_mark->link_rss;
-                                // if ($rss_url && $link_mark->link_visible==='Y') {
-                                    array_push($subscribed_urls, $link_mark->link_url);
-                                // }
-                            }
-                            // print_r($output_json);
-                            // print_r('<pre>');
-                            // print_r($subscribed_urls);
-                            // print_r('</pre>');
-                            $output_data = json_decode($output_json);
-                            the_rss_feeds($output_data);
-                        ?>
-                    </div>
-            <?php
+                                // print_r($output_json);
+                                // print_r('<pre>');
+                                // print_r($subscribed_urls);
+                                // print_r('</pre>');
+                                $output_data = json_decode($output_json);
+                                the_rss_feeds($output_data);
+                            ?>
+                        </div>
+                <?php
+                    }
                 }
             ?>
         </form>
@@ -662,6 +665,7 @@
         $pre_array = explode(',',trim($value));  // NO "," Array
         // $pre_array_count = count($pre_array);
         foreach ($article_opts as $option){
+            if (empty($option)) continue;
             $opts_key = $option->name;
             $opts_val = $option->term_id;
             $checking = in_array($opts_val, $pre_array) ? 'checked' : '';
@@ -1124,6 +1128,8 @@
                                 $opt = 'site_rss_update_interval';
                                 $value = get_option($opt);
                                 $preset = 12;  //默认开启（时）间
+                                global $post;
+                                print_r($post);
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
                                 echo '<p class="description" id="site_rss_feeds_timeout_label"><a href="' . admin_url('admin.php?page=' . $GLOBALS['RSS_PAGE_NAME']) . '" target="_self">RSS 友链订阅</a> 计划自动更新 feeds 频率（默认12小时/一天更新两次，修改<i><s>前</s><b>后</b></i>请 <input id="updateSchedule" style="font-size: 12px;" type="button" value="刷新定时任务" data-api="' . get_api_refrence('rss', true) . '" data-page="' . $GLOBALS['RSS_PAGE_NAME'] . '" data-admin-url="' . admin_url('admin-ajax.php') . '" data-nonce="' . wp_create_nonce("update_cronjobs") . '"></p><input id="updateSchedules" type="number" min="1" max="" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>'; //以解锁操作
                             ?>
@@ -1820,7 +1826,8 @@
                                         echo '<p class="description" id="">指定开启展示单页分类，使用逗号“ , ”分隔（默认开启日志、漫游影视、资源下载页面</p><div class="checkbox">';
                                         $async_array = explode(',',trim($value));  // NO "," Array
                                         // $pre_array_count = count($async_array);
-                                        foreach ($async_opts as $option){
+                                        foreach ($async_opts as $option) {
+                                            if (empty($option)) continue;
                                             $opts_slug = $option->slug;
                                             $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
@@ -1868,7 +1875,9 @@
                                         }elseif($news_cat){
                                             array_push($arrobj, array('name' => $news_cat->name, 'slug' => $news_cat->slug));
                                         }
-                                        if($arrobj){
+                                        if (empty($arrobj)) {
+                                            echo '<b> Empty Index </b>';
+                                        } else {
                                             $preset = $arrobj[0]['slug'].',';
                                             if(!$value){
                                                 update_option($opt, $preset);
@@ -1882,8 +1891,6 @@
                                                 echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$array['name'].'</label>';
                                             }
                                             echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '"/></div>';;
-                                        }else{
-                                            echo '<b> Empty Index </b>';
                                         }
                                     ?>
                                 </td>
@@ -1950,14 +1957,18 @@
                                 $defaults = new stdClass();
                                 $defaults->name = '所有类目';
                                 $defaults->slug = '';
-                                array_unshift($lists, $defaults);
+                                if (!empty($lists)) array_unshift($lists, $defaults);
                                 // print_r($lists);
                                 if(!$value) update_option($opt, $defaults->slug);else $preset=$value;
                                 echo '<label for="'.$opt.'"><p class="description" id="">首页随机友链列表指定分类（默认显示所有类目</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
-                                    foreach ($lists as $list){
-                                        echo '<option value="'.$list->slug.'"';
-                                        if($value==$list->slug) echo('selected="selected"');
-                                        echo '>'.$list->name.'</option>';
+                                    if (empty($lists)) {
+                                        echo '<option value="'.$defaults->slug.'" selected="selected">'.$defaults->name.'</option>';
+                                    } else {
+                                        foreach ($lists as $list){
+                                            echo '<option value="'.$list->slug.'"';
+                                            if($value==$list->slug) echo('selected="selected"');
+                                            echo '>'.$list->name.'</option>';
+                                        }
                                     }
                                 echo '</select></label>';
                             ?>
@@ -2150,8 +2161,8 @@
                                         $rss_feeds->slug = 'rssfeeds';
                                         $async_opts = array($templates_info['news'], $templates_info['notes'], $templates_info['weblog'], $templates_info['acg'], $templates_info['2bfriends'], $templates_info['download'], $templates_info['archive'], $templates_info['ranks'], $templates_info['goods'], $rss_feeds);
                                         // print_r($async_opts);
-                                        if(!$value){
-                                            $preset_str = $async_opts[3]->slug.','.$async_opts[5]->slug.','.$async_opts[6]->slug.',';
+                                        if(!$value) {
+                                            $preset_str = $rss_feeds->slug.','; //$async_opts[3]->slug.','.$async_opts[5]->slug.','.$async_opts[6]->slug.','.
                                             update_option($opt, $preset_str);
                                             $value = $preset_str;
                                         }
@@ -2159,6 +2170,9 @@
                                         $async_array = explode(',',trim($value));  // NO "," Array
                                         // $pre_array_count = count($async_array);
                                         foreach ($async_opts as $option){
+                                            if (!isset($option->slug) || !isset($option->name)) {
+                                                continue;
+                                            }
                                             $opts_slug = $option->slug;
                                             $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
@@ -2200,7 +2214,8 @@
                                         echo '<p class="description" id="">指定开启 ajax 异步页面，使用逗号“ , ”分隔（默认开启漫游影视、归档页面</p><div class="checkbox">';
                                         $async_array = explode(',',trim($value));  // NO "," Array
                                         // $pre_array_count = count($async_array);
-                                        foreach ($async_opts as $option){
+                                        foreach ($async_opts as $option) {
+                                            if (empty($option)) continue;
                                             $opts_slug = $option->slug;
                                             $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
@@ -2211,24 +2226,24 @@
                             </tr>
                             <?php
                                 $acg_cat = $async_opts[1];
-                                if(in_array($acg_cat->slug, $async_array)){
+                                if(isset($acg_cat->slug) && in_array($acg_cat->slug, $async_array)) {
                             ?>
-                                <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
-                                    <?php echo '<th scope="row">— '.$acg_cat->name.' 数量</th>'; ?>
-                                    <td>
-                                        <?php
-                                            $opt = 'site_async_acg';
-                                            $value = get_option($opt);
-                                            $preset = 9;  //默认填充数据
-                                            if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                            echo '<p class="description" id="site_bar_pixiv_label">漫游影视默认/手动加载数量（默认 9</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                        ?>
-                                    </td>
-                                </tr>
+                                    <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
+                                        <?php echo '<th scope="row">— '.$acg_cat->name.' 数量</th>'; ?>
+                                        <td>
+                                            <?php
+                                                $opt = 'site_async_acg';
+                                                $value = get_option($opt);
+                                                $preset = 9;  //默认填充数据
+                                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                                echo '<p class="description" id="site_bar_pixiv_label">漫游影视默认/手动加载数量（默认 9</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                            ?>
+                                        </td>
+                                    </tr>
                             <?php
                                 }
                                 $weblog_cat = $async_opts[2];
-                                if(in_array($weblog_cat->slug, $async_array)){
+                                if(isset($weblog_cat->slug) && in_array($weblog_cat->slug, $async_array)){
                             ?>
                                 <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
                                     <?php echo '<th scope="row">— '.$weblog_cat->name.' 数量</th>'; ?>
@@ -2245,7 +2260,7 @@
                             <?php
                                 }
                                 $archive_cat = $async_opts[0];
-                                if(in_array($archive_cat->slug, $async_array)){
+                                if(isset($archive_cat->slug) && in_array($archive_cat->slug, $async_array)){
                             ?>
                                 <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
                                     <?php echo '<th scope="row">— '.$archive_cat->name.' 数量</th>'; ?>
@@ -2860,7 +2875,8 @@
                                 echo '<p class="description" id="site_bottom_nav_label">底部右下角导航链接（使用逗号“ , ”分隔，可选填其他分类 slug 别名</p><div class="checkbox">';
                                 $pre_array = explode(',',trim($value));  // NO "," Array
                                 // $pre_array_count = count($pre_array);
-                                foreach ($options as $option){
+                                foreach ($options as $option) {
+                                    if (empty($option)) continue;
                                     $opts_slug = $option->slug;
                                     $checking = in_array($opts_slug, $pre_array) ? 'checked' : '';
                                     echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';

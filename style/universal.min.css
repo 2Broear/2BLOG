@@ -1894,6 +1894,11 @@ body.dark .share #dislike span #counter {color:#303030}
     max-width: 35px;
     max-height: 35px;
 }
+.wp_comments_list .wp_comments img.avatar {
+    max-width: 50px;
+    max-height: 50px;
+    padding: 2px;
+}
 .wp_comments_list a#cancel-comment-reply-link{
     display: block!important;
 }
@@ -1984,6 +1989,7 @@ body.dark .share #dislike span #counter {color:#303030}
 .wp_comments .vinfo{
     padding-top: 3px;
     position: relative;
+    font-size: var(--min-size-rem);
 }
 
 .wp_comments .comment-reply-link{
@@ -2210,7 +2216,7 @@ body.dark .wp_comment_box a#cancel-comment-reply-link{
     margin: 5px;
     display: inline-block;
     vertical-align: middle;
-    animation: fromto .35s ease-out infinite alternate;
+    /*animation: fromto .35s ease-out infinite alternate;*/
 }
 @keyframes fromto{
 	from {top:5px;}

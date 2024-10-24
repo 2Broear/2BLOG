@@ -970,18 +970,19 @@
                             if (valider(mark_input) && mark_inputs.length>=1) {
                                 finder(mark_note, "", 1, "label").textContent = mark_inputs;
                                 mark_input.remove();
-                                markedContext = d_nick;
+                                // markedContext = d_nick;
                             } else {
                                 if (verify_updates) mark_note.remove();
                             }
                         }
                         // const isLikedUserMark = result.like && result.like.includes(d_mid); //marker.data.user.mid
                         if (verify_updates) {
+                            console.log(markedContext)
                             node.className = c_disabled;
                             node.textContent = markedContext;
                         } else {
                             node.dataset.liked = disliked ? '' : 1;
-                            node.className = disliked ? `${c_like} ${c_like}` : `${c_like} ${c_liked}`;
+                            node.className = disliked ? `${c_like}` : `${c_like} ${c_liked}`;
                             node.textContent = disliked ? s_ctxLike : s_ctxLiked; //s_ctxLike
                         }
                     });
@@ -1007,7 +1008,7 @@
                 };
             },
             quote: function(node) {
-                const {init: {_conf: {static: {ctxQuoted:s_ctxQuoted}, class: {line:c_line}, element: {commentArea:e_commentArea}}}, _utils: {_dom: {valider, finder}}, status: {isNodeMarkDone}, mods: {close}} = marker;
+                const {init: {_conf: {static: {ctxQuote:s_ctxQuote, ctxQuoted:s_ctxQuoted}, class: {line:c_line, disabled:c_disabled}, element: {commentArea:e_commentArea}}}, _utils: {_dom: {valider, finder}}, status: {isNodeMarkDone}, mods: {close}} = marker;
                 if(!valider(node)) {
                     return node;
                 }
@@ -1024,10 +1025,16 @@
                     close(mark_node);
                     return;
                 }
+                node.classList.add(c_disabled);
                 node.textContent = s_ctxQuoted;
+                let timer = setTimeout(()=>{
+                        node.classList.remove(c_disabled);
+                        node.textContent = s_ctxQuote;
+                        clearTimeout(timer);
+                    }, 1500);
             },
             copy: function(node) {
-                const {init: {_conf: {static: {ctxCopied:s_ctxCopied}, class: {line:c_line}}}, _utils: {_dom: {valider, finder}}, status: {isNodeMarkDone}, mods: {close}} = marker;
+                const {init: {_conf: {static: {ctxCopy:s_ctxCopy, ctxCopied:s_ctxCopied}, class: {line:c_line, disabled:c_disabled}}}, _utils: {_dom: {valider, finder}}, status: {isNodeMarkDone}, mods: {close}} = marker;
                 if(!valider(node)) {
                     return node;
                 }
@@ -1040,11 +1047,18 @@
                 //exec copy..
                 document.execCommand('copy');
                 selection.removeAllRanges();
-                if(!isNodeMarkDone(mark_node)){
+                if(!isNodeMarkDone(mark_node)) {
                     node.textContent = s_ctxCopied;
                     // close(mark_node);
                     return;
                 }
+                node.classList.add(c_disabled);
+                node.textContent = s_ctxCopied;
+                let timer = setTimeout(()=>{
+                        node.classList.remove(c_disabled);
+                        node.textContent = s_ctxCopy;
+                        clearTimeout(timer);
+                    }, 1500);
             },
             close: function(node, execUpdate=false) {
                 const {init: {_conf: {class: {line:c_line, tool:c_tool, processing:c_processing}}}, _utils: {_dom: {valider, finder}}, status: {isNodeMarkAble, isMarkerAccessable, isNodeTextOnly, isNodeMarkDone}, mods: {update}} = marker;
@@ -1266,8 +1280,23 @@
                     // init&load dom..
                     marker.dom.initiate(marker);
                     // check marker status before initiate.(prevent mouseup events exec mark())
-                    const {init: {_conf: {static: {useNote:s_useNote, useCopy:s_useCopy, useQuote:s_useQuote}, class: {close:c_close, mark:c_mark, note:c_note, copy:c_copy, quote:c_quote, like:c_like}, element: {effectsArea:e_effectsArea}}}, _utils: {_closure: {debouncer}, _dom: {clicker}, _event: {add:addEvent}}, status: {isMarkerAvailable}, mods: {mark, down, note, copy, quote, close}} = marker; // _event
-                    if(!isMarkerAvailable()) throw new Error('marker unavailable, register init failed..');
+                    const {init: {_conf: {static: {useNote:s_useNote, useCopy:s_useCopy, useQuote:s_useQuote}, class: {close:c_close, mark:c_mark, note:c_note, copy:c_copy, quote:c_quote, like:c_like,liked:c_liked}, element: {effectsArea:e_effectsArea, commentArea:e_commentArea}}}, _utils: {_closure: {debouncer}, _dom: {clicker}, _event: {add:addEvent}}, status: {isMarkerAvailable}, mods: {mark, down, note, copy, quote, close}} = marker; // _event
+                    if(s_useNote) clicker(e_effectsArea, c_note, debouncer((t)=>note(t)));
+                    if(s_useCopy) clicker(e_effectsArea, c_copy, debouncer((t)=>copy(t)));
+                    if(s_useQuote) clicker(e_effectsArea, c_quote, debouncer((t)=>quote(t)));
+                    if(!isMarkerAvailable()) {
+                        // extra tips for un-registerd mark user
+                        let tips4unregister = (t)=> {
+                            t.classList.add(c_liked);
+                            t.textContent = 'Comments Required!';
+                            alert('Unregistered user, you must comment(fullfill name/email) before marking-off!');
+                            e_commentArea.focus();
+                        };
+                        clicker(e_effectsArea, c_mark, debouncer((t)=>tips4unregister(t), 300));
+                        clicker(e_effectsArea, c_like, debouncer((t)=>tips4unregister(t), 300));
+                        clicker(e_effectsArea, c_close, debouncer((t)=>tips4unregister(t), 300));
+                        throw new Error('marker unavailable, register init failed..');
+                    }
                     // bind events
                     const pointerupEvents = debouncer(mark.bind(window.getSelection()), 100);
                     addEvent(e_effectsArea, 'pointerup', pointerupEvents); // addEvent this enviroument changed!!
@@ -1277,14 +1306,9 @@
                     // };
                     // addEvent(e_effectsArea, 'contextmenu', contextmenu_);  // moblie events
                     // addEvent(e_effectsArea, 'select', contextmenu_);  // moblie events
-                    
                     clicker(e_effectsArea, c_mark, debouncer((t)=>down(t)));
                     clicker(e_effectsArea, c_like, debouncer((t)=>down(t, false)));
                     clicker(e_effectsArea, c_close, debouncer((t)=>close(t, true), 150));
-                    if(s_useNote) clicker(e_effectsArea, c_note, debouncer((t)=>note(t)));
-                    if(s_useCopy) clicker(e_effectsArea, c_copy, debouncer((t)=>copy(t), 100));
-                    if(s_useQuote) clicker(e_effectsArea, c_quote, debouncer((t)=>quote(t), 100));
-                    // clicker(e_effectsArea, '', (t)=>console.log('h2 clicked.',t), 'h2');
                     console.log('marker initialized.', marker);
                 } catch (error) {
                     console.log(error);

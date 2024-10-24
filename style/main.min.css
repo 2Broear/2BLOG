@@ -390,7 +390,7 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 #acg_window-content-inside_right-bg{position:absolute;z-index:1;width:100%;height:100%}
 .acg_window-content-inside_right span#acg-content-area-txt{display:block;width:100%;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);z-index:2;background-color:rgba(255,255,255,0.65);}
 .acg_window-content-inside_right span#acg-content-area{display:block;position:absolute;margin:0 auto;width:100%;height:100%;/*background:url('//img.2broear.com/main/CDNO/girl_school.jpg') center center;background-size:cover;*/transition:all .5s ease}
-.acg_window-content-inside_right span p{line-height:25px;padding:5%;font-size: 1rem;}
+.acg_window-content-inside_right span p{font-size: 1rem;/*line-height:25px;padding:5%;*/}
 .acg_window-content-inside_right-in-p-hover{letter-spacing:1px !important;color:rgba(0,0,0,0.7) !important;background-color:rgba(255,255,255,0.5) !important;text-shadow:1px 1px 18px rgba(0,0,0,0.18)}
 .acg_window-content-inside_right-in-h2-hover{color:green}
 .go-home{color:rgba(0,0,0,0.8) !important}

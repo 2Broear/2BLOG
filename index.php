@@ -6,11 +6,14 @@
         $output = '';
         $output_sw = false;
         if(get_option('site_cache_switcher')){
-            $temp_slug = get_category($cid)->slug;
-            $cache = 'site_recent_'.$temp_slug.'_cache';
-            $caches = get_option('site_cache_includes');
-            $output_sw = in_array($temp_slug, explode(',', $caches));
-            $output = $output_sw ? get_option($cache) : '';
+            $temp = get_category($cid);
+            if (isset($temp->slug)) {
+                $temp_slug = $temp->slug;
+                $cache = 'site_recent_'.$temp_slug.'_cache';
+                $caches = get_option('site_cache_includes');
+                $output_sw = in_array($temp_slug, explode(',', $caches));
+                $output = $output_sw ? get_option($cache) : '';
+            }
         }
         if(!$output || !$output_sw){
             // $output = get_recent_posts($cid, $specific_link, $detail, $limit, $random);
@@ -89,7 +92,7 @@
         .banner .banner-inside ul{
             max-height: 268px;
             /*filter: opacity(0.15);*/
-            filter: invert(1);
+            /*filter: invert(1);*/
             /*animation: colorfull ease 3s .5s;*/
         }
         <?php
@@ -202,13 +205,26 @@
         <!-- 右 -->
         <div class="recommendation wow fadeInUp hfeed" data-wow-delay="0.2s">
             <?php
-                $rcmd_query = new WP_Query(array_filter(array('cat' => get_option('site_rcmdside_cid'), 'meta_key' => 'post_orderby', 'posts_per_page' => 1,
+                $rcmd_cat = get_option('site_rcmdside_cid');
+                $rcmd_arr = array(
+                    'cat' => $rcmd_cat,
+                    'posts_per_page' => 1,
+                    'meta_key' => 'post_orderby',
                     'orderby' => array(
                         'meta_value_num' => 'DESC',
                         'date' => 'DESC',
                         'modified' => 'DESC',
                     )
-                )));
+                );
+                if (!$rcmd_cat) {
+                    unset($rcmd_arr['meta_key']);
+                    $rcmd_arr['cat'] = 1;
+                    $rcmd_arr['orderby'] = array(
+                        'date' => 'DESC',
+                        'modified' => 'DESC',
+                    );
+                }
+                $rcmd_query = new WP_Query(array_filter($rcmd_arr));
                 while ($rcmd_query->have_posts()):
                     $rcmd_query->the_post();
                     $post_feeling = get_post_meta($post->ID, "post_feeling", true);
@@ -273,6 +289,7 @@
                 $site_per_posts = get_option('site_per_posts');
                 $rand_count = mt_rand($site_per_posts, $site_per_posts+1);
                 for($i=0;$i<$load_arr_count;$i++){
+                    if (empty($load_arr[$i])) continue;
             ?>
                     <div id="news-window">
                         <span class='resource-windows-top'>
@@ -307,7 +324,8 @@
                     <?php
                         }else{
                             $ranklink = get_site_bookmarks(get_option('site_list_links_category'), 'rand', 'ASC', $rand_count);
-                            echo get_site_links($ranklink, 'list'); //, true
+                            $ranklinks = get_site_links($ranklink, 'list'); //, true
+                            echo empty($ranklink) ? '<li><a href="">' . $ranklinks . '</a></li>' : $ranklinks;
                         }
                     ?>
                 </ul>
@@ -335,7 +353,7 @@
                         <span class="newsBox-supTitle-iDescription" id="icon-technology">
                             <em>LOG</em><i class="icom icon-weblog"></i>
                         </span>
-                        <h2><?php echo $blog_temp = get_cat_by_template('weblog')->name;//echo strtoupper($blog_temp->slug).'「'.$blog_temp->name.'」'; ?></h2>
+                        <h2><?php echo $blog_temp = get_cat_by_template('weblog');if (!empty($blog_temp)) echo $blog_temp->name; ?></h2>
                     </div>
                     <ul class="tech_window-content">
                         <?php 
@@ -361,7 +379,7 @@
                             }else{
                                 the_recent_posts($query_cid);
                             }
-                            $baas&&strpos(get_option('site_leancloud_category'), 'category-weblog.php')!==false ? avos_posts_query($query_cid,".tech_window-content") : the_recent_posts($query_cid);
+                            // $baas&&strpos(get_option('site_leancloud_category'), 'category-weblog.php')!==false ? avos_posts_query($query_cid,".tech_window-content") : the_recent_posts($query_cid);
                         ?>
                     </ul>
                     <div class="newsBox-subText-Description" id="tech_window-bottom">

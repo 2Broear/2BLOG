@@ -389,7 +389,7 @@
         global $post, $cdn_switch;
         $exe = $exe ? $exe : 0;
         $cdn_api = get_option('site_cdn_api');
-        $pid = $pid ? $pid : $post->ID;
+        $pid = $pid ? $pid : (isset($post->ID) ? $post->ID : 0);
         $api_file = '/'.$api.'.php';
         $authentication = get_option('site_chatgpt_dir', 'authentication');
         $cdn_src = $cdn ? $src_cdn : custom_cdn_src(0, 1);
@@ -786,46 +786,58 @@
         //清除（重建）指定分类
         function update_category_post_cache($post, $temp_slug, $page_cache) {
             $temp_info = get_cat_by_template($temp_slug);
-            if(!$cat){
+            if(!$cat) {
                 global $cat;
             }
-            $pid = $post->ID;
-            $cat = $cat ? $cat : get_the_category($pid)->term_id; // $categories = wp_get_post_categories($pid);
+            $cid = get_the_category($post->ID)[0]->term_id;
+            // print_r($cid);
+            $cat = $cat ? $cat : $cid; //get_the_category($pid)->term_id; // $categories = wp_get_post_categories($pid);
             if(in_category($temp_info->slug, $post) || cat_is_ancestor_of($cat, $temp_info->term_id)){ //in_array($temp_info->term_id, $categories)
                 update_option($page_cache, '');
             }
         }
         function site_update_specific_caches($post_id) {
+            global $cat;
             $post = get_post($post_id);
             if($post->post_type != 'post') return;  // update post only(no inform)
-            
-            // 清除（重建）更新ACG
-            update_category_post_cache($post, 'acg', 'site_acg_stats_cache');
-            update_category_post_cache($post, 'acg', 'site_acg_post_cache');
-            
-            // 清除（重建）更新下载
-            update_category_post_cache($post, 'download', 'site_download_list_cache');
             
             // 清除（当前）归档数据
             update_option('site_archive_count_cache', '');
             update_option('site_archive_contributions_cache', '');
             // update_option('site_archive_list_cache', '');
+            
             $post_year = date('Y', strtotime($post->post_date));
-            $archive_years = json_decode(get_option('site_archive_years_cache'));
-            if (in_array($post_year, $archive_years)) {
-                update_option('site_archive_' . $post_year . '_cache', '');
-                // update_option('site_archive_years_cache', '');
+            $archive_years = get_option('site_archive_years_cache');
+            if ($archive_years) {
+                $archive_years = json_decode($archive_years);
+                if (in_array($post_year, $archive_years)) {
+                    update_option('site_archive_' . $post_year . '_cache', '');
+                    // update_option('site_archive_years_cache', '');
+                }
             }
             
             // 清除对应文章分类缓存
-            $temp_array = array(get_cat_by_template('news')->slug, get_cat_by_template('notes')->slug, get_cat_by_template('weblog')->slug, get_cat_by_template('acg')->slug);
             $caches = get_option('site_cache_includes');
-            $output_sw = false;
-            foreach ($temp_array as $temp_slug) {
-                $cache = 'site_recent_'.$temp_slug.'_cache';
-                $output_sw = in_array($temp_slug, explode(',', $caches));
-                if($output_sw) {
-                    update_category_post_cache($post_id, $temp_slug, $cache);
+            if ($caches) {
+                $temp_array = array(get_cat_by_template('news'), get_cat_by_template('notes'), get_cat_by_template('weblog'), get_cat_by_template('acg'), get_cat_by_template('download'));
+                $output_sw = false;
+                foreach ($temp_array as $temp) {
+                    if (empty($temp)) continue;
+                    $temp_slug = $temp->slug;
+                    $cache = 'site_recent_'.$temp_slug.'_cache';
+                    $output_sw = in_array($temp_slug, explode(',', $caches));
+                    if($output_sw) {
+                        // 清除（重建）更新通用缓存
+                        update_category_post_cache($post_id, $temp_slug, $cache);
+                        // 清除（重建）更新指定缓存
+                        if ($temp_slug==='acg') {
+                            update_category_post_cache($post, $temp_slug, 'site_acg_stats_cache');
+                            update_category_post_cache($post, $temp_slug, 'site_acg_post_cache');
+                        }
+                        if ($temp_slug==='download') {
+                            update_category_post_cache($post, $temp_slug, 'site_download_list_cache');
+                        }
+                    }
                 }
             }
         }
@@ -861,7 +873,10 @@
         }
 
         add_action('wp', 'schedule_all_cronjob');
-        function schedule_all_cronjob($param_interval = 0) {
+        function schedule_all_cronjob($param_interval = false) {
+            if (!is_numeric($param_interval) || $param_interval <= 0) {
+                $param_interval = get_option('site_rss_update_interval', 12); // 默认值
+            }
             if(!wp_next_scheduled('db_caches_cronjob_hook')){
                 // 设定定时作业执行时间（东八区时间）
                 $timestamp = strtotime('today 06:00 Asia/Shanghai'); // 设置每天上午执行一次定时作业
@@ -872,9 +887,14 @@
                 date_default_timezone_set('Asia/Shanghai');
                 // 当前时间的时间戳
                 $timestamp = time(); //current_time( 'timestamp' ); //
-                $hours_interval = $param_interval ? $param_interval : get_option('site_rss_update_interval', 12) . 'hours';
-                // 安排事件，每隔$interval小时执行一次
-                wp_schedule_event( $timestamp, $hours_interval, 'scheduled_rss_feeds_updates_hook' );
+                $hours_interval = $param_interval . 'hours';
+                // 安排事件，每隔$interval小时执行一次 使用 @ 来抑制错误输出
+                // @wp_schedule_event( $timestamp, $hours_interval, 'scheduled_rss_feeds_updates_hook' );
+                try {
+                    wp_schedule_event( $timestamp, $hours_interval, 'scheduled_rss_feeds_updates_hook' );
+                } catch (Exception $e) {
+                    report_logs("\n\n".$e->getMessage()."\n\n");  // 记录错误信息到错误日志
+                }
             }
         }
         

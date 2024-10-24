@@ -300,10 +300,15 @@
                     <?php
                         }else{
                             $sitelink = get_site_bookmarks('sitelink', 'rand', 'DESC');
-                            echo get_site_links($sitelink);
-        	                $use_temp = get_template_bind_cat('category-2bfriends.php');
-        	                $temp_link = !$use_temp->errors ? get_category_link($use_temp->term_id) : 'javascript:;';
-    	                    echo '<a id="more" href="'.$temp_link.'" title="更多" target="_blank">  更多 </a>';
+                            $sitelinks = get_site_links($sitelink);
+                            if (empty($sitelink)) {
+    	                        echo '<a id="more" href="javascript:;">' . $sitelinks . '</a>';
+                            } else {
+                                echo get_site_links($sitelink);
+            	                $use_temp = get_template_bind_cat('category-2bfriends.php');
+            	                $temp_link = !$use_temp->errors ? get_category_link($use_temp->term_id) : 'javascript:;';
+        	                    echo '<a id="more" href="'.$temp_link.'" title="更多" target="_blank">  更多 </a>';
+                            }
                         }
                     ?>
                 </li>
