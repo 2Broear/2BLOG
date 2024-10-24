@@ -665,7 +665,7 @@
         $pre_array = explode(',',trim($value));  // NO "," Array
         // $pre_array_count = count($pre_array);
         foreach ($article_opts as $option){
-            if (empty($option)) continue;
+            if ($option->error) continue;
             $opts_key = $option->name;
             $opts_val = $option->term_id;
             $checking = in_array($opts_val, $pre_array) ? 'checked' : '';
@@ -1295,10 +1295,11 @@
                                         $options = array('Article', 'Sidebar', $templates_info['about'], $templates_info['acg'], $templates_info['guestbook'], $templates_info['privacy']);
                                         echo '<p class="description" id="site_map_includes_label">开启后使用上方👆图片加速域名👆加速站内指定位置视频，常用于超小型文件（Article：文章视频，Sidebar：侧栏视频</p><div class="checkbox">';
                                         $pre_array = explode(',',trim($value));  // NO "," Array
-                                        // $pre_array_count = count($pre_array);
-                                        foreach ($options as $option){
-                                            $slug = is_object($option)&&$option->slug ? strtolower($option->slug) : strtolower($option);  
-                                            $name = is_object($option)&&$option->name ? $option->name : $option;
+                                        // print_r($options);
+                                        foreach ($options as $option) {
+                                            if (is_object($option) && $option->error) continue;
+                                            $slug = is_string($option) ? strtolower($option) : strtolower($option->slug);
+                                            $name = is_string($option) ? strtolower($option) : strtolower($option->name);
                                             $checking = in_array($slug, $pre_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$slug.'" type="checkbox" value="'.$slug.'" '.$checking.' /><label for="'.$opt.'_'.$slug.'">'.$name.'</label>';
                                         }
@@ -1827,7 +1828,7 @@
                                         $async_array = explode(',',trim($value));  // NO "," Array
                                         // $pre_array_count = count($async_array);
                                         foreach ($async_opts as $option) {
-                                            if (empty($option)) continue;
+                                            if ($option->error) continue;
                                             $opts_slug = $option->slug;
                                             $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
@@ -2215,7 +2216,7 @@
                                         $async_array = explode(',',trim($value));  // NO "," Array
                                         // $pre_array_count = count($async_array);
                                         foreach ($async_opts as $option) {
-                                            if (empty($option)) continue;
+                                            if ($option->error) continue;
                                             $opts_slug = $option->slug;
                                             $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
                                             echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
@@ -2876,7 +2877,7 @@
                                 $pre_array = explode(',',trim($value));  // NO "," Array
                                 // $pre_array_count = count($pre_array);
                                 foreach ($options as $option) {
-                                    if (empty($option)) continue;
+                                    if ($option->error) continue;
                                     $opts_slug = $option->slug;
                                     $checking = in_array($opts_slug, $pre_array) ? 'checked' : '';
                                     echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';

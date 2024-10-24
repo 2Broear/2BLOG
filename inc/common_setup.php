@@ -912,7 +912,15 @@ function onMailError( $wp_error ) {
     // get bind category-template cat by specific binded-temp post_id
     function get_cat_by_template($temp='news', $parm=false) {
         $cats = get_template_bind_cat('category-'.$temp.'.php');
-        return !$cats->errors ? ($parm ? $cats->$parm : $cats) : false;
+        if ($cats->errors) {
+            $err_cat = new stdClass();
+            $err_cat->name = null;
+            $err_cat->slug = null;
+            $err_cat->term_id = null;
+            $err_cat->error = $cats->errors;
+            return $err_cat;
+        }
+        return $parm ? $cats->$parm : $cats;
     }
     
     function get_between_string($begin, $end, $str) {
