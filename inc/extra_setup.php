@@ -786,15 +786,11 @@
         //清除（重建）指定分类
         function update_category_post_cache($post, $temp_slug, $page_cache) {
             $temp_info = get_cat_by_template($temp_slug);
-            if(!$cat) {
-                global $cat;
-            }
+            if ($temp_info->error) return;
+            if (!$cat) global $cat;
             $cid = get_the_category($post->ID)[0]->term_id;
-            // print_r($cid);
             $cat = $cat ? $cat : $cid; //get_the_category($pid)->term_id; // $categories = wp_get_post_categories($pid);
-            if(in_category($temp_info->slug, $post) || cat_is_ancestor_of($cat, $temp_info->term_id)){ //in_array($temp_info->term_id, $categories)
-                update_option($page_cache, '');
-            }
+            if(in_category($temp_info->slug, $post) || cat_is_ancestor_of($cat, $temp_info->term_id)) update_option($page_cache, '');
         }
         function site_update_specific_caches($post_id) {
             global $cat;
@@ -820,24 +816,22 @@
             $caches = get_option('site_cache_includes');
             if ($caches) {
                 $temp_array = array(get_cat_by_template('news'), get_cat_by_template('notes'), get_cat_by_template('weblog'), get_cat_by_template('acg'), get_cat_by_template('download'));
-                $output_sw = false;
+                $output_caches = explode(',', $caches);
                 foreach ($temp_array as $temp) {
-                    if (empty($temp)) continue;
-                    $temp_slug = $temp->slug;
-                    $cache = 'site_recent_'.$temp_slug.'_cache';
-                    $output_sw = in_array($temp_slug, explode(',', $caches));
-                    if($output_sw) {
-                        // 清除（重建）更新通用缓存
-                        update_category_post_cache($post_id, $temp_slug, $cache);
-                        // 清除（重建）更新指定缓存
-                        if ($temp_slug==='acg') {
-                            update_category_post_cache($post, $temp_slug, 'site_acg_stats_cache');
-                            update_category_post_cache($post, $temp_slug, 'site_acg_post_cache');
-                        }
-                        if ($temp_slug==='download') {
-                            update_category_post_cache($post, $temp_slug, 'site_download_list_cache');
-                        }
+                    if ($temp->error) {
+                        continue;
                     }
+                    $temp_slug = $temp->slug;
+                    // 清除（重建）更新通用缓存
+                    if(in_array($temp_slug, $output_caches)) update_category_post_cache($post_id, $temp_slug, 'site_recent_'.$temp_slug.'_cache');
+                }
+                // 清除（重建）更新指定缓存
+                if(in_array('acg', $output_caches)) {
+                    update_category_post_cache($post, 'acg', 'site_acg_stats_cache');
+                    update_category_post_cache($post, 'acg', 'site_acg_post_cache');
+                }
+                if(in_array('download', $output_caches)) {
+                    update_category_post_cache($post, 'download', 'site_download_list_cache');
                 }
             }
         }
@@ -901,16 +895,21 @@
         //定时清除（重建）缓存
         add_action('db_caches_cronjob_hook', 'site_clear_timeout_caches'); //定时更新 db caches
         function site_clear_timeout_caches() {
+            
             // 定时清除（重建）ACG 缓存
             update_option('site_acg_stats_cache', '');
             update_option('site_rank_list_cache', '');
+            
             // 触发更新
-            report_logs("（定时任务）开始更新 ACG 数据..."); // 记录日志
-            $response = wp_remote_get(get_category_link(get_cat_by_template('acg', 'term_id')));
-            if (!is_wp_error($response)) {
-                report_logs("（定时任务）ACG 已更新。\n"); // $body = wp_remote_retrieve_body($response);
-            } else {
-                report_logs('（定时任务）ACG 更新失败：' . $response->get_error_message() . '）'); // 记录错误日志
+            $acg_temp = get_cat_by_template('acg');
+            if (!$acg_temp->error) {
+                report_logs("（定时任务）开始更新 ACG 数据..."); // 记录日志
+                $response = wp_remote_get(get_category_link($acg_temp->term_id));
+                if (!is_wp_error($response)) {
+                    report_logs("（定时任务）ACG 已更新。\n"); // $body = wp_remote_retrieve_body($response);
+                } else {
+                    report_logs('（定时任务）ACG 更新失败：' . $response->get_error_message() . '）'); // 记录错误日志
+                }
             }
             
             // 清除（重建）归档数据
@@ -921,13 +920,17 @@
                 update_option('site_archive_' . $archive_year . '_cache', '');
             }
             update_option('site_archive_years_cache', '');
+            
             // 触发更新
-            report_logs("（定时任务）开始更新归档数据..."); // 记录日志
-            $response = wp_remote_get(get_category_link(get_cat_by_template('archive', 'term_id')));
-            if (!is_wp_error($response)) {
-                report_logs("（定时任务）归档已更新。\n"); // $body = wp_remote_retrieve_body($response);
-            } else {
-                report_logs('（定时任务）归档更新失败：' . $response->get_error_message() . '）'); // 记录错误日志
+            $archive_temp = get_cat_by_template('archive');
+            if (!$archive_temp->error) {
+                report_logs("（定时任务）开始更新归档数据..."); // 记录日志
+                $response = wp_remote_get(get_category_link($archive_temp->term_id));
+                if (!is_wp_error($response)) {
+                    report_logs("（定时任务）归档已更新。\n"); // $body = wp_remote_retrieve_body($response);
+                } else {
+                    report_logs('（定时任务）归档更新失败：' . $response->get_error_message() . '）'); // 记录错误日志
+                }
             }
         }
         

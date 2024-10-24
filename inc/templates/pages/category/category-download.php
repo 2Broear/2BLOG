@@ -33,7 +33,7 @@ function get_download_posts($cats, $order=1){
                 'number' => 1,
             ));
             $cat_poster = get_term_meta($cat_id, 'seo_image', true );
-            if(!$cat_poster) $cat_poster = get_postimg(0, $cat_first_post[0]->ID, true); //get_option('site_bgimg');
+            if(!$cat_poster && !empty($cat_first_post)) $cat_poster = get_postimg(0, $cat_first_post[0]->ID, true); //get_option('site_bgimg');
             $output .= '<div class="dld_box '.$cat_slug.'"><div class="dld_box_wrap"><div class="box_up preCover"><span style="background:url('.$cat_poster.') center center /cover"><a href="javascript:;"><h3> '.$cat_name.' </h3><i> '.strtoupper($cat_slug).'</i><em></em></a></span></div><div class="box_down"><ul>';
                 //setup query
                 global $post, $lazysrc, $loadimg;
@@ -51,6 +51,7 @@ function get_download_posts($cats, $order=1){
                     $left_query->the_post();
                     $link = get_post_meta($post->ID, "post_feeling", true);
                     $postimg = get_postimg(0,$post->ID,true);
+                    $lazyhold = '';
                     if($lazysrc!='src'){
                         $lazyhold = 'data-src="'.$postimg.'"';
                         $postimg = $loadimg;
