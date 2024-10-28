@@ -37,6 +37,14 @@ function get_download_posts($cats, $order=1){
             $output .= '<div class="dld_box '.$cat_slug.'"><div class="dld_box_wrap"><div class="box_up preCover"><span style="background:url('.$cat_poster.') center center /cover"><a href="javascript:;"><h3> '.$cat_name.' </h3><i> '.strtoupper($cat_slug).'</i><em></em></a></span></div><div class="box_down"><ul>';
                 //setup query
                 global $post, $lazysrc, $loadimg;
+		// 修復WP報錯問題 
+		if ($lazysrc != 'src') {
+                $lazyhold = 'data-src="'.$postimg.'"';
+                $postimg = $loadimg;
+                } else {
+                $lazyhold = ''; // 如果沒有懶加載，設置為空字符串
+                }
+		
                 $left_query = new WP_Query(array_filter(array(
                     'cat' => $cat_id,
                     'meta_key' => 'post_orderby',
