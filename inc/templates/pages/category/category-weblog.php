@@ -48,6 +48,10 @@
         .weblog-tree-all.useMemos .memos-tree-core{
             display: block;
         }
+        figure img, figure video {
+            width: auto;
+            height: auto;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

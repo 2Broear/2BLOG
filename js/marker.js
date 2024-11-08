@@ -123,6 +123,10 @@
                             let _eachMarks = (mark, user)=> {
                                 let {nick, text, date, uid, rid, note} = mark,
                                     isOtherUserMark = user !== _d_mid;
+                                if (!rid || !uid) {
+                                    console.warn(`wrong rid|uid`, mark);
+                                    return;
+                                }
                                 // URIError: URI malformed
                                 try {
                                     if (nick) nick = decodeURIComponent(nick);

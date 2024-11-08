@@ -340,6 +340,19 @@
         // return $xml;
     }
     
+    function get_rss_data_by_cat($category = '', $format = false) {
+        $rss_data = file_get_contents(get_plugin_refrence('rss', true) . 'cat=' . $category . '&update=0&limit=0&output=0&clear=0', false, stream_context_create(array(
+            'http' => array(
+                'method' => 'GET',
+                'header' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+            )
+        )));
+        if (empty($rss_data)) {
+            return [];
+        }
+        return $format ? json_decode($rss_data) : $rss_data;
+    }
+    
     // Gutenberg editor
     load_theme_partial('/inc/wp_blocks.php');  // if(is_edit_page() || is_single()) 
     /*
@@ -447,8 +460,32 @@
         return (count($res)>0 ? $res : false);
     }
     // 返回友链指定分类 html
-    function get_site_links($links, $frame=false, $strict=false){
-        if(!$links) return 'unreachable links provide';
+    function get_site_links($links, $frame=false, $strict=false, $category = ''){
+        if(!$links) {
+            return 'unreachable links provide';
+        }
+        $over2yearsNoUpdateRssList = array();
+        if ($category && is_string($category)) {
+            $rss_data = get_rss_data_by_cat($category, true);
+            if ($rss_data) {
+                $blacklist = ['0000-00-00', '1970-01-01'];
+                foreach ($rss_data as $data) {
+                    // 给定的日期字符串
+                    $dateString = $data->date;
+                    // 将给定的日期字符串转换为 DateTime 对象
+                    $givenDate = new DateTime($dateString);
+                    // 获取当前日期
+                    $currentDate = new DateTime();
+                    // 计算两个日期之间的差异
+                    $interval = $currentDate->diff($givenDate);
+                    // 输出年数差异
+                    if ($interval->y>=2 && !in_array($dateString, $blacklist)) {
+                        array_push($over2yearsNoUpdateRssList, $data->rss);
+                        // $impression = '<span class="ssl http"> 待除草 </span>';
+                    }
+                }
+            }
+        }
         global $lazysrc, $loadimg;
         $output = '';
         foreach ($links as $link){
@@ -460,6 +497,7 @@
             //     continue;
             // }
             $link_url = $link->link_url;
+            $link_rss = $link->link_rss;
             $link_name = $link->link_name;
             $link_desc = $link->link_description;
             $link_descs = $link_desc ? '<span class="lowside-description"><p>'.$link_desc.'</p></span>' : '';
@@ -469,22 +507,25 @@
             $ssl = $link_rating>=9 ? ' https' : '';
             $rel = $link->link_rel ? $link->link_rel : false;
             $target = !$link_target ? '_blank' : $link_target;
-            $impress = $link_notes&&$link_notes!='' ? '<span class="ssl'.$ssl.'"> '.$link_notes.' </span>' : false;
+            $impression = $link_notes&&$link_notes!='' ? '<span class="ssl'.$ssl.'"> '.$link_notes.' </span>' : false;
             $avatar = !$link->link_image ? 'https:' . get_option('site_avatar_mirror') . 'avatar/' . md5(mt_rand().'@rand.avatar') . '?s=300' : $link->link_image;
             $lazyhold = "";
             if($lazysrc!='src'){
                 $lazyhold = 'data-src="'.$avatar.'"';
                 $avatar = $loadimg;
             }
+            if (in_array($link_rss, $over2yearsNoUpdateRssList)) {
+                $impression = '<span class="ssl http"> 待除草 </span>';
+            }
             switch ($frame) {
                 case 'full':
                     $avatar_statu = $status==$standby ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$avatar.'" alt="'.$link_name.'" draggable="false">';
                     $rel_statu = $rel ? $rel : 'friends';
-                    $output .= '<div class="inbox flexboxes '.$status.$sex.'"><div class="inbox-inside flexboxes"><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div></div>';
+                    $output .= '<div class="inbox flexboxes '.$status.$sex.'"><div class="inbox-inside flexboxes"><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impression.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div></div>';
                     break;
                 case 'half':
                     $rel_statu = $rel ? $rel : 'recommends';
-                    $output .= '<div class="inbox '.$status.$sex.'"><div class="inbox-inside flexboxes">'.$impress.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div></div>'; //<em></em>
+                    $output .= '<div class="inbox '.$status.$sex.'"><div class="inbox-inside flexboxes">'.$impression.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div></div>'; //<em></em>
                     break;
                 case 'list':
                     $rel_statu = $rel ? $rel : 'random';
@@ -797,18 +838,20 @@
             $post = get_post($post_id);
             if($post->post_type != 'post') return;  // update post only(no inform)
             
-            // 清除（当前）归档数据
-            update_option('site_archive_count_cache', '');
-            update_option('site_archive_contributions_cache', '');
-            // update_option('site_archive_list_cache', '');
-            
-            $post_year = date('Y', strtotime($post->post_date));
-            $archive_years = get_option('site_archive_years_cache');
-            if ($archive_years) {
-                $archive_years = json_decode($archive_years);
-                if (in_array($post_year, $archive_years)) {
-                    update_option('site_archive_' . $post_year . '_cache', '');
-                    // update_option('site_archive_years_cache', '');
+            $archive_temp = get_cat_by_template('archive');
+            if (!isset($archive_temp->error)) {
+                // 清除（当前）归档数据
+                update_option('site_archive_count_cache', '');
+                update_option('site_archive_contributions_cache', '');
+                // update_option('site_archive_list_cache', '');
+                $post_year = date('Y', strtotime($post->post_date));
+                $archive_years = get_option('site_archive_years_cache');
+                if ($archive_years) {
+                    $archive_years = json_decode($archive_years);
+                    if (in_array($post_year, $archive_years)) {
+                        update_option('site_archive_' . $post_year . '_cache', '');
+                        // update_option('site_archive_years_cache', '');
+                    }
                 }
             }
             
@@ -896,13 +939,17 @@
         add_action('db_caches_cronjob_hook', 'site_clear_timeout_caches'); //定时更新 db caches
         function site_clear_timeout_caches() {
             
+            // 清除 tag_clouds 缓存
+            if (!get_option('site_tagcloud_auto_caches')) {
+                update_option('site_tag_clouds_cache', '');
+            }
             // 定时清除（重建）ACG 缓存
             update_option('site_acg_stats_cache', '');
             update_option('site_rank_list_cache', '');
             
             // 触发更新
             $acg_temp = get_cat_by_template('acg');
-            if (!$acg_temp->error) {
+            if (!isset($acg_temp->error)) {
                 report_logs("（定时任务）开始更新 ACG 数据..."); // 记录日志
                 $response = wp_remote_get(get_category_link($acg_temp->term_id));
                 if (!is_wp_error($response)) {
@@ -912,19 +959,19 @@
                 }
             }
             
-            // 清除（重建）归档数据
-            update_option('site_archive_count_cache', '');
-            update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
-            $archive_years = json_decode(get_option('site_archive_years_cache'));
-            foreach ($archive_years as $archive_year) {
-                update_option('site_archive_' . $archive_year . '_cache', '');
-            }
-            update_option('site_archive_years_cache', '');
-            
             // 触发更新
             $archive_temp = get_cat_by_template('archive');
-            if (!$archive_temp->error) {
+            if (!isset($archive_temp->error)) {
                 report_logs("（定时任务）开始更新归档数据..."); // 记录日志
+                // 清除（重建）归档数据
+                update_option('site_archive_count_cache', '');
+                update_option('site_archive_contributions_cache', ''); //解决bug：切换全年报表后无法判断db数据库中是否已存在全年记录
+                $archive_years = json_decode(get_option('site_archive_years_cache'));
+                foreach ($archive_years as $archive_year) {
+                    update_option('site_archive_' . $archive_year . '_cache', '');
+                }
+                update_option('site_archive_years_cache', '');
+                
                 $response = wp_remote_get(get_category_link($archive_temp->term_id));
                 if (!is_wp_error($response)) {
                     report_logs("（定时任务）归档已更新。\n"); // $body = wp_remote_retrieve_body($response);

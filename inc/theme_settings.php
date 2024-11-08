@@ -255,7 +255,7 @@
             <?php
                 // wp_cache_flush(); // bug: to clear wp_options caches
                 // $output_retry = 2;
-                $output_limit = 3;
+                $output_limit = get_option('site_rss_update_count', 3);
                 $output_chunk = 10;  // bigger for better performance
                 $output_sw = false;
                 $caches_sw = get_option('site_cache_switcher');
@@ -289,7 +289,8 @@
                                             $scheduled_ts = 'Scheduled updates: ' . date('Y-m-d H:i:s', $scheduled_ts) . ' (' . time() .' -> ' . $scheduled_ts . ')<br/>';
                                             print_r("<i style='float:left;opacity:.75;'>$scheduled_ts</i>");
                                         }
-                                        echo "<p style='text-align:right;margin-bottom:35px;'>$caches_name ($output_date) <a href='javascript:;' class='reloadFeeds' data-cat='$link_slug' data-limit=3 data-update=1 data-output=1 data-clear=0 data-api='$link_api'>reload $link_slug?</a></p>"; //
+                                        $reload_limits = get_option('site_rss_update_count', 3);
+                                        echo "<p style='text-align:right;margin-bottom:35px;'>$caches_name ($output_date) <a href='javascript:;' class='reloadFeeds' data-cat='$link_slug' data-limit=$reload_limits data-update=1 data-output=1 data-clear=0 data-api='$link_api'> reload $link_slug *</a>&nbsp;<input type='number' id='reloadCount' class='small-text' value=$reload_limits min=1 max=99 style='width:45px' /></p>"; //
                                     }
                                 }
                                 // $output_json length will be 0 if non-caches loaded
@@ -418,6 +419,7 @@
         // if(get_option('site_tagcloud_switcher')){
             register_setting( 'baw-settings-group', 'site_tagcloud_num' );
             register_setting( 'baw-settings-group', 'site_tagcloud_max' );
+            register_setting( 'baw-settings-group', 'site_tagcloud_auto_caches' );
         // }
         register_setting( 'baw-settings-group', 'site_stream_switcher' );
         register_setting( 'baw-settings-group', 'site_mbit_array' );
@@ -559,6 +561,7 @@
         
         register_setting( 'baw-settings-group', 'site_rss_categories' );
         register_setting( 'baw-settings-group', 'site_rss_update_interval' );
+        register_setting( 'baw-settings-group', 'site_rss_update_count' );
         register_setting( 'baw-settings-group', 'site_map_switcher' );
         // if(get_option('site_map_switcher')){
             register_setting( 'baw-settings-group', 'site_map_includes' );
@@ -1109,7 +1112,7 @@
                                 foreach($cats as $the_cat){
                                     if($the_cat->count>=1) array_push($options, $the_cat);  // has-content category only
                                 }
-                                echo '<p class="description" id="site_rss_categories_label">指定站点 RSS 分类文章，使用逗号“ , ”分隔（feed将在任意文章更新后更新</p><div class="checkbox">';
+                                echo '<p class="description" id="site_rss_categories_label">指定输出站点 RSS 分类文章，使用逗号“ , ”分隔（feed将在任意文章更新后更新</p><div class="checkbox">';
                                 $pre_array = explode(',',trim($value));  // NO "," Array
                                 // $pre_array_count = count($pre_array);
                                 foreach ($options as $option){
@@ -1122,16 +1125,26 @@
                         </td>
                     </tr>
                     <tr valign="top" class="">
-                        <th scope="row">RSS 更新频率（小时）</th>
+                        <th scope="row">RSS 拉取频率（小时）</th>
                         <td>
                             <?php
                                 $opt = 'site_rss_update_interval';
                                 $value = get_option($opt);
                                 $preset = 12;  //默认开启（时）间
-                                global $post;
-                                print_r($post);
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
                                 echo '<p class="description" id="site_rss_feeds_timeout_label"><a href="' . admin_url('admin.php?page=' . $GLOBALS['RSS_PAGE_NAME']) . '" target="_self">RSS 友链订阅</a> 计划自动更新 feeds 频率（默认12小时/一天更新两次，修改<i><s>前</s><b>后</b></i>请 <input id="updateSchedule" style="font-size: 12px;" type="button" value="刷新定时任务" data-api="' . get_api_refrence('rss', true) . '" data-page="' . $GLOBALS['RSS_PAGE_NAME'] . '" data-admin-url="' . admin_url('admin-ajax.php') . '" data-nonce="' . wp_create_nonce("update_cronjobs") . '"></p><input id="updateSchedules" type="number" min="1" max="" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>'; //以解锁操作
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">RSS 更新数量（条目）</th>
+                        <td>
+                            <?php
+                                $opt = 'site_rss_update_count';
+                                $value = get_option($opt);
+                                $preset = 3;
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                echo '<p class="description" id="site_rss_feeds_timeout_label"><a href="' . admin_url('admin.php?page=' . $GLOBALS['RSS_PAGE_NAME']) . '" target="_self">RSS 友链订阅</a> 拉取数量（默认3条</p><input type="number" min="1" max="9" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                             ?>
                         </td>
                     </tr>
@@ -2099,40 +2112,44 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">首页随机标签云（自带主题色，若检测到无标签将默认展示随机动漫图</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:cornflowerblue;" class="btn">标签の云</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">首页随机标签云（自带主题色，若检测到无标签将默认展示随机动漫图；可在页面缓存中开启 tagclouds</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:cornflowerblue;" class="btn">标签の云</span></label>';
                             ?>
                         </td>
                     </tr>
-                    <?php
-                        // if(get_option('site_tagcloud_switcher')){
-                    ?>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags = get_option('site_tagcloud_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 标签展示数量</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_tagcloud_num';
-                                        $value = get_option($opt);
-                                        $preset = 32;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id=""> 最多显示数量（默认显示 32 个</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $tags; ?>">
-                                <th scope="row">— 标签最大字体</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_tagcloud_max';
-                                        $value = get_option($opt);
-                                        $preset = 30;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id=""> 最大显示字体（默认最大 30px，最小 10px</p><input type="number" min="11" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                    <?php
-                        // }
-                    ?>
+                        <tr valign="top" class="child_option dynamic_opts <?php echo $tags = get_option('site_tagcloud_switcher') ? 'dynamic_optshow' : false; ?>">
+                            <th scope="row">— 标签展示数量</th>
+                            <td>
+                                <?php
+                                    $opt = 'site_tagcloud_num';
+                                    $value = get_option($opt);
+                                    $preset = 32;  //默认填充数据
+                                    if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                    echo '<p class="description" id=""> 最多显示数量（默认显示 32 个</p><input type="number" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                ?>
+                            </td>
+                        </tr>
+                        <tr valign="top" class="child_option dynamic_opts <?php echo $tags; ?>">
+                            <th scope="row">— 标签最大字体</th>
+                            <td>
+                                <?php
+                                    $opt = 'site_tagcloud_max';
+                                    $value = get_option($opt);
+                                    $preset = 30;  //默认填充数据
+                                    if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                    echo '<p class="description" id=""> 最大显示字体（默认最大 30px，最小 10px</p><input type="number" min="11" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                ?>
+                            </td>
+                        </tr>
+                        <tr valign="top" class="child_option dynamic_opts <?php echo $tags; ?>">
+                            <th scope="row">— 自动更新缓存</th>
+                            <td>
+                                <?php
+                                    $opt = 'site_tagcloud_auto_caches';
+                                    $status = check_status($opt);
+                                    echo '<label for="'.$opt.'"><p class="description" id="">自动更新标签云缓存（开启后访问标签云时将始终更新缓存为最新，默认每日自动更新</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Auto Update Cache</b></label>';
+                                ?>
+                            </td>
+                        </tr>
                     <tr valign="top">
                         <th scope="row"> 缓存索引 - 页面配置 </th>
                         <td>
@@ -2158,9 +2175,12 @@
                                         $opt = 'site_cache_includes';  //unique str
                                         $value = get_option($opt);
                                         $rss_feeds = new stdClass();
+                                        $tag_clouds = new stdClass();
                                         $rss_feeds->name = 'RSS 订阅';
                                         $rss_feeds->slug = 'rssfeeds';
-                                        $async_opts = array($templates_info['news'], $templates_info['notes'], $templates_info['weblog'], $templates_info['acg'], $templates_info['2bfriends'], $templates_info['download'], $templates_info['archive'], $templates_info['ranks'], $templates_info['goods'], $rss_feeds);
+                                        $tag_clouds->name = 'TAG 标签云';
+                                        $tag_clouds->slug = 'tagclouds';
+                                        $async_opts = array($templates_info['news'], $templates_info['notes'], $templates_info['weblog'], $templates_info['acg'], $templates_info['2bfriends'], $templates_info['download'], $templates_info['archive'], $templates_info['ranks'],  $rss_feeds, $tag_clouds);
                                         // print_r($async_opts);
                                         if(!$value) {
                                             $preset_str = $rss_feeds->slug.','; //$async_opts[3]->slug.','.$async_opts[5]->slug.','.$async_opts[6]->slug.','.

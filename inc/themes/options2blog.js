@@ -121,7 +121,7 @@ jQuery(document).ready(function($){
           blog_settings = document.querySelector(".wrap.settings"),
           theme_root = document.querySelector(":root"),
           theme_picker = document.querySelector("input[type=color]");
-    if(blog_settings){
+    if(blog_settings) {
         theme_picker.onchange = theme_picker.oninput=function(){  //onchange/onpropertychange only active when off-focus
             theme_root.style.setProperty("--panel-theme", this.value);
         };
@@ -302,6 +302,7 @@ jQuery(document).ready(function($){
             }
         }
     }
+    
     // switch tabs & active class
     const activecls = "active",
           switchcls = "show",
@@ -343,6 +344,7 @@ jQuery(document).ready(function($){
               return obj;
           },
           parms = getQueryObject();
+          
     // console.log(switchtab);
     if(parms&&parms.tab){
         document.querySelector("form ."+parms.tab).classList.add(switchcls);
@@ -351,6 +353,7 @@ jQuery(document).ready(function($){
         formtable ? formtable.classList.add(switchcls) : formtable;  // auto active first formtable
         switchtab[0].classList.add(activecls);  // clearClass then active
     }
+    
     bindEventClick(document.querySelector(".switchTab"), 'li', (t)=> {
         pushParam('tab', t.id);
         // location.search = '?page=2blog-settings&tab='+t.id;
@@ -360,12 +363,11 @@ jQuery(document).ready(function($){
         document.querySelector("form ."+t.id).classList.add(switchcls);  // clearClass then show
     });
     
-
-    bindEventClick(blog_settings, '', (t)=> {
+    bindEventClick(document, '', (t)=> {
         if (t.id!=='updateSchedule') return;
         // console.log(t)
         if (confirm(`Updating Scheduled Tasks(scheduled_rss_feeds_updates)?`)) {
-            const updateScheduleInput = blog_settings.querySelector('#updateSchedules');
+            const updateScheduleInput = document.querySelector('#updateSchedules');
             var xhr = new XMLHttpRequest();
             xhr.open('POST', t.dataset.adminUrl, true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -425,48 +427,57 @@ jQuery(document).ready(function($){
     const contents = document.querySelector('#contents');
     const reloader = 'reloadFeeds';
     if (contents) {
-        bindEventClick(contents, reloader, (t)=> {
-            const dataset = t.dataset;
-            const container = contents.querySelector(`.formtable.${dataset.cat}.${switchcls}`);
-            if (!confirm(`重新拉取 ${dataset.cat} 中所有 rss 数据？`)) return;
-            t.textContent = `fetching ${dataset.cat}...`;
-            t.classList.remove(reloader);
-            console.log('loading url: ', dataset.api);
-            fetch(`${dataset.api}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, {
-                method: 'GET',
-            })
-            .then(res=> {
-                if (res.ok) {
-                    console.log('data loaded.', res);
-                    return res.text(); //json()
-                }
-                console.warn('request failed.')
-                // const reader = res.body.getReader();
-                // let receivedLength = 0; // 已接收的数据长度
-                
-                // reader.read().then(function processText({ done, value }) {
-                //     if (done) {
-                //         console.log('Stream complete');
-                //         return;
-                //     }
-                //     receivedLength += value.length;
-                //     const totalLength = res.headers.get('Content-Length');
-                //     const progress = Math.round((receivedLength / totalLength) * 100);
+        // const reloadFeeds = contents.querySelector('.reloadFeeds');
+        bindEventClick(contents, '', (t)=> { //reloader
+            if (t.id==='reloadCount') {
+                const reloadFeeds = t.parentNode.querySelector('.reloadFeeds');
+                t.onchange = t.onpropertychange = ()=> reloadFeeds.dataset.limit = t.value;
+                return;
+            }
+            if (t.classList && t.classList.contains(reloader)) {
+                const dataset = t.dataset;
+                const container = contents.querySelector(`.formtable.${dataset.cat}.${switchcls}`);
+                if (!confirm(`重新拉取 ${dataset.cat} 中所有 rss 数据（${dataset.limit}条）？`)) return;
+                t.textContent = `fetching ${dataset.cat}...`;
+                t.classList.remove(reloader);
+                console.log('loading url: ', dataset.api);
+                fetch(`${dataset.api}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, {
+                    method: 'GET',
+                })
+                .then(res=> {
+                    if (res.ok) {
+                        console.log('data loaded.', res);
+                        return res.text(); //json()
+                    }
+                    console.warn('request failed.')
+                    // const reader = res.body.getReader();
+                    // let receivedLength = 0; // 已接收的数据长度
                     
-                //     console.log(progress + '%');
-                    
-                //     return reader.read().then(processText);
-                // });
-            })
-            .then(data=> {
-                container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ data }`;
-                console.log('data fullfilled.');
-                alert(`${dataset.cat} rss data loaded.`);
-            })
-            .catch(error => {
-                container.querySelector('p').innerHTML = `Reload site_rss_${dataset.cat}_cache failed, <u>${ error }!</u>`;
-                console.error('Error fetching progress:', error);
-            });
+                    // reader.read().then(function processText({ done, value }) {
+                    //     if (done) {
+                    //         console.log('Stream complete');
+                    //         return;
+                    //     }
+                    //     receivedLength += value.length;
+                    //     const totalLength = res.headers.get('Content-Length');
+                    //     const progress = Math.round((receivedLength / totalLength) * 100);
+                        
+                    //     console.log(progress + '%');
+                        
+                    //     return reader.read().then(processText);
+                    // });
+                })
+                .then(data=> {
+                    container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ data }`;
+                    console.log('data fullfilled.');
+                    alert(`${dataset.cat} rss data loaded.`);
+                })
+                .catch(error => {
+                    container.querySelector('p').innerHTML = `Reload site_rss_${dataset.cat}_cache failed, <u>${ error }!</u>`;
+                    console.error('Error fetching progress:', error);
+                });
+                return;
+            }
         });
     }
 });

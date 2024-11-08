@@ -565,7 +565,7 @@
     
     var scroll_throttler = null,
         scroll_record = 0,
-        scroll_delay = 200,
+        scroll_delay = 300,
         scroll_func = function(){
             var scrollTop = document.documentElement.scrollTop || document.body.scrollTop,
                 clientHeight = document.body.clientHeight,
