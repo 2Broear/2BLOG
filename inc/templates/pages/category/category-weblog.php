@@ -59,7 +59,7 @@
         <div class="win-tops bg" style="background:url() center center /cover ">
             <header>
                 <nav id="tipson" class="ajaxloadon">
-                    <?php get_header(); ?>
+                    <?php get_header();//echo get_category_feed_link($cat, 'rss2'); ?>
                 </nav>
             </header>
             <?php

@@ -39,6 +39,10 @@
         	};
         };
         function bindEventClick(parent, ids, callback){
+            if (!parent) {
+                console.warn('bindEventClick failed', parent);
+                return;
+            }
             parent.onclick=(e)=>{
                 e = e || window.event;
                 let t = e.target || e.srcElement;

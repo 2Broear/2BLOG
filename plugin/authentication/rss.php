@@ -58,14 +58,18 @@
     if($caches_sw) {
         $output_sw = in_array('rssfeeds', explode(',', $caches_inc));
         $output_caches = get_option($caches_name);
-        if ($output_sw && $output_caches && !$do_update) {
-            if ($do_output) {
-                $link_apis = get_api_refrence('rss', true) . "cat=$req_cat&limit=3&update=1&output=0&format=0";
-                echo "<p style='text-align:right'>Loaded from $caches_name, <a href='javascript:;' class='fetch-reload' data-api='$link_apis'>reload $req_cat?</a></p>";
-                the_rss_feeds(json_decode($output_caches));
-            } else {
-                print_r($output_caches);
+        if ($output_sw && !$do_update) {
+            if ($output_caches === '') {
+                print_r([]);
+                exit;
             }
+            if (!$do_output) {
+                print_r($output_caches);
+                exit;
+            }
+            $link_apis = get_api_refrence('rss', true) . "cat=$req_cat&limit=3&update=1&output=0&format=0";
+            echo "<p style='text-align:right'>Loaded from $caches_name, <a href='javascript:;' class='fetch-reload' data-api='$link_apis'>reload $req_cat?</a></p>";
+            the_rss_feeds(json_decode($output_caches));
             exit;
         }
     }

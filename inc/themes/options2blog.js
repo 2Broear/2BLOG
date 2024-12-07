@@ -1,5 +1,9 @@
 jQuery(document).ready(function($){
-    function bindEventClick(parent, ids, callback){
+    function bindEventClick(parent, ids, callback) {
+        if (!parent) {
+            console.warn('bindEventClick failed', parent);
+            return;
+        }
         parent.onclick=(e)=>{
             e = e || window.event;
             let t = e.target || e.srcElement;
@@ -117,7 +121,7 @@ jQuery(document).ready(function($){
 // ***  ROW JAVASCRIPT FUNCTIONs (AFTER DOCUMENT LOADED) *** //
 
     const //switch_tab = document.querySelector(".switchTab"),
-          switch_offset = document.querySelector("form").offsetTop,
+          switch_form = document.querySelector("form"),
           blog_settings = document.querySelector(".wrap.settings"),
           theme_root = document.querySelector(":root"),
           theme_picker = document.querySelector("input[type=color]");
@@ -259,6 +263,7 @@ jQuery(document).ready(function($){
             scroll_record = 0,
             scroll_delay = 200,
             scroll_func = function(e){
+                const switch_offset = switch_form.offsetTop;
                 return (function(){
                     if(scroll_throttler==null){
                         scroll_throttler = setTimeout(function(){
@@ -282,7 +287,7 @@ jQuery(document).ready(function($){
                     }
                 })();
             };
-        window.addEventListener('scroll', scroll_func, true);
+        if (switch_form) window.addEventListener('scroll', scroll_func, true);
         
         // same options sync(identify by input id)
         const sync_data = [
@@ -346,12 +351,12 @@ jQuery(document).ready(function($){
           parms = getQueryObject();
           
     // console.log(switchtab);
-    if(parms&&parms.tab){
+    if(parms && parms.tab) {
         document.querySelector("form ."+parms.tab).classList.add(switchcls);
         document.querySelector(".switchTab li#"+parms.tab).classList.add(activecls);  // clearClass then active
-    }else{
+    } else {
         formtable ? formtable.classList.add(switchcls) : formtable;  // auto active first formtable
-        switchtab[0].classList.add(activecls);  // clearClass then active
+        if (switchtab[0]) switchtab[0].classList.add(activecls);  // clearClass then active
     }
     
     bindEventClick(document.querySelector(".switchTab"), 'li', (t)=> {

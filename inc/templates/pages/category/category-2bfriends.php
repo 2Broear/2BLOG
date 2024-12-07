@@ -30,13 +30,16 @@
         .friends-boxes .deals .inboxSliderCard {
             white-space: nowrap;
         }
-        .friends-boxes .deals .inboxSliderCard .slideBox.column {
+        .friends-boxes .deals .inboxSliderCard.sliding {
+            scroll-behavior: auto!important;
+        }
+        .friends-boxes .deals .inboxSliderCard.sliding .slideBox {
             display: table;
             display: inline-block;
             white-space: nowrap;
             transition: transform .35s ease;
         }
-        .friends-boxes .deals .inboxSliderCard .slideBox.column a {
+        .friends-boxes .deals .inboxSliderCard.sliding .slideBox a {
             /*padding: 0 15px 0 0;*/
             letter-spacing: 3px;
             writing-mode: tb-rl;
@@ -84,9 +87,9 @@
                             //     $output_object->$each_cat = get_site_bookmarks($each_cat);
                             // }
                             $rich_links = get_site_bookmarks('standard');
-                            $output .= $rich_links ? '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes">'.get_site_links($rich_links, 'full', false, 'standard').'</div>' : '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';
+                            $output .= $rich_links ? '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes">'.get_site_links($rich_links, 'full', 'standard').'</div>' : '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';
                             $tech_links = get_site_bookmarks('technical');  // $tech_links = get_filtered_bookmarks('technical', 'others');
-                            if($tech_links) $output .= '<div class="inbox-clip"><h2 id="exchanged"> '.$t2.' </h2></div><div class="deals tech exchanged flexboxes">'.get_site_links($tech_links, 'full', false, 'technical').'</div>';
+                            if($tech_links) $output .= '<div class="inbox-clip"><h2 id="exchanged"> '.$t2.' </h2></div><div class="deals tech exchanged flexboxes">'.get_site_links($tech_links, 'full', 'technical').'</div>';
                             
                             $rcmd_links = get_site_bookmarks('special', 'rand', 'DESC');
                             if($rcmd_links) $output .= '<div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes">'.get_site_links($rcmd_links, 'half').'</div>';
@@ -115,203 +118,243 @@
     class slideBox {
         constructor() {
             this.elements = {
-                slideCard: document.querySelector('.inboxSliderCard'),
-                slideBox: document.querySelector('.slideBox'),
+                slideCard: document.documentElement,
+                slideBox: document.body,
             }
             this.data = {
+                debugMode: false,
+                slideRandom: true,
                 slideAnimate: null,
                 slideReverse: false,
-                slideOffsets: 0, 
-                slideSpeed: .25, 
                 slideRestart: 1000,
-                slideMaxOffset: this.elements.slideCard.scrollWidth - this.elements.slideCard.offsetWidth,
+                slideDirection: 0, //1,-1,0
+                slideOffsetsX: 0,
+                slideOffsetsY: 0,
+                slideClass: 'sliding',
+                slideSpeed: .25,
+                slideRound: -1,
+                slideCount: 0,
+                slideWidth: 0,
+                slideHeight: 0,
             }
             this.status = {
+                // method
+                isObject: (obj)=> Object.prototype.toString.call(obj) === '[object Object]',
+                isElement: (node)=> node && node instanceof HTMLElement && node.nodeType === 1,
+                isFunction: (func)=> func && typeof func === 'function',
+                isNumber: (num, int = false)=> {
+                    let isNum = !isNaN(num) && typeof num === 'number';
+                    if (int) return this.status.isFunction(Number.isInteger) ? isNum && Number.isInteger(num) : isNum && num % 1 === 0;
+                    return isNum;
+                },
                 // static
-                isScrollAvailable: this.elements.slideCard.scrollWidth > this.elements.slideCard.offsetWidth,
-                isScrollToAvailable: this.elements.slideCard.scrollTo,
+                isEvenNumber: (num)=> num & 1 && num % 2 === 0,
+                isScrollToEnabled: ()=> this.status.isFunction(this.elements.slideCard.scrollTo),
                 // dynamic
-                isScrollToStart() {
-                    return this.data.slideOffsets <= 0;
+                isScrollAvailable: ()=> {
+                    const validSlideElements = this.status.isElement(this.elements.slideCard) && this.status.isElement(this.elements.slideBox);
+                    return validSlideElements && (this.data.slideDirection ? this.elements.slideCard.scrollHeight >= this.elements.slideCard.offsetHeight : this.elements.slideCard.scrollWidth >= this.elements.slideCard.offsetWidth); // use >= incase default elements(html,body) provided
                 },
-                isScrollToEnd() {
-                    return this.data.slideOffsets >= this.data.slideMaxOffset;
-                },
+                isScrollToStart: ()=> this.data.slideDirection ? this.data.slideOffsetsY <= 0 : this.data.slideOffsetsX <= 0,
+                isScrollToEnd: ()=> this.data.slideDirection ? this.data.slideOffsetsY >= this.data.slideHeight : this.data.slideOffsetsX >= this.data.slideWidth,
             }
             this.mods = {
-                getRandomNumber(from = 0, to = 1, fix = 2) {
+                randomNumber(from = 0, to = 1, fix = 2) {
                     const random = (Math.random() * (to - from) + from);
                     return parseFloat(random.toFixed(fix));
                 },
+                confRewriter: function _confRewriter(rewrite = {}, preset = {}, merge = true) {
+                    const result = { ...preset };
+                    for (const key in rewrite) {
+                        if (rewrite.hasOwnProperty(key)) {
+                            const validObjects = this.status.isObject(result[key]) && this.status.isObject(rewrite[key]); // const validObjects = Object.prototype.toString.call(result[key])==='[object Object]' && Object.prototype.toString.call(rewrite[key][key])==='[object Object]';
+                            if (!merge) {
+                                // 递归合并对象
+                                result[key] = validObjects ? _confRewriter(rewrite[key], result[key] || {}, merge) : rewrite[key];
+                                continue;
+                            }
+                            switch (true) {
+                                // 合并数组
+                                case Array.isArray(result[key]) && Array.isArray(rewrite[key]):
+                                    result[key] = [...new Set([...result[key], ...rewrite[key]])];
+                                    break;
+                                // 覆盖元素
+                                case this.status.isElement(rewrite[key]): // rewrite[key] instanceof HTMLElement
+                                    result[key] = rewrite[key];
+                                    break;
+                                // 递归合并对象
+                                default:
+                                    result[key] = validObjects ? _confRewriter(rewrite[key], result[key] || {}, merge) : rewrite[key];
+                            }
+                        }
+                    }
+                    return result;
+                }
+            }
+            this.events = {
+                bind(element, event, callback) {
+                    element[event] = callback;
+                },
+                unbind(element, event, callback = null) {
+                    element[event] = callback;
+                }
             }
         }
         
-        abortAnimation (animateKey, callback, delay = 1) {
-            cancelAnimationFrame(this.data.slideAnimate);
-            if (callback && typeof callback === 'function') {
-                if (!delay) {
+        abortAnimation (animateKey, callback, delay = 0) {
+            cancelAnimationFrame(animateKey);
+            if (this.status.isFunction(callback)) {
+                const restartDelay = delay ? delay : this.data.slideRestart;
+                if (restartDelay === 0 && delay === 0) {
                     callback();
                     return;
                 }
-                let timer = setTimeout(()=> {
+                const timer = setTimeout(()=> {
                     callback();
                     clearTimeout(timer);
-                }, this.data.slideRestart);
-                console.log(`animation(${animateKey}) abort, restart in ${this.data.slideRestart} ms..`);
+                }, restartDelay);
+                console.log(`animation(${animateKey}) abort, restart in ${restartDelay} ms..`);
                 return;
             }
             console.log(`animation(${animateKey}) stoped(without callback).`);
         }
         
         startAnimation () {
-            // console.log(this)
             // must clear animation frame(if animateKey exists) before startAnimation
             if (this.data.slideAnimate) cancelAnimationFrame(this.data.slideAnimate);
-            // requestAnimationFrame 中的箭头函数会确保 this 指向 slideBox 实例，从而避免 undefined 的问题
-            this.data.slideAnimate = requestAnimationFrame(this.startAnimation.bind(this)); //()=>this.startAnimation()
-            this.data.slideReverse ? this.data.slideOffsets-=this.data.slideSpeed : this.data.slideOffsets+=this.data.slideSpeed;
-            // console.log(this.data.slideOffsets)
+            // requestAnimationFrame 中的箭头函数会确保 this 指向 slideBox 实例，从而避免 undefined 的问题 //()=>this.startAnimation()
+            this.data.slideAnimate = requestAnimationFrame(this.startAnimation.bind(this));
+            
+            // scrollBy direction&reversible
+            if (this.data.slideDirection) {
+                this.data.slideReverse ? this.data.slideOffsetsY -= this.data.slideSpeed : this.data.slideOffsetsY += this.data.slideSpeed;
+            } else {
+                this.data.slideReverse ? this.data.slideOffsetsX -= this.data.slideSpeed : this.data.slideOffsetsX += this.data.slideSpeed;
+            }
+            // dynamic(sync) adjust overflows(max&min)
+            if (this.data.slideOffsetsX < 0 || this.data.slideOffsetsY < 0) this.data.slideOffsetsX = this.data.slideOffsetsY = 0;
+            if (this.data.slideOffsetsX > this.data.slideWidth || this.data.slideOffsetsY > this.data.slideHeight) {
+                this.data.slideOffsetsX = this.data.slideWidth;
+                this.data.slideOffsetsY = this.data.slideHeight;
+            }
+            
+            // animation debug
+            if (this.data.debugMode) {
+                if (this.data.slideDirection) {
+                    // if (this.data.slideHeight !== this.elements.slideCard.offsetHeight) console.warn(`slideHeight(${this.data.slideHeight}) !== slideCard.offsetHeight(${this.elements.slideCard.offsetHeight})!`);
+                    console.log(this.data.slideOffsetsY, this.data.slideHeight);
+                } else {
+                    // if (this.data.slideWidth !== this.elements.slideCard.offsetWidth) console.warn(`slideWidth(${this.data.slideWidth}) !== slideCard.offsetWidth(${this.elements.slideCard.offsetWidth})!`);
+                    console.log(this.data.slideOffsetsX, this.data.slideWidth)
+                }
+            }
+            
             // animation start
-            this.status.isScrollToAvailable ? this.elements.slideCard.scrollTo(this.data.slideOffsets, 0) : this.elements.slideBox.style.transform = `translateX(-${this.data.slideOffsets}px)`;
-            // console.log(this.status.isScrollToStart.call(this))
+            this.status.isScrollToEnabled ? this.elements.slideCard.scrollTo(this.data.slideOffsetsX, this.data.slideOffsetsY) : this.elements.slideBox.style.transform = `translate(-${this.data.slideOffsetsX}px, ${this.data.slideOffsetsY}px)`;
+            
             // animation abort
-            if (this.status.isScrollToStart.call(this) || this.status.isScrollToEnd.call(this)) {
+            const isScrollToStart = this.status.isScrollToStart.call(this);
+            const isScrollToEnd = this.status.isScrollToEnd.call(this);
+            if (isScrollToStart || isScrollToEnd) {
+                // specific rounds
+                if (this.status.isNumber(this.data.slideRound, true) && this.data.slideRound >= 0) {
+                    if (this.data.slideRound === 0) {
+                        this.abortAnimation(this.data.slideAnimate, ()=> {
+                            console.log(`slideCount(${this.data.slideCount})`, this.data);
+                        });
+                        // unbind events
+                        this.events.unbind(this.elements.slideCard, 'onpointermove');
+                        return;
+                    }
+                    ++this.data.slideCount; // use ++i insted of i++ unbind events
+                    // prefix odd rounds
+                    // if (!this.status.isEvenNumber(this.data.slideRound)) this.data.slideCount += 2;
+                    if (this.data.slideCount >= this.data.slideRound) this.data.slideRound = 0;
+                }
+                // Infinity loop
                 this.abortAnimation(this.data.slideAnimate, ()=> {
-                    // reverse only if isScrollToEnd
-                    this.data.slideReverse = this.status.isScrollToEnd.call(this);
-                    this.data.slideSpeed = this.mods.getRandomNumber(0.25);
+                    this.data.slideReverse = isScrollToEnd;  // reverse only if isScrollToEnd
+                    if (this.data.slideRandom) this.data.slideSpeed = this.mods.randomNumber(0.25);
                     this.startAnimation();
                 });
             }
         }
         
-        initAnimation() {
-            if (!this.status.isScrollAvailable) {
-                console.warn('invalid scrollWidth.');
+        initAnimation(_conf = {}) {
+            // console.log(this.elements.slideCard.scrollWidth , this.elements.slideCard.offsetWidth, this.elements.slideCard)
+            // rewrite custom arguments(data/elements only, before rewrite-elements)
+            if (_conf.data) this.data = this.mods.confRewriter.call(this, _conf.data, this.data);
+            if (_conf.elements) this.elements = this.mods.confRewriter.call(this, _conf.elements, this.elements);
+            if (!this.status.isScrollAvailable()) {
+                console.warn('invalid elements/scrollWidth/scrollHeight or slideDirection provided, check', this);
                 return;
             }
-            // update slideMaxOffset after classList(scrollWidth-updated)
-            this.elements.slideBox.classList.add('column');
-            this.data.slideMaxOffset = this.elements.slideCard.scrollWidth - this.elements.slideCard.offsetWidth;
-            // startAnimation
+            
+            // update slideWidth/slideHeight after scrollWidth/scrollHeight updated.
+            this.elements.slideCard.style.scrollBehavior = 'auto';
+            this.elements.slideCard.classList.add(this.data.slideClass);
+            if (this.data.slideDirection) {
+                this.data.slideHeight = this.elements.slideCard.scrollHeight - this.elements.slideCard.offsetHeight; 
+                if (this.data.slideHeight === 0) this.data.slideHeight = this.elements.slideCard.scrollHeight;
+            } else {
+                this.data.slideWidth = this.elements.slideCard.scrollWidth - this.elements.slideCard.offsetWidth;
+                if (this.data.slideWidth === 0) this.data.slideWidth = this.elements.slideCard.scrollWidth;
+            }
+            
+            // update dynamic status to static(multi-call performance issue)
+            this.status.isScrollToEnabled = this.status.isFunction(this.elements.slideCard.scrollTo);
+            
+            // start animation
             this.startAnimation();
             console.log('animation init.', this);
+            
             // bind events
             const that = this;
-            this.elements.slideCard.onpointerenter = ((interval = 200)=> {
-                if (!that.data.slideAnimate) {
-                    console.log('non pointer exists.');
-                    return;
-                };
-                let debouncer = null;
+            this.events.bind(this.elements.slideCard, 'onpointermove', ((interval = 200)=> {
+                let running = true;
                 return function() {
-                    if(debouncer) clearTimeout(debouncer);
-                    debouncer = setTimeout(()=> {
-                        // remember to 'bind' that-to-this points
-                        that.abortAnimation(that.data.slideAnimate, that.startAnimation.bind(that));
+                    if (!running) return;
+                    running = false;
+                    setTimeout(()=> {
+                        that.abortAnimation(that.data.slideAnimate, that.startAnimation.bind(that), 0);
+                        running = true;
                     }, interval);
                 }
-            })(250);
+            })(500));
             // this.elements.slideCard.onpointerenter = ((interval = 200)=> {
-            //     let throttler = true;
+            //     if (!that.data.slideAnimate) {
+            //         console.log('non pointer exists.');
+            //         return;
+            //     };
+            //     let debouncer = null;
             //     return function() {
-            //         if (!throttler) return;
-            //         throttler = false;
-            //         setTimeout(()=> {
+            //         if(debouncer) clearTimeout(debouncer);
+            //         debouncer = setTimeout(()=> {
+            //             // remember to 'bind' that-to-this points
             //             that.abortAnimation(that.data.slideAnimate, that.startAnimation.bind(that));
-            //             throttler = true;
             //         }, interval);
             //     }
-            // })(500);
+            // })(250);
         }
     }
     
     const slideBoxes = new slideBox();
-    slideBoxes.data.slideSpeed = slideBoxes.mods.getRandomNumber(0.5);
-    slideBoxes.initAnimation();
+    // slideBoxes.data.slideSpeed = slideBoxes.mods.randomNumber(0.5);
+    slideBoxes.initAnimation({
+        data: {
+            // slideSpeed: slideBoxes.mods.randomNumber(0.5),
+            // slideDirection: 1,
+            // slideSpeed: 10,
+            // slideRound: 2,
+            // slideRandom: false,
+            // debugMode: true,
+        },
+        elements: {
+            slideCard: document.querySelector('.inboxSliderCard'),
+            slideBox: document.querySelector('.slideBox'),
+        }
+    });
     
-    // ((slideOffsets = 0, slideSpeed = .25, slideRestart = 1000)=> {
-    //     // elements
-    //     const e_slideCard = document.querySelector('.inboxSliderCard');
-    //     const e_slideBox = e_slideCard.querySelector('.slideBox');
-    //     // status
-    //     const s_isScrollToAvailable = e_slideCard.scrollTo;
-    //     let slideAnimate = null, slideReverse = false;
-    //     // data
-    //     const d_slideMaxOffset = e_slideCard.scrollWidth - e_slideCard.offsetWidth; //e_slideBox.offsetWidth - e_slideCard.offsetWidth;
-    //     // mods
-    //     function abortAnimation (animateKey, callback, delay = 1) {
-    //         cancelAnimationFrame(slideAnimate);
-    //         if (callback && typeof callback === 'function') {
-    //             if (!delay) {
-    //                 callback();
-    //                 return;
-    //             }
-    //             let timer = setTimeout(()=> {
-    //                 callback();
-    //                 clearTimeout(timer);
-    //             }, slideRestart);
-    //             console.log(`animation(${animateKey}) stoped, restart in ${slideRestart} ms..`);
-    //             return;
-    //         }
-    //         console.log(`animation(${animateKey}) stoped.`)
-    //     }
-    //     function startAnimation (_reverse = false) {
-    //         if (slideAnimate) cancelAnimationFrame(slideAnimate); // must clear animation frame(if animateKey exists) before startAnimation
-    //         slideAnimate = requestAnimationFrame(startAnimation);
-    //         slideReverse ? slideOffsets-=slideSpeed : slideOffsets+=slideSpeed;
-    //         // animation start
-    //         s_isScrollToAvailable ? e_slideCard.scrollTo(slideOffsets, 0) : e_slideBox.style.transform = `translateX(-${slideOffsets}px)`;
-    //         // animation stop
-    //         if (slideOffsets <= 0) {
-    //             abortAnimation(slideAnimate, ()=> {
-    //                 slideReverse = false;
-    //                 startAnimation();
-    //             });
-    //         } else if (slideOffsets >= d_slideMaxOffset) {
-    //             abortAnimation(slideAnimate, ()=> {
-    //                 // slideOffsets = 0;
-    //                 slideReverse = true;
-    //                 startAnimation();
-    //             });
-    //             // // abortAnimation(slideAnimate);
-    //             // if (null === e_slideBox.nextElementSibling) {
-    //             //     const cloneNode = e_slideBox.cloneNode(true); //document.adoptNode(e_slideBox);
-    //             //     cloneNode.classList.add('clone');
-    //             //     e_slideCard.appendChild(cloneNode);
-    //             //     abortAnimation(slideAnimate);
-    //             //     return;
-    //             // }
-    //             // e_slideBox.remove();
-    //         }
-    //     }
-    //     startAnimation();
-    //     // events
-    //     e_slideCard.onpointerenter = ((interval = 200)=> {
-    //         if (!slideAnimate) {
-    //             console.log('non pointer exists.');
-    //             return;
-    //         };
-    //         let debouncer = null;
-    //         return function() {
-    //             if(debouncer) clearTimeout(debouncer);
-    //             debouncer = setTimeout(()=> {
-    //                 abortAnimation(slideAnimate, startAnimation);
-    //             }, interval);
-    //         }
-    //     })(250);
-    //     // e_slideCard.onpointerenter = ((interval = 200)=> {
-    //     //     let throttler = true;
-    //     //     return function() {
-    //     //         if (!throttler) return;
-    //     //         throttler = false;
-    //     //         setTimeout(()=> {
-    //     //             abortAnimation(slideAnimate, startAnimation);
-    //     //             throttler = true;
-    //     //         }, interval);
-    //     //     }
-    //     // })(1000);
-    // })(0, .25, 1500);
 </script>
 <!-- inHtmlJs -->
 <!-- pluginJs !!! Cannot redefine property: applicationId (av-min must be same with valine.js cdn) !!! av-min.js must be load via dynamicLoad(use no raw function twice) to head js which allow init AV twice -->

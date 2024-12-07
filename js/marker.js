@@ -660,9 +660,19 @@
             },
         },
         status: {
-            isMarkerAvailable: (anonymous=false)=> {
+            isMarkerAvailable: (anonymous = false)=> {
                 let valid_statu = true;
                 if(!anonymous) {
+                    const {mail, nick} = marker.data.user;
+                    if (mail) {
+                        const validEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+                        const emailValid = validEmail.test(decodeURIComponent(mail));
+                        if (!emailValid) console.warn('Abort on invalid email provided!', mail);
+                        return emailValid;
+                    } else {
+                        console.warn('Abort on invalid email provided!', mail);
+                        return false;
+                    }
                     const commentInfo = marker.init._conf.element.commentInfo,
                           userinfo = Object.entries(commentInfo);
                     for(let i=0;i<userinfo.length;i++){
