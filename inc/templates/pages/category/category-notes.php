@@ -23,7 +23,11 @@
 		</nav>
 	</header>
     <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>
-    <video src="<?php echo get_option('site_acgn_video'); ?>" poster="<?php echo get_meta_image($cat, $img_cdn.'/images/1llusion.gif'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload" playsinline -webkit-playsinline></video>
+	<?php 
+	    $video_src = replace_video_url(get_option('site_acgn_video'));
+	    $poster_src = $video_src ? $video_src : get_meta_image($cat, $img_cdn.'/images/1llusion.gif');
+	    echo do_shortcode('[custom_video src="' . $video_src . '" poster="' . $poster_src . '"]');
+    ?>
 	<!--<span id="fixed" style="background:inherit"></span>-->
 	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s"><span></span> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '好记性不如烂键盘'; ?><!--<strong>烂键盘</strong>--> </h5>
 </div>

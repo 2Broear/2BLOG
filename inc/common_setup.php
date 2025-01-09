@@ -235,18 +235,20 @@
     }
     
     // 过滤单页视频 cdn 路径
-    function replace_video_url($url=false, $key=false){
-        if($url){
-            global $images_cdn, $upload_url, $videos_cdn_arr, $cat, $cdn_switch;
-            if($cdn_switch){
-                $key = $key ? $key : current_slug();
-                $url = in_array($key, $videos_cdn_arr) ? str_replace($upload_url, $images_cdn, $url) : str_replace($images_cdn, $upload_url, $url);
-            }else{
-                $url = str_replace($images_cdn, $upload_url, $url);
-            };
-            // unset($images_cdn, $upload_url, $videos_cdn_arr, $cat, $cdn_switch);
-            return $url;
+    function replace_video_url($url='', $key=false){
+        if(!$url || !is_string($url)) {
+            return;
         }
+        global $images_cdn, $upload_url, $cat, $cdn_switch;
+        if($cdn_switch) {
+            global $videos_cdn_arr; // cdn url control
+            $key = $key ? $key : current_slug();
+            $url = in_array($key, $videos_cdn_arr) ? str_replace($upload_url, $images_cdn, $url) : str_replace($images_cdn, $upload_url, $url);
+        }else{
+            $url = str_replace($images_cdn, $upload_url, $url);
+        };
+        // unset($images_cdn, $upload_url, $videos_cdn_arr, $cat, $cdn_switch);
+        return $url;
     }
     // unset($videos_cdn_arr);
     
@@ -1048,7 +1050,34 @@ function onMailError( $wp_error ) {
         preg_match('/\d{3}/', $headers[0], $matches);
         return $matches[0];
     }
-    function get_url_status_by_curl($url, $timeout=5){  //with timeout
+    function get_url_status_by_curl($url, $multi = false, $timeout = 5){  //with timeout
+        if ($multi) {
+            // 初始化 cURL 多句柄
+            $mh = curl_multi_init();
+            $ch = curl_init($rssUrl);
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_HEADER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+            curl_setopt($ch, CURLOPT_NOBODY, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+            // 将 cURL 句柄添加到多句柄中
+            curl_multi_add_handle($mh, $ch);
+        
+            // 执行多句柄中的所有 cURL 请求
+            $active = null;
+            do {
+                $status = curl_multi_exec($mh, $active);
+                curl_multi_select($mh);
+            } while ($active && $status == CURLM_OK);
+        
+            // 获取请求结果
+            // $response = curl_multi_getcontent($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_multi_close($mh);
+            return $httpCode;
+        }
+        
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_HEADER, true);

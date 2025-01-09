@@ -65,8 +65,6 @@ jQuery(document).ready(function($){
                         d_type = 'video';
                         break;
                     case 3:
-                        d_type = ['video','image'];
-                        break;
                     default:
                         d_type = ['video','image'];
                         break;
@@ -102,10 +100,10 @@ jQuery(document).ready(function($){
                         p_list.innerHTML = "";
                         field.value = "";
                         for(let i=0,atcLen=attachments.length;i<atcLen;i++){
-                            let each_url = attachments[i].url;
-                            if(each_url){
-                                p_list.innerHTML += '<em class="upload_previews" style="background:url('+each_url+') center center /cover;"></em>';
-                                field.value += each_url+' , ';
+                            let attachment = attachments[i];
+                            if(attachment.url) {
+                                p_list.innerHTML += attachment.type==='video' ? `<video class="upload_preview bgm" src="${attachment.url}" poster="${attachment.url}" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>` : `<em class="upload_previews" style="background:url(${attachment.url}) center center /cover;"></em>`;
+                                field.value += attachment.url+' , ';
                             }
                         }
                     }else{

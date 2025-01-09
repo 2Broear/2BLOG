@@ -183,7 +183,11 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                     <?php get_header(); ?>
                 </nav>
             </header>
-            <video src="<?php echo $video = replace_video_url(get_option('site_acgn_video')); ?>" poster="<?php echo $video ? $video : get_meta_image($cat, $img_cdn.'/images/acg.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload" playsinline -webkit-playsinline></video>
+        	<?php 
+        	    $video_src = replace_video_url(get_option('site_acgn_video'));
+        	    $poster_src = $video_src ? $video_src : get_meta_image($cat, $img_cdn.'/images/acg.jpg');
+        	    echo do_shortcode('[custom_video src="' . $video_src . '" poster="' . $poster_src . '"]');
+            ?>
             <div class="counter">
                 <?php
                     $async_sw = get_option('site_async_switcher');

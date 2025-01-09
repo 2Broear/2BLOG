@@ -84,7 +84,11 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                     <?php get_header(); ?>
                 </nav>
             </header>
-            <video src="<?php echo get_option('site_acgn_video'); ?>" poster="<?php echo get_meta_image($cat, $img_cdn.'/images/archive.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload"></video>
+        	<?php 
+        	    $video_src = replace_video_url(get_option('site_acgn_video'));
+        	    $poster_src = $video_src ? $video_src : get_meta_image($cat, $img_cdn.'/images/archive.jpg');
+        	    echo do_shortcode('[custom_video src="' . $video_src . '" poster="' . $poster_src . '"]');
+            ?>
             <div class="counter">
                 <?php 
                     $caches_sw = get_option('site_cache_switcher');
@@ -304,11 +308,12 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                         // $output = $output_sw ? get_option('site_archive_list_cache') : '';
                         $archive_years = json_decode(get_option('site_archive_years_cache'));
                         if ($output_sw && !empty($archive_years)) {
+                            // print_r($archive_years);
                             foreach ($archive_years as $output_year) {
                                 $output_data = get_option('site_archive_' . $output_year . '_cache');
                                 $output_data = json_decode($output_data); //, true
                                 if (!$output_data) {
-                                    echo '<h2>' . $output_year . ' 年度发布 🔁</h2><span class="stat_'.$output_year.' stats">📈📉统计：<b>Empty data of ' . $output_year . ' (Refresh for updates..)</b></span>';
+                                    echo '<h2>' . $output_year . ' 年度发布 🔁</h2><span class="stat_'.$output_year.' stats">📈📉统计：<b>Updated data for ' . $output_year . ' (<a href="javascript:void(0);" onclick="window.location.reload()">Refresh updates..</a>)</b></span>';
                                     update_archive_year($output_year, $output_sw);
                                     continue;
                                 }

@@ -52,6 +52,9 @@
             width: auto;
             height: auto;
         }
+        .weblog-tree-core.reply .tree-box-title h3.reply_quote:after {
+            content: '回应此片段';
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

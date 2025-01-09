@@ -197,42 +197,41 @@ function get_cat_posts($the_cat, $pre_cat=false, $limit=99){
             <!--</div>-->
             <div class="rcmd-boxes flexboxes">
                 <?php
-                    if(!$baas){
-                        //acg post list(multi)
-                        function the_cat_posts(){
-                            global $cat, $cats, $preset, $async_loads;
-                            $preslug = $preset->slug;
-                            $output = '';
-                            if(!empty($cats) && current_slug()==$preslug){
-                                // cache db only if not-single sub-page
-                                $output_sw = false;
-                                if(get_option('site_cache_switcher')){
-                                    $caches = get_option('site_cache_includes');
-                                    $temp_slug = get_cat_by_template('goods','slug');
-                                    $output_sw = in_array($temp_slug, explode(',', $caches));
-                                    $output = $output_sw ? get_option('site_cat_post_cache') : '';
-                                }
-                                if(!$output || !$output_sw){
-                                    foreach($cats as $the_cat) $output .= get_cat_posts($the_cat, $preslug, $async_loads);
-                                    // wp_kses_post() filted javascript:; href
-                                    if($output_sw) update_option('site_cat_post_cache', $output); //wp_kses_post($output)
-                                }else{
-                                    // always update wp-nonce if db-cached
-                                    foreach($cats as $the_cat){
-                                        $cat_slug = $the_cat->slug;
-                                        $cur_nonce = wp_create_nonce($cat_slug."_posts_ajax_nonce");
-                                        // (.*?) 会在匹配到 data-nonce 或 data-cat 属性后停止匹配
-                                        $output = preg_replace('/<a(.*)data-nonce=("[^"]*")(.*)data-cat=("'.strtoupper($cat_slug).'")(.*)<\/a>/i', '<a$1data-nonce="'.$cur_nonce.'"$3data-cat=$4$5</a>', $output);
-                                    }
-                                }
-                            }else{
-                                $output .= get_cat_posts(get_category($cat), $preslug, $async_loads);
+                    $preset = get_cat_by_template(str_replace('.php',"",substr(basename(__FILE__),9)));
+                    //acg post list(multi)
+                    function the_cat_posts(){
+                        global $cat, $cats, $preset, $async_loads;
+                        $preslug = $preset->slug;
+                        $output = '';
+                        if(!empty($cats) && current_slug()==$preslug){
+                            // cache db only if not-single sub-page
+                            $output_sw = false;
+                            if(get_option('site_cache_switcher')){
+                                $caches = get_option('site_cache_includes');
+                                $temp_slug = get_cat_by_template('goods','slug');
+                                $output_sw = in_array($temp_slug, explode(',', $caches));
+                                $output = $output_sw ? get_option('site_cat_post_cache') : '';
                             }
-                            // wp_kses_post() caused setupBlurColor() unabled to setup
-                            echo $output; //wp_kses_post($output)
+                            if(!$output || !$output_sw){
+                                foreach($cats as $the_cat) $output .= get_cat_posts($the_cat, $preslug, $async_loads);
+                                // wp_kses_post() filted javascript:; href
+                                if($output_sw) update_option('site_cat_post_cache', $output); //wp_kses_post($output)
+                            }else{
+                                // always update wp-nonce if db-cached
+                                foreach($cats as $the_cat){
+                                    $cat_slug = $the_cat->slug;
+                                    $cur_nonce = wp_create_nonce($cat_slug."_posts_ajax_nonce");
+                                    // (.*?) 会在匹配到 data-nonce 或 data-cat 属性后停止匹配
+                                    $output = preg_replace('/<a(.*)data-nonce=("[^"]*")(.*)data-cat=("'.strtoupper($cat_slug).'")(.*)<\/a>/i', '<a$1data-nonce="'.$cur_nonce.'"$3data-cat=$4$5</a>', $output);
+                                }
+                            }
+                        }else{
+                            $output .= get_cat_posts(get_category($cat), $preslug, $async_loads);
                         }
-                        the_cat_posts();
+                        // wp_kses_post() caused setupBlurColor() unabled to setup
+                        echo $output; //wp_kses_post($output)
                     }
+                    the_cat_posts();
                 ?>
                 <div class="container module"></div>
                 <div id="comment_txt">

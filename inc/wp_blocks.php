@@ -1,4 +1,13 @@
 <?php
+    function custom_video_shortcode($atts){
+        $src = isset($atts['src']) ? $atts['src'] : '/';
+        $poster = isset($atts['poster']) ? $atts['poster'] : $src;
+        $autoplay = isset($atts['autoplay']) ? $atts['autoplay'] : 'autoplay';
+        $muted = isset($atts['muted']) ? $atts['muted'] : 'muted';
+        $loop = isset($atts['loop']) ? $atts['loop'] : 'loop';
+        $type = isset($atts['type']) ? $atts['type'] : 'video/mp4';
+        return '<video poster="' . $poster . '" preload ' . $autoplay . ' ' . $muted . ' ' . $loop . ' x5-video-player-type="h5" controlsList="nofullscreen nodownload" playsinline -webkit-playsinline><source  src="' . $src . '" type="' . $type . '"></source></video>';
+    }
     function custom_netease_shortcode($atts){
         $id = isset($atts['id']) ? $atts['id'] : 'id';
         $width = isset($atts['width']) ? $atts['width'] : '';
@@ -70,6 +79,7 @@
         return '<div class="ibox quotes"><div class="iboxes" style="background:url() center center /cover;"><img src="'.get_postimg(0,$pid,true).'" alt="'.$title.'"><h3><a href="'.get_the_permalink($pid).'" target="_blank">'.$title.'</a></h3><div class="content"><p>'.$excerpt.'</p></div><mark>'.$avatar.' '.$author.' '.get_the_time('d/m/Y').' '.get_tag_list($pid, 1, "/").' | '.getPostViews($pid).' views.</mark></div></div>';
     }
     // 注册短代码
+    add_shortcode('custom_video', 'custom_video_shortcode');
     add_shortcode('netease_embed', 'custom_netease_shortcode');
     add_shortcode('bilibili_embed', 'custom_bilibili_shortcode');
     add_shortcode('custom_title', 'custom_title_shortcode');

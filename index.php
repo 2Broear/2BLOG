@@ -156,6 +156,13 @@
         .weBlog-Description .weBlog-Description-inside-content span p{
             display: none;
         }
+        video {
+            width: 100%;
+            object-fit: cover;
+        }
+        .banner video {
+            height: 100%;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -189,8 +196,8 @@
                             $banner_array = explode(',',get_option('site_banner_array',''));
                             $banner_array_count = count($banner_array);
                             for($i=0;$i<$banner_array_count;$i++){
-                                $image_url = trim($banner_array[$i]);
-                                if($image_url) echo '<li style="background: url('.$image_url.') no-repeat center center /cover;"></li>';
+                                $banner_url = trim($banner_array[$i]);
+                                if($banner_url) echo '<li style="background: url() no-repeat center center /cover;">' . do_shortcode('[custom_video src="' . $banner_url . '" poster]') . '</li>'; //'.$banner_url.'
                             }
                         ?>
                     </ul>
@@ -460,7 +467,7 @@
                                         $caches_sw = get_option('site_cache_switcher');
                                         $caches_inc = get_option('site_cache_includes');
                                         $caches_name = 'site_tag_clouds_cache';
-                                        if($caches_sw) {
+                                        if ($caches_sw && !get_option('site_tagcloud_auto_caches')) {
                                             $output_sw = in_array('tagclouds', explode(',', $caches_inc));
                                             $output_caches = get_option($caches_name);
                                             if ($output_sw && $output_caches) {
@@ -468,54 +475,46 @@
                                                 return;
                                             }
                                         }
-                                        if(get_option('site_tagcloud_switcher')) {
-                                            $min_font = 10;
-                                            $max_font = get_option('site_tagcloud_max');
-                                            $num = get_option('site_tagcloud_num');
-                                            $tags = get_tags(array(
-                                                'taxonomy' => 'post_tag',
-                                                'orderby' => 'count', //name
-                                                'hide_empty' => true // for development,
-                                                // 'number' => $num
-                                            ));
-                                            $tags_count = count($tags);
-                                            $tags_count = $tags_count<=$num ? $tags_count : $num;
-                                            shuffle($tags);  // random tags
-                                            if($tags_count>0) {
-                                                $output_string = '';
-                                                global $bold_font;
-                                                for($i=0; $i<$tags_count; $i++) {
-                                                    $tag = $tags[$i];
-                                                    $tag_count = $tag->count;
-                                                    $rand_font = mt_rand($min_font, $max_font);
-                                                    if($rand_font>=$max_font/1.25){
-                                                        $rand_opt = mt_rand(5,10);  // highlight big_font
-                                                        $bold_font = $rand_opt>9 || $rand_font==$max_font ? 'bold' : 'normal';  // max bold_font
-                                                        $color_font = $rand_opt==10 && $rand_font==$max_font ? 'color:var(--theme-color)' : '';
-                                                    }else{
-                                                        $rand_opt = mt_rand(2,10);
-                                                        $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'color:var(--theme-color)' : '';
-                                                    }
-                                                    $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
-                                                    $output_string .= '<'.$html_tag.' data-count="'.$tag_count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';'.$color_font.'" title="'.$tag_count.' 篇标签文章">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
-                                                };
-                                                // auto update tagclouds caches
-                                                if (get_option('site_tagcloud_auto_caches')) {
-                                                    update_option($caches_name, $output_string);
-                                                    echo $output_string;
-                                                    return;
+                                        $min_font = 10;
+                                        $max_font = get_option('site_tagcloud_max');
+                                        $num = get_option('site_tagcloud_num');
+                                        $tags = get_tags(array(
+                                            'taxonomy' => 'post_tag',
+                                            'orderby' => 'count', //name
+                                            'hide_empty' => true // for development,
+                                            // 'number' => $num
+                                        ));
+                                        $tags_count = count($tags);
+                                        $tags_count = $tags_count<=$num ? $tags_count : $num;
+                                        shuffle($tags);  // random tags
+                                        if($tags_count>0) {
+                                            $output_string = '';
+                                            global $bold_font;
+                                            for($i=0; $i<$tags_count; $i++) {
+                                                $tag = $tags[$i];
+                                                $tag_count = $tag->count;
+                                                $rand_font = mt_rand($min_font, $max_font);
+                                                if($rand_font>=$max_font/1.25){
+                                                    $rand_opt = mt_rand(5,10);  // highlight big_font
+                                                    $bold_font = $rand_opt>9 || $rand_font==$max_font ? 'bold' : 'normal';  // max bold_font
+                                                    $color_font = $rand_opt==10 && $rand_font==$max_font ? 'color:var(--theme-color)' : '';
+                                                }else{
+                                                    $rand_opt = mt_rand(2,10);
+                                                    $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'color:var(--theme-color)' : '';
                                                 }
-                                                // standard updates
-                                                if ($output_sw) {
-                                                    update_option($caches_name, $output_string); //wp_kses_post($output_string)
-                                                    return;
-                                                }
-                                                // standard echo
-                                                echo $output_string;
+                                                $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
+                                                $output_string .= '<'.$html_tag.' data-count="'.$tag_count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';'.$color_font.'" title="'.$tag_count.' 篇标签文章">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
+                                            };
+                                            // standard updates
+                                            if ($output_sw) {
+                                                update_option($caches_name, $output_string); //wp_kses_post($output_string)
                                                 return;
                                             }
-                                            echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
+                                            // standard echo
+                                            echo $output_string;
+                                            return;
                                         }
+                                        echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
                                     }
                                     the_tag_clouds('span'); 
                                 ?>

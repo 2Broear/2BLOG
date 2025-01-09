@@ -163,10 +163,10 @@
                         get_search_form();
                         echo '<p>';
                         $nick = get_option('site_nick', get_bloginfo('name'));
-                        $curcat = get_the_category() ? get_the_category()[0] : false;
+                        $curcat = get_the_category() ? get_the_category()[0] : get_category(0);
                         echo  is_single() ? "<b>".$nick."</b> の ".$curcat->name : bloginfo('description');
                         echo '</p><p>';
-                            current_tips($nick);
+                        current_tips($nick);
                         echo '</p>';
                         if(is_single()){
                             $next_post = get_next_post(true, '', 'category');  // same category posts

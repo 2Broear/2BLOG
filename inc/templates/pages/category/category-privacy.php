@@ -19,7 +19,11 @@
                 <?php get_header(); ?>
             </nav>
         </header>
-        <video src="<?php echo $video = replace_video_url(get_option('site_privacy_video')); ?>" poster="<?php echo $video ? $video : get_meta_image($cat, $img_cdn.'/images/privacy.jpg'); ?>" preload autoplay muted loop x5-video-player-type="h5" controlsList="nofullscreen nodownload" playsinline -webkit-playsinline></video>
+		<?php 
+		    $video_src = replace_video_url(get_option('site_privacy_video'));
+		    $poster_src = $video_src ? $video_src : get_meta_image($cat, $img_cdn.'/images/privacy.jpg');
+		    echo do_shortcode('[custom_video src="' . $video_src . '" poster="' . $poster_src . '"]');
+	    ?>
 	    <h5><?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '<span> 隐私</span> 协议'; ?></h5>
     </div>
     <div class="content-all-windows">

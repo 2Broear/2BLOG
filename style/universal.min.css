@@ -424,7 +424,8 @@ i.icomoon,
 }
 .additional.metaboxes li a.choosen::before,
 .additional.metaboxes li a:hover::before{
-    opacity: .66;
+    /*opacity: .66;*/
+    opacity: .1;
 }
 .additional.metaboxes li a:before{
     content: "";
@@ -441,7 +442,8 @@ i.icomoon,
 /*.additional.metaboxes li a.choosen b,*/
 .additional.metaboxes li a:hover b{
     /*border-color: rgb(235 102 66 / 66%);*/
-    font-weight: bold;
+    /*font-weight: bold;*/
+    opacity: 0;
 }
 .additional.metaboxes li a.choosen,
 .additional.metaboxes li:hover a{
@@ -1717,7 +1719,7 @@ body.dark .ibox.quotes .iboxes::before{
     left: auto;
     top: 7%;
     right: 3%;
-    opacity: .15;
+    opacity: .1;
     transition: right,opacity .5s ease;
 }
 /*.ibox.quotes .iboxes .content{*/

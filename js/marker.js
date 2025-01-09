@@ -556,16 +556,15 @@
                 },
             },
             _diy: {
-                strGenerator: function(num=16, useCrypto=false) {
-                    if(useCrypto && crypto && crypto instanceof Object){
+                strGenerator: function(num = 16, cryptor = false) {
+                    if(cryptor && crypto && crypto instanceof Object) {
                         const randomBytes = new Uint8Array(num);
                         crypto.getRandomValues(randomBytes);
                         return Array.from(randomBytes, byte => ('0' + byte.toString(16)).slice(-2)).join('');
-                    }else{
-                        const randomMix = Math.random() + parseFloat('0.' + Date.now()), // Math.random().toString(num)
-                              randomStr = randomMix.toString(num);
-                        return randomStr.substring(2, randomStr.length);
                     }
+                    const randomMix = Math.random() + parseFloat('0.' + Date.now()), // Math.random().toString(num)
+                          randomStr = randomMix.toString(num);
+                    return randomStr.substring(2, randomStr.length);
                 },
                 paramParser: function(obj, post=false, encode=true) {
                     if(post && marker._utils._etc.isObject(obj)) {

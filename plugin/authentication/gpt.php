@@ -83,11 +83,11 @@
                 // print_r('second request token: '.count_chaters($requirements,1,1)); //.count_chaters($requirements,1,1,0,true))
                 // print_r(count_chaters($requirements,1,1,0,true,true));
                 
-                function curlRequest($question, $maxlen=1024, $additional='；不能换行，不能超过 200 个字') { //注意字数不宜过长
+                function curlRequest($question, $maxlen=1024, $additional='，注意不要换行，不要超过200个字符') { //注意字数不宜过长
                     $merge_ingore = get_option('site_chatgpt_merge_ingore');
-                    $openai_proxy = get_option('site_chatgpt_proxy');
-                    $openai_key = get_option('site_chatgpt_apikey');
-                    $openai_apis = get_option('site_chatgpt_apis');
+                    $api_proxy = get_option('site_chatgpt_proxy');
+                    $api_key = get_option('site_chatgpt_apikey');
+                    $api_type = get_option('site_chatgpt_apis');
                     $prompt_context = '你将扮演一名文字解析师，分析并简述文章用意' . $additional;
                     $post_data = array(
                         "model" => get_option('site_chatgpt_model'), //ada
@@ -98,17 +98,44 @@
 '.$question.'
 """', //$question.'。分析上述内容，简述文章用意'.$additional
                     );
-                    if($openai_apis == '/v1/chat/completions') {
+                    // kimi moonshot api
+                    if($api_type == '/v1/chat/completions') {
                         unset($post_data['prompt']);
-                        $post_data = array_merge($post_data, array('messages' => [
-                            ["role" => "system", "content" => $prompt_context], //分析并简述文章用意
-                            ["role" => "user", "content" => $question]
-                        ]));
+                        $post_data = array_merge($post_data, array(
+                            'messages' => [
+                                ["role" => "system", "content" => $prompt_context], //分析并简述文章用意
+                                ["role" => "user", "content" => $question]
+                            ],
+                            'stream' => false, // <-- 注意这里，我们通过设置 stream=True 开启流式输出模式
+                        ));
+                    }
+                    // deepseek api
+                    if($api_type == '/chat/completions') {
+                        unset($post_data['prompt']);
+                        $post_data = array_merge($post_data, array(
+                            'messages' => [
+                                ["role" => "system", "content" => $prompt_context], //分析并简述文章用意
+                                ["role" => "user", "content" => $question]
+                            ],
+                            "frequency_penalty" => 0,
+                            "presence_penalty" => 0,
+                            "response_format" => [
+                                "type" => "text"
+                            ],
+                            "stop" => null,
+                            "stream" => false,
+                            "stream_options" => null,
+                            "top_p" => 1,
+                            "tools" => null,
+                            "tool_choice" => "none",
+                            "logprobs" => false,
+                            "top_logprobs" => null
+                        ));
                     }
                     // print_r($post_data);
                     $curl = curl_init();
                     curl_setopt_array($curl, array(
-                        CURLOPT_URL => $openai_proxy . $openai_apis,
+                        CURLOPT_URL => $api_proxy . $api_type,
                         CURLOPT_RETURNTRANSFER => true,
                         CURLOPT_ENCODING => "",
                         CURLOPT_MAXREDIRS => 10,
@@ -119,7 +146,7 @@
                         CURLOPT_POSTFIELDS => json_encode($post_data),
                         CURLOPT_HTTPHEADER => array(
                             "Content-Type: application/json",
-                            "Authorization: Bearer " . $openai_key
+                            "Authorization: Bearer " . $api_key
                         ),
                     ));
                     // $res = curl_exec($curl);
@@ -136,12 +163,12 @@
                             if($left_token<=CHATGPT_LIMIT_RESERVED){
                                 $left_words = count_chaters($question,1,1,0,true);
                                 $addition_res = curlRequest($left_words);
-                                return curlRequest($previous_txt.api_get_resultText($addition_res,true)); //, 392, '。'
+                                return curlRequest($previous_txt . api_get_resultText($addition_res,true)); //, 392, '。'
                             }else{
                                 if($merge_ingore){
                                     $left_words_ingored = count_chaters($question,1,1,0,true,true);
                                     $addition_res = curlRequest($left_words_ingored); // end of context(4096-max)
-                                    return curlRequest($previous_txt.api_get_resultText($addition_res,true)); //, 512, '。'
+                                    return curlRequest($previous_txt . api_get_resultText($addition_res,true)); //, 512, '。'
                                 }else{
                                     $res = json_encode(array('error' => array ('message' => 'requested content too long to abstract (context token: '.$question_token.', inqueue token: '.$left_token.')','type' => 'request_context_too_long','created'=>time())),true);
                                 }
