@@ -1054,7 +1054,7 @@ function onMailError( $wp_error ) {
         if ($multi) {
             // 初始化 cURL 多句柄
             $mh = curl_multi_init();
-            $ch = curl_init($rssUrl);
+            $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_HEADER, true);
             curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);

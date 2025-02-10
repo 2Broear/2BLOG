@@ -18,6 +18,7 @@
         }
         .friends-boxes .deals.tech .inbox {
             max-width: calc(100% / 6.35);
+            max-width: calc(100% / 7.5);
         }
         .friends-boxes .deals.tech .inbox .inbox-aside span.lowside-title h4{
             max-width: 4em;

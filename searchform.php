@@ -1,5 +1,5 @@
 <form id="searchform" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
-    <input type="text" class="search-field" name="s" placeholder="Searching" value="<?php echo get_search_query(); ?>">
+    <input type="text" class="search-field" name="s" placeholder="Searching" autocomplete="off" value="<?php echo get_search_query(); ?>">
     <span class="slider"></span>
     <span class="m-search">
         <i class="BBFontIcons"></i>

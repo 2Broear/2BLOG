@@ -522,6 +522,7 @@
         // }      
         register_setting( 'baw-settings-group', 'site_leancloud_switcher' );
         register_setting( 'baw-settings-group', 'site_third_comments' );
+            register_setting( 'baw-settings-group', 'site_comment_blacklists' );
         // register_setting( 'baw-settings-group', 'site_valine_switcher' );
             register_setting( 'baw-settings-group', 'site_comment_serverchan' );
             register_setting( 'baw-settings-group', 'site_comment_pushplus' );
@@ -1524,7 +1525,7 @@
                         </td>
                     </tr>
                             <!-- Wordpress -->
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $wordpress_statu = get_option('site_third_comments')=='Wordpress' ? 'dynamic_optshow Wordpress' : 'dynamic_opts Wordpress' ?>">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $wordpress_statu = $third_comment=='Wordpress' ? 'dynamic_optshow Wordpress' : 'dynamic_opts Wordpress' ?>">
                                 <th scope="row">— Ajax 评论支持</th>
                                 <td>
                                     <?php
@@ -1548,7 +1549,7 @@
                                 </td>
                             </tr>
                             <!-- Valine -->
-                            <tr valign="top" class="child_option sync_data <?php echo $valine_statu = get_option('site_third_comments')=='Valine' ? 'dynamic_opts dynamic_optshow Valine' : 'dynamic_opts Valine'; ?>">
+                            <tr valign="top" class="child_option sync_data <?php echo $valine_statu = $third_comment=='Valine' ? 'dynamic_opts dynamic_optshow Valine' : 'dynamic_opts Valine'; ?>">
                                 <th scope="row">— APP ID<sup id="tips">sync</sup></th>
                                 <td>
                                     <?php
@@ -1594,7 +1595,7 @@
                                 </td>
                             </tr>
                             <!-- Twikoo -->
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $twikoo_statu = get_option('site_third_comments')=='Twikoo' ? 'dynamic_optshow Twikoo' : 'dynamic_opts Twikoo' ?>">
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $twikoo_statu = $third_comment=='Twikoo' ? 'dynamic_optshow Twikoo' : 'dynamic_opts Twikoo' ?>">
                                 <th scope="row">— 版本号</th>
                                 <td>
                                     <?php
@@ -1604,7 +1605,7 @@
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
                                         $status_code = 0;
                                         $url = 'https://cdn.staticfile.org/twikoo/' . $preset . '/twikoo.all.min.js';
-                                        if(get_option('site_third_comments')=='Twikoo'){
+                                        if($third_comment=='Twikoo'){
                                             $status_code = get_url_status_by_curl($url, 3); //get_url_status_by_header($url);
                                         }
                                         echo '<p class="description" id="site_comment_pushplus_label">twikoo.all.min.js 版本号（默认 1.6.4，当前文件（'.$url.'）状态：'.$status_code.'</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="small-text" placeholder="Twikoo Source" value="' . $preset . '"/>';
@@ -1617,6 +1618,19 @@
                                     <?php
                                         $opt = 'site_twikoo_envid';
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="您的环境id" value="' . get_option($opt) . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <!-- Common -->
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 屏蔽关键词<sup id="tips">common</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_comment_blacklists';
+                                        $value = get_option($opt);
+                                        // $preset = '快递代发|一件代发|代发平台|礼品代发|空包代发|快递单号|单号网|单号无忧|淘宝空包|京东空包|拼多多空包|刷单单号|提供底单|云仓代发';
+                                        // if(!$value) update_option($opt, $preset);else $preset=$value;
+                                        echo '<p class="description" id="site_comment_serverchan_label">屏蔽指定评论内容，使用 “|” 分隔关键词（非模糊匹配</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Comment BlackList" value="' . $value . '"/>';
                                     ?>
                                 </td>
                             </tr>

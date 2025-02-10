@@ -13,13 +13,13 @@
 <div id="capture">
     <header><em style="background:url(<?php echo $parameters['image']; ?>) center center /cover"></em></header>
     <aside>
-        <h3><?php echo $parameters['title']; ?></h3>
-        <p><?php echo $parameters['content']; ?></p>
-        <small><span contenteditable="true"><?php $tags = $parameters['tags'];echo $tags ? $tags : '<b>'.$parameters['author'].'</b>&nbsp;'; ?></span><?php echo $parameters['date']; ?></small>
+        <h3><?php echo urldecode($parameters['title']); ?></h3>
+        <p><?php echo urldecode($parameters['content']); ?></p>
+        <small><span contenteditable="true"><?php $tags = urldecode($parameters['tags']);echo $tags ? $tags : '<b>'.urldecode($parameters['author']).'</b>&nbsp;'; ?></span><?php echo $parameters['date']; ?></small>
         <span id="qrcode"></span>
     </aside>
     <footer>
-        <?php echo $tags ? '<b> SHARING VIA '.$parameters['author'].' </b>' : '<i> Poster shared in '.date('Y/m/d H:i',$_SERVER['REQUEST_TIME']).' </i>'; //$_SERVER['HTTP_ORIGIN'];?>
+        <?php echo $tags ? '<b> SHARING VIA '.urldecode($parameters['author']).' </b>' : '<i> Poster shared in '.date('Y/m/d H:i',$_SERVER['REQUEST_TIME']).' </i>'; //$_SERVER['HTTP_ORIGIN'];?>
     </footer>
 </div>
 <div class="poster active">

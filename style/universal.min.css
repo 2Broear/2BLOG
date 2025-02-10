@@ -440,6 +440,7 @@ i.icomoon,
     transition: opacity .15s ease;
 }
 /*.additional.metaboxes li a.choosen b,*/
+.additional.metaboxes li a.choosen b
 .additional.metaboxes li a:hover b{
     /*border-color: rgb(235 102 66 / 66%);*/
     /*font-weight: bold;*/
@@ -456,7 +457,7 @@ i.icomoon,
     padding: 30px 15px!important;
     position: relative;
     border-radius: var(--radius);
-    /*margin: auto 15px 15px 0;*/
+    margin: auto 15px 0 0!important;
     top: 0;
     transition: top .35s ease;
 }
@@ -485,10 +486,10 @@ i.icomoon,
     -webkit-backdrop-filter: blur(10px);
 }
 .additional.metaboxes li:last-child a{
-    margin: auto;
+    margin-right: 0!important;
 }
 .additional.metaboxes li a{
-    margin-right: 15px;
+    /*margin-right: 15px;*/
 }
 
 
@@ -562,7 +563,7 @@ body.dark .inside_of_block nav.main-nav .links-more li:hover>a{
 }
 .additional li a{
     padding: 0!important;
-    margin: auto 10px;
+    /*margin: auto 10px;*/
 }
 .additional li{
     display: block!important;

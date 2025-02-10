@@ -52,7 +52,7 @@ body.dark .wp_comments:hover{background:var(--preset-3a)!important}
 .news-article-container img{width:auto;height:auto;max-width:100%;box-sizing:border-box;overflow:hidden;margin:10px 0;border-radius:var(--radius);transition:all .5s ease;/*cursor:url(../../images/cursor/zoom-in.cur),url(../images/cursor/zoom-in.cur),pointer;*cursor:url(../../images/cursor/zoom-in.cur),pointer;_cursor:url(../../images/cursor/zoom-in.cur),pointer*/}
 .news-article-container img.overDisplay{width:auto;height:auto;max-width:100%;overflow:hidden;margin:10px auto;padding:0}
 .news-article-window{color:var(--preset-2b);transition: width .5s ease;}
-.news-article-core{width:100%;height:auto;overflow:hidden}
+.news-article-core{width:100%;height:auto;/*overflow:hidden*/}
 .news-article-core:hover{box-shadow:rgba(0,0,0,0.03) 0 1px 3px}
 .news-article-inside{background-color:var(--preset-f);border-radius:var(--radius);border:1px solid var(--preset-s)}
 .news-article-inside #news-article-head{width:100%;height:auto;clear:both}

@@ -33,6 +33,18 @@
 	        /*max-width: 88%;*/
 	        justify-content: start;
 	    }
+	    /***  extras  ***/
+	    .win-content {
+	        background: linear-gradient(90deg, var(--mirror-start) 0, var(--mirror-end));
+            background: -webkit-linear-gradient(0deg, var(--mirror-start) 0, var(--mirror-end));
+	        background: rgb(255 255 255 / 95%);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 2px solid white;
+	    }
+	    body.dark .win-content {
+	        border-color: transparent;
+	    }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

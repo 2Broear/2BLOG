@@ -2,8 +2,36 @@
     'use strict';
     const marker = {
         dom: {
-            initiate: (marker)=> {
+            initiate: (marker, redefined = false)=> {
                 const {init: {_conf: {static: {ctxMark:s_ctxMark, ctxMarked:s_ctxMarked, ctxQuote:s_ctxQuote, ctxCopy:s_ctxCopy, ctxNote:s_ctxNote, ctxCancel:s_ctxCancel, ctxLike:s_ctxLike,ctxLiked:s_ctxLiked, lineAnimate:s_lineAnimate, lineKeepTop:s_lineKeepTop, lineColor:s_lineColor, lineColors:s_lineColors, lineBold:s_lineBold, lineBoldMax:s_lineBoldMax, lineDegrees:s_lineDegrees, userNick:s_userNick, userMail:s_userMail, userMid:s_userMid, md5Url:s_md5Url, dataAlive:s_dataAlive, dataPrefix:s_dataPrefix, dataStream:s_dataStream, avatar:s_avatar, useNote:s_useNote, useCopy:s_useCopy, useQuote:s_useQuote, likeMax:s_likeMax}, class: {line:c_line, tool:c_tool, toolIn:c_toolIn, avatars:c_avatars, mark:c_mark, done:c_done, note:c_note, quote:c_quote, copy:c_copy, close:c_close, like:c_like, liked:c_liked, underline:c_underline, processing:c_processing, disabled:c_disabled, }, element: {commentInfo: {userNick:e_userNick, userMail:e_userMail}, effectsArea:e_effectsArea}}}, data: {list:d_list, path:d_path, user: {mid:d_mid}, stat:{counts:d_counts}, _caches:d_caches,}, _utils: {_cookie: {get:getCookie, set:setCookie, del:delCookie}, _etc: {funValidator, dynamicLoad, isObject}, _dom: {finder, valider}}, status: {isMarkerUserUpdate, isMarkerAccessable}, mods: {fetch}} = marker;
+                const _md5update = (callback)=> {
+                    let userinfo = {
+                            nick: e_userNick.value,
+                            mail: e_userMail.value,
+                        };
+                    const _execUpdate = (userinfo, cbk)=> {
+                        userinfo.mid = userinfo.mail ? md5(userinfo.mail) : "";
+    			        // store userinfo(d_mid for currentUserCounts verification
+			            marker.data = userinfo;
+                        // store to local cookies
+                        setCookie(s_userNick, userinfo.nick);
+                        setCookie(s_userMail, userinfo.mail);
+                        setCookie(s_userMid, userinfo.mid);
+                        if(funValidator(cbk)) cbk();
+                    };
+                    if(typeof md5 === 'undefined') {
+                        console.log('init md5..');
+                        dynamicLoad(s_md5Url, ()=>_execUpdate(userinfo, callback));
+                        return;
+                    }
+                    console.log('md5 inited, updating records..');
+                    _execUpdate(userinfo, callback);
+                };
+                // redefined
+                if (redefined) {
+                    _md5update();
+                    return;
+                }
                 // changes required
                 let _conf = marker.init._conf,
                     style = document.createElement('STYLE'),
@@ -331,42 +359,19 @@
                             }else{
                                 console.debug('localMarks: ALL MATCHED');
                             }
-                        },
-                        _md5update = (callback)=> {
-                            let userinfo = {
-                                    nick: e_userNick.value,
-                                    mail: e_userMail.value,
-                                },
-                                _execUpdate = (userinfo, cbk)=> {
-                                    userinfo.mid = userinfo.mail ? md5(userinfo.mail) : "";
-                			        // store userinfo(d_mid for currentUserCounts verification
-            			            marker.data = userinfo;
-                                    // store to local cookies
-                                    setCookie(s_userNick, userinfo.nick);
-                                    setCookie(s_userMail, userinfo.mail);
-                                    setCookie(s_userMid, userinfo.mid);
-                                    if(funValidator(cbk)) cbk();
-                                };
-                            if(typeof md5 === 'undefined') {
-                                console.log('init md5..');
-                                dynamicLoad(s_md5Url, ()=>_execUpdate(userinfo, callback));
-                            }else{
-                                console.log('md5 initiated, updating records..');
-                                _execUpdate(userinfo, callback);
-                            }
                         };
                     // re-update on userinfo->mail changed.
                     if(isMarkerUserUpdate()) {
-                        _md5update(_outputMarkers);
                         console.log(`marker user updated: ${e_userMail.value} (counts: ${d_counts})`);
+                        _md5update(_outputMarkers);
                     }else{
                         // abort on userinfo exists
                         if(!isMarkerAccessable() && e_userMail.value){
-                            _md5update(_outputMarkers);
                             console.log(`marker user inited. (counts: ${d_counts})`);
+                            _md5update(_outputMarkers);
                         }else{
+                            console.log('default _outputMarkers');
                             _outputMarkers();
-                            console.debug('default _outputMarkers');
                         }
                     }
                 }, (err)=>console.warn(err));
@@ -670,6 +675,11 @@
                         return emailValid;
                     } else {
                         console.warn('Abort on invalid email provided!', mail);
+                        // safari redefined(exists user with empty cookie records)
+                        if (!marker.status.isMarkerUserUpdate() && marker.status.isMarkerAccessable()) {
+                            console.warn('Exist User with Empty cookie Records, redefined init..');
+                            marker.dom.initiate(marker, true);
+                        }
                         return false;
                     }
                     const commentInfo = marker.init._conf.element.commentInfo,
@@ -690,7 +700,8 @@
             },
             isMarkerAccessable: ()=> {
                 const {mail, mid} = marker.data.user;
-                return mail&&mail !== "" && mid&&mid !== "";
+                if (!mail || !mid) return false;
+                return mail!==""&&mail!=='undefined' && mid!==""&&mid!=='undefined';
             },
             isMarkerUserUpdate: function() {
                 const {init: {_conf: {element: {commentInfo: {userMail:e_userMail}}}}, data: {user: {mail:d_mail}}, status:{isMarkerAccessable}} = marker;
@@ -735,7 +746,7 @@
             isMarkerSelectable: (node = null)=> {
                 const {init: {_conf: {class: {blackList:c_blackList}}}, _utils: {_dom: {valider, finder}}} = marker;
                 if(!valider(node) || !node.classList) {
-                    console.warn('invalid nodes or classList', node);
+                    console.warn('invalid node provided or classList', node);
                     return false;
                 }
                 let blackTags = ['h1','h2','h3','h4','h5','h6','a','s','del','code','mark','details','summary', 'blockquote'],
@@ -1299,7 +1310,7 @@
                     if(s_useQuote) clicker(e_effectsArea, c_quote, debouncer((t)=>quote(t)));
                     if(!isMarkerAvailable()) {
                         // extra tips for un-registerd mark user
-                        let tips4unregister = (t)=> {
+                        const tips4unregister = (t)=> {
                             t.classList.add(c_liked);
                             t.textContent = 'Comments Required!';
                             alert('Unregistered user, you must comment(fullfill name/email) before marking-off!');

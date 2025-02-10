@@ -38,7 +38,7 @@
             // marker
             if(get_option('site_marker_switcher')){
     ?>
-                asyncLoad('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/marker.js', function(){
+                asyncLoad('<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/marker.js', function(){
                     // use keyword "new" to point to init method.
                     new marker.init({
                         static: {

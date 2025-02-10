@@ -20,24 +20,24 @@
             <!--<img decoding="async" loading="lazy" data-src="<?php echo $img_cdn; ?>/images/bilibili_wink.webp" alt="bilibili_wink" style="margin: 0 auto;">-->
         </div>
         <script>
-            function poster_sw(){
+            function poster_sw() {
                 const poster = document.querySelector(".poster");
                 poster.classList && poster.classList.contains('active') ? poster.classList.remove('active') : poster.classList.add('active');
             };
-            function getPoster(t){
-                if(document.querySelector("#capture")){
+            function getPoster(t) {
+                if(document.querySelector("#capture")) {
                     poster_sw();
                     return;
                 }
                 t.parentNode.classList.add("disabled");  // incase multi click (first generating only)
                 send_ajax_request("GET", "<?php echo $src_cdn.'/plugin/html2canvas.php'; ?>", 
                     parse_ajax_parameter({
-                        "title": "<?php the_title(); ?>",
-                        "content": "<?php custom_excerpt(50); ?>",
-                        "tags": '<?php echo get_the_tag_list('',' ',''); ?>',
-                        "author": "<?php echo get_option('site_nick'); ?>",
+                        "title": "<?php echo urlencode(get_the_title()); ?>",
+                        "content": "<?php echo urlencode(custom_excerpt(50, true)); ?>",
+                        "tags": '<?php echo urlencode(get_the_tag_list('',' ','')); ?>',
+                        "author": "<?php echo urlencode(get_option('site_nick')); ?>",
                         "date": "<?php the_time('d-m-Y'); ?>",
-                        "image": "<?php echo get_postimg(0,$pid,true).'?fixed_cors_str'; ?>",
+                        "image": "<?php echo urlencode(get_postimg(0,$pid,true)); ?>", //.'?fixed_cors_str'
                         "loading": "<?php custom_cdn_src('img'); ?>/images/loading_3_color_tp.png",
                     }, true), function(res){
                         if(!res) throw new Error('signature error.'); //if(sign_.err) return;
