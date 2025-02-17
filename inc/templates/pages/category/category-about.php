@@ -119,7 +119,7 @@
                             <li class="intro_right">
                                 <div class="mbit" data-mbit="<?php $mbit_array_result = explode('/', get_option('site_mbit_result_array'));echo strtoupper($mbit_array_result[1]); ?>">
                                     <div class="mbit_intro">
-                                        <p> MBIT 16 Personalities overview<!--<sup> (Oct 21, 2022) </sup>--> </p>
+                                        <p> MBti 16 Personalities overview<!--<sup> (Oct 21, 2022) </sup>--> </p>
                                         <a href="https://www.16personalities.com/<?php $mbit_abbr=$mbit_array_result[0];echo strpos($mbit_abbr,'-')!==false ? substr($mbit_abbr,0,4) : $mbit_abbr; ?>-personality" style="color:#33a474;" target="_blank" title="see details about <?php echo $res_type=strtoupper($mbit_abbr); ?>"><b><?php echo $res_type; ?></b></a>
                                     </div>
                                     <ol class="mbit_range">

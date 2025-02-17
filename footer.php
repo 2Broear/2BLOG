@@ -81,7 +81,7 @@
                             	notify: false,
                             	verify: false,
                             	visitor: false,
-                            	recordIP: false,
+                            	recordIP: true,  // ad case
                             	placeholder: '快来玩右下角的“涂鸦画板”！',
                             	<?php
                             	    echo get_option('site_cdn_switcher') ? 'imgCdn: "'.$img_cdn.'",' . PHP_EOL . ' srcCdn: "'.$src_cdn.'",' . PHP_EOL . ' apiCdn: "'.$plugin_path.'",' . PHP_EOL : 'rootPath: "'.$root_path.'",' . PHP_EOL;

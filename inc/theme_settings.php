@@ -363,6 +363,51 @@
                     }
                 }
             ?>
+            <div class="rsslogs" data-api="<?php echo get_api_refrence('dirscaner', true) . '&deep=0&extends=.log&_ajax_nonce='.wp_create_nonce(date('Ymd') . "_dirscaner_ajax_nonce") . '&path=' . WP_CONTENT_DIR . '/uploads/logs'; ?>">
+                <p>📜 <b> 查阅日志记录 </b> 📑</p>
+                <select id="" class="logs-year dropdown-react">
+                    <option value=""><?php esc_attr( _e( '日志年份', 'logs-year' ) ); ?></option>
+                    <?php
+                        $logDir = WP_CONTENT_DIR . '/uploads/logs';
+                        $logYears = dirScaner($logDir, false, true);
+                        $curYear = date('Y');
+                        foreach ($logYears as $logPath) {
+                            // $logLink = str_replace('/www/wwwroot/', 'https://', $logPath);
+                            $logName = str_replace($logDir . '/', '', $logPath);  // basename($logPath)
+                            $selectedYear = $logName === $curYear ? ' selected' : '';
+                            echo '<option value="' . esc_attr($logName) . '"' . $selectedYear . '>' . $logName . '</option>';
+                        }
+                    ?>
+                </select>
+                <select id="" class="logs-month dropdown-react" data-context="<?php echo $monthText = '日志月份'; ?>">
+                    <option value=""><?php esc_attr( _e( $monthText, 'logs-month' ) ); ?></option>
+                    <?php
+                        $logMonth = dirScaner($logDir . '/' . $curYear, false, true);
+                        $curMonth = date('m');
+                        foreach ($logMonth as $logPath) {
+                            // $logLink = str_replace('/www/wwwroot/', 'https://', $logPath);
+                            $logName = basename($logPath);  // str_replace($logDir . '/', '', $logPath)
+                            $selectedYear = $logName === $curMonth ? ' selected' : '';
+                            echo '<option value="' . esc_attr($logName) . '"' . $selectedYear . '>' . $logName . '</option>';
+                        }
+                    ?>
+                </select>
+                <select id="" class="logs-dropdown" data-context="<?php echo $monthText = '选择日志'; ?>">
+                    <option value=""><?php esc_attr( _e( $monthText, 'logs-dropdown' ) ); ?></option>
+                    <?php
+                        // 输出select+option
+                        $curDir = $logDir . '/' . $curYear . '/' . $curMonth;
+                        $logFiles = dirScaner($curDir, true, false, '.log');
+                        // print_r($logFiles);
+                        foreach ($logFiles as $filePath) {
+                            $file_link = str_replace('/www/wwwroot/', 'https://', $filePath);
+                            $file_name = str_replace($curDir . '/', '', $filePath);  // basename($filePath)
+                            echo '<option value="' . esc_attr($file_link) . '">/' . $file_name . '</option>';
+                        }
+                    ?>
+                </select>
+                <p><textarea id="" class="logs-container" placeholder="点击上方选项卡以切换查询" style="width:100%;height:150px;" disabled></textarea></p>
+            </div>
         </form>
 <?php
     }

@@ -1,10 +1,10 @@
 jQuery(document).ready(function($){
-    function bindEventClick(parent, ids, callback) {
+    function bindEvents(events = 'onclick', parent, ids, callback) {
         if (!parent) {
-            console.warn('bindEventClick failed', parent);
+            console.warn('bindEvents failed', parent);
             return;
         }
-        parent.onclick=(e)=>{
+        parent[events] = (e)=> {
             e = e || window.event;
             let t = e.target || e.srcElement;
             if(!t) return;
@@ -357,7 +357,7 @@ jQuery(document).ready(function($){
         if (switchtab[0]) switchtab[0].classList.add(activecls);  // clearClass then active
     }
     
-    bindEventClick(document.querySelector(".switchTab"), 'li', (t)=> {
+    bindEvents('onclick', document.querySelector(".switchTab"), 'li', (t)=> {
         pushParam('tab', t.id);
         // location.search = '?page=2blog-settings&tab='+t.id;
         clearClass(switchtab, activecls);  // clear actived class
@@ -366,7 +366,7 @@ jQuery(document).ready(function($){
         document.querySelector("form ."+t.id).classList.add(switchcls);  // clearClass then show
     });
     
-    bindEventClick(document, '', (t)=> {
+    bindEvents('onclick', document, '', (t)=> {
         if (t.id!=='updateSchedule') return;
         // console.log(t)
         if (confirm(`Updating Scheduled Tasks(scheduled_rss_feeds_updates)?`)) {
@@ -431,7 +431,7 @@ jQuery(document).ready(function($){
     const reloader = 'reloadFeeds';
     if (contents) {
         // const reloadFeeds = contents.querySelector('.reloadFeeds');
-        bindEventClick(contents, '', (t)=> { //reloader
+        bindEvents('onclick', contents, '', (t)=> { //reloader
             if (t.id==='reloadCount') {
                 const reloadFeeds = t.parentNode.querySelector('.reloadFeeds');
                 t.onchange = t.onpropertychange = ()=> reloadFeeds.dataset.limit = t.value;
@@ -444,43 +444,195 @@ jQuery(document).ready(function($){
                 t.textContent = `fetching ${dataset.cat}...`;
                 t.classList.remove(reloader);
                 console.log('loading url: ', dataset.api);
-                fetch(`${dataset.api}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, {
-                    method: 'GET',
-                })
-                .then(res=> {
-                    if (res.ok) {
-                        console.log('data loaded.', res);
-                        return res.text(); //json()
-                    }
-                    console.warn('request failed.')
-                    // const reader = res.body.getReader();
-                    // let receivedLength = 0; // 已接收的数据长度
-                    
-                    // reader.read().then(function processText({ done, value }) {
-                    //     if (done) {
-                    //         console.log('Stream complete');
-                    //         return;
-                    //     }
-                    //     receivedLength += value.length;
-                    //     const totalLength = res.headers.get('Content-Length');
-                    //     const progress = Math.round((receivedLength / totalLength) * 100);
-                        
-                    //     console.log(progress + '%');
-                        
-                    //     return reader.read().then(processText);
-                    // });
-                })
-                .then(data=> {
-                    container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ data }`;
+                
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', `${dataset.api}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, true);
+                xhr.onprogress = function(event) {
+                  if (event.lengthComputable) {
+                    var percentComplete = event.loaded / event.total * 100;
+                    console.log('Progress: ' + percentComplete + '%');
+                  }
+                };
+                xhr.onload = function() {
+                  if (xhr.status === 200) {
+                    container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ xhr.responseText }`;
                     console.log('data fullfilled.');
                     alert(`${dataset.cat} rss data loaded.`);
+                  }
+                };
+                xhr.send();
+                return;
+                // fetch(`${dataset.api}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, { method: 'GET', })
+                // .then(res=> {
+                //     if (!res.ok) {
+                //         throw new Error('request failed.');
+                //     }
+                //     return res.text(); //json()
+                //     const reader = res.body.getReader();
+                //     let receivedLength = 0; // 已接收的数据长度
+                //     const totalLength = parseInt(res.headers.get('Content-Length') || '0', 10);
+            
+                //     reader.read().then(function processText({ done, value }) {
+                //         if (done) {
+                //             console.log('Stream complete');
+                //             return;
+                //         }
+                //         receivedLength += value.length;
+                //         const progress = Math.round((receivedLength / totalLength) * 100);
+            
+                //         console.log(progress + '%');
+                //         // 在这里你可以更新页面元素来展示进度
+            
+                //         return reader.read().then(processText);
+                //     });
+                // })
+                // .then(data=> {
+                //     container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ data }`;
+                //     console.log('data fullfilled.');
+                //     alert(`${dataset.cat} rss data loaded.`);
+                // })
+                // .catch(error => {
+                //     container.querySelector('p').innerHTML = `Reload site_rss_${dataset.cat}_cache failed, <u>${ error }!</u>`;
+                //     console.error('Error fetching progress:', error);
+                // });
+            }
+        });
+        
+        // dropdown_logs
+        const rsslogs = contents.querySelector('.rsslogs');
+        if (!rsslogs) {
+            throw new Error('invalid rsslogs list/area/react provided!', rsslogs);
+        }
+        const dropdown_logs = rsslogs.querySelector('.logs-dropdown');
+        const dropdown_area = rsslogs.querySelector('.logs-container');
+        const selected_year = rsslogs.querySelector('.logs-year');
+        const selected_month = rsslogs.querySelector('.logs-month');
+        // dropdown list
+        let cacheControl = {
+                list: [],
+                logs: []
+            };
+        let listUpdates = (list, updateNode = null)=> {
+                if (!list || !Array.isArray(list)) throw new Error('invalid list array provided.');
+                if (!updateNode || !updateNode instanceof HTMLElement)  throw new Error('invalid update node provided.');
+                const year_value = selected_year.selectedOptions[0].value ? selected_year.selectedOptions[0].value : 0;
+                const month_value = selected_month.selectedOptions[0].value ? selected_month.selectedOptions[0].value : 0;
+                const is_edit_list = updateNode !== dropdown_logs;
+                dropdown_logs.innerHTML = `<option value=""> ${dropdown_logs.dataset.context} </option>`;  // always update dropdown_logs
+                updateNode.innerHTML = `<option value=""> ${updateNode.dataset.context} </option>`;
+                // Performance enhancement
+                let fragment = document.createDocumentFragment();
+                list.forEach((item)=> {
+                    const itemLast = is_edit_list ? item.lastIndexOf('/') + 1 : item.lastIndexOf('/');
+                    const itemName = item.substr(itemLast, item.length);
+                    const itemLink = item.replace('/www/wwwroot/', 'https://');
+                    let option = document.createElement("Option");
+                    option.value = is_edit_list ? itemName : itemLink;
+                    if (cacheControl.logs[year_value] && cacheControl.logs[year_value][month_value] && cacheControl.logs[year_value][month_value][itemName]) {
+                        console.log('find cached option while loading options.', itemLink);
+                        // mark cached options(incase of logCaches loss effect)
+                        option.dataset.cached = true;
+                    }
+                    option.textContent = itemName;
+                    fragment.appendChild(option);
+                });
+                updateNode.appendChild(fragment);
+                // UE enhancement
+                updateNode.focus();
+            };
+        bindEvents('onchange', rsslogs, '', (t)=> {
+            if (t.classList && t.classList.contains('dropdown-react')) {
+                const selected = t.options[t.selectedIndex];
+                let queryDirOnly = 0;
+                let updateNode = dropdown_logs;
+                // update month list(query directory only) if year selected
+                if (t.classList.contains('logs-year')) {
+                    selected_month.selectedIndex = dropdown_logs.selectedIndex = 0; // reset month&logs if year selected
+                    queryDirOnly = 1;
+                    updateNode = selected_month;
+                    selected_month.focus();
+                }
+                // reset to '.log' query if empty selected_year
+                if (selected_year.value === '') {
+                    selected_month.selectedIndex = dropdown_logs.selectedIndex = 0;
+                    selected_year.focus();
+                    queryDirOnly = 0;
+                    updateNode = dropdown_logs;
+                    // quite if month selected while year not selected.
+                    if (t.classList.contains('logs-month')) return;
+                }
+                // load from cache
+                // const changedType = t.classList.contains('logs-month') ? 'month' : 'years';
+                let year_value = selected_year.selectedOptions[0].value ? selected_year.selectedOptions[0].value : 0;
+                let month_value = selected_month.selectedOptions[0].value ? selected_month.selectedOptions[0].value : 0;
+                if (selected.dataset.cached) {
+                    listUpdates(cacheControl.list[year_value][month_value], updateNode); // dropdown_area.value = cacheControl.list[year_value][month_value];
+                    console.log(`option(list) load from caches`, cacheControl);
+                    return;
+                }
+                // load new value
+                let api_url = rsslogs.dataset.api;
+                if (year_value) api_url = api_url + '/' + year_value;
+                if (month_value) api_url = api_url + '/' + month_value;
+                fetch(`${api_url}&dironly=${queryDirOnly}`, {
+                    method: 'GET', // POST incase 200load from cache
+                })
+                .then(res=> {
+                    if (!res.ok) throw new Error('request failed.');
+                    return res.json(); //text()
+                })
+                .then(data=> {
+                    listUpdates(data, updateNode);
+                    // mark & save to caches
+                    selected.dataset.cached = true;
+                    if (!cacheControl.list[year_value]) cacheControl.list[year_value] = [];
+                    cacheControl.list[year_value][month_value] = data; //JSON.parse(data);
+                    console.log('data(list) fullfilled.', data);
                 })
                 .catch(error => {
-                    container.querySelector('p').innerHTML = `Reload site_rss_${dataset.cat}_cache failed, <u>${ error }!</u>`;
                     console.error('Error fetching progress:', error);
                 });
                 return;
             }
         });
+        // fetching logs
+        dropdown_logs.onchange = function(e) {
+            const selected = this.options[this.selectedIndex];
+            // invalid options
+            if (!selected || !selected.value) return;
+            // load from cache
+            let year_value = selected_year.selectedOptions[0].value ? selected_year.selectedOptions[0].value : '0';
+            let month_value = selected_month.selectedOptions[0].value ? selected_month.selectedOptions[0].value : '0';
+            let file_names = selected.textContent; //.substr(1, selected.textContent.lastIndexOf('.')-1)
+            if (year_value == '0' || month_value == '0') {
+                console.warn('please selecte a year/month before selecting logs!');
+                // return;
+            }
+            if (selected.dataset.cached) {
+                dropdown_area.value = cacheControl.logs[year_value][month_value][file_names];
+                console.log(`option(log) load from caches`, cacheControl);
+                return;
+            }
+            // load new value
+            fetch(`${selected.value}?ts=${Date.now()}`, {
+                method: 'GET', // POST incase 200load from cache
+            })
+            .then(res=> {
+                if (!res.ok) throw new Error('request failed.');
+                return res.text(); //json()
+            })
+            .then(data=> {
+                dropdown_area.value = data;  // fullfill data
+                // mark & save to caches
+                selected.dataset.cached = true;
+                if (!cacheControl.logs[year_value]) cacheControl.logs[year_value] = [];
+                if (!cacheControl.logs[year_value][month_value]) cacheControl.logs[year_value][month_value] = [];
+                cacheControl.logs[year_value][month_value][file_names] = data;
+                console.log('data(log) fullfilled.', data);
+            })
+            .catch(error => {
+                console.error('Error fetching progress:', error);
+            });
+        }
     }
 });

@@ -2,24 +2,6 @@
     define('WP_USE_THEMES', false);  // No need for the template engine
     require_once('../../../../../wp-load.php');  // Load WordPress Core
     
-    // 检查并返回 xhr 请求携带参数
-    function get_request_param(string $param) {
-        $res = null;
-        if(!isset($_REQUEST[$param])) return $res;
-        switch (true) {
-            case isset($_GET[$param]):
-                $res = $_GET[$param];
-                break;
-            case isset($_POST[$param]):
-                $res = $_POST[$param];
-                break;
-            default:
-                $res = false;
-                break;
-        }
-        return trim($res);
-    }
-    
     $req_cat = get_request_param('cat');
     $link_limit = get_request_param('limit');
     $use_clear = get_request_param('clear');
@@ -36,11 +18,15 @@
     // $use_sse = get_request_param('sse');
     $links_slug = get_links_category('slug');
     if (!in_array($req_cat, $links_slug)) {
-        echo $req_cat ? '<pre>Unknown category: "' . $req_cat . '", Please try again.</pre>' : '<pre>Empty category! Please specify a cat param.</pre>';
+        $error_msg = $req_cat ? '<pre>Unknown category: "' . $req_cat . '", Please try again.</pre>' : '<pre>Empty category! Please specify a cat param.</pre>';
+        report_logs($error_msg); // 记录日志
+        echo $error_msg;
         exit;
     }
     if ($use_clear) {
-        echo "<pre>Clear all caches before updating $req_cat, standby..</pre>";
+        $message = "<pre>Clear all caches before updating $req_cat, standby..</pre>";
+        report_logs($message); // 记录日志
+        echo $message;
         // 清除（全部） rss 订阅
         foreach ($links_slug as $link_cat) {
             update_option('site_rss_' . $link_cat . '_cache', '');  //清除（重建）聚合内容
@@ -96,16 +82,20 @@
     }
     // }
     
-    // // 计算 JSON 数据的长度
-    // $contentLength = strlen($output_json);
-    // // 设置 Content-Type 为 application/json，这是发送 JSON 数据的标准 MIME 类型
-    // header("Content-Type: application/json");
-    // // 设置 Content-Length 响应头
-    // header("Content-Length: $contentLength");
+    // 计算 JSON 数据的长度
+    $contentLength = strlen($output_json);
+    // 设置 Content-Length 响应头
+    header("Content-Length: $contentLength");
+    // // 使用 Transfer-Encoding: chunked !502
+    // header("Transfer-Encoding: chunked");
     // print_r($output_json);
     if ($do_output) {
+        // report_logs("已成功输出（更新）RSS HTML."); // 记录日志
+        header('Content-Type: text/html; charset=utf-8');
         the_rss_feeds(json_decode($output_json));
     } else {
+        // report_logs("已成功输出 RSS JSON."); // 记录日志
+        header("Content-Type: application/json");
         print_r($output_json);
     }
 ?>
