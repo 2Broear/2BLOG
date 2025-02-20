@@ -512,69 +512,101 @@ jQuery(document).ready(function($){
                 list: [],
                 logs: []
             };
-        let listUpdates = (list, updateNode = null)=> {
-                if (!list || !Array.isArray(list)) throw new Error('invalid list array provided.');
-                if (!updateNode || !updateNode instanceof HTMLElement)  throw new Error('invalid update node provided.');
-                const year_value = selected_year.selectedOptions[0].value ? selected_year.selectedOptions[0].value : 0;
-                const month_value = selected_month.selectedOptions[0].value ? selected_month.selectedOptions[0].value : 0;
-                const is_edit_list = updateNode !== dropdown_logs;
-                dropdown_logs.innerHTML = `<option value=""> ${dropdown_logs.dataset.context} </option>`;  // always update dropdown_logs
-                updateNode.innerHTML = `<option value=""> ${updateNode.dataset.context} </option>`;
-                // Performance enhancement
-                let fragment = document.createDocumentFragment();
-                list.forEach((item)=> {
-                    const itemLast = is_edit_list ? item.lastIndexOf('/') + 1 : item.lastIndexOf('/');
-                    const itemName = item.substr(itemLast, item.length);
-                    const itemLink = item.replace('/www/wwwroot/', 'https://');
-                    let option = document.createElement("Option");
-                    option.value = is_edit_list ? itemName : itemLink;
-                    if (cacheControl.logs[year_value] && cacheControl.logs[year_value][month_value] && cacheControl.logs[year_value][month_value][itemName]) {
-                        console.log('find cached option while loading options.', itemLink);
-                        // mark cached options(incase of logCaches loss effect)
-                        option.dataset.cached = true;
+        // defaults defaults value
+        if (rsslogs.dataset.defaults) {
+            const selected_year_val = selected_year.selectedOptions[0].value;
+            const selected_month_val = selected_month.selectedOptions[0].value;
+            if (!selected_year_val || !selected_month_val) throw new Error('invalid selected_year or month with defaults on.');
+            let valuePusher = (nodes, array, replace = false)=> {
+                    for (let i=1,l=nodes.length; i<l; i++) {
+                        const value = replace ? nodes[i].value.replace('https://', '/www/wwwroot/') : `${rsslogs.dataset.path}/${selected_year_val}/${nodes[i].value}`;
+                        array.push(value);
                     }
-                    option.textContent = itemName;
-                    fragment.appendChild(option);
-                });
-                updateNode.appendChild(fragment);
-                // UE enhancement
-                updateNode.focus();
-            };
+                };
+            cacheControl.list[selected_year_val] = [[]];
+            valuePusher(selected_month.children, cacheControl.list[selected_year_val][0]);
+            //..
+            cacheControl.list[selected_year_val][selected_month_val] = [];
+            valuePusher(dropdown_logs.children, cacheControl.list[selected_year_val][selected_month_val], true);
+            // mark as cached.
+            selected_year.selectedOptions[0].dataset.cached = selected_month.selectedOptions[0].dataset.cached = true;
+        }
+        function listUpdates(list, updateNode = null, cached = false) {
+            if (!list || !Array.isArray(list)) {
+                updateNode.innerHTML = `<option value=""> ${updateNode.dataset.context} </option>`;
+                // throw new Error('invalid list array provided.');
+                console.warn('invalid list array provided.', list);
+                return;
+            }
+            if (!updateNode || !updateNode instanceof HTMLElement) throw new Error('invalid update node provided.');
+            const year_value = selected_year.selectedOptions[0].value ? selected_year.selectedOptions[0].value : 0;
+            const month_value = selected_month.selectedOptions[0].value ? selected_month.selectedOptions[0].value : 0;
+            const is_edit_list = updateNode !== dropdown_logs;
+            dropdown_logs.innerHTML = `<option value=""> ${dropdown_logs.dataset.context} </option>`;  // always update dropdown_logs
+            updateNode.innerHTML = `<option value=""> ${updateNode.dataset.context} </option>`;
+            // Performance enhancement
+            let fragment = document.createDocumentFragment();
+            list.forEach((item)=> {
+                const itemLast = is_edit_list ? item.lastIndexOf('/') + 1 : item.lastIndexOf('/');
+                const itemName = item.substr(itemLast, item.length);
+                const itemLink = item.replace('/www/wwwroot/', 'https://');
+                let option = document.createElement("Option");
+                option.value = is_edit_list ? itemName : itemLink;
+                if (cacheControl.logs[year_value] && cacheControl.logs[year_value][month_value] && cacheControl.logs[year_value][month_value][itemName]) {
+                    console.log('find cached option while loading options.', itemLink);
+                    // mark cached options(incase of logCaches loss effect)
+                    option.dataset.cached = true;
+                }
+                option.textContent = itemName;
+                fragment.appendChild(option);
+            });
+            updateNode.appendChild(fragment);
+            // UE enhancement
+            updateNode.focus();
+        };
         bindEvents('onchange', rsslogs, '', (t)=> {
-            if (t.classList && t.classList.contains('dropdown-react')) {
-                const selected = t.options[t.selectedIndex];
-                let queryDirOnly = 0;
+            if (!t.classList) return;
+            const selectedOption = t.options[t.selectedIndex];
+            let year_value = selected_year.selectedOptions[0].value ? selected_year.selectedOptions[0].value : 0;
+            let month_value = selected_month.selectedOptions[0].value ? selected_month.selectedOptions[0].value : 0;
+            if (t.classList.contains('dropdown-react')) {
+                let directoryOnly = 0;
                 let updateNode = dropdown_logs;
                 // update month list(query directory only) if year selected
-                if (t.classList.contains('logs-year')) {
+                const rootsSelected = selected_year.value == '';
+                const yearsSelected = t.classList.contains('logs-year');
+                const monthSelected = t.classList.contains('logs-month');
+                if (yearsSelected || rootsSelected) {
                     selected_month.selectedIndex = dropdown_logs.selectedIndex = 0; // reset month&logs if year selected
-                    queryDirOnly = 1;
-                    updateNode = selected_month;
-                    selected_month.focus();
+                    if (yearsSelected) {
+                        directoryOnly = 1;
+                        updateNode = selected_month;
+                        // reset month selection
+                        month_value = 0;
+                        selected_month.focus();
+                    }
+                    if (rootsSelected) {
+                        directoryOnly = 0;
+                        updateNode = dropdown_logs;
+                        // reset all selections
+                        year_value = month_value = 0;
+                        selected_year.focus();
+                        // quite if month selected while year not selected.
+                        listUpdates(false, selected_month);
+                        // if (monthSelected) return;
+                    }
                 }
-                // reset to '.log' query if empty selected_year
-                if (selected_year.value === '') {
-                    selected_month.selectedIndex = dropdown_logs.selectedIndex = 0;
-                    selected_year.focus();
-                    queryDirOnly = 0;
-                    updateNode = dropdown_logs;
-                    // quite if month selected while year not selected.
-                    if (t.classList.contains('logs-month')) return;
-                }
-                // load from cache
-                // const changedType = t.classList.contains('logs-month') ? 'month' : 'years';
-                let year_value = selected_year.selectedOptions[0].value ? selected_year.selectedOptions[0].value : 0;
-                let month_value = selected_month.selectedOptions[0].value ? selected_month.selectedOptions[0].value : 0;
-                if (selected.dataset.cached) {
-                    listUpdates(cacheControl.list[year_value][month_value], updateNode); // dropdown_area.value = cacheControl.list[year_value][month_value];
-                    console.log(`option(list) load from caches`, cacheControl);
+                // load cached value
+                if (selectedOption.dataset.cached) {
+                    listUpdates(cacheControl.list[year_value][month_value], updateNode); // logs
+                    console.log(`option(list) load from caches`, cacheControl.list);
                     return;
                 }
-                // load new value
-                let api_url = rsslogs.dataset.api;
-                if (year_value) api_url = api_url + '/' + year_value;
-                if (month_value) api_url = api_url + '/' + month_value;
-                fetch(`${api_url}&dironly=${queryDirOnly}`, {
+                // fetching value
+                let api_path = rsslogs.dataset.path;
+                if (year_value) api_path = api_path + '/' + year_value;
+                if (month_value) api_path = api_path + '/' + month_value;
+                fetch(`${rsslogs.dataset.api}&path=${api_path}&dironly=${directoryOnly}&_ajax_nonce=${rsslogs.dataset.nonce}`, {
                     method: 'GET', // POST incase 200load from cache
                 })
                 .then(res=> {
@@ -584,7 +616,7 @@ jQuery(document).ready(function($){
                 .then(data=> {
                     listUpdates(data, updateNode);
                     // mark & save to caches
-                    selected.dataset.cached = true;
+                    selectedOption.dataset.cached = true;
                     if (!cacheControl.list[year_value]) cacheControl.list[year_value] = [];
                     cacheControl.list[year_value][month_value] = data; //JSON.parse(data);
                     console.log('data(list) fullfilled.', data);
@@ -594,45 +626,42 @@ jQuery(document).ready(function($){
                 });
                 return;
             }
+            // fetching logs
+            if (t.classList.contains('logs-dropdown')) {
+                // invalid options
+                if (!selectedOption || !selectedOption.value) return;
+                // load from cache
+                const file_names = selectedOption.textContent; //.substr(1, selectedOption.textContent.lastIndexOf('.')-1)
+                if (year_value == 1 || month_value == 1) {
+                    console.warn('please selecte a year/month before selecting logs!');
+                    // return;
+                }
+                if (selectedOption.dataset.cached) {
+                    dropdown_area.value = cacheControl.logs[year_value][month_value][file_names];
+                    console.log(`option(log) load from caches`, cacheControl.logs);
+                    return;
+                }
+                // load new value
+                fetch(`${selectedOption.value}?ts=${Date.now()}`, {
+                    method: 'GET', // POST incase 200load from cache
+                })
+                .then(res=> {
+                    if (!res.ok) throw new Error('request failed.');
+                    return res.text(); //json()
+                })
+                .then(data=> {
+                    dropdown_area.value = data;  // fullfill data
+                    // mark & save to caches
+                    selectedOption.dataset.cached = true;
+                    if (!cacheControl.logs[year_value]) cacheControl.logs[year_value] = [];
+                    if (!cacheControl.logs[year_value][month_value]) cacheControl.logs[year_value][month_value] = [];
+                    cacheControl.logs[year_value][month_value][file_names] = data;
+                    console.log('data(log) fullfilled.', data);
+                })
+                .catch(error => {
+                    console.error('Error fetching progress:', error);
+                });
+            }
         });
-        // fetching logs
-        dropdown_logs.onchange = function(e) {
-            const selected = this.options[this.selectedIndex];
-            // invalid options
-            if (!selected || !selected.value) return;
-            // load from cache
-            let year_value = selected_year.selectedOptions[0].value ? selected_year.selectedOptions[0].value : '0';
-            let month_value = selected_month.selectedOptions[0].value ? selected_month.selectedOptions[0].value : '0';
-            let file_names = selected.textContent; //.substr(1, selected.textContent.lastIndexOf('.')-1)
-            if (year_value == '0' || month_value == '0') {
-                console.warn('please selecte a year/month before selecting logs!');
-                // return;
-            }
-            if (selected.dataset.cached) {
-                dropdown_area.value = cacheControl.logs[year_value][month_value][file_names];
-                console.log(`option(log) load from caches`, cacheControl);
-                return;
-            }
-            // load new value
-            fetch(`${selected.value}?ts=${Date.now()}`, {
-                method: 'GET', // POST incase 200load from cache
-            })
-            .then(res=> {
-                if (!res.ok) throw new Error('request failed.');
-                return res.text(); //json()
-            })
-            .then(data=> {
-                dropdown_area.value = data;  // fullfill data
-                // mark & save to caches
-                selected.dataset.cached = true;
-                if (!cacheControl.logs[year_value]) cacheControl.logs[year_value] = [];
-                if (!cacheControl.logs[year_value][month_value]) cacheControl.logs[year_value][month_value] = [];
-                cacheControl.logs[year_value][month_value][file_names] = data;
-                console.log('data(log) fullfilled.', data);
-            })
-            .catch(error => {
-                console.error('Error fetching progress:', error);
-            });
-        }
     }
 });

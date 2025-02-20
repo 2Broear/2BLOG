@@ -363,12 +363,11 @@
                     }
                 }
             ?>
-            <div class="rsslogs" data-api="<?php echo get_api_refrence('dirscaner', true) . '&deep=0&extends=.log&_ajax_nonce='.wp_create_nonce(date('Ymd') . "_dirscaner_ajax_nonce") . '&path=' . WP_CONTENT_DIR . '/uploads/logs'; ?>">
+            <div class="rsslogs" data-api="<?php echo admin_url('admin-ajax.php') . '?action=dirScaner&deep=0&extends=.log'; ?>" data-path="<?php echo $logDir = WP_CONTENT_DIR . '/uploads/logs'; ?>" data-nonce="<?php echo wp_create_nonce(date('Y-m-d') . '_dirscaner_ajax_nonce'); ?>" data-defaults='1'>
                 <p>📜 <b> 查阅日志记录 </b> 📑</p>
                 <select id="" class="logs-year dropdown-react">
                     <option value=""><?php esc_attr( _e( '日志年份', 'logs-year' ) ); ?></option>
                     <?php
-                        $logDir = WP_CONTENT_DIR . '/uploads/logs';
                         $logYears = dirScaner($logDir, false, true);
                         $curYear = date('Y');
                         foreach ($logYears as $logPath) {
@@ -392,12 +391,9 @@
                         }
                     ?>
                 </select>
-                <select id="" class="logs-dropdown" data-context="<?php echo $monthText = '选择日志'; ?>">
+                <select id="" class="logs-dropdown" data-context="<?php echo $monthText = '选择日志'; ?>" data-defaults="<?php $curDir = $logDir . '/' . $curYear . '/' . $curMonth;$logFiles = dirScaner($curDir, true, false, '.log'); ?>">
                     <option value=""><?php esc_attr( _e( $monthText, 'logs-dropdown' ) ); ?></option>
                     <?php
-                        // 输出select+option
-                        $curDir = $logDir . '/' . $curYear . '/' . $curMonth;
-                        $logFiles = dirScaner($curDir, true, false, '.log');
                         // print_r($logFiles);
                         foreach ($logFiles as $filePath) {
                             $file_link = str_replace('/www/wwwroot/', 'https://', $filePath);
