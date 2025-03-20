@@ -564,6 +564,7 @@
         register_setting( 'baw-settings-group', 'site_leancloud_switcher' );
         register_setting( 'baw-settings-group', 'site_third_comments' );
             register_setting( 'baw-settings-group', 'site_comment_blacklists' );
+            register_setting( 'baw-settings-group', 'site_comment_blockoutside' );
         // register_setting( 'baw-settings-group', 'site_valine_switcher' );
             register_setting( 'baw-settings-group', 'site_comment_serverchan' );
             register_setting( 'baw-settings-group', 'site_comment_pushplus' );
@@ -1672,6 +1673,16 @@
                                         // $preset = '快递代发|一件代发|代发平台|礼品代发|空包代发|快递单号|单号网|单号无忧|淘宝空包|京东空包|拼多多空包|刷单单号|提供底单|云仓代发';
                                         // if(!$value) update_option($opt, $preset);else $preset=$value;
                                         echo '<p class="description" id="site_comment_serverchan_label">屏蔽指定评论内容，使用 “|” 分隔关键词（非模糊匹配</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Comment BlackList" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 屏蔽境外 IP<sup id="tips">common</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_comment_blockoutside';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">阻止所有非大陆、香港、台湾的境外IP发布评论（可临时用于刷评屏蔽</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">外网屏蔽</b></label>';
                                     ?>
                                 </td>
                             </tr>

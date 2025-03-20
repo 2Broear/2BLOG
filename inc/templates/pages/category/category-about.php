@@ -67,6 +67,25 @@
         .ibox{
             text-align: inherit;
         }
+        
+        .wp-block-table {
+            margin: 25px auto;
+            text-align: left;
+            border-radius: 0;
+        }
+        .wp-block-table table {
+            width: auto;
+            border-spacing: 10px;
+            border-collapse: collapse;
+        }
+        .wp-block-table table tr {
+            padding: 5px;
+            border-radius: 1px 1px 0 0;
+        }
+        .wp-block-table table tr td {
+            padding: 10px;
+            border: 1px solid rgb(200 200 200 / 35%);
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

@@ -5,22 +5,24 @@
         require_once( '../../../../../wp-load.php' );  // incase api DOCUMENT_ROOT
         // define('USE_STREAM', get_option('site_stream_switcher'));
     }
-    // 检查并返回 xhr 请求携带参数
-    function get_request_param(string $param) {
-        $res = null;
-        if(!isset($_REQUEST[$param])) return $res;
-        switch (true) {
-            case isset($_GET[$param]):
-                $res = $_GET[$param];
-                break;
-            case isset($_POST[$param]):
-                $res = $_POST[$param];
-                break;
-            default:
-                $res = false;
-                break;
+    if (!function_exists('get_request_param')) {
+        // 检查并返回 xhr 请求携带参数
+        function get_request_param(string $param) {
+            $res = null;
+            if(!isset($_REQUEST[$param])) return $res;
+            switch (true) {
+                case isset($_GET[$param]):
+                    $res = $_GET[$param];
+                    break;
+                case isset($_POST[$param]):
+                    $res = $_POST[$param];
+                    break;
+                default:
+                    $res = false;
+                    break;
+            }
+            return trim($res);
         }
-        return trim($res);
     }
     
     define('CACHED_PATH', './mark_data.php');

@@ -676,10 +676,11 @@
                     } else {
                         console.warn('Abort on invalid email provided!', mail);
                         // safari redefined(exists user with empty cookie records)
-                        if (!marker.status.isMarkerUserUpdate() && marker.status.isMarkerAccessable()) {
-                            console.warn('Exist User with Empty cookie Records, redefined init..');
-                            marker.dom.initiate(marker, true);
-                        }
+                        // BUG!!!
+                        // if (!marker.status.isMarkerUserUpdate() && marker.status.isMarkerAccessable()) {
+                        //     console.warn('Exist User with Empty cookie Records, redefined init..');
+                        //     marker.dom.initiate(marker, true);
+                        // }
                         return false;
                     }
                     const commentInfo = marker.init._conf.element.commentInfo,
@@ -1265,7 +1266,7 @@
                             // }
                             try {
                                 const eventData = JSON.parse(event.data);
-                                if (eventData == null) throw new Error('invalid eventData');
+                                if (eventData == null) throw new Error('empty eventData.');
                                 eventData.eventId = event.lastEventId;
                                 console.debug('Reciving SSE Data..', event);
                                 if(funValidator(cbk)) cbk(eventData); // `${event.lastEventId}:{${event.data}}`

@@ -89,6 +89,7 @@
                         	        echo get_option("site_wpwx_notify_switcher") ? 'wxNotify: true,' . PHP_EOL : 'wxNotify: false,' . PHP_EOL;
                         	        $comments_blackList = get_option("site_comment_blacklists");
                         	        echo $comments_blackList ? 'blackList: "' . urlencode(trim($comments_blackList)) . '",' . PHP_EOL : 'blackList: "",' . PHP_EOL;
+                        	        echo get_option("site_comment_blockoutside") ? 'ipForbidden: true,' . PHP_EOL : 'ipForbidden: false,' . PHP_EOL;
                             	?>
                             	pushPlus: <?php echo get_option('site_comment_pushplus') ? "'".get_option('site_comment_pushplus')."'" : 'false'; ?>,
                             	serverChan: <?php echo get_option('site_comment_serverchan') ? "'".get_option('site_comment_serverchan')."'" : 'false'; ?>,
