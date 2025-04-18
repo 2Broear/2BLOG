@@ -107,18 +107,21 @@
                     $response = $response===false ? 'cURL Error ('.curl_errno($ch).'): '.curl_error($ch).'\n' : $response;
                     if(USE_STREAM) {
                         if(json_decode($response)!==null) $response = json_decode($response);
-                        // print_r($response);
-                        if(isset($response) && empty($response->code)) {
-                            foreach($response as $key => $value) {
-                                if(!$value) continue; // ingore empty data
-                                // returnEventData($value, 'message', $key, 0, 1); // $md5.'!=='.$res_md5
-                                // output each-single-data
-                                foreach($value as $k => $val) {
-                                    returnEventData($val, 'message', $key, 0, 1);
+                        if (is_string($response)) {
+                            print_r($response);
+                        } else {
+                            if(isset($response) && empty($response->code)) {
+                                foreach($response as $key => $value) {
+                                    if(!$value) continue; // ingore empty data
+                                    // returnEventData($value, 'message', $key, 0, 1); // $md5.'!=='.$res_md5
+                                    // output each-single-data
+                                    foreach($value as $k => $val) {
+                                        returnEventData($val, 'message', $key, 0, 1);
+                                    }
                                 }
+                            }else{
+                                returnEventData('null');
                             }
-                        }else{
-                            returnEventData('null');
                         }
                     }else{
                         echo $response;

@@ -169,11 +169,11 @@ function get_cat_posts($the_cat, $pre_cat=false, $limit=99){
         .inbox-aside .both .gamespot .range span#after{
             z-index: -4;
         }
-        .container {
+        .cvs-container {
             width: 50vw;
             height: 200px;
         }
-        .container canvas {
+        .cvs-container canvas {
             width: 100% !important;
             height: 100% !important;
         }
@@ -233,7 +233,7 @@ function get_cat_posts($the_cat, $pre_cat=false, $limit=99){
                     }
                     the_cat_posts();
                 ?>
-                <div class="container module"></div>
+                <div class="cvs-container module"></div>
                 <div id="comment_txt">
                     <?php 
                         the_page_content(current_slug());  //the_content();
@@ -300,6 +300,10 @@ function get_cat_posts($the_cat, $pre_cat=false, $limit=99){
 </script>
 <?php
     get_foot();
+    $async_sw = get_option('site_async_switcher');
+    $acg_temp_slug = get_cat_by_template('acg','slug');
+    $async_array = explode(',', get_option('site_async_includes'));
+    $use_async = $async_sw ? in_array($acg_temp_slug, $async_array) : false;
     if($async_sw&&$use_async){
 ?>
         <script>

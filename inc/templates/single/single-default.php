@@ -9,7 +9,7 @@
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/n.css?1v=<?php echo get_theme_info(); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/n.css?1v=<?php echo get_theme_info(); ?>2" />
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/highlight/agate.m.css" />
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/fancybox.css" />
     <style>
@@ -26,12 +26,19 @@
 	        /*animation-delay: .5s;*/
 	    }
 	    figure.wp-block-gallery > figure{
-	        min-height: 222px;
+	        /*min-height: 222px;*/
+	        width: inherit;
+	        /*min-height: inherit;*/
+	    }
+	    figure.wp-block-gallery > figure {
+	        margin: 4px 5px;
 	    }
 	    figure.wp-block-gallery{
 	        margin: 0;
 	        /*max-width: 88%;*/
-	        justify-content: start;
+	        width: 100%;
+	        flex-wrap: nowrap;
+	        /*justify-content: start;*/
 	    }
 	    /***  extras  ***/
 	    .win-content {

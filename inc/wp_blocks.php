@@ -6,7 +6,9 @@
         $muted = isset($atts['muted']) ? $atts['muted'] : 'muted';
         $loop = isset($atts['loop']) ? $atts['loop'] : 'loop';
         $type = isset($atts['type']) ? $atts['type'] : 'video/mp4';
-        return '<video poster="' . $poster . '" preload ' . $autoplay . ' ' . $muted . ' ' . $loop . ' x5-video-player-type="h5" controlsList="nofullscreen nodownload" playsinline -webkit-playsinline><source  src="' . $src . '" type="' . $type . '"></source></video>';
+        $is_video = preg_match("/mp4|mov|avi/i", substr(strrchr($src,'.'),1));
+        if (!$is_video) $src = '';
+        return '<video src="' . $src . '" poster="' . $poster . '" preload ' . $autoplay . ' ' . $muted . ' ' . $loop . ' x5-video-player-type="h5" controlsList="nofullscreen nodownload" playsinline -webkit-playsinline></video>'; //<source  src="' . $src . '" type="' . $type . '"></source>
     }
     function custom_netease_shortcode($atts){
         $id = isset($atts['id']) ? $atts['id'] : 'id';

@@ -72,8 +72,9 @@
                 global $wp_query;
                 // $founds = $wp_query->found_posts;
                 $dates = $wp_query->query;
+                $date_yea = isset($dates['year']) ? $dates['year'] . ' of' : false;
                 $date_mon = array_key_exists('monthnum',$dates) ? ' - '.$dates['monthnum'].' ' : '';
-                $title = 'Archives of ' . $dates['year'] . $date_mon . $surfix; //$founds . 
+                $title = 'Archives ' . $date_yea . $date_mon . $surfix; //$founds . 
                 break;
             case is_home():
                 $title .= get_bloginfo('name') . $surfix . " - " . get_bloginfo('description');

@@ -255,38 +255,6 @@ jQuery(document).ready(function($){
             });
         });
         
-        // scroll function
-        const submit_btn = document.querySelectorAll("p.submit")[0];
-        var scroll_throttler = null,
-            scroll_record = 0,
-            scroll_delay = 200,
-            scroll_func = function(e){
-                const switch_offset = switch_form.offsetTop;
-                return (function(){
-                    if(scroll_throttler==null){
-                        scroll_throttler = setTimeout(function(){
-                            console.log('scroll_throttler');
-                            var windowHeight = window.innerHeight,
-                                clientHeight = document.body.clientHeight,
-                                scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-                            scroll_foward = window.pageYOffset;  //scroll Value
-                            if(scroll_record-scroll_foward<0){  //down
-                                if(scrollTop>=switch_offset){
-                                    blog_settings.classList.add("fixed");
-                                }
-                            }else{  //up
-                                if(scrollTop<=switch_offset){ //*4
-                                    blog_settings.classList.remove("fixed");
-                                }
-                            }
-                            scroll_record = scroll_foward;  // Update scrolled value
-                            scroll_throttler = null;  //消除定时器
-                        }, scroll_delay);
-                    }
-                })();
-            };
-        if (switch_form) window.addEventListener('scroll', scroll_func, true);
-        
         // same options sync(identify by input id)
         const sync_data = [
             'site_leancloud_appid',
@@ -305,6 +273,39 @@ jQuery(document).ready(function($){
             }
         }
     }
+    // scroll function
+    const submit_btn = document.querySelectorAll("p.submit")[0];
+    var scroll_throttler = null,
+        scroll_record = 0,
+        scroll_delay = 200,
+        scroll_func = function(e){
+            const switch_offset = switch_form.offsetTop;
+            console.log(switch_form)
+            return (function(){
+                if(scroll_throttler==null){
+                    scroll_throttler = setTimeout(function(){
+                        console.log('scroll_throttler');
+                        var windowHeight = window.innerHeight,
+                            clientHeight = document.body.clientHeight,
+                            scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                        scroll_foward = window.pageYOffset;  //scroll Value
+                        if(scroll_record-scroll_foward<0){  //down
+                            if(scrollTop>=switch_offset){
+                                document.body.classList.add("fixed");
+                            }
+                        }else{  //up
+                            if(scrollTop<=switch_offset){ //*4
+                                document.body.classList.remove("fixed");
+                            }
+                        }
+                        scroll_record = scroll_foward;  // Update scrolled value
+                        scroll_throttler = null;  //消除定时器
+                    }, scroll_delay);
+                }
+            })();
+        };
+    if (switch_form) window.addEventListener('scroll', scroll_func, true);
+    
     
     // switch tabs & active class
     const activecls = "active",
@@ -507,11 +508,13 @@ jQuery(document).ready(function($){
         const dropdown_area = rsslogs.querySelector('.logs-container');
         const selected_year = rsslogs.querySelector('.logs-year');
         const selected_month = rsslogs.querySelector('.logs-month');
+        
         // dropdown list
         let cacheControl = {
                 list: [],
                 logs: []
             };
+            
         // defaults defaults value
         if (rsslogs.dataset.defaults) {
             const selected_year_val = selected_year.selectedOptions[0].value;
@@ -531,6 +534,7 @@ jQuery(document).ready(function($){
             // mark as cached.
             selected_year.selectedOptions[0].dataset.cached = selected_month.selectedOptions[0].dataset.cached = true;
         }
+        
         function listUpdates(list, updateNode = null, cached = false) {
             if (!list || !Array.isArray(list)) {
                 updateNode.innerHTML = `<option value=""> ${updateNode.dataset.context} </option>`;
@@ -564,6 +568,7 @@ jQuery(document).ready(function($){
             // UE enhancement
             updateNode.focus();
         };
+        
         bindEvents('onchange', rsslogs, '', (t)=> {
             if (!t.classList) return;
             const selectedOption = t.options[t.selectedIndex];
@@ -626,6 +631,7 @@ jQuery(document).ready(function($){
                 });
                 return;
             }
+            
             // fetching logs
             if (t.classList.contains('logs-dropdown')) {
                 // invalid options

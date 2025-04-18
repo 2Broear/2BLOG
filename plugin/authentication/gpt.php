@@ -257,7 +257,11 @@
                             $cdn_auth = api_illegal_auth($auth_host_array, $cdn_src);
                             break;
                     }
-                    api_illegal_auth($auth_path_array, '/wp-content/themes/') || $cdn_auth ? api_err_handle('request illegal, cdn/api enabled(gpt)',403) : overwrite_request_record();
+                    if (api_illegal_auth($auth_path_array, '/wp-content/themes/') || $cdn_auth) {
+                        api_err_handle('request illegal, cdn/api enabled(gpt)',403);
+                        return;
+                    };
+                    overwrite_request_record();
                 }else{
                     overwrite_request_record();
                 }

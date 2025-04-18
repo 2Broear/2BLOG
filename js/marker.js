@@ -129,7 +129,7 @@
                     'fetch': 1,
                     'sse': 1,
                 }, (res)=> {
-                    console.log('load marker from remote', res);
+                    console.log(`marker load from remote`, res);
                     // user identification.. (MUST before output all keys for the first-time user-mid gets)
                     let _outputMarkers = ()=> {
                             // !!!BUG: stream 流多次执行 _outputMarkers() 无法即时更新 data 数据??
@@ -157,7 +157,7 @@
                                 }
                                 // URIError: URI malformed
                                 try {
-                                    if (nick) nick = decodeURIComponent(nick);
+                                    if (nick) nick = decodeURIComponent(nick); //console.log('nick',nick)
                                     if (text) text = decodeURIComponent(text);
                                     if (note) note = decodeURIComponent(note);
                                 } catch(err) {
@@ -177,18 +177,19 @@
                                     const close_btn = finder(frag_tool, c_close, 1);
                                     close_btn.remove(); //if(valider(close_btn)) 
                                 }
-                                // traversal context nodes
-                                if(!mark_paragraph.textContent.includes(text)){
-                                    console.log(`mark_uid(${mark_index}) is diff with mark_paragraph record(perhaps content changed), traversal nodes on..`, e_effectsArea);
-                                    const effectChildNodes = e_effectsArea.children;
-                                    for (let i=0;i<effectChildNodes.length;i++) {
+                                // traversal context nodes(fix wordpress bug of wraped group)
+                                const is_mark_paragraph_wrapped = mark_paragraph.childNodes[0].nodeType==1 && mark_paragraph.childElementCount<=1;
+                                if(!mark_paragraph.textContent.includes(text) || is_mark_paragraph_wrapped) {
+                                    const effectChildNodes = is_mark_paragraph_wrapped ? mark_paragraph.childNodes[0].children : e_effectsArea.children;
+                                    console.warn(`mark_uid(${mark_index}) has diff record on mark_paragraph(perhaps context wrapped changed), traversal nodes on..`, effectChildNodes);
+                                    for (let i=0,l=effectChildNodes.length;i<l;i++) {
                                         if(effectChildNodes[i].textContent.includes(text)) {
                                             mark_index = i;
                                             break;
                                         }
                                     }
                                     mark_paragraph = effectChildNodes[mark_index];
-                                    console.log(`traversal done. found(indexOf ${text}) on mark_uid:`, mark_index);
+                                    console.log(`traversal found effectChildNodes[${mark_index}] on `, mark_paragraph);
                                 }
                                 // load users avatar
                                 const tool_avatars = finder(tool_inside, c_avatars, 1), // update append-avatars dom
@@ -246,7 +247,7 @@
                                 }
                                 tool_mark.textContent = markedContext;
                                 frag_mark.appendChild(frag_tool);
-                                // write in
+                                // write in (wordpress bug: group caused frag_tool outside)
                                 const specific_chars = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
                                 mark_paragraph.innerHTML = mark_paragraph.innerHTML.replace(specific_chars, frag_mark.outerHTML);
                             };
@@ -320,7 +321,7 @@
                                 }
                             }
                             // 对比返回的远程用户标记与本地记录（仅存在记录检查）
-                            // 返回数据（已响应）——>对比本地记录（未匹配到本地记录）——>新增本地记录
+                            // 返回数据（已响应）—>对比本地记录（未匹配到本地记录）—>新增本地记录
                             let existNonUpdatedMarks = [];
                             if(isMarkerStream) {
                                 // remoteNotInLocal: push curUserMarks which is non-existent from local
@@ -340,8 +341,8 @@
                                 });
                             }
                             if(existNonUpdatedMarks.length > 0) {
-                                console.warn('existNonUpdatedMarks', existNonUpdatedMarks);
                                 const _d_caches = d_caches ? d_caches : marker.data._caches;
+                                console.log('existNonUpdatedMarks', existNonUpdatedMarks);
                                 existNonUpdatedMarks.forEach(marks=> {
                                     const mark_rid = marks.rid,
                                           mark_cname = s_dataPrefix + mark_rid,
@@ -356,24 +357,24 @@
                                         console.log(`marker(${mark_rid}) belongs to another device(not found in localStorage)`);
                                     }
                                 });
-                            }else{
-                                console.debug('localMarks: ALL MATCHED');
+                                return;
                             }
+                            console.debug('localMarks: ALL MATCHED');
                         };
                     // re-update on userinfo->mail changed.
                     if(isMarkerUserUpdate()) {
                         console.log(`marker user updated: ${e_userMail.value} (counts: ${d_counts})`);
                         _md5update(_outputMarkers);
-                    }else{
-                        // abort on userinfo exists
-                        if(!isMarkerAccessable() && e_userMail.value){
-                            console.log(`marker user inited. (counts: ${d_counts})`);
-                            _md5update(_outputMarkers);
-                        }else{
-                            console.log('default _outputMarkers');
-                            _outputMarkers();
-                        }
+                        return;
                     }
+                    // abort on userinfo exists
+                    if(!isMarkerAccessable() && e_userMail.value){
+                        _md5update(_outputMarkers);
+                        console.log(`marker user inited. (counts: ${d_counts})`);
+                        return;
+                    }
+                    _outputMarkers();
+                    console.debug('default _outputMarkers');
                 }, (err)=>console.warn(err));
             },
         },
@@ -1214,7 +1215,7 @@
                     'sse': 0,
                     'del': 0,
                     'ts': 0,
-                    "nick": encodeURIComponent(d_nick),
+                    "nick": d_nick, //repeat of encodeURIComponent(d_nick)
                     "mail": decodeURIComponent(d_mail),
                     'pid': s_postId,
                 }, (obj_)=> {

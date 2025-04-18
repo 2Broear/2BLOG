@@ -21,6 +21,34 @@
     <style>
         body.dark #supports em.warmhole{filter: invert(1);}
         <?php if(get_option('site_logo_switcher')) echo 'body.dark .mobile-vision .m-logo span,body.dark .logo-area span{background: url('.get_option('site_logos').') no-repeat center center /cover!important;}'; ?>
+        .article_index .in_dex,
+        header>nav#tipson .top-bar-tips {
+            backdrop-filter: saturate(150%) blur(5px);
+            -webkit-backdrop-filter: saturate(150%) blur(5px);
+            background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);
+            background-size: 4px 4px;
+            /*background-color: rgba(255,255,255, .55);*/
+        }
+        body.dark .article_index .in_dex,
+        body.dark header>nav#tipson .top-bar-tips {
+            background-image: radial-gradient(rgb(49 49 49 / 55%) 2px, rgb(49 49 49) 2px);
+            background-size: 4px 4px;
+            background-color: rgba(49,49,49, .55);
+        }
+        .win-top em.digital_mask {
+            /*bottom: -50px;*/
+        }
+        .win-top em.digital_mask:before {
+            background: linear-gradient(0deg, rgb(0 0 0 / 18%) 0%, transparent);
+            background: -webkit-linear-gradient(90deg, rgb(0 0 0 / 18%) 0%, transparent);
+            background-size: auto!important;
+        }
+        #footer-copyright li {
+            color: var(--preset-6);
+        }
+        body.dark #footer-copyright li {
+            color: var(--preset-9);
+        }
     </style>
     <script>
         document.documentElement.style.setProperty('--theme-color','<?php echo $theme; ?>');
