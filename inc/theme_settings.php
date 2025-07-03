@@ -234,11 +234,41 @@
             :root{
                 --panel-theme: <?php echo get_option('site_theme','#eb6844'); ?>;
             }
-            @media screen and (max-width:760px){
+            @media screen and (max-width:760px) {
                 #wpcontent,
-                .switchTab li {padding: 0!important;}
+                .switchTab li {
+                    padding: 5px 10px!important;
+                    margin: 5px auto!important;
+                }
+                .fixed .switchTab{
+                    top: 22px!important;
+                    width: 82%!important;
+                }
+                .auto-fold #wpcontent {
+                    margin:auto!important;
+                }
             }
-            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{right:-80px}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{width: 90%;top: 55px;border-radius: 50px;padding: 5px;}.switchTab{width:100%;transition:all .35s ease;margin:0 auto;padding:10px 0;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:var(--panel-theme);/*background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)*/}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px/*text-shadow:1px 1px 0 white;*/}h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0!important}
+            @keyframes scale {
+                0% {
+                    transform: scale(.85);
+                    transform-origin: top
+                }
+            
+                to {
+                    transform: none
+                }
+            }
+            
+            @supports (animation-timeline:view()) {
+                .formtable > .feeds {
+                    animation: scale 1s;
+                    transform: none;
+                    animation-timeline: view(block);
+                    animation-range: cover 0 30%;
+                    /*will-change: transform;*/
+                }
+            }
+            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{right:-80px}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{width: 360px;top: 55px;border-radius: 50px;transition-duration: .55s;/*padding: 5px;*/}.switchTab{width:100%;transition:all .35s ease;margin:0 auto;padding:10px 0;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active{color:var(--panel-theme);/*background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)*/}.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px auto;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;/*text-shadow:1px 1px 0 white;*/}h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0!important}
         </style>
         <!--<h1 style="text-align: center;font-size: 4rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> RSS <b>Feeds</b></h1>-->
         <h1 style="text-align: center;font-size: 4rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b>RSS Feeds</b></h1>
@@ -305,28 +335,6 @@
                                         $rss_url = $link_mark->link_rss;
                                         if ($rss_url && $link_mark->link_visible==='Y') {
                                             array_push($subscribed_urls, $link_mark);
-                                            // $feed_data = get_rss_feeds($rss_url, $link_mark, $output_limit, true);
-                                            // // $feed_data = get_rss_feeds($rss_url, $link_mark, $output_limit);
-                                            // // $feed_data = fetch_rss_feeds($rss_url, $link_mark, $output_limit);
-                                            // // for ($i=0; $i<$output_retry; $i++) {
-                                            // //     $feed_data = get_rss_feeds($rss_url, $link_mark, $output_limit);
-                                            // //     if ($feed_data !== null) break; // 成功获取结果，跳出重试循环
-                                            // //     sleep(1); // 等待5秒后重试
-                                            // // }
-                                            // if (empty($feed_data) || $feed_data === null) {
-                                            //     $error_class = new stdClass();
-                                            //     $error_class->title = ''; //RSS 内容抓取失败！
-                                            //     $error_class->desc = '无法获取 ta 的 rss 内容，请检查：' . $rss_url;
-                                            //     $error_class->date = '0000-00-00'; //date("Y-m-d");
-                                            //     $error_class->link = 'javascript:;';
-                                            //     $error_class->url = $link_mark->link_url;
-                                            //     $error_class->author = $rss_author;
-                                            //     $error_class->avatar = $link_mark->link_image ?? '//cravatar.cn/avatar/?d=mp&s=50';
-                                            //     array_push($output_array, $error_class);
-                                            //     continue;
-                                            // }
-                                            // array_push($output_array, $feed_data);
-                                            // $output_json = json_encode($output_array);
                                         }
                                     }
                                     
@@ -466,6 +474,11 @@
             register_setting( 'baw-settings-group', 'site_tagcloud_max' );
             register_setting( 'baw-settings-group', 'site_tagcloud_auto_caches' );
         // }
+        register_setting( 'baw-settings-group', 'site_footprint_switcher' );
+            register_setting( 'baw-settings-group', 'site_footprint_map' );
+            register_setting( 'baw-settings-group', 'site_footprint_apikey' );
+            register_setting( 'baw-settings-group', 'site_footprint_data' );
+            register_setting( 'baw-settings-group', 'site_footprint_panorama_data' );
         register_setting( 'baw-settings-group', 'site_stream_switcher' );
         register_setting( 'baw-settings-group', 'site_links_code_state' );
             register_setting( 'baw-settings-group', 'site_links_code_state_cats' );
@@ -565,6 +578,7 @@
         register_setting( 'baw-settings-group', 'site_third_comments' );
             register_setting( 'baw-settings-group', 'site_comment_blacklists' );
             register_setting( 'baw-settings-group', 'site_comment_blockoutside' );
+            register_setting( 'baw-settings-group', 'site_forbidden_outsideborder' );
         // register_setting( 'baw-settings-group', 'site_valine_switcher' );
             register_setting( 'baw-settings-group', 'site_comment_serverchan' );
             register_setting( 'baw-settings-group', 'site_comment_pushplus' );
@@ -743,15 +757,45 @@
             :root{
                 --panel-theme: <?php echo get_option('site_theme','#eb6844'); ?>;
             }
-            @media screen and (max-width:760px){
+            @media screen and (max-width:760px) {
                 #wpcontent,
-                .switchTab li {padding: 0!important;}
-                p.submit:first-child {top: 135px!important;}
+                .switchTab li {
+                    padding: 5px 10px!important;
+                    margin: 5px auto!important;
+                }
+                p.submit:first-child {top: 85px!important;}
+                .fixed .switchTab{
+                    top: 22px!important;
+                    width: 82%!important;
+                }
+                .auto-fold #wpcontent {
+                    margin:auto!important;
+                }
             }
-        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(90deg,rgba(255, 255, 255, 0) 25%, currentColor 255%)}label:hover input[type=checkbox]{box-shadow:0 0 0 1px #2271b1}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:233px;height:18px;cursor:pointer;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(180deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(-90deg, #f5f7f9 0, #fff);}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text-disabled{display:none;}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-weight:200;font-size:smaller;margin-top:0!important;margin-bottom:10px!important}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+            @keyframes scale {
+                0% {
+                    transform: scale(.85);
+                    transform-origin: top
+                }
+            
+                to {
+                    transform: none
+                }
+            }
+            
+            @supports (animation-timeline:view()) {
+                table > tbody > tr {
+                    animation: scale 1s;
+                    transform: none;
+                    animation-timeline: view(block);
+                    animation-range: cover 0 30%;
+                    /*will-change: transform;*/
+                }
+            }
+        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(90deg,rgba(255, 255, 255, 0) 25%, currentColor 255%)}label:hover input[type=checkbox]{box-shadow:0 0 0 1px #2271b1}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:233px;height:18px;cursor:pointer;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(180deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(-90deg, #f5f7f9 0, #fff);}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text-disabled{display:none;}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{background:mediumpurple;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;color: white;font-size: smaller;text-align: center;background: rgb(0 0 0 / 52%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius:5px;position:relative;overflow:hidden;}label.upload.upload_preview_list{margin-right: 0}
-            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{right:-5%;}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{width: 90%;top: 55px;border-radius: 50px;padding: 5px;}.switchTab{width:100%;transition:all .35s ease;margin:0 auto;padding:10px 0;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li.active{color:var(--panel-theme);/*background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)*/}.switchTab li:hover b{text-shadow:none}.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 5px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px/*text-shadow:1px 1px 0 white;*/}
+            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{right:-80px;}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{width: 360px;top: 55px;border-radius: 50px;transition-duration: .55s;/*padding: 5px;*/}.switchTab{width:100%;transition:all .35s ease;margin:0 auto;padding:10px 0;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active{color:var(--panel-theme);/*background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)*/}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li.active,.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px auto;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;/*text-shadow:1px 1px 0 white;*/}
             .smtp{margin-left:10px;vertical-align:middle;}
             #loading.responsed{-webkit-animation-duration:.35s!important;animation-duration:.35s!important;}
             #loading.responsing{-webkit-animation:rotateloop .5s infinite linear;animation:rotateloop .5s infinite linear}
@@ -798,16 +842,18 @@
                 display: none;
             }
             ul.cached_post_list li{list-style-type:none;display:inline-block;margin-left:5px;margin-bottom:2px;border:1px solid #ddd;padding:5px 10px;border-radius:8px;cursor:pointer;text-align:center;/*white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:38px;position:relative*/}
+            .dynamic_dom {display: inline-block;margin-bottom: 15px;text-decoration: underline;position:relative;z-index:9;cursor: help;}
+            .upload .dynamic_dom {margin: auto;padding: 10px 15px;background: #f0f0f1;}
         </style>
         <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>THEME</b><p style="letter-spacing:normal;margin-bottom:auto;"> 主题部分页面提供 Leancloud 第三方 bass 数据储存服务 </p></h1>
         <!--<hr/>-->
         <div class="switchTab">
             <ul>
-                <li id="basic" class="">基本信息</li>
-                <li id="common">通用控制</li>
-                <li id="index">页面配置</li>
-                <li id="sidebar">边栏设置</li>
-                <li id="footer">页尾设置</li>
+                <li id="basic" class="">基本</li>
+                <li id="common">通用</li>
+                <li id="index">页面</li>
+                <li id="sidebar">边栏</li>
+                <li id="footer">页尾</li>
                 <!--<li id="contact"><b>联系方式</b></li>-->
             </ul>
         </div>
@@ -1682,7 +1728,17 @@
                                     <?php
                                         $opt = 'site_comment_blockoutside';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">阻止所有非大陆、香港、台湾的境外IP发布评论（可临时用于刷评屏蔽</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">外网屏蔽</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">阻止所有非大陆、香港、台湾的境外IP发布评论（可临时用于刷评屏蔽</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">外网评论屏蔽</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option">
+                                <th scope="row">— 屏蔽境外 IP<sup id="tips">common</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_forbidden_outsideborder';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">阻止所有非大陆、香港、台湾的境外IP访问网站（!api performance issue</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">外网访问屏蔽</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -2062,23 +2118,39 @@
                                 $opt = 'site_list_links_category';
                                 $value = get_option($opt);
                                 $lists = get_links_category();
-                                $defaults = new stdClass();
-                                $defaults->name = '所有类目';
-                                $defaults->slug = '';
-                                if (!empty($lists)) array_unshift($lists, $defaults);
-                                // print_r($lists);
-                                if(!$value) update_option($opt, $defaults->slug);else $preset=$value;
-                                echo '<label for="'.$opt.'"><p class="description" id="">首页随机友链列表指定分类（默认显示所有类目</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
-                                    if (empty($lists)) {
-                                        echo '<option value="'.$defaults->slug.'" selected="selected">'.$defaults->name.'</option>';
-                                    } else {
-                                        foreach ($lists as $list){
-                                            echo '<option value="'.$list->slug.'"';
-                                            if($value==$list->slug) echo('selected="selected"');
-                                            echo '>'.$list->name.'</option>';
-                                        }
+                                // $defaults = new stdClass();
+                                // $defaults->name = '所有类目';
+                                // $defaults->slug = '';
+                                // if (!empty($lists)) array_unshift($lists, $defaults);
+                                // // print_r($lists);
+                                // if(!$value) update_option($opt, $defaults->slug);else $preset=$value;
+                                // echo '<label for="'.$opt.'"><p class="description" id="">首页随机友链列表指定分类（默认显示所有类目</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                //     if (empty($lists)) {
+                                //         echo '<option value="'.$defaults->slug.'" selected="selected">'.$defaults->name.'</option>';
+                                //     } else {
+                                //         foreach ($lists as $list){
+                                //             echo '<option value="'.$list->slug.'"';
+                                //             if($value==$list->slug) echo('selected="selected"');
+                                //             echo '>'.$list->name.'</option>';
+                                //         }
+                                //     }
+                                // echo '</select></label>';
+                                if(!$value) {
+                                    $preset_ids = '';
+                                    foreach ($lists as $list) {
+                                        $preset_ids .= $list->term_id . ',';
                                     }
-                                echo '</select></label>';
+                                    update_option($opt, $preset_ids);
+                                    $value = $preset_ids;
+                                }
+                                echo '<p class="description" id="">首页随机友链列表指定分类（默认全选所有类目</p><div class="checkbox">';
+                                $async_array = explode(',',trim($value));  // NO "," Array
+                                foreach ($lists as $list) {
+                                    $opts_id = $list->term_id;
+                                    $checking = in_array($opts_id, $async_array) ? 'checked' : '';
+                                    echo '<input id="'.$opt.'_'.$opts_id.'" type="checkbox" value="'.$opts_id.'" '.$checking.' /><label for="'.$opt.'_'.$opts_id.'">'.$list->name.'</label>';
+                                }
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" value="' . $value . '"/></div>';
                             ?>
                         </td>
                     </tr>
@@ -2088,7 +2160,7 @@
                             <?php
                                 // $opt = 'site_list_bg';
                                 // $value = get_option( $opt, '' );
-                                // echo '<p class="description" id="site_about_video_label">首页卡片导航下方左侧背景图（带动画</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$value.'" poster="'.$value.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="列表背景" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button multi" data-type="" value="选取文件">';
+                                // echo '<p class="description" id="site_about_video_label">首页卡片导航下方左侧背景图（带动画</p><label for="'.$opt.'" class="upload"><a class="dynamic_dom" data-dom="video" data-src="' . $preset . '" title="加载预览">加载视频</a></label><input type="text" name="'.$opt.'" placeholder="列表背景" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button multi" data-type="" value="选取文件">';
                             ?>
                     <!--    </td>-->
                     <!--</tr>-->
@@ -2244,6 +2316,163 @@
                                 ?>
                             </td>
                         </tr>
+                    <tr valign="top">
+                        <th scope="row"> 足迹地图 </th>
+                        <td>
+                            <?php
+                                $opt = 'site_footprint_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">高德 足迹地图（支持携带参数 iframe 全景</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:blue" class="btn">足迹地图</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $footprint = get_option('site_footprint_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— Map</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_footprint_map';
+                                        $value = get_option($opt);
+                                        $maps = array(
+                                            array('name'=>'高德地图', 'type'=>'amap'),
+                                            array('name'=>'腾讯地图', 'type'=>'tmap'),
+                                        );
+                                        $preset = $maps[0]['type'];
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update
+                                        echo '<label for="'.$opt.'"><p class="description" id="">显示地图类型，默认使用高德地图 <a href="https://lbs.amap.com/demo/javascript-api-v2/example/mass-markers/marker-indexcluster2" target="_blank">文档参考</a>，可选腾讯地图 <a href="https://lbs.qq.com/webDemoCenter/glAPI/glMarkerCluster/markerCluster" target="_blank">文档参考</a></p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                            foreach ($maps as $map){
+                                                $type = $map['type'];
+                                                echo '<option value="'.$type.'"';if($preset==$type)echo('selected="selected"');echo '>'.$map['name'].'</option>'; // preview="'.$img_cdn.'/images/settings/'.$type.'.png"
+                                            }
+                                        echo '</select></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $footprint; ?>">
+                                <th scope="row">— API Key</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_footprint_apikey';
+                                        $value = get_option($opt);
+                                        echo '<p class="description" id="">地图 API 调用 KEY</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="API Key" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $footprint; ?>">
+                                <th scope="row">— 坐标数据</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_footprint_data';
+                                        $value = get_option($opt);
+                                        $preset_ = '
+// 配置贴图（maps 数据来源下方全景数据）
+const defaultTexture = maps.map_01;
+const returnsTexture = window.structuredClone ? window.structuredClone(defaultTexture) : JSON.parse(JSON.stringify(defaultTexture));
+maps.map_01.entry.push(maps.map_02);
+maps.map_02.entry.push(returnsTexture);
+const defaultTextureString = JSON.stringify(defaultTexture);
+const encodedTextureString = encodeURIComponent(defaultTextureString);
+';
+                                        $preset = get_option('site_footprint_map') === 'amap' ? $preset_ . '
+// 配置标记点
+var points = [
+    {
+        lnglat: "39.925077049391,116.506621867519",
+        thumbnail: "//img.2broear.com/2025/06/right.webp",
+        content: `<h2>Content</h2><p>overwrite context to content</p><img src="//img.2broear.com/2025/06/right.webp" />`,
+        context: "晨光家园",
+        district: "朝阳区",
+        city: "北京",
+    },
+    {
+        lnglat: "39.957363077042,116.412789588355",
+        thumbnail: "//img.2broear.com/2025/06/front.webp",
+        content: `<iframe src="//node.2broear.com/indexs.html?data=${encodedTextureString}" frameborder="no" width="500" height="200"></iframe>`,
+        context: "东城家园",
+        district: "东城区",
+        city: "北京",
+    },
+];
+// 配置标记区域
+var district = {
+    "北京": {
+        "lnglat" : "39.904989,116.405285",
+    },
+    "朝阳区": {
+        "lnglat" : "39.921489,116.486409",
+    },
+};' : $preset_ . '
+//配置标记点对象数组
+const markerData = [
+    {
+        position: [39.953416,116.480945],
+        content: `<iframe src="//node.2broear.com?data=${encodedTextureString}" frameborder="no" width="500" height="200"></iframe>`,
+        context: "",
+    },
+    {
+        position: [39.984104,116.407503],
+        content: `<h2>Content</h2><p>overwrite context to content</p><img src="//img.2broear.com/2025/06/front.webp" />`,
+        context: "test_thumbnail",
+    },
+    {
+        position: [39.908802,116.397502],
+        content: "",
+        context: "",
+    },
+];';
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="">手动填写数据源，自动插入上方坐标数据之上（示例数据已预设，points：标点，district：索引，content 参数支持嵌入 iframe 标签</p><p>注意：此项预设数据（留空）随地图类型改变而改变！</p><a class="dynamic_dom" data-dom="iframe" data-src="https://lbs.qq.com/tool/getpoint/get-point.html" data-width="100%" data-height="400" title="点击动态加载坐标拾取器">打开坐标拾取器（TMap）</a><textarea name="'.$opt.'" id="'.$opt.'" rows="10" style="width: 100%;">'.$preset.'</textarea>'; //https://lbs.amap.com/tools/picker
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $footprint; ?>">
+                                <th scope="row">— 全景预览数据（可选）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_footprint_panorama_data';
+                                        $value = get_option($opt);
+                                        $preset = '
+const maps = {
+    map_01: {
+        ctx: ["2BROEAR NEXT", "Heading"],
+        // src: "//img.2broear.com/2025/06/minecraft30x.jpg",
+        env: [],
+        uvs: [0.8757278879540462, 0.903727826428567, 0.40605076349556524, 0.48124969014847924],
+        point: {
+            x: 379.73991320053943, y: -88.8495197768429, z: -414.5114041846273,
+            px: -130, py: 30, pz: 0,
+            rx: 0, ry: 0, rz: Math.PI * 0.5,
+            width:80, height:320, deepth:5,
+            cw: 320, ch: 320, cs: 256
+        },
+        entry: [],
+    },
+    map_02: {
+        ctx: ["MINECRAFT", "v0.7.3"],
+        // src: "//img.2broear.com/2025/05/Ayutthaya_SD60x.mp4", 
+        env: [
+            "//img.2broear.com/2025/06/1.16_panorama_2.webp",
+            "//img.2broear.com/2025/06/1.16_panorama_0.webp",
+            "//img.2broear.com/2025/06/1.16_panorama_4s.webp",
+            "//img.2broear.com/2025/06/1.16_panorama_5s.webp", 
+            "//img.2broear.com/2025/06/1.16_panorama_1.webp",
+            "//img.2broear.com/2025/06/1.16_panorama_3.webp",
+        ],
+        uvs: [0.6754583295687697, 0.8029043481247053, 0.30890971887284235, 0.5107758060045948],
+        point: {
+            x: -20.15844995141832, y: -145.91485079560525, z: -472.9048238279224,
+            px: 0, py: 100, pz: 200,
+            width:100, height:400, deepth:10,
+            rx: -Math.PI * 0.5, ry: 0, rz: -600,
+            cw: 512, ch: 512, cs: 256
+        },
+        entry: [],
+    },
+};';
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="">手动填写全景地图数据（示例数据已预设：可通过设置 entry 参数以跳转其他 map（可设置回溯 map），可选设置环境地图（跳转同理</p><p><b>参数说明：</b></p><p>entry：点击进入下个场景入口（数组对象，可加入多个入口）；ctx：入口标题数组；env：环境贴图数组；uvs：可点击范围UV数组（需开启debug调试右击获取uv信息）；point：点击中心点（显示动画贴图区域，x,y,z信息需在debug调试右击事件获取；px,py,pz为自定义修饰偏移；rx,ry,rz为旋转动画贴图配置；width,height,deepth为动画贴图尺寸；cw,ch,cs为ctx入口标题画布尺寸，其中cs可调节画布/字体大小）</p><textarea name="'.$opt.'" id="'.$opt.'" rows="15" style="width: 100%;">'.$preset.'</textarea>';
+                                    ?>
+                                </td>
+                            </tr>
                     <tr valign="top">
                         <th scope="row"> 缓存索引 - 页面配置 </th>
                         <td>
@@ -2773,7 +3002,7 @@
                                 $value = get_option($opt);
                                 $preset = '';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_about_video_label">关于我背景视频</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_about_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
+                                echo '<p class="description" id="site_about_video_label">关于我背景视频</p><label for="'.$opt.'" class="upload"><a class="dynamic_dom" data-dom="video" data-src="' . $preset . '" title="加载预览">加载视频</a></label><input type="text" name="'.$opt.'" placeholder="for_empty_about_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2785,7 +3014,7 @@
                                 $value = get_option($opt);
                                 $preset = '';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_guestbook_video_label">留言板背景视频</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_guestbook_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
+                                echo '<p class="description" id="site_guestbook_video_label">留言板背景视频</p><label for="'.$opt.'" class="upload"><a class="dynamic_dom" data-dom="video" data-src="' . $preset . '" title="加载预览">加载视频</a></label><input type="text" name="'.$opt.'" placeholder="for_empty_guestbook_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2797,7 +3026,7 @@
                                 $value = get_option($opt);
                                 $preset = '';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="">漫游影视背景视频（开启后背景图片将作为视频的poster展示</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_acgn_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
+                                echo '<p class="description" id="">漫游影视背景视频（开启后背景图片将作为视频的poster展示</p><label for="'.$opt.'" class="upload"><a class="dynamic_dom" data-dom="video" data-src="' . $preset . '" title="加载预览">加载视频</a></label><input type="text" name="'.$opt.'" placeholder="for_empty_acgn_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2809,7 +3038,7 @@
                                 $value = get_option($opt);
                                 // $preset = $img_cdn.'/media/videos/data.mp4';
                                 // $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_privacy_video_label">隐私政策背景视频</p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$value.'" poster="'.$value.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" placeholder="for_empty_privacy_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
+                                echo '<p class="description" id="site_privacy_video_label">隐私政策背景视频</p><label for="'.$opt.'" class="upload"><a class="dynamic_dom" data-dom="video" data-src="' . $preset . '" title="加载预览">加载视频</a></label><input type="text" name="'.$opt.'" placeholder="for_empty_privacy_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -2943,7 +3172,7 @@
                                         $value = get_option($opt);
                                         $preset = $img_cdn.'/images/newyear.gif';
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        echo '<p class="description" id="">倒计时背景图片/视频（默认新年 gif </p><label for="'.$opt.'" class="upload"><video class="upload_preview bgm" src="'.$preset.'" poster="'.$preset.'" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button multi" data-type value="选取媒体" />';  //<em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em>
+                                        echo '<p class="description" id="">倒计时背景图片/视频（默认新年 gif </p><label for="'.$opt.'" class="upload"><a class="dynamic_dom" data-dom="video" data-src="' . $preset . '" title="加载预览">加载视频</a></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button multi" data-type value="选取媒体" />';  //<em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em>
                                     ?>
                                 </td>
                             </tr>
@@ -3305,7 +3534,7 @@
                                 $value = get_option( $opt, '' );
                                 $preset = get_option('site_avatar');
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_contact_wechat_label">底部（微信）联系方式（图片链接</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" /></label><input type="text" name="'.$opt.'" placeholder="微信二维码" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
+                                echo '<p class="description" id="site_contact_wechat_label">底部（微信）联系方式（图片链接</p><label for="'.$opt.'" class="upload"><a class="dynamic_dom" data-dom="img" data-src="' . $preset . '" title="加载预览">加载图片</a></label><input type="text" name="'.$opt.'" placeholder="微信二维码" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
                             ?>
                         </td>
                     </tr>

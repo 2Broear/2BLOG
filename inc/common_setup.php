@@ -643,7 +643,48 @@
      *---------------------------------------------------------------------------------------------------------------------------------
     */
     
-    
+    if (get_option('site_forbidden_outsideborder')) {
+        add_action( 'wp', 'forbidden_outside_border' );
+        function forbidden_outside_border() {
+            $ip = $_SERVER['REMOTE_ADDR'];
+            switch (true) {
+                case isset($_SERVER['HTTP_X_FORWARDED_FOR']):
+                    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                    break;
+                case isset($_SERVER['HTTP_CLIENT_IP']):
+                    $ip = $_SERVER['HTTP_CLIENT_IP'];
+                    break;
+                default:
+                    break;
+            }
+            print_r('https://api.ip.sb/geoip/' . $ip);
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, 'https://api.ip.sb/geoip/' . $ip);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36');
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($curl, CURLOPT_TIMEOUT, 5);
+            $data = curl_exec($curl);
+            $data = json_decode($data);
+            preg_match('/chinas|hong kong|Taiwan/i', $data->country, $valide_country);
+            if (empty($valide_country)) {
+                if ('CN' != $data->country_code || 'AS' != $data->continent_code) {
+                    // wp_redirect('/404', 302);
+                    // global $wp_query;
+                    // $wp_query->set_404();
+                    // status_header( 404 );
+                    // nocache_headers();
+                    header("HTTP/1.1 401 Unauthorized");
+                    // echo '<pre>';
+                    // print_r($data);
+                    // echo '</pre>';
+                    wp_die( 'Unauthorized ' . $ip . ' forbidden' );
+                    // exit;
+                }
+            }
+            curl_close($curl);
+        }
+    }
     
     // 重写 WP 固定链接(初始化)
     if(!get_option('permalink_structure')){
@@ -743,7 +784,7 @@
     }
     
     //禁用远程管理文件 xmlrpc.php 防爆破
-    if(get_option('site_xmlrpc_switcher')){
+    if(get_option('site_xmlrpc_switcher')) {
         add_filter('xmlrpc_enabled', '__return_false');
     }
     

@@ -3,6 +3,42 @@
  * Template name: （BaaS）友链模板
  * Template Post Type: page
 */
+$baas = get_option('site_leancloud_switcher') && strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false; //in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')))
+// 输出站点链接
+function the_site_links($t1='小伙伴', $t2='技术の', $t3='荐见鉴') { //, $baas=false
+    global $baas;
+    if($baas) {
+        echo '<div class="fade-item"><div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes"></div><!-- rcmd begain --></div><div class="fade-item"><div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes"></div><!-- lost begain --></div><div class="fade-item"><div class="inbox-clip"></div><div class="deals oldest"><div class="inboxSliderCard"><div class="slideBox flexboxes"></div></div></div></div>';
+        return;
+    };
+    $output = '';
+    $output_sw = false;
+    if(get_option('site_cache_switcher')) {
+        $caches = get_option('site_cache_includes');
+        $temp_slug = get_cat_by_template('2bfriends','slug');
+        $output_sw = in_array($temp_slug, explode(',', $caches));
+        $output = $output_sw ? get_option('site_link_list_cache') : '';
+    };
+    if($output==='' || !$output_sw) {
+        $rich_links = get_site_bookmarks('standard');
+        $tech_links = get_site_bookmarks('technical');  // $tech_links = get_filtered_bookmarks('technical', 'others');
+        $rcmd_links = get_site_bookmarks('special', 'rand', 'DESC');
+        $other_links = get_site_bookmarks('others', 'link_id', 'DESC');
+        $stete_rich = $stete_tech = $stete_rcmd = '';
+        if(get_option('site_links_code_state')) {
+            $state_includes = get_option('site_links_code_state_cats');
+            $stete_rich = in_array('standard', explode(',', $state_includes));
+            $stete_tech = in_array('special', explode(',', $state_includes));
+            $stete_rcmd = in_array('special', explode(',', $state_includes));
+        }
+        $output .= $rich_links ? '<div class="fade-item"><div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes">'.get_site_links($rich_links, 'full', '', $stete_rich).'</div></div>' : '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div></div>';
+        if($tech_links) $output .= '<div class="fade-item"><div class="inbox-clip"><h2 id="exchanged"> '.$t2.' </h2></div><div class="deals tech exchanged flexboxes">'.get_site_links($tech_links, 'full', '', $stete_tech).'</div></div>';
+        if($rcmd_links) $output .= '<div class="fade-item"><div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes">'.get_site_links($rcmd_links, 'half', '', $stete_rcmd).'</div></div>';
+        if($other_links) $output .= '<div class="deals oldest"><div class="fade-item"><div class="inboxSliderCard"><div class="slideBox flexboxes">'.get_site_links($other_links).'</div></div></div></div>';
+        if($output_sw) update_option('site_link_list_cache', wp_kses_post($output));
+    };
+    echo wp_kses_post($output);
+}
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -50,6 +86,9 @@
         .friends-boxes .deals .inboxSliderCard .slideBox a:last-child {
             padding: 0;
         }
+        .friends-boxes .deals .inbox span.ssl {
+	        background: var(--preset-4a);
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -63,43 +102,10 @@
         <div class="content-all-windows" style="padding-top:0;">
             <div class="friends-boxes flexboxes">
                 <?php 
-                    $baas = get_option('site_leancloud_switcher') && strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false; //in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')))
-                    // 输出站点链接
-                    function the_site_links($t1='小伙伴', $t2='技术の', $t3='荐见鉴') { //, $baas=false
-                        global $baas;
-                        if($baas) {
-                            echo '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes"></div><!-- rcmd begain --><div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes"></div><!-- lost begain --><div class="inbox-clip"></div><div class="deals oldest"><div class="inboxSliderCard"><div class="slideBox flexboxes"></div></div></div>';
-                            return;
-                        };
-                        $output = '';
-                        $output_sw = false;
-                        if(get_option('site_cache_switcher')) {
-                            $caches = get_option('site_cache_includes');
-                            $temp_slug = get_cat_by_template('2bfriends','slug');
-                            $output_sw = in_array($temp_slug, explode(',', $caches));
-                            $output = $output_sw ? get_option('site_link_list_cache') : '';
-                        }
-                        if(!$output || !$output_sw) {
-                            $rich_links = get_site_bookmarks('standard');
-                            $tech_links = get_site_bookmarks('technical');  // $tech_links = get_filtered_bookmarks('technical', 'others');
-                            $rcmd_links = get_site_bookmarks('special', 'rand', 'DESC');
-                            $other_links = get_site_bookmarks('others', 'link_id', 'DESC');
-                            $stete_rich = $stete_tech = $stete_rcmd = '';
-                            if(get_option('site_links_code_state')) {
-                                $state_includes = get_option('site_links_code_state_cats');
-                                $stete_rich = in_array('standard', explode(',', $state_includes));
-                                $stete_tech = in_array('special', explode(',', $state_includes));
-                                $stete_rcmd = in_array('special', explode(',', $state_includes));
-                            }
-                            $output .= $rich_links ? '<div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes">'.get_site_links($rich_links, 'full', '', $stete_rich).'</div>' : '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';
-                            if($tech_links) $output .= '<div class="inbox-clip"><h2 id="exchanged"> '.$t2.' </h2></div><div class="deals tech exchanged flexboxes">'.get_site_links($tech_links, 'full', '', $stete_tech).'</div>';
-                            if($rcmd_links) $output .= '<div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes">'.get_site_links($rcmd_links, 'half', '', $stete_rcmd).'</div>';
-                            if($other_links) $output .= '<div class="deals oldest"><div class="inboxSliderCard"><div class="slideBox flexboxes">'.get_site_links($other_links).'</div></div></div>';
-                            if($output_sw) update_option('site_link_list_cache', wp_kses_post($output));
-                        }
-                        echo wp_kses_post($output);
-                    }
                     the_site_links();
+                    // wp_cache_flush(); // 清除所有缓存，包括选项
+                    // global $wpdb;
+                    // echo $wpdb->get_var($wpdb->prepare("SELECT option_value FROM $wpdb->options WHERE option_name = %s", 'site_link_list_cache'));
                     echo '<br />';
                     the_content();  // the_page_content(current_slug());
                     dual_data_comments();
@@ -113,7 +119,7 @@
 <!-- siteJs -->
 <script type="module">
     try {
-        import("<?php echo $src_cdn; ?>/js/slidebox.js").then((res)=> {
+        import("<?php echo custom_cdn_src(0,1);//$src_cdn; ?>/js/slidebox.js").then((res)=> {
             const { AutoSlideBox, Utils } = res;
             const slideBox = new AutoSlideBox({
                 slideSpeed: Utils.BASIC.randomNumber(0.5),

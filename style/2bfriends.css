@@ -419,7 +419,7 @@
 	border-bottom-right-radius: var(--radius);
 	border-top-left-radius: var(--radius);
 	position: absolute;
-	background: var(--preset-6);
+	background: var(--preset-4a);
 	top: 0;
 	left: 0;
 	opacity: .75;

@@ -421,8 +421,8 @@
           sidebar_ads = sidebar_window ? sidebar_window.querySelector(".news-ppt") : false,
           footer = document.querySelector('.footer-all'),
           site_tool = document.querySelector(".functions-tool"),
-          progress_ball = site_tool.querySelector(".inside-functions"),
-          progress_wave = progress_ball.querySelector(".pagePer i span"),
+          progress_ball = site_tool ? site_tool.querySelector(".inside-functions") : null,
+          progress_wave = progress_ball ? progress_ball.querySelector(".pagePer i span") : null,
           progress_bar = document.querySelector(".top-bar-tips span#doc-progress-bar"),
     	  class_up = 'barSetUp',
           class_down = 'barSetDown',
@@ -493,11 +493,13 @@
     	}
     }
     
-    // scrollTo && article_tool
-    site_tool.querySelector(".top").onclick=()=>window.scrollTo(0,0);
-    site_tool.querySelector(".bottom").onclick=()=>window.scrollTo(0,99999);
-    // site_tool.querySelector(".top").onclick=()=>window.requestAnimationFrame(function(){window.scrollTo(0,0);});
-    // site_tool.querySelector(".bottom").onclick=()=>window.requestAnimationFrame(function(){window.scrollTo(0,99999);});
+    if (site_tool) {
+        // scrollTo && article_tool
+        site_tool.querySelector(".top").onclick=()=>window.scrollTo(0,0);
+        site_tool.querySelector(".bottom").onclick=()=>window.scrollTo(0,99999);
+        // site_tool.querySelector(".top").onclick=()=>window.requestAnimationFrame(function(){window.scrollTo(0,0);});
+        // site_tool.querySelector(".bottom").onclick=()=>window.requestAnimationFrame(function(){window.scrollTo(0,99999);});
+    }
     
     if(article_tool){
         const tool_view = article_tool.querySelector("#full-view em"),

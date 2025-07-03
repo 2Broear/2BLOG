@@ -17,24 +17,10 @@
     <meta name="msapplication-TileColor" content="<?php echo $theme; ?>" />
     <meta name="msapplication-TileImage" content="<?php echo get_site_favico(); ?>" />
     <link rel="shortcut icon" href="<?php echo get_site_favico(); ?>"/>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/universal.min.css?v=<?php echo get_theme_info(); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/style/universal.min.css?v=<?php echo get_theme_info(); ?>" />
     <style>
         body.dark #supports em.warmhole{filter: invert(1);}
-        <?php if(get_option('site_logo_switcher')) echo 'body.dark .mobile-vision .m-logo span,body.dark .logo-area span{background: url('.get_option('site_logos').') no-repeat center center /cover!important;}'; ?>
-        .article_index .in_dex,
-        header>nav#tipson .top-bar-tips {
-            backdrop-filter: saturate(150%) blur(5px);
-            -webkit-backdrop-filter: saturate(150%) blur(5px);
-            background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);
-            background-size: 4px 4px;
-            /*background-color: rgba(255,255,255, .55);*/
-        }
-        body.dark .article_index .in_dex,
-        body.dark header>nav#tipson .top-bar-tips {
-            background-image: radial-gradient(rgb(49 49 49 / 55%) 2px, rgb(49 49 49) 2px);
-            background-size: 4px 4px;
-            background-color: rgba(49,49,49, .55);
-        }
+        <?php if(get_option('site_logo_switcher')) echo 'body.dark .mobile-vision .m-logo span,body.dark .logo-area span{background: url(' . get_option('site_logos') . ') no-repeat center center /cover!important;}'; ?>
         .win-top em.digital_mask {
             /*bottom: -50px;*/
         }
@@ -46,8 +32,67 @@
         #footer-copyright li {
             color: var(--preset-6);
         }
+        /*
+        ** experimental style futures
+        */
         body.dark #footer-copyright li {
             color: var(--preset-9);
+        }
+        .article_index .in_dex,
+        header>nav#tipson .top-bar-tips {
+            backdrop-filter: saturate(150%) blur(5px);
+            -webkit-backdrop-filter: saturate(150%) blur(5px);
+            background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);
+            background-size: 4px 4px;
+            /*background-color: rgba(255,255,255, .55);*/
+        }
+        body.dark .article_index .in_dex,
+        body.dark header>nav#tipson .top-bar-tips {
+            background-image: radial-gradient(var(--preset-2b) 2px, var(--preset-2bs) 2px);
+            background-size: 4px 4px;
+            background-color: var(--preset-2bs);
+        }
+        /**
+        * scroll to view
+        */
+        .content-all-windows {
+            overflow-y: clip;
+        }
+        @keyframes scale-view {
+            0% {
+                transform: scale(.85);
+                transform-origin: top
+            }
+        
+            to {
+                transform: none
+            }
+        }
+        
+        @supports (animation-timeline:view()) {
+            /*.archive-tree .archive-item,*/
+            /*.friends-boxes .inbox-item,*/
+            /*.rcmd-boxes .loadbox,*/
+            .fade-item,
+            .news-article-list article,
+            .win-content .notes article,
+            .download_boxes .dld_box,
+            .weblog-tree-core-record,
+            .vlist > .vcard {
+                animation: scale-view 1s;
+                transform: none;
+                animation-timeline: view(block);
+                animation-range: cover 0 30%;
+                /*will-change: transform;*/
+            }
+            .vlist > .vcard,
+            .rcmd-boxes .fade-item,
+            .archive-tree .fade-item {
+                animation-range: cover 0 20%
+            }
+            .ranking .fade-item {
+                animation-range: cover 0 50%
+            }
         }
     </style>
     <script>

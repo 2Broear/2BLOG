@@ -78,8 +78,8 @@
             right: -15%;
         }
         .resource-windows div{
-            /*margin: 15px 25px auto auto;*/
-            margin: 5px 25px auto auto;
+            margin: 15px 25px auto auto;
+            /*margin: 5px 25px auto auto;*/
         }
         @keyframes colorfull{
             0%{
@@ -144,14 +144,11 @@
         .resource-windows div:last-of-type{
             margin-right: auto;
         }
-        .weBlog-Description .weBlog-Description-inside-content span{
-            margin-bottom: 5px;
-        }
-        .weBlog-Description .weBlog-Description-inside-content span strong{
-            letter-spacing: 5px;
+        .weBlog-Description .weBlog-Description-inside-content span {
             font-family: math;
-            font-size: 150%;
-            font-weight: 100;
+            margin-bottom: 5px;
+            /*letter-spacing: 5px;*/
+            /*font-weight: 100;*/
         }
         .weBlog-Description .weBlog-Description-inside-content span p{
             display: none;
@@ -160,8 +157,32 @@
             width: 100%;
             object-fit: cover;
         }
+        .banner {
+            max-height:250px;
+            /*margin-bottom: 15px;*/
+        }
         .banner video {
             height: 100%;
+        }
+        .main-top-part:first-child {
+            /*margin: 15px auto auto;*/
+        }
+        .weBlog-Description .weBlog-Description-inside-content span small strong {
+            background: linear-gradient(to right, var(--theme-color), transparent);
+            -webkit-background-clip: text;
+            color: transparent;
+            font-size: xx-large;
+        }
+        @media screen and (max-width: 960px) {
+            .banner .banner-inside {
+                max-height: 150px;
+            }
+        }
+        body.dark .Fresh-ImgBoxs span a b {
+            filter: url(#x);
+        }
+        .recommendation #recommend-inside span.content-tail aside.personal_stand p {
+            opacity: .55;
         }
     </style>
 </head>
@@ -183,7 +204,7 @@
                 <div class="weBlog-Description-inside">
                     <div class="weBlog-Description-inside-content">
                         <span>
-                            <small><strong> <?php echo get_option('site_nick', get_bloginfo('name')); ?> </strong></small>
+                            <small style="filter: url(#x);"><b style="font-size:xx-large;">👋</b><strong> 你好，hoooola!!! <?php //echo get_option('site_nick', get_bloginfo('name')); ?> </strong></small>
                             <p> 「<?php bloginfo('description') ?>」 </p>
                         </span>
                     </div>
@@ -191,16 +212,17 @@
             </div>
             <div class="banner">
                 <div class="banner-inside">
-                    <ul>
+                    <iframe id="panorama" frameborder="no" style="min-height: 250px"></iframe>
+                    <!--<ul>-->
                         <?php
-                            $banner_array = explode(',',get_option('site_banner_array',''));
-                            $banner_array_count = count($banner_array);
-                            for($i=0;$i<$banner_array_count;$i++){
-                                $banner_url = trim($banner_array[$i]);
-                                if($banner_url) echo '<li style="background: url() no-repeat center center /cover;">' . do_shortcode('[custom_video src="' . $banner_url . '" poster]') . '</li>'; //'.$banner_url.'
-                            }
+                            // $banner_array = explode(',',get_option('site_banner_array',''));
+                            // $banner_array_count = count($banner_array);
+                            // for($i=0;$i<$banner_array_count;$i++){
+                            //     $banner_url = trim($banner_array[$i]);
+                            //     if($banner_url) echo '<li style="background: url() no-repeat center center /cover;">' . do_shortcode('[custom_video src="' . $banner_url . '" poster]') . '</li>'; //'.$banner_url.'
+                            // }
                         ?>
-                    </ul>
+                    <!--</ul>-->
                     <div class="switcher">
                         <span id="banner-prev" class="banner_prew"></span>
                         <span id="banner-next" class="banner_next"></span>
@@ -279,7 +301,7 @@
                       $card_term = get_category_by_slug($card_slug) ? get_category_by_slug($card_slug) : get_category(1);  // 1 for UNCATEGORIZED
                       if(!$card_nick) $card_nick=get_category_by_slug($card_slug)->name;  //incase non diy nick
                       if($card_slug){  //incase end with ";"
-                        echo '<span class="'.$card_slug.'"><a href="'.get_category_link($card_term->term_id).'"> '.$card_nick.'<i class="icom icon-'.$card_slug.'"></i></a></span>';
+                        echo '<span class="'.$card_slug.'"><a href="'.get_category_link($card_term->term_id).'"> <b>' . $card_nick . '</b><i class="icom icon-'.$card_slug.'"></i></a></span>';
                       }
                   }
               }
@@ -543,6 +565,6 @@
     if(get_option('site_chat_switcher')) echo '<script src="'.get_option('site_chat').'"></script>';
     get_foot();
 ?>
-<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/banner.js?v=<?php echo get_theme_info(); ?>"></script>
+<!--<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/banner.js?v=<?php echo get_theme_info(); ?>"></script>-->
 <!--<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/cursor.js"></script>-->
 </body></html>

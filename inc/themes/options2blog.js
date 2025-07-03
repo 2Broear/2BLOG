@@ -280,11 +280,11 @@ jQuery(document).ready(function($){
         scroll_delay = 200,
         scroll_func = function(e){
             const switch_offset = switch_form.offsetTop;
-            console.log(switch_form)
+            // console.log(switch_form)
             return (function(){
                 if(scroll_throttler==null){
                     scroll_throttler = setTimeout(function(){
-                        console.log('scroll_throttler');
+                        console.debug('scroll_throttler');
                         var windowHeight = window.innerHeight,
                             clientHeight = document.body.clientHeight,
                             scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
@@ -367,62 +367,68 @@ jQuery(document).ready(function($){
         document.querySelector("form ."+t.id).classList.add(switchcls);  // clearClass then show
     });
     
-    bindEvents('onclick', document, '', (t)=> {
-        if (t.id!=='updateSchedule') return;
+    bindEvents('onclick', document, '', (t, e)=> {
         // console.log(t)
-        if (confirm(`Updating Scheduled Tasks(scheduled_rss_feeds_updates)?`)) {
-            const updateScheduleInput = document.querySelector('#updateSchedules');
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', t.dataset.adminUrl, true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.success) {
-                        t.disabled = true;
-                        alert('updating status: ' + response.data + ' Standby cronjob-redepoly..'); // + ', Locate to rss-feeds now..'
-                        let counter = 3;
-                        t.value = 'Standby ' + counter;
-                        let countdown = setInterval(()=> {
-                            if (counter<=1) {
-                                clearInterval(countdown);
-                                t.value = 'Schedules updated';
-                                updateScheduleInput.disabled = false;
-                                updateScheduleInput.focus();
-                                return;
-                            }
-                            counter--;
+        if (t.classList && t.classList.contains('dynamic_dom')) {
+            e.stopPropagation();
+            e.preventDefault();
+            const dom = t.dataset.dom || 'IFRAME';
+            const element = document.createElement(dom);
+            element.src = t.dataset.src;
+            if (dom == 'video' || dom == 'img') element.className = 'upload_preview bgm';
+            if (dom == 'video') {
+                element.poster = t.dataset.src;
+                element.setAttribute('preload', 'preload');
+                element.setAttribute('autoplay', 'autoplay');
+                element.setAttribute('muted', 'muted');
+                element.setAttribute('loop', 'loop');
+                element.setAttribute('x5-video-player-type', 'h5');
+                element.setAttribute('controlslist', 'nofullscreen nodownload');
+            }
+            if (t.dataset.width) element.width = t.dataset.width;
+            if (t.dataset.height) element.height = t.dataset.height;
+            t.parentNode.appendChild(element);
+            t.remove();
+            console.log('dynamic loaded element', element);
+        }
+        
+        if (t.id === 'updateSchedule') {
+            const confirms = confirm(`Updating Scheduled Tasks(scheduled_rss_feeds_updates)?`);
+            if (confirms) {
+                const updateScheduleInput = document.querySelector('#updateSchedules');
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', t.dataset.adminUrl, true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            t.disabled = true;
+                            alert('updating status: ' + response.data + ' Standby cronjob-redepoly..'); // + ', Locate to rss-feeds now..'
+                            let counter = 3;
                             t.value = 'Standby ' + counter;
-                        }, 1000);
-                        // location.replace(location.origin + location.pathname + "?page=" + t.dataset.page);
-                        // location.reload(true);
+                            let countdown = setInterval(()=> {
+                                if (counter<=1) {
+                                    clearInterval(countdown);
+                                    t.value = 'Schedules updated';
+                                    updateScheduleInput.disabled = false;
+                                    updateScheduleInput.focus();
+                                    return;
+                                }
+                                counter--;
+                                t.value = 'Standby ' + counter;
+                            }, 1000);
+                            // location.replace(location.origin + location.pathname + "?page=" + t.dataset.page);
+                            // location.reload(true);
+                        } else {
+                            console.error('Error:', response.data);
+                        }
                     } else {
-                        console.error('Error:', response.data);
+                        console.error('Request failed with status:', xhr.status);
                     }
-                } else {
-                    console.error('Request failed with status:', xhr.status);
-                }
-            };
-            xhr.send('action=update_cronjobs&nonce=' + t.dataset.nonce + '&interval=' + updateScheduleInput.value);
-            // fetch(`${t.dataset.api}refresh=1`, {
-            //     method: 'GET',
-            // })
-            // .then(res=> {
-            //     if (res.ok) {
-            //         return res.text(); //json()
-            //     }
-            //     console.warn('request failed.')
-            // })
-            // .then(data=> {
-            //     t.disabled = 'disabled';
-            //     alert(data + ', Locate to rss-feeds now..');
-            //     location.replace(location.origin + location.pathname + "?page=" + t.dataset.page);
-            //     // location.reload(true);
-            // })
-            // .catch(error => {
-            //     container.querySelector('p').innerHTML = `Reload site_rss_${dataset.cat}_cache failed, <u>${ error }!</u>`;
-            //     console.error('Error fetching progress:', error);
-            // });
+                };
+                xhr.send('action=update_cronjobs&nonce=' + t.dataset.nonce + '&interval=' + updateScheduleInput.value);
+            }
         }
     });
     

@@ -55,7 +55,7 @@
             }
             $link_apis = get_api_refrence('rss', true) . "cat=$req_cat&limit=3&update=1&output=0&format=0";
             echo "<p style='text-align:right'>Loaded from $caches_name, <a href='javascript:;' class='fetch-reload' data-api='$link_apis'>reload $req_cat?</a></p>";
-            the_rss_feeds(json_decode($output_caches));
+            the_rss_feeds(json_decode($output_caches), $link_limit);
             exit;
         }
     }
@@ -63,7 +63,7 @@
     // updating instantly
     $output_json = '';
     // if(strlen($output_json)===0 || !$output_sw) {
-    $use_chunk = get_request_param('chunk');
+    $use_chunk = get_request_param('chunk') || 10;
     
     $linked_urls = array();
     $link_marks = get_site_bookmarks($req_cat);
@@ -73,7 +73,7 @@
     }
     
     // fetch_rss_feeds_via_url plus array_chunk limits
-    $output_json = parse_rss_data($linked_urls, $link_limit, $use_chunk||10);
+    $output_json = parse_rss_data($linked_urls, $link_limit, $use_chunk);
     if($output_json && $output_sw) { // && !$use_cache
         // echo "updating caches..";
         update_option($caches_name, wp_kses_post(preg_replace( "/\s(?=\s)/","\1", $output_json )));

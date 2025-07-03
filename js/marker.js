@@ -62,7 +62,7 @@
                 // selectively load tools
                 if(s_useNote) toolsLoader(toolsInside, c_note, `${s_ctxNote}内容`, `<label>${s_ctxNote}</label><input type="text" placeholder="输入注释.." max="50" />`);
                 if(s_useCopy) toolsLoader(toolsInside, c_copy, `${s_ctxCopy}内容`, s_ctxCopy);
-                if(s_useQuote) toolsLoader(toolsInside, c_quote, `评论${s_ctxQuote}`, s_ctxQuote);
+                if(s_useQuote) toolsLoader(toolsInside, c_quote, `评论${s_ctxQuote} & 复制锚点`, s_ctxQuote);
                 // always load closer(selectively remove)
                 const tool_close = document.createElement('SPAN');
                 tool_close.className = c_close;
@@ -249,7 +249,11 @@
                                 frag_mark.appendChild(frag_tool);
                                 // write in (wordpress bug: group caused frag_tool outside)
                                 const specific_chars = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-                                mark_paragraph.innerHTML = mark_paragraph.innerHTML.replace(specific_chars, frag_mark.outerHTML);
+                                if (mark_paragraph) {
+                                    mark_paragraph.innerHTML = mark_paragraph.innerHTML.replace(specific_chars, frag_mark.outerHTML);
+                                } else {
+                                    console.warn('invalid mark_paragraph!', mark_paragraph);
+                                }
                             };
                             // 输出 所有用户标记
                             if(s_dataStream) {
@@ -1044,9 +1048,13 @@
                     console.warn('Quote abort on invalid commentArea!', comment_box);
                     return;
                 }
-                comment_box.value = `\n> ${mark_node.firstChild.nodeValue} ...`;
-                comment_box.setSelectionRange(0,0);
+                const text_content = mark_node.firstChild.nodeValue;
+                const text_anchor = window.location.href + '#:~:text=' + text_content;
+                comment_box.value = `${text_anchor}\n> ${text_content} ...`;
+                comment_box.setSelectionRange(0, text_anchor.length);
                 comment_box.focus();
+                document.execCommand('copy');
+                //..
                 if(!isNodeMarkDone(mark_node)){
                     close(mark_node);
                     return;
@@ -1054,10 +1062,11 @@
                 node.classList.add(c_disabled);
                 node.textContent = s_ctxQuoted;
                 let timer = setTimeout(()=>{
-                        node.classList.remove(c_disabled);
-                        node.textContent = s_ctxQuote;
-                        clearTimeout(timer);
-                    }, 1500);
+                    node.classList.remove(c_disabled);
+                    node.textContent = s_ctxQuote;
+                    clearTimeout(timer);
+                    timer = null;
+                }, 1500);
             },
             copy: function(node) {
                 const {init: {_conf: {static: {ctxCopy:s_ctxCopy, ctxCopied:s_ctxCopied}, class: {line:c_line, disabled:c_disabled}}}, _utils: {_dom: {valider, finder}}, status: {isNodeMarkDone}, mods: {close}} = marker;
@@ -1081,10 +1090,11 @@
                 node.classList.add(c_disabled);
                 node.textContent = s_ctxCopied;
                 let timer = setTimeout(()=>{
-                        node.classList.remove(c_disabled);
-                        node.textContent = s_ctxCopy;
-                        clearTimeout(timer);
-                    }, 1500);
+                    node.classList.remove(c_disabled);
+                    node.textContent = s_ctxCopy;
+                    clearTimeout(timer);
+                    timer = null;
+                }, 1500);
             },
             close: function(node, execUpdate=false) {
                 const {init: {_conf: {class: {line:c_line, tool:c_tool, processing:c_processing}}}, _utils: {_dom: {valider, finder}}, status: {isNodeMarkAble, isMarkerAccessable, isNodeTextOnly, isNodeMarkDone}, mods: {update}} = marker;

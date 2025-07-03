@@ -71,7 +71,7 @@ body.dark .wp_comments:hover{background:var(--preset-3a)!important}
 #news-article-head span#night-vision_inside-article-only em i{font-size:14px;padding:0 0 0 5px;position:relative;top:2px}
 #news-article-head span#night-vision_inside-article-only em i::after{content:'\e917'}
 #news-article-head span#night-vision_inside-article-only em i.HighLight::after{content:'\e916'}
-#news-article-head span#full-view:hover{background-color:var(--preset-6);border-color:var(--preset-6)}
+#news-article-head span#full-view:hover{background-color:var(--preset-4a);border-color:currentColor;}
 #news-article-head span#full-view:hover > em{color:var(--preset-f)}
 #news-article-head span#font-plus:hover{background-color:var(--theme-color);border-color:var(--theme-color)}
 #news-article-head span#font-plus:hover > em{color:var(--preset-f)}

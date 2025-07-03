@@ -52,6 +52,12 @@
 	    body.dark .win-content {
 	        border-color: transparent;
 	    }
+	    .hljs {
+	        background: var(--preset-3a);
+	    }
+	    .hljs ul li:hover {
+	        background: var(--preset-2bs);
+	    }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

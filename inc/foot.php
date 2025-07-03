@@ -38,7 +38,7 @@
             // marker
             if(get_option('site_marker_switcher')){
     ?>
-                asyncLoad('<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/marker.js', function(){
+                asyncLoad('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/marker.js', function(){
                     // use keyword "new" to point to init method.
                     new marker.init({
                         static: {
@@ -120,4 +120,26 @@
             }
         }
     ?>
+    // window.onload = ()=> {
+        const iframe = document.getElementById('panorama');
+        if (iframe && iframe instanceof HTMLElement) {
+            iframe.src = 'https://node.2broear.com/'; //indexs.html
+            // iframe.frameborder = 'no';
+            iframe.width = '100%';
+            iframe.height = '100%';
+        }
+    // }
 </script>
+<svg style="display: none;">
+    <defs>
+        <filter id="x" height="500%">
+            <feTurbulence baseFrequency="0.01 0.02" numOctaves="2" result="t0"></feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="t0" result="d0" scale="5"></feDisplacementMap>
+            <feComposite in="SourceGraphic" in2="d0" operator="atop" result="0"></feComposite>
+            <feTurbulence baseFrequency="1" numOctaves="2" result="t1"></feTurbulence>
+            <feDisplacementMap in="0" in2="t1" result="d1" scale="2"></feDisplacementMap>
+            <feComposite in="0" in2="d1" operator="atop" result="1"></feComposite>
+            <feOffset dx="-3" dy="-3" in="1"></feOffset>
+        </filter>
+    </defs>
+</svg>

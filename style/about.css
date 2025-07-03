@@ -576,10 +576,10 @@
 
 body.dark .about_blocks{
     color: white;
-    background: #303030;
+    background: var(--preset-3b);
 }
 body.dark .In-core-head .user_info{
-    background: linear-gradient(-90deg,#303030 0%,var(--preset-3a) 100%);
+    background: linear-gradient(90deg,var(--preset-3a) 0%,var(--preset-3b) 100%);
 }
 body.dark .about_blocks li.intro_right .mbit .mbit_range li span{
     background: var(--preset-3a);

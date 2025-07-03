@@ -313,8 +313,9 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                                 $output_data = get_option('site_archive_' . $output_year . '_cache');
                                 $output_data = json_decode($output_data); //, true
                                 if (!$output_data) {
-                                    echo '<h2>' . $output_year . ' 年度发布 🔁</h2><span class="stat_'.$output_year.' stats">📈📉统计：<b>Updated data for ' . $output_year . ' (<a href="javascript:void(0);" onclick="window.location.reload()">Refresh updates..</a>)</b></span>';
+                                    echo '<div class="fade-item"><h2>' . $output_year . ' 年度发布 🔁</h2><span class="stat_'.$output_year.' stats">📈📉统计：<b>Updated data for ' . $output_year . ' (<a href="javascript:void(0);" onclick="window.location.reload()">Refresh updates..</a>)</b></span>';
                                     update_archive_year($output_year, $output_sw);
+                                    echo '</div>';
                                     continue;
                                 }
                                 // print_r($output_data);
@@ -324,7 +325,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                                 // 贪婪匹配(.*)有效（标识符连接处需?非贪婪匹配）
                                 $output_title = preg_replace('/<sup(.*)data-year=("' . $output_year . '")(.*?)data-nonce=("[^"]*")(.*)<\/sup>/i', '<sup $1data-year=$2$3data-nonce="' . $new_nonce . '"$5</sup>', $output_title);
                                 
-                                echo $output_title . $output_data->content;
+                                echo '<div class="fade-item">' . $output_title . $output_data->content . '</div>';
                             }
                             return;
                         }
@@ -342,7 +343,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                     }
                     // echo wp_kses_post($output);
                     foreach ($output_array as $data_year) {
-                        echo $data_year->title . $data_year->content;
+                        echo '<div class="fade-item">' . $data_year->title . $data_year->content . '</div>';
                     }
                 }
                 the_archive_lists();

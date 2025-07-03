@@ -86,6 +86,15 @@
             padding: 10px;
             border: 1px solid rgb(200 200 200 / 35%);
         }
+        
+        .In-core-head .head-inside::before {z-index: -1}
+        .In-core-head .head-inside {
+            padding: 0;
+            height: 200px;
+        };
+        body.dark .In-core-head .user_info{
+            background: linear-gradient(90deg,var(--preset-3a) 0%,var(--preset-3b) 100%);
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -96,6 +105,8 @@
         </nav>
     </header>
     <?php //get_inform(); ?>
+    <!--<video type="video/webm" src="https://cdn.cdmmscl.com/20250428164.webm" poster="" preload="auto" autoplay="" muted="" loop="" x5-playsinline="true" playsinline="true" webkit-playsinline="true" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>-->
+    <!--<video controls="" loop="" autoplay="autoplay" preload="true" crossorigin="anonymous" x5-playsinline="true" playsinline="true" webkit-playsinline="true" x5-video-player-type="h5"><source type="video/webm" src="https://cdn.cdmmscl.com/20250428164.webm"><p>your browser does not support videos, suggest to upgrade.</p></video>-->
     <div class="content-all-windows">
         <div class="Introduce-window" style="width: 100%;">
             <div class="Introduce-core">
@@ -131,6 +142,7 @@
                                     <?php
                                         if($video){
                                             echo '<video src="'.$video.'" poster="" preload="auto" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload" playsinline -webkit-playsinline></video>'; //'.get_meta_image($cat, get_option('site_bgimg')).'
+                                            // echo '<iframe id="panorama" frameborder="no"></iframe>';
                                         }
                                     ?>
                                 </div>
