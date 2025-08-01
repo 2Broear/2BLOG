@@ -5,7 +5,7 @@
 ?>
 <title><?php echo get_site_title(); ?></title>
     <meta name="keywords" content="<?php echo get_site_keywords(); ?>">
-    <meta name="description" content="<?php echo get_site_description(); ?>">
+    <meta name="description" content="<?php echo get_site_description($cat); ?>">
     <meta http-equiv="Content-Type" content="text/html; charset=<?php bloginfo('charset') ?>">
     <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!-- 如果有安装 Google Chrome Frame 插件则强制为Chromium内核，否则强制本机支持的最高版本IE内核，作用于IE浏览器 -->
@@ -52,6 +52,8 @@
             background-size: 4px 4px;
             background-color: var(--preset-2bs);
         }
+        <?php
+            if (get_option('site_animated_scrolling_switcher')) echo '
         /**
         * scroll to view
         */
@@ -93,6 +95,9 @@
             .ranking .fade-item {
                 animation-range: cover 0 50%
             }
+        }'; ?>
+        .adscene {
+            margin-bottom: 15px!important;
         }
     </style>
     <script>

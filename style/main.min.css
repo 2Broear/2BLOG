@@ -232,8 +232,12 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 #Wanted-list-core ol li a{color:var(--preset-8);font-size:var(--min-size);max-width:25em;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;transition:all .3s ease}
 #Wanted-list-core ol li:hover > a{color:var(--preset-6);padding:0 0 0 5px;text-decoration:underline}
 .resource-windows{width:100%;max-width:100%;position:relative;/*overflow:hidden;*/color:var(--preset-6);font-weight:300;flex-flow:row nowrap;justify-content:space-between}
-.resource-windows div{width:100%;height:auto;position:inherit;margin:15px auto auto 15px;border-radius:var(--radius);box-shadow:rgba(0,0,0,0.05) -20px 20px 40px;}
-.resource-windows div span.resource-windows-top{width:auto;height:57px;border-radius:var(--radius) var(--radius) 0 0;border-bottom:1px solid var(--preset-s);background-color:var(--mirror);display:block;position:relative}
+.resource-windows div{width:100%;height:auto;position:inherit;border-radius:var(--radius);box-shadow:rgba(0,0,0,0.05) -20px 20px 40px;
+    margin: 15px 25px auto auto;
+    background: linear-gradient(-90deg, var(--mirror-start) 0, var(--mirror-end));
+    background: -webkit-linear-gradient(180deg, var(--mirror-start) 0, var(--mirror-end));
+}
+.resource-windows div span.resource-windows-top{width:auto;height:57px;border-radius:var(--radius) var(--radius) 0 0;display:block;position:relative;/*border-bottom:1px solid var(--preset-s);background-color:var(--mirror);*/}
 .resource-windows div span.resource-windows-top h3{display:block;margin:auto 15px;letter-spacing:3px;font-size:1rem;line-height:58px}
 .resource-windows div span.resource-windows-top span.resource-windows-top_inside{color:var(--preset-6);width:65px;height:100%;display:block;float:left;border-right:1px solid #eaeaea;display:none;}
 #news-window:hover > .resource-windows-top p{color:var(--theme-color)}
@@ -331,10 +335,11 @@ img.lazy{max-height:100%;object-fit:cover;padding:0 35px;}
 .tech_window-content li span#fst-num::after{content:'st';font-size:14px;display:inline-block;float:right;color:currentColor;position:relative;left:-2px;letter-spacing:1px}
 .tech_window-content li span#snd-num::after{content:'nd';font-size:var(--min-size);display:block;float:right;position:relative;left:-1px;color:currentColor}
 .tech_window-content li span#trd-num::after{content:'rd';font-size:var(--min-size);display:block;float:right;position:relative;color:currentColor;letter-spacing:1px}
-.resource-windows div ul{width:100%;list-style-type:none;position:relative;padding:0;margin:0;background-color:var(--preset-f);border-radius:0 0 var(--radius) var(--radius);border: 1px solid #fff;border-top: 0;
+.resource-windows div ul{width:100%;list-style-type:none;position:relative;padding:0;margin:0;border-radius:0 0 var(--radius) var(--radius);border-top: 0;
     box-sizing: border-box;
-    background: linear-gradient(90deg, var(--mirror) 0, #fff);
-    background: -webkit-linear-gradient(235deg, var(--mirror) 0, #fff);
+    /*background-color:var(--preset-f);border: 1px solid #fff;*/
+    /*background: linear-gradient(90deg, var(--mirror) 0, #fff);*/
+    /*background: -webkit-linear-gradient(235deg, var(--mirror) 0, #fff);*/
 }
 .resource-windows div ul li:hover{background-color:var(--preset-f)}
 .resource-windows div ul li:hover > a{color:var(--preset-2b);}

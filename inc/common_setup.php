@@ -111,21 +111,21 @@
         return $keywords;
     }
     // 返回站点描述（摘要）
-    function get_site_description($cat=false){
-        $desc = get_option('site_description', "no descriptions yet");
+    function get_site_description($cat){
+        $desc = "no descriptions yet";
         switch (true) {
-            case is_category():
-                if(get_term_meta($cat, 'seo_description', true)) {
-                    if(!$cat) global $cat;
-                    $desc = get_term_meta($cat, 'seo_description', true);
-                }
+            case is_category() || is_page():
+                global $cat;
+                $desc = get_term_meta($cat, 'seo_description', true);
                 break;
             case is_single():
                 $desc = get_ai_abstract();
                 break;
             default:
+                $desc = get_option('site_description');
                 break;
         }
+        // if($desc) $desc = $cat_desc;
         return preg_replace('/\n/',"", $desc); //trim($desc);
     }
     

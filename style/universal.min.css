@@ -594,6 +594,7 @@ body.dark .inside_of_block nav.main-nav .links-more li:hover>a{
     padding-right: 0;
     /*top: 10%;*/
     z-index: 1;
+    width: 100%;
 }
 .additional .sub-additional{
     width: 125%;
@@ -1446,6 +1447,11 @@ body.dark::-webkit-scrollbar-thumb,body.dark .v .vwrap .vedit .vemojis::-webkit-
 body.dark::-webkit-scrollbar-thumb:hover,body.dark .v .vwrap .vedit .vemojis::-webkit-scrollbar-thumb:hover{background:#777777}
 body.dark::-webkit-scrollbar-thumb:active,body.dark .v .vwrap .vedit .vemojis::-webkit-scrollbar-thumb:active,body.dark .footer-detector::before{background-color:var(--preset-9)}
 
+body.dark .resource-windows div {
+    background: linear-gradient(-90deg, var(--preset-3a) 0, var(--mirror-end));
+    background: -webkit-linear-gradient(180deg, var(--preset-3a) 0, var(--mirror-end));
+}
+
 /* preset-9 color only */
 body.dark .footer-contact-left ul a,
 body.dark .tags,
@@ -1555,9 +1561,9 @@ body.dark .weblog-tree-core-r,
 body.dark .win-nav .nav-header div,body.dark .main-root ul li:nth-child(even),
 body.dark .download_boxes .dld_box .dld_box_wrap,
 body.dark .about_blocks,
-body.dark .resource-windows div ul,
 body.dark .recommendation,body.dark .recommendation #recommend-inside .recommend-newsContent,
-body.dark .resource-windows div span.resource-windows-top,
+/*body.dark .resource-windows div ul,*/
+/*body.dark .resource-windows div span.resource-windows-top,*/
 body.dark .banner .banner-inside{
     color:var(--preset-9);
     background:var(--preset-3b)!important;

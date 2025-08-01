@@ -5,7 +5,8 @@
     $comment_sw = $third_cmt=='Valine' ? true : false;//get_option('site_valine_switcher');
     $twikoo_sw = $third_cmt=='Twikoo' ? true : false;//get_option('site_twikoo_switcher');
     $wp_ajax_comment = get_option('site_ajax_comment_switcher');
-    if(is_single()){
+    if (is_single()) {
+        adscene_shortcode('adscene_list_context');
 ?>
         <div class="share" style="<?php if(!$comment_sw) echo 'margin-top:15px'; ?>">
             <a id="dislike" title="有点东西（Like）" href="javascript:;" data-action="like" data-id="<?php echo $pid=get_the_ID(); ?>" data-nonce="<?php echo wp_create_nonce($pid."_post_like_ajax_nonce"); ?>" class="<?php if(isset($_COOKIE['post_liked_'.$post_ID])) echo 'liked';?>" <?php if(!$comment_sw) echo 'onclick="postLike(this)"'; ?>><?php if($comment_sw) echo '<div class="user"><small></small><div id="list"></div></div>'; ?>

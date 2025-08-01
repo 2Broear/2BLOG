@@ -27,6 +27,8 @@
                     width: 100%;
                 }
                 .amap-cluster {
+                    max-width: 80px;
+                    max-height: 80px;
                     display: flex;
                     justify-content: center;
                     flex-direction: column;
@@ -63,42 +65,42 @@
                     padding: 15px 25px; 
                     border-radius: 50px; 
                 }
-                /*#panorama .amap-info-content {*/
-                /*    max-width: 100%;*/
-                /*    padding: 10px;*/
-                /*    border-radius: 15px;*/
-                /*}*/
+                .bottom-center .amap-info-sharp {
+                    bottom: 1px;
+                }
         <?php
             } else {
         ?>
                 html,
                 body {
-                  margin: 0;
-                  padding: 0;
-                  overflow: hidden;
-                  height: 100%;
+                    margin: 0;
+                    padding: 0;
+                    overflow: hidden;
+                    height: 100%;
                 }
                 #mapContainer {
-                  position: relative;
-                  height: 100%;
-                  width: 100%;
+                    position: relative;
+                    height: 100%;
+                    width: 100%;
                 }
                 .clusterBubble {
-                  border-radius: 50%;
-                  color: #fff;
-                  font-size: x-large;
-                  font-weight: 500;
-                  text-align: center;
-                  opacity: 0.88;
-                  background-image: linear-gradient(139deg, #4294FF 0%, #295BFF 100%);
-                  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.20);
-                  position: absolute;
-                  top: 0px;
-                  left: 0px;
-                  user-select: none;
-                  -webkit-user-select: none;
-                  cursor: pointer;
-                  border: 8px solid rgb(255 255 255 / 55%);
+                    padding: 5px;
+                    /*min-width: 55px;*/
+                    /*min-height: 55px;*/
+                    border-radius: 50%;
+                    color: #fff;
+                    font-size: x-large;
+                    font-weight: 800;
+                    text-align: center;
+                    opacity: 0.88;
+                    background-image: linear-gradient(139deg, #4294FF 0%, #295BFF 100%);
+                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.20);
+                    position: absolute;
+                    top: 0px;
+                    left: 0px;
+                    cursor: pointer;
+                    border: 10px solid rgb(255 255 255 / 55%);
+                    will-change: transform;
                 }
                 .infoWindow > div:first-child {
                     padding: 10px 15px!important;
@@ -109,36 +111,68 @@
                 }
                 .infoWindow > div:last-child {
                     display: none;
+                    width: 20px !important;
+                    height: 20px !important;
+                    margin: 5px;
+                }
+                #mapContainer > div:last-child,
+                #mapContainer a,
+                #mapContainer img,
+                #mapContainer .logo-text,
+                #mapContainer .tmap-scale-control,
+                #mapContainer .clusterBubble,
+                #mapContainer .rotate-circle,
+                #mapContainer .tmap-zoom-control {
+                    user-select: none;
+                    -webkit-user-select: none;
+                    -webkit-user-drag: none;
+                    /*pointer-events: none;*/
                 }
         <?php
             }
         ?>
+        .win-top:after {
+            background: transparent!important;
+        }
         #panorama .amap-info-content,
         #panorama > div:first-child {
             text-align: center;
             padding: 10px !important;
             border-radius: 15px !important;
             background-color: transparent!important;
-            background: linear-gradient(180deg, rgb(200 215 255 / 68%) 0%, rgb(255 255 255) 100%);
-            background: -webkit-linear-gradient(270deg, rgb(200 215 255 / 68%) 0%, rgb(255 255 255) 100%);
+            background: linear-gradient(180deg, rgb(200 215 255 / 58%) 0%, rgb(255 255 255) 100%);
+            background: -webkit-linear-gradient(270deg, rgb(200 215 255 / 58%) 0%, rgb(255 255 255) 100%);
             backdrop-filter: blur(10px);
             border: 1px solid rgb(255 255 255);
+            user-select: none;
+            -webkit-user-select: none;
         }
         #panorama img,
         #panorama iframe {
             display: block;
-            max-width: 500px;
-            max-height: 200px;
+            max-width: 500px!important;
+            max-height: 250px!important;
             border-radius: inherit;
             -webkit-user-drag: none;
-            user-select: none;
-            -webkit-user-select: none;
         }
-        #panorama h2 {
-            margin: 10px auto 5px;
+        #panorama img {
+            max-height: 200px!important;
+        }
+        #panorama h2, #panorama h3,
+        #panorama p {
+            color: var(--preset-3a);
+            padding: 0 5px;
+            max-width: 235px;
+            text-align: left;
+            white-space: pre-wrap;
+            /* overflow: hidden; */
+            /* text-overflow: ellipsis; */
+        }
+        #panorama h2, #panorama h3 {
+            margin: 10px auto 2px;
         }
         #panorama p {
-            margin-top: auto;
+            margin: auto auto 18px;
             opacity: .75;
             font-size: 12px;
         }
@@ -188,8 +222,7 @@
             // footprint_data(points, district)
             echo $footprint_data;
     ?>
-            // compatible function for amap-coords(lng,lat)
-            // 高德坐标转换器
+            // 高德坐标转换器 // compatible function for amap-coords(lng,lat)
             function lng2lat(coordsString = '', splitArray = false) {
                 if (Array.isArray(coordsString)) coordsString = coordsString[0];
                 if (typeof coordsString !== 'string') {
@@ -206,12 +239,16 @@
             points.forEach((item)=> item.lnglat = lng2lat(item.lnglat, true));
             // console.log(points, district);
             
-            const mapContainer = document.querySelector('#container');
+            // const mapContainer = document.querySelector('#container');
+            const center = Object.values(district)[0].lnglat.split(',');
+            
             var map = new AMap.Map("container", {
                 zoom: defaultZoom,
+                center: center,  //设置地图中心点
                 animateEnable: true,
                 mapStyle: "amap://styles/" + mapTheme,
             });
+            // map.setCenter(center);  //设置地图中心点
         
             var layer_length = Object.keys(district).length;
             var dynamic_size = 5 * layer_length;
@@ -267,7 +304,7 @@
             };
             
             // 在 renderClusterMarker 外部定义 infoWindow 以关闭 infoWindow.close();
-            var infoWindow = new AMap.InfoWindow({offset: new AMap.Pixel(0, -30)});
+            var infoWindow = new AMap.InfoWindow({offset: new AMap.Pixel(0, -50)});
             // points = points.forEach((item)=> item.lnglat[0] = lng2lat(item.lnglat[0]));
             new AMap.IndexCluster(map, points, {
                 renderClusterMarker: function (context) {
@@ -289,16 +326,19 @@
                             if(curZoom < 20) curZoom += 2;
                             // reset id status
                             infoWindow.dom.id = '';
-                            // (最大缩放)
+                            // (最大缩放倍数)
                             if (maxZoom) {
                                 // console.log(infoWindow.dom)
                                 if (styleObj.content) infoWindow.dom.id = 'panorama';
                                 infoWindow.setContent(styleObj.content || styleObj.context);
                                 infoWindow.open(map, e.target.getPosition());
+                                // center only
+                                map.setCenter(e.lnglat);
+                                // curZoom -= 1.9;  // 减小缩放倍数
+                            } else {
+                                // zoom & center by default
                                 map.setZoomAndCenter(curZoom, e.lnglat);
-                                curZoom -= 1.9;  // 减小缩放倍数
                             }
-                            map.setZoomAndCenter(curZoom, e.lnglat);
                         });
                         // (隐藏窗口 最大缩放)
                         if (maxZoom - 1) infoWindow.close();// console.log('exit', infoWindow);
@@ -343,14 +383,14 @@
             var map;
             var ClusterBubbleClick;
             
-            var drawContainer = document.getElementById('mapContainer');
+            // var drawContainer = document.getElementById('mapContainer');
             var center = new TMap.LatLng(39.953416, 116.380945);
             
             map = new TMap.Map('mapContainer', {
                 zoom: defaultZoom,
-                pitch: 10,
+                pitch: 1,
                 center: center,
-                minZoom: 5,
+                minZoom: 2,
                 maxZoom: 20,
                 draggable: true,
                 scrollable: true,
@@ -363,11 +403,22 @@
                 //         'point'
                 //     ]
                 // },
+                //地图的默认鼠标指针样式
+                draggableCursor: "crosshair",
+ 
+                //拖动地图时的鼠标指针样式
+                draggingCursor: "pointer",
             });
             
             // init markerData.positions LatLng
             markerData.forEach((item)=> {
-                item.position = new TMap.LatLng(item.position[0], item.position[1]);
+                const latlng = item.position;
+                if (Array.isArray(latlng)) {
+                    item.position = new TMap.LatLng(latlng[0], latlng[1]);
+                } else {
+                    const coords = latlng.split(',');
+                    item.position = new TMap.LatLng(coords[0], coords[1]);
+                }
             });
             
             // 创建点聚合
@@ -380,7 +431,6 @@
                 zoomOnClick: true,
                 gridSize: 60,
                 averageCenter: false,
-                
             });
             
             var clusterBubbleList = [];
@@ -398,11 +448,12 @@
             
             // 监听聚合簇变化
             markerCluster.on('cluster_changed', function (e) {
-                // 销毁旧聚合簇生成的覆盖物
-                if (clusterBubbleList.length) {
-                    clusterBubbleList.forEach(function (item) {
-                        item.destroy();
-                    })
+                let getZoom = map.getZoom();
+                // console.log(clusterBubbleList.length, getZoom)
+                if (getZoom <= defaultZoom) map.pitchTo(0);  // reset pitch
+                // 销毁旧聚合簇生成的覆盖物（大屏bug修复：小于最小缩放时停止销毁聚合）
+                if (clusterBubbleList.length && getZoom >= defaultZoom) {
+                    clusterBubbleList.forEach((item)=> item.destroy());
                     clusterBubbleList = [];
                 }
                 markerGeometries = [];
@@ -410,6 +461,7 @@
                 // 根据新的聚合簇数组生成新的覆盖物和点标记图层
                 var clusters = markerCluster.getClusters();
                 clusters.forEach(function (item, index) {
+                    // map.pitchTo(0);
                     if (item.geometries.length > 1) {
                         let clusterBubble = new ClusterBubble({
                             map,
@@ -426,9 +478,11 @@
                             // 平滑缩放
                             // map.panTo(curCenter, 500);
                             // map.zoomTo(curZoom + 1, 500);
+                            // map.pitchTo(curZoom);
                             map.easeTo({
                                 center: curCenter,
                                 zoom: curZoom,
+                                pitch: curZoom * 3
                             });
                         });
                         clusterBubbleList.push(clusterBubble);
@@ -444,6 +498,8 @@
                 
                 // create marker
                 if (marker) {
+                    // 已创建过点标记图层，直接更新数据
+                    marker.setGeometries(markerGeometries);
                     markerGeometries.forEach((item)=> {
                         const currentMarkerData = markerData[item.index];
                         // console.log(currentMarkerData, marker);
@@ -466,8 +522,6 @@
                             // ]);
                         }
                     });
-                    // 已创建过点标记图层，直接更新数据
-                    marker.setGeometries(markerGeometries);
                 } else {
                     // 创建点标记图层
                     marker = new TMap.MultiMarker({
@@ -486,6 +540,7 @@
                         geometries: markerGeometries
                     });
                 }
+                
                 // console.log(markerGeometries)
                 //marker 点击事件
                 marker.on("click", function (evt) {
@@ -493,9 +548,18 @@
                     const geometry = evt.geometry;
                     const markerIndex = geometry.index;
                     const customContent = markerData[markerIndex];
-                    //设置infoWindow
+                    
+                    // 平滑缩放
+                    map.panTo(geometry.position);
+                    // map.easeTo({
+                    //     center: geometry.position,
+                    //     // zoom: map.getZoom() + 0.1,
+                    // });
+                    
+                    //设置 infoWindow
                     infoWindow.open(); //打开信息窗
-                    infoWindow.setPosition(geometry.position);//设置信息窗位置
+                    infoWindow.setPosition(geometry.position); //设置信息窗位置
+                    
                     // clear before set
                     infoWindow.dom.id = '';
                     let context = customContent?.context;
@@ -503,8 +567,19 @@
                         infoWindow.dom.id = 'panorama';
                         context = customContent?.content;
                     }
-                    infoWindow.setContent(context || geometry.position.toString());//设置信息窗内容
-                })
+                    infoWindow.setContent(context || geometry.position.toString()); //设置信息窗内容
+                });
+                
+                //marker 悬浮事件
+                marker.on("hover", (evt)=> evt.originalEvent.target.style.cursor = 'auto');
+                marker.on("mousemove", (evt)=> {
+                    const target = evt.originalEvent.target;
+                    const geometry = evt.geometry;
+                    // const customContent = markerData[geometry.index];
+                    // const context = customContent?.content ? customContent.content : customContent?.context;
+                    target.style.cursor = 'pointer';
+                    target.title = geometry.position.toString(); //context || 
+                });
             });
             
             

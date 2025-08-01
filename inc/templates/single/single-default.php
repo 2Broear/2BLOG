@@ -24,6 +24,8 @@
 	    .bg h1 a{
 	        animation-duration: 1.5s;
 	        /*animation-delay: .5s;*/
+	        filter: url(#x);
+	        font-size: xxx-large;
 	    }
 	    figure.wp-block-gallery > figure{
 	        /*min-height: 222px;*/

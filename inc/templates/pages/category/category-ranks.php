@@ -137,7 +137,11 @@ function the_comment_ranks($t1='常客',$c1='访问较频繁的童鞋',$t2='稀�
                     the_comment_ranks('常客','访问较频繁的童鞋', '稀客','偶尔来访的小伙伴', '游客',''); 
                 ?>
             </div>
-            <?php the_content();  // the_page_content(current_slug()); ?>
+            <?php 
+                the_content();  // the_page_content(current_slug());
+                // ads..
+                adscene_shortcode('adscene_list_context');
+            ?>
             <div id="comment_txt">
                 <?php dual_data_comments(); ?>
             </div>

@@ -60,7 +60,7 @@
                     $third_cmt = get_option('site_third_comments');
                     if($third_cmt=='Valine'){    // 全站加载
                 ?>
-                        <script src="<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info(); ?>"></script>
+                        <script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info(); ?>"></script>
                 <?php
                         if(!$baas){
                 ?>

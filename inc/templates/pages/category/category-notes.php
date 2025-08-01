@@ -10,8 +10,14 @@
     <?php get_head(); ?>
 	<link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/notes.css?v=<?php echo get_theme_info(); ?>" />
 	<style> 
-	    .win-top h5{font-weight: 800;}
-	    article .info span.valine-comment-count:before{margin-right: 3px;opacity: .75}
+	    .win-top h5 {
+	        font-weight: 800;
+	        filter: url(#x);
+	    }
+	    article .info span.valine-comment-count:before {
+	        margin-right: 3px;
+	        opacity: .75;
+	    }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -82,6 +88,7 @@
 				</div>
 				<div class="nav-footer"></div>
 			</div>
+			<?php adscene_shortcode('adscene_sidebar_long'); ?>
 		</div>
 		<div class="win-content main">
 			<div class="notes notes_default" style="max-width: 100%;">
@@ -135,6 +142,8 @@
                 <?php
                     endwhile;
                     wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
+                    // ads..
+                    adscene_shortcode('adscene_list_context');
                 ?>
                 <div class="pageSwitcher">
                     <?php 

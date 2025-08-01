@@ -77,10 +77,6 @@
             font-size: 7rem;
             right: -15%;
         }
-        .resource-windows div{
-            margin: 15px 25px auto auto;
-            /*margin: 5px 25px auto auto;*/
-        }
         @keyframes colorfull{
             0%{
                 filter: hue-rotate(0deg);
@@ -88,6 +84,9 @@
             100%{
                 filter: hue-rotate(360deg);
             }
+        }
+        .banner .banner-inside {
+            height: 250px;
         }
         .banner .banner-inside ul{
             max-height: 268px;
@@ -184,6 +183,16 @@
         .recommendation #recommend-inside span.content-tail aside.personal_stand p {
             opacity: .55;
         }
+        
+        .acg_window-content li.acg_window-content-inside_left {
+            /*display: none;*/
+        }
+        .acg_window-content li.acg_window-content-inside_right {
+            /*width: auto;*/
+            /*max-width: 88%;*/
+            /*position: relative;*/
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -212,7 +221,7 @@
             </div>
             <div class="banner">
                 <div class="banner-inside">
-                    <iframe id="panorama" frameborder="no" style="min-height: 250px"></iframe>
+                    <iframe id="panorama" frameborder="no" style="/*min-height: 250px;*/"></iframe>
                     <!--<ul>-->
                         <?php
                             // $banner_array = explode(',',get_option('site_banner_array',''));
@@ -437,19 +446,19 @@
                     </div>
                     <ul class="acg_window-content">
                     <?php
-                        if($acg_sw){
+                        if($acg_sw) {
                     ?>
                         <li class="acg_window-content-inside_left"<?php if(!$tag_sw) echo ' style="width: 98%;margin: 15px auto;"'; ?>>
-                        	<span id="acg_window-content-inside_left-tInfo">
-                    		    <?php $query_cid = get_option('site_acgnside_cid'); ?>
-                        		<span id="acg_window-content-inside_left-txt">
-                    				<!--<h2>pixivトップ50</h2><a href="javascript:;"> 漫游影视近期动态 </a>-->
-                    				<p>pixivで最もホットな2Dクリエイティブドローイングコレクショントップ<span id="acg_window-content-inside_left-txt_hidden" unselectable="on"> 10 </span> &nbsp;以上.</p>
-                        		</span>
-                        	</span>
+                        <!--	<span id="acg_window-content-inside_left-tInfo">-->
+                    		  <!--  <?php $query_cid = get_option('site_acgnside_cid'); ?>-->
+                        <!--		<span id="acg_window-content-inside_left-txt">-->
+                    				<!--<p>pixivで最もホットな2Dクリエイティブドローイングコレクショントップ<span id="acg_window-content-inside_left-txt_hidden" unselectable="on"> 10 </span> &nbsp;以上.</p>-->
+                        <!--		</span>-->
+                        <!--	</span>-->
                         	<span id="acg_window-content-inside_left-bList">
                         		<ol class="acg_window-content-inside_left-list">
                                     <?php
+                                        // adscene_shortcode('adscene_list_richtext');
                                         $query_slug = !isset(get_category($query_cid)->errors) ? get_category($query_cid)->slug : get_category(1)->slug;
                                         if($baas&&strpos(get_option('site_leancloud_category'), 'category-acg.php')!==false){
                                     ?>
@@ -467,7 +476,7 @@
                                                 })
                                             </script>
                                     <?php
-                                        }else{
+                                        } else {
                                             the_recent_posts($query_cid, false, true, get_option('site_per_posts'));
                                         }
                                     ?>

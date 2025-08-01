@@ -1,4 +1,89 @@
 <?php
+    // 谷歌 Adscene 广告简码
+    if (get_option('site_ads_switcher')) {
+        function custom_adscene_sidebar_square_shortcode($atts) {
+            $autoWidth = isset($atts['autoWidth']) ? $atts['autoWidth'] : true;
+            return '<div class="adscene"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
+                <!-- 方形侧栏 -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-7117066844426823"
+                     data-ad-slot="5163357376"
+                     data-ad-format="auto"
+                     data-full-width-responsive="' . $autoWidth . '"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script></div>';
+        }
+        function custom_adscene_sidebar_long_shortcode($atts) {
+            $autoWidth = isset($atts['autoWidth']) ? $atts['autoWidth'] : true;
+            return '<div class="adscene"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
+                <!-- 纵向侧栏 -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-7117066844426823"
+                     data-ad-slot="9174538970"
+                     data-ad-format="auto"
+                     data-full-width-responsive="' . $autoWidth . '"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script></div>';
+        }
+        function custom_adscene_list_richtext_shortcode($atts) {
+            return '<article class="adscene"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
+                <!-- 富文本列表 -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-format="fluid"
+                     data-ad-layout-key="-e0+6t-24-4z+h3"
+                     data-ad-client="ca-pub-7117066844426823"
+                     data-ad-slot="6093295669"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script></article>';
+        }
+        function custom_adscene_list_context_shortcode($atts) {
+            return '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
+                <!-- 纯文本列表 -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-format="fluid"
+                     data-ad-layout-key="-gw-3+1f-3d+2z"
+                     data-ad-client="ca-pub-7117066844426823"
+                     data-ad-slot="1000751085"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>';
+        }
+        function custom_adscene_article_embed_shortcode($atts) {
+            return '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-7117066844426823"
+                     data-ad-slot="8804053635"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>';
+        }
+        
+        // ads.0.0
+        function add_adscene_shortcodes() {
+            add_shortcode('adscene_sidebar_square', 'custom_adscene_sidebar_square_shortcode');
+            add_shortcode('adscene_sidebar_long', 'custom_adscene_sidebar_long_shortcode');
+            add_shortcode('adscene_list_richtext', 'custom_adscene_list_richtext_shortcode');
+            add_shortcode('adscene_list_context', 'custom_adscene_list_context_shortcode');
+            add_shortcode('adscene_article_embed', 'custom_adscene_article_embed_shortcode');
+        }
+        
+        // if (is_single()) {
+        //     if (get_option('site_ads_arsw')) add_adscene_shortcodes();
+        // } else {
+            add_adscene_shortcodes();
+        // }
+    }
+    
     function custom_video_shortcode($atts){
         $src = isset($atts['src']) ? $atts['src'] : '/';
         $poster = isset($atts['poster']) ? $atts['poster'] : $src;
@@ -80,6 +165,7 @@
         }
         return '<div class="ibox quotes"><div class="iboxes" style="background:url() center center /cover;"><img src="'.get_postimg(0,$pid,true).'" alt="'.$title.'"><h3><a href="'.get_the_permalink($pid).'" target="_blank">'.$title.'</a></h3><div class="content"><p>'.$excerpt.'</p></div><mark>'.$avatar.' '.$author.' '.get_the_time('d/m/Y', $pid).' '.get_tag_list($pid, 1, "/").' | '.getPostViews($pid).' views.</mark></div></div>';
     }
+    
     // 注册短代码
     add_shortcode('custom_video', 'custom_video_shortcode');
     add_shortcode('netease_embed', 'custom_netease_shortcode');
@@ -95,26 +181,4 @@
       );
     }
     add_action('enqueue_block_editor_assets', 'enqueue_block_script');
-    
-    // function register_pandastudio_tips() {
-    //     wp_register_script(
-    //         'pandastudio-tips',
-    //         get_theme_file_uri().'/inc/themes/tips.js',
-    //         array( 'wp-blocks', 'wp-element' )
-    //     );
-     
-    //     wp_register_style(
-    //         'pandastudio-tips',
-    //         get_theme_file_uri().'/inc/themes/tips.css',
-    //         array( 'wp-edit-blocks' )
-    //     );
-     
-    //     register_block_type( 'pandastudio/tips', array(
-    //         'editor_script' => 'pandastudio-tips',
-    //         'editor_style'  => 'pandastudio-tips',
-    //     ) );
-    // }
-    // if (function_exists('register_block_type')) {
-    //     add_action( 'init', 'register_pandastudio_tips' );
-    // }
 ?>

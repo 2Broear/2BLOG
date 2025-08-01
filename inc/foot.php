@@ -79,27 +79,46 @@
                     break;
                 case $acg_temp_id:
                 case cat_is_ancestor_of($acg_temp_id, $cat):
+                case get_cat_by_template('archive','term_id'):
                     if($datadance) {
-                        echo 'dataDancing(document.querySelectorAll(".win-top .counter div"), "h2", -15, 5, "<sup>+</sup>");';
     ?>
-                        // const list = document.querySelectorAll(".win-top .counter div");
-                        // if (list.length > 0) {
-                        //     for (let i=0,listLen=list.length; i<listLen; i++) {
-                        //         let each = list[i],
-                        //             counter = each.querySelector('h2'),
-                        //             limit = parseInt(each.dataset.count);
-                        //         easeCounter(0, limit, 1, 0.5, (num)=> {
-                        //             let counted =parseInt(num);
-                        //             counter.innerHTML = counted + "<sup>+</sup>"; //init counts
-                        //             if (counted >= limit) each.classList.remove('blink');
-                        //         });
-                        //     }
-                        // }
+                        if (window.CSS.registerProperty) {
+                            window.CSS.registerProperty({
+                                name: "--counter-num",
+                                syntax: "<integer>",
+                                inherits: false,
+                                initialValue: 0,
+                            });
+                            document.head.getElementsByTagName('style')[0].textContent += `
+    /*@property --counter-num {
+        syntax: "<integer>";
+        initial-value: 0;
+        inherits: false;
+    }*/
+    @keyframes counts {
+        0% {
+            --counter-num: 0;
+        }
+        100% {
+            --counter-num: var(--data-count);
+        }
+    }
+    .win-top .counter h1,
+    .win-top .counter h2 {
+        transition: --counter-num 1s;
+        counter-reset: counter-num var(--counter-num);
+        animation: counts calc(var(--data-count) * 0.025s) forwards ease-in-out;
+        -webkit-animation: counts calc(var(--data-count) * 0.025s) forwards ease-in-out;
+    }
+    .win-top .counter h1:before,
+    .win-top .counter h2:before {
+        content: counter(counter-num);
+    }`;
+                        } else {
+                            dataDancing(document.querySelectorAll(".win-top .counter div"), "h1", 200, 25);  // dom reflow performance issue
+                        }
     <?php
                     }
-                    break;
-                case get_cat_by_template('archive','term_id'):
-                    if($datadance) echo 'dataDancing(document.querySelectorAll(".win-top .counter div"), "h1", 200, 25);';
                     break;
                 case get_cat_by_template('about','term_id'):
                     if($vdo_poster_sw) echo 'setupVideoPoster(2);';  // 截取设置当前页面所有视频 poster 

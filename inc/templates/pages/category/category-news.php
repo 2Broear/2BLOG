@@ -67,7 +67,7 @@
                                         <?php
                                             $lazyhold = "";
                                             $postimg = get_postimg();
-                                            if($lazysrc!='src'){
+                                            if($lazysrc!='src') {
                                                 $lazyhold = 'data-src="'.$postimg.'"';
                                                 $postimg = $loadimg;
                                             }
@@ -104,6 +104,8 @@
                         <?php
                             endwhile;
                             wp_reset_query();
+                            // ads..
+                            adscene_shortcode('adscene_list_richtext');
                         ?>
 					</div>
 				</div>

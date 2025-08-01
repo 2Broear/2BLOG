@@ -1,4 +1,27 @@
 jQuery(document).ready(function($){
+    
+    function throttle(fn, delay = 1000) {
+        let runing = false;
+        return function(...args) {
+            if (runing) return;
+            runing = true;
+            let timer = setTimeout(function() {
+                fn.apply(this, args);
+                runing = false;
+                timer = null;
+                clearTimeout(timer);
+            }, delay);
+        };
+    }
+    
+    function debouncer (fn, delay = 1000) { //this.#delay
+        let timer;
+        return function(...args) {
+            if(timer) clearTimeout(timer);
+            timer = setTimeout(()=> fn.apply(this, args), delay);
+        };
+    }
+
     function bindEvents(events = 'onclick', parent, ids, callback) {
         if (!parent) {
             console.warn('bindEvents failed', parent);
@@ -32,6 +55,7 @@ jQuery(document).ready(function($){
       };
       return curEl;
     }
+    
     function getParentNode(curPar,tarPar){
         while(curPar && curPar.nodeName.toLowerCase()!=tarPar){
             curPar = curPar.parentNode
@@ -117,36 +141,232 @@ jQuery(document).ready(function($){
 
 
 // ***  ROW JAVASCRIPT FUNCTIONs (AFTER DOCUMENT LOADED) *** //
-
+    
+    bindEvents('onclick', document, '', (t, e)=> {
+        // console.log(t)
+        switch (true) {
+            case t.classList && t.classList.contains('dynamic_dom'):
+                e.stopPropagation();
+                e.preventDefault();
+                const dom = t.dataset.dom || 'IFRAME';
+                const element = document.createElement(dom);
+                if (!t.dataset.src) {
+                    break;
+                }
+                element.src = t.dataset.src;
+                if (dom == 'video' || dom == 'img') element.className = 'upload_preview bgm';
+                if (dom == 'video') {
+                    element.poster = t.dataset.src;
+                    element.setAttribute('preload', 'preload');
+                    element.setAttribute('autoplay', 'autoplay');
+                    element.setAttribute('muted', 'muted');
+                    element.setAttribute('loop', 'loop');
+                    element.setAttribute('x5-video-player-type', 'h5');
+                    element.setAttribute('controlslist', 'nofullscreen nodownload');
+                }
+                if (t.dataset.width) element.width = t.dataset.width;
+                if (t.dataset.height) element.height = t.dataset.height;
+                t.parentNode.appendChild(element);
+                t.remove();
+                console.log('dynamic loaded element', element);
+                break;
+            case t.id === 'updateSchedule':
+                const updateScheduleInput = t.parentNode.querySelector('#updateSchedules');
+                const updateScheduleValue = updateScheduleInput.value;
+                if (confirm(`Updating Scheduled Tasks(scheduled_rss_feeds_updates->${updateScheduleValue})?`)) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', t.dataset.adminUrl, true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    xhr.onload = function () {
+                        if (xhr.status === 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.success) {
+                                t.disabled = true;
+                                alert('updating status: ' + response.data + ' Standby cronjob-redepoly..'); // + ', Locate to rss-feeds now..'
+                                let counter = 3;
+                                t.value = 'Standby ' + counter;
+                                let countdown = setInterval(()=> {
+                                    if (counter <= 1) {
+                                        clearInterval(countdown);
+                                        t.value = 'Schedules updated';
+                                        updateScheduleInput.disabled = false;
+                                        updateScheduleInput.focus();
+                                        return;
+                                    }
+                                    counter--;
+                                    t.value = 'Standby ' + counter;
+                                }, 1000);
+                                // location.replace(location.origin + location.pathname + "?page=" + t.dataset.page);
+                                // location.reload(true);
+                            } else {
+                                console.error('Error:', response.data);
+                            }
+                        } else {
+                            console.error('Request failed with status:', xhr.status);
+                        }
+                    };
+                    xhr.send('action=update_cronjobs&nonce=' + t.dataset.nonce + '&interval=' + updateScheduleValue);
+                }
+                break;
+            case t.id === 'updateDomain':
+                const context = t.value;
+                const options = t.dataset.options;
+                if (!options) {
+                    alert('未选择任何更新项！');
+                    return;
+                }
+                let before = t.dataset.before;
+                let after = t.dataset.after;
+                before = before.substring(before.indexOf('//'), before.length);
+                after = after ? after.substring(after.indexOf('//'), after.length) : before;
+                let update_options = '';
+                options.split(',').forEach((item)=> {
+                    if (item) update_options += item.split('=')[0] + '/';
+                });
+                if (false === confirm(`确认更新（${update_options}）数据库内容：${before}->${after}？`)) {
+                    console.log('user canceled.');
+                    return;
+                }
+                t.value = '等待更新..';
+                t.disabled = true;
+                if (after === before) {
+                    t.value = context;
+                    t.disabled = false;
+                    break;
+                }
+                // console.log(before, after);
+                jQuery.post(t.dataset.url, {
+                    action: 'update_db_data',
+                    before: encodeURIComponent(before),
+                    after: encodeURIComponent(after),
+                    options: encodeURIComponent(options),
+                    _ajax_nonce: t.dataset.nonce,
+                }, function(response, status) {
+                    console.log(response, status);
+                    t.value = '已更新';
+                    if (status !== 'success') {
+                        return;
+                    }
+                    const memcachedUrl = window.location.origin + '/memcached.php';
+                    fetch(memcachedUrl)
+                        .then((res)=>{
+                            t.value = context;
+                            t.disabled = false;
+                            if (res.status !== 200) {
+                                console.log('no memcached flush needed', res);
+                                return;
+                            }
+                            // mark opened window
+                            const memcached = window.open(memcachedUrl, '', 'width=1200,height=800');
+                            if (window.SharedWorker) {
+                                // 连接 Shared Worker
+                                const worker = new SharedWorker("/sworker.js", {
+                                    name: "MySharedWorker", // 设置 Worker 名称
+                                });
+                                worker.port.start();
+                                
+                                // 接收更新
+                                worker.port.onmessage = (e) => {
+                                    console.log(e.data)
+                                    if (e.data === 'stop') {
+                                        console.warn('shared worker stoped, reflush done.');
+                                        // close marked window
+                                        let timer = setTimeout(()=> {
+                                            window.focus();
+                                            // 类 alert 阻塞主线程任务
+                                            if (confirm('数据库已更新，刷新页面？')) window.location.reload();
+                                            memcached.close();
+                                            clearTimeout(timer);
+                                            timer = null;
+                                        }, 1500);
+                                    }
+                                };
+                            }
+                        })
+                        .catch((err)=> {
+                            console.warn(err)
+                        });
+                });
+                break;
+            default:
+                // code
+        }
+    });
+    
     const //switch_tab = document.querySelector(".switchTab"),
           switch_form = document.querySelector("form"),
           blog_settings = document.querySelector(".wrap.settings"),
-          theme_root = document.querySelector(":root"),
-          theme_picker = document.querySelector("input[type=color]");
+          theme_root = document.querySelector(":root");
     if(blog_settings) {
-        theme_picker.onchange = theme_picker.oninput=function(){  //onchange/onpropertychange only active when off-focus
-            theme_root.style.setProperty("--panel-theme", this.value);
-        };
+        
+        //onchange/onpropertychange only active when off-focus
+        bindEvents('oninput', switch_form, '', throttle((t)=> {
+            // console.log(t);
+            if (!t.classList) return;
+            switch (true) {
+                case t.id == 'site_theme':
+                    theme_root.style.setProperty("--panel-theme", this.value);
+                    break;
+                case t.classList.contains('live-update'):
+                    const updateTarget = t.parentNode.querySelector('.update-target');
+                    if (updateTarget) {
+                        if (t.value === updateTarget.dataset.before) {
+                            updateTarget.setAttribute('disabled', '');
+                            break;
+                        }
+                        updateTarget.removeAttribute('disabled');
+                        updateTarget.dataset.after = t.value;
+                    }
+                    break;
+                default:
+                    // console.warn(t);
+            }
+        }, 250));
+        
         // 多选框同步逻辑
         const checkboxes = document.querySelectorAll('.checkbox');
+        function checkboxClear(eachcheck, node, callback) {
+            for(let j=0,echkLen=eachcheck.length;j<echkLen;j++) {
+                const isButtonNode = node.type === 'button';
+                let inputString = isButtonNode ? node.dataset.options : node.value;
+                // decodeURIComponent for ',' fix
+                inputString = decodeURIComponent(inputString);
+                let outputTrim = inputString.replace(/\s*/g,""),  // clear all whitespace
+                    outputEnds = outputTrim.substr(outputTrim.length-1, outputTrim.length);  // last chr
+                if (outputEnds != ',' && outputTrim.length > 0) inputString += ',';  // support IE
+                eachcheck[j].onchange = function() {
+                    // decodeURIComponent for regexp match
+                    this.value = decodeURIComponent(this.value);
+                    node.dataset.options = decodeURIComponent(node.dataset.options);
+                    let clearOutput = isButtonNode ? node.dataset.options.replace(/\s*/g,"") : node.value.replace(/\s*/g,""),  // clear all whitespace
+                        clearString = clearOutput.match(this.value + ',') ? this.value + ',' : this.value;
+                    if (this.checked) {
+                        clearOutput += this.value + ',';
+                    } else {
+                        clearOutput = clearOutput.replace(clearString, '');
+                    }
+                    // console.log(clearOutput)
+                    // re encodeURIComponent
+                    // clearOutput = encodeURIComponent(clearOutput);
+                    // final output
+                    if (isButtonNode) {
+                        node.dataset.options = clearOutput;
+                    } else {
+                        node.value = clearOutput;
+                    }
+                    callback?.(clearOutput);
+                };
+            }
+        }
         for(let i=0,ckbLen=checkboxes.length;i<ckbLen;i++){
             let eachbox = checkboxes[i],
                 eachcheck = eachbox.querySelectorAll('input[type=checkbox]'),
-                outputText = eachbox.parentNode.querySelector('input[type=text]');
-            for(let j=0,echkLen=eachcheck.length;j<echkLen;j++){
-                // let checkArray = [outputText.value];
-                let outputTrim = outputText.value.replace(/\s*/g,""),  // clear all whitespace
-                    outputEnds = outputTrim.substr(outputTrim.length-1, outputTrim.length);  // last chr
-                outputEnds!=','&&outputTrim.length>0 ? outputText.value += ',' : false;  // support IE
-                // !outputText.value.replace(/\s*/g,"").endsWith(',')&&outputText.value.length>0 ? outputText.value += ',' : false;  // check if endsWith ',' (not compatible ie)
-                eachcheck[j].onchange=function(){
-                    // checkArray.push(this.value+' , ');  console.log(checkArray);
-                    let clearOutput = outputText.value.replace(/\s*/g,""),  // clear all whitespace
-                        clearString = clearOutput.match(this.value+',') ? this.value+',' : this.value;
-                    this.checked ? clearOutput += this.value+',' : clearOutput = clearOutput.replace(clearString, '');  // ',' replace logic
-                    outputText.value = clearOutput;  // final output
-                };
-            }
+                outputText = eachbox.parentNode.querySelector('input[type=text]'),
+                outputButton = eachbox.parentNode.querySelector('input[type=button]');
+            if (outputButton)
+                checkboxClear(eachcheck, outputButton);
+            else 
+                checkboxClear(eachcheck, outputText);
         }
         // 即时更新 select 图片
         const select_images = document.querySelectorAll(".select_images"),
@@ -367,72 +587,6 @@ jQuery(document).ready(function($){
         document.querySelector("form ."+t.id).classList.add(switchcls);  // clearClass then show
     });
     
-    bindEvents('onclick', document, '', (t, e)=> {
-        // console.log(t)
-        if (t.classList && t.classList.contains('dynamic_dom')) {
-            e.stopPropagation();
-            e.preventDefault();
-            const dom = t.dataset.dom || 'IFRAME';
-            const element = document.createElement(dom);
-            element.src = t.dataset.src;
-            if (dom == 'video' || dom == 'img') element.className = 'upload_preview bgm';
-            if (dom == 'video') {
-                element.poster = t.dataset.src;
-                element.setAttribute('preload', 'preload');
-                element.setAttribute('autoplay', 'autoplay');
-                element.setAttribute('muted', 'muted');
-                element.setAttribute('loop', 'loop');
-                element.setAttribute('x5-video-player-type', 'h5');
-                element.setAttribute('controlslist', 'nofullscreen nodownload');
-            }
-            if (t.dataset.width) element.width = t.dataset.width;
-            if (t.dataset.height) element.height = t.dataset.height;
-            t.parentNode.appendChild(element);
-            t.remove();
-            console.log('dynamic loaded element', element);
-        }
-        
-        if (t.id === 'updateSchedule') {
-            const confirms = confirm(`Updating Scheduled Tasks(scheduled_rss_feeds_updates)?`);
-            if (confirms) {
-                const updateScheduleInput = document.querySelector('#updateSchedules');
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', t.dataset.adminUrl, true);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.onload = function () {
-                    if (xhr.status === 200) {
-                        var response = JSON.parse(xhr.responseText);
-                        if (response.success) {
-                            t.disabled = true;
-                            alert('updating status: ' + response.data + ' Standby cronjob-redepoly..'); // + ', Locate to rss-feeds now..'
-                            let counter = 3;
-                            t.value = 'Standby ' + counter;
-                            let countdown = setInterval(()=> {
-                                if (counter<=1) {
-                                    clearInterval(countdown);
-                                    t.value = 'Schedules updated';
-                                    updateScheduleInput.disabled = false;
-                                    updateScheduleInput.focus();
-                                    return;
-                                }
-                                counter--;
-                                t.value = 'Standby ' + counter;
-                            }, 1000);
-                            // location.replace(location.origin + location.pathname + "?page=" + t.dataset.page);
-                            // location.reload(true);
-                        } else {
-                            console.error('Error:', response.data);
-                        }
-                    } else {
-                        console.error('Request failed with status:', xhr.status);
-                    }
-                };
-                xhr.send('action=update_cronjobs&nonce=' + t.dataset.nonce + '&interval=' + updateScheduleInput.value);
-            }
-        }
-    });
-    
-    
     // rss fetch feeds reloader
     const contents = document.querySelector('#contents');
     const reloader = 'reloadFeeds';
@@ -450,7 +604,7 @@ jQuery(document).ready(function($){
                 if (!confirm(`重新拉取 ${dataset.cat} 中所有 rss 数据（${dataset.limit}条）？`)) return;
                 t.textContent = `fetching ${dataset.cat}...`;
                 t.classList.remove(reloader);
-                console.log('loading url: ', dataset.api);
+                console.log(`loading url: ${dataset.api}`);
                 
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', `${dataset.api}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, true);
@@ -465,8 +619,16 @@ jQuery(document).ready(function($){
                     container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ xhr.responseText }`;
                     console.log('data fullfilled.');
                     alert(`${dataset.cat} rss data loaded.`);
+                  } else {
+                        t.classList.add(reloader);
+                        t.textContent = `reload failed, reload ${dataset.cat}?`;
                   }
                 };
+                xhr.onerror = function(err) {
+                    console.warn(err);
+                    t.classList.add(reloader);
+                    t.textContent = `reload failed, reload ${dataset.cat}?`;
+                }
                 xhr.send();
                 return;
                 // fetch(`${dataset.api}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, { method: 'GET', })

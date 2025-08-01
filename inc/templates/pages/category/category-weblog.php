@@ -120,7 +120,7 @@
                             'posts_per_page' => $async_loads,  //use left_query counts
                         )));
                         // Empty card if null reponsed
-                        if(!$log_query->have_posts()) echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t="'.current_slug(true).'"></i><h1> 这里，<b>空空的！</b> </h1></div>';  //<b>'.current_slug(true).'</b> 
+                        if(!$log_query->have_posts()) echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t="'.current_slug(true).'"></i><h1> 这里，<b>空空的~</b> </h1></div>';  //<b>'.current_slug(true).'</b> 
                         while ($log_query->have_posts()):
                             $log_query->the_post();
                             // $post_feeling = get_post_meta($post->ID, "post_feeling", true);
@@ -171,6 +171,8 @@
                 <?php       
                         endwhile;
                         wp_reset_query();
+                        // ads..
+                        adscene_shortcode('adscene_list_context');
                     }
                     $async_array = explode(',', get_option('site_async_includes'));
                     if(get_option('site_async_switcher')&&in_array($weblog_slug, $async_array)){
@@ -185,7 +187,7 @@
                         $posts_count = $log_query->post_count;
                         $disable_statu = $posts_count==$all_count ? ' disabled' : false; //>=
                         echo $baas ? '<div class="weblog-tree-etc load"><button>加载更多</button></div>' : '<div class="load'.$disable_statu.'"><button class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cat.'" data-cat="'.$weblog_slug.'" data-nonce="'.wp_create_nonce(current_slug()."_posts_ajax_nonce").'" title="加载更多">加载更多</button></div>';
-                    }else{
+                    } else {
                 ?>
                         <div class="pageSwitcher">
                             <?php

@@ -75,23 +75,23 @@
                 </td>
             </tr>
             <tr class="form-field">
-                <th valign="top" scope="row"><label for="term_fields[seo_title]"><?php _e('Page Title'); ?></label></th>
+                <th valign="top" scope="row"><label for="seo_title"><?php _e('Page Title'); ?></label></th>
                 <td>
-                    <input type="text" size="40" value="<?php echo esc_attr(get_term_meta($term->term_id, 'seo_title', true)); ?>" id="term_fields[seo_title]" name="term_fields[seo_title]"><br/>
+                    <input type="text" size="40" value="<?php echo esc_attr(get_term_meta($term->term_id, 'seo_title', true)); ?>" id="seo_title" name="seo_title"><br/>
                     <span class="title"><?php _e('SEO Title Options, edit or leave it. (note that this will override the whole "title")'); ?></span>
                 </td>
             </tr>
             <tr class="form-field">
-                <th valign="top" scope="row"><label for="term_fields[seo_keywords]"><?php _e('Page Keywords'); ?></label></th>
+                <th valign="top" scope="row"><label for="seo_keywords"><?php _e('Page Keywords'); ?></label></th>
                 <td>
-                    <input type="text" size="40" value="<?php echo esc_attr(get_term_meta($term->term_id, 'seo_keywords', true)); ?>" id="term_fields[seo_keywords]" name="term_fields[seo_keywords]"><br/>
+                    <input type="text" size="40" value="<?php echo esc_attr(get_term_meta($term->term_id, 'seo_keywords', true)); ?>" id="seo_keywords" name="seo_keywords"><br/>
                     <span class="keywords"><?php _e('SEO Keywords Options, edit or leave it.'); ?></span>
                 </td>
             </tr>
             <tr class="form-field">
-                <th valign="top" scope="row"><label for="term_fields[seo_description]"><?php _e('Page Description'); ?></label></th>
+                <th valign="top" scope="row"><label for="seo_description"><?php _e('Page Description'); ?></label></th>
                 <td>
-                    <textarea class="large-text" cols="50" rows="5" id="term_fields[seo_description]" name="term_fields[seo_description]"><?php echo esc_textarea(get_term_meta($term->term_id, 'seo_description', true)); ?></textarea><br/>
+                    <textarea class="large-text" cols="50" rows="5" id="seo_description" name="seo_description"><?php echo esc_textarea(get_term_meta($term->term_id, 'seo_description', true)); ?></textarea><br/>
                     <span class="description"><?php _e('SEO Desc Options, edit or leave it.'); ?></span>
                 </td>
             </tr>
@@ -268,7 +268,7 @@
                     /*will-change: transform;*/
                 }
             }
-            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{right:-80px}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{width: 360px;top: 55px;border-radius: 50px;transition-duration: .55s;/*padding: 5px;*/}.switchTab{width:100%;transition:all .35s ease;margin:0 auto;padding:10px 0;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active{color:var(--panel-theme);/*background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)*/}.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px auto;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;/*text-shadow:1px 1px 0 white;*/}h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0!important}
+            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{border-radius: 50px;width:100%;max-width:max-content;padding:10px 25px;transition:all .35s ease;margin:0 auto;top:52px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active{color:var(--panel-theme);/*background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)*/}.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;/*text-shadow:1px 1px 0 white;*/}h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0!important}
         </style>
         <!--<h1 style="text-align: center;font-size: 4rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> RSS <b>Feeds</b></h1>-->
         <h1 style="text-align: center;font-size: 4rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b>RSS Feeds</b></h1>
@@ -485,6 +485,7 @@
             register_setting( 'baw-settings-group', 'site_links_rss_alive_state' );
         register_setting( 'baw-settings-group', 'site_mbit_array' );
         register_setting( 'baw-settings-group', 'site_mbit_result_array' );
+        register_setting( 'baw-settings-group', 'site_animated_scrolling_switcher' );
         register_setting( 'baw-settings-group', 'site_animated_counting_switcher' );
         
         register_setting( 'baw-settings-group', 'site_memos_switcher' );
@@ -611,7 +612,7 @@
         
         register_setting( 'baw-settings-group', 'site_ads_switcher' );
         // if(get_option('site_ads_switcher')){
-            register_setting( 'baw-settings-group', 'site_ads_init' );
+            // register_setting( 'baw-settings-group', 'site_ads_init' );
             register_setting( 'baw-settings-group', 'site_ads_arsw' );
         // }
         register_setting( 'baw-settings-group', 'site_smtp_switcher' );
@@ -679,6 +680,7 @@
         'about' => get_cat_by_template('about'),
         '2bfriends' => get_cat_by_template('2bfriends'),
         'download' => get_cat_by_template('download'),
+        'footprints' => get_cat_by_template('footprints'),
         'archive' => get_cat_by_template('archive'),
         'ranks' => get_cat_by_template('ranks'),
         'privacy' => get_cat_by_template('privacy'),
@@ -792,10 +794,10 @@
                     /*will-change: transform;*/
                 }
             }
-        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(90deg,rgba(255, 255, 255, 0) 25%, currentColor 255%)}label:hover input[type=checkbox]{box-shadow:0 0 0 1px #2271b1}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:233px;height:18px;cursor:pointer;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(180deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(-90deg, #f5f7f9 0, #fff);}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text-disabled{display:none;}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translate(-50%,-50%);z-index:9;transition:right .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(90deg,rgba(255, 255, 255, 0) 25%, currentColor 255%)}label:hover input[type=checkbox]{box-shadow:0 0 0 1px #2271b1}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{opacity:.75};input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:233px;height:18px;cursor:pointer;}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 5px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(180deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(-90deg, #f5f7f9 0, #fff);}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text-disabled{display:none;}.form-table td input.array-text{box-shadow:0 0 0 1px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .35s ease;}p.submit:first-child input:hover{background:white;padding-left:25px!important;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:-webkit-linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:linear-gradient(45deg,dodgerblue 0%, #2271b1 100%);background:#222;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{background:mediumpurple;border-color:transparent}.upload_button{margin-left:10px!important;background:black;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;color: white;font-size: smaller;text-align: center;background: rgb(0 0 0 / 52%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius:5px;position:relative;overflow:hidden;}label.upload.upload_preview_list{margin-right: 0}
-            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{right:-80px;}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{width: 360px;top: 55px;border-radius: 50px;transition-duration: .55s;/*padding: 5px;*/}.switchTab{width:100%;transition:all .35s ease;margin:0 auto;padding:10px 0;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active{color:var(--panel-theme);/*background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)*/}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li.active,.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px auto;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;/*text-shadow:1px 1px 0 white;*/}
+            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{border-radius: 50px;width:100%;max-width:max-content;padding:10px 25px;transition:all .35s ease;margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active{color:var(--panel-theme);/*background:white;box-shadow:0 0 0 2px whitesmoke, 0 0 0 3px var(--panel-theme)*/}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li.active,.switchTab li:hover{color:white;background:var(--panel-theme);box-shadow:0 0 0 2px #fff, 0 0 0 3px var(--panel-theme);}.switchTab li{display:inline-block;padding:7px 14px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;/*text-shadow:1px 1px 0 white;*/}
             .smtp{margin-left:10px;vertical-align:middle;}
             #loading.responsed{-webkit-animation-duration:.35s!important;animation-duration:.35s!important;}
             #loading.responsing{-webkit-animation:rotateloop .5s infinite linear;animation:rotateloop .5s infinite linear}
@@ -805,9 +807,13 @@
             #loading:before{-webkit-box-sizing:border-box;box-sizing:border-box;content:"";position:absolute;display:inline-block;top:0px;left:50%;margin-left:-20px;width:40px;height:40px;border:6px double #a0a0a0;border-top-color:transparent!important;border-bottom-color:transparent!important;border-radius:50%;}
             @keyframes rotateloop{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg);}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg);}
             }
+            .form-table .checkboxes,
             .form-table .checkbox{display:inline-block;border-radius:5px;padding:5px 0 5px 15px;}
+            .form-table .checkboxes input[type=checkbox],
             .form-table .checkbox input[type=checkbox]{margin:auto}
+            .form-table .checkboxes label,
             .form-table .checkbox label{display:inline-block;padding:1px 15px 0 5px;font-weight:bold;font-size:smaller}
+            .form-table .checkboxes label:last-of-type,
             .form-table .checkbox label:last-of-type{padding-right:5px;}
             #wpcontent{padding:0!important}
             .wrap.settings hr,.wrap.settings{margin:0}
@@ -844,8 +850,9 @@
             ul.cached_post_list li{list-style-type:none;display:inline-block;margin-left:5px;margin-bottom:2px;border:1px solid #ddd;padding:5px 10px;border-radius:8px;cursor:pointer;text-align:center;/*white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:38px;position:relative*/}
             .dynamic_dom {display: inline-block;margin-bottom: 15px;text-decoration: underline;position:relative;z-index:9;cursor: help;}
             .upload .dynamic_dom {margin: auto;padding: 10px 15px;background: #f0f0f1;}
+            .update-target {margin: auto 5px; min-height: 29px;cursor: help;}
         </style>
-        <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>THEME</b><p style="letter-spacing:normal;margin-bottom:auto;"> 主题部分页面提供 Leancloud 第三方 bass 数据储存服务 </p></h1>
+        <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>&#60;&#47;&#62;</b><p style="letter-spacing:normal;margin-bottom:auto;"> 主题部分页面提供 Leancloud 第三方 baas 数据储存服务 </p></h1>
         <!--<hr/>-->
         <div class="switchTab">
             <ul>
@@ -1246,7 +1253,7 @@
                                 $value = get_option($opt);
                                 $preset = 12;  //默认开启（时）间
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                echo '<p class="description" id="site_rss_feeds_timeout_label"><a href="' . admin_url('admin.php?page=' . $GLOBALS['RSS_PAGE_NAME']) . '" target="_self">RSS 友链订阅</a> 计划自动更新 feeds 频率（默认12小时/一天更新两次，修改<i><s>前</s><b>后</b></i>请 <input id="updateSchedule" style="font-size: 12px;" type="button" value="刷新定时任务" data-api="' . get_api_refrence('rss', true) . '" data-page="' . $GLOBALS['RSS_PAGE_NAME'] . '" data-admin-url="' . admin_url('admin-ajax.php') . '" data-nonce="' . wp_create_nonce("update_cronjobs") . '"></p><input id="updateSchedules" type="number" min="1" max="" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>'; //以解锁操作
+                                echo '<p class="description" id="site_rss_feeds_timeout_label"><a href="' . admin_url('admin.php?page=' . $GLOBALS['RSS_PAGE_NAME']) . '" target="_self">RSS 友链订阅</a> 计划自动更新 feeds 频率（默认12小时/一天更新两次，修改后可刷新任务</p><input id="updateSchedule" class="update-target" style="font-size: 12px;" type="button" value="刷新定时任务" data-before="' . $value . '" data-api="' . get_api_refrence('rss', true) . '" data-page="' . $GLOBALS['RSS_PAGE_NAME'] . '" data-admin-url="' . admin_url('admin-ajax.php') . '" data-nonce="' . wp_create_nonce("update_cronjobs") . '" disabled />&nbsp;<input id="updateSchedules" class="small-text live-update" type="number" min="1" max="" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>'; //以解锁操作
                             ?>
                         </td>
                     </tr>
@@ -1382,17 +1389,42 @@
                         // if(get_option('site_cdn_switcher')){
                     ?>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $cdn = get_option('site_cdn_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 图片加速域名</th>
+                                <td>
+                                    <p class="description" id="site_cdn_img_label">媒体库图片文件（存放于 wp-content/uploads 路径，此项需在提交修改前 <i>更新数据库</i></p>
+                                    <div class="checkbox">
+                                        <?php
+                                            $options = array(
+                                                ['options', 'option_value'],     // wp_options
+                                                ['termmeta', 'meta_value'],      // wp_termmeta
+                                                ['postmeta', 'meta_value'],      // wp_postmeta
+                                                ['posts', 'post_content'],       // wp_posts
+                                                ['comments', 'comment_content'], // wp_comments
+                                            );
+                                            $option_str = '';
+                                            foreach ($options as $option) {
+                                                $option_table = $option[0];
+                                                $option_row = $option[1];
+                                                $option_val = $option_table . '=' . $option_row;
+                                                $option_str .= $option_val . ','; //'"' . $option_table . '",';
+                                                // $option_arr = urlencode(json_encode($option));
+                                                echo '<input id="site_update_'.$option_table.'" class="" type="checkbox"  value="'.$option_val.'" checked /><label for="site_update_'.$option_table.'">'.$option_table.'</label>';
+                                            }
+                                        ?>
+                                    </div>
+                                    <?php 
+                                        $site_cdn_img = get_option('site_cdn_img');
+                                        $default_options = $option_str; //urlencode(json_encode($options));
+                                        echo '<input id="updateDomain" class="update-target" type="button" value="更新数据库" disabled data-options="' . $default_options . '" data-before="' . $site_cdn_img . '" data-url=" ' . admin_url('admin-ajax.php') . '" data-nonce="' . wp_create_nonce('dbupdate_ajax_nonce') . '" title="提交修改后可在此单独更新修改前旧值为最新" />';
+                                    ?>
+                                    <input type="text" name="site_cdn_img" id="site_cdn_img" class="middle-text live-update" placeholder="site_cdn_img" value="<?php echo $site_cdn_img; ?>"/>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $cdn; ?>">
                                 <th scope="row">— 文件加速域名</th>
                                 <td>
                                     <p class="description" id="site_cdn_src_label">可选项，网站cdn（css、js）链接/标头（默认使用当前主题目录，可用于安全性考量</p>
                                     <input type="text" name="site_cdn_src" id="site_cdn_src" class="middle-text" placeholder="site_cdn_src" value="<?php echo get_option( 'site_cdn_src', '' ); ?>"/>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $cdn; ?>">
-                                <th scope="row">— 图片加速域名</th>
-                                <td>
-                                    <p class="description" id="site_cdn_img_label">媒体库图片文件（存放于 wp-content/uploads 路径</p>
-                                    <input type="text" name="site_cdn_img" id="site_cdn_img" class="middle-text" placeholder="site_cdn_img" value="<?php echo get_option( 'site_cdn_img', '' ) ?>"/>
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $cdn; ?>">
@@ -2322,7 +2354,7 @@
                             <?php
                                 $opt = 'site_footprint_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">高德 足迹地图（支持携带参数 iframe 全景</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:blue" class="btn">足迹地图</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">聚合点足迹地图（tip: 将坐标数据及全景数据留空可恢复默认值</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:blue" class="btn">足迹地图</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -2386,7 +2418,7 @@ var points = [
     {
         lnglat: "39.957363077042,116.412789588355",
         thumbnail: "//img.2broear.com/2025/06/front.webp",
-        content: `<iframe src="//node.2broear.com/indexs.html?data=${encodedTextureString}" frameborder="no" width="500" height="200"></iframe>`,
+        content: `<iframe src="//node.2broear.com/?data=${encodedTextureString}" frameborder="no" width="500" height="200"></iframe>`,
         context: "东城家园",
         district: "东城区",
         city: "北京",
@@ -2404,28 +2436,28 @@ var district = {
 //配置标记点对象数组
 const markerData = [
     {
-        position: [39.953416,116.480945],
-        content: `<iframe src="//node.2broear.com?data=${encodedTextureString}" frameborder="no" width="500" height="200"></iframe>`,
+        position: "39.953416,116.480945",
+        content: `<iframe src="//node.2broear.com/?data=${encodedTextureString}" frameborder="no" width="500" height="200"></iframe>`,
         context: "",
     },
     {
-        position: [39.984104,116.407503],
+        position: "39.984104,116.407503",
         content: `<h2>Content</h2><p>overwrite context to content</p><img src="//img.2broear.com/2025/06/front.webp" />`,
         context: "test_thumbnail",
     },
     {
-        position: [39.908802,116.397502],
+        position: "39.908802,116.397502",
         content: "",
         context: "",
     },
 ];';
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="">手动填写数据源，自动插入上方坐标数据之上（示例数据已预设，points：标点，district：索引，content 参数支持嵌入 iframe 标签</p><p>注意：此项预设数据（留空）随地图类型改变而改变！</p><a class="dynamic_dom" data-dom="iframe" data-src="https://lbs.qq.com/tool/getpoint/get-point.html" data-width="100%" data-height="400" title="点击动态加载坐标拾取器">打开坐标拾取器（TMap）</a><textarea name="'.$opt.'" id="'.$opt.'" rows="10" style="width: 100%;">'.$preset.'</textarea>'; //https://lbs.amap.com/tools/picker
+                                        echo '<p class="description" id="">手动填写数据源，自动插入上方坐标数据之上（示例数据已预设，points：标点，district：索引，content 参数支持嵌入 iframe 标签</p><p>注意：此项预设数据（留空）随地图类型改变而改变！</p><a class="dynamic_dom" data-dom="iframe" data-src="//lbs.qq.com/tool/getpoint/get-point.html" data-width="100%" data-height="500" title="点击加载坐标拾取器">坐标拾取器（TMap）</a><textarea name="'.$opt.'" id="'.$opt.'" rows="10" style="width: 100%;">'.$preset.'</textarea>'; //https://lbs.amap.com/tools/picker
                                     ?>
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $footprint; ?>">
-                                <th scope="row">— 全景预览数据（可选）</th>
+                                <th scope="row">— 全景数据列表（可选）</th>
                                 <td>
                                     <?php
                                         $opt = 'site_footprint_panorama_data';
@@ -2899,6 +2931,16 @@ const maps = {
                         </td>
                     </tr>
                     <tr valign="top">
+                        <th scope="row">滚动动画</th>
+                        <td>
+                            <?php
+                                $opt = 'site_animated_scrolling_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">全站列表数据滚动渐进式加载动画</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:cadetblue" class="btn">滚动动画</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
                         <th scope="row">计数动画</th>
                         <td>
                             <?php
@@ -3048,12 +3090,12 @@ const maps = {
                 <h1><b class="num" style="border-color:hotpink;box-shadow:-5px -5px 0 rgb(255 105 180 / 18%);">04</b>边栏设置<p class="en">SIDEBAR SETTINGS</p></h1>
                 <table class="form-table sidebar">
                     <tr valign="top">
-                        <th scope="row">Google 广告</th>
+                        <th scope="row">Google Adscene</th>
                         <td>
                             <?php
                                 $opt = 'site_ads_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_ads_switcher_label">谷歌广告（开启后需填写初始化代码</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color: orangered;" class="btn">Google Ads</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_ads_switcher_label">谷歌广告（开启后前往 "/inc/wp-blocks.php" 修改全站初始化广告代码：方形侧栏/纵向侧栏/富文本列表/纯文本列表</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color: orangered;" class="btn">Google Adsense</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -3061,19 +3103,7 @@ const maps = {
                         // if(get_option('site_ads_switcher')){
                     ?>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $ads = get_option('site_ads_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— Adsense 初始化代码</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_ads_init';
-                                        $value = get_option($opt);
-                                        $preset = "Initialization Code.";
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<textarea class="codeblock" name="'.$opt.'" id="'.$opt.'">'.$preset.'</textarea>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $ads; ?>">
-                                <th scope="row">— 文章页启用</th>
+                                <th scope="row">— 启用文章页广告</th>
                                 <td>
                                     <?php
                                         $opt = 'site_ads_arsw';
@@ -3086,10 +3116,22 @@ const maps = {
                                         }else{
                                             $status = $value ? "checked" : "check";
                                         };
-                                        echo '<label for="'.$opt.'"><p class="description" id="">默认开启（在文章内页侧边栏启用谷歌广告位</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">启用文章页广告</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">默认开启（文章内页尾部广告位</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">文章页广告</b></label>';
                                     ?>
                                 </td>
                             </tr>
+                            <!--<tr valign="top" class="child_option dynamic_opts <?php echo $ads; ?>">-->
+                            <!--    <th scope="row">— Adsense 初始化代码</th>-->
+                            <!--    <td>-->
+                                    <?php
+                                        // $opt = 'site_ads_init';
+                                        // $value = get_option($opt);
+                                        // $preset = "Initialization Code.";
+                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        // echo '<textarea class="codeblock" name="'.$opt.'" id="'.$opt.'">'.$preset.'</textarea>';
+                                    ?>
+                            <!--    </td>-->
+                            <!--</tr>-->
                     <?php
                         // }
                     ?>
@@ -3251,7 +3293,7 @@ const maps = {
                             <?php
                                 $opt = 'site_bottom_nav';  //unique str
                                 $value = get_option($opt);
-                                $options = array($templates_info['archive'], $templates_info['privacy']); //array('privacy','archives');
+                                $options = array($templates_info['archive'], $templates_info['privacy'], $templates_info['footprints']); //array('privacy','archives');
                                 if(!$value){
                                     $preset_str = $options[0]->slug.','.$options[1]->slug.',';
                                     update_option($opt, $preset_str );
@@ -3510,7 +3552,7 @@ const maps = {
                                 $value = get_option($opt);  //默认填充数据
                                 $preset = 'Art Design | Coding | Documents | Social Media | Tech Support';  //默认填充数据
                                 if(!$value) update_option($opt, $preset);else $preset=$value;
-                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="large-text" value="'.$preset.'">';
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="'.$preset.'">';
                             ?>
                         </td>
                     </tr>

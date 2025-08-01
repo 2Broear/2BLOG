@@ -51,20 +51,9 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
         .archive-tree ul:hover{
             /*max-height: 368px;*/
         }
-        @keyframes blinker {
-            0% {
-                opacity: 1;
-            }
-            50% {
-                opacity: .5;
-            }
-            100% {
-                opacity: 1;
-            }
-        }
         div.blink{
-            animation: blinker .5s infinite alternate ease;
-            -webkit-animation: blinker .5s infinite alternate ease;
+            /*animation: blinker .5s infinite alternate ease;*/
+            /*-webkit-animation: blinker .5s infinite alternate ease;*/
         }
         .stats a:hover{
             color: var(--theme-color);
@@ -72,6 +61,15 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
         .stats a{
             color: inherit;
             text-decoration: underline;
+        }
+        /**
+        * experimental fetures
+        * @property --counter-num
+        * @overwrite animation
+        **/
+        .win-top .counter h2 {
+            /*animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);*/
+            /*-webkit-animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);*/
         }
     </style>
 </head>
@@ -108,7 +106,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                             $blink = get_option('site_animated_counting_switcher') ? ' blink' : false;
                             foreach ($archive_yearly as $archive){
                                 $counts = $archive['count'];
-                                $output .= '<div class="'.$blink.'" data-count="'.$counts.'"><a href="'.$archive['link'].'" rel="nofollow"><b>'.$archive['title'].'</b><h1>'.$counts.'</h1><p>篇发布记录</p></a></div>';
+                                $output .= '<div class="'.$blink.'" data-count="'.$counts.'"><a href="'.$archive['link'].'" rel="nofollow"><b>'.$archive['title'].'</b><h1 data-count="'.$counts.'" style="--data-count:'.$counts.'"></h1><p>篇发布记录</p></a></div>'; //'.$counts.'
                             }
                             if($output_sw) update_option('site_archive_count_cache', wp_kses_post($output));
                             // unset($archive_yearly);
@@ -347,6 +345,8 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                     }
                 }
                 the_archive_lists();
+                // ads..
+                adscene_shortcode('adscene_list_context');
             ?>
             <div id="comment_txt" class="wow fadeInUp" data-wow-delay="0.25s">
                 <?php 

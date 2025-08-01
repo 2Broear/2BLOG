@@ -115,9 +115,9 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                 opacity: 1;
             }
         }
-        div.blink{
-            animation: blinker .5s infinite alternate ease;
-            -webkit-animation: blinker .5s infinite alternate ease;
+        div.blink {
+            /*animation: blinker .5s infinite alternate ease;*/
+            /*-webkit-animation: blinker .5s infinite alternate ease;*/
         }
         /***  decrease 3d layers(cancelable)  ***/
         .rcmd-boxes .info .inbox,
@@ -174,6 +174,15 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         .rcmd-boxes .fade-item .inbox-clip:first-child {
             margin: 55px auto 35px!important;
         }
+        /**
+        * experimental fetures
+        * @property --counter-num
+        * @overwrite animation
+        **/
+        .win-top .counter h2 {
+            animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);
+            -webkit-animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -227,14 +236,14 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                                             $dataCls = ' blink';
                                             $cat_num = '0';
                                         }
-                                        $output .= '<div class="'.$cat_slug.$dataCls.'" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2>'.$cat_num.'<sup>+</sup></h2><p>'.$the_cat->name.'/'.strtoupper($cat_slug).'</p></a></div>';
+                                        $output .= '<div class="'.$cat_slug.$dataCls.'" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2 style="--data-count:'.$cat_count.'"><sup>+</sup></h2><p>'.$the_cat->name.'/'.strtoupper($cat_slug).'</p></a></div>'; //'.$cat_num.'
                                     }
                                     if($output_sw) update_option('site_acg_stats_cache', wp_kses_post($output));
                                 }
                             }else{
                                 $the_cat = get_category($cat);
                                 $cat_count = $the_cat->count;
-                                $output .= '<div class="" data-count='.$cat_count.'><h2 class="single">'.$cat_count.'<sup>+</sup></h2><p>'.$the_cat->name.'/'.$the_cat->slug.'</p></div>';
+                                $output .= '<div class="" data-count='.$cat_count.'><h2 class="single" style="--data-count:'.$cat_count.'"><sup>+</sup></h2><p>'.$the_cat->name.'/'.$the_cat->slug.'</p></div>'; //'.$cat_count.'
                             }
                             echo wp_kses_post($output);
                         }

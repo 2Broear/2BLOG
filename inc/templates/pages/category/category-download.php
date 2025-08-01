@@ -65,7 +65,7 @@ function get_download_posts($cats, $order=1){
                 endwhile;
                 wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
                 unset($post, $lazysrc, $loadimg);
-            $output .= '</ul></div></div></div>';
+            $output .= '</ul></div></div>' . adscene_shortcode('adscene_sidebar_square', true) . '</div>';
         }
     };
     return $output;
@@ -82,7 +82,9 @@ function get_download_posts($cats, $order=1){
             padding: 0 15px;
             box-sizing: border-box;
         }
-        .scroll-inform{padding:0 15px}
+        .scroll-inform {
+            padding: 0 15px;
+        }
         .download_boxes .dld_boxes{
             /*width: calc(100%/3.03)!important;*/
         }
@@ -114,7 +116,7 @@ function get_download_posts($cats, $order=1){
                     if(!empty($cats) && current_slug()==$preslug){
                         if(!$output || !$output_sw){
                             for($i=1;$i<4;$i++) $output .= '<div class="dld_boxes">'.get_download_posts($cats, $i).'</div>';
-                            if($output_sw) update_option('site_download_list_cache', wp_kses_post($output));
+                            if($output_sw) update_option('site_download_list_cache', $output); //wp_kses_post($output)
                         }
                     }else{
                         $term_order = get_term_meta($cat, 'seo_order', true);
@@ -124,7 +126,7 @@ function get_download_posts($cats, $order=1){
                 }else{
                     $output = '<div class="dld_boxes"><div class="dld_box adobe"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>Adobe 2020/2021</h3><i>ADOBE</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div><div class="dld_box soft"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>桌面软件</h3><i>SOFT</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div></div><div class="dld_boxes"><div class="dld_box p2p"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>下载软件</h3><i>P2P</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div><div class="dld_box tool"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>实用工具</h3><i>TOOLS</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div><div class="dld_box media"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>视频媒体</h3><i>MEDIA</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div></div><div class="dld_boxes"><div class="dld_box tools"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>辅助工具</h3><i>SORDUM</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div><div class="dld_box crack"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>破解工具</h3><i>CRACK</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div><div class="dld_box vpn"><div class="dld_box_wrap"><div class="box_up preCover"><span><a href="javascript:;"><h3>加速器</h3><i>٧ρ∩</i><em></em></a></span></div><div class="box_down"><ul><span id="loading"></span></ul></div></div></div></div>';
                 };
-                echo wp_kses_post($output);
+                echo $output; //wp_kses_post($output);
 		    ?>
 		</div>
 		<div style="max-width:1102px;margin:0 auto">
