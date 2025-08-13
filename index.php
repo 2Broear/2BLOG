@@ -177,7 +177,7 @@
                 max-height: 150px;
             }
         }
-        body.dark .Fresh-ImgBoxs span a b {
+        .Fresh-ImgBoxs span a b {
             filter: url(#x);
         }
         .recommendation #recommend-inside span.content-tail aside.personal_stand p {
@@ -555,7 +555,10 @@
                         }
                     ?>
                     </ul>
-                    <?php echo $acg_sw ? '<div class="newsBox-subText-Description" id="acg_window-bottom"><a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper($query_slug).'</b></a></div>' : ''; //<a href="javascript:;"><b>TAGCLOUDS</b></a> ?>
+                    <?php 
+                        adscene_shortcode('adscene_list_context');
+                        echo $acg_sw ? '<div class="newsBox-subText-Description" id="acg_window-bottom"><a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper($query_slug).'</b></a></div>' : ''; //<a href="javascript:;"><b>TAGCLOUDS</b></a>
+                    ?>
                     <!--<div class="newsBox-subText-Description" id="acg_window-bottom">-->
                     <!--    <?php //echo $acg_sw ? '<a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper($query_slug).'</b></a>' : '<a href="javascript:;"><b>CLOUDS</b></a>'; ?>-->
                     <!--</div>-->

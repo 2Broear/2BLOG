@@ -62,11 +62,7 @@
                 ?>
                         <script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info(); ?>"></script>
                 <?php
-                        if(!$baas){
-                ?>
-                            <script src="<?php echo $src_cdn; ?>/js/leancloud/av-min.js?v=footcall"></script>
-                <?php
-                        }
+                        if(!$baas) echo '<script src="' . $src_cdn . '/js/leancloud/av-min.js?v=footcall"></script>';
                 	    $root_path = custom_cdn_src('default', true);
             	        $plugin_path = $root_path.'/plugin';
                 ?>
@@ -387,39 +383,6 @@
     </div>
 </div>
 <script type="text/javascript">
-    console.info("<?php echo get_num_queries().'次查询，耗时'.timer_stop(0).'秒。'; ?>");
-    asyncLoad("<?php echo $src_cdn; ?>/js/nprogress.js", function(){
-	    NProgress.start();
-	    const NProgressLoaded = function(){
-    		NProgress.done();
-    	    window.removeEventListener('load', NProgressLoaded, true);
-	    }
-    	window.addEventListener('load', NProgressLoaded, true);
-    });
-    // 闭包节流器
-    function closure_throttle(callback=false, delay=200){
-        let closure_variable = true;  //default running
-        return function(){
-            if(!closure_variable) return;  //now running..
-            closure_variable = false;  //stop running
-            setTimeout(()=>{
-                callback.apply(this, arguments);
-                closure_variable = true;  //reset running
-            }, delay);
-        };
-    }
-    // 自动根据时段设置主题
-    function automode(){
-        getCookie('theme_manual') ? setCookie('theme_manual',0) : false;  // disable manual mode
-        let date = new Date(),
-            hour = date.getHours(),
-            min = date.getMinutes(),
-            sec = date.getSeconds(),
-            start = <?php echo get_option('site_darkmode_start',17); ?>,
-            end = <?php echo get_option('site_darkmode_end',9); ?>;
-        hour>=end&&hour<start || hour==end&&min>=0&&sec>=0 ? setCookie('theme_mode','light') : setCookie('theme_mode','dark');
-        document.body.className = getCookie('theme_mode');  //change apperance after cookie updated
-    };
     <?php
         // lazyLoad images
         if(get_option('site_lazyload_switcher')) {

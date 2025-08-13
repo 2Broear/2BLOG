@@ -311,6 +311,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                                 $output_data = get_option('site_archive_' . $output_year . '_cache');
                                 $output_data = json_decode($output_data); //, true
                                 if (!$output_data) {
+                                    // 注意EO缓存！Refresh updates
                                     echo '<div class="fade-item"><h2>' . $output_year . ' 年度发布 🔁</h2><span class="stat_'.$output_year.' stats">📈📉统计：<b>Updated data for ' . $output_year . ' (<a href="javascript:void(0);" onclick="window.location.reload()">Refresh updates..</a>)</b></span>';
                                     update_archive_year($output_year, $output_sw);
                                     echo '</div>';

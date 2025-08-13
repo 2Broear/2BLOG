@@ -55,6 +55,9 @@
         .weblog-tree-core.reply .tree-box-title h3.reply_quote:after {
             content: '回应此片段';
         }
+        .weblog-tree-box .tree-box-content {
+            color: var(--preset-6);
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

@@ -20,19 +20,23 @@ function the_site_links($t1='小伙伴', $t2='技术の', $t3='荐见鉴') { //,
         $output = $output_sw ? get_option('site_link_list_cache') : '';
     };
     if($output==='' || !$output_sw) {
-        $rich_links = get_site_bookmarks('standard');
-        $tech_links = get_site_bookmarks('technical');  // $tech_links = get_filtered_bookmarks('technical', 'others');
-        $rcmd_links = get_site_bookmarks('special', 'rand', 'DESC');
-        $other_links = get_site_bookmarks('others', 'link_id', 'DESC');
+        $STANDARD = 'standard';
+        $TECHNICAL = 'technical';
+        $SPECIAL = 'special';
+        $OTHERS = 'others';
+        $rich_links = get_site_bookmarks($STANDARD);
+        $tech_links = get_site_bookmarks($TECHNICAL);  // $tech_links = get_filtered_bookmarks($TECHNICAL, $OTHERS);
+        $rcmd_links = get_site_bookmarks($SPECIAL, 'rand', 'DESC');
+        $other_links = get_site_bookmarks($OTHERS, 'link_id', 'DESC');
         $stete_rich = $stete_tech = $stete_rcmd = '';
         if(get_option('site_links_code_state')) {
             $state_includes = get_option('site_links_code_state_cats');
-            $stete_rich = in_array('standard', explode(',', $state_includes));
-            $stete_tech = in_array('special', explode(',', $state_includes));
-            $stete_rcmd = in_array('special', explode(',', $state_includes));
+            $stete_rich = in_array($STANDARD, explode(',', $state_includes));
+            $stete_tech = in_array($TECHNICAL, explode(',', $state_includes));
+            $stete_rcmd = in_array($SPECIAL, explode(',', $state_includes));
         }
-        $output .= $rich_links ? '<div class="fade-item"><div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes">'.get_site_links($rich_links, 'full', '', $stete_rich).'</div></div>' : '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div></div>';
-        if($tech_links) $output .= '<div class="fade-item"><div class="inbox-clip"><h2 id="exchanged"> '.$t2.' </h2></div><div class="deals tech exchanged flexboxes">'.get_site_links($tech_links, 'full', '', $stete_tech).'</div></div>';
+        $output .= $rich_links ? '<div class="fade-item"><div class="inbox-clip"><h2 id="exchanged"> '.$t1.' </h2></div><div class="deals exchanged flexboxes">'.get_site_links($rich_links, 'full', '', $stete_rich, $STANDARD).'</div></div>' : '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div></div>';
+        if($tech_links) $output .= '<div class="fade-item"><div class="inbox-clip"><h2 id="exchanged"> '.$t2.' </h2></div><div class="deals tech exchanged flexboxes">'.get_site_links($tech_links, 'full', '', $stete_tech, $TECHNICAL).'</div></div>';
         if($rcmd_links) $output .= '<div class="fade-item"><div class="inbox-clip"><h2 id="rcmded"> '.$t3.' </h2></div><div class="deals rcmd flexboxes">'.get_site_links($rcmd_links, 'half', '', $stete_rcmd).'</div></div>';
         if($other_links) $output .= '<div class="deals oldest"><div class="fade-item"><div class="inboxSliderCard"><div class="slideBox flexboxes">'.get_site_links($other_links).'</div></div></div></div>';
         if($output_sw) update_option('site_link_list_cache', wp_kses_post($output));
@@ -88,6 +92,54 @@ function the_site_links($t1='小伙伴', $t2='技术の', $t3='荐见鉴') { //,
         }
         .friends-boxes .deals .inbox span.ssl {
 	        background: var(--preset-4a);
+        }
+        .friends-boxes .deals .inbox:hover > .inbox-inside.aside {
+            transform: translateY(-15px) scale(.75);
+            opacity: 1;
+            z-index: 1;
+        }
+        .friends-boxes .deals .inbox .inbox-inside.aside::after {
+            content: none;
+        }
+        .friends-boxes .deals .inbox .inbox-inside.aside {
+            height: auto;
+            padding: 0;
+            position: absolute;
+            bottom: 0;
+            transform: translateY(0) scale(1);
+            opacity: 0;
+            transition: all .35s ease;
+            cursor: cell;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .friends-boxes .deals .inbox .inbox-inside.aside a {
+            display: block;
+            max-width: 88%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .friends-boxes .deals .inbox .inbox-inside.aside ol {
+            margin: 25px auto;
+            /*padding-left: 25px;*/
+        }
+        .friends-boxes .deals.tech .inbox .inbox-inside.aside ol {
+            margin: 0;
+        }
+        .friends-boxes .deals .inbox .inbox-inside.aside.loaded {
+            /*transition: none;*/
+            /*transform: translateY(0) scale(.85);*/
+            transform: translateY(0) scale(1);
+            top: 0;
+            cursor: default;
+        }
+        .friends-boxes .deals .inbox .inbox-inside.aside a#loadRSSFeeds::after {
+            content: '【点击加载】RSS 聚合内容';
+        }
+        .friends-boxes .deals .inbox .inbox-inside.aside a#loadRSSFeeds {
+            padding: 12px 0;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -145,10 +197,42 @@ function the_site_links($t1='小伙伴', $t2='技术の', $t3='荐见鉴') { //,
 <!-- pluginJs !!! Cannot redefine property: applicationId (av-min must be same with valine.js cdn) !!! av-min.js must be load via dynamicLoad(use no raw function twice) to head js which allow init AV twice -->
 <!--<script src="//cdn.jsdelivr.net/npm/leancloud-storage/dist/av-min.js"></script>-->
 <!-- inHtmlJs -->
+<script type="text/javascript">
+    bindEventClick(document.querySelector('.friends-boxes'), 'loadRSSFeeds', function(t) {
+        fetch(t.dataset.api)
+        .then((res)=> {
+            if (res.status !== 200) {
+                t.textContent = `loadRSSFeeds failed: ${res.status}`;
+                console.log(res);
+                return;
+            }
+            return res.json();
+        })
+        .then((data)=> {
+            // console.log(data)
+            const container = document.createElement('OL');
+            const mainContent = decodeURIComponent(data.desc);
+            container.innerHTML = `<li><a href="${data.link === 'javascript:;' ? data.rss : data.link}" target="_blank" title="${mainContent}"><b>${data.title || mainContent}</b></a></li>`;
+            if (data.child) {
+                data.child.forEach((item)=> {
+                    const childContent = decodeURIComponent(item.desc);
+                    container.innerHTML += `<li><a href="${item.link}" target="_blank" title="${childContent}">${item.title || childContent}</a></li>`;
+                });
+            }
+            t.parentNode.classList.add('loaded');
+            t.parentNode.appendChild(container);
+            t.remove();
+        })
+        .catch((err)=> {
+            t.textContent = decodeURIComponent(err);
+            console.warn(err);
+        });
+    });
+</script>
 <?php
     get_foot();
     // declear lazyLoad standby-avatar(seo-fix alt tips)
-    if($baas){
+    if ($baas) {
 ?>
     <script type="text/javascript">
         //request AV.Query

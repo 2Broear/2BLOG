@@ -2,11 +2,35 @@
     define('WP_USE_THEMES', false);  // No need for the template engine
     require_once('../../../../../wp-load.php');  // Load WordPress Core
     
-    $req_cat = get_request_param('cat');
-    $link_limit = get_request_param('limit');
-    $use_clear = get_request_param('clear');
-    $do_update = get_request_param('update');
+    $query_cat = get_request_param('cat');
+    $query_num = get_request_param('limit');
+    $query_key = urldecode(get_request_param('key'));
+    $query_val = urldecode(get_request_param('value'));
+    $do_query = $query_key && $query_val;
+    $do_clear = get_request_param('clear');
     $do_output = get_request_param('output');
+    $do_update = get_request_param('update');
+    
+    if ($do_query) {
+        /**
+         * 在对象数组中搜索指定键值匹配的元素
+         * @param array $array 要搜索的数组
+         * @param string $key 要匹配的键名（如 "author"、"title"、"date"）
+         * @param mixed $value 要匹配的值
+         * @return array 返回匹配的所有元素（数组形式）
+         */
+        function searchByKeyValue($array, $key, $value) {
+            // return array_filter($array, function($item) use ($key, $value) {
+            //     return isset($item->$key) && $item->$key === $value;
+            // });
+            foreach ($array as $item) {
+                if (isset($item->$key) && strcasecmp($item->$key , $value) === 0) { //$item->$key === $value
+                    return $item; // 直接返回匹配的 stdClass 对象
+                }
+            }
+            return null; // 未找到返回 null
+        }
+    }
     // $do_refresh = get_request_param('refresh');
     // if ($do_refresh) {
     //     wp_clear_scheduled_hook('scheduled_rss_feeds_updates_hook');
@@ -17,14 +41,14 @@
     // $use_cache = get_request_param('cache');
     // $use_sse = get_request_param('sse');
     $links_slug = get_links_category('slug');
-    if (!in_array($req_cat, $links_slug)) {
-        $error_msg = $req_cat ? '<pre>Unknown category: "' . $req_cat . '", Please try again.</pre>' : '<pre>Empty category! Please specify a cat param.</pre>';
+    if (!in_array($query_cat, $links_slug)) {
+        $error_msg = $query_cat ? '<pre>Unknown category: "' . $query_cat . '", Please try again.</pre>' : '<pre>Empty category! Please specify a cat param.</pre>';
         report_logs($error_msg); // 记录日志
         echo $error_msg;
         exit;
     }
-    if ($use_clear) {
-        $message = "<pre>Clear all caches before updating $req_cat, standby..</pre>";
+    if ($do_clear) {
+        $message = "<pre>Clear all caches before updating $query_cat, standby..</pre>";
         report_logs($message); // 记录日志
         echo $message;
         // 清除（全部） rss 订阅
@@ -39,7 +63,7 @@
     $output_sw = false;
     $caches_sw = get_option('site_cache_switcher');
     $caches_inc = get_option('site_cache_includes');
-    $caches_name = 'site_rss_' . $req_cat . '_cache';
+    $caches_name = 'site_rss_' . $query_cat . '_cache';
     
     if($caches_sw) {
         $output_sw = in_array('rssfeeds', explode(',', $caches_inc));
@@ -50,12 +74,16 @@
                 exit;
             }
             if (!$do_output) {
-                print_r($output_caches);
+                if ($do_query) {
+                    $output_caches = json_decode($output_caches);
+                    $output_caches = searchByKeyValue($output_caches, $query_key, $query_val);
+                }
+                print_r(json_encode($output_caches)); //print_r("Empty query key/value [$query_key: $query_val]");
                 exit;
             }
-            $link_apis = get_api_refrence('rss', true) . "cat=$req_cat&limit=3&update=1&output=0&format=0";
-            echo "<p style='text-align:right'>Loaded from $caches_name, <a href='javascript:;' class='fetch-reload' data-api='$link_apis'>reload $req_cat?</a></p>";
-            the_rss_feeds(json_decode($output_caches), $link_limit);
+            $link_apis = get_api_refrence('rss', true) . "cat=$query_cat&limit=3&update=1&output=0";
+            echo "<p style='text-align:right'>Loaded from $caches_name, <a href='javascript:;' class='fetch-reload' data-api='$link_apis'>reload $query_cat?</a></p>";
+            the_rss_feeds(json_decode($output_caches), $query_num);
             exit;
         }
     }
@@ -66,19 +94,19 @@
     $use_chunk = get_request_param('chunk') || 10;
     
     $linked_urls = array();
-    $link_marks = get_site_bookmarks($req_cat);
+    $link_marks = get_site_bookmarks($query_cat);
     
     foreach ($link_marks as $link_mark) {
         if ($link_mark->link_rss && $link_mark->link_visible==='Y') array_push($linked_urls, $link_mark);
     }
     
     // fetch_rss_feeds_via_url plus array_chunk limits
-    $output_json = parse_rss_data($linked_urls, $link_limit, $use_chunk);
+    $output_json = parse_rss_data($linked_urls, $query_num, $use_chunk);
     if($output_json && $output_sw) { // && !$use_cache
         // echo "updating caches..";
         update_option($caches_name, wp_kses_post(preg_replace( "/\s(?=\s)/","\1", $output_json )));
     } else {
-        echo '<p style="text-align:center">No rss feeds found on category ' . $req_cat . '</p>';
+        echo '<p style="text-align:center">No rss feeds found on category ' . $query_cat . '</p>';
     }
     // }
     

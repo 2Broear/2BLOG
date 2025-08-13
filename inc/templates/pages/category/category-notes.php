@@ -88,7 +88,7 @@
 				</div>
 				<div class="nav-footer"></div>
 			</div>
-			<?php adscene_shortcode('adscene_sidebar_long'); ?>
+			<?php if (get_option('site_ads_sidebar')) adscene_shortcode('adscene_sidebar_long'); ?>
 		</div>
 		<div class="win-content main">
 			<div class="notes notes_default" style="max-width: 100%;">

@@ -3,6 +3,16 @@
 ?>
 <script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
 <script type="text/javascript">
+    document.body.className = '';
+    // 自动执行一次以更正缓存(after load main.js)
+    if ( + getCookie('theme_manual')) { // use + force string to number
+        console.log(`user theme_manual enabled, switch theme mode: ${getCookie('theme_mode')}..`);
+        document.body.className = getCookie('theme_mode');// darkmode(); // automode();
+    } else {
+        console.debug(`user theme_manual disabled, switch theme auto-mode: ${getCookie('theme_mode')}..`);
+        // reset to default(timezone) mode to clear EOCaches
+        automode();
+    }
     <?php
         global $cat;
         $vdo_poster_sw = get_option('site_video_poster_switcher');
@@ -142,10 +152,13 @@
     // window.onload = ()=> {
         const iframe = document.getElementById('panorama');
         if (iframe && iframe instanceof HTMLElement) {
-            iframe.src = 'https://node.2broear.com/'; //indexs.html
             // iframe.frameborder = 'no';
-            iframe.width = '100%';
-            iframe.height = '100%';
+            setTimeout(window.queueMicrotask(()=> {
+                iframe.width = '100%';
+                iframe.height = '100%';
+                iframe.src = 'https://node.2broear.com/'; //indexs.html
+            }), 0);
+            ;
         }
     // }
 </script>

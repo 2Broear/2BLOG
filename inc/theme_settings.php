@@ -613,7 +613,8 @@
         register_setting( 'baw-settings-group', 'site_ads_switcher' );
         // if(get_option('site_ads_switcher')){
             // register_setting( 'baw-settings-group', 'site_ads_init' );
-            register_setting( 'baw-settings-group', 'site_ads_arsw' );
+            register_setting( 'baw-settings-group', 'site_ads_article' );
+            register_setting( 'baw-settings-group', 'site_ads_sidebar' );
         // }
         register_setting( 'baw-settings-group', 'site_smtp_switcher' );
         // if(get_option('site_smtp_switcher')){
@@ -2349,6 +2350,63 @@
                             </td>
                         </tr>
                     <tr valign="top">
+                        <th scope="row">Google Adsense 页面广告</th>
+                        <td>
+                            <?php
+                                $opt = 'site_ads_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_ads_switcher_label">谷歌广告（开启后前往 "/inc/wp-blocks.php" 修改全站初始化广告代码：方形侧栏/纵向侧栏/富文本列表/纯文本列表</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color: orangered;" class="btn">Adsense</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        // if(get_option('site_ads_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $ads = get_option('site_ads_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 文章页广告</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_ads_article';
+                                        // $value = get_option($opt);
+                                        // $data = get_option('site_ads_init', '' );
+                                        // //设置默认开启（仅适用存在默认值的checkbox）
+                                        // if(!$value&&!$data){
+                                        //     update_option($opt, "on_default");
+                                        //     $status="checked";
+                                        // }else{
+                                        //     $status = $value ? "checked" : "check";
+                                        // };
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启文章内页 尾部广告位</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">文章页广告</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $ads; ?>">
+                                <th scope="row">— 侧边栏广告</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_ads_sidebar';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启文章列表 侧边广告位</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">侧边栏广告</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <!--<tr valign="top" class="child_option dynamic_opts <?php echo $ads; ?>">-->
+                            <!--    <th scope="row">— Adsense 初始化代码</th>-->
+                            <!--    <td>-->
+                                    <?php
+                                        // $opt = 'site_ads_init';
+                                        // $value = get_option($opt);
+                                        // $preset = "Initialization Code.";
+                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        // echo '<textarea class="codeblock" name="'.$opt.'" id="'.$opt.'">'.$preset.'</textarea>';
+                                    ?>
+                            <!--    </td>-->
+                            <!--</tr>-->
+                    <?php
+                        // }
+                    ?>
+                    <tr valign="top">
                         <th scope="row"> 足迹地图 </th>
                         <td>
                             <?php
@@ -3089,52 +3147,6 @@ const maps = {
             <div class="formtable sidebar">
                 <h1><b class="num" style="border-color:hotpink;box-shadow:-5px -5px 0 rgb(255 105 180 / 18%);">04</b>边栏设置<p class="en">SIDEBAR SETTINGS</p></h1>
                 <table class="form-table sidebar">
-                    <tr valign="top">
-                        <th scope="row">Google Adscene</th>
-                        <td>
-                            <?php
-                                $opt = 'site_ads_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_ads_switcher_label">谷歌广告（开启后前往 "/inc/wp-blocks.php" 修改全站初始化广告代码：方形侧栏/纵向侧栏/富文本列表/纯文本列表</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color: orangered;" class="btn">Google Adsense</span></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <?php
-                        // if(get_option('site_ads_switcher')){
-                    ?>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $ads = get_option('site_ads_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 启用文章页广告</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_ads_arsw';
-                                        $value = get_option($opt);
-                                        $data = get_option('site_ads_init', '' );
-                                        //设置默认开启（仅适用存在默认值的checkbox）
-                                        if(!$value&&!$data){
-                                            update_option($opt, "on_default");
-                                            $status="checked";
-                                        }else{
-                                            $status = $value ? "checked" : "check";
-                                        };
-                                        echo '<label for="'.$opt.'"><p class="description" id="">默认开启（文章内页尾部广告位</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">文章页广告</b></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <!--<tr valign="top" class="child_option dynamic_opts <?php echo $ads; ?>">-->
-                            <!--    <th scope="row">— Adsense 初始化代码</th>-->
-                            <!--    <td>-->
-                                    <?php
-                                        // $opt = 'site_ads_init';
-                                        // $value = get_option($opt);
-                                        // $preset = "Initialization Code.";
-                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        // echo '<textarea class="codeblock" name="'.$opt.'" id="'.$opt.'">'.$preset.'</textarea>';
-                                    ?>
-                            <!--    </td>-->
-                            <!--</tr>-->
-                    <?php
-                        // }
-                    ?>
                     <tr valign="top">
                         <th scope="row">Pixiv 排行（挂件）</th>
                         <td>

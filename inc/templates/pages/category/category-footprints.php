@@ -234,6 +234,7 @@
                 const lng = coords[0];
                 return splitArray ? [lat, lng] : `${lat},${lng}`;
             }
+            
             // compatible both
             Object.values(district).forEach((item)=> item.lnglat = lng2lat(item.lnglat));
             points.forEach((item)=> item.lnglat = lng2lat(item.lnglat, true));
@@ -358,7 +359,7 @@
                 },
                 clusterIndexSet: {
                     city: {
-                        minZoom: 2,
+                        minZoom: 5,
                         maxZoom: 10,
                     },
                     district: {
@@ -373,6 +374,7 @@
             });
     <?php
         } else {
+            // 注意EO缓存！
             $mapTheme = $theme_mode === 'dark' ? 'style 6' : 'style 3';
             echo 'const mapTheme = "' . $mapTheme . '";';
             // footprint_panorama_data
@@ -387,7 +389,7 @@
             var center = new TMap.LatLng(39.953416, 116.380945);
             
             map = new TMap.Map('mapContainer', {
-                zoom: defaultZoom,
+                zoom: defaultZoom / 1.1,
                 pitch: 1,
                 center: center,
                 minZoom: 2,
