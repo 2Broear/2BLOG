@@ -63,11 +63,13 @@
         @keyframes scale-view {
             0% {
                 transform: scale(.85);
-                transform-origin: top
+                transform-origin: top;
+                opacity: 0
             }
         
             to {
-                transform: none
+                transform: none;
+                opacity: 1
             }
         }
         
@@ -102,11 +104,12 @@
     </style>
     <script>
         document.documentElement.style.setProperty('--theme-color','<?php echo $theme; ?>');
-        function asyncLoad(url, callback){
+        function asyncLoad(url, callback, defer = false){
         	const head = document.getElementsByTagName('head')[0],
         		  script = document.createElement('script');
     	    script.setAttribute('type', 'text/javascript');
     	    script.setAttribute('async', true);
+    	    script.setAttribute('defer', defer);
     	    script.setAttribute('src', url);
     		head.appendChild(script);
         	script.onload = script.onreadystatechange = function(){

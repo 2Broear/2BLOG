@@ -67,6 +67,8 @@
             	        $plugin_path = $root_path.'/plugin';
                 ?>
                         <script type="text/javascript">
+                            // asyncLoad('', function() {
+                            // });
                 		    new Valine({
                             	el: '#vcomments',
                             	appId: '<?php echo get_option('site_leancloud_appid') ?>',
@@ -77,7 +79,7 @@
                             	notify: false,
                             	verify: false,
                             	visitor: false,
-                            	recordIP: true,  // ad case
+                            // 	recordIP: true,  // ad case
                             	placeholder: '快来玩右下角的“涂鸦画板”！',
                             	<?php
                             	    echo get_option('site_cdn_switcher') ? 'imgCdn: "'.$img_cdn.'",' . PHP_EOL . ' srcCdn: "'.$src_cdn.'",' . PHP_EOL . ' apiCdn: "'.$plugin_path.'",' . PHP_EOL : 'rootPath: "'.$root_path.'",' . PHP_EOL;
@@ -346,7 +348,7 @@
             </p>
           </ul>
           <ul style="text-align:right">
-              <li id="feed"><a href="<?php bloginfo('rss2_url'); ?>" target="_blank">RSS</a></li>
+              <li id="feed"><a href="<?php bloginfo('rss2_url'); ?>" target="_blank" style="font-weight:bold;">RSS</a></li>
               <?php
                   $bottom_nav_array = explode(',',get_option('site_bottom_nav'));
                   $bottom_nav_array_count = count($bottom_nav_array);

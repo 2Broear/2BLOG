@@ -21,6 +21,9 @@
             /*margin-left: 25px;*/
         }
 	    .in_dex li.child{margin-left: 15px!important;}
+	    .bg h1 {
+	        max-width: 20em;
+	    }
 	    .bg h1 a{
 	        animation-duration: 1.5s;
 	        /*animation-delay: .5s;*/
@@ -59,6 +62,12 @@
 	    }
 	    .hljs ul li:hover {
 	        background: var(--preset-2bs);
+	    }
+	    body.dark .v .vlist .vcard .vcontent p {
+            color: var(--preset-9);
+	    }
+	    .v .vlist .vcard .vcontent p {
+            color: var(--preset-6);
 	    }
     </style>
 </head>

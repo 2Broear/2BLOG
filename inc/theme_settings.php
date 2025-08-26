@@ -2462,53 +2462,51 @@ maps.map_02.entry.push(returnsTexture);
 const defaultTextureString = JSON.stringify(defaultTexture);
 const encodedTextureString = encodeURIComponent(defaultTextureString);
 ';
-                                        $preset = get_option('site_footprint_map') === 'amap' ? $preset_ . '
-// 配置标记点
-var points = [
-    {
-        lnglat: "39.925077049391,116.506621867519",
-        thumbnail: "//img.2broear.com/2025/06/right.webp",
-        content: `<h2>Content</h2><p>overwrite context to content</p><img src="//img.2broear.com/2025/06/right.webp" />`,
-        context: "晨光家园",
-        district: "朝阳区",
-        city: "北京",
-    },
-    {
-        lnglat: "39.957363077042,116.412789588355",
-        thumbnail: "//img.2broear.com/2025/06/front.webp",
-        content: `<iframe src="//node.2broear.com/?data=${encodedTextureString}" frameborder="no" width="500" height="200"></iframe>`,
-        context: "东城家园",
-        district: "东城区",
-        city: "北京",
-    },
-];
-// 配置标记区域
-var district = {
-    "北京": {
-        "lnglat" : "39.904989,116.405285",
-    },
-    "朝阳区": {
-        "lnglat" : "39.921489,116.486409",
-    },
-};' : $preset_ . '
-//配置标记点对象数组
-const markerData = [
-    {
-        position: "39.953416,116.480945",
-        content: `<iframe src="//node.2broear.com/?data=${encodedTextureString}" frameborder="no" width="500" height="200"></iframe>`,
-        context: "",
-    },
-    {
-        position: "39.984104,116.407503",
-        content: `<h2>Content</h2><p>overwrite context to content</p><img src="//img.2broear.com/2025/06/front.webp" />`,
-        context: "test_thumbnail",
-    },
-    {
-        position: "39.908802,116.397502",
-        content: "",
-        context: "",
-    },
-];';
+                                        $preset = $preset_ . '
+markerData = {
+    // 配置标记点
+    points: [
+        {
+            lnglat: "39.925077049391,116.506621867519",
+            position: "39.925077049391,116.506621867519",
+            thumbnail: "//img.2broear.com/2025/06/right.webp",
+            content: `<h2>Content</h2><p>overwrite context to content</p><img src="//img.2broear.com/2025/06/right.webp" />`,
+            context: "晨光家园",
+            district: "朝阳区",
+            city: "北京",
+        },
+        {
+            lnglat: "39.957363077042,116.412789588355",
+            position: "39.957363077042,116.412789588355",
+            thumbnail: "//img.2broear.com/2025/06/front.webp",
+            content: `<iframe src="//node.2broear.com/?data=${encodedTextureString}" frameborder="no" width="500" height="200"></iframe>`,
+            context: "东城家园",
+            district: "东城区",
+            city: "北京",
+        },
+        {
+            lnglat: "39.908802,116.397502",
+            position: "39.908802,116.397502",
+            thumbnail: "",
+            content: "",
+            context: "其他",
+            district: "其他区",
+            city: "北京",
+        },
+    ],
+    // 配置标记区
+    district: {
+        "北京": {
+            "lnglat" : "39.904989,116.405285",
+        },
+        "朝阳区": {
+            "lnglat" : "39.921489,116.486409",
+        },
+        "其他区": {
+            "lnglat" : "39.908802,116.397502",
+        },
+    }
+};';
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
                                         echo '<p class="description" id="">手动填写数据源，自动插入上方坐标数据之上（示例数据已预设，points：标点，district：索引，content 参数支持嵌入 iframe 标签</p><p>注意：此项预设数据（留空）随地图类型改变而改变！</p><a class="dynamic_dom" data-dom="iframe" data-src="//lbs.qq.com/tool/getpoint/get-point.html" data-width="100%" data-height="500" title="点击加载坐标拾取器">坐标拾取器（TMap）</a><textarea name="'.$opt.'" id="'.$opt.'" rows="10" style="width: 100%;">'.$preset.'</textarea>'; //https://lbs.amap.com/tools/picker
                                     ?>
@@ -3138,7 +3136,7 @@ const maps = {
                                 $value = get_option($opt);
                                 // $preset = $img_cdn.'/media/videos/data.mp4';
                                 // $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_privacy_video_label">隐私政策背景视频</p><label for="'.$opt.'" class="upload"><a class="dynamic_dom" data-dom="video" data-src="' . $preset . '" title="加载预览">加载视频</a></label><input type="text" name="'.$opt.'" placeholder="for_empty_privacy_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
+                                echo '<p class="description" id="site_privacy_video_label">隐私政策背景视频</p><label for="'.$opt.'" class="upload"><a class="dynamic_dom" data-dom="video" data-src="' . $value . '" title="加载预览">加载视频</a></label><input type="text" name="'.$opt.'" placeholder="for_empty_privacy_video" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=2 value="选择视频" />';
                             ?>
                         </td>
                     </tr>
@@ -3425,7 +3423,7 @@ const maps = {
                                     $status = $value ? "checked" : "check";
                                 };
                                 // $status = $value ? "checked" : "check";
-                                echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_switcher_label">页面底部展示“十年之约”图标（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <img src="'.$img_cdn.'/images/svg/foreverblog.svg" alt="wormhole" style="height: 15px;filter:invert(0.5); vertical-align:middle;"><!--<b class="'.$status.'">ForeverBlog 成员</b>--></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_switcher_label">页面底部展示“十年之约”图标（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <img src="'.$img_cdn.'/images/svg/foreverblog.svg" alt="wormhole" style="height: 15px; vertical-align:middle;"><!--<b class="'.$status.'">ForeverBlog 成员</b>--></label>';
                             ?>
                         </td>
                     </tr>
@@ -3449,7 +3447,7 @@ const maps = {
                                     <?php
                                         $opt = 'site_foreverblog_wormhole';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_wormhole_label">随机访问十年之约友链博客（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><!--<b class="'.$status.'">穿梭虫洞</b>--> <img src="'.$img_cdn.'/images/wormhole_4_tp_ez.gif" alt="wormhole" style="height: 22px;filter:invert(0.5); vertical-align:middle;"></label>'; 
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_wormhole_label">随机访问十年之约友链博客（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><!--<b class="'.$status.'">穿梭虫洞</b>--> <img src="'.$img_cdn.'/images/wormhole_4_tp_ez.gif" alt="wormhole" style="height: 22px; vertical-align:middle;"></label>'; 
                                     ?>
                                 </td>
                             </tr>
@@ -3492,7 +3490,7 @@ const maps = {
                             <?php
                                 $opt = 'site_not_ai_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_monitor_switcher_label">非AI撰写声明（生成<a href="https://notbyai.fyi/" target="_blank"> not-by-ai </a>声明图标，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 14px;filter:invert(0.5); vertical-align:middle;"></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_monitor_switcher_label">非AI撰写声明（生成<a href="https://notbyai.fyi/" target="_blank"> not-by-ai </a>声明图标，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/> <img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 14px; vertical-align:middle;"></label>';
                             ?>
                         </td>
                     </tr>

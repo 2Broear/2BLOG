@@ -371,15 +371,23 @@ class AutoSlideBox extends Utils {
         
         // bind events
         const that = this;
-        this.bindEvents(this.#config.slideElements.slideFrame, 'onpointermove', Utils.CLOSURE.debounce(()=> {
+        const abortAnimation = ()=> {
             that.abortAnimation(that.startAnimation.bind(that), 0);
-        }, 500, ()=> {
+        };
+        const cancelAnimation = ()=> {
             // 立即取消动画
             if (that.#config.slideAnimate) {
                 cancelAnimationFrame(that.#config.slideAnimate);
                 that.#config.slideAnimate = null;
             }
-        }));
+        };
+        // 滚动
+        // this.bindEvents(this.#config.slideElements.slideFrame, 'onscroll', Utils.CLOSURE.debounce(()=> {
+        //     abortAnimation();
+        //     console.log('scrollTo..')
+        // }, 1000, cancelAnimation));
+        // 移动
+        this.bindEvents(this.#config.slideElements.slideFrame, 'onpointermove', Utils.CLOSURE.debounce(abortAnimation, 1000, cancelAnimation));
         
         // init callback
         if (Utils.TYPEOF.Function(callback)) callback();

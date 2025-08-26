@@ -68,11 +68,12 @@
     if($caches_sw) {
         $output_sw = in_array('rssfeeds', explode(',', $caches_inc));
         $output_caches = get_option($caches_name);
-        if ($output_sw && !$do_update) {
-            if ($output_caches === '') {
-                print_r([]);
-                exit;
-            }
+        if ($output_sw && !$do_update && $output_caches) {
+            // print_r(json_encode(['caches loaded.']));
+            // if ($output_caches === '') {
+            //     print_r(json_encode([]));
+            //     exit;
+            // }
             if (!$do_output) {
                 if ($do_query) {
                     $output_caches = json_decode($output_caches);
@@ -124,6 +125,12 @@
     } else {
         // report_logs("已成功输出 RSS JSON."); // 记录日志
         header("Content-Type: application/json");
-        print_r($output_json);
+        if ($do_query) {
+            $output_caches = json_decode($output_caches);
+            $output_caches = searchByKeyValue($output_caches, $query_key, $query_val);
+            print_r(json_encode($output_caches));
+        } else {
+            print_r($output_json);
+        }
     }
 ?>

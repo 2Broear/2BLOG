@@ -1351,7 +1351,7 @@ audio{width:300px;height:32px}
     .xzh_m-only{display:block}
     .footer-quickway{max-width:10em;padding-left: 15px!important;}
     .footer-contact-left .footer-right{display:none!important;}
-    .footer-contact-left .footer-left{justify-content: center;width:100%;/*45%*/}
+    .footer-contact-left .footer-left{justify-content: space-around;width:100%;/*45%*/}
     .footer-contact-left ul{padding:0 0 0 35px}
     .wp_comments_list .children{margin-left:40px!important}
     .wp_comments .vinfo span.useragent{display:none}

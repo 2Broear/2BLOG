@@ -663,7 +663,7 @@
                 if(scrollTop<=res[0] || scrollTop>=share.offsetTop){ //-100
                     aindex_cl(aindex_li,'current')
                 }else{
-                    res.forEach(function(offset,index){
+                    res.forEach(function(offset, index){
                         if(scrollTop>=offset){
                             aindex_cl(aindex_li,'current');  // location.href='title-'+index;
                             document.querySelector('#t'+index).classList.add('current');

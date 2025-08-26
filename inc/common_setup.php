@@ -129,20 +129,20 @@
         return preg_replace('/\n/',"", $desc); //trim($desc);
     }
     
-    function get_ai_abstract(){
-        if(get_option('site_chatgpt_desc_sw') && in_chatgpt_cat()){
+    function get_ai_abstract() {
+        $desc = custom_excerpt(999, true); //get_the_excerpt();
+        // $desc = 'Standby API Responsing';
+        if(get_option('site_chatgpt_desc_sw') && in_chatgpt_cat()) {
             $dir = get_option('site_chatgpt_dir') ? get_option('site_chatgpt_dir').'/' : '';
             include_once get_template_directory() . '/plugin/'.$dir.'gpt_data.php';  // 读取文件记录
             global $post;
             $pid = $post->ID;
-            if(isset($cached_post['chat_pid_'.$pid]['error'])){
+            if (isset($cached_post['chat_pid_'.$pid]['error'])) {
                 $desc = $cached_post['chat_pid_'.$pid]['error']['message'];
-            }else if(isset($cached_post['chat_pid_'.$pid]['choices'][0])){
+            } else if (isset($cached_post['chat_pid_'.$pid]['choices'][0])) {
                 $desc = isset($cached_post['chat_pid_'.$pid]['choices'][0]['message']) ? $cached_post['chat_pid_'.$pid]['choices'][0]['message']['content'] : $cached_post['chat_pid_'.$pid]['choices'][0]['text'];
             }
             $desc = mb_substr($desc, 0, 666) . '...';
-        }else{
-            $desc = custom_excerpt(999, true); //get_the_excerpt();
         }
         return $desc;
     }

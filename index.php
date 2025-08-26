@@ -5,7 +5,7 @@
         // cache db only if not-single sub-page
         $output = '';
         $output_sw = false;
-        if(get_option('site_cache_switcher')){
+        if(get_option('site_cache_switcher')) {
             $temp = get_category($cid);
             if (isset($temp->slug)) {
                 $temp_slug = $temp->slug;
