@@ -130,8 +130,8 @@
     }
     
     function get_ai_abstract() {
-        $desc = custom_excerpt(999, true); //get_the_excerpt();
-        // $desc = 'Standby API Responsing';
+        // $desc = custom_excerpt(999, true); //get_the_excerpt();
+        $desc = 'Standby API Responsing';
         if(get_option('site_chatgpt_desc_sw') && in_chatgpt_cat()) {
             $dir = get_option('site_chatgpt_dir') ? get_option('site_chatgpt_dir').'/' : '';
             include_once get_template_directory() . '/plugin/'.$dir.'gpt_data.php';  // 读取文件记录

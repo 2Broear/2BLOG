@@ -583,6 +583,9 @@
         // register_setting( 'baw-settings-group', 'site_valine_switcher' );
             register_setting( 'baw-settings-group', 'site_comment_serverchan' );
             register_setting( 'baw-settings-group', 'site_comment_pushplus' );
+        register_setting( 'baw-settings-group', 'site_cloudflare_turnstile' );
+            register_setting( 'baw-settings-group', 'site_cloudflare_turnstile_sitekey' );
+            register_setting( 'baw-settings-group', 'site_cloudflare_turnstile_secretkey' );
         // if(get_option('site_valine_switcher')){
         //     // register_setting( 'baw-settings-group', 'site_leancloud_sdk' );
         //     // register_setting( 'baw-settings-group', 'site_comment_qmsgchan' );
@@ -1625,6 +1628,35 @@
                         </td>
                     </tr>
                     <tr valign="top">
+                        <th scope="row">Cloudflare Turnstile</th>
+                        <td>
+                            <?php
+                                $opt = 'site_cloudflare_turnstile';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">启用 Cloudflare Turnstile 校验访客信息（开启后默认检测评论访客信息，支持 wordpress 及第三方 valine 评论系统，暂不支持 twikoo，后续支持可选页面检测</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b style="color:darkorange;" class="btn"> Turnstile </b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <!-- Turnstile -->
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $turnstile = get_option('site_cloudflare_turnstile') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— Turnstile SiteKey</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_cloudflare_turnstile_sitekey';
+                                        echo '<p class="description" id="">Turnstile SiteKey</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Turnstile SiteKey" value="' . get_option($opt) . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $turnstile; ?>">
+                                <th scope="row">— Turnstile SecretKey</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_cloudflare_turnstile_secretkey';
+                                        echo '<p class="description" id="">Turnstile SecretKey（留空将导致三方评论回调验证失败！</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Turnstile SecretKey" value="' . get_option($opt) . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <tr valign="top">
                         <th scope="row">评论系统<sup class="dualdata dynamic_comment"> <?php $third_comment=get_option('site_third_comments');echo $third_comment ? $third_comment : 'WordPress';//if($third_comment=='Valine'){echo 'Valine';}elseif($third_comment=='Twikoo'){echo 'Twikoo';}else{echo 'BaaS';} ?></sup></th>
                         <td>
                             <?php
@@ -1647,7 +1679,7 @@
                     </tr>
                             <!-- Wordpress -->
                             <tr valign="top" class="child_option dynamic_opts <?php echo $wordpress_statu = $third_comment=='Wordpress' ? 'dynamic_optshow Wordpress' : 'dynamic_opts Wordpress' ?>">
-                                <th scope="row">— Ajax 评论支持</th>
+                                <th scope="row">— Ajax 评论加载</th>
                                 <td>
                                     <?php
                                         $opt = 'site_ajax_comment_switcher';
@@ -1744,7 +1776,7 @@
                             </tr>
                             <!-- Common -->
                             <tr valign="top" class="child_option">
-                                <th scope="row">— 屏蔽关键词<sup id="tips">common</sup></th>
+                                <th scope="row">— 关键词屏蔽<sup id="tips">common</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_comment_blacklists';
@@ -1756,22 +1788,12 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option">
-                                <th scope="row">— 屏蔽境外 IP<sup id="tips">common</sup></th>
+                                <th scope="row">— 境外 IP 屏蔽<sup id="tips">common</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_comment_blockoutside';
                                         $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">阻止所有非大陆、香港、台湾的境外IP发布评论（可临时用于刷评屏蔽</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">外网评论屏蔽</b></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option">
-                                <th scope="row">— 屏蔽境外 IP<sup id="tips">common</sup></th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_forbidden_outsideborder';
-                                        $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">阻止所有非大陆、香港、台湾的境外IP访问网站（!api performance issue</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">外网访问屏蔽</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -2467,7 +2489,7 @@ markerData = {
     // 配置标记点
     points: [
         {
-            lnglat: "39.925077049391,116.506621867519",
+            latlng: "39.925077049391,116.506621867519",
             position: "39.925077049391,116.506621867519",
             thumbnail: "//img.2broear.com/2025/06/right.webp",
             content: `<h2>Content</h2><p>overwrite context to content</p><img src="//img.2broear.com/2025/06/right.webp" />`,
@@ -2476,35 +2498,23 @@ markerData = {
             city: "北京",
         },
         {
-            lnglat: "39.957363077042,116.412789588355",
+            latlng: "39.957363077042,116.412789588355",
             position: "39.957363077042,116.412789588355",
             thumbnail: "//img.2broear.com/2025/06/front.webp",
             content: `<iframe src="//node.2broear.com/?data=${encodedTextureString}" frameborder="no" width="500" height="200"></iframe>`,
             context: "东城家园",
             district: "东城区",
             city: "北京",
-        },
-        {
-            lnglat: "39.908802,116.397502",
-            position: "39.908802,116.397502",
-            thumbnail: "",
-            content: "",
-            context: "其他",
-            district: "其他区",
-            city: "北京",
-        },
+        }
     ],
     // 配置标记区
     district: {
         "北京": {
-            "lnglat" : "39.904989,116.405285",
+            "latlng" : "39.904989,116.405285",
         },
         "朝阳区": {
-            "lnglat" : "39.921489,116.486409",
-        },
-        "其他区": {
-            "lnglat" : "39.908802,116.397502",
-        },
+            "latlng" : "39.921489,116.486409",
+        }
     }
 };';
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset

@@ -4,6 +4,36 @@
     Template Post Type: post, news
 */
     global $src_cdn, $img_cdn;
+    $viewmode = get_request_param('viewmode');
+    if ($viewmode && $viewmode === 'map') {
+        echo '<style>
+            img,
+            video,
+            figure {
+                max-width: 100%;
+                height: auto;
+                object-fit: cover;
+                margin: auto auto 10px;
+                padding: 0;
+            }
+            .chatGPT {
+                display: none;
+            }
+            p {
+                opacity: .75;
+                line-height: 23px;
+                font-size: 14px;
+            }
+        </style>';
+        $content = get_the_content();
+        // replace lazy-img attr-string
+        echo $content = str_replace('data-src', 'loading="lazy" src', $content);
+        // echo '<script>
+        //     const imgs = document.querySelectorAll("img");
+        //     window.parent.postMessage(imgs, "http://blog.2broear.com");
+        // </script>';
+        exit;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">

@@ -45,6 +45,8 @@
             background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);
             background-size: 4px 4px;
             /*background-color: rgba(255,255,255, .55);*/
+            /*backdrop-filter: saturate(150%) blur(0px);*/
+            /*-webkit-backdrop-filter: saturate(150%) blur(0px);*/
         }
         body.dark .article_index .in_dex,
         body.dark header>nav#tipson .top-bar-tips {

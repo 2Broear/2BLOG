@@ -1,8 +1,8 @@
 <?php
 /*
-   Template name: （BaaS）日志模板
-   Template Post Type: page
-*/
+ * Template name: （BaaS）日志模板
+ * Template Post Type: page
+ */
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
