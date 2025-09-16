@@ -309,7 +309,7 @@ custom_initfield_ipforbidden = e.config.ipForbidden;
 custom_initfield_posterimg = e.config.posterImg ? e.config.posterImg : custom_initfield_rootpath+'/images/default.jpg';
 // must var (case innerHTML no access to global varible)
 var lazyAvatar = custom_initfield_lazyload ? '<img data-src="'+m.cdn+'?d=mp" alt="avatar" />' : '<img src="'+m.cdn+'?d=mp" alt="avatar" />';
-e.placeholder=e.config.placeholder||"Just Go Go",e.el.innerHTML='<div class="vwrap"><div class="vheader item'+P.length+'"><div class="avatar"><span id="avatar">'+lazyAvatar+'</span></div>'+P.join("")+'</div><div class="vedit txt-right"><textarea id="veditor" class="veditor vinput" placeholder="'+e.placeholder+'"></textarea><div class="canvas_paint_board" style="display:none;font-size:12px"><div class="paint_tools"><input id="fill" type="color" title="画笔颜色">&nbsp;&nbsp;粗细&nbsp;&nbsp;<input id="bold" type="number" title="画笔粗细">&nbsp;&nbsp;<button id="undraw" title="上一步"> 撤销 </button>&nbsp;&nbsp;<button id="redraw" title="下一步"> 重做 </button>&nbsp;&nbsp;<button id="eraser" title="橡皮擦"> 擦除 </button>&nbsp;&nbsp;<button id="clear" title="全部清除"> 清屏 </button>&nbsp;</div><canvas id="canvas">Your browser does not support the canvas element.</canvas></div><div class="vctrl"><span>'+e.config.defender+'</span><span class="painting-btn" title="CANVAS 画图面板">'+e.locale.ctrl.CanvasPaint+'</span><span class="vemoji-btn">'+e.locale.ctrl.emoji+'<!--&nbsp;&nbsp;|&nbsp;&nbsp;--></span><span class="vpreview-btn"></span><span class="ESwitch-btn" title="bilibili 小电视">'+e.locale.ctrl.ESwitch+'</span></div><div class="vcontrol"><div class="col col-80 text-right"><button type="button" title="Ctrl+Enter" id="pushBtn" class="vsubmit vbtn">'+e.locale.ctrl.reply+'</button><button type="button" id="repushBtn" class="vsubmit vbtn" style="display:none"> 重新提交 </button></div></div><div class="info"><div class="timeRecord" style="display:none;">编辑保存于：<b></b></div><div class="power txt-right" style="display:none;">Powered By <a href="https://valine.js.org" target="_blank">Valine</a> v'+o+'</div></div><div class="vemojis" style="display:block;"></div><div class="vinput vpreview txt-center" style="display:none;"></div></div><div style="display:none;" class="vmark"></div></div><div class="vinfo" style="display:none;"><div class="vcount col"></div></div><div class="vlist"></div><div class="vempty" style="display:none;"></div><div class="vpage txt-center"></div>';var U=u.find(e.el,".vempty");e.nodata={show:function(t){return U.innerHTML=t||e.locale.tips.sofa,u.attr(U,"style","display:block;"),e},hide:function(){return u.attr(U,"style","display:none;"),e}};var I=u.create("div","class","vloading"),N=u.find(e.el,".vlist");e.loading={show:function(t){var n=u.findAll(N,".vcard");return t?N.insertBefore(I,n[0]):N.appendChild(I),e.nodata.hide(),e},hide:function(){var t=u.find(N,".vloading");return t&&u.remove(t),0===u.findAll(N,".vcard").length&&e.nodata.show(),e}};var mycanvas=document.getElementById('canvas'),ctx=mycanvas.getContext('2d'),vedit=document.getElementsByClassName("vedit")[0],veditor=document.getElementById('veditor'),eraser=document.getElementById('eraser'),clear=document.getElementById('clear'),number=document.getElementById('bold'),color=document.getElementById('fill'),width=1102,height=322,lineColor="#000000",lineBold=5,trigger=false,drawCount=0,drawHistory=[],move=(down_x,down_y,move_x,move_y)=>{if(trigger==true){ctx.lineTo(down_x,down_y);ctx.lineTo(move_x,move_y);ctx.clearRect(move_x,move_y,number.value,number.value)}else{ctx.beginPath();ctx.lineTo(down_x,down_y);ctx.lineTo(move_x,move_y);ctx.stroke()}},draw=()=>{mycanvas.onmousedown=(omd)=>{let down_x=omd.offsetX,down_y=omd.offsetY;console.log(down_x,","+down_y);mycanvas.onmousemove=(omm)=>{document.body.style.userSelect="none";let move_x=omm.offsetX,move_y=omm.offsetY;move(down_x,down_y,move_x,move_y);down_x=move_x;down_y=move_y;mycanvas.onmouseup=()=>{drawdone();move(down_x,down_y,move_x,move_y)}};mycanvas.onmouseup=()=>{drawdone()}};
+e.placeholder=e.config.placeholder||"Just Go Go",e.el.innerHTML='<div class="vwrap"><div class="vheader item'+P.length+'"><div class="avatar"><span id="avatar">'+lazyAvatar+'</span></div>'+P.join("")+'</div><div class="vedit txt-right"><textarea id="veditor" class="veditor vinput" placeholder="'+e.placeholder+'"></textarea><div class="canvas_paint_board" style="display:none;font-size:12px"><div class="paint_tools"><input id="fill" type="color" title="画笔颜色">&nbsp;&nbsp;粗细&nbsp;&nbsp;<input id="bold" type="number" title="画笔粗细">&nbsp;&nbsp;<button id="undraw" title="上一步"> 撤销 </button>&nbsp;&nbsp;<button id="redraw" title="下一步"> 重做 </button>&nbsp;&nbsp;<button id="eraser" title="橡皮擦"> 擦除 </button>&nbsp;&nbsp;<button id="clear" title="全部清除"> 清屏 </button>&nbsp;</div><canvas id="canvas">Your browser does not support the canvas element.</canvas></div><div class="vctrl"><span></span><span class="painting-btn" title="CANVAS 画图面板">'+e.locale.ctrl.CanvasPaint+'</span><span class="vemoji-btn">'+e.locale.ctrl.emoji+'<!--&nbsp;&nbsp;|&nbsp;&nbsp;--></span><span class="vpreview-btn"></span><span class="ESwitch-btn" title="bilibili 小电视">'+e.locale.ctrl.ESwitch+'</span></div><div class="vcontrol"><div class="col col-80 text-right"><button type="button" title="Ctrl+Enter" id="pushBtn" class="vsubmit vbtn">'+e.locale.ctrl.reply+'</button><button type="button" id="repushBtn" class="vsubmit vbtn" style="display:none"> 重新提交 </button></div></div><div class="info"><div class="timeRecord" style="display:none;">编辑保存于：<b></b></div><div class="power txt-right" style="display:none;">Powered By <a href="https://valine.js.org" target="_blank">Valine</a> v'+o+'</div></div><div class="vemojis" style="display:block;"></div><div class="vinput vpreview txt-center" style="display:none;"></div></div><div style="display:none;" class="vmark"></div></div>'+e.config.defender+'<div class="vinfo" style="display:none;"><div class="vcount col"></div></div><div class="vlist"></div><div class="vempty" style="display:none;"></div><div class="vpage txt-center"></div>';var U=u.find(e.el,".vempty");e.nodata={show:function(t){return U.innerHTML=t||e.locale.tips.sofa,u.attr(U,"style","display:block;"),e},hide:function(){return u.attr(U,"style","display:none;"),e}};var I=u.create("div","class","vloading"),N=u.find(e.el,".vlist");e.loading={show:function(t){var n=u.findAll(N,".vcard");return t?N.insertBefore(I,n[0]):N.appendChild(I),e.nodata.hide(),e},hide:function(){var t=u.find(N,".vloading");return t&&u.remove(t),0===u.findAll(N,".vcard").length&&e.nodata.show(),e}};var mycanvas=document.getElementById('canvas'),ctx=mycanvas.getContext('2d'),vedit=document.getElementsByClassName("vedit")[0],veditor=document.getElementById('veditor'),eraser=document.getElementById('eraser'),clear=document.getElementById('clear'),number=document.getElementById('bold'),color=document.getElementById('fill'),width=1102,height=322,lineColor="#000000",lineBold=5,trigger=false,drawCount=0,drawHistory=[],move=(down_x,down_y,move_x,move_y)=>{if(trigger==true){ctx.lineTo(down_x,down_y);ctx.lineTo(move_x,move_y);ctx.clearRect(move_x,move_y,number.value,number.value)}else{ctx.beginPath();ctx.lineTo(down_x,down_y);ctx.lineTo(move_x,move_y);ctx.stroke()}},draw=()=>{mycanvas.onmousedown=(omd)=>{let down_x=omd.offsetX,down_y=omd.offsetY;console.log(down_x,","+down_y);mycanvas.onmousemove=(omm)=>{document.body.style.userSelect="none";let move_x=omm.offsetX,move_y=omm.offsetY;move(down_x,down_y,move_x,move_y);down_x=move_x;down_y=move_y;mycanvas.onmouseup=()=>{drawdone();move(down_x,down_y,move_x,move_y)}};mycanvas.onmouseup=()=>{drawdone()}};
 mycanvas.ontouchstart=(ots)=>{ots.preventDefault();let boundingTopStart=canvas.getBoundingClientRect().top,boundingLeftStart=canvas.getBoundingClientRect().left,down_x=ots.touches[0].clientX-boundingLeftStart,down_y=ots.touches[0].clientY-boundingTopStart;console.log(down_x,","+down_y);mycanvas.ontouchmove=(otm)=>{otm.preventDefault();document.body.style.userSelect="none";let boundingTopMove=canvas.getBoundingClientRect().top,boundingLeftMove=canvas.getBoundingClientRect().left,move_x=otm.changedTouches[0].clientX-boundingLeftMove,move_y=otm.changedTouches[0].clientY-boundingTopMove;console.log(move_x+','+move_y);move(down_x,down_y,move_x,move_y);down_x=move_x;down_y=move_y;mycanvas.ontouchend=()=>{drawdone();move(down_x,down_y,move_x,move_y);}}}
 },unbind=()=>{mycanvas.onmousedown=null;mycanvas.onmousemove=null;mycanvas.onmouseup=null;document.body.style.userSelect="";
 mycanvas.ontouchstart = null;mycanvas.ontouchmove = null;mycanvas.ontouchend = null;
@@ -416,25 +416,45 @@ commentFilter=function(vcomment, objId){
     if(blobStrArr){var xhr=new XMLHttpRequest;xhr.responseType='blob';for(let i=0,blobLen=blobStrArr.length;i<blobLen;i++){xhr.onload=function(){var recoveredBlob=xhr.response;var reader=new FileReader;reader.onload=function(){console.log(reader);tempBaseArr.push(reader.result);var map=replaceArr(vcomment,blobStrArr,tempBaseArr);console.log(map);repe.set("comment",map);repe.save()};reader.readAsDataURL(recoveredBlob)};xhr.open('GET',blobStrArr[i].replace('"',''));xhr.send()}}
 };var B=function(){v.comment="",_.comment.value="",w(_.comment),u.attr(_.comment,"placeholder",t.placeholder),R={},t.preview.empty().hide()},P=u.find(t.el,".vsubmit"),U=function(e){return u.attr(P,"disabled")?void t.alert.show({type:0,text:t.locale.tips.busy+'ヾ(๑╹◡╹)ﾉ"',ctxt:t.locale.ctrl.ok}):""==v.comment?void _.comment.focus():(v.nick=v.nick||"匿名者",void(t.notify||t.verify?Q(N):N()))},I=function(){var e=new AV.ACL;return e.setPublicReadAccess(!0),e.setPublicWriteAccess(!0),e},N=function(){
     if (custom_initfield_defenter) {
-        const cft = u.find(t.el,"#pushBtn");
-        if (!cft.dataset.token) {
+        const pushBtn = u.find(t.el,"#pushBtn");
+        if (!pushBtn.dataset.token) {
             console.warn('cf-turnstile token is required before comment!');
             alert('等待 turnstile 验证..');
             return;
         }
-        fetch(`${custom_initfield_adminajax}?action=check_captcha&cf-turnstile-response=${cft.dataset.token}&_ajax_nonce=${cft.dataset.nonce}`, {
+        const resetTurnstile = function() {
+            if (!pushBtn || !turnstile) {
+                console.warn('error resetTurnstile', pushBtn, turnstile);
+                return;
+            }
+            // restore cf-verification(no mater success check_captcha)
+            pushBtn.dataset.token = "";
+            turnstile.reset(pushBtn.dataset.tid || 'cf-chl-widget-xxxxx');
+        }
+        // if (pushBtn.dataset.success)
+        fetch(`${custom_initfield_adminajax}?action=check_captcha&cf-turnstile-response=${pushBtn.dataset.token}&_ajax_nonce=${pushBtn.dataset.nonce}`, {
             method: 'GET', // POST incase 200load from cache
         })
         .then(res=> {
             if (!res.ok) throw new Error('request failed.');
-            return res.json(); //text()
+            try {
+                return res.json();
+            } catch {
+                return res.text();
+            }
         })
         .then(data=> {
             console.log('data(log) fullfilled.', data);
-            data.success ? submitComment() : alert('验证失败！' + data.message);
+            data?.success ? submitComment() : alert('验证失败！' + data?.message);
+            // resetTurnstile();
         })
         .catch(error => {
             console.error('Error fetching progress:', error);
+            // resetTurnstile();
+        })
+        .finally(() => {
+            // restore cf-verification(no mater success submit)
+            resetTurnstile();
         });
     } else {
         submitComment();

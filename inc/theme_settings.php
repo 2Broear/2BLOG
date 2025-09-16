@@ -1757,11 +1757,11 @@
                                         $preset = '1.6.4';  //默认
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
                                         $status_code = 0;
-                                        $url = 'https://cdn.staticfile.org/twikoo/' . $preset . '/twikoo.all.min.js';
+                                        $url = 'https://cdn.staticfile.org/twikoo/' . $preset . '/twikoo.min.js';
                                         if($third_comment=='Twikoo'){
                                             $status_code = get_url_status_by_curl($url, 3); //get_url_status_by_header($url);
                                         }
-                                        echo '<p class="description" id="site_comment_pushplus_label">twikoo.all.min.js 版本号（默认 1.6.4，当前文件（'.$url.'）状态：'.$status_code.'</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="small-text" placeholder="Twikoo Source" value="' . $preset . '"/>';
+                                        echo '<p class="description" id="site_comment_pushplus_label">twikoo.min.js 版本号（默认 1.6.4，当前文件（'.$url.'）状态：'.$status_code.'</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="small-text" placeholder="Twikoo Source" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>

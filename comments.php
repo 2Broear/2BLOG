@@ -163,13 +163,13 @@
                     	</div>
                     </div>
                 	<?php
-            	        if ($cf_turnstile) echo '<div class="cf-turnstile" data-sitekey="' . get_option('site_cloudflare_turnstile_sitekey') . '" data-language="cn" data-theme="' . theme_mode(true) . '" data-size="flexible" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"></div>';
                 		echo get_comment_id_fields($post_ID);
                 		do_action('comment_form', $post_ID);
                 	?>
                 </form>
             </div>
             <?php
+    	        if ($cf_turnstile) echo '<div id="widget-container" class="cf-turnstile"></div>'; // class="cf-turnstile" data-sitekey="' . get_option('site_cloudflare_turnstile_sitekey') . '" data-language="cn" data-theme="' . theme_mode(true) . '" data-size="flexible" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"
                 $per_page = get_option('comments_per_page', 15);//15;//
                 $comments = get_comments(array(
                     'post_id' => $post_ID,
@@ -317,6 +317,7 @@
                         },
                         // test: ()=>console.log(this)
                     };
+                    
                     Object.defineProperty(comments.init.prototype, 'realtime_avatar', {
                         value: function() {
                             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -346,6 +347,7 @@
                         configurable: false,
                         enumerable: false,
                     });
+                    
                     Object.defineProperty(comments.init.prototype, 'realtime_fields', {
                         get(){
                             return this.fields;
@@ -354,10 +356,12 @@
                             this.fields = field;
                         }
                     });
+                    
                     const comments_init = new comments.init(comments.info);
                     comments_init.realtime_avatar();
                     //..
-                    const comment_box = document.querySelector(".wp_comment_box"),
+                    const pushBtn = document.getElementById("pushBtn"),
+                          comment_box = document.querySelector(".wp_comment_box"),
                           comment_form = comment_box.querySelector("form"),
                           placeholder = comment_box.querySelector("textarea").placeholder,
                           comment = comment_form.querySelector("textarea[name=comment]"),
@@ -379,15 +383,24 @@
                                   disabled ? els[i].classList.add(cls) : els[i].classList.remove(cls);
                               }
                           };
+                    
                     //*** Submit comments logic ***//
-                    bindEventClick(comment_box, 'submit_btn', function(t, e){
+                    function resetTurnstile() {
+                        if (!pushBtn || !turnstile) {
+                            console.warn('error resetTurnstile', pushBtn, turnstile);
+                            return;
+                        }
+                        pushBtn.dataset.token = "";
+                        turnstile.reset(pushBtn.dataset.tid || 'cf-chl-widget-xxxxx');
+                    }
+                    bindEventClick(comment_box, 'submit_btn', function(t, e) {
                         e.preventDefault();  // prevent form submit
                         let a_val = author.value,
                             e_val = email.value,
                             c_val = comment.value,
                             comment_pid = t.dataset.cid,
                             comment_cid = t.dataset.pid;
-                        if(required_fields){
+                        if (required_fields) {
                             const e_reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/,
                                   t_fuc = function(str){
                                       let trim = str.replace(/^\s+|\s+$/g,"").replace( /^\s*/, '');
@@ -407,6 +420,11 @@
                             if(!t_fuc(c_val) || !t_fuc(a_val) || !e_reg.test(e_val)){
                                 return;
                             }
+                        }
+                        if (!pushBtn.dataset.token) {
+                            alert('等待 turnstile 验证...');
+                            // vcomments.querySelector("textarea").focus();
+                            return;
                         }
                         t.value = "提交中..";
                         // t.classList.add('busy');  //disable submit
@@ -472,9 +490,12 @@
                                         comment_parnode.classList.remove(disRepCls);  //enable reply
                                     }
                                 } catch (e) {
+                                    console.warn(e);
                                     handleComment();
                                 }
-                            }, function(err){
+                                // restore cf-verification(no mater success)
+                                resetTurnstile();
+                            }, function(err) {
                                 switch (err) {
                                     case 409:
                                         err = "检测到重复评论，您似乎已经提交过这条评论了！";
@@ -493,16 +514,25 @@
                                 t.value = "<?php echo $text_submit; ?>";
                                 // t.classList.remove('busy');  //enable submit
                                 comment_parnode.classList.remove(disRepCls);  //enable reply
-                            });
+                                // restore cf-verification(no mater success)
+                                resetTurnstile();
+                            }
+                        );
                     });
+                    
                     //*** Reply comments logic ***//
-                    comment_list.onclick=(e)=>{
+                    comment_list.onclick=(e)=> {
                         e = e || window.event;
                         let t = e.target || e.srcElement;
                         if(!t) return;
                         while(t!=comment_list){
-                            if(t.classList && t.classList.contains("comment-reply-link")){
-                                if(t.classList.contains('replying')) return;
+                            if(t.classList && t.classList.contains("comment-reply-link")) {
+                                    if (!pushBtn.dataset.token) {
+                                        alert('等待 turnstile 验证...');
+                                        // vcomments.querySelector("textarea").focus();
+                                        return;
+                                    }
+                                    if(t.classList.contains('replying')) return;
                                     class_switcher(comment_list.querySelectorAll(".comment-reply-link"), 'replying', false);  //enable(all-reply) adopt 
                                     t.classList.add('replying');  //disable(current-reply) adopt
                                     let adopt_node = document.adoptNode(comment_box),
@@ -518,7 +548,7 @@
                                     adopt_submit.dataset.cid = t.dataset.commentid;
                                     adopt_submit.dataset.replyto = t.dataset.replyto;
                                 break;
-                            }else if(t.id && t.id=="cancel-comment-reply-link"){
+                            } else if (t.id && t.id=="cancel-comment-reply-link") {
                                 class_switcher(comment_list.querySelectorAll(".comment-reply-link"), 'replying', false);  //enable(all-reply) adopt 
                                 let adopt_node = document.adoptNode(comment_box),
                                     adopt_area = adopt_node.querySelector("textarea[name=comment]"),
@@ -533,7 +563,7 @@
                                 adopt_submit.dataset.cid = 0;
                                 adopt_submit.removeAttribute('data-replyto');
                                 break;
-                            }else{
+                            } else {
                                 t = t.parentNode;
                             }
                         }

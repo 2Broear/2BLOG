@@ -520,7 +520,7 @@ markerData = {
             $mapTheme = $default_theme === 'dark' ? 'grey' : 'white';
             echo 'const mapTheme = "' . $mapTheme . '";';
     ?>
-            const maxZoomCity = maxZoom / 3.6;
+            const maxZoomCity = maxZoom / 3.2;
             const maxZoomDistrict = maxZoom / 1.68;
             const clusterIndexSet = {
                 city: {

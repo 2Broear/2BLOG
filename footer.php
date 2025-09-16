@@ -8,7 +8,48 @@
         return $year;
     }
     $cf_turnstile = get_option('site_cloudflare_turnstile');
-    if ($cf_turnstile) echo '<style>.cf-turnstile{margin-top:15px;}</style><script defer async src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>';
+    if ($cf_turnstile) {
+?>
+        <style>.cf-turnstile{margin-top:15px;}.cf-turnstile.hide{display:none;}</style>
+        <!--<script defer async src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>-->
+        <script defer async src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad"></script>
+        <script>
+            let turnstileId = null;
+            // https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/
+            function onTurnstileLoad() {
+                turnstileId = turnstile.render("#widget-container", {
+                    sitekey: "<?php echo get_option('site_cloudflare_turnstile_sitekey'); ?>",
+                    language: "cn",
+                    size: "flexible",
+                    theme: "<?php theme_mode(); ?>",
+                    callback: function (token) {
+                        console.log("Challenge completed:", token);
+                        const pushBtn = document.getElementById("pushBtn");
+                        pushBtn.dataset.token = token;
+                        pushBtn.dataset.tid = turnstileId;
+                    },
+                    "error-callback": function (errorCode) {
+                        console.error("Turnstile error:", errorCode);
+                    },
+                });
+            }
+            // const pushBtn = document.getElementById("pushBtn");
+            // function onTurnstileSuccess(token) {
+            //     console.log("Turnstile success:", token);
+            //     pushBtn.dataset.token = token;
+            //     pushBtn.disabled = false;
+            // }
+            // function onTurnstileError(errorCode) {
+            //     console.error("Turnstile error:", errorCode);
+            //     pushBtn.disabled = true;
+            // }
+            // function onTurnstileExpired() {
+            //     console.warn("Turnstile token expired");
+            //     pushBtn.disabled = true;
+            // }
+        </script>
+<?php
+    };
 ?>
 <div class="footer-all">
     <div class="footer-detector" id="end-news-all">
@@ -84,7 +125,7 @@
                             // 	recordIP: true,  // ad case
                             	placeholder: '快来玩右下角的“涂鸦画板”！',
                             	<?php
-                            	    echo $cf_turnstile ? 'defender: `<div class="cf-turnstile" data-sitekey="'. get_option('site_cloudflare_turnstile_sitekey') . '" data-language="cn" data-theme="' . theme_mode(true) . '" data-size="flexible" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"></div>`,' . PHP_EOL : 'defender: "",' . PHP_EOL;
+                            	    echo $cf_turnstile ? 'defender: `<div id="widget-container"></div>`,' . PHP_EOL : 'defender: "",' . PHP_EOL; // class="cf-turnstile" data-sitekey="'. get_option('site_cloudflare_turnstile_sitekey') . '" data-language="cn" data-theme="' . theme_mode(true) . '" data-size="flexible" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"
                             	    echo get_option('site_cdn_switcher') ? 'imgCdn: "'.$img_cdn.'",' . PHP_EOL . ' srcCdn: "'.$src_cdn.'",' . PHP_EOL . ' apiCdn: "'.$plugin_path.'",' . PHP_EOL : 'rootPath: "'.$root_path.'",' . PHP_EOL;
                             	    echo get_option('site_lazyload_switcher') ? 'lazyLoad: true,' . PHP_EOL : 'lazyLoad: false,' . PHP_EOL;
                         	        echo get_option("site_wpwx_notify_switcher") ? 'wxNotify: true,' . PHP_EOL : 'wxNotify: false,' . PHP_EOL;
@@ -105,11 +146,20 @@
                             const vcomments = document.querySelector("#vcomments");
                             if(vcomments) {
                                 const vwraps = vcomments.querySelectorAll(".vwrap"),
+                                      vsubmit = vcomments.querySelector(".vsubmit"),
                                       origin_wrap = vwraps[0]; // origin_bak = document.importNode(origin_wrap, true),
                                 // origin_wrap.querySelector("textarea").setAttribute('autofocus',true);
-                                bindEventClick(vcomments, 'vat', function(t){
+                                bindEventClick(vcomments, 'vat', function(t) {
+                                    if (!vsubmit.dataset.token) {
+                                        alert('等待 turnstile 验证...');
+                                        // vcomments.querySelector("textarea").focus();
+                                        return;
+                                    }
+                                    // restore cf-verification
+                                    // if (turnstileId) turnstile.reset(turnstileId);
+                                    // document.querySelector('.cf-turnstile').remove(); //classList.add('hide');
                                     const adopt_node = document.adoptNode(origin_wrap);
-                                    if(!t.classList.contains('reply')){
+                                    if (!t.classList.contains('reply')) {
                                         const vats = vcomments.querySelectorAll(".vat"),
                                               vpar = getParByCls(t, 'vh');
                                         for(let i=0,vatsLen=vats.length;i<vatsLen;i++){
@@ -125,7 +175,7 @@
                                             clearTimeout(delay_focus);
                                             delay_focus = null;
                                         }, 100);
-                                    }else{
+                                    } else {
                                         t.classList.remove('reply');
                                         t.innerText = "回复";
                                         vcomments.insertBefore(adopt_node, vcomments.querySelector(".vinfo"));  // reverse origin_bak
@@ -136,7 +186,7 @@
                 <?php
                     } elseif ($third_cmt=='Twikoo') {
                 ?>
-                        <script src="<?php echo 'https://cdn.staticfile.org/twikoo/' . get_option('site_twikoo_version'). '/twikoo.all.min.js'; ?>"></script>
+                        <script src="<?php echo 'https://cdn.staticfile.org/twikoo/' . get_option('site_twikoo_version'). '/twikoo.min.js'; ?>"></script>
                         <script>
                             twikoo.init({
                                 envId: '<?php echo $twikoo_envid = get_option('site_twikoo_envid'); ?>',
@@ -144,7 +194,7 @@
                             });
                             const comment_count = document.querySelectorAll('.valine-comment-count'),
                                   comments_list = document.querySelector('#comments');
-                            if(comment_count){
+                            if (comment_count) {
                                 var count_array = [];
                                 for(let i=0,ccLen=comment_count.length;i<ccLen;i++){
                                     count_array.push(comment_count[i].dataset.xid);//getAttribute('data-xid'));
@@ -161,18 +211,20 @@
                                         console.error(err);
                                 });
                             };
-                            if(comments_list){
+                            if (comments_list) {
                                 twikoo.getRecentComments({
-                                    envId: '<?php echo $twikoo_envid; ?>', // 环境 ID
+                                    envId: "<?php echo $twikoo_envid; ?>", // 环境 ID
                                     pageSize: <?php echo $post_per; ?>, // 获取多少条，默认：5，最大：100
                                     includeReply: true // 是否包括最新回复，默认：true
-                                }).then(function (res) {
+                                })
+                                .then(function (res) {
                                     for(let i=0,resLen=res.length;i<resLen;i++){
                                         // console.log(res[i]);
                                         let each = res[i];
                                         comments_list.innerHTML += `<a href="${each.url}#${each.id}" target="_blank" rel="nofollow"><em title="${each.commentText}">${each.nick}：${each.commentText}</em></a>`;
                                     }
-                                }).catch(function (err) {
+                                })
+                                .catch(function (err) {
                                     console.error(err);
                                 });
                             }
@@ -391,24 +443,6 @@
 </div>
 <script type="text/javascript">
     <?php
-        if ($cf_turnstile) {
-    ?>
-            const pushBtn = document.getElementById("pushBtn");
-            function onTurnstileSuccess(token) {
-                console.log("Turnstile success:", token);
-                pushBtn.dataset.token = token;
-                pushBtn.disabled = false;
-            }
-            function onTurnstileError(errorCode) {
-                console.error("Turnstile error:", errorCode);
-                pushBtn.disabled = true;
-            }
-            function onTurnstileExpired() {
-                console.warn("Turnstile token expired");
-                pushBtn.disabled = true;
-            }
-    <?php
-        }
         // lazyLoad images
         if(get_option('site_lazyload_switcher')) {
             $acgcid = get_cat_by_template('acg','term_id');

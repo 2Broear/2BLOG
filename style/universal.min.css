@@ -2090,7 +2090,7 @@ p.wp_comment_tip{
 }
 .wp_comment_box form input.err,
 .wp_comment_box form textarea.err{
-    border-color: var(--theme-color);
+    border-color: var(--theme-color)!important;
 }
 .wp_comment_box form input[type=submit]:hover,
 .wp_comment_box form textarea:focus,
