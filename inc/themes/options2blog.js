@@ -47,6 +47,31 @@ jQuery(document).ready(function($){
         };
     }
     
+    function get_api_salt(file, sucessCallback, errorCallback) {
+        return fetch(`${window.location.origin}/wp-admin/admin-ajax.php?action=api_salt_handler&api_file=${file}`, {
+            method: 'GET', // POST incase 200load from cache
+        })
+        .then(res=> {
+            if (!res.ok) throw new Error('request failed.');
+            try {
+                return res.json();
+            } catch (e) {
+                console.warn(e);
+                return res.text();
+            }
+        })
+        .then(data=> {
+            console.log('data(list) fullfilled.', data);
+            sucessCallback?.(data);
+            return data;
+        })
+        .catch(error => {
+            console.error('Error fetching progress:', error);
+            errorCallback?.(error);
+            return error;
+        });
+    }
+    
     function getParentElement(curEl, parCls){
       //!curEl.classList incase if dnode oes not have any classes (null occured)
       while(!curEl || !curEl.classList || !curEl.classList.contains(parCls)){
@@ -600,70 +625,45 @@ jQuery(document).ready(function($){
             }
             if (t.classList && t.classList.contains(reloader)) {
                 const dataset = t.dataset;
+                const api_url = dataset.api;
+                const api_file = api_url.substring(api_url.lastIndexOf('/'), api_url.indexOf('?'));
                 const container = contents.querySelector(`.formtable.${dataset.cat}.${switchcls}`);
+                // console.log(`loading url: ${api_url}`);
                 if (!confirm(`重新拉取 ${dataset.cat} 中所有 rss 数据（${dataset.limit}条）？`)) return;
                 t.textContent = `fetching ${dataset.cat}...`;
                 t.classList.remove(reloader);
-                console.log(`loading url: ${dataset.api}`);
-                
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', `${dataset.api}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, true);
-                xhr.onprogress = function(event) {
-                  if (event.lengthComputable) {
-                    var percentComplete = event.loaded / event.total * 100;
-                    console.log('Progress: ' + percentComplete + '%');
-                  }
-                };
-                xhr.onload = function() {
-                  if (xhr.status === 200) {
-                    container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ xhr.responseText }`;
-                    console.log('data fullfilled.');
-                    alert(`${dataset.cat} rss data loaded.`);
-                  } else {
+                //..
+                async function use_api_salt() {
+                    const api_salt = await get_api_salt(api_file);
+                    console.log(api_salt);
+                    const new_url = api_url.substring(0, api_url.indexOf('?')) + `?s=${api_salt.s}&t=${api_salt.t}`;
+                    // console.log(new_url);
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', `${new_url}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, true);
+                    xhr.onprogress = function(event) {
+                      if (event.lengthComputable) {
+                        var percentComplete = event.loaded / event.total * 100;
+                        console.log('Progress: ' + percentComplete + '%');
+                      }
+                    };
+                    xhr.onload = function() {
+                      if (xhr.status === 200) {
+                        container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ xhr.responseText }`;
+                        console.log('data fullfilled.');
+                        alert(`${dataset.cat} rss data loaded.`);
+                      } else {
+                            t.classList.add(reloader);
+                            t.textContent = `reload failed, reload ${dataset.cat}?`;
+                      }
+                    };
+                    xhr.onerror = function(err) {
+                        console.warn(err);
                         t.classList.add(reloader);
                         t.textContent = `reload failed, reload ${dataset.cat}?`;
-                  }
-                };
-                xhr.onerror = function(err) {
-                    console.warn(err);
-                    t.classList.add(reloader);
-                    t.textContent = `reload failed, reload ${dataset.cat}?`;
+                    }
+                    xhr.send();
                 }
-                xhr.send();
-                return;
-                // fetch(`${dataset.api}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, { method: 'GET', })
-                // .then(res=> {
-                //     if (!res.ok) {
-                //         throw new Error('request failed.');
-                //     }
-                //     return res.text(); //json()
-                //     const reader = res.body.getReader();
-                //     let receivedLength = 0; // 已接收的数据长度
-                //     const totalLength = parseInt(res.headers.get('Content-Length') || '0', 10);
-            
-                //     reader.read().then(function processText({ done, value }) {
-                //         if (done) {
-                //             console.log('Stream complete');
-                //             return;
-                //         }
-                //         receivedLength += value.length;
-                //         const progress = Math.round((receivedLength / totalLength) * 100);
-            
-                //         console.log(progress + '%');
-                //         // 在这里你可以更新页面元素来展示进度
-            
-                //         return reader.read().then(processText);
-                //     });
-                // })
-                // .then(data=> {
-                //     container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ data }`;
-                //     console.log('data fullfilled.');
-                //     alert(`${dataset.cat} rss data loaded.`);
-                // })
-                // .catch(error => {
-                //     container.querySelector('p').innerHTML = `Reload site_rss_${dataset.cat}_cache failed, <u>${ error }!</u>`;
-                //     console.error('Error fetching progress:', error);
-                // });
+                use_api_salt();
             }
         });
         

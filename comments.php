@@ -93,26 +93,26 @@
 <?php
     }
     if(comments_open() || is_category()&&$post->comment_status=="open"){ //$post->comment_status=="open"
-        if(is_user_logged_in()){
+        if (is_user_logged_in()) {
             $wp_user = get_currentuserinfo();// global $current_user;// print_r($wp_user);
             $user_name = $wp_user->user_nicename; // $_COOKIE["comment_author_" . COOKIEHASH];
             $user_mail = $wp_user->user_email; // $_COOKIE["comment_author_email_" . COOKIEHASH];
             $user_link = $wp_user->user_url; // $_COOKIE["comment_author_url_" . COOKIEHASH];
-        }else{
+        } else {
             $user_name = array_key_exists("comment_author_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_" . COOKIEHASH] : false;
             $user_mail = array_key_exists("comment_author_email_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_email_" . COOKIEHASH] : false;
             $user_link = array_key_exists("comment_author_url_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_url_" . COOKIEHASH] : false;
         };
-        if($comment_sw){
+        if ($comment_sw) {
             $welcome="既来之则留之~ 欢迎在下方留言评论，提交评论后还可以撤销或重新编辑。（Valine 会自动保存您的评论信息到浏览器）";
-        }elseif($twikoo_sw){
+        } elseif ($twikoo_sw) {
             $welcome="既来之则留之~ 欢迎在下方留言评论";
-        }else{
+        } else {
             $wp_login = is_user_logged_in() ? '<small> ( Logged as <a href="'.wp_login_url(get_permalink()).'" title="登出？">'.$user_name.'</a> ) </small>' : '';
             $welcome='欢迎您，'.$user_name.'！您可以在这里畅言您的的观点与见解！'.$wp_login;//
         };
         echo '<div class="main"><span id="respond"><h2> 评论留言 </h2></span><p>'.$welcome.'</p></div>';
-        if(is_single()){
+        if (is_single()) {
 ?>
             <script type="text/javascript">
                 function postLike(t){
@@ -146,7 +146,8 @@
             $req = get_option( 'require_name_email' );
             $text_submit = '提交评论';
             $text_loadmore = '加载更多评论';
-            $cf_turnstile = get_option('site_cloudflare_turnstile');
+            $cf_turnstile_wordpress = get_cf_turnstile('Wordpress');
+            if ($cf_turnstile_wordpress) the_cf_turnstile();
 ?>
             <div class="wp_comment_box">
                 <form action="<?php echo esc_url(home_url('/')); ?>wp-comments-post.php" method="post">
@@ -169,7 +170,7 @@
                 </form>
             </div>
             <?php
-    	        if ($cf_turnstile) echo '<div id="widget-container" class="cf-turnstile"></div>'; // class="cf-turnstile" data-sitekey="' . get_option('site_cloudflare_turnstile_sitekey') . '" data-language="cn" data-theme="' . theme_mode(true) . '" data-size="flexible" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"
+    	        if ($cf_turnstile_wordpress) echo '<div id="widget-container"></div>'; // class="cf-turnstile" data-sitekey="' . get_option('site_cloudflare_turnstile_sitekey') . '" data-language="cn" data-theme="' . theme_mode(true) . '" data-size="flexible" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"
                 $per_page = get_option('comments_per_page', 15);//15;//
                 $comments = get_comments(array(
                     'post_id' => $post_ID,
@@ -273,35 +274,31 @@
                 	'reverse_top_level' => null,  //set null for panel settings
                 	'reverse_children'  => null
                 );
-                if($wp_ajax_comment){
-                    if($wp_ajax_comment_paginate){
-                        // print_r($comments);
-                        foreach($comments as $each){
-                            if($each->comment_parent!=0){
-                                return;
-                            }
-                            wp_comments_template($each);
-                            // 遍历子评论列表 https://wp-kama.com/function/WP_Comment::get_children
-                            $child_comment = $each->get_children(array(
-                                'hierarchical' => 'threaded',
-                                // 'status'       => 'approve',
-                                'order'        => 'ASC',
-                                // 'orderby'=>'order_clause',
-                                // 'meta_query'=>array(
-                                //   'order_clause' => 'comment_parent'
-                                // )
-                            ));
-                            if(count($child_comment)>=1){
-                                echo '<ul class="children" data-cpid="'.$each->comment_ID.'">';
-                                wp_child_comments_loop($each);
-                                echo '</ul>';
-                            }
-                            // echo '</div>';
+                if ($wp_ajax_comment && $wp_ajax_comment_paginate) {
+                    // print_r($comments);
+                    foreach($comments as $each){
+                        if($each->comment_parent!=0){
+                            return;
                         }
-                    }else{
-                        wp_list_comments($wp_comment_args);
+                        wp_comments_template($each);
+                        // 遍历子评论列表 https://wp-kama.com/function/WP_Comment::get_children
+                        $child_comment = $each->get_children(array(
+                            'hierarchical' => 'threaded',
+                            // 'status'       => 'approve',
+                            'order'        => 'ASC',
+                            // 'orderby'=>'order_clause',
+                            // 'meta_query'=>array(
+                            //   'order_clause' => 'comment_parent'
+                            // )
+                        ));
+                        if(count($child_comment)>=1){
+                            echo '<ul class="children" data-cpid="'.$each->comment_ID.'">';
+                            wp_child_comments_loop($each);
+                            echo '</ul>';
+                        }
+                        // echo '</div>';
                     }
-                }else{
+                } else {
                     wp_list_comments($wp_comment_args);
                 }
             ?>
@@ -391,7 +388,15 @@
                             return;
                         }
                         pushBtn.dataset.token = "";
-                        turnstile.reset(pushBtn.dataset.tid || 'cf-chl-widget-xxxxx');
+                        turnstile.reset(pushBtn.dataset?.tid || 'cf-chl-widget-xxxxx');
+                    }
+                    function validTurnstileToken() {
+                        if (!pushBtn.dataset.token) {
+                            alert('等待 turnstile 验证...');
+                            // vcomments.querySelector("textarea").focus();
+                            return false;
+                        }
+                        return true;
                     }
                     bindEventClick(comment_box, 'submit_btn', function(t, e) {
                         e.preventDefault();  // prevent form submit
@@ -421,11 +426,9 @@
                                 return;
                             }
                         }
-                        if (!pushBtn.dataset.token) {
-                            alert('等待 turnstile 验证...');
-                            // vcomments.querySelector("textarea").focus();
-                            return;
-                        }
+                        <?php
+                            if ($cf_turnstile_wordpress) echo 'if (!validTurnstileToken()) return;';
+                        ?>
                         t.value = "提交中..";
                         // t.classList.add('busy');  //disable submit
                         comment_parnode.classList.add(disRepCls);  //disable reply
@@ -527,11 +530,9 @@
                         if(!t) return;
                         while(t!=comment_list){
                             if(t.classList && t.classList.contains("comment-reply-link")) {
-                                    if (!pushBtn.dataset.token) {
-                                        alert('等待 turnstile 验证...');
-                                        // vcomments.querySelector("textarea").focus();
-                                        return;
-                                    }
+                                    <?php
+                                        if ($cf_turnstile_wordpress) echo 'if (!validTurnstileToken()) return;';
+                                    ?>
                                     if(t.classList.contains('replying')) return;
                                     class_switcher(comment_list.querySelectorAll(".comment-reply-link"), 'replying', false);  //enable(all-reply) adopt 
                                     t.classList.add('replying');  //disable(current-reply) adopt

@@ -311,8 +311,8 @@
                                         $output_json = $output_caches;
                                         $output_data = json_decode($output_json);
                                         $output_date = isset($output_data[0]->lastUpdate) ? $output_data[0]->lastUpdate : '0000-00-00';
-                                        // $link_api = get_api_refrence('rss', true);  // failed to fetch
-                                        $link_api = get_plugin_refrence('rss', true);
+                                        $link_api = get_api_refrence('rss');  //, true
+                                        // $link_api = get_plugin_refrence('rss', true);
                                         date_default_timezone_set('Asia/Shanghai');
                                         // print_r('(' . date('Y-m-d H:i:s', strtotime('today 06:00 Asia/Shanghai')) . ') ' . strtotime('today 06:00 Asia/Shanghai'));
                                         // print_r(wp_get_schedules());
@@ -586,6 +586,7 @@
         register_setting( 'baw-settings-group', 'site_cloudflare_turnstile' );
             register_setting( 'baw-settings-group', 'site_cloudflare_turnstile_sitekey' );
             register_setting( 'baw-settings-group', 'site_cloudflare_turnstile_secretkey' );
+            register_setting( 'baw-settings-group', 'site_cloudflare_turnstile_comments' );
         // if(get_option('site_valine_switcher')){
         //     // register_setting( 'baw-settings-group', 'site_leancloud_sdk' );
         //     // register_setting( 'baw-settings-group', 'site_comment_qmsgchan' );
@@ -1656,19 +1657,32 @@
                                     ?>
                                 </td>
                             </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $turnstile; ?>">
+                                <th scope="row">— Turnstile Comments</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_cloudflare_turnstile_comments';
+                                        $value = get_option($opt);
+                                        $comments_options = ['Wordpress','Valine','Twikoo'];
+                                        echo '<p class="description" id="site_map_includes_label">可选开启评论审核系统（暂不支持 twikoo</p><div class="checkbox">';
+                                        $pre_array = explode(',',trim($value));  // NO "," Array
+                                        foreach ($comments_options as $option) {
+                                            $checking = in_array($option, $pre_array) ? 'checked' : '';
+                                            echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.$option.'</label>';
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" value="' . $value . '" placeholder="评论审查" /></div>';;
+                                    ?>
+                                </td>
+                            </tr>
                     <tr valign="top">
                         <th scope="row">评论系统<sup class="dualdata dynamic_comment"> <?php $third_comment=get_option('site_third_comments');echo $third_comment ? $third_comment : 'WordPress';//if($third_comment=='Valine'){echo 'Valine';}elseif($third_comment=='Twikoo'){echo 'Twikoo';}else{echo 'BaaS';} ?></sup></th>
                         <td>
                             <?php
                                 $opt = 'site_third_comments';
                                 $value = get_option($opt);
-                                $arrobj = ['Wordpress','Valine','Twikoo'];
-                                // $arrobj = array(
-                                //     // array('name'=>'Waline', 'icon'=>$img_cdn.'/images/settings/alicloud.png'),
-                                // );
-                                if(!$value) update_option($opt, $arrobj[0]);else $preset=$value;  //auto update option to default if unset
+                                if(!$value) update_option($opt, $comments_options[0]);else $preset=$value;  //auto update option to default if unset
                                 echo '<label for="'.$opt.'"><p class="description" id="">可选第三方评论系统（开启后需填配置项</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">'; //<option value="">WordPress</option>
-                                    foreach ($arrobj as $arr){
+                                    foreach ($comments_options as $arr){
                                         echo '<option value="'.$arr.'"';
                                         if($value==$arr) echo('selected="selected"');
                                         echo '>'.$arr.'</option>';

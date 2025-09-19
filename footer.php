@@ -4,52 +4,9 @@
     function get_copyright(){
         $year = gmdate('Y', time() + 3600*8);//date('Y');
         $begain = get_option('site_begain');
-        if($begain&&$begain<$year) echo $begain."-";
+        if ($begain && $begain<$year) echo $begain . "-";
         return $year;
     }
-    $cf_turnstile = get_option('site_cloudflare_turnstile');
-    if ($cf_turnstile) {
-?>
-        <style>.cf-turnstile{margin-top:15px;}.cf-turnstile.hide{display:none;}</style>
-        <!--<script defer async src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>-->
-        <script defer async src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad"></script>
-        <script>
-            let turnstileId = null;
-            // https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/
-            function onTurnstileLoad() {
-                turnstileId = turnstile.render("#widget-container", {
-                    sitekey: "<?php echo get_option('site_cloudflare_turnstile_sitekey'); ?>",
-                    language: "cn",
-                    size: "flexible",
-                    theme: "<?php theme_mode(); ?>",
-                    callback: function (token) {
-                        console.log("Challenge completed:", token);
-                        const pushBtn = document.getElementById("pushBtn");
-                        pushBtn.dataset.token = token;
-                        pushBtn.dataset.tid = turnstileId;
-                    },
-                    "error-callback": function (errorCode) {
-                        console.error("Turnstile error:", errorCode);
-                    },
-                });
-            }
-            // const pushBtn = document.getElementById("pushBtn");
-            // function onTurnstileSuccess(token) {
-            //     console.log("Turnstile success:", token);
-            //     pushBtn.dataset.token = token;
-            //     pushBtn.disabled = false;
-            // }
-            // function onTurnstileError(errorCode) {
-            //     console.error("Turnstile error:", errorCode);
-            //     pushBtn.disabled = true;
-            // }
-            // function onTurnstileExpired() {
-            //     console.warn("Turnstile token expired");
-            //     pushBtn.disabled = true;
-            // }
-        </script>
-<?php
-    };
 ?>
 <div class="footer-all">
     <div class="footer-detector" id="end-news-all">
@@ -101,13 +58,15 @@
                 <?php
                     $baas = get_option('site_leancloud_switcher');
                     $third_cmt = get_option('site_third_comments');
-                    if($third_cmt=='Valine') {    // 全站加载
+                    if ($third_cmt=='Valine') {    // 全站加载
                 ?>
-                        <script src="<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info(); ?>"></script>
+                        <script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/Valine/Valine.m.js?v=<?php echo get_theme_info(); ?>"></script>
                 <?php
                         if (!$baas) echo '<script src="' . $src_cdn . '/js/leancloud/av-min.js?v=footcall"></script>';
                 	    $root_path = custom_cdn_src('default', true);
             	        $plugin_path = $root_path.'/plugin';
+                	    $cf_turnstile_valine = get_cf_turnstile($third_cmt);
+            	        if ($cf_turnstile_valine) the_cf_turnstile();
                 ?>
                         <script type="text/javascript">
                             // asyncLoad('', function() {
@@ -125,7 +84,7 @@
                             // 	recordIP: true,  // ad case
                             	placeholder: '快来玩右下角的“涂鸦画板”！',
                             	<?php
-                            	    echo $cf_turnstile ? 'defender: `<div id="widget-container"></div>`,' . PHP_EOL : 'defender: "",' . PHP_EOL; // class="cf-turnstile" data-sitekey="'. get_option('site_cloudflare_turnstile_sitekey') . '" data-language="cn" data-theme="' . theme_mode(true) . '" data-size="flexible" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"
+                            	    echo $cf_turnstile_valine ? 'defender: `<div id="widget-container"></div>`,' . PHP_EOL : 'defender: "",' . PHP_EOL; // class="cf-turnstile" data-sitekey="'. get_option('site_cloudflare_turnstile_sitekey') . '" data-language="cn" data-theme="' . theme_mode(true) . '" data-size="flexible" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"
                             	    echo get_option('site_cdn_switcher') ? 'imgCdn: "'.$img_cdn.'",' . PHP_EOL . ' srcCdn: "'.$src_cdn.'",' . PHP_EOL . ' apiCdn: "'.$plugin_path.'",' . PHP_EOL : 'rootPath: "'.$root_path.'",' . PHP_EOL;
                             	    echo get_option('site_lazyload_switcher') ? 'lazyLoad: true,' . PHP_EOL : 'lazyLoad: false,' . PHP_EOL;
                         	        echo get_option("site_wpwx_notify_switcher") ? 'wxNotify: true,' . PHP_EOL : 'wxNotify: false,' . PHP_EOL;
@@ -150,13 +109,17 @@
                                       origin_wrap = vwraps[0]; // origin_bak = document.importNode(origin_wrap, true),
                                 // origin_wrap.querySelector("textarea").setAttribute('autofocus',true);
                                 bindEventClick(vcomments, 'vat', function(t) {
+                                <?php
+                                    if ($cf_turnstile_valine) {
+                                ?>
                                     if (!vsubmit.dataset.token) {
                                         alert('等待 turnstile 验证...');
                                         // vcomments.querySelector("textarea").focus();
                                         return;
                                     }
-                                    // restore cf-verification
-                                    // if (turnstileId) turnstile.reset(turnstileId);
+                                <?php
+                                    }
+                                ?>
                                     // document.querySelector('.cf-turnstile').remove(); //classList.add('hide');
                                     const adopt_node = document.adoptNode(origin_wrap);
                                     if (!t.classList.contains('reply')) {

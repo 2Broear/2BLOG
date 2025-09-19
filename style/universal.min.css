@@ -2060,12 +2060,12 @@ p.wp_comment_tip{
 }
 .wp_comment_box form{
     height: auto;
-    margin: 25px auto;
+    margin: 15px auto;
     /*text-align: right;*/
 }
 
 .wp_comment_box form .userinfo{
-    width: 26%!important;
+    width: 26%;
     display: inline-block;
     margin-left: 10px;
     vertical-align: top;
