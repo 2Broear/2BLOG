@@ -687,7 +687,7 @@
     }
     
     // 重写 WP 固定链接(初始化)
-    if(!get_option('permalink_structure')){
+    if (!get_option('permalink_structure')) {
         add_action( 'init', 'custom_permalink_rules' );
         function custom_permalink_rules() {
             global $wp_rewrite;
@@ -696,7 +696,7 @@
         }
     }
     // 移除 URL category 目录 // https://blog.wpjam.com/function_reference/trailingslashit/
-    if(get_option('site_remove_category_switcher')){
+    if (get_option('site_remove_category_switcher')) {
         function remove_category($string, $type){
             if($type!='single' && $type=='category' && (strpos($string, 'category')!==false)){
                 $url_without_category = str_replace(array("/category"), "", $string);
@@ -715,7 +715,7 @@
     }
     add_filter( 'get_avatar', 'replace_gravatar' );
     //通过邮箱匹配（gravatar/qq）头像（默认获取后台gravatar镜像源）
-    function match_mail_avatar($user_mail){
+    function match_mail_avatar($user_mail) {
         preg_match_all('/@qq.com/i', $user_mail, $qq_matches);
         preg_match_all('/(.*?)@/i', $user_mail, $mail_account);
         $avatar_mirror = get_option('site_avatar_mirror','//gravatar.com/');
@@ -724,7 +724,7 @@
     }
     
     // 更新 sitemap 站点地图
-    if(get_option('site_map_switcher')){
+    if (get_option('site_map_switcher')) {
         function update_sitemap() {
             load_theme_partial('/plugin/sitemap.php');
         }
@@ -750,7 +750,7 @@
     add_filter('pre_get_posts', 'rss_category');
     
     // 搜索样式控制
-    if(get_option('site_search_style_switcher')){
+    if (get_option('site_search_style_switcher')) {
         // https://thomasgriffin.com/how-to-include-custom-post-types-in-wordpress-search-results/
         add_action( 'pre_get_posts', 'tg_include_custom_post_types_in_search_results' );
         function tg_include_custom_post_types_in_search_results($query){
@@ -767,7 +767,7 @@
     }
     
     //关闭图片上传自动裁剪
-    if(get_option('site_imgcrop_switcher')){
+    if (get_option('site_imgcrop_switcher')) {
         // https://wordpress.stackexchange.com/questions/126718/disabling-auto-resizing-of-uploaded-images
         function remove_image_sizes( $sizes, $metadata ) {
             return [];
@@ -784,9 +784,7 @@
     }
     
     //禁用远程管理文件 xmlrpc.php 防爆破
-    if(get_option('site_xmlrpc_switcher')) {
-        add_filter('xmlrpc_enabled', '__return_false');
-    }
+    if(get_option('site_xmlrpc_switcher')) add_filter('xmlrpc_enabled', '__return_false');
     
     /*****   WP Comment email/wechat notify, ajax/pagination etc   *****/
     

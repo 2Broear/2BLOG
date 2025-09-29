@@ -11,26 +11,8 @@
     $do_output = get_request_param('output');
     $do_update = get_request_param('update');
     
-    if ($do_query) {
-        /**
-         * 在对象数组中搜索指定键值匹配的元素
-         * @param array $array 要搜索的数组
-         * @param string $key 要匹配的键名（如 "author"、"title"、"date"）
-         * @param mixed $value 要匹配的值
-         * @return array 返回匹配的所有元素（数组形式）
-         */
-        function searchByKeyValue($array, $key, $value) {
-            // return array_filter($array, function($item) use ($key, $value) {
-            //     return isset($item->$key) && $item->$key === $value;
-            // });
-            foreach ($array as $item) {
-                if (isset($item->$key) && strcasecmp($item->$key , $value) === 0) { //$item->$key === $value
-                    return $item; // 直接返回匹配的 stdClass 对象
-                }
-            }
-            return null; // 未找到返回 null
-        }
-    }
+    // if ($do_query) {
+    // }
     // $do_refresh = get_request_param('refresh');
     // if ($do_refresh) {
     //     wp_clear_scheduled_hook('scheduled_rss_feeds_updates_hook');
@@ -128,7 +110,8 @@
         if ($do_query) {
             $output_caches = json_decode($output_caches);
             $output_caches = searchByKeyValue($output_caches, $query_key, $query_val);
-            print_r(json_encode($output_caches));
+            $output_caches = json_encode($output_caches);
+            print_r($output_caches);
         } else {
             print_r($output_json);
         }

@@ -480,6 +480,8 @@
             register_setting( 'baw-settings-group', 'site_footprint_data' );
             register_setting( 'baw-settings-group', 'site_footprint_panorama_data' );
         register_setting( 'baw-settings-group', 'site_stream_switcher' );
+        register_setting( 'baw-settings-group', 'site_links_rss_cards_sw' );
+            register_setting( 'baw-settings-group', 'site_links_rss_cards_manual' );
         register_setting( 'baw-settings-group', 'site_links_code_state' );
             register_setting( 'baw-settings-group', 'site_links_code_state_cats' );
             register_setting( 'baw-settings-group', 'site_links_rss_alive_state' );
@@ -3030,14 +3032,35 @@ const maps = {
                             ?>
                         </td>
                     </tr>
+                    
                     <!-- Links options -->
+                    <tr valign="top">
+                        <th scope="row">友链 - RSS卡片流</th>
+                        <td>
+                            <?php
+                                $opt = 'site_links_rss_cards_sw';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后默认加载RSS卡片信息流，可选开启前端手动加载卡片信息（</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:darkolivegreen" class="btn">RSS 卡片</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $link_states = get_option('site_links_rss_cards_sw') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 按需加载 </th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_links_rss_cards_manual';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后可前端指定加载友链RSS卡片内容（默认关闭</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b style="color:gray">ManualLoad</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
                     <tr valign="top">
                         <th scope="row">友链 - 状态检测</th>
                         <td>
                             <?php
                                 $opt = 'site_links_code_state';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">开启后定期检测并显示友链状态，可选开启指定分类，若检测站点返回 400+ 错误将自动将该友链设置为 standby 不可访问状态（此项将消耗大量时间，默认每日6点更新</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:darkgreen" class="btn">Link State</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后定期检测并显示友链状态，可选开启指定分类，若检测站点返回 400+ 错误将自动将该友链设置为 standby 不可访问状态（此项将消耗大量时间，默认每日6点更新</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:darkgreen" class="btn">友链状态</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -3062,15 +3085,15 @@ const maps = {
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $link_states ? 'dynamic_optshow' : false; ?>">
-                            <th scope="row">— RSS活性检测 <sup>Alpha</sup></th>
-                            <td>
-                                <?php
-                                    $opt = 'site_links_rss_alive_state';
-                                    $status = check_status($opt);
-                                    echo '<label for="'.$opt.'"><p class="description" id="">检测并显示友链RSS活性状态，超过 2 年未更新将被标记“待除草”状态（此项为 A 测，存在数据差异，不建议开启</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' disabled /> <b style="color:gray">RSS ALIVE STATE</b></label>';
-                                ?>
-                            </td>
-                    </tr>
+                                <th scope="row">— RSS活性检测 <sup>Alpha</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_links_rss_alive_state';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">检测并显示友链RSS活性状态，超过 2 年未更新将被标记“待除草”状态（此项为 A 测，存在数据差异，不建议开启</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' disabled /> <b style="color:gray">RSS ALIVE STATE</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
                     <!-- Archives options -->
                     <tr valign="top">
                         <th scope="row">归档 - 报表范围</th>
