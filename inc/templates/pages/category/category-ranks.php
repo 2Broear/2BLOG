@@ -24,7 +24,7 @@ function get_comment_ranks() {
     });
     return $comments_data;
 }
-function the_comment_ranks($t1='常客',$c1='访问较频繁的童鞋',$t2='稀客',$c2='偶尔来访的小伙伴',$t3='游客',$c3='') {
+function the_comment_ranks($t1='常客',$c1='近期访问较频繁的童鞋',$t2='稀客',$c2='近期偶尔来访的小伙伴',$t3='游客',$c3='') {
     global $valine_sw;
     $output = '';
     if(!$valine_sw){
@@ -35,27 +35,56 @@ function the_comment_ranks($t1='常客',$c1='访问较频繁的童鞋',$t2='稀�
             $output_sw = in_array($temp_slug, explode(',', $caches));
             $output = $output_sw ? get_option('site_rank_list_cache') : '';
         }
-        if(!$output || !$output_sw){
+        if (!$output || !$output_sw) {
             global $lazysrc, $loadimg;
             $output .= '<div class="fade-item"><h1>'.$t1.' </h1><p>'.$c1.'</p><ul id="rankest">';
             $rankdata = get_comment_ranks();
             $datalen = count($rankdata);
             $databox = '';
-            for($i=0;$i<3;$i++){
+            $loopmax = 5; // 3 plus 匿名者/2broear
+            // function commenter_filter($callback) {
+            //     $callback();
+            // }
+            function get_range_max($rankdata, $loopnum) {
+                // global $rankdata;
+                // print_r($rankdata);
+                $range_max = 0;
+                for ($i=0; $i < $loopnum; $i++) {
+                    if(array_key_exists($i, $rankdata)){
+                        $user = $rankdata[$i];
+                        $count = $user->count ? $user->count : 0;
+                        $name = $user->name ? $user->name : '匿名者';
+                    }
+                    if ($name != "匿名者" && $name != "2broear") {
+                        $range_max += $count;
+                    }
+                }
+                return $range_max;
+            }
+            function get_range_percent($num, $max) {
+                if (!is_numeric($num) || !is_numeric($max)) {
+                    return 0;
+                }
+                return ($num / $max) * 100;
+            }
+            $range_max = get_range_max($rankdata, $loopmax);
+            for ($i=0; $i < $loopmax; $i++) {
                 if(array_key_exists($i,$rankdata)){
                     $user = $rankdata[$i];
                     $count = $user->count ? $user->count : 0;
                     $link = $user->link ? $user->link : '#';
                     $name = $user->name ? $user->name : '???';
                 }
-                $lazyhold = "";
-                $avatar = get_option('site_avatar_mirror').'avatar/'.md5($user->mail).'?d=retro&s=100';
-                if($lazysrc!='src'){
-                    $lazyhold = 'data-src="'.$avatar.'"';
-                    $avatar = $loadimg;
+                if ($name != "匿名者" && $name != "2broear") {
+                    $lazyhold = "";
+                    $avatar = get_option('site_avatar_mirror').'avatar/'.md5($user->mail).'?d=retro&s=100';
+                    if($lazysrc!='src'){
+                        $lazyhold = 'data-src="'.$avatar.'"';
+                        $avatar = $loadimg;
+                    }
+                    // $counts = $count<50 ? $count*2 : $count;
+                    $databox .= '<li><span id="avatar" data-t="'.$count.'"><a href="'.$link.'" target="_blank"><img '.$lazyhold.' src="'.$avatar.'" title="这家伙留了 '.$count.' 条评论！" alt="'.$name.'" /></a></span><span id="range" style=""><em style="height:'.get_range_percent($count, $range_max).'%"><span class="wave active"></span></em></span><a href="'.$link.'" target="_self"><b title="'.$name.'">'.$name.'</b></a></li>'; //$counts
                 }
-                $counts = $count<50 ? $count*2 : $count;
-                $databox .= '<li><span id="avatar" data-t="'.$count.'"><a href="'.$link.'" target="_blank"><img '.$lazyhold.' src="'.$avatar.'" title="这家伙留了 '.$count.' 条评论！" alt="'.$name.'" /></a></span><span id="range" style=""><em style="height:'.$counts.'%"><span class="wave active"></span></em></span><a href="'.$link.'" target="_self"><b title="'.$name.'">'.$name.'</b></a></li>';
             };
             $databox .= '</ul>';
             // top 10
@@ -102,6 +131,9 @@ function the_comment_ranks($t1='常客',$c1='访问较频繁的童鞋',$t2='稀�
     <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/ranking.css?v=<?php echo get_theme_info(); ?>" />
     <style>
+        .ranking ul li span#range {
+            max-height: 150px;
+        }
         .ranking ul li span#range em span.wave{
             position: relative;
             z-index: 1;
@@ -134,13 +166,13 @@ function the_comment_ranks($t1='常客',$c1='访问较频繁的童鞋',$t2='稀�
                     $valine_sw = $third_cmt==='Valine';
                     $twikoo_sw = $third_cmt==='Twikoo';
                     // 输出评论排行
-                    the_comment_ranks('常客','访问较频繁的童鞋', '稀客','偶尔来访的小伙伴', '游客',''); 
+                    the_comment_ranks('常客','近期访问较频繁的童鞋', '稀客','近期偶尔来访的小伙伴', '游客',''); 
                 ?>
             </div>
             <?php 
                 the_content();  // the_page_content(current_slug());
                 // ads..
-                adscene_shortcode('adscene_list_context');
+                adsense_shortcode('adsense_list_context');
             ?>
             <div id="comment_txt">
                 <?php dual_data_comments(); ?>
@@ -230,13 +262,31 @@ function the_comment_ranks($t1='常客',$c1='访问较频繁的童鞋',$t2='稀�
                     temp_rankest = document.createElement("DIV"),
                     temp_ranks = document.createElement("DIV"),
                     temp_ranked = document.createElement("DIV");
+                function get_range_max() {
+                    let range_max = 0;
+                    for (let i=0; i<limit; i++) {
+                        let name = temps[i].n,
+                            times = temps[i].t;
+                        if (i < max && name != "匿名者" && name != "2broear") {
+                            range_max += times;
+                        }
+                    }
+                    return range_max;
+                }
+                function get_range_percent(num, max) {
+                    if (isNaN(num) || isNaN(max)) {
+                        alert('NaN: ', num, max);
+                        return 0;
+                    }
+                    return (num / max) * 100;
+                }
+                const range_max = get_range_max();
+                // console.log(range_max)
                 for(let i=0;i<limit;i++){
                     let name = temps[i].n,
                         mail = temps[i].m,//md5(temps[i].m),
                         link = temps[i].l,
                         times = temps[i].t;
-                    avg = avg+=temps[i].t;
-                    average = avg/max;
                     if(name!="匿名者"&&name!="2broear"){
                         <?php
                             $lazyhold = "";
@@ -248,8 +298,10 @@ function the_comment_ranks($t1='常客',$c1='访问较频繁的童鞋',$t2='稀�
                         ?>
                         link = link ? link : 'javascript:;';
                         if(i<max){
+                            avg = avg += times;
+                            average = avg/max;
                             remove_load(rankest);
-                            temp_rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img <?php echo $lazyhold; ?> src="<?php echo $avatar; ?>" title="这家伙留了 ${times} 条评论！" alt="${name}" /></a></span><span id="range" style="height:${average}px"><em style="height:${times*1}%"><span class="wave active"></span></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>`;
+                            temp_rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img <?php echo $lazyhold; ?> src="<?php echo $avatar; ?>" title="这家伙留了 ${times} 条评论！" alt="${name}" /></a></span><span id="range"><em style="height:${get_range_percent(times, range_max)}%"><span class="wave active"></span></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>`; // style="height:${average}px"
                             fragment_rankest.appendChild(temp_rankest);
                         }
                         if(i>=max && i<maxes){

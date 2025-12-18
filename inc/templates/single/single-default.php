@@ -4,38 +4,12 @@
     Template Post Type: post, notes
 */
     global $src_cdn, $img_cdn;
-    $viewmode = get_request_param('viewmode');
-    if ($viewmode && $viewmode === 'map') {
-        echo '<style>
-            img,
-            video,
-            figure {
-                max-width: 100%;
-                height: auto;
-                object-fit: cover;
-                margin: auto auto 10px;
-                padding: 0;
-            }
-            .chatGPT {
-                display: none;
-            }
-            p {
-                opacity: .75;
-                line-height: 23px;
-                font-size: 14px;
-            }
-        </style>';
-        $content = get_the_content();
-        // replace lazy-img attr-string
-        echo $content = str_replace('data-src', 'loading="lazy" src', $content);
-        exit;
-    }
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <?php get_head(); ?>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/n.css?1v=<?php echo get_theme_info(); ?>2" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/n.css?1v=<?php echo get_theme_info(); ?>" />
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/highlight/agate.m.css" />
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/fancybox.css" />
     <style>
@@ -47,6 +21,9 @@
             /*margin-left: 25px;*/
         }
 	    .in_dex li.child{margin-left: 15px!important;}
+	    .content, .bg h1 {
+	        font-family: 'Source Han Serif SC','Source Han Serif','source-han-serif-sc',"Noto Serif",'PT Serif','SongTi SC',serif;
+	    }
 	    .bg h1 {
 	        max-width: 20em;
 	    }
@@ -74,10 +51,12 @@
 	    /***  extras  ***/
 	    .win-content {
 	        background: linear-gradient(90deg, var(--mirror-start) 0, var(--mirror-end));
-            background: -webkit-linear-gradient(0deg, var(--mirror-start) 0, var(--mirror-end));
-	        background: rgb(255 255 255 / 95%);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            background: -webkit-linear-gradient(150deg, var(--mirror-start) 0, var(--mirror-end));
+            max-width: 1024px;
+            /*** !Perfomance Issue  ***/
+	        /*background: rgb(255 255 255 / 95%);*/
+            /*backdrop-filter: blur(15px);*/
+            /*-webkit-backdrop-filter: blur(15px);*/
             border: 2px solid white;
 	    }
 	    body.dark .win-content {
@@ -126,10 +105,10 @@
                             <?php 
                                 the_content();
                                 $ps = get_post_meta($pid, "post_feeling", true);
-                                if($ps){
+                                if ($ps) {
                                     $weblog = get_cat_by_template('weblog');
                                     $download = get_cat_by_template('download');
-                                    if(in_category($weblog->slug, $pid) || in_category($download->slug, $pid)) echo do_shortcode('[custom_title title="其他" statu]').'<p>'.$ps.'</p>';
+                                    if(in_category($weblog->slug, $pid) || in_category($download->slug, $pid)) echo do_shortcode('[custom_title title="Ps." statu]').'<p>'.$ps.'</p>';
                                 }
                             ?>
                         </div>

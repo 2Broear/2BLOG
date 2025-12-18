@@ -352,13 +352,22 @@ article .infos span#slider {
 	color: var(--preset-c);
 }
 .win-content article span#normal.great {
-	border-color:var(--preset-okay);background-color:var(--preset-okay-l)
+	border-color:var(--preset-okay);
+	/*background-color:var(--preset-okay-l);*/
+    background: linear-gradient(45deg, var(--preset-okay-l), transparent);
+    background: -webkit-linear-gradient(45deg, var(--preset-okay-l), transparent);
 }
 .win-content article span#normal.caution {
-	border-color:var(--preset-caution);background-color:var(--preset-caution-l)
+	border-color:var(--preset-caution);
+	/*background-color:var(--preset-caution-l);*/
+    background: linear-gradient(45deg, var(--preset-caution-l), transparent);
+    background: -webkit-linear-gradient(45deg, var(--preset-caution-l), transparent);
 }
 .win-content article span#normal.alert {
-	border-color:var(--preset-alert);background-color:var(--preset-alert-l)
+	border-color:var(--preset-alert);
+	/*background-color:var(--preset-alert-l);*/
+    background: linear-gradient(45deg, var(--preset-alert-l), transparent);
+    background: -webkit-linear-gradient(45deg, var(--preset-alert-l), transparent);
 }
 .win-content article span#normal {
 	width: 100%;
@@ -370,7 +379,9 @@ article .infos span#slider {
 	position: relative;
 	border-left: 3px solid;
 	border-color: var(--preset-6);
-	background-color: var(--preset-s);
+	/*background-color: var(--preset-s);*/
+    background: linear-gradient(45deg, var(--preset-s), transparent);
+    background: -webkit-linear-gradient(45deg, var(--preset-s), transparent);
 	/*margin-bottom: 18px;*/
 	box-sizing: border-box;
 }

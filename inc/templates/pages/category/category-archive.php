@@ -51,11 +51,17 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
         .archive-tree ul:hover{
             /*max-height: 368px;*/
         }
+        .archive-tree ul {
+            overscroll-behavior: contain;
+        }
         div.blink{
             /*animation: blinker .5s infinite alternate ease;*/
             /*-webkit-animation: blinker .5s infinite alternate ease;*/
         }
-        .stats a:hover{
+        .stats b:hover{
+            opacity: 1;
+        }
+        .stats b:hover > a{
             color: var(--theme-color);
         }
         .stats a{
@@ -347,7 +353,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                 }
                 the_archive_lists();
                 // ads..
-                adscene_shortcode('adscene_list_context');
+                adsense_shortcode('adsense_list_context');
             ?>
             <div id="comment_txt" class="wow fadeInUp" data-wow-delay="0.25s">
                 <?php 

@@ -1,9 +1,9 @@
 <?php
     // 谷歌 Adsense 广告简码
     if (get_option('site_ads_switcher')) {
-        function custom_adscene_sidebar_square_shortcode($atts) {
+        function custom_adsense_sidebar_square_shortcode($atts) {
             $autoWidth = isset($atts['autoWidth']) ? $atts['autoWidth'] : true;
-            return '<div class="adscene fade-item"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
+            return '<div class="adsense fade-item"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
                 <!-- 方形侧栏 -->
                 <ins class="adsbygoogle"
                      style="display:block"
@@ -15,9 +15,9 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script></div>';
         }
-        function custom_adscene_sidebar_long_shortcode($atts) {
+        function custom_adsense_sidebar_long_shortcode($atts) {
             $autoWidth = isset($atts['autoWidth']) ? $atts['autoWidth'] : true;
-            return '<div class="adscene fade-item"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
+            return '<div class="adsense fade-item"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
                 <!-- 纵向侧栏 -->
                 <ins class="adsbygoogle"
                      style="display:block"
@@ -29,8 +29,8 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script></div>';
         }
-        function custom_adscene_list_richtext_shortcode($atts) {
-            return '<article class="adscene fade-item"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
+        function custom_adsense_list_richtext_shortcode($atts) {
+            return '<article class="adsense fade-item"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
                 <!-- 富文本列表 -->
                 <ins class="adsbygoogle"
                      style="display:block"
@@ -42,8 +42,8 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script></article>';
         }
-        function custom_adscene_list_context_shortcode($atts) {
-            return '<div class="adscene fade-item"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
+        function custom_adsense_list_context_shortcode($atts) {
+            return '<div class="adsense fade-item"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
                 <!-- 纯文本列表 -->
                 <ins class="adsbygoogle"
                      style="display:block"
@@ -55,8 +55,8 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script></div>';
         }
-        function custom_adscene_article_embed_shortcode($atts) {
-            return '<div class="adscene fade-item"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
+        function custom_adsense_article_embed_shortcode($atts) {
+            return '<div class="adsense fade-item"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7117066844426823" crossorigin="anonymous"></script>
                 <ins class="adsbygoogle"
                      style="display:block; text-align:center;"
                      data-ad-layout="in-article"
@@ -69,18 +69,18 @@
         }
         
         // ads.0.0
-        function add_adscene_shortcodes() {
-            add_shortcode('adscene_sidebar_square', 'custom_adscene_sidebar_square_shortcode');
-            add_shortcode('adscene_sidebar_long', 'custom_adscene_sidebar_long_shortcode');
-            add_shortcode('adscene_list_richtext', 'custom_adscene_list_richtext_shortcode');
-            add_shortcode('adscene_list_context', 'custom_adscene_list_context_shortcode');
-            add_shortcode('adscene_article_embed', 'custom_adscene_article_embed_shortcode');
+        function add_adsense_shortcodes() {
+            add_shortcode('adsense_sidebar_square', 'custom_adsense_sidebar_square_shortcode');
+            add_shortcode('adsense_sidebar_long', 'custom_adsense_sidebar_long_shortcode');
+            add_shortcode('adsense_list_richtext', 'custom_adsense_list_richtext_shortcode');
+            add_shortcode('adsense_list_context', 'custom_adsense_list_context_shortcode');
+            add_shortcode('adsense_article_embed', 'custom_adsense_article_embed_shortcode');
         }
         
         // if (is_single()) {
-        //     if (get_option('site_ads_arsw')) add_adscene_shortcodes();
+        //     if (get_option('site_ads_arsw')) add_adsense_shortcodes();
         // } else {
-            add_adscene_shortcodes();
+            add_adsense_shortcodes();
         // }
     }
     

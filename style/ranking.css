@@ -106,7 +106,7 @@ body.dark .ranking ul li span#range,body.dark .ranking ul li img{
 }
 .ranking ul li span#range{
     max-width: 32px;
-    min-height: 172px;
+    min-height: 152px;
     overflow: hidden;
     margin: 15px auto;
     background: var(--preset-s);

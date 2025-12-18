@@ -65,7 +65,7 @@ function get_download_posts($cats, $order=1){
                 endwhile;
                 wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
                 unset($post, $lazysrc, $loadimg);
-            $output .= '</ul></div></div>' . adscene_shortcode('adscene_sidebar_square', true) . '</div>';
+            $output .= '</ul></div></div>' . adsense_shortcode('adsense_sidebar_square', true) . '</div>';
         }
     };
     return $output;

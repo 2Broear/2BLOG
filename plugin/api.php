@@ -30,7 +30,7 @@
         parse_str($QSTR, $params);
         function send_auth_request(){
             global $params;
-            $auth_api = array_key_exists('auth', $params) ? $params['auth'] : $_POST['auth'];
+            $auth_api = get_request_param('auth');
             //setup api authentication
             if($auth_api){
                 /*
@@ -59,7 +59,7 @@
                 }else{
                     $res->err = 'cdn disabled';
                 }
-                $exec = array_key_exists('exec', $params) ? $params['exec'] : $_POST['exec'];
+                $exec = get_request_param('exec');
                 if($exec){
                     // 通过此 api 发送代理请求，返回客户端为 server 端（custom server request-header）
                     $ch = curl_init();

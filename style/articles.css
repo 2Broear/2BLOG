@@ -222,5 +222,6 @@ ul li>ol li,ol li>ul li{font-size: var(--min-size)}
 @media screen and (max-width:600px){
     figure > figure{
         width: 45%!important;
+        width: 30%!important;
     }
 }

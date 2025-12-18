@@ -105,7 +105,7 @@
                             endwhile;
                             wp_reset_query();
                             // ads..
-                            adscene_shortcode('adscene_list_richtext');
+                            adsense_shortcode('adsense_list_richtext');
                         ?>
 					</div>
 				</div>

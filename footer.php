@@ -84,11 +84,11 @@
                             // 	recordIP: true,  // ad case
                             	placeholder: '快来玩右下角的“涂鸦画板”！',
                             	<?php
+                        	        $comments_blackList = get_option("site_comment_blacklists");
                             	    echo $cf_turnstile_valine ? 'defender: `<div id="widget-container"></div>`,' . PHP_EOL : 'defender: "",' . PHP_EOL; // class="cf-turnstile" data-sitekey="'. get_option('site_cloudflare_turnstile_sitekey') . '" data-language="cn" data-theme="' . theme_mode(true) . '" data-size="flexible" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"
                             	    echo get_option('site_cdn_switcher') ? 'imgCdn: "'.$img_cdn.'",' . PHP_EOL . ' srcCdn: "'.$src_cdn.'",' . PHP_EOL . ' apiCdn: "'.$plugin_path.'",' . PHP_EOL : 'rootPath: "'.$root_path.'",' . PHP_EOL;
                             	    echo get_option('site_lazyload_switcher') ? 'lazyLoad: true,' . PHP_EOL : 'lazyLoad: false,' . PHP_EOL;
                         	        echo get_option("site_wpwx_notify_switcher") ? 'wxNotify: true,' . PHP_EOL : 'wxNotify: false,' . PHP_EOL;
-                        	        $comments_blackList = get_option("site_comment_blacklists");
                         	        echo $comments_blackList ? 'blackList: "' . urlencode(trim($comments_blackList)) . '",' . PHP_EOL : 'blackList: "",' . PHP_EOL;
                         	        echo get_option("site_comment_blockoutside") ? 'ipForbidden: true,' . PHP_EOL : 'ipForbidden: false,' . PHP_EOL;
                             	?>
@@ -409,7 +409,8 @@
         // lazyLoad images
         if(get_option('site_lazyload_switcher')) {
             $acgcid = get_cat_by_template('acg','term_id');
-            if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)) {
+            $acgpage = $acgcid==$cat || cat_is_ancestor_of($acgcid, $cat);
+            if($acgpage) {
     ?>
                 const worker = new Worker('<?php echo custom_cdn_src(0,1); ?>/js/worker.js');
                 const getAverageRGB = function(imgEl){var blockSize=5,defaultRGB={r:255,g:255,b:255},canvas=document.createElement('canvas'),context=canvas.getContext&&canvas.getContext('2d'),data,width,height,i=-4,length,rgb={r:0,g:0,b:0},count=0;if(!context){return defaultRGB}height=canvas.height=imgEl.naturalHeight||imgEl.offsetHeight||imgEl.height;width=canvas.width=imgEl.naturalWidth||imgEl.offsetWidth||imgEl.width;context.drawImage(imgEl,0,0);try{data=context.getImageData(0,0,width,height)}catch(e){return defaultRGB}length=data.data.length;while((i+=blockSize*4)<length){++count;rgb.r+=data.data[i];rgb.g+=data.data[i+1];rgb.b+=data.data[i+2]}rgb.r=~~(rgb.r/count);rgb.g=~~(rgb.g/count);rgb.b=~~(rgb.b/count);return rgb},
@@ -417,8 +418,8 @@
                         if (!tarEl) return;
                         if (img instanceof HTMLImageElement) {
                             const rgb = getAverageRGB(img);
-                            const rgba = rgb['r']+' '+rgb['g']+' '+rgb['b']+' / 50%';
-                            tarEl.setAttribute('style','background:rgb('+rgba+')');
+                            const rgba = `${rgb['r']} ${rgb['g']} ${rgb['b']} / 88%`;
+                            tarEl.setAttribute('style','background-color: rgb('+rgba+')');
                             return;
                         }
                         worker.postMessage({
@@ -430,117 +431,18 @@
                             tempimg.src = objectURL;
                             tempimg.setAttribute('crossorigin', 'Anonymous');
                             const rgb = getAverageRGB(tempimg);
-                            const rgba = rgb['r']+' '+rgb['g']+' '+rgb['b']+' / 50%';
-                            tarEl.setAttribute('style','background:rgb('+rgba+')');
+                            const rgba = `${rgb['r']} ${rgb['g']} ${rgb['b']} / 88%`;
+                            tarEl.setAttribute('style','background-color: rgb('+rgba+')');
                             // URL.revokeObjectURL(objectURL);
                         }
                         worker.onerror = function(event){
-                            console.warn("ERROR: " + event.filename + " (" + event.lineno + "): " +
-                                        event.message);
+                            console.warn("ERROR: " + event.filename + " (" + event.lineno + "): " + event.message);
                         }
                     }
     <?php
             }
-    ?>
-            const lazyimg = document.querySelectorAll("body img[data-src]"),
-                  loading = "<?php echo $img_cdn; ?>/images/loading_3_color_tp.png";
-            var raf_available = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-            if(lazyimg[0]){
-                var time_delay = 500,
-                    msgObject = Object.create(null),
-                    loadArray = Array.apply(null, lazyimg),  // [...lazyimg]
-                    arrayChunk = function(array, process, context=null, args){
-                        setTimeout(function(){
-                            var item = array.shift();
-                            // process.call(context, item);
-                            process.apply(context, [item, args]);
-                            // console.log(process)
-                            if (array.length > 0){
-                                setTimeout(arguments.callee, 10);
-                            }
-                        }, 100);
-                    },
-                    processImage = function(image, initial, imgList=null){
-                        const updateList = Object.prototype.toString.call(imgList)=='[object Array]';
-                        let datasrc = image.dataset.src;
-                        initial ? image.src = loading : false; //pre-holder (datasrc only)
-                        // console.debug('processing..', image, loadArray);
-                        // !!!LONG TASK engaged!!!
-                        if(image.getBoundingClientRect().top >= window.innerHeight || image.offsetParent==null || !image.src){
-                            return;
-                        }
-                        // console.log('onsreen image: ',image);
-                        image.src = datasrc; // 即时更新 image（设置后即可监听图片 onload 事件）
-                        // 使用 onload 事件替代定时器或Promise，判断已设置真实 src 的图片加载完成后再执行后续操作
-                        image.onload=function(){
-                            if(this.getAttribute('src')===datasrc){
-                                if(updateList) imgList.splice(imgList.indexOf(this), 1);  // 移除已加载图片数组（已赋值真实 src 情况下）
-                                this.onload = null;  //fix bug: can't modify img-src(this.src = datasrc;)
-                            }else{
-                                this.removeAttribute('data-src'); // disable loading
-                                // bug: can't modify img-src
-                                this.src = datasrc;  // this.src will auto-fix [http://] prefix
-                                time_delay = 3*time_delay;  //increase delay (decrease request)
-                                console.log(time_delay);
-                            }
-                            <?php
-                                if($acgcid==$cat || cat_is_ancestor_of($acgcid, $cat)){
-                                    echo 'setupBlurColor(this, getParByCls(this, "inbox"));'; //this.parentElement.parentElement
-                                }
-                            ?>
-                        }
-                        // handle loading-err images image.onerror=()=>this.src=loading;
-                        image.onerror=function(){
-                            if(updateList) imgList.splice(imgList.indexOf(this), 1);  // 移除错误图片数组
-                            this.removeAttribute('src');
-                            this.removeAttribute('data-src'); // disable loading
-                            if(!this.dataset.err){
-                                this.setAttribute('alt','图片请求出现问题');
-                                this.id = 'err';
-                            }
-                        }
-                    },
-                    autoLoad = function(imgLoadArr, initial=false){
-                        if(Object.prototype.toString.call(imgLoadArr)=='[object Array]'){
-                            let arrLen = imgLoadArr.length;
-                            for(let i=0;i<arrLen;i++){
-                                new Promise(function(resolve,reject){
-                                    resolve(imgLoadArr);
-                                }).then(function(res){
-                                    processImage(res[i], initial, res); //imgLoadArr[i]
-                                }).catch(function(err){
-                                    console.log(err);
-                                });
-                            }
-                            return;
-                        };
-                        // single image: updateList === loadArray but imgLoadArr(concated array)
-                        processImage(imgLoadArr, initial, loadArray);  // imgLoadArr
-                    },
-                    scrollLoad = closure_throttle((e)=>{
-                        if(loadArray.length<=0){
-                            console.log(Object.assign(msgObject, {msg:'lazyload done', code:200}), loadArray);
-                            window.removeEventListener('scroll', scrollForRemove, true);
-                            return;
-                        };
-                        // autoLoad(loadArray);
-                        arrayChunk(loadArray.concat(), autoLoad);
-                        // console.log('throttling..',loadArray);
-                    }, time_delay),
-                    scrollForRemove = function(event){
-                        let e = event || window.event,
-                            t = e.target || e.srcElement;
-                        if(t!==document) return;
-                        // requestAnimationFrame support
-                        raf_available ? window.requestAnimationFrame(scrollLoad) : scrollLoad();
-                    };
-                // autoLoad(loadArray, true);
-                arrayChunk(loadArray.concat(), autoLoad, this, true); // will NOT change origin chunk array(lose effect)
-                window.addEventListener('scroll', scrollForRemove, true);
-            }
-    <?php
-        };
-        if(get_option('site_async_switcher') && !is_single()){
+        }
+        if (get_option('site_async_switcher') && !is_single()) {
     ?>
             function load_ajax_posts(t,type,limit,callback,action=false,url=false,params=false){
                 const type_acg = "acg",
@@ -612,6 +514,46 @@
     <?php
         }
     ?>
+</script>
+<script type="module">
+    // var raf_available = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+    const lazyImgs = document.querySelectorAll("body img[data-src]");
+    if (lazyImgs.length) {
+        const loadImgSrc = "<?php echo $img_cdn; ?>/images/loading_3_color_tp.png";
+        const setAcgBackground = ()=> {<?php echo $acgpage ? 'setupBlurColor(this, getParByCls(this, "inbox"));' : 'console.debug("not in acg page.");'; ?>}
+        //..
+        try {
+            import("<?php echo custom_cdn_src(1, 1); ?>/js/utils.js").then((mod)=> {
+                // visibility observer
+                const visibilityObserver = new mod.VisibilityObserver({
+                    threshold: 0.1, // 10%可见时触发
+                    rootMargin: '10px' // 提前10px检测
+                });
+                // observer images
+                lazyImgs.forEach((img)=> {
+                    visibilityObserver.observe(img, (entry) => {
+                        const image = entry.target;
+                        const datasrc = image.dataset.src;
+                        if (!image.dataset.src) {
+                            console.warn('no data-src found on img', image);
+                            return;
+                        }
+                        if (entry.target.src === datasrc) {
+                            console.debug('image data-src settled.');
+                            return;
+                        }
+                        // entry.target.src = entry.isVisible ? datasrc : loadImgSrc;  // BUG of inVisible loadImgSrc
+                        if (entry.isVisible) entry.target.src = datasrc;
+                        // entry.target.onload = ()=> setAcgBackground();
+                        <?php if ($acgpage) echo 'entry.target.onload = ()=> {setupBlurColor(this, getParByCls(this, "inbox"))};'; ?>
+                    });
+                });
+                
+            })
+        } catch(e) {
+            console.warn("VisibilityObserver unavailable! check utils.",e)
+        }
+    }
 </script>
 <?php
     if(get_option('site_video_capture_switcher')){

@@ -88,7 +88,7 @@
 				</div>
 				<div class="nav-footer"></div>
 			</div>
-			<?php if (get_option('site_ads_sidebar')) adscene_shortcode('adscene_sidebar_long'); ?>
+			<?php if (get_option('site_ads_sidebar')) adsense_shortcode('adsense_sidebar_long'); ?>
 		</div>
 		<div class="win-content main">
 			<div class="notes notes_default" style="max-width: 100%;">
@@ -143,7 +143,7 @@
                     endwhile;
                     wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
                     // ads..
-                    adscene_shortcode('adscene_list_context');
+                    adsense_shortcode('adsense_list_context');
                 ?>
                 <div class="pageSwitcher">
                     <?php 

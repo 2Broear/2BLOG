@@ -458,7 +458,7 @@
                         	<span id="acg_window-content-inside_left-bList">
                         		<ol class="acg_window-content-inside_left-list">
                                     <?php
-                                        // adscene_shortcode('adscene_list_richtext');
+                                        // adsense_shortcode('adsense_list_richtext');
                                         $query_slug = !isset(get_category($query_cid)->errors) ? get_category($query_cid)->slug : get_category(1)->slug;
                                         if($baas&&strpos(get_option('site_leancloud_category'), 'category-acg.php')!==false){
                                     ?>
@@ -556,7 +556,7 @@
                     ?>
                     </ul>
                     <?php 
-                        adscene_shortcode('adscene_list_context');
+                        adsense_shortcode('adsense_list_context');
                         echo $acg_sw ? '<div class="newsBox-subText-Description" id="acg_window-bottom"><a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper($query_slug).'</b></a></div>' : ''; //<a href="javascript:;"><b>TAGCLOUDS</b></a>
                     ?>
                     <!--<div class="newsBox-subText-Description" id="acg_window-bottom">-->

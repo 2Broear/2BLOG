@@ -34,9 +34,11 @@
                             let eachimg = imgs[i],
                                 eachpar = eachimg.parentNode,
                                 fancybox = document.createElement("a");
+                            // eachimg.src ? fancybox.setAttribute("href", eachimg.src) : fancybox.setAttribute("href", eachimg.dataset.src);
+                            const datasrc = eachimg.dataset?.src || eachimg.src; 
+                            fancybox.setAttribute("href", datasrc);
                             fancybox.setAttribute("data-fancybox","gallery");
                             fancybox.setAttribute("aria-label", "gallery_images");
-                            eachimg.src ? fancybox.setAttribute("href", eachimg.src) : fancybox.setAttribute("href", eachimg.dataset.src);
                             fancybox.appendChild(eachimg);
                             eachpar.insertBefore(fancybox, eachpar.firstChild);
                         }

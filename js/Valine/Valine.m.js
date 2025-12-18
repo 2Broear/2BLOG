@@ -430,6 +430,8 @@ commentFilter=function(vcomment, objId){
             // restore cf-verification(no mater success check_captcha)
             pushBtn.dataset.token = "";
             turnstile.reset(pushBtn.dataset.tid || 'cf-chl-widget-xxxxx');
+            // document.body.dataset.turnstileToken = "";
+            // turnstile.reset(document.body.dataset.turnstileTokenId || 'cf-chl-widget-xxxxx');
         }
         // if (pushBtn.dataset.success)
         fetch(`${custom_initfield_adminajax}?action=check_captcha&cf-turnstile-response=${pushBtn.dataset.token}&_ajax_nonce=${pushBtn.dataset.nonce}`, {

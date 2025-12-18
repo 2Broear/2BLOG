@@ -175,7 +175,7 @@
                         endwhile;
                         wp_reset_query();
                         // ads..
-                        adscene_shortcode('adscene_list_context');
+                        adsense_shortcode('adsense_list_context');
                     }
                     $async_array = explode(',', get_option('site_async_includes'));
                     if(get_option('site_async_switcher')&&in_array($weblog_slug, $async_array)){

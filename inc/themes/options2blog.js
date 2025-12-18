@@ -330,7 +330,7 @@ jQuery(document).ready(function($){
             if (!t.classList) return;
             switch (true) {
                 case t.id == 'site_theme':
-                    theme_root.style.setProperty("--panel-theme", this.value);
+                    theme_root.style.setProperty("--panel-theme", t.value); //this.value
                     break;
                 case t.classList.contains('live-update'):
                     const updateTarget = t.parentNode.querySelector('.update-target');
@@ -632,36 +632,37 @@ jQuery(document).ready(function($){
                 if (!confirm(`重新拉取 ${dataset.cat} 中所有 rss 数据（${dataset.limit}条）？`)) return;
                 t.textContent = `fetching ${dataset.cat}...`;
                 t.classList.remove(reloader);
-                //..
+                // async
                 async function use_api_salt() {
                     const api_salt = await get_api_salt(api_file);
-                    console.log(api_salt);
-                    const new_url = api_url.substring(0, api_url.indexOf('?')) + `?s=${api_salt.s}&t=${api_salt.t}`;
-                    // console.log(new_url);
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('GET', `${new_url}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, true);
-                    xhr.onprogress = function(event) {
-                      if (event.lengthComputable) {
-                        var percentComplete = event.loaded / event.total * 100;
-                        console.log('Progress: ' + percentComplete + '%');
-                      }
-                    };
-                    xhr.onload = function() {
-                      if (xhr.status === 200) {
-                        container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ xhr.responseText }`;
-                        console.log('data fullfilled.');
-                        alert(`${dataset.cat} rss data loaded.`);
-                      } else {
+                    // get_api_salt(api_file, (api_salt)=> {
+                        const new_url = api_url.substring(0, api_url.indexOf('?')) + `?s=${api_salt.s}&t=${api_salt.t}`;
+                        // console.log(new_url);
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('GET', `${new_url}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, true);
+                        xhr.onprogress = function(event) {
+                          if (event.lengthComputable) {
+                            var percentComplete = event.loaded / event.total * 100;
+                            console.log('Progress: ' + percentComplete + '%');
+                          }
+                        };
+                        xhr.onload = function() {
+                          if (xhr.status === 200) {
+                            container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ xhr.responseText }`;
+                            console.log('data fullfilled.');
+                            alert(`${dataset.cat} rss data loaded.`);
+                          } else {
+                                t.classList.add(reloader);
+                                t.textContent = `reload failed, reload ${dataset.cat}?`;
+                          }
+                        };
+                        xhr.onerror = function(err) {
+                            console.warn(err);
                             t.classList.add(reloader);
                             t.textContent = `reload failed, reload ${dataset.cat}?`;
-                      }
-                    };
-                    xhr.onerror = function(err) {
-                        console.warn(err);
-                        t.classList.add(reloader);
-                        t.textContent = `reload failed, reload ${dataset.cat}?`;
-                    }
-                    xhr.send();
+                        }
+                        xhr.send();
+                    // });
                 }
                 use_api_salt();
             }

@@ -97,7 +97,7 @@
         arrayChunk(loadArray.concat(), autoLoad); // autoLoad(loadArray);
         // requestAnimationFrame support
         if(!scroll) return;
-        window.addEventListener('scroll', scrollForRemove, true);
+        window.addEventListener('scroll', scrollForRemove, { passive: true }); //, true
     }
     
     function setupVideoPoster(second,quality,base64){
