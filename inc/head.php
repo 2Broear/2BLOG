@@ -49,7 +49,8 @@
     <link rel="shortcut icon" href="<?php echo get_site_favico(); ?>"/>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/style/universal.min.css?v=<?php echo get_theme_info(); ?>" />
     <style>
-        body.dark #supports em.warmhole{filter: invert(1);}
+        .inside_of_block nav.main-nav ul li a {font-weight: bold;}
+        body.dark #supports em.warmhole {filter: invert(1);}
         <?php if(get_option('site_logo_switcher')) echo 'body.dark .mobile-vision .m-logo span,body.dark .logo-area span{background: url(' . get_option('site_logos') . ') no-repeat center center /cover!important;}'; ?>
         .win-top em.digital_mask {
             /*bottom: -50px;*/

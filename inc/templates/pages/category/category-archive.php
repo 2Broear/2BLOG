@@ -140,7 +140,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                         $GLOBALS['color_middle'] = '#40c463';
                         $GLOBALS['color_heavy'] = '#30a14e';
                         $GLOBALS['color_more'] = '#216e39';
-                        echo '<h5><strong> Contributes  </strong><ul class="cs_tips"><li></li><li style="color:'.$GLOBALS['color_light'].'"></li><li style="color:'.$GLOBALS['color_middle'].'"></li><li style="color:'.$GLOBALS['color_heavy'].'"></li><li style="color:'.$GLOBALS['color_more'].'"></li></ul></h5>';
+                        echo '<h5><strong> Yearly Contribution  </strong><ul class="cs_tips"><li></li><li style="color:'.$GLOBALS['color_light'].'"></li><li style="color:'.$GLOBALS['color_middle'].'"></li><li style="color:'.$GLOBALS['color_heavy'].'"></li><li style="color:'.$GLOBALS['color_more'].'"></li></ul></h5>';
                         if(!$output || !$output_sw){  // no-cache or cache-disabled
                             $GLOBALS['archive_daily'] = get_post_archives('daily','post',9999); //$archive_daily
                             global $curYear; //$curYear = gmdate('Y', time() + 3600*8);
