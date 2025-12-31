@@ -66,6 +66,12 @@
         /*
         ** experimental style futures
         */
+        .v .vlist .vcard .vcontent p {
+            color: var(--preset-6);
+        }
+        body.dark .v .vlist .vcard .vcontent p {
+            color: var(--preset-c);
+        }
         body.dark #footer-copyright li {
             color: var(--preset-9);
         }

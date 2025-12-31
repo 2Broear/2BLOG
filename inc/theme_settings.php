@@ -268,10 +268,10 @@
                     /*will-change: transform;*/
                 }
             }
-            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 25px;transition:all .35s ease;margin:0 auto;top:52px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0!important}
+            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:all .35s ease;margin:0 auto;top:52px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0!important}
         </style>
         <!--<h1 style="text-align: center;font-size: 4rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> RSS <b>Feeds</b></h1>-->
-        <h1 style="text-align: center;font-size: 3.6rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b>RSSFeeds</b></h1>
+        <h1 style="text-align: center;font-size: 3.6rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b><span style="color:var(--panel-theme)"> RSS </span>Feeds</b></h1>
         <div class="switchTab">
             <ul>
                 <?php
@@ -803,10 +803,10 @@
                     /*will-change: transform;*/
                 }
             }
-        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(90deg,rgba(255, 255, 255, 0) 25%, currentColor 255%)}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 15px var(--panel-theme);padding: 3px 6px!important;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;font-style: normal;}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(180deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(-90deg, #f5f7f9 0, #fff);}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .35s ease;}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:#1d2327;/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
-            .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{background:var(--panel-theme);border-color:transparent}.upload_button{margin-left:10px!important;background:black;border-radius:50px;}
+        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fafafa 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 5px;border-radius: 5px;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 25%, currentColor 255%);}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 15px var(--panel-theme);padding: 3px 6px!important;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > td{background:inherit}.form-table tr:hover{background:white;border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(180deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(-90deg, #f5f7f9 0, #fff);}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.35);}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:#1d2327;/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+            .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{/*background:var(--panel-theme);border-color:transparent;*/}.upload_button{margin-left:10px!important;background:black;border-radius:50px;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;font-size: smaller;font-weight:bold;text-align: center;color: var(--panel-theme);background: rgb(0 0 0 / 5%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;backdrop-filter:blur(10px);}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius: 10px;position: relative;overflow: hidden;}label.upload.upload_preview_list{margin-right: 0}
-            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 25px;transition:all .35s ease;margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}
+            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:all .35s ease;margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #fff;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}
             .smtp{margin-left:10px;vertical-align:middle;}
             #loading.responsed{-webkit-animation-duration:.35s!important;animation-duration:.35s!important;}
             #loading.responsing{-webkit-animation:rotateloop .5s infinite linear;animation:rotateloop .5s infinite linear}
@@ -827,7 +827,7 @@
             #wpcontent{padding:0!important}
             .wrap.settings hr,.wrap.settings{margin:0}
             ul.cached_post_list{margin:15px auto auto;padding:0;position:relative}
-            ul.cached_post_list li:hover{border-color:transparent;text-decoration:underline;/*opacity:.75;border-style:dashed;background:whitesmoke;*/}
+            ul.cached_post_list li:hover{opacity:.75;/*border-color:transparent;text-decoration:underline;border-style:dashed;background:whitesmoke;*/}
             /*ul.cached_post_list li:hover::before{content:attr(data-title)}*/
             /*ul.cached_post_list li:hover::after{content:'×';width:15px;height:15px;position:absolute;top:5px;right:5px;border:1px solid;border-radius:50%;line-height:14px;background:whitesmoke}*/
             ul.cached_post_list li:hover::before{content:attr(title);content:'重新摘要';font-size:small;}
@@ -865,6 +865,38 @@
             **  Enhancements
             **  2025
             **/
+            @keyframes sliderSwitch {
+                0% {
+                    opacity: 0;
+                }
+                99% {
+                    opacity: .99;
+                    display: none;
+                }
+                100% {
+                    opacity: 1;
+                    display: table-row;
+                }
+            }
+            .form-table tr.dynamic_optshow {
+                animation: sliderSwitch 1s 1 forwards ease;
+            }
+            .form-table tr.dynamic_opts {
+                opacity: 0;
+                /*height: 0;*/
+                /*display: table-row;*/
+            }
+            select:active,
+            label.upload:active,
+            .cached_post_list li:active,
+            input[type*=time]:active,
+            input[type*=date]:active,
+            input[type=color]:active,
+            input[type=number]:active,
+            input[type=button]:active {
+                transform: scale(0.95);
+                transition: transform .15s ease;
+            }
             input[type=button] {
                 box-shadow: 0 0 0 3px #fff, 0 0 0 4px #2271b1;
             }
@@ -879,7 +911,15 @@
                 box-shadow: none;
                 border-color: lightgray;
                 padding: 0 15px;
+                font-size: smaller;
                 /*pointer-events: none;*/
+            }
+            h1 b.num {
+                border-color: currentColor;
+                background: none;
+                border: 1px solid #fafafa;
+                /*font-style: normal;*/
+                text-shadow: -10px -10px 20px currentColor;
             }
             label:hover input[type=checkbox]:checked {
                 box-shadow:0 0 15px var(--panel-theme);
@@ -899,7 +939,7 @@
                 float: right;
                 margin: 2px 0px 0 10px;
                 /*transition: all .35s ease;*/
-                transition: all .15s cubic-bezier(1, 0, 0.5, 1);
+                transition: all .35s cubic-bezier(1, 0.5, 0.5, 1);
                 border-top-right-radius: 15px!important;
             }
             input[type=checkbox]:checked:focus {
@@ -909,6 +949,7 @@
             }
             input[type=checkbox] + * {
                 opacity: .66!important;
+                transition: opacity .35s ease;
             }
             .checkbox input[type=checkbox]:checked + *,
             input[type=checkbox]:checked + * {
@@ -934,13 +975,15 @@
                 background: #2271b1;
                 transition: inherit;
                 position: absolute;
-                top: 2px;
-                left: 2px;
+                top: 50%;
+                left: 3px;
+                transform: translate(0, -50%);
             }
+            .checkbox > input[type=checkbox]::before, /** fix checkbox slider offsets **/
             input[type=checkbox]:checked::before {
                 background: white;
-                top: 5px;
                 left: 100%;
+                margin: auto;
                 margin-left: -12px;
             }
             /*.checkbox label {*/
@@ -964,11 +1007,11 @@
                 background: transparent !important;
             }
             .checkbox > input[type=checkbox] {
-                max-width: 0 !important;
+                max-width: 0;
                 float: none!important;
             }
         </style>
-        <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>&#60;&#47;&#62;</b><p style="letter-spacing:normal;margin-bottom:auto;"> 主题部分页面提供 Leancloud 第三方 baas 数据储存服务 </p></h1>
+        <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>&#60;<span style="color:var(--panel-theme)">&#47;</span>&#62;</b><p style="letter-spacing:normal;margin-bottom:auto;"> 主题部分页面提供 Leancloud 第三方 baas 数据储存服务 </p></h1>
         <!--<hr/>-->
         <div class="switchTab">
             <ul>
@@ -986,7 +1029,7 @@
             <?php settings_fields( 'baw-settings-group' ); // 设置字段 这个函数取代了 nonce magic, action field, and page_options ?>
             <?php do_settings_sections( 'baw-settings-group' ); // 这个函数取代了表单字段标记形式本身 ?>
             <div class="formtable basic">
-                <h1><b class="num" style="border-color:var(--panel-theme);box-shadow:-5px -5px 0 rgb(155 155 155 / 18%);">01</b>基本信息<p class="en">BASICALLY INFOMATION</p></h1>
+                <h1><b class="num" style="color:var(--panel-theme);box-shadow:-5px -5px 0 rgb(255 255 255 / 50%);">01</b>基本信息<p class="en">BASIC INFO</p></h1>
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row">博主昵称</th>
@@ -1042,7 +1085,7 @@
                 </table>
             </div>
             <div class="formtable common">
-                <h1><b class="num" style="border-color:dodgerblue;box-shadow:-5px -5px 0 rgb(30 144 255 / 18%);">02</b>通用控制<p class="en">COMMON CONTROLS</p></h1>
+                <h1><b class="num" style="color:dodgerblue;box-shadow:-5px -5px 0 rgb(30 144 255 / 10%);">02</b>通用控制<p class="en">COMMON CONTROLS</p></h1>
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row">主题颜色</th>
@@ -1154,7 +1197,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="">开启后移除 url 中自带的 category 目录（默认开启，模拟相同 slug 链接 page 页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">移除 CATEGORY</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后移除 url 中自带的 category 目录（默认开启，模拟相同 slug 链接 page 页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">移除目录</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1162,19 +1205,19 @@
                         // if(get_option('site_remove_category_switcher')){
                     ?>
                             <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_remove_category_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 链接尾部斜杠</th>
+                                <th scope="row">—  URL 尾部斜杠</th>
                                 <td>
                                     <?php
                                         $opt = 'site_url_slash_sw';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后移除站点 Permalink 超链接中的尾部"/"，URL地址中的“/”需在<a href="/wp-admin/options-permalink.php" target="_blank"> 固定链接 </a>中设置</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">去除 URL 斜杠</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后移除站点 Permalink 超链接中的尾部"/"，URL地址中的“/”需在<a href="/wp-admin/options-permalink.php" target="_blank"> 固定链接 </a>中设置</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">移除斜杠</b></label>';
                                     ?>
                                 </td>
                             </tr>
                     <?php
                         // }
                     ?>
-                            <!--<tr valign="top" class="child_option">-->
+                            <!--<tr valign="top" class="child_option dynamic_optshow">-->
                             <!--    <th scope="row">— 页面层级关系<sup title="实验性功能">EXP</sup></th>-->
                             <!--    <td>-->
                                     <?php
@@ -1185,7 +1228,7 @@
                             <!--    </td>-->
                             <!--</tr>-->
                     <tr valign="top" class="">
-                        <th scope="row">搜索/标签样式</th>
+                        <th scope="row">搜索/标签 页面样式</th>
                         <td>
                             <?php
                                 $opt = 'site_search_style_switcher';
@@ -1198,7 +1241,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_search_style_switcher_label">搜索结果及标签内容展示列表样式，开启后将使用各页面数据列表样式（默认使用笔记栈列表样式</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>搜索列表样式</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_search_style_switcher_label">搜索结果及标签内容展示列表样式，开启后将使用各页面数据列表样式（默认使用笔记栈列表样式</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>多样搜索</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1206,7 +1249,7 @@
                         // if(get_option('site_search_style_switcher')){
                     ?>
                             <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_search_style_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 搜索结果类型（多选项）</th>
+                                <th scope="row">— 搜索类型包含（多选项）</th>
                                 <td>
                                     <?php
                                         $opt = 'site_search_includes';  //unique str
@@ -1233,12 +1276,12 @@
                         // }
                     ?>
                     <tr valign="top">
-                        <th scope="row">metaBox 元导航分类</th>
+                        <th scope="row">多元导航分类</th>
                         <td>
                             <?php
                                 $opt = 'site_metanav_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_metanav_switcher_label">多元化展示分类导航名称、描述及背景</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">多元分类导航</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_metanav_switcher_label">多元化（样式）展示分类导航名称、描述及背景内容</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">metaBox</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1433,7 +1476,7 @@
                         // }
                     ?>
                     <tr valign="top">
-                        <th scope="row">Darkmode 暗黑模式</th>
+                        <th scope="row">深色模式</th>
                         <td>
                             <?php
                                 $opt = 'site_darkmode_switcher';
@@ -1447,7 +1490,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_switcher_label">开启后将自动识别时段（晚17至早9）并切换主题为 darkmode 模式</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">自动深色模式</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_switcher_label">开启后将自动识别时段（晚17至早9）并切换主题为 darkmode 模式</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">自动模式</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1482,12 +1525,12 @@
                         // }
                     ?>
                     <tr valign="top">
-                        <th scope="row">Lazyload 懒加载</th>
+                        <th scope="row">图片懒加载</th>
                         <td>
                             <?php
                                 $opt = 'site_lazyload_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">开启文章/部分页面图片使用懒加载（默认关闭 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">图片懒加载</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">开启文章/部分页面图片使用 Lazyload 懒加载（默认关闭 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Lazyload</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1497,7 +1540,7 @@
                             <?php
                                 $opt = 'site_cdn_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_cdn_switcher_label">开启后可自定义cdn加速域名（需要配置 nginx 指定域名 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">CDN加速域名</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_cdn_switcher_label">开启后可自定义cdn加速域名（需要配置 nginx 指定域名 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">CDN 加速</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1604,7 +1647,7 @@
                                 function funcStatus($func){
                                     return function_exists($func) ? "<b style='color:green'>$func (已开启)</b>" : "<u style='color:red'>$func (已关闭)</u>";
                                 }
-                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label"><b>上传视频</b>到媒体库时 自动在存放文件同目录下生成动态截图（此前上传的视频无效<br/>⚠后端环境：服务端须提前安装<b> ffmpeg </b> 扩展，并开启以下任一<b> php 函数</b>：'.funcStatus('exec').'、'.funcStatus('system').'、'.funcStatus('shell_exec').'（解除禁用后需重启nginx），测试 shell_exec 暂时无法解析大文件<br/>⚠前端应用：视频元素不存在<b> autoplay </b>自动播放属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">视频片段预览</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label"><b>上传视频</b>到媒体库时 自动在存放文件同目录下生成动态截图（此前上传的视频无效<br/>⚠后端环境：服务端须提前安装<b> ffmpeg </b> 扩展，并开启以下任一<b> php 函数</b>：'.funcStatus('exec').'、'.funcStatus('system').'、'.funcStatus('shell_exec').'（解除禁用后需重启nginx），测试 shell_exec 暂时无法解析大文件<br/>⚠前端应用：视频元素不存在<b> autoplay </b>自动播放属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">片段预览</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1614,7 +1657,7 @@
                                     <?php
                                         $opt = 'site_video_capture_gif';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后上传视频时生成 gif 动图作用于视频海报（开启视频截图捕获后默认自动生成gif预览，此处仅控制 poster 属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">GIF预览</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后上传视频时生成 gif 动图作用于视频海报（开启视频截图捕获后默认自动生成gif预览，此处仅控制 poster 属性</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">GIF 预览</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -1791,7 +1834,7 @@
                                     <?php
                                         $opt = 'site_cloudflare_turnstile_login';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后登陆 WordPress 后台需要通过 turnstile 验证（可能造成移动端登录失败?</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LoginVerify</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后登陆 WordPress 后台需要通过 turnstile 验证（可能造成移动端登录失败?</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">登录校验</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -1909,26 +1952,24 @@
                                     ?>
                                 </td>
                             </tr>
-                            <!-- Common -->
-                            <tr valign="top" class="child_option">
-                                <th scope="row">— 关键词屏蔽<sup id="tips">common</sup></th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_comment_blacklists';
-                                        $value = get_option($opt);
-                                        // $preset = '快递代发|一件代发|代发平台|礼品代发|空包代发|快递单号|单号网|单号无忧|淘宝空包|京东空包|拼多多空包|刷单单号|提供底单|云仓代发';
-                                        // if(!$value) update_option($opt, $preset);else $preset=$value;
-                                        echo '<p class="description" id="site_comment_serverchan_label">屏蔽指定评论内容，使用 “|” 分隔关键词（非模糊匹配</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Comment BlackList" value="' . $value . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option">
+                            <!-- Common options -->
+                            <tr valign="top" class="child_option dynamic_optshow">
                                 <th scope="row">— 境外 IP 屏蔽<sup id="tips">common</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_comment_blockoutside';
                                         $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">阻止所有非大陆、香港、台湾的境外IP发布评论（可临时用于刷评屏蔽</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">外网屏蔽</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_optshow">
+                                <th scope="row">— 关键词屏蔽<sup id="tips">common</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_comment_blacklists';
+                                        $value = get_option($opt);
+                                        echo '<p class="description" id="site_comment_serverchan_label">屏蔽指定评论内容，使用 “|” 分隔关键词（非模糊匹配</p><textarea name="'.$opt.'" id="'.$opt.'">'.$value.'</textarea>';  //<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Comment BlackList" value="' . $value . '"/>
                                     ?>
                                 </td>
                             </tr>
@@ -1939,7 +1980,7 @@
                                 $opt = 'site_wpwx_notify_switcher';
                                 $value = get_option($opt);
                                 $status = $value ? "checked" : "check";
-                                echo '<label for="'.$opt.'"><p class="description" id="site_wpwx_notify_switcher_label">基于企业微信应用开发的评论推送微信通知，需填写企业ID、企业应用AgentId、企业应用Secret（微信需关注该企业应用才能收到通知<a href="https://www.jishusongshu.com/network-tech/work-weixin-push-website-comment/" target="_blank"> 相关文档 </a> 状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>评论微信提醒</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_wpwx_notify_switcher_label">基于企业微信应用开发的评论推送微信通知，需填写企业ID、企业应用AgentId、企业应用Secret（微信需关注该企业应用才能收到通知<a href="https://www.jishusongshu.com/network-tech/work-weixin-push-website-comment/" target="_blank"> 相关文档 </a> 状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>微信提醒</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2008,7 +2049,7 @@
                                 $status = $value ? "checked" : "check";
                                 echo '<label for="'.$opt.'"><p class="description" id="site_smtp_switcher_label">SMTP 发件服务配置（配置smtp时默认使用常规设置内的管理员邮箱（状态：'.$status;
                                 // if($state) echo '<u style="color:forestgreen">发件测试已通过</u>';else echo '<u style="color:orangered">配置未通过测试</u>';
-                                echo '，如已通过但未收到邮件请检查授权码及服务器是否全部配置正确</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>SMTP 发件配置</b></label>';
+                                echo '，如已通过但未收到邮件请检查授权码及服务器是否全部配置正确</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>SMTP</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2070,12 +2111,12 @@
                         // }
                     ?>
                     <tr valign="top" class="">
-                        <th scope="row">WP评论邮件提醒（博主</th>
+                        <th scope="row">评论邮件提醒</th>
                         <td>
                             <?php
                                 $opt = 'site_wpmail_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_wpmail_switcher_label">WP自带评论审核提醒邮件，此选项为定制模板邮件（两者均需上方 SMTP 配置测试通过后才能收到邮件提醒，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>评论邮件提醒</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_wpmail_switcher_label">WP自带评论审核提醒邮件（博主，此选项为定制模板邮件（两者均需上方 SMTP 配置测试通过后才能收到邮件提醒，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>邮件提醒</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2085,7 +2126,7 @@
                             <?php
                                 $opt = 'site_xmlrpc_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">防止攻击者绕过 wordpress 登录限制消耗系统资源（禁用后将无法使用 wp 官方APP及相关接口</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Disable XML-RPC</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">防止攻击者绕过 wordpress 登录限制消耗系统资源（禁用后将无法使用 wp 官方APP及相关接口</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">XML-RPC</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2095,14 +2136,14 @@
                             <?php
                                 $opt = 'site_imgcrop_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">一般图片上传裁剪规则可在<a href="/wp-admin/options-media.php" target="_blank"> 媒体 </a>中修改</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">禁用图片裁剪</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">一般图片上传裁剪规则可在<a href="/wp-admin/options-media.php" target="_blank"> 媒体 </a>中修改</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">禁用裁剪</b></label>';
                             ?>
                         </td>
                     </tr>
                 </table>
             </div>
             <div class="formtable index">
-                <h1><b class="num" style="border-color:blueviolet;box-shadow:-5px -5px 0 rgb(138 43 226 / 18%);">03</b>页面配置<p class="en">PAGES SETTINGS</p></h1>
+                <h1><b class="num" style="color:blueviolet;box-shadow:-5px -5px 0 rgb(138 43 226 / 10%);">03</b>页面配置<p class="en">PAGES CONFS</p></h1>
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row">站点头部公告<sup class="dualdata" title="“多数据”">BaaS</sup></th>
@@ -2138,7 +2179,7 @@
                             <?php
                                 $opt = 'site_breadcrumb_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">页面导航</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">快速导航</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2153,12 +2194,12 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">展示型分类列表</th>
+                        <th scope="row">展示型文章分类</th>
                         <td>
                             <?php
                                 $opt = 'site_single_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">非展示型分类文章默认使用相应单页模板（开启指定分类下的文章链接将不可查看文章详情</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">展示型分类</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">非展示型分类文章默认使用相应单页模板（开启指定分类下的文章将<u> 默认不显示文章链接 </u>（只可在归档中查阅</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">展示型文章</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2201,7 +2242,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="">文章页 table of content 目录索引，开启后在文章页可见（建议 notes 类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>文章目录</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">文章页 table of content 目录索引，开启后在文章页可见（建议 notes 类型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b>TOC 目录</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2209,7 +2250,7 @@
                         // if(get_option('site_indexes_switcher')){
                     ?>
                             <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_indexes_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">索引目录分类（多选）</th>
+                                <th scope="row">— 索引目录分类（多选）</th>
                                 <td>
                                     <?php
                                         $opt = 'site_indexes_includes';  //unique str
@@ -2368,7 +2409,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_techside_switcher_label">开启首页科技资讯栏目（默认开启，选择任意项后可手动关闭，支持多分类及baas数据</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">日志栏目</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_techside_switcher_label">开启首页科技资讯栏目（默认开启，选择任意项后可手动关闭，支持多分类及baas数据</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">WEBLOG</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2389,7 +2430,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <!--<tr valign="top" class="child_option">-->
+                            <!--<tr valign="top" class="child_option dynamic_optshow">-->
                             <!--    <th scope="row">— 分类侧栏图片</th>-->
                             <!--    <td>-->
                                     <?php
@@ -2405,7 +2446,7 @@
                         // }
                     ?>
                     <tr valign="top">
-                        <th scope="row">首页 - ACG栏目<sup class="dualdata" title="“多数据”">BaaS</sup></th>
+                        <th scope="row">首页 - ACG 栏目<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
                             <?php
                                 $opt = 'site_acgnside_switcher';
@@ -2418,7 +2459,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_switcher_label">开启首页科技资讯栏目（默认开启，选择任意项后可手动关闭，支持多分类及baas数据</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">ACGN栏目</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_switcher_label">开启首页科技资讯栏目（默认开启，选择任意项后可手动关闭，支持多分类及baas数据</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">ACGN</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2439,7 +2480,7 @@
                                     ?>
                                 </td>
                             </tr>
-                            <!--<tr valign="top" class="child_option">-->
+                            <!--<tr valign="top" class="child_option dynamic_optshow">-->
                             <!--    <th scope="row">— 分类展示数量</th>-->
                             <!--    <td>-->
                                     <?php
@@ -2502,7 +2543,7 @@
                                 <?php
                                     $opt = 'site_tagcloud_auto_caches';
                                     $status = check_status($opt);
-                                    echo '<label for="'.$opt.'"><p class="description" id="">自动更新标签云缓存（开启后访问标签云时将始终更新缓存为最新，默认每日自动更新</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Keep Update</b></label>';
+                                    echo '<label for="'.$opt.'"><p class="description" id="">自动更新标签云缓存（开启后访问标签云时将始终更新缓存为最新，默认每日自动更新</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">禁用缓存</b></label>';
                                 ?>
                             </td>
                         </tr>
@@ -2972,7 +3013,7 @@ const maps = {
                                     <?php
                                         $opt = 'site_chatgpt_caches';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">本地已缓存文章摘要数据，勾选后<ins> 提交保存 </ins>以显示记录（倒序，默认最近10条）<b>。点击文章ID可删除对应记录（不可逆）</b>，<ins>悬浮文章ID</ins> 可查看文章标题及摘要</p><p>删除文章摘要记录后，<u><i>重新访问文章以更新摘要</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LOCAL CACHED POSTS</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">本地已缓存文章摘要数据，勾选后<ins> 提交保存 </ins>以显示记录（倒序，默认最近10条）<b>。点击文章ID可删除对应记录（不可逆）</b>，<ins>悬浮文章ID</ins> 可查看文章标题及摘要</p><p>删除文章摘要记录后，<u><i>重新访问文章以更新摘要</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Cached Posts</b></label>';
                                         if(get_option($opt)){
                                             include(get_template_directory() . '/plugin/'.get_option('site_chatgpt_dir').'/gpt_data.php');
                                             // print_r($cached_post);
@@ -3018,7 +3059,7 @@ const maps = {
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— 同步文章页面 SEO 描述</th>
+                                <th scope="row">— 同步文章 SEO 描述</th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_desc_sw';
@@ -3045,7 +3086,7 @@ const maps = {
                             <?php
                                 $opt = 'site_memos_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">开启 memos 页面备忘录</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:lightcoral" class="btn">useMemos</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">开启 memos 页面备忘录</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:lightcoral" class="btn">Memos</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -3169,7 +3210,7 @@ const maps = {
                                     <?php
                                         $opt = 'site_links_rss_cards_manual';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后可在前端手动加载指定友链RSS内容（默认关闭</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b style="color:gray">Manual</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后可在前端手动加载指定友链RSS内容（默认关闭</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b>手动加载</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -3230,7 +3271,7 @@ const maps = {
                             <?php
                                 $opt = 'site_async_archive_contributions';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示<b>全年</b>（去年-今年当月）热度报表（默认显示当年/月份，若开启此项无效 可通过<b> 更新/发布/删除 </b>文章重建归档缓存索引，<u>或等待第二天自动刷新缓存</u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Yearly Contributions</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示<b>全年</b>（去年-今年当月）热度报表（默认显示当年/月份，若开启此项无效 可通过<b> 更新/发布/删除 </b>文章重建归档缓存索引，<u>或等待第二天自动刷新缓存</u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">年度报表</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -3240,7 +3281,7 @@ const maps = {
                             <?php
                                 $opt = 'site_async_archive_stats';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示当年已发布文章分类统计（默认开启，已修复可能存在的性能问题</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Categorize Posts</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后显示当年已发布文章分类统计（默认开启，已修复可能存在的性能问题</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">分类文章</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -3256,7 +3297,7 @@ const maps = {
                             ?>
                         </td>
                     </tr>
-                        <tr valign="top" class="child_option">
+                        <tr valign="top" class="child_option dynamic_optshow">
                             <th scope="row">— MBIT测试结果</th>
                             <td>
                                 <?php
@@ -3319,7 +3360,7 @@ const maps = {
                 </table>
             </div>
             <div class="formtable sidebar">
-                <h1><b class="num" style="border-color:hotpink;box-shadow:-5px -5px 0 rgb(255 105 180 / 18%);">04</b>边栏设置<p class="en">SIDEBAR SETTINGS</p></h1>
+                <h1><b class="num" style="color:hotpink;box-shadow:-5px -5px 0 rgb(255 105 180 / 10%);">04</b>边栏设置<p class="en">SIDEBAR SETTINGS</p></h1>
                 <table class="form-table sidebar">
                     <tr valign="top">
                         <th scope="row">Pixiv 排行（挂件）</th>
@@ -3419,7 +3460,7 @@ const maps = {
                                     $status = $value ? "checked" : "check";
                                 };
                                 // $status = $value ? "checked" : "check";
-                                echo '<label for="'.$opt.'"><p class="description" id="site_mostview_switcher_label">资讯、资讯文章分类页面侧边栏文章热度排行（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">侧边栏热门文章</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_mostview_switcher_label">资讯、资讯文章分类页面侧边栏文章热度排行（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">热门文章</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -3454,7 +3495,7 @@ const maps = {
                 </table>
             </div>
             <div class="formtable footer">
-                <h1><b class="num" style="border-color:limegreen;box-shadow:-5px -5px 0 rgb(50 205 50 / 18%);">05</b>页尾设置<p class="en">FOOTER CONTROLS</p></h1>
+                <h1><b class="num" style="color:limegreen;box-shadow:-5px -5px 0 rgb(50 205 50 / 10%);">05</b>页尾设置<p class="en">FOOTER SETTINGS</p></h1>
                 <table class="form-table footer">
                     <tr valign="top">
                         <th scope="row">底部近期文章</th>
