@@ -61,6 +61,10 @@
         .weblog-tree-box .tree-box-content {
             color: var(--preset-6);
         }
+        .tk-content blockquote,
+        .vcontent blockquote {
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

@@ -79,7 +79,7 @@
     background: -webkit-linear-gradient(90deg, var(--mirror) 0, #fff);
 }
 .rcmd-boxes .info .inbox.more:hover{transform:none}
-.rcmd-boxes .info .inbox.more{background: none;box-shadow: rgba(0,0,0,0.08) 0 0 18px;}
+.rcmd-boxes .info .inbox.more{background: none;box-shadow: rgba(0,0,0,0.05) 0 0 15px;}
 .rcmd-boxes .info .inbox{max-width:calc(100%/5.5);width:100%;background-color:var(--preset-f);margin:10px;transition:.3s ease;transition-property:transform;flex-flow:column nowrap;position:relative;border-radius:var(--radius);overflow:hidden;will-change:transform;}
 .rcmd-boxes .info .inbox .inbox-more:before{width:5px;height:50px;}
 .rcmd-boxes .info .inbox .inbox-more:after{width:50px;height:5px;}

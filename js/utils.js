@@ -76,17 +76,29 @@ class _Closure {
     static delay = 200;
     #delay = 200;
     
-    debouncer (callback, delay = _Closure.delay) { //this.#delay
+    debouncer (callback, delay = _Closure.delay, once = false) { //this.#delay
         var timer = null;
+        let onced = false;
         return function(...args) {
+            if (once && !onced) {
+                callback.apply(this, args); //exec once immediately
+                onced = true;  //mark as onced
+                return;
+            }
             if(timer) clearTimeout(timer);
             timer = setTimeout(()=> callback.apply(this, args), delay);
         };
     }
     
-    throttler (callback, delay = _Closure.delay) { //this.#delay
+    throttler (callback, delay = _Closure.delay, once = false) { //this.#delay
         let closure_variable = true;  //default running
+        let onced = false;
         return function(...args) {
+            if (once && !onced) {
+                callback.apply(this, args); //exec once immediately
+                onced = true;  //mark as onced
+                return;
+            }
             if(!closure_variable) return;  //now running..
             closure_variable = false;  //stop running
             setTimeout(()=> {

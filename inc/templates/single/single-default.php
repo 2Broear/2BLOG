@@ -74,6 +74,9 @@
 	    .v .vlist .vcard .vcontent p {
             color: var(--preset-6);
 	    }
+	    .win-content {
+	        border-radius: calc(var(--radius) * 2);
+	    }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

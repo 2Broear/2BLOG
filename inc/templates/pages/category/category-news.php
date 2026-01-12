@@ -24,6 +24,9 @@
             background: linear-gradient(45deg, var(--preset-2b) 36%, rgba(48, 48, 48, 0.15) 66%, var(--preset-2a) 90%);
             background: -webkit-linear-gradient(45deg, var(--preset-2b) 36%, rgba(0, 0, 0, 0.15) 66%, var(--preset-2a) 90%);
         }
+        .news-window:nth-child(even) h2.entry-title {
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

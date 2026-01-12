@@ -135,13 +135,13 @@ h2 sup.loading:after{
     /*margin-right: 15px;*/
     float: left;
 }
-.archive-tree ul li span:last-child:after{
+.archive-tree ul li sup span:last-child:after{
     content: none;
 }
-.archive-tree ul li span:after{
+.archive-tree ul li sup span:after{
     content: ' 、';
 }
-.archive-tree ul li span{
+.archive-tree ul li sup span{
     display: inline-block;
     margin-left: 2px;
 }

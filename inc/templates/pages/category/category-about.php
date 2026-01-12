@@ -86,7 +86,9 @@
             padding: 10px;
             border: 1px solid rgb(200 200 200 / 35%);
         }
-        
+        .about_blocks li.intro_right .mbit .mbit_intro a {
+            box-shadow: 0px 0 0px 5px rgb(51 164 116 / 10%);
+        }
         .In-core-head .head-inside::before {z-index: -1}
         .In-core-head .head-inside {
             padding: 0;
@@ -94,6 +96,9 @@
         };
         body.dark .In-core-head .user_info{
             background: linear-gradient(90deg,var(--preset-3a) 0%,var(--preset-3b) 100%);
+        }
+        .body-basically .Introduce {
+            color: var(--preset-4a);
         }
     </style>
 </head>

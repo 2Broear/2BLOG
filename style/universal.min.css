@@ -862,7 +862,7 @@ i.arrow-down::after{content:'\e908'}
 .slider-menu{width:70%;height:100%;position:fixed;top:0;left:-1px;transform:translateX(-100%);outline:0;overflow-x:hidden;overflow-y:auto;transition:all .75s cubic-bezier(0.36,0.36,0.1,1.0);display:none;z-index:100001;/*background:url("https://img.2broear.com/bg3.png") center center*/}
 .slider-menu-inside{width:100%;height:100%;position:relative;box-shadow:rgba(0,0,0,0.12) 0 1px 12px}
 .slider-menu_header{padding: 50px 0;border-bottom:4px solid var(--theme-color);position:relative}
-.slider-menu_header .slider-tips{display:block;margin:5px;position:absolute;top:0;left:0}
+.slider-menu_header .slider-tips{display:block;margin:15px 10px;position:absolute;top:0;left:0}
 .slider-menu_header .slider-tips p{color:var(--preset-6);margin:5px;font-size:var(--min-size);text-align:left;transition:all .5s ease}
 .slider-menu_header .slider-close{display:block;position:absolute;top:0;right:0}
 .slider-menu_header .slider-close i:active{color:var(--preset-4a)}
@@ -1149,7 +1149,7 @@ audio{width:300px;height:32px}
 .scroll-inform p{margin:0;display:inline-block;vertical-align:middle}
 .scroll-inform a:hover{color:var(--theme-color)}
 .scroll-inform a{color:inherit;padding-top:2px}
-.scroll-inform div.scroll-block{width:72%;height:20px;color:var(--preset-9);;position:relative;}
+.scroll-inform div.scroll-block{width:72%;height:20px;color:var(--preset-8);;position:relative;}
 .scroll-inform div.scroll-block span.showes,
 .scroll-inform div.scroll-block span.show{top:0%}
 .scroll-inform div.scroll-block span.move{top:-100%}
@@ -1464,7 +1464,7 @@ body.dark .article_index .in_dex p,
 body.dark .mobile-vision .m-logo span, body.dark .inside_of_block .logo-area span,
 body.dark .footer-contact-left ul h2,body.dark .news-article-container h3,body.dark #news-article-head h1,body.dark .footer-detector #end-end,body.dark .main h2,body.dark .body-basically h2,body.dark .body-basically h1,body.dark .body-basically h3,body.dark .resource-windows div span.resource-windows-top h3,body.dark #tech_window-top h2,body.dark .resource-windows div span.resource-windows-top span.resource-windows-top_inside,body.dark .news-inside-content h2 a,body.dark .topic h2,body.dark .topic-inside i,body.dark .win-nav .nav-header h2,body.dark .win-content article h1,body.dark .imtl-content-right-inside-search form,body.dark .win-content article h2,body.dark .win-content article h3,body.dark .rcmd-boxes .inbox-clip,body.dark .rcmd-boxes .info .inbox .inbox-aside span.lowside-title h4,body.dark .rcmd-boxes .info .inbox:hover > .inbox-aside,body.dark .dld_box .box_up span a h3,body.dark .v .veditor,body.dark .v .vlist .vcard .vhead .vnick,body.dark .inside_of_block nav.main-nav ul li a,body.dark .footer-recommend li sup#new,body.dark .links-more span,body.dark .footer-contact li a:hover,body.dark .footer-ul a:hover{color:var(--preset-c)}
 /* preset-2b background-color only */
-body.dark::-webkit-scrollbar-track, body.dark .v .vwrap .vedit .vemojis::-webkit-scrollbar-track,body.dark .win-top:after,body.dark .friends-boxes .deals .inbox.standby::before{background-color:var(--preset-2b)}
+body.dark::-webkit-scrollbar-track, body.dark .v .vwrap .vedit .vemojis::-webkit-scrollbar-track,body.dark .win-top:after,body.dark .friends-boxes .deals .inbox.standby .inbox-inside::before{background-color:var(--preset-2b)}
 
 /* edge winPad fixes(no:: + background-color) */
 body.dark, body.dark #footer-contact-way,body.dark .weblog-tree-core-l #weblog-circle,body.dark .friends-boxes .deals .inbox.standby .inbox-inside{background-color:var(--preset-2b)!important;border-color:transparent!important;}

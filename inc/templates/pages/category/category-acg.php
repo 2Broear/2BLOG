@@ -184,6 +184,9 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
             animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);
             -webkit-animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);
         }
+        .win-top em.digital_mask {
+            background-size: 4px 4px!important;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

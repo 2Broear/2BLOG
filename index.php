@@ -56,22 +56,29 @@
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/main.min.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
     <style>
-        #banner-prev,#banner-next{
+        #banner-prev,
+        #banner-next {
             cursor: pointer;
-            background:url("<?php echo $img_cdn; ?>/images/css_sprites.png") no-repeat;
+            background: url("<?php echo $img_cdn; ?>/images/css_sprites.png") no-repeat;
         }
-        .banner .banner-inside ul{cursor:grab;}
-        .acg_window-content-inside_right::before{
+        .banner .banner-inside ul {
+            cursor: grab;
+        }
+        .acg_window-content-inside_right::before {
             opacity: .5;
             content: none;
         }
-        .main-bottom-ta{
+        .main-bottom-ta {
             display: block;
         }
-        .Fresh-ImgBoxs span a{
+        .Fresh-ImgBoxs span a {
             font-family: cursive,monospace,serif,fangsong;
             font-size: 4.5em;
             padding: 10% 0;
+            transition: .75s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        .Fresh-ImgBoxs span a b {
+            filter: url(#x);
         }
         .Fresh-ImgBoxs span i{
             font-size: 7rem;
@@ -104,19 +111,19 @@
         }
         .Fresh-ImgBoxs span:first-child a{
             color: #4285f4;
-            background: linear-gradient(-90deg, rgb(67 133 245 / 99%) 0, var(--mirror-end));
+            background: linear-gradient(-90deg, rgb(67 133 245 / 99%) 0, transparent);
         }
         .Fresh-ImgBoxs span:nth-child(2) a{
             color: #ea4335;
-            background: linear-gradient(-90deg, rgb(234 69 55 / 99%) 0, var(--mirror-end));
+            background: linear-gradient(-90deg, rgb(234 69 55 / 99%) 0, transparent);
         }
         .Fresh-ImgBoxs span:nth-child(3) a{
             color: #fbbc05;
-            background: linear-gradient(-90deg, rgb(251 189 7 / 99%) 0, var(--mirror-end));
+            background: linear-gradient(-90deg, rgb(251 189 7 / 99%) 0, transparent);
         }
         .Fresh-ImgBoxs span:last-child a{
             color: #34a853;
-            background: linear-gradient(-90deg, rgb(53 169 83 / 99%) 0, var(--mirror-end));
+            background: linear-gradient(-90deg, rgb(53 169 83 / 99%) 0, transparent);
         }
         #special-img{
             position: absolute;
@@ -177,11 +184,9 @@
                 max-height: 150px;
             }
         }
-        .Fresh-ImgBoxs span a b {
-            filter: url(#x);
-        }
+        
         .recommendation #recommend-inside span.content-tail aside.personal_stand p {
-            opacity: .55;
+            opacity: .75;
         }
         
         .acg_window-content li.acg_window-content-inside_left {
@@ -192,6 +197,26 @@
             /*max-width: 88%;*/
             /*position: relative;*/
             margin: 0 auto;
+        }
+        .recommendation #recommend-inside {
+            color: var(--preset-6);
+        }
+        .recommendation #recommend-inside .recommend-newsImg {
+            border-radius: inherit;
+            /*overflow: inherit;*/
+        }
+        .recommendation #recommend-inside .recommend-newsContent {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+        .acg_window-content-inside_left-list li a {
+            color: var(--preset-6);
+        }
+        .acg_window-content-inside_left-list li a sup {
+            opacity: .75;
+        }
+        .resource-windows div ul li {
+            border-radius: var(--radius);
         }
     </style>
 </head>
@@ -213,7 +238,7 @@
                 <div class="weBlog-Description-inside">
                     <div class="weBlog-Description-inside-content">
                         <span>
-                            <small style="filter: url(#x);"><b style="font-size:xx-large;">👋</b><strong> 你好，hoooola!!! <?php //echo get_option('site_nick', get_bloginfo('name')); ?> </strong></small>
+                            <small style="filter: url(#x);"><b style="font-size:xx-large;">👋</b><strong> hooooola!! <?php //echo get_option('site_nick', get_bloginfo('name')); ?> </strong></small>
                             <p> 「<?php bloginfo('description') ?>」 </p>
                         </span>
                     </div>

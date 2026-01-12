@@ -368,7 +368,7 @@
             </p>
           </ul>
           <ul style="text-align:right">
-              <li id="feed"><a href="<?php bloginfo('rss2_url'); ?>" target="_blank" style="font-weight:bold;">RSS</a></li>
+              <li id="feed"><a href="<?php bloginfo('rss2_url'); ?>" target="_blank" style="/*font-weight:bold;*/">RSS</a></li>
               <?php
                   $bottom_nav_array = explode(',',get_option('site_bottom_nav'));
                   $bottom_nav_array_count = count($bottom_nav_array);
@@ -523,7 +523,7 @@
         const setAcgBackground = ()=> {<?php echo $acgpage ? 'setupBlurColor(this, getParByCls(this, "inbox"));' : 'console.debug("not in acg page.");'; ?>}
         //..
         try {
-            import("<?php echo custom_cdn_src(1, 1); ?>/js/utils.js").then((mod)=> {
+            import("<?php echo $src_cdn; ?>/js/utils.js").then((mod)=> {
                 // visibility observer
                 const visibilityObserver = new mod.VisibilityObserver({
                     threshold: 0.1, // 10%可见时触发

@@ -149,6 +149,9 @@ function the_comment_ranks($t1='常客',$c1='近期访问较频繁的童鞋',$t2
         .ranking ul li span#range em span.wave{
             overflow: hidden;
         }
+        .ranking #ranked {
+            margin-bottom: 5%;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
