@@ -25,8 +25,8 @@
     margin: 35px auto 15px;
     overflow: hidden;
     font-family: cursive;
-    text-decoration: underline;
     letter-spacing: 0;
+    /*text-decoration: underline;*/
     /*letter-spacing: 5px;*/
 }
 .rcmd-boxes .inbox-clip:first-child{

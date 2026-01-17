@@ -25,7 +25,7 @@
     // display custom_column for custom_column.js preset input-value
     add_filter('manage_posts_columns', 'wpse_3531_add_seo_columns', 10, 2);
     function wpse_3531_add_seo_columns($posts_columns, $post_type){
-        if($post_type!='inform') $posts_columns['post_orderby'] = '排序值';
+        if($post_type!='inform') $posts_columns['post_orderby'] = '排序';
         // $posts_columns['post_rating'] = '评分';
         global $edit_acg_posts;
         if($edit_acg_posts){

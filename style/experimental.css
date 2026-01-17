@@ -1,0 +1,624 @@
+/*
+** experimental style futures
+*/
+.adscene {
+    margin-bottom: 15px!important;
+}
+.slider-menu {
+    background-image: radial-gradient(var(--preset-3a) 1px, var(--preset-2b) 1px)!important;
+    background-size: 10px 10px!important;
+}
+.inside-functions .box div:active {
+    transition: transform .35s ease;
+}
+.inside-functions .box div {
+    transition: transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    /*box-shadow: 0 0 20px var(--preset-c);*/
+    border: 2px solid var(--preset-2b);
+    font-weight: bold;
+}
+#tech_window-bottom,
+#acg_window-bottom,
+.load button,
+.links-more {
+    border-width: 2px!important;
+}
+.main-header-all {
+    animation-duration: .55s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.article_index .in_dex,
+header>nav#tipson .top-bar-tips {
+    backdrop-filter: saturate(150%) blur(5px);
+    -webkit-backdrop-filter: saturate(150%) blur(5px);
+    background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);
+    background-size: 4px 4px;
+    /*background-color: rgba(255,255,255, .55);*/
+    /*backdrop-filter: saturate(150%) blur(0px);*/
+    /*-webkit-backdrop-filter: saturate(150%) blur(0px);*/
+}
+body.dark .article_index .in_dex,
+body.dark header>nav#tipson .top-bar-tips {
+    background-image: radial-gradient(var(--preset-2b) 2px, var(--preset-2bs) 2px);
+    background-size: 4px 4px;
+    background-color: var(--preset-2bs);
+}
+body.dark .rcmd-boxes .info .inbox .inbox-headside img,
+body.dark .article_index a,
+#supports-txt {
+    opacity: 1!important;
+}
+blockquote.wp-block-quote p,
+.friends-boxes .deals .inboxSliderCard .slideBox a,
+#footer-copyright li {
+    color: var(--preset-6);
+}
+body.dark .friends-boxes .deals .inboxSliderCard .slideBox a,
+body.dark #footer-copyright li {
+    color: var(--preset-9);
+}
+/**
+**
+**  Experimental Feats
+**  UI 2025
+**
+**/
+:root {
+    --radius: 18px;
+}
+html, body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+/*footer .container,*/
+.win-top:after,
+.content-all {
+    background-image: radial-gradient(var(--preset-e) 1px, var(--preset-fa) 1px);
+    background-size: 10px 10px;
+    /** Performance Issue **/
+    /*background-attachment: fixed;*/
+}
+/*body.dark footer .container,*/
+body.dark .win-top:after,
+body.dark .content-all {
+    background-image: radial-gradient(var(--preset-3a) 1px, var(--preset-2b) 1px);
+}
+/**
+** index
+**/
+/*.acg_window-content-inside_left-list li a,*/
+#tech_window-bottom,
+#acg_window-bottom {
+    background: linear-gradient(180deg, var(--mirror) 0, #fff);
+    background: -webkit-linear-gradient(-90deg, var(--mirror) 0, #fff);
+}
+body.dark .recommendation #recommend-inside .recommend-newsContent {
+    border-color: transparent!important;
+}
+.recommendation #recommend-inside .recommend-newsImg div a#rel {
+    color: var(--mirror);
+    /*letter-spacing: 1px;*/
+    background: var(--preset-2bs);
+    border: 1px solid var(--preset-6);
+    backdrop-filter: blur(14px);
+    margin: 18px auto;
+    max-width: 14em;
+    line-height: 36px;
+    border-radius: 50px;
+    transition: all .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+.recommendation #recommend-inside .recommend-newsImg div a#rel b {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 10px;
+    box-sizing: border-box;
+    max-width: 98%;
+}
+.recommendation #recommend-inside:hover > .recommend-newsImg div a#rel {
+    color: var(--preset-f);
+    border-color: transparent;
+    margin: 0 auto;
+    line-height: 55px;
+    max-width: 100%;
+    border-radius: 0;
+    letter-spacing: 5px;
+    /*font-size: 1rem;*/
+    /*margin: 15px auto;*/
+    /*line-height: 45px;*/
+    /*max-width: 90%;*/
+    /*border-radius: calc(var(--radius) / 1.5);*/
+}
+.recommendation #recommend-inside:active > .recommend-newsImg div a#rel {
+    /*transform: scale(1.15);*/
+    letter-spacing: 1px;
+    margin: 18px auto;
+    max-width: 12em;
+    line-height: 36px;
+    border-radius: 50px;
+    border-color: var(--preset-6);
+    transition: .15s ease;
+}
+.resource-windows div ul li a:focus {
+    background: var(--preset-fa);
+    border-color: transparent!important;
+    box-shadow: rgb(0 0 0 / 5%) 0 0 20px!important;
+    /*box-shadow: none!important;*/
+}
+body.dark .resource-windows div ul li a:focus {
+    background: var(--preset-3a);
+}
+/**
+** news && weblog && valine comments
+**/
+.news-article-inside {
+    border: 2px solid var(--preset-f);
+}
+.pageSwitcher a:hover {
+    color: var(--theme-color)!important;
+    background: var(--preset-fa);
+}
+/*.v .vlist .vcard.true,*/
+/*.v .vlist .vcard:hover,*/
+body.dark .wp-block-table table {
+    background: var(--preset-2b);
+}
+.wp-block-table table,
+.pageSwitcher a {
+    background: var(--preset-f);
+    background-color: var(--preset-f);
+}
+.news-content-right-download,
+.news-ppt div:first-of-type,
+.main-root ul li:nth-child(even),
+.weblog-tree-core-r {
+    background: var(--preset-f);
+    border-color: var(--preset-f);
+    box-shadow: rgb(0 0 0 / 5%) 0 0 20px;
+    transition-property: transform!important;
+}
+.win-content article p,
+.news-content-right-download ol,
+.v .vlist .vcard .vh .vat,
+#comment_txt p,
+.news-inside-content .news-core_area p {
+    color: var(--preset-6);
+}
+.news-ppt {
+    overflow: visible;
+}
+/*body.dark .v .vlist .vcard.true,*/
+/*body.dark .v .vlist .vcard:hover,*/
+body.dark .weblog-tree-core-r,
+body.dark .news-ppt div:first-of-type,
+body.dark .pageSwitcher a {
+    background: var(--preset-3b);
+    border-color: var(--preset-3a);
+}
+body.dark .v .vlist .vcard .vh .vat,
+body.dark #comment_txt p,
+body.dark .news-inside-content .news-core_area p {
+    color: var(--preset-9)!important;
+}
+/*.v .vquote .vcard {*/
+/*    margin-left: 10px;*/
+/*}*/
+.v .vwrap .vedit .vemojis img {
+    overflow: visible;
+}
+/*.v .vlist .vcard .vquote .vcard:hover,*/
+.v .vlist .vcard.true,
+.v .vlist .vcard:hover {
+    border-color: var(--preset-e);
+    box-shadow: 0 0 20px rgb(0 0 0 / 5%);
+}
+.v .vlist .vcard .vquote:hover {
+    border-color: transparent;
+}
+.v .vlist .vcard {
+    border: 1px solid transparent;
+}
+.v .vlist .vcard .vcontent p {
+    color: var(--preset-6);
+}
+body.dark .v .vlist .vcard:hover {
+    border-color: var(--preset-4b);
+}
+body.dark .v .vlist .vcard .vcontent p {
+    color: var(--preset-c);
+}
+body.dark .v .vlist .vcard .vcontent img#draw {
+    background: var(--preset-4a);
+}
+/**
+** archive
+**/
+.archive-tree h2 {
+    border: none;
+}
+.cs-tree .dayto {
+    border: 1px solid var(--preset-9);
+}
+body.dark .cs-tree span,
+body.dark .archive-tree ul li a {
+    border-color: var(--preset-4b);
+}
+/**
+** 2bfriends
+**/
+.friends-boxes .deals .inboxSliderCard {
+    color: var(--preset-9);
+}
+body.dark .friends-boxes .deals .inboxSliderCard {
+    color: var(--preset-6);
+}
+/**
+** etc
+**/
+/*.body-basically .Introduce,*/
+.main {
+    color: var(--preset-4a);
+}
+footer #footer-support-board {
+    box-shadow: 0px -20px 20px rgb(0 0 0 / 5%);
+}
+/*.load button:hover {*/
+/*    border-color: transparent!important;*/
+/*}*/
+.load button:active {
+    color: var(--theme-color)!important;
+}
+/*.v .vbtn,*/
+.load button {
+    /*color: var(--preset-6);*/
+    /*border: 2px solid var(--preset-f);*/
+    font-weight: bold;
+    border-color: var(--preset-f);
+    background: linear-gradient(45deg, var(--mirror-start), var(--mirror-end));
+    box-shadow: 0 0 20px rgb(0 0 0 / 10%);
+}
+/*body.dark .v .vbtn,*/
+body.dark .load button {
+    /*color: var(--preset-c);*/
+    border-color: var(--preset-4a);
+    background: linear-gradient(45deg, var(--preset-4a), var(--preset-2b));
+}
+/**
+** 
+** feat: border-radius
+** 
+**/
+.inside_of_block nav.main-nav ul li a.choosen::after {
+    border-radius: 3px;
+}
+/*.recommendation,*/
+/*.Fresh-ImgBoxs span,*/
+/*.banner .banner-inside,*/
+/*.resource-windows div,*/
+.v .vwrap,
+.v .vlist .vcard {
+    /*border-radius: calc(var(--radius) * 2);*/
+    border-radius: var(--radius)!important;
+}
+.vheader #avatar {
+    border-radius: var(--radius) var(--radius) 0 0!important;
+}
+/**
+** 
+** feat: ue/scale transform
+** 
+**/
+/*.win-content article h1,*/
+/*.news-inside-content h2 a,*/
+header>nav#tipson .top-bar-tips a,
+.body-basically .Introduce p a,
+article .infos a,
+.stats a,
+figure a,
+footer a {
+    display: inline-block;
+}
+/**
+**  disabled transform
+**/
+#vcomments.v.drawing .vwrap,
+#vcomments.v.drawing .vlist .vcard {
+    transform: none!important;
+}
+/*.content-all a:active,*/
+/*.friends-boxes .inbox-clip:active,*/
+/*.v .vwrap .vedit .vctrl span:active,*/
+.inside_of_block nav.main-nav ul li a:active,
+.mobile-vision span:active,
+.slider-menu-inside i:active,
+.slider-menu_body ul li a:active,
+.inside_of_block .logo-area:active,
+.Fresh-ImgBoxs span:active,
+.resource-windows div:active,
+.weBlog-Description .weBlog-Description-inside-content:active,
+.win-top .counter a:active,
+.news-article-head-tools span:active,
+.load button:active,
+.body-basically .Introduce p a:active,
+.rcmd-boxes .info .inbox.more:active,
+.ibox .iboxes:active,
+.download_boxes .dld_box .dld_box_wrap:active,
+a.markable .tools .toolInside:active,
+.share a:active,
+form:active,
+.lively-click:active {
+    transform: scale(0.92);
+}
+/*.inside_of_block nav.main-nav:active,*/
+/*.In-core-head .profile:active,*/
+/*.win-top h1:active,*/
+/*.win-top h5:active,*/
+header>nav#tipson .top-bar-tips a:active,
+.main-root:active,
+.pageSwitcher:active,
+.recommendation:active,
+.article_index .in_dex:active,
+.friends-boxes .deals .inboxSliderCard:active,
+.acg_window-content-inside_right .tags:active,
+.acg_window-content-inside_left-list:active,
+.additional.metabox ol:active,
+.news-window:active,
+#acg_window-bottom:active,
+/*.news-slidebar-window>#translatez > div:active,*/
+.news-content-right-download:active,
+.win-nav .nav-header:active,
+/*.win-content article .infos:active,*/
+.win-content .notes article:active,
+.weblog-tree-core-r:active,
+.about_blocks:active,
+.ibox.quotes .iboxes:active,
+footer a:active,
+figure a:active,
+/*.v .vlist .vquote .vcard:active,*/
+.lively-click-098:active {
+    transform: scale(0.98);
+}
+/*.archive-tree ul li a.link:active,*/
+details summary:active,
+.v .vwrap:active,
+.v .vlist .vcard:active,
+.lively-click-099:active {
+    transform: scale(0.99);
+}
+/*.additional.metaboxes li a:active,*/
+.additional.metabox li a:active,
+.friends-boxes .deals .inboxSliderCard .slideBox a:active,
+.acg_window-content-inside_left-list li a:active,
+.news-content-right-download ol li a:active,
+.friends-boxes .deals .inbox:active,
+.article_index .in_dex a:active,
+.rcmd-boxes .info .inbox:active,
+.footer-detector:active,
+a.markable .tools .toolInside span:active,
+.v .vlist .vcard .vhead .vnick:active,
+.v .vwrap .vedit .vctrl span:active,
+.v .vbtn:active,
+.stats a:active,
+.lively-click-108:active {
+    transform: scale(1.08)!important;
+}
+/**
+**  Special translates
+**/
+.lively-click-central:active {
+    transform: scale(0.92) translate(-50%, -50%)!important;
+}
+#html2img:active,
+.slider-menu_header .slider-logo span:active,
+.mobile-vision .m-logo span:active,
+.lively-click-098-central:active {
+    transform: scale(0.98) translate(-50%, -50%)!important;
+}
+.v .vbtn.extend_addon:active,
+.inside-functions .box div.pagePer:active,
+.lively-click-108-central:active {
+    transform: scale(1.08) translate(-50%, -50%)!important;
+}
+.lively-click-115-central:active {
+    transform: scale(1.15) translate(-50%, -50%)!important;
+}
+.inside-functions .box div.dark:active {
+    transform: scale(0.92) translate(-66px, -66px);
+}
+.inside-functions .box div.top:active {
+    transform: scale(0.92) translate(-50%, -80px);
+}
+.inside-functions .box div.bottom:active {
+    transform: scale(0.92) translate(-80px, -50%);
+}
+/*.win-content article h1:active,*/
+/*.news-inside-content h2 a:active,*/
+.win-content article .infos a:active,
+#html2img #cancel:active,
+.main-root ul li a:active,
+.pageSwitcher a:active,
+.about_blocks li.intro_right .mbit .mbit_intro a:active,
+.acg_window-content-inside_right .tags span:active,
+#acg_window-bottom a:active,
+.cs-tree span:active,
+.news-window-img a:active,
+.v .vlist .vcard .vh .vat:active,
+.v .vwrap .vedit .vemojis img:active,
+.resource-windows div ul li:active,
+.lively-click-115:active {
+    transform: scale(1.15)!important;
+}
+/*.inside_of_block nav.main-nav,*/
+/*.friends-boxes .inbox-clip,*/
+/*.news-inside-content h2 a,*/
+/*.win-content article h1,*/
+/*.In-core-head .profile,*/
+/*.content-all a,*/
+/*.win-top h1,*/
+/*.win-top h5,*/
+.mobile-vision span,
+.slider-menu_header .slider-logo span,
+.slider-menu-inside i,
+.slider-menu_body ul li a,
+header>nav#tipson .top-bar-tips a,
+.inside_of_block nav.main-nav ul li a,
+.inside_of_block .logo-area,
+.recommendation,
+.Fresh-ImgBoxs span,
+.resource-windows div,
+.resource-windows div ul li,
+.weBlog-Description .weBlog-Description-inside-content,
+.acg_window-content-inside_right .tags,
+.acg_window-content-inside_right .tags span,
+.acg_window-content-inside_left-list,
+.acg_window-content-inside_left-list li a,
+.win-top .counter a,
+.cs-tree span,
+/*.archive-tree ul li a.link,*/
+#acg_window-bottom,
+#acg_window-bottom a,
+.additional.metabox ol,
+.news-article-head-tools span,
+.news-window,
+.news-window-img a,
+/*.news-slidebar-window>#translatez > div,*/
+.news-content-right-download,
+.news-content-right-download ol li a,
+.win-nav .nav-header,
+.win-content .notes article,
+/*.win-content article .infos,*/
+.win-content article .infos a,
+.main-root,
+.main-root ul li a,
+.weblog-tree-core-r,
+.v .vwrap,
+.load button,
+.pageSwitcher,
+.pageSwitcher a,
+.v .vbtn,
+.v .vlist .vcard,
+/*.v .vlist .vcard .vh .vat,*/
+.v .vwrap .vedit .vctrl span,
+.v .vwrap .vedit .vemojis img,
+/*.v .vlist .vcard .vhead .vnick,*/
+.rcmd-boxes .info .inbox.more,
+.about_blocks,
+.about_blocks li.intro_right .mbit .mbit_intro a,
+.body-basically .Introduce p a,
+.ibox .iboxes,
+.friends-boxes .deals .inbox,
+.friends-boxes .deals .inboxSliderCard,
+.friends-boxes .deals .inboxSliderCard .slideBox a,
+.download_boxes .dld_box .dld_box_wrap,
+.article_index .in_dex,
+.article_index .in_dex a,
+.footer-detector,
+a.markable .tools .toolInside,
+a.markable .tools .toolInside span,
+#html2img,
+#html2img #cancel,
+details summary,
+form,
+figure a,
+footer a,
+.stats a,
+.share a,
+.lively-click,
+.lively-click-098,
+.lively-click-098-central,
+.lively-click-099,
+.lively-click-099-central,
+.lively-click-108,
+.lively-click-108-central,
+.lively-click-115,
+.lively-click-115-central {
+    transition: .15s ease;
+    transition-property: transform, top, background;
+    /*will-change: transform;*/
+}
+/**
+** 
+** feat: animations
+** 
+**/
+@keyframes switchMode {
+    0% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(1);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(10);
+    }
+}
+@keyframes switchModes {
+    0% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(10);
+    }
+    66% {
+        opacity: 1;
+        transform: translate(-50%,-50%) scale(20);
+    }
+    99% {
+        transform: translate(-50%,-50%) scale(100);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%,-50%) scale(1);
+    }
+}
+/*body.dark header>nav#tipson .top-bar-tips {*/
+/*    z-index: 9999;*/
+/*}*/
+/*.inside-functions .box div.dark:active,*/
+/*.inside-functions .box div.dark:hover {*/
+/*    overflow: visible;*/
+/*}*/
+/*.inside-functions .box div.dark {*/
+/*    overflow: hidden;*/
+/*}*/
+/*body.light .inside-functions .box div.dark i::after,*/
+/*body.dark .inside-functions .box div.dark i::after,*/
+.inside-functions .box div.dark:active i::after,
+.inside-functions .box div.dark:active svg {
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation: 
+        switchMode .15s 0s,
+        switchModes .55s .15s;
+    /*transform: scale(10);*/
+    /*opacity: 1;*/
+}
+body.dark .inside-functions .box div.dark i::after,
+body.dark .inside-functions .box div.dark svg {
+    /*color: var(--preset-fa);*/
+    color: var(--mirror-start);
+}
+.inside-functions .box div.dark i::after,
+.inside-functions .box div.dark svg {
+    color: var(--preset-2bs);
+    /*color: var(--preset-3a);*/
+    fill: currentColor;
+    background: currentColor;
+}
+.inside-functions .box div.dark i::after,
+.inside-functions .box div.dark svg {
+    content: '';
+    min-width: 40px;
+    min-height: 40px;
+    display: block;
+    border-radius: 50%;
+    opacity: 0;
+    z-index: -9;
+    position: inherit;
+    top: -2px;
+    left: -2px;
+    /*transform-origin: bottom right;*/
+    /*will-change: transform;*/
+}
+.inside-functions .box div.dark i::after {
+    top: inherit;
+    left: inherit;
+    transform: inherit;
+}

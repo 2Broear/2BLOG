@@ -56,8 +56,8 @@
             /*font-style: italic;*/
             /*letter-spacing: 3px;*/
         }
-        iframe.netease_embed{
-            margin: 0 auto;
+        iframe.netease_embed {
+            /*margin: 0 auto;*/
             display: block;
         }
         .ibox mark,
@@ -99,6 +99,13 @@
         }
         .body-basically .Introduce {
             color: var(--preset-4a);
+        }
+        .about_blocks li.intro_right .mbit .mbit_range li span:before, 
+        .about_blocks li.intro_right .mbit .mbit_range li span:after {
+            opacity: .35;
+        }
+        blockquote p {
+            margin: 10px auto;
         }
     </style>
 </head>
@@ -155,8 +162,8 @@
                             <li class="intro_right">
                                 <div class="mbit" data-mbit="<?php $mbit_array_result = explode('/', get_option('site_mbit_result_array'));echo strtoupper($mbit_array_result[1]); ?>">
                                     <div class="mbit_intro">
-                                        <p> MBti 16 Personalities overview<!--<sup> (Oct 21, 2022) </sup>--> </p>
-                                        <a href="https://www.16personalities.com/<?php $mbit_abbr=$mbit_array_result[0];echo strpos($mbit_abbr,'-')!==false ? substr($mbit_abbr,0,4) : $mbit_abbr; ?>-personality" style="color:#33a474;" target="_blank" title="more about <?php echo $res_type=strtoupper($mbit_abbr); ?>"><b><?php echo $res_type; ?></b></a>
+                                        <p> MBTI 16 Personalities<!--<sup> (Oct 21, 2022) </sup>--> </p>
+                                        <a href="https://www.16personalities.com/ch/<?php $mbit_abbr=$mbit_array_result[0];echo strpos($mbit_abbr,'-')!==false ? substr($mbit_abbr,0,4) : $mbit_abbr; ?>-人格" style="color:#33a474;" target="_blank" title="more about <?php echo $res_type=strtoupper($mbit_abbr); ?>"><b><?php echo $res_type; ?></b></a>
                                     </div>
                                     <ol class="mbit_range">
                                         <?php

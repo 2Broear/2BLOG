@@ -77,6 +77,19 @@
 	    .win-content {
 	        border-radius: calc(var(--radius) * 2);
 	    }
+	    body.dark .v .vlist .vcard:hover {
+	        background: var(--preset-3a);
+	    }
+	    body.dark .v .vlist .vcard .vquote .vcard:hover {
+	        background: var(--preset-4a)!important;
+	    }
+        /*body.dark .vquote .vheader #avatar {*/
+        /*    color: var(--preset-4b)!important;*/
+        /*}*/
+        /*body.dark .vquote .vwrap .vheader .vinput:focus,*/
+        /*body.dark .vquote .vedit {*/
+        /*    background: var(--preset-4b)!important;*/
+        /*}*/
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

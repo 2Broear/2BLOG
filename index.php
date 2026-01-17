@@ -181,7 +181,7 @@
         }
         @media screen and (max-width: 960px) {
             .banner .banner-inside {
-                max-height: 150px;
+                max-height: 180px!important;
             }
         }
         
@@ -208,6 +208,8 @@
         .recommendation #recommend-inside .recommend-newsContent {
             border-top-left-radius: 0;
             border-top-right-radius: 0;
+            border-width: 2px;
+            border-top: none;
         }
         .acg_window-content-inside_left-list li a {
             color: var(--preset-6);
@@ -215,8 +217,14 @@
         .acg_window-content-inside_left-list li a sup {
             opacity: .75;
         }
+        .resource-windows div ul li:hover {
+            /*background-color: transparent;*/
+        }
         .resource-windows div ul li {
             border-radius: var(--radius);
+        }
+        .resource-windows div ul li a {
+            color: var(--preset-6);
         }
     </style>
 </head>

@@ -92,7 +92,7 @@
                 if($memos_sw) {
             ?>
                     <div style="width:100%;text-align: right;padding: 10px 20px 5px 15px;box-sizing: border-box;">
-                        <button class="switch-to-memos" href="javascript:;" title="加载更多">切换 Memos 记录</button>
+                        <button class="switch-to-memos lively-click" href="javascript:;" title="加载更多">切换 Memos 记录</button>
                     </div>
                     <div class="memos-tree-core">
                         <div class="load">

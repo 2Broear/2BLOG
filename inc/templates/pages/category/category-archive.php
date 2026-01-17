@@ -68,6 +68,9 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
             color: inherit;
             text-decoration: underline;
         }
+        .data-info h2 sup {
+            display: inline-block;
+        }
         /**
         * experimental fetures
         * @property --counter-num
@@ -269,7 +272,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                         $output_stats = '<span class="stat_'.$cur_year.' stats">📈📉统计：<b><a href="'.esc_url(home_url('/?s&cid='.$news_temp_id.'&year='.$cur_year)).'" target="_blank">'.$news_temp_name.'</a></b> '.$news_count.'篇、 <b><a href="'.esc_url(home_url('/?s&cid='.$note_temp_id.'&year='.$cur_year)).'" target="_blank">'.$note_temp_name.'</a></b> '.$note_count.'篇、 <b><a href="'.esc_url(home_url('/?s&cid='.$blog_temp_id.'&year='.$cur_year)).'" target="_blank">'.$blog_temp_name.'</a></b> '.$blog_count.'篇、 <b>其他类型</b> '.$rest_count.'篇。</span>';
                     }
                     // SAME COMPARE AS $found $limit
-                    $load_btns = $posts_count>=$async_loads ? '<sup class="call" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="'.wp_create_nonce($cur_year."_posts_ajax_nonce").'">加载更多</sup>' : '<sup class="call disabled" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="disabled">已全部载入</sup>';
+                    $load_btns = $posts_count>=$async_loads ? '<sup class="call lively-click-115" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="'.wp_create_nonce($cur_year."_posts_ajax_nonce").'">加载更多</sup>' : '<sup class="call disabled" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="disabled">已全部载入</sup>';
                     $load_icon = $curYear==$cur_year ? ' 🚀 ' : ' 📁 ';
                     // $output .= 
                     $output_object->title = $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$load_icon.$load_btns.'</h2>' . $output_stats : '<h2>' . $cur_year . ' 年度发布</h2>' . $output_stats; //wp_kses_post($output_title);
@@ -318,7 +321,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                                 $output_data = json_decode($output_data); //, true
                                 if (!$output_data) {
                                     // 注意EO缓存！Refresh updates
-                                    echo '<div class="fade-item"><h2>' . $output_year . ' 年度发布 🔁</h2><span class="stat_'.$output_year.' stats">📈📉统计：<b>Updated data for ' . $output_year . ' (<a href="javascript:void(0);" onclick="window.location.reload()">Refresh updates..</a>)</b></span>';
+                                    echo '<div class="fade-item"><div class="data-info lively-click-099"><h2>' . $output_year . ' 年度发布 🔁</h2><span class="stat_'.$output_year.' stats">📈📉统计：<b>Updated data for ' . $output_year . ' (<a href="javascript:void(0);" onclick="window.location.reload()">Refresh updates..</a>)</b></span></div>';
                                     update_archive_year($output_year, $output_sw);
                                     echo '</div>';
                                     continue;
@@ -348,7 +351,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                     }
                     // echo wp_kses_post($output);
                     foreach ($output_array as $data_year) {
-                        echo '<div class="fade-item">' . $data_year->title . $data_year->content . '</div>';
+                        echo '<div class="fade-item"><div class="data-info lively-click-099">' . $data_year->title . '</div>' . $data_year->content . '</div>';
                     }
                 }
                 the_archive_lists();

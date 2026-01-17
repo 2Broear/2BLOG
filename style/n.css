@@ -54,7 +54,7 @@
 }
 .article_index.fold .in_dex{
     min-width: 100px;
-    opacity: .85;
+    /*opacity: .85;*/
 }
 .article_index.fold .in_dex ul{
     display: none;
@@ -73,26 +73,29 @@
     opacity: .5;
 }
 .article_index ol,
-.article_index ul{
+.article_index ul {
     margin: auto!important;
     padding: 0;
     list-style-type: none!important;
 }
-.article_index ol.child{
+.article_index ol.child {
     padding-left: 20px;
     /*display: none;*/
 }
-.article_index li{
+.article_index li {
     margin: auto!important;
+    font-size: small;
+}
+.article_index li a {
+    display: block;
     max-width: 15em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: small;
 }
 body.dark .article_index a{
     color: inherit;
-    opacity: .75;
+    /*opacity: .75;*/
 }
 
 
