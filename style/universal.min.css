@@ -334,7 +334,7 @@ header>nav#tipson .top-bar-tips a{color: inherit;text-decoration: underline;posi
 .inside_of_block nav.main-nav ul{list-style-type:none;margin:0;text-align: right;padding:0 ;/*15px;display:flex;flex-flow:row nowrap;position:relative;justify-content:flex-end*/}
 .inside_of_block nav.main-nav ul li{color:var(--preset-6);line-height:102px;display:inline-block;/*margin:15px auto;position:relative;max-height:102px;height:102px;*/}
 .inside_of_block nav.main-nav ul li > a {font-size: var(--min-size)}
-.inside_of_block nav.main-nav ul li:hover>a{color:var(--theme-color)}
+.inside_of_block nav.main-nav ul li a:hover {color:var(--theme-color)}
 .choosen{color:var(--theme-color)!important;font-weight:bold}
 .tags span a:hover:after{
     background: var(--theme-color)!important;
@@ -354,17 +354,18 @@ i.icomoon,
 .inside_of_block nav.main-nav ul li.sec_level div.links-more a:hover{color:var(--theme-color);border-bottom:2px solid}
 .inside_of_block nav.main-nav ul li.sec_level div.links-more a{color:var(--preset-8);padding:0;margin:0;line-height:36px;text-align:left;border-bottom:1px solid var(--preset-s)}
 
-.additional.metabox{
+.additional {
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%,-50%);
+}
+.additional.metabox {
+    line-height: 0;
     width: 380%;
     width: 380px;
     min-width: 320px;
-    left: -136px;
-    line-height: 0;
     padding: 65px 15px 15px;
-    transform: translate(-50%,-50%);
-    -webkit-transform: translate(-50%,-50%);
-    left: 50%;
-    bottom: 0;
 }
 .additional.metabox ol:hover::after{
     /*color: var(--theme-color);*/
@@ -374,7 +375,7 @@ i.icomoon,
     content: ''!important;
 }
 .sub-additional.metabox ol{
-    padding: 15px 0!important;
+    padding: 15px!important;
 }
 .sub-additional.metabox ol li{
     max-width: 100%;
@@ -433,8 +434,8 @@ i.icomoon,
 }
 .additional.metaboxes li a.choosen::before,
 .additional.metaboxes li a:hover::before{
-    /*opacity: .66;*/
-    opacity: .1;
+    opacity: .66;
+    /*opacity: .1;*/
 }
 .additional.metaboxes li a:before{
     content: "";
@@ -471,7 +472,8 @@ i.icomoon,
     transition: top .35s ease;
 }
 .additional.metaboxes li a b{
-    padding: 2px 3px;
+    display: block;
+    padding: 0 3px 3px;
     border: 1px dashed transparent;
     position: relative;
     letter-spacing: 1px;
@@ -2225,7 +2227,7 @@ body.dark .wp_comment_box a#cancel-comment-reply-link{
     /*vertical-align: middle;*/
 }
 .pageSwitcher a{
-    line-height: 27px;
+    line-height: 28px;
     display: inline-block;
     color: var(--preset-6);
     /*margin-left: 5px;*/

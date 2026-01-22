@@ -40,9 +40,11 @@ function get_cat_posts($the_cat, $pre_cat=false, $limit=99){
         $post_rcmd = get_post_meta($post->ID, "post_rcmd", true);
         $post_rating = get_post_meta($post->ID, "post_rating", true);
         $postimg = get_postimg(0, $post->ID, true);
-        if($lazysrc!='src'){
+        if ($lazysrc != 'src') {
             $lazyhold = 'data-src="'.$postimg.'"';
-            $postimg = $loadimg;
+        } else {
+            $lazyhold = '';
+            $loadimg = $postimg;
         }
         $href = $post_source ? $post_source : ($cat_single_sw ? "javascript:;" : get_the_permalink());
         $output .= '<div class="inbox flexboxes" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /><span class="author">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(66,true).'</p></span>';

@@ -40,14 +40,14 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         $post_rcmd = get_post_meta($post->ID, "post_rcmd", true);
         $post_rating = get_post_meta($post->ID, "post_rating", true);
         $postimg = get_postimg(0, $post->ID, true);
-        $lazyhold = '';
-        // $loadimg = $postimg;  // !!!BUG: load before lazy
-        if($lazysrc!='src'){
+        if ($lazysrc != 'src') {
             $lazyhold = 'data-src="'.$postimg.'"';
-            $postimg = $loadimg;
+        } else {
+            $lazyhold = '';
+            $loadimg = $postimg;
         }
         $href = $post_source ? $post_source : ($acg_single_sw ? "javascript:;" : get_the_permalink());
-        $output .= '<div class="inbox flexboxes" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /></a><span class="author">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(66,true).'</p></span>';
+        $output .= '<div class="inbox flexboxes" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /></a><span class="author">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(52,true).'</p></span>';
         if($post_rcmd){
             $rcmd_title = 'Personal Recommends';
             $rcmd_class = '';
@@ -123,8 +123,9 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         }
         .rcmd-boxes .info .inbox .inbox-headside:before {
             /*content: none;*/
-            display: none;
+            /*display: none;*/
             opacity: .15;
+            pointer-events: none;
         }
         /***  decrease 3d layers(cancelable)  ***/
         .rcmd-boxes .info .inbox,
@@ -195,6 +196,10 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         }
         .rcmd-boxes .info .inbox .inbox-more a {
             border-radius: inherit;
+        }
+        .rcmd-boxes .info .inbox .inbox-more a.loading,
+        .rcmd-boxes .info .inbox .inbox-more a.disabled {
+            pointer-events: none;
         }
     </style>
 </head>
@@ -365,44 +370,44 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
 </script>
 <?php
     get_foot();
-    if($async_sw&&$use_async){
+    if ($async_sw && $use_async) {
 ?>
-        <script>
-            const rcmd_boxes = document.querySelector(".rcmd-boxes"),
-                  preset_loads = <?php echo $async_loads; ?>;
-            bindEventClick(rcmd_boxes, 'load-more', function(t){
-                load_ajax_posts(t, 'acg', preset_loads, function(res, load_box){
-                    let fragment = document.createDocumentFragment();
-                    res.forEach(item=> {
-                        let temp = document.createElement("DIV"),
-                            extra_str = "",
-                            post_rating = item.rating;
-                        temp.id = "pid_"+item.id;
-                        temp.classList.add("inbox", "flexboxes");
-                        if(item.rcmd){
-                            const both_class = post_rating ? " both" : "",
-                                  rcmd_title = post_rating ? 'GOLD Recommendation' : 'Personal Recommends'
-                                  rcmd_rating = post_rating ? post_rating : '荐';
-                            extra_str = `<div class="game-ratings gs${both_class}"><div class="gamespot" title="${rcmd_title}"><div class="range Essential RSBIndex"><span id="before"></span><span id="after"></span></div><span id="spot"><h3>${rcmd_rating}</h3></span></div></div>`;
-                        }else{
-                            extra_str = post_rating ? '<div class="game-ratings ign"><div class="ign hexagon" title="IGN High Grades"><h3>'+post_rating+'</h3></div></div>' : '';
-                        }
-                        temp.innerHTML = `<div class="inbox-headside flexboxes"><a href="${item.link || 'javascript:void(0);'}" target="_self"><img src="${item.poster}" alt="${item.subtitle}" crossorigin="Anonymous"></a><span class="author">${item.subtitle}</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="${item.link || 'javascript:void(0);'}" target="_self">${item.title}</a></h4></span><span class="lowside-description"><p>${item.excerpt}</p></span>${extra_str}</div>`; //<img class="bg" src="${item.poster}">
-                        fragment.appendChild(temp);
-                        // setup ajax-load images blur-color
-                        if(item.poster) {
-                            let tempimg = new Image();
-                            tempimg.src = item.poster;
-                            tempimg.setAttribute('crossorigin','Anonymous');
-                            tempimg.onload=()=>setupBlurColor(tempimg, temp);
-                            // setupBlurColor(item.poster, temp);
-                        }
-                    });
-                    load_box.insertBefore(fragment, load_box.lastElementChild); //lastChild
-                    execRotation(load_box.querySelectorAll('.inbox-aside .game-ratings.both'));
+    <script>
+        const rcmd_boxes = document.querySelector(".rcmd-boxes"),
+              preset_loads = <?php echo $async_loads; ?>;
+        bindEventClick(rcmd_boxes, 'load-more', function(t) {
+            load_ajax_posts(t, 'acg', preset_loads, function(res, load_box) {
+                let fragment = document.createDocumentFragment();
+                res.forEach(item=> {
+                    let temp = document.createElement("DIV"),
+                        extra_str = "",
+                        post_rating = item.rating;
+                    temp.id = "pid_"+item.id;
+                    temp.classList.add("inbox", "flexboxes");
+                    if(item.rcmd){
+                        const both_class = post_rating ? " both" : "",
+                              rcmd_title = post_rating ? 'GOLD Recommendation' : 'Personal Recommends'
+                              rcmd_rating = post_rating ? post_rating : '荐';
+                        extra_str = `<div class="game-ratings gs${both_class}"><div class="gamespot" title="${rcmd_title}"><div class="range Essential RSBIndex"><span id="before"></span><span id="after"></span></div><span id="spot"><h3>${rcmd_rating}</h3></span></div></div>`;
+                    }else{
+                        extra_str = post_rating ? '<div class="game-ratings ign"><div class="ign hexagon" title="IGN High Grades"><h3>'+post_rating+'</h3></div></div>' : '';
+                    }
+                    temp.innerHTML = `<div class="inbox-headside flexboxes"><a href="${item.link || 'javascript:void(0);'}" target="_self"><img src="${item.poster}" alt="${item.subtitle}" crossorigin="Anonymous"></a><span class="author">${item.subtitle}</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="${item.link || 'javascript:void(0);'}" target="_self">${item.title}</a></h4></span><span class="lowside-description"><p>${item.excerpt.substr(0,52)}..</p></span>${extra_str}</div>`; //<img class="bg" src="${item.poster}">
+                    fragment.appendChild(temp);
+                    // setup ajax-load images blur-color
+                    if(item.poster) {
+                        let tempimg = new Image();
+                        tempimg.src = item.poster;
+                        tempimg.setAttribute('crossorigin','Anonymous');
+                        tempimg.onload=()=>setupBlurColor(tempimg, temp);
+                        // setupBlurColor(item.poster, temp);
+                    }
                 });
+                load_box.insertBefore(fragment, load_box.lastElementChild); //lastChild
+                execRotation(load_box.querySelectorAll('.inbox-aside .game-ratings.both'));
             });
-        </script>
+        });
+    </script>
 <?php
     };
     if($baas) echo '<script type="text/javascript" src="'.$src_cdn.'/js/jquery-1.9.1.min.js"></script><script type="text/javascript" src="'.$src_cdn.'/js/acgn.js?v='.get_theme_info("Version").'"></script>';

@@ -68,13 +68,14 @@
                                 <article class="<?php if($post_orderby>1) echo 'topset icom'; ?> news-window wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                                     <div class="news-window-inside">
                                         <?php
-                                            $lazyhold = "";
                                             $postimg = get_postimg();
-                                            if($lazysrc!='src') {
+                                            if ($lazysrc != 'src') {
                                                 $lazyhold = 'data-src="'.$postimg.'"';
-                                                $postimg = $loadimg;
+                                            } else {
+                                                $lazyhold = '';
+                                                $loadimg = $postimg;
                                             }
-                                            if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img '.$lazyhold.' src="'.$postimg.'" alt="'.get_the_title().'" /></a></span>'; //get_postimg() || 
+                                            if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.get_the_title().'" /></a></span>'; //get_postimg() || 
                                         ?>
                                         <div class="news-inside-content" style="<?php //echo $hasimg_style; ?>">
                                             <h2 class="entry-title">

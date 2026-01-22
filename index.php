@@ -246,7 +246,7 @@
                 <div class="weBlog-Description-inside">
                     <div class="weBlog-Description-inside-content">
                         <span>
-                            <small style="filter: url(#x);"><b style="font-size:xx-large;">👋</b><strong> hooooola!! <?php //echo get_option('site_nick', get_bloginfo('name')); ?> </strong></small>
+                            <small style="filter: url(#x);"><b style="font-size:xx-large;">👋</b><strong> hoooooola! <?php //echo get_option('site_nick', get_bloginfo('name')); ?> </strong></small>
                             <p> 「<?php bloginfo('description') ?>」 </p>
                         </span>
                     </div>
@@ -475,7 +475,7 @@
                         <span class="newsBox-supTitle-iDescription" id="icon-acg">
                             <em><?php echo $acg_sw ? 'ACG' : 'TAG'; ?></em><i class="icom icon-acg"></i>
                         </span>
-                        <h2> ACG はすぐに TAG </h2><!-- ACG · TAG -->
+                        <h2> ACG はすぐに TAG Clouds </h2><!-- ACG · TAG -->
                     </div>
                     <ul class="acg_window-content">
                     <?php
@@ -510,7 +510,7 @@
                                             </script>
                                     <?php
                                         } else {
-                                            the_recent_posts($query_cid, false, true, get_option('site_per_posts'));
+                                            the_recent_posts($query_cid, false, true, get_option('site_per_posts') * 1.2);
                                         }
                                     ?>
                         		</ol>

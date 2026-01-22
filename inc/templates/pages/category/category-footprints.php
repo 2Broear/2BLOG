@@ -49,26 +49,5 @@
     </footer>
 </div>
 <!-- siteJs -->
-<script type="module">
-    // import("https://src.2broear.com/js/utils.js").then((mods)=> {
-    //     console.log(mods)
-    //     const { VisibilityObserver } = mods;
-    //     const Observer = new VisibilityObserver({
-    //         threshold: 0.1, // 10%可见时触发
-    //         rootMargin: '10px' // 提前10px检测
-    //     });
-    //     // Observer.observe(document.querySelector('#map'), (entry) => {
-    //     //     console.log(entry)
-    //     // });
-    //     window.addEventListener('message',e=>{
-    //         if(e.origin==='https://api.2broear.com'){
-    //                 console.log(e.origin) //子页面URL，这里是http://b.index.com
-    //                 console.log(e.source) // 子页面window对象，全等于iframe.contentWindow
-    //                 console.log(e.data) //子页面发送的消息
-    //             }
-    //         },false)
-    //     });
-    // });
-</script>
 <?php get_foot(); ?>
 </body></html>

@@ -76,14 +76,15 @@ function the_comment_ranks($t1='常客',$c1='近期访问较频繁的童鞋',$t2
                     $name = $user->name ? $user->name : '???';
                 }
                 if ($name != "匿名者" && $name != "2broear") {
-                    $lazyhold = "";
                     $avatar = get_option('site_avatar_mirror').'avatar/'.md5($user->mail).'?d=retro&s=100';
-                    if($lazysrc!='src'){
+                    if ($lazysrc != 'src') {
                         $lazyhold = 'data-src="'.$avatar.'"';
-                        $avatar = $loadimg;
+                    } else {
+                        $lazyhold = '';
+                        $loadimg = $avatar;
                     }
                     // $counts = $count<50 ? $count*2 : $count;
-                    $databox .= '<li><span id="avatar" data-t="'.$count.'"><a href="'.$link.'" target="_blank"><img '.$lazyhold.' src="'.$avatar.'" title="这家伙留了 '.$count.' 条评论！" alt="'.$name.'" /></a></span><span id="range" style=""><em style="height:'.get_range_percent($count, $range_max).'%"><span class="wave active"></span></em></span><a href="'.$link.'" target="_self"><b title="'.$name.'">'.$name.'</b></a></li>'; //$counts
+                    $databox .= '<li><span id="avatar" data-t="'.$count.'"><a href="'.$link.'" target="_blank"><img '.$lazyhold.' src="'.$loadimg.'" title="这家伙留了 '.$count.' 条评论！" alt="'.$name.'" /></a></span><span id="range" style=""><em style="height:'.get_range_percent($count, $range_max).'%"><span class="wave active"></span></em></span><a href="'.$link.'" target="_self"><b title="'.$name.'">'.$name.'</b></a></li>'; //$counts
                 }
             };
             $databox .= '</ul>';
@@ -95,13 +96,14 @@ function the_comment_ranks($t1='常客',$c1='近期访问较频繁的童鞋',$t2
                     if($user){
                         $count = $user->count;
                         $link = $user->link;
-                        $lazyhold = "";
                         $avatar = get_option('site_avatar_mirror').'avatar/'.md5($user->mail).'?d=retro&s=100';
-                        if($lazysrc!='src'){
+                        if ($lazysrc != 'src') {
                             $lazyhold = 'data-src="'.$avatar.'"';
-                            $avatar = $loadimg;
+                        } else {
+                            $lazyhold = '';
+                            $loadimg = $avatar;
                         }
-                        $databox .= '<li title="TA 在本站已有 '.$count.' 条评论"><span id="avatar"><a href="'.$link.'" target="_blank"><img '.$lazyhold.' src="'.$avatar.'" title="这家伙留了 '.$count.' 条评论！" alt="'.$name.'"></a></span><a href="'.$link.'" target="_blank"><b data-mail="'.$user->mail.'">'.$user->name.'</b><sup>'.$count.'+</sup></a></li>';
+                        $databox .= '<li title="TA 在本站已有 '.$count.' 条评论"><span id="avatar"><a href="'.$link.'" target="_blank"><img '.$lazyhold.' src="'.$loadimg.'" title="这家伙留了 '.$count.' 条评论！" alt="'.$name.'"></a></span><a href="'.$link.'" target="_blank"><b data-mail="'.$user->mail.'">'.$user->name.'</b><sup>'.$count.'+</sup></a></li>';
                     }
                 }
                 $databox .= '</ul>';
@@ -292,11 +294,12 @@ function the_comment_ranks($t1='常客',$c1='近期访问较频繁的童鞋',$t2
                         times = temps[i].t;
                     if(name!="匿名者"&&name!="2broear"){
                         <?php
-                            $lazyhold = "";
                             $avatar = get_option('site_avatar_mirror').'avatar/${mail}?d=retro&s=100';
-                            if($lazysrc!='src'){
+                            if ($lazysrc != 'src') {
                                 $lazyhold = 'data-src="'.$avatar.'"';
-                                $avatar = $loadimg;
+                            } else {
+                                $lazyhold = '';
+                                $loadimg = $avatar;
                             }
                         ?>
                         link = link ? link : 'javascript:;';
@@ -304,12 +307,12 @@ function the_comment_ranks($t1='常客',$c1='近期访问较频繁的童鞋',$t2
                             avg = avg += times;
                             average = avg/max;
                             remove_load(rankest);
-                            temp_rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img <?php echo $lazyhold; ?> src="<?php echo $avatar; ?>" title="这家伙留了 ${times} 条评论！" alt="${name}" /></a></span><span id="range"><em style="height:${get_range_percent(times, range_max)}%"><span class="wave active"></span></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>`; // style="height:${average}px"
+                            temp_rankest.innerHTML += `<li><span id="avatar" data-t="${times}"><a href="${link}" target="_blank"><img <?php echo $lazyhold; ?> src="<?php echo $loadimg; ?>" title="这家伙留了 ${times} 条评论！" alt="${name}" /></a></span><span id="range"><em style="height:${get_range_percent(times, range_max)}%"><span class="wave active"></span></em></span><a href="${link}" target="_self"><b>${name}</b></a></li>`; // style="height:${average}px"
                             fragment_rankest.appendChild(temp_rankest);
                         }
                         if(i>=max && i<maxes){
                             remove_load(ranks);
-                            temp_ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar" data-t="${times}"><img <?php echo $lazyhold; ?> src="<?php echo $avatar; ?>" alt="${name}" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b></a></li>`; //<sup>${times}+</sup>
+                            temp_ranks.innerHTML += `<li title="TA 在本站已有 ${times} 条评论"><span id="avatar" data-t="${times}"><img <?php echo $lazyhold; ?> src="<?php echo $loadimg; ?>" alt="${name}" /></span><a href="${link}"><b data-mail="${temps[i].m}">${name}</b></a></li>`; //<sup>${times}+</sup>
                             fragment_ranks.appendChild(temp_ranks);
                         }
                         if(i>maxes){

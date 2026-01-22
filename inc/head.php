@@ -137,6 +137,7 @@
 ?>
     </style>
     <script>
+        console.info("<?php echo get_num_queries().'次查询，耗时'.timer_stop(0).'秒。'; ?>");
         document.documentElement.style.setProperty('--theme-color','<?php echo $theme; ?>');
         function asyncLoad(url, callback, defer = false){
         	const head = document.getElementsByTagName('head')[0],
@@ -184,7 +185,6 @@
             };
             return curEl;
         };
-        console.info("<?php echo get_num_queries().'次查询，耗时'.timer_stop(0).'秒。'; ?>");
         asyncLoad("<?php echo $src_cdn; ?>/js/nprogress.js", function(){
     	    NProgress.start();
     	    const NProgressLoaded = function(){
@@ -216,6 +216,24 @@
                 end = <?php echo get_option('site_darkmode_end',9); ?>;
             hour>=end&&hour<start || hour==end&&min>=0&&sec>=0 ? setCookie('theme_mode','light') : setCookie('theme_mode','dark');
             document.body.className = getCookie('theme_mode');  //change apperance after cookie updated
+            // // 1. 创建媒体查询对象
+            // const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            // // 2. 定义一个函数来处理主题切换
+            // function handleColorSchemeChange(e) {
+            //     if (e.matches) {
+            //         // 用户偏好深色模式 (dark)
+            //         setCookie('theme_mode','dark');
+            //         document.body.className = 'dark';
+            //     } else {
+            //         // 用户偏好浅色模式 (light) 或未设置/系统不支持
+            //         setCookie('theme_mode','light');
+            //         document.body.className = 'light';
+            //     }
+            // }
+            // // 3. 初始执行一次，设置当前主题
+            // handleColorSchemeChange(colorSchemeQuery);
+            // // 4. 监听媒体查询的变化
+            // colorSchemeQuery.addEventListener('change', handleColorSchemeChange);
         };
     </script>
 <?php

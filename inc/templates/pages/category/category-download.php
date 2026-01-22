@@ -51,17 +51,18 @@ function get_download_posts($cats, $order=1){
                     $left_query->the_post();
                     $link = get_post_meta($post->ID, "post_feeling", true);
                     $postimg = get_postimg(0,$post->ID,true);
-                    $lazyhold = '';
-                    if($lazysrc!='src'){
+                    if ($lazysrc != 'src') {
                         $lazyhold = 'data-src="'.$postimg.'"';
-                        $postimg = $loadimg;
+                    } else {
+                        $lazyhold = '';
+                        $loadimg = $postimg;
                     }
                     $href = $link ? $link : 'javascript:void(0);';
                     $target = $link ? '_blank' : '_self';
                     $class_disabled  = !$link ? 'disabled ' : false;
                     $class_topset = get_post_meta($post->ID, 'post_orderby', true)>1 ? 'topset' : false;
                     $single_link = !$dload_single_sw ? '<a href="'.get_the_permalink().'" target="_blank" style="right:70px;">详情</a>' : '';
-                    $output .= '<li class="'.$class_disabled.$class_topset.'"><div class="details"><a href="'.$href.'" target="'.$target.'" rel="nofollow" title="下载附件"><img '.$lazyhold.' src="'.$postimg.'" alt="poster" /></a><div class="desc">'.get_the_title().'<a href="'.$href.'" target="'.$target.'" rel="nofollow">下载附件</a>'.$single_link.'</div></div></li>';
+                    $output .= '<li class="'.$class_disabled.$class_topset.'"><div class="details"><a href="'.$href.'" target="'.$target.'" rel="nofollow" title="下载附件"><img '.$lazyhold.' src="'.$loadimg.'" alt="poster" /></a><div class="desc">'.get_the_title().'<a href="'.$href.'" target="'.$target.'" rel="nofollow">下载附件</a>'.$single_link.'</div></div></li>';
                 endwhile;
                 wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
                 unset($post, $lazysrc, $loadimg);

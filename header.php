@@ -175,7 +175,7 @@
                             if($prev_post){
                                 $prev_pid = $prev_post->ID;
                                 echo '<p id="np"><b>下一篇：</b>';
-                                if(is_a($prev_post , 'WP_Post')){
+                                if (is_a($prev_post , 'WP_Post')) {
                                     echo '<a href="'.get_permalink($prev_pid).'">'.get_the_title($prev_pid).'</a>';
                                 }
                                 echo '</p>';
@@ -208,10 +208,9 @@
                 <nav class="main-nav">
                     <ul class="wp_list_cats">
                         <?php category_navigation(); ?>
-                        <!--<li><small style="padding: 0 15px;display: none;">oop<strong>S</strong>ays..</small></li>-->
                     </ul>
                     <div class="nav-slider">
-                        <span id="slide-target"></span>
+                        <!--<span id="slide-target"></span>-->
                     </div>
                 </nav>
             </div>

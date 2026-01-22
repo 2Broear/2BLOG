@@ -1,4 +1,74 @@
 /*
+** overwrite ui
+*/
+
+.sub-additional,
+.additional {
+    min-width: 112%;
+}
+.additional li a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.additional .sub-additional .sub-additional {
+    right: 0%;
+}
+.inside_of_block nav.main-nav ul li.th_level:hover > .sub-additional,
+.inside_of_block nav.main-nav ul li.trd_level:hover > .sub-additional {
+    right: 100%;
+}
+.inside_of_block nav.main-nav ul li.sec_level:hover > .additional {
+    padding-top: 30px;
+}
+.main-header-all.barSetUp {
+    pointer-events: none;
+    /*visibility: hidden;*/
+}
+.main-header-all.barSetDown nav .nav-slider {
+    top: -50px;
+}
+nav .nav-wrap .nav-slider.show {
+    opacity: .1;
+}
+nav .nav-wrap .nav-slider.move {
+    transition-property: width, height, opacity;
+}
+nav .nav-wrap .nav-slider {
+    opacity: 0;
+    /*min-width: 10px;*/
+    min-height: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9;
+    transition: cubic-bezier(0, 0, 0.15, 1.15);
+    /*transition-property: width, height, opacity;*/
+    /*linear(0 0%, 0 1.8%, 0.01 3.6%, 0.03 6.35%, 0.07 9.1%, 0.13 11.4%, 0.19 13.4%, 0.27 15%, 0.34 16.1%, 0.54 18.35%, 0.66 20.6%, 0.72 22.4%, 0.77 24.6%, 0.81 27.3%, 0.85 30.4%, 0.88 35.1%, 0.92 40.6%, 0.94 47.2%, 0.96 55%, 0.98 64%, 0.99 74.4%, 1 86.4%, 1 100%)*/
+    border-radius: var(--radius);
+    pointer-events: none;
+    /*background: -webkit-linear-gradient(0deg, var(--mirror-start) 0, var(--mirror-end));*/
+}
+@keyframes valueSetUp {
+    0% {
+        opacity: 1;
+        transform:translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform:translateY(-50%);
+    }
+}
+@keyframes valueSetDown {
+    0% {
+        opacity: 0;
+        transform:translateY(-50%);
+    }
+    100% {
+        opacity: 1;
+        transform:translateY(0);
+    }
+}
+/*
 ** experimental style futures
 */
 .adscene {
@@ -23,7 +93,11 @@
 .links-more {
     border-width: 2px!important;
 }
+header>nav#tipson .top-bar-tips {
+    z-index: 9999;
+}
 .main-header-all {
+    z-index: 9998;
     animation-duration: .55s;
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -48,6 +122,10 @@ body.dark .article_index a,
 #supports-txt {
     opacity: 1!important;
 }
+.rcmd-boxes .info .inbox {
+    background-color: var(--preset-e);
+}
+.rcmd-boxes .info .inbox .inbox-aside,
 blockquote.wp-block-quote p,
 .friends-boxes .deals .inboxSliderCard .slideBox a,
 #footer-copyright li {
@@ -223,6 +301,7 @@ body.dark .news-inside-content .news-core_area p {
 body.dark .v .vlist .vcard:hover {
     border-color: var(--preset-4b);
 }
+body.dark .rcmd-boxes .info .inbox .inbox-aside,
 body.dark .v .vlist .vcard .vcontent p {
     color: var(--preset-c);
 }
@@ -283,12 +362,33 @@ body.dark .load button {
     background: linear-gradient(45deg, var(--preset-4a), var(--preset-2b));
 }
 /**
-** 
-** feat: border-radius
-** 
+** feat: header
 **/
+.inside_of_block nav.main-nav ul li {
+    line-height: normal;
+}
+.inside_of_block nav.main-nav ul li a {
+    padding: 25px 15px;
+    margin: 15px auto;
+}
 .inside_of_block nav.main-nav ul li a.choosen::after {
     border-radius: 3px;
+    opacity: .15;
+}
+.additional .links-more li a {
+    margin: auto!important;
+}
+.additional.metabox .links-more li a {
+    margin: auto!important;
+}
+.additional.metaboxes .links-more li a {
+    margin: auto 15px 0 0!important;
+}
+.additional.metaboxes li a:before {
+    opacity: .52;
+}
+.sub-additional.metabox ol {
+    padding: 15px!important;
 }
 /*.recommendation,*/
 /*.Fresh-ImgBoxs span,*/
@@ -309,7 +409,7 @@ body.dark .load button {
 **/
 /*.win-content article h1,*/
 /*.news-inside-content h2 a,*/
-header>nav#tipson .top-bar-tips a,
+/*header>nav#tipson .top-bar-tips a,*/
 .body-basically .Introduce p a,
 article .infos a,
 .stats a,
@@ -341,8 +441,6 @@ footer a {
 .body-basically .Introduce p a:active,
 .rcmd-boxes .info .inbox.more:active,
 .ibox .iboxes:active,
-.download_boxes .dld_box .dld_box_wrap:active,
-a.markable .tools .toolInside:active,
 .share a:active,
 form:active,
 .lively-click:active {
@@ -360,7 +458,7 @@ header>nav#tipson .top-bar-tips a:active,
 .friends-boxes .deals .inboxSliderCard:active,
 .acg_window-content-inside_right .tags:active,
 .acg_window-content-inside_left-list:active,
-.additional.metabox ol:active,
+.additional ol:active,
 .news-window:active,
 #acg_window-bottom:active,
 /*.news-slidebar-window>#translatez > div:active,*/
@@ -371,6 +469,7 @@ header>nav#tipson .top-bar-tips a:active,
 .weblog-tree-core-r:active,
 .about_blocks:active,
 .ibox.quotes .iboxes:active,
+a.markable .tools .toolInside:active,
 footer a:active,
 figure a:active,
 /*.v .vlist .vquote .vcard:active,*/
@@ -378,6 +477,7 @@ figure a:active,
     transform: scale(0.98);
 }
 /*.archive-tree ul li a.link:active,*/
+.download_boxes .dld_box .dld_box_wrap:active,
 details summary:active,
 .v .vwrap:active,
 .v .vlist .vcard:active,
@@ -385,7 +485,7 @@ details summary:active,
     transform: scale(0.99);
 }
 /*.additional.metaboxes li a:active,*/
-.additional.metabox li a:active,
+.additional li a:active,
 .friends-boxes .deals .inboxSliderCard .slideBox a:active,
 .acg_window-content-inside_left-list li a:active,
 .news-content-right-download ol li a:active,
@@ -393,7 +493,6 @@ details summary:active,
 .article_index .in_dex a:active,
 .rcmd-boxes .info .inbox:active,
 .footer-detector:active,
-a.markable .tools .toolInside span:active,
 .v .vlist .vcard .vhead .vnick:active,
 .v .vwrap .vedit .vctrl span:active,
 .v .vbtn:active,
@@ -444,6 +543,7 @@ a.markable .tools .toolInside span:active,
 .v .vlist .vcard .vh .vat:active,
 .v .vwrap .vedit .vemojis img:active,
 .resource-windows div ul li:active,
+a.markable .tools .toolInside span:active,
 .lively-click-115:active {
     transform: scale(1.15)!important;
 }
@@ -455,11 +555,11 @@ a.markable .tools .toolInside span:active,
 /*.content-all a,*/
 /*.win-top h1,*/
 /*.win-top h5,*/
+/*header>nav#tipson .top-bar-tips a,*/
 .mobile-vision span,
 .slider-menu_header .slider-logo span,
 .slider-menu-inside i,
 .slider-menu_body ul li a,
-header>nav#tipson .top-bar-tips a,
 .inside_of_block nav.main-nav ul li a,
 .inside_of_block .logo-area,
 .recommendation,
@@ -476,7 +576,7 @@ header>nav#tipson .top-bar-tips a,
 /*.archive-tree ul li a.link,*/
 #acg_window-bottom,
 #acg_window-bottom a,
-.additional.metabox ol,
+.additional ol,
 .news-article-head-tools span,
 .news-window,
 .news-window-img a,

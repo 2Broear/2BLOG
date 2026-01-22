@@ -456,6 +456,7 @@
         register_setting( 'baw-settings-group', 'site_single_switcher' );
         register_setting( 'baw-settings-group', 'site_single_includes' );
         register_setting( 'baw-settings-group', 'site_icon_switcher' );
+        register_setting( 'baw-settings-group', 'site_nav_slider_switcher' );
         register_setting( 'baw-settings-group', 'site_keywords' );
         register_setting( 'baw-settings-group', 'site_description' );
         register_setting( 'baw-settings-group', 'site_support' );
@@ -893,6 +894,9 @@
             **  Enhancements
             **  2025
             **/
+            .fixed p.submit:first-child:active {
+                transform: scale(0.95) translateX(-150px);
+            }
             .fixed .switchTab:active {
                 transform: scale(0.95) translateY(20px);
             }
@@ -1215,13 +1219,24 @@
                         // }
                     ?>
                     <tr valign="top">
-                        <th scope="row">导航 ICON</th>
+                        <th scope="row">导航 Icon</th>
                         <td>
                             <?php
                                 $opt = 'site_icon_switcher';
                                 $value = get_option($opt);
                                 $status = $value ? "checked" : "check";
                                 echo '<label for="'.$opt.'"><p class="description" id="">站点导航字体图标，导航别名默认为图标css类（暂不支持创建时手动选择</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:steelblue;" class="btn">ICON</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">导航 Slider</th>
+                        <td>
+                            <?php
+                                $opt = 'site_nav_slider_switcher';
+                                $value = get_option($opt);
+                                $status = $value ? "checked" : "check";
+                                echo '<label for="'.$opt.'"><p class="description" id="">站点导航跟随模块，开启后透明主题色块可跟随鼠标移动标记链接（暂仅支持PC端</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:dodgerblue;" class="btn">Slider</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1571,7 +1586,7 @@
                                         $value = get_option($opt);
                                         $preset = 17;  //默认开启（时）间
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_darkmode_start_label">darkmode 开启时间（大于13点小于24点</p><input type="number" min="13" max="24" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        echo '<p class="description" id="site_darkmode_start_label">开启时间（大于13点小于24点</p><input type="number" min="13" max="24" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1583,7 +1598,7 @@
                                         $value = get_option($opt);
                                         $preset = 9;  //默认关闭（时）间
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_darkmode_end_label">darkmode 关闭时间（大于1点小于12点</p><input type="number" min="1" max="12" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        echo '<p class="description" id="site_darkmode_end_label">关闭时间（大于1点小于12点</p><input type="number" min="1" max="12" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>
@@ -1844,72 +1859,17 @@
                                         echo '<input id="'.$opt.'_'.$index.'" type="checkbox" value="'.$index.'" '.$checking.' /><label for="'.$opt.'_'.$index.'">'.$option.'</label>';
                                     }
                                 }
-                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" readonly style="" value="' . $value . '" placeholder="请选择"/></div>';;
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" readonly style="" value="' . $value . '" placeholder="请选择"/></div>';
                             ?>
                         </td>
                     </tr>
-                    <tr valign="top">
-                        <th scope="row">Cloudflare Turnstile</th>
-                        <td>
-                            <?php
-                                $opt = 'site_cloudflare_turnstile';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">启用 Cloudflare Turnstile 校验访客信息（开启后默认检测评论访客信息，支持 wordpress 及第三方 valine 评论系统，暂不支持 twikoo，后续支持可选页面检测</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b style="color:darkorange;" class="btn"> Turnstile </b></label>';
-                            ?>
-                        </td>
-                    </tr>
-                            <!-- Turnstile -->
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $turnstile = get_option('site_cloudflare_turnstile') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— Turnstile SiteKey</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_cloudflare_turnstile_sitekey';
-                                        echo '<p class="description" id="">Turnstile SiteKey</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Turnstile SiteKey" value="' . get_option($opt) . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $turnstile; ?>">
-                                <th scope="row">— Turnstile SecretKey</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_cloudflare_turnstile_secretkey';
-                                        echo '<p class="description" id="">Turnstile SecretKey（留空将导致三方评论回调验证失败！</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Turnstile SecretKey" value="' . get_option($opt) . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $turnstile; ?>">
-                                <th scope="row">— Turnstile Comments</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_cloudflare_turnstile_comments';
-                                        $value = get_option($opt);
-                                        $comments_options = ['Wordpress','Valine','Twikoo'];
-                                        echo '<p class="description" id="site_map_includes_label">可选开启评论审核系统（暂不支持 twikoo</p><div class="checkbox">';
-                                        $pre_array = explode(',',trim($value));  // NO "," Array
-                                        foreach ($comments_options as $option) {
-                                            $checking = in_array($option, $pre_array) ? 'checked' : '';
-                                            echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.$option.'</label>';
-                                        }
-                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" readonly value="' . $value . '" placeholder="请选择"/></div>';;
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $turnstile; ?>">
-                                <th scope="row">— Turnstile Login</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_cloudflare_turnstile_login';
-                                        $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后登陆 WordPress 后台需要通过 turnstile 验证（可能造成移动端登录失败?</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">登录校验</b></label>';
-                                    ?>
-                                </td>
-                            </tr>
                     <tr valign="top">
                         <th scope="row">评论系统<sup class="dualdata dynamic_comment"> <?php $third_comment=get_option('site_third_comments');echo $third_comment ? $third_comment : 'WordPress';//if($third_comment=='Valine'){echo 'Valine';}elseif($third_comment=='Twikoo'){echo 'Twikoo';}else{echo 'BaaS';} ?></sup></th>
                         <td>
                             <?php
                                 $opt = 'site_third_comments';
                                 $value = get_option($opt);
+                                $comments_options = ['Wordpress', 'Valine', 'Twikoo'];
                                 if(!$value) update_option($opt, $comments_options[0]);else $preset=$value;  //auto update option to default if unset
                                 echo '<label for="'.$opt.'"><p class="description" id="">可选第三方评论系统（开启后需填配置项</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">'; //<option value="">WordPress</option>
                                     foreach ($comments_options as $arr){
@@ -2036,6 +1996,62 @@
                                         $opt = 'site_comment_blacklists';
                                         $value = get_option($opt);
                                         echo '<p class="description" id="site_comment_serverchan_label">屏蔽指定评论内容，使用 “|” 分隔关键词（非模糊匹配</p><textarea name="'.$opt.'" id="'.$opt.'">'.$value.'</textarea>';  //<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Comment BlackList" value="' . $value . '"/>
+                                    ?>
+                                </td>
+                            </tr>
+                    <tr valign="top">
+                        <th scope="row">Cloudflare Turnstile</th>
+                        <td>
+                            <?php
+                                $opt = 'site_cloudflare_turnstile';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">启用 Cloudflare Turnstile 校验访客信息（开启后默认检测评论访客信息，支持 wordpress 及第三方 valine 评论系统，暂不支持 twikoo，后续支持可选页面检测</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b style="color:darkorange;" class="btn"> Turnstile </b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <!-- Turnstile -->
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $turnstile = get_option('site_cloudflare_turnstile') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— Turnstile SiteKey</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_cloudflare_turnstile_sitekey';
+                                        echo '<p class="description" id="">Turnstile SiteKey</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Turnstile SiteKey" value="' . get_option($opt) . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $turnstile; ?>">
+                                <th scope="row">— Turnstile SecretKey</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_cloudflare_turnstile_secretkey';
+                                        echo '<p class="description" id="">Turnstile SecretKey（留空将导致三方评论回调验证失败！</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Turnstile SecretKey" value="' . get_option($opt) . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $turnstile; ?>">
+                                <th scope="row">— Turnstile Comments</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_cloudflare_turnstile_comments';
+                                        $value = get_option($opt);
+                                        $comments_options = ['Wordpress', 'Valine'];
+                                        echo '<p class="description" id="site_map_includes_label">可选开启评论审核系统（Twikoo 默认支持 trunstile 配置</p><div class="checkbox">';
+                                        $pre_array = explode(',',trim($value));  // NO "," Array
+                                        foreach ($comments_options as $option) {
+                                            $checking = in_array($option, $pre_array) ? 'checked' : '';
+                                            echo '<input id="'.$opt.'_'.$option.'" type="checkbox" value="'.$option.'" '.$checking.' /><label for="'.$opt.'_'.$option.'">'.$option.'</label>';
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" readonly value="' . $value . '" placeholder="请选择"/></div>';;
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $turnstile; ?>">
+                                <th scope="row">— Turnstile Login</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_cloudflare_turnstile_login';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后登陆 WordPress 后台需要通过 turnstile 验证（可能造成移动端登录失败?</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">登录校验</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -2217,7 +2233,7 @@
                             <?php
                                 $opt = 'site_experimental_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">试验性（全站）UI/UE 内容（开启后可体验最新页面样式内容</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Experimental Feats</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">试验性（全站）UI/UE 内容（开启后可体验最新页面样式内容</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Experimental</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -3261,7 +3277,7 @@ const maps = {
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">滚动动画</th>
+                        <th scope="row">动画 - 滚动加载</th>
                         <td>
                             <?php
                                 $opt = 'site_animated_scrolling_switcher';
@@ -3271,7 +3287,7 @@ const maps = {
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">计数动画</th>
+                        <th scope="row">动画 - 数字计数</th>
                         <td>
                             <?php
                                 $opt = 'site_animated_counting_switcher';

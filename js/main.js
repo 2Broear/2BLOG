@@ -102,9 +102,8 @@
     
     function setupVideoPoster(second,quality,base64){
         const videos = document.querySelectorAll('video');
-        var msgJson = Object.create(null);
-        if(!videos[0]){
-            console.log(Object.assign(msgJson, {msg:'setupVideoPoster Not found', code:404}));
+        if (!videos[0]) {
+            console.log(`setupVideoPoster[${i}] Not found`);
             return;
         }
         for(let i=0,vdoLen=videos.length;i<vdoLen;i++){
@@ -112,7 +111,7 @@
             // return new Promise(function (resolve, reject) {  // RETURN caused outside-loop array length calc-err
             new Promise(function(resolve, reject){
                 if(video.autoplay){
-                    reject(Object.assign(msgJson, {msg:'setupVideoPoster Abort on autoplay', code:'v'+i}));
+                    reject(`setupVideoPoster[${i}] Abort on autoplay`);
                     return;
                 }
                 let vdo = document.createElement('video');
@@ -144,11 +143,11 @@
                 let video = res[0],
                     check = video.src.match(/\.(?:avi|mp4|mov|mpg|mpeg|flv|swf|wmv|wma|rmvb|mkv)$/i);
                 if(!video || !check){
-                    console.log(Object.assign(msgJson, {msg:'setupVideoPoster Error', code:'v'+i}));
+                    console.log(`setupVideoPoster[${i}] Error`);
                     return;
                 }
                 video.setAttribute('poster', res[1]);
-                console.log(Object.assign(msgJson, {msg:'setupVideoPoster Done', code:'v'+i}));
+                console.log(`setupVideoPoster[${i}] Done`);
             }).catch(function(err){
                 console.log(err);
             });
