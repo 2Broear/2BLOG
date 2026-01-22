@@ -84,7 +84,7 @@ nav .nav-wrap .nav-slider {
 .inside-functions .box div {
     transition: transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     /*box-shadow: 0 0 20px var(--preset-c);*/
-    border: 2px solid var(--preset-2b);
+    border: 2px solid var(--preset-4a);
     font-weight: bold;
 }
 #tech_window-bottom,
@@ -295,6 +295,10 @@ body.dark .news-inside-content .news-core_area p {
 .v .vlist .vcard {
     border: 1px solid transparent;
 }
+.v .vlist .vcard .vcontent.expand,
+.v .vlist .vcard .vcontent img#draw {
+    border-radius: var(--radius);
+}
 .v .vlist .vcard .vcontent p {
     color: var(--preset-6);
 }
@@ -467,7 +471,6 @@ header>nav#tipson .top-bar-tips a:active,
 /*.win-content article .infos:active,*/
 .win-content .notes article:active,
 .weblog-tree-core-r:active,
-.about_blocks:active,
 .ibox.quotes .iboxes:active,
 a.markable .tools .toolInside:active,
 footer a:active,
@@ -479,6 +482,7 @@ figure a:active,
 /*.archive-tree ul li a.link:active,*/
 .download_boxes .dld_box .dld_box_wrap:active,
 details summary:active,
+.about_blocks:active,
 .v .vwrap:active,
 .v .vlist .vcard:active,
 .lively-click-099:active {

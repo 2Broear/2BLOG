@@ -82,7 +82,7 @@
             },
             scrollLoad = closure_throttle((e)=>{
                 if(loadArray.length<=0){
-                    console.log(Object.assign(msgObject, {msg:'lazyload done', code:200}));
+                    console.log('lazyload done');
                     window.removeEventListener('scroll', scrollForRemove, true);
                     return;
                 };
@@ -392,11 +392,12 @@
         cval!=null ? document.cookie = name+ "="+cval+";expires="+exp.toGMTString()+";path=/" : false;
     }
     
-    function darkmode(){
-        setCookie('theme_manual',1);  // set cookie to manual (disable auto detect)
+    function darkmode() {
+        setCookie('theme_manual', 1);  // set cookie to manual (disable auto detect)
         getCookie('theme_mode')!="dark" ? setCookie('theme_mode','dark','/',1) : setCookie('theme_mode','light','/',1);
-        document.body.className = getCookie('theme_mode');  //change apperance after cookie updated
-        console.warn(`theme_mode has changed: ${getCookie('theme_mode')}`);
+        const theme_mode = getCookie('theme_mode');
+        document.body.className = theme_mode;  //change apperance after cookie updated
+        console.warn(`theme_mode[manual] switch-color-scheme: ${theme_mode}`);
     }
     
     /*  

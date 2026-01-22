@@ -269,7 +269,7 @@
                 }
             }
             /**
-            ** UE Enhancements
+            ** UE Enhancements 2026
             **/
             .fixed .switchTab:active {
                 transform: scale(0.95) translateY(20px);
@@ -285,6 +285,34 @@
                 transition: transform .35s ease;
                 /*transition: transform .35s cubic-bezier(0.68, -0.55, 0.27, 1.55)!important;*/
             }
+            body.dark #wpbody-content {
+                background-image: radial-gradient(rgb(23 34 46) 1px, rgb(10, 20, 28) 1px);
+            }
+            body.dark .switchTab {
+                color: #ccc;
+                background-image: radial-gradient(rgb(18 27 36) 2px, rgb(10, 20, 28, .5) 2px);
+                border-color: rgb(28 41 52);
+            }
+            body.dark .switchTab li.active,
+            body.dark .switchTab li:active {
+                box-shadow: 0 0 0 4px rgb(28 41 52), 0 0 0 6px var(--panel-theme);
+            }
+            body.dark h1,
+            body.dark .feeds .info b {
+                color: #eee;
+                text-shadow: none!important;
+            }
+            body.dark .feeds {
+                color: #999;
+                border-color: rgb(28 41 52);
+            }
+            body.dark input,
+            /*body.dark select,*/
+            body.dark textarea {
+                color: #ccc;
+                background: rgb(14 22 30);
+                border-color: rgb(28 41 52);
+            }
             /*.switchTab li:active {*/
             /*    transform: scale(1.05)!important;*/
             /*}*/
@@ -294,7 +322,7 @@
                 transition: transform .35s ease;
                 /*transition: inherit;*/
             }
-            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{transform:translateY(20px);/*width:max-content;top: 55px;width: 360px;transition-duration: .55s;padding: 5px;*/}.switchTab{border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:all .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, #fff 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0!important}
+            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{transform:translateY(20px);/*width:max-content;top: 55px;width: 360px;transition-duration: .55s;padding: 5px;*/}.switchTab{border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, #fff 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0!important}
         </style>
         <!--<h1 style="text-align: center;font-size: 4rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> RSS <b>Feeds</b></h1>-->
         <h1 style="text-align: center;font-size: 3.6rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b><span style="color:var(--panel-theme)"> RSS </span>Feeds</b></h1><!--<p style="letter-spacing:normal;margin-bottom:auto;">导航分类为友情链接分类</p>-->
@@ -457,6 +485,7 @@
         register_setting( 'baw-settings-group', 'site_single_includes' );
         register_setting( 'baw-settings-group', 'site_icon_switcher' );
         register_setting( 'baw-settings-group', 'site_nav_slider_switcher' );
+        register_setting( 'baw-settings-group', 'site_progress_bar_switcher' );
         register_setting( 'baw-settings-group', 'site_keywords' );
         register_setting( 'baw-settings-group', 'site_description' );
         register_setting( 'baw-settings-group', 'site_support' );
@@ -832,10 +861,10 @@
                     /*will-change: transform;*/
                 }
             }
-        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;overscroll-behavior:contain;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fff 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fff 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 8px;border-radius: 25px;border-top-left-radius:0;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 25%, currentColor 255%);}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 15px var(--panel-theme);padding: 3px 6px!important;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > th{padding: 15px 0 15px 35px;color: var(--panel-theme);}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr:hover > td{background:inherit;padding: 15px 25px 15px 0;}.form-table tr:hover{border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(90deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(0deg, #f5f7f9 0, #fff);background:white;}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table tr:hover{box-shadow:0 0 20px rgb(0 0 0 / 5%);}.form-table tr{border-radius: 18px;position: relative;z-index: 1;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;transition: padding .35s ease;border-radius:inherit;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.35);}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:#1d2327;/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;overscroll-behavior:contain;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fff 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fff 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 8px;border-radius: 25px;border-top-left-radius:0;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 25%, currentColor 255%);}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 15px var(--panel-theme);padding: 3px 6px!important;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > th{padding: 15px 0 15px 35px;color: var(--panel-theme)!important;}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr:hover > td{background:inherit;padding: 15px 25px 15px 0;}.form-table tr:hover{border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(90deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(0deg, #f5f7f9 0, #fff);background:white;}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table tr:hover{box-shadow:0 0 20px rgb(0 0 0 / 5%);}.form-table tr{border-radius: 18px;position: relative;z-index: 1;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;transition: padding .35s ease;border-radius:inherit;border-top-left-radius: 0;border-bottom-left-radius: 0;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.35);}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:#1d2327;/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{/*background:var(--panel-theme);border-color:transparent;*/}.upload_button{margin-left:10px!important;background:black;border-radius:50px;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;font-size: smaller;font-weight:bold;text-align: center;color: var(--panel-theme);background: rgb(0 0 0 / 5%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;backdrop-filter:blur(10px);}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius: 10px;position: relative;overflow: hidden;}label.upload.upload_preview_list{margin-right: 0}
-            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:all .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}
+            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}
             .smtp{margin-left:10px;vertical-align:middle;}
             #loading.responsed{-webkit-animation-duration:.35s!important;animation-duration:.35s!important;}
             #loading.responsing{-webkit-animation:rotateloop .5s infinite linear;animation:rotateloop .5s infinite linear}
@@ -894,8 +923,66 @@
             **  Enhancements
             **  2025
             **/
+            body.dark #wpbody-content {
+                background-image: radial-gradient(rgb(23 34 46) 1px, rgb(10, 20, 28) 1px);
+            }
+            body.dark .switchTab {
+                color: #ccc;
+                background-image: radial-gradient(rgb(18 27 36) 2px, rgb(10, 20, 28, .5) 2px);
+                border-color: rgb(28 41 52);
+            }
+            body.dark input[type=button] {
+                box-shadow: 0 0 0 3px rgb(28 41 52), 0 0 0 4px #2271b1;
+            }
+            body.dark .switchTab li.active,
+            body.dark .switchTab li:active {
+                box-shadow: 0 0 0 4px rgb(28 41 52), 0 0 0 6px var(--panel-theme);
+            }
+            body.dark input[type=text],
+            body.dark input[type=number],
+            body.dark input[type=checkbox],
+            /*body.dark input[type=button],*/
+            /*body.dark select,*/
+            body.dark textarea {
+                color: #ccc;
+                background: rgb(14 22 30);
+                border-color: #666;
+            }
+            body.dark ul.cached_post_list li,
+            body.dark textarea {
+                border-color: rgb(28 41 52);
+            }
+            body.dark .checkbox > input[type=checkbox]:checked,
+            body.dark .form-table td input.array-text {
+                background: rgb(14 22 30)!important;
+            }
+            body.dark .form-table td input.array-text {
+                color: #666;
+                border-color: rgb(32 43 52);
+            }
+            body.dark .upload .dynamic_dom {
+                color: #ccc;
+                background: rgb(23 34 46);
+            }
+            body.dark ul.cached_post_list li:after,
+            body.dark ul.cached_post_list li,
+            body.dark .form-table tr:hover {
+                background: rgb(28 41 52);
+            }
+            body.dark .child_option td {
+                background: linear-gradient(90deg, transparent 0%, rgb(23 34 46) 100%);
+                background: -webkit-linear-gradient(0deg, transparent 0%, rgb(23 34 46) 100%);
+            }
+            body.dark .form-table th,
+            body.dark .form-table .checkbox label,
+            body.dark .wrap.settings,
+            body.dark .wrap h1 {
+                color: #eee;
+                text-shadow: none!important;
+            }
             .fixed p.submit:first-child:active {
                 transform: scale(0.95) translateX(-150px);
+                transition-duration: .35s;
             }
             .fixed .switchTab:active {
                 transform: scale(0.95) translateY(20px);
@@ -1033,8 +1120,8 @@
                 box-shadow: none;
             }
             input[type=checkbox]:checked {
-                background: var(--panel-theme);
-                border-color: var(--panel-theme);
+                background: var(--panel-theme)!important;
+                border-color: var(--panel-theme)!important;
             }
             input[type=checkbox]::before {
                 content: "" !important;
@@ -1063,7 +1150,7 @@
             /*    opacity: 1;*/
             /*}*/
             .checkbox > input[type=checkbox] + * {
-                opacity: .88!important;
+                opacity: .66!important;
             }
             .checkbox > input[type=checkbox]:checked {
                 background: white !important;
@@ -1237,6 +1324,100 @@
                                 $value = get_option($opt);
                                 $status = $value ? "checked" : "check";
                                 echo '<label for="'.$opt.'"><p class="description" id="">站点导航跟随模块，开启后透明主题色块可跟随鼠标移动标记链接（暂仅支持PC端</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:dodgerblue;" class="btn">Slider</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Progress Bar</th>
+                        <td>
+                            <?php
+                                $opt = 'site_progress_bar_switcher';
+                                $value = get_option($opt);
+                                $status = $value ? "checked" : "check";
+                                echo '<label for="'.$opt.'"><p class="description" id="">站点顶部加载条，开启后全站使用</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style=";" class="btn">NProgress</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Google Adsense</th>
+                        <td>
+                            <?php
+                                $opt = 'site_ads_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_ads_switcher_label">谷歌广告（开启后前往 "/inc/wp-blocks.php" 修改全站初始化广告代码：方形侧栏/纵向侧栏/富文本列表/纯文本列表</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color: orangered;" class="btn">Adsense</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        // if(get_option('site_ads_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $ads = get_option('site_ads_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 文章页广告</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_ads_article';
+                                        // $value = get_option($opt);
+                                        // $data = get_option('site_ads_init', '' );
+                                        // //设置默认开启（仅适用存在默认值的checkbox）
+                                        // if(!$value&&!$data){
+                                        //     update_option($opt, "on_default");
+                                        //     $status="checked";
+                                        // }else{
+                                        //     $status = $value ? "checked" : "check";
+                                        // };
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启文章内页 尾部广告位</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">文章页</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $ads; ?>">
+                                <th scope="row">— 侧边栏广告</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_ads_sidebar';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启文章列表 侧边广告位</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">侧边栏</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        // }
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">站点头部公告<sup class="dualdata" title="“多数据”">BaaS</sup></th>
+                        <td>
+                            <?php
+                                $opt = 'site_inform_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">部分页面头部公告显示内容（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">站点公告</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        // if(get_option('site_inform_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_inform_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 公告数量</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_inform_num';
+                                        $value = get_option($opt);
+                                        $preset = 3;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">公告展示数量（默认展示 最新发布 的 3 条公告</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php 
+                        // } 
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">面包屑导航</th>
+                        <td>
+                            <?php
+                                $opt = 'site_breadcrumb_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">快捷导航</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1571,7 +1752,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_switcher_label">开启后将自动识别时段（晚17至早9）并切换主题为 darkmode 模式</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">自动模式</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_switcher_label">开启后将根据时段自动切换主题（默认晚17至早9<br />⚠️注意：主题默认支持根据系统配置自动设置主题深浅色（同时支持手动切换）。此项启用时，将按照此处<b>配置的深浅色时段</b>自动配置显示模式（若当前系统为深色模式，此时切换系统为浅色将无法自动生效，因为此处权配置显示时段重高于系统默认配置</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">自动模式</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2238,44 +2419,6 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">站点头部公告<sup class="dualdata" title="“多数据”">BaaS</sup></th>
-                        <td>
-                            <?php
-                                $opt = 'site_inform_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">部分页面头部公告显示内容（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">站点公告</b></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <?php
-                        // if(get_option('site_inform_switcher')){
-                    ?>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_inform_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 公告数量</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_inform_num';
-                                        $value = get_option($opt);
-                                        $preset = 3;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">公告展示数量（默认展示 最新发布 的 3 条公告</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                    <?php 
-                        // } 
-                    ?>
-                    <tr valign="top">
-                        <th scope="row">面包屑导航</th>
-                        <td>
-                            <?php
-                                $opt = 'site_breadcrumb_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">快捷导航</b></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top">
                         <th scope="row">文章列表预览图</th>
                         <td>
                             <?php
@@ -2640,206 +2783,6 @@
                             </td>
                         </tr>
                     <tr valign="top">
-                        <th scope="row">Google Adsense 页面广告</th>
-                        <td>
-                            <?php
-                                $opt = 'site_ads_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_ads_switcher_label">谷歌广告（开启后前往 "/inc/wp-blocks.php" 修改全站初始化广告代码：方形侧栏/纵向侧栏/富文本列表/纯文本列表</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color: orangered;" class="btn">Adsense</span></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <?php
-                        // if(get_option('site_ads_switcher')){
-                    ?>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $ads = get_option('site_ads_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 文章页广告</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_ads_article';
-                                        // $value = get_option($opt);
-                                        // $data = get_option('site_ads_init', '' );
-                                        // //设置默认开启（仅适用存在默认值的checkbox）
-                                        // if(!$value&&!$data){
-                                        //     update_option($opt, "on_default");
-                                        //     $status="checked";
-                                        // }else{
-                                        //     $status = $value ? "checked" : "check";
-                                        // };
-                                        $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启文章内页 尾部广告位</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">文章页</b></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $ads; ?>">
-                                <th scope="row">— 侧边栏广告</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_ads_sidebar';
-                                        $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启文章列表 侧边广告位</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">侧边栏</b></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <!--<tr valign="top" class="child_option dynamic_opts <?php echo $ads; ?>">-->
-                            <!--    <th scope="row">— Adsense 初始化代码</th>-->
-                            <!--    <td>-->
-                                    <?php
-                                        // $opt = 'site_ads_init';
-                                        // $value = get_option($opt);
-                                        // $preset = "Initialization Code.";
-                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        // echo '<textarea class="codeblock" name="'.$opt.'" id="'.$opt.'">'.$preset.'</textarea>';
-                                    ?>
-                            <!--    </td>-->
-                            <!--</tr>-->
-                    <?php
-                        // }
-                    ?>
-                    <tr valign="top">
-                        <th scope="row"> 足迹地图 </th>
-                        <td>
-                            <?php
-                                $opt = 'site_footprint_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">聚合点足迹地图（tip: 将坐标数据及全景数据留空可恢复默认值</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:blue" class="btn">足迹地图</span></label>';
-                            ?>
-                        </td>
-                    </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $footprint = get_option('site_footprint_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— Map</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_footprint_map';
-                                        $value = get_option($opt);
-                                        $maps = array(
-                                            array('name'=>'高德地图', 'type'=>'amap'),
-                                            array('name'=>'腾讯地图', 'type'=>'tmap'),
-                                        );
-                                        $preset = $maps[0]['type'];
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update
-                                        echo '<label for="'.$opt.'"><p class="description" id="">显示地图类型，默认使用高德地图 <a href="https://lbs.amap.com/demo/javascript-api-v2/example/mass-markers/marker-indexcluster2" target="_blank">文档参考</a>，可选腾讯地图 <a href="https://lbs.qq.com/webDemoCenter/glAPI/glMarkerCluster/markerCluster" target="_blank">文档参考</a></p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
-                                            foreach ($maps as $map){
-                                                $type = $map['type'];
-                                                echo '<option value="'.$type.'"';if($preset==$type)echo('selected="selected"');echo '>'.$map['name'].'</option>'; // preview="'.$img_cdn.'/images/settings/'.$type.'.png"
-                                            }
-                                        echo '</select></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $footprint; ?>">
-                                <th scope="row">— API Key</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_footprint_apikey';
-                                        $value = get_option($opt);
-                                        echo '<p class="description" id="">地图 API 调用 KEY</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="API Key" value="' . $value . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $footprint; ?>">
-                                <th scope="row">— 坐标数据</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_footprint_data';
-                                        $value = get_option($opt);
-                                        $preset_ = '
-// 配置贴图（maps 数据来源下方全景数据）
-const defaultTexture = maps.map_01;
-const returnsTexture = window.structuredClone ? window.structuredClone(defaultTexture) : JSON.parse(JSON.stringify(defaultTexture));
-maps.map_01.entry.push(maps.map_02);
-maps.map_02.entry.push(returnsTexture);
-const defaultTextureString = JSON.stringify(defaultTexture);
-const encodedTextureString = encodeURIComponent(defaultTextureString);
-';
-                                        $preset = $preset_ . '
-markerData = {
-    // 配置标记点
-    points: [
-        {
-            latlng: "39.925077049391,116.506621867519",
-            position: "39.925077049391,116.506621867519",
-            thumbnail: "//img.2broear.com/2025/06/right.webp",
-            content: `<h2>Content</h2><p>overwrite context to content</p><img src="//img.2broear.com/2025/06/right.webp" />`,
-            context: "晨光家园",
-            district: "朝阳区",
-            city: "北京",
-        },
-        {
-            latlng: "39.957363077042,116.412789588355",
-            position: "39.957363077042,116.412789588355",
-            thumbnail: "//img.2broear.com/2025/06/front.webp",
-            content: `<iframe src="//node.2broear.com/?data=${encodedTextureString}" frameborder="no" width="500" height="200"></iframe>`,
-            context: "东城家园",
-            district: "东城区",
-            city: "北京",
-        }
-    ],
-    // 配置标记区
-    district: {
-        "北京": {
-            "latlng" : "39.904989,116.405285",
-        },
-        "朝阳区": {
-            "latlng" : "39.921489,116.486409",
-        }
-    }
-};';
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="">手动填写数据源，自动插入上方坐标数据之上（示例数据已预设，points：标点，district：索引，content 参数支持嵌入 iframe 标签</p><p>注意：此项预设数据（留空）随地图类型改变而改变！</p><a class="dynamic_dom" data-dom="iframe" data-src="//lbs.qq.com/tool/getpoint/get-point.html" data-width="100%" data-height="500" title="点击加载坐标拾取器">坐标拾取器（TMap）</a><textarea name="'.$opt.'" id="'.$opt.'" rows="10" style="width: 100%;">'.$preset.'</textarea>'; //https://lbs.amap.com/tools/picker
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $footprint; ?>">
-                                <th scope="row">— 全景数据列表（可选）</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_footprint_panorama_data';
-                                        $value = get_option($opt);
-                                        $preset = '
-const maps = {
-    map_01: {
-        ctx: ["2BROEAR NEXT", "Heading"],
-        // src: "//img.2broear.com/2025/06/minecraft30x.jpg",
-        env: [],
-        uvs: [0.8757278879540462, 0.903727826428567, 0.40605076349556524, 0.48124969014847924],
-        point: {
-            x: 379.73991320053943, y: -88.8495197768429, z: -414.5114041846273,
-            px: -130, py: 30, pz: 0,
-            rx: 0, ry: 0, rz: Math.PI * 0.5,
-            width:80, height:320, deepth:5,
-            cw: 320, ch: 320, cs: 256
-        },
-        entry: [],
-    },
-    map_02: {
-        ctx: ["MINECRAFT", "v0.7.3"],
-        // src: "//img.2broear.com/2025/05/Ayutthaya_SD60x.mp4", 
-        env: [
-            "//img.2broear.com/2025/06/1.16_panorama_2.webp",
-            "//img.2broear.com/2025/06/1.16_panorama_0.webp",
-            "//img.2broear.com/2025/06/1.16_panorama_4s.webp",
-            "//img.2broear.com/2025/06/1.16_panorama_5s.webp", 
-            "//img.2broear.com/2025/06/1.16_panorama_1.webp",
-            "//img.2broear.com/2025/06/1.16_panorama_3.webp",
-        ],
-        uvs: [0.6754583295687697, 0.8029043481247053, 0.30890971887284235, 0.5107758060045948],
-        point: {
-            x: -20.15844995141832, y: -145.91485079560525, z: -472.9048238279224,
-            px: 0, py: 100, pz: 200,
-            width:100, height:400, deepth:10,
-            rx: -Math.PI * 0.5, ry: 0, rz: -600,
-            cw: 512, ch: 512, cs: 256
-        },
-        entry: [],
-    },
-};';
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="">手动填写全景地图数据（示例数据已预设：可通过设置 entry 参数以跳转其他 map（可设置回溯 map），可选设置环境地图（跳转同理</p><p><b>参数说明：</b></p><p>entry：点击进入下个场景入口（数组对象，可加入多个入口）；ctx：入口标题数组；env：环境贴图数组；uvs：可点击范围UV数组（需开启debug调试右击获取uv信息）；point：点击中心点（显示动画贴图区域，x,y,z信息需在debug调试右击事件获取；px,py,pz为自定义修饰偏移；rx,ry,rz为旋转动画贴图配置；width,height,deepth为动画贴图尺寸；cw,ch,cs为ctx入口标题画布尺寸，其中cs可调节画布/字体大小）</p><textarea name="'.$opt.'" id="'.$opt.'" rows="15" style="width: 100%;">'.$preset.'</textarea>';
-                                    ?>
-                                </td>
-                            </tr>
-                    <tr valign="top">
                         <th scope="row"> 缓存索引 - 页面配置 </th>
                         <td>
                             <?php
@@ -2988,7 +2931,200 @@ const maps = {
                                 }
                             ?>
                     <tr valign="top">
-                        <th scope="row"> AI 文章摘要 </th>
+                        <th scope="row"> 足迹地图 </th>
+                        <td>
+                            <?php
+                                $opt = 'site_footprint_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">聚合点足迹地图（tip: 将坐标数据及全景数据留空可恢复默认值</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:cornflowerblue" class="btn">足迹地图</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $footprint = get_option('site_footprint_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— Map</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_footprint_map';
+                                        $value = get_option($opt);
+                                        $maps = array(
+                                            array('name'=>'高德地图', 'type'=>'amap'),
+                                            array('name'=>'腾讯地图', 'type'=>'tmap'),
+                                        );
+                                        $preset = $maps[0]['type'];
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update
+                                        echo '<label for="'.$opt.'"><p class="description" id="">显示地图类型，默认使用高德地图 <a href="https://lbs.amap.com/demo/javascript-api-v2/example/mass-markers/marker-indexcluster2" target="_blank">文档参考</a>，可选腾讯地图 <a href="https://lbs.qq.com/webDemoCenter/glAPI/glMarkerCluster/markerCluster" target="_blank">文档参考</a></p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                            foreach ($maps as $map){
+                                                $type = $map['type'];
+                                                echo '<option value="'.$type.'"';if($preset==$type)echo('selected="selected"');echo '>'.$map['name'].'</option>'; // preview="'.$img_cdn.'/images/settings/'.$type.'.png"
+                                            }
+                                        echo '</select></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $footprint; ?>">
+                                <th scope="row">— API Key</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_footprint_apikey';
+                                        $value = get_option($opt);
+                                        echo '<p class="description" id="">地图 API 调用 KEY</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="API Key" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $footprint; ?>">
+                                <th scope="row">— 坐标数据</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_footprint_data';
+                                        $value = get_option($opt);
+                                        $preset_ = '
+// 配置贴图（maps 数据来源下方全景数据）
+const defaultTexture = maps.map_01;
+const returnsTexture = window.structuredClone ? window.structuredClone(defaultTexture) : JSON.parse(JSON.stringify(defaultTexture));
+maps.map_01.entry.push(maps.map_02);
+maps.map_02.entry.push(returnsTexture);
+const defaultTextureString = JSON.stringify(defaultTexture);
+const encodedTextureString = encodeURIComponent(defaultTextureString);
+';
+                                        $preset = $preset_ . '
+markerData = {
+    // 配置标记点
+    points: [
+        {
+            latlng: "39.925077049391,116.506621867519",
+            position: "39.925077049391,116.506621867519",
+            thumbnail: "//img.2broear.com/2025/06/right.webp",
+            content: `<h2>Content</h2><p>overwrite context to content</p><img src="//img.2broear.com/2025/06/right.webp" />`,
+            context: "晨光家园",
+            district: "朝阳区",
+            city: "北京",
+        },
+        {
+            latlng: "39.957363077042,116.412789588355",
+            position: "39.957363077042,116.412789588355",
+            thumbnail: "//img.2broear.com/2025/06/front.webp",
+            content: `<iframe src="//node.2broear.com/?data=${encodedTextureString}" frameborder="no" width="500" height="200"></iframe>`,
+            context: "东城家园",
+            district: "东城区",
+            city: "北京",
+        }
+    ],
+    // 配置标记区
+    district: {
+        "北京": {
+            "latlng" : "39.904989,116.405285",
+        },
+        "朝阳区": {
+            "latlng" : "39.921489,116.486409",
+        }
+    }
+};';
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="">手动填写数据源，自动插入上方坐标数据之上（示例数据已预设，points：标点，district：索引，content 参数支持嵌入 iframe 标签</p><p>注意：此项预设数据（留空）随地图类型改变而改变！</p><a class="dynamic_dom" data-dom="iframe" data-src="//lbs.qq.com/tool/getpoint/get-point.html" data-width="100%" data-height="500" title="点击加载坐标拾取器">坐标拾取器（TMap）</a><textarea name="'.$opt.'" id="'.$opt.'" rows="10" style="width: 100%;">'.$preset.'</textarea>'; //https://lbs.amap.com/tools/picker
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $footprint; ?>">
+                                <th scope="row">— 全景数据列表（可选）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_footprint_panorama_data';
+                                        $value = get_option($opt);
+                                        $preset = '
+const maps = {
+    map_01: {
+        ctx: ["2BROEAR NEXT", "Heading"],
+        // src: "//img.2broear.com/2025/06/minecraft30x.jpg",
+        env: [],
+        uvs: [0.8757278879540462, 0.903727826428567, 0.40605076349556524, 0.48124969014847924],
+        point: {
+            x: 379.73991320053943, y: -88.8495197768429, z: -414.5114041846273,
+            px: -130, py: 30, pz: 0,
+            rx: 0, ry: 0, rz: Math.PI * 0.5,
+            width:80, height:320, deepth:5,
+            cw: 320, ch: 320, cs: 256
+        },
+        entry: [],
+    },
+    map_02: {
+        ctx: ["MINECRAFT", "v0.7.3"],
+        // src: "//img.2broear.com/2025/05/Ayutthaya_SD60x.mp4", 
+        env: [
+            "//img.2broear.com/2025/06/1.16_panorama_2.webp",
+            "//img.2broear.com/2025/06/1.16_panorama_0.webp",
+            "//img.2broear.com/2025/06/1.16_panorama_4s.webp",
+            "//img.2broear.com/2025/06/1.16_panorama_5s.webp", 
+            "//img.2broear.com/2025/06/1.16_panorama_1.webp",
+            "//img.2broear.com/2025/06/1.16_panorama_3.webp",
+        ],
+        uvs: [0.6754583295687697, 0.8029043481247053, 0.30890971887284235, 0.5107758060045948],
+        point: {
+            x: -20.15844995141832, y: -145.91485079560525, z: -472.9048238279224,
+            px: 0, py: 100, pz: 200,
+            width:100, height:400, deepth:10,
+            rx: -Math.PI * 0.5, ry: 0, rz: -600,
+            cw: 512, ch: 512, cs: 256
+        },
+        entry: [],
+    },
+};';
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="">手动填写全景地图数据（示例数据已预设：可通过设置 entry 参数以跳转其他 map（可设置回溯 map），可选设置环境地图（跳转同理</p><p><b>参数说明：</b></p><p>entry：点击进入下个场景入口（数组对象，可加入多个入口）；ctx：入口标题数组；env：环境贴图数组；uvs：可点击范围UV数组（需开启debug调试右击获取uv信息）；point：点击中心点（显示动画贴图区域，x,y,z信息需在debug调试右击事件获取；px,py,pz为自定义修饰偏移；rx,ry,rz为旋转动画贴图配置；width,height,deepth为动画贴图尺寸；cw,ch,cs为ctx入口标题画布尺寸，其中cs可调节画布/字体大小）</p><textarea name="'.$opt.'" id="'.$opt.'" rows="15" style="width: 100%;">'.$preset.'</textarea>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <tr valign="top">
+                        <th scope="row"> Memos 备忘录 </th>
+                        <td>
+                            <?php
+                                $opt = 'site_memos_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">开启 memos 页面备忘录</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:lightcoral" class="btn">Memos</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $memos = get_option('site_memos_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— Access Token<sup>必填</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_memos_apikey';
+                                        $value = get_option($opt);
+                                        echo '<p class="description" id="">API Access Token 密钥</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Memos Access Token" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $memos; ?>">
+                                <th scope="row">— API Url</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_memos_proxy';
+                                        $value = get_option($opt);
+                                        $preset = 'https://demo.usememos.com';  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="">API 调用服务部署地址，默认 https://demo.usememos.com</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Memos Api url" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $memos; ?>">
+                                <th scope="row">— Query Pattern</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_memos_pattern';
+                                        $value = get_option($opt);
+                                        $models = ['/','/all','/stats'];
+                                        if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
+                                        echo '<label for="'.$opt.'"><p class="description" id="">useMemos 查询类型，默认查询所有数据，可选 all 仅返回公开数据（除 ARCHIVED、PRIVATE.. 详细参考、<a href="https://github.com/orgs/usememos/discussions/1024" target="_blank">Memos API 非官方不完全说明</a>、<a href="https://learnku.com/articles/85218#d25ce0" target="_blank">memos 接口文档</a></p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                            foreach ($models as $mod){
+                                                echo '<option value="'.$mod.'"';
+                                                if($value==$mod) echo('selected="selected"');
+                                                echo '>'.$mod.'</option>';
+                                            }
+                                        echo '</select></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <tr valign="top">
+                        <th scope="row"> AI 文章摘要 <sup>AI</sup> </th>
                         <td>
                             <?php
                                 $opt = 'site_chatgpt_switcher';
@@ -3185,57 +3321,7 @@ const maps = {
                                 </td>
                             </tr>
                     <tr valign="top">
-                        <th scope="row"> 个人备忘录 - Memos </th>
-                        <td>
-                            <?php
-                                $opt = 'site_memos_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">开启 memos 页面备忘录</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:lightcoral" class="btn">Memos</span></label>';
-                            ?>
-                        </td>
-                    </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $memos = get_option('site_memos_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— Access Token<sup>必填</sup></th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_memos_apikey';
-                                        $value = get_option($opt);
-                                        echo '<p class="description" id="">API Access Token 密钥</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Memos Access Token" value="' . $value . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $memos; ?>">
-                                <th scope="row">— API Url</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_memos_proxy';
-                                        $value = get_option($opt);
-                                        $preset = 'https://demo.usememos.com';  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="">API 调用服务部署地址，默认 https://demo.usememos.com</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Memos Api url" value="' . $value . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $memos; ?>">
-                                <th scope="row">— Query Pattern</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_memos_pattern';
-                                        $value = get_option($opt);
-                                        $models = ['/','/all','/stats'];
-                                        if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
-                                        echo '<label for="'.$opt.'"><p class="description" id="">useMemos 查询类型，默认查询所有数据，可选 all 仅返回公开数据（除 ARCHIVED、PRIVATE.. 详细参考、<a href="https://github.com/orgs/usememos/discussions/1024" target="_blank">Memos API 非官方不完全说明</a>、<a href="https://learnku.com/articles/85218#d25ce0" target="_blank">memos 接口文档</a></p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
-                                            foreach ($models as $mod){
-                                                echo '<option value="'.$mod.'"';
-                                                if($value==$mod) echo('selected="selected"');
-                                                echo '>'.$mod.'</option>';
-                                            }
-                                        echo '</select></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                    <tr valign="top">
-                        <th scope="row"> 文章页面 - 划线标记 <sup>Beta</sup> </th>
+                        <th scope="row"> 划线标记 <sup>Beta</sup> </th>
                         <td>
                             <?php
                                 $opt = 'site_marker_switcher';
@@ -3256,16 +3342,6 @@ const maps = {
                                     ?>
                                 </td>
                             </tr>
-                            <!--<tr valign="top" class="child_option dynamic_opts <?php //echo get_option('site_marker_switcher') ? 'dynamic_optshow' : false; ?>">-->
-                            <!--    <th scope="row">— 文章模板</th>-->
-                            <!--    <td>-->
-                                    <?php
-                                        // $opt = 'site_marker_news_disabled';
-                                        // $status = check_status($opt);
-                                        // echo '<label for="'.$opt.'"><p class="description" id="">开启后可 禁用 文章模板内使用划线标记功能（默认关闭</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">文章划线</b></label>';
-                                    ?>
-                            <!--    </td>-->
-                            <!--</tr>-->
                     <tr valign="top">
                         <th scope="row"> 流式传输 API <sup>SSE</sup> </th>
                         <td>

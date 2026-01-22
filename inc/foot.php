@@ -3,16 +3,15 @@
 ?>
 <script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
 <script type="text/javascript">
-    document.body.className = '';
+    console.info("<?php echo get_num_queries().'次查询，耗时'.timer_stop(0).'秒。'; ?>");
     // 自动执行一次以更正缓存(after load main.js)
+    // document.body.className = '';  // reset to default(timezone) mode to clear EOCaches
     if ( + getCookie('theme_manual')) { // use + force string to number
-        console.log(`user theme_manual enabled, switch theme mode: ${getCookie('theme_mode')}..`);
         document.body.className = getCookie('theme_mode');// darkmode(); // automode();
+        console.log(`theme_mode[manual] switch-color-scheme: ${getCookie('theme_mode')}..`);
     } else {
-        console.debug(`user theme_manual disabled, switch theme auto-mode: ${getCookie('theme_mode')}..`);
-        // reset to default(timezone) mode to clear EOCaches
         automode();
-    }
+    };
     <?php
         global $cat;
         $vdo_poster_sw = get_option('site_video_poster_switcher');
@@ -101,31 +100,7 @@
                                 inherits: false,
                                 initialValue: 0,
                             });
-                            document.head.getElementsByTagName('style')[0].textContent += `
-    /*@property --counter-num {
-        syntax: "<integer>";
-        initial-value: 0;
-        inherits: false;
-    }*/
-    @keyframes counts {
-        0% {
-            --counter-num: 0;
-        }
-        100% {
-            --counter-num: var(--data-count);
-        }
-    }
-    .win-top .counter h1,
-    .win-top .counter h2 {
-        transition: --counter-num 1s;
-        counter-reset: counter-num var(--counter-num);
-        animation: counts calc(var(--data-count) * 0.025s) forwards ease-in-out;
-        -webkit-animation: counts calc(var(--data-count) * 0.025s) forwards ease-in-out;
-    }
-    .win-top .counter h1:before,
-    .win-top .counter h2:before {
-        content: counter(counter-num);
-    }`;
+                            document.head.getElementsByTagName('style')[0].textContent += `/*@property --counter-num {syntax: "<integer>";initial-value: 0;inherits: false;}*/@keyframes counts {0% {--counter-num: 0;}100% {--counter-num: var(--data-count);}}.win-top .counter h1, .win-top .counter h2 {transition: --counter-num 1s;counter-reset: counter-num var(--counter-num);animation: counts calc(var(--data-count) * 0.025s) forwards ease-in-out;-webkit-animation: counts calc(var(--data-count) * 0.025s) forwards ease-in-out;}.win-top .counter h1:before, .win-top .counter h2:before {content: counter(counter-num);}`;
                         } else {
                             dataDancing(document.querySelectorAll(".win-top .counter div"), "h1", 200, 25);  // dom reflow performance issue
                         }

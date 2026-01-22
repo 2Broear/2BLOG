@@ -87,6 +87,27 @@ jQuery(document).ready(function($){
         };
         return curPar
     }
+    
+    // 自动根据时段设置主题
+    (function automode() {
+        const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        function handleColorSchemeChange(e) {
+            // console.log(e)
+            if (e.matches) {
+                // 用户偏好深色模式优先 (dark)
+                document.body.classList.add('dark');
+                console.log('theme_mode[auto] prefers-color-scheme: dark');
+            } else {
+                document.body.classList.remove('dark');
+                console.log('theme_mode[auto] prefers-color-scheme: default');
+            }
+        }
+        // 3. 初始执行一次，设置当前主题
+        handleColorSchemeChange(colorSchemeQuery);
+        // 4. 监听媒体查询的变化
+        colorSchemeQuery.addEventListener('change', handleColorSchemeChange);
+    })();
+    
     var mediaUploader;
     // var _this;  // preset global this
     const upload_buttons = document.querySelectorAll(".upload_button"),

@@ -65,6 +65,11 @@
             display: block!important;
             left: 0;
         }
+        @media (prefers-color-scheme: dark) {
+            body.dark .content-all {
+                /*background: black;*/
+            }
+        }
     </style>
 <?php
     }
@@ -137,23 +142,20 @@
 ?>
     </style>
     <script>
-        console.info("<?php echo get_num_queries().'次查询，耗时'.timer_stop(0).'秒。'; ?>");
+        // setup default theme
         document.documentElement.style.setProperty('--theme-color','<?php echo $theme; ?>');
-        function asyncLoad(url, callback, defer = false){
-        	const head = document.getElementsByTagName('head')[0],
-        		  script = document.createElement('script');
-    	    script.setAttribute('type', 'text/javascript');
-    	    script.setAttribute('async', true);
-    	    script.setAttribute('defer', defer);
-    	    script.setAttribute('src', url);
-    		head.appendChild(script);
-        	script.onload = script.onreadystatechange = function(){
-        		if(!this.readyState || this.readyState=='loaded' || this.readyState=='complete'){
-        			if(callback&&typeof callback==='function') callback();
-        		}
-        		script.onload = script.onreadystatechange = null;
-        	};
-        };
+        // 闭包节流器
+        function closure_throttle(callback=false, delay=200){
+            let closure_variable = true;  //default running
+            return function(){
+                if(!closure_variable) return;  //now running..
+                closure_variable = false;  //stop running
+                setTimeout(()=>{
+                    callback.apply(this, arguments);
+                    closure_variable = true;  //reset running
+                }, delay);
+            };
+        }
         function bindEventClick(parent, ids, callback){
             if (!parent) {
                 console.warn('bindEventClick failed', parent);
@@ -185,6 +187,62 @@
             };
             return curEl;
         };
+        // 自动根据时段设置主题
+        function automode() {
+            const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            function handleColorSchemeChange(e) {
+                // console.log(e.matches)
+                if (getCookie('theme_manual')) setCookie('theme_manual', 0);  // disable manual mode/prefers
+                if (e.matches) {
+                    // 用户偏好深色模式优先 (dark)
+                    document.body.className = 'dark';
+                    setCookie('theme_mode','dark');  // record for manual switch
+                    console.log('theme_mode[auto] prefers-color-scheme: dark');
+                } else {
+                    // 默认调用内部主题判定规则/系统不支持
+            <?php
+                if (get_option('site_darkmode_switcher')) {
+            ?>
+                    const start = <?php echo get_option('site_darkmode_start',17); ?>,
+                          end = <?php echo get_option('site_darkmode_end',9); ?>;
+                    let date = new Date(),
+                        hour = date.getHours();
+                    hour >= end && hour < start || hour==end && date.getMinutes() >= 0 && date.getSeconds() >= 0 ? setCookie('theme_mode','light') : setCookie('theme_mode','dark');
+            <?php
+                } else {
+            ?>
+                    setCookie('theme_mode','light');
+            <?php
+                }
+            ?>
+                    const theme_mode = getCookie('theme_mode');
+                    document.body.className = theme_mode;
+                    console.log('theme_mode[auto] switch-color-scheme: ' + theme_mode);
+                }
+            }
+            // 3. 初始执行一次，设置当前主题
+            handleColorSchemeChange(colorSchemeQuery);
+            // 4. 监听媒体查询的变化
+            colorSchemeQuery.addEventListener('change', handleColorSchemeChange);
+        };
+        function asyncLoad(url, callback, defer = false){
+        	const head = document.getElementsByTagName('head')[0],
+        		  script = document.createElement('script');
+    	    script.setAttribute('type', 'text/javascript');
+    	    script.setAttribute('async', true);
+    	    script.setAttribute('defer', defer);
+    	    script.setAttribute('src', url);
+    		head.appendChild(script);
+        	script.onload = script.onreadystatechange = function(){
+        		if(!this.readyState || this.readyState=='loaded' || this.readyState=='complete'){
+        			if(callback&&typeof callback==='function') callback();
+        		}
+        		script.onload = script.onreadystatechange = null;
+        	};
+        };
+    <?php
+        if (get_option('site_progress_bar_switcher')) {
+    ?>
         asyncLoad("<?php echo $src_cdn; ?>/js/nprogress.js", function(){
     	    NProgress.start();
     	    const NProgressLoaded = function(){
@@ -193,48 +251,9 @@
     	    }
         	window.addEventListener('load', NProgressLoaded, true);
         });
-        // 闭包节流器
-        function closure_throttle(callback=false, delay=200){
-            let closure_variable = true;  //default running
-            return function(){
-                if(!closure_variable) return;  //now running..
-                closure_variable = false;  //stop running
-                setTimeout(()=>{
-                    callback.apply(this, arguments);
-                    closure_variable = true;  //reset running
-                }, delay);
-            };
+    <?php
         }
-        // 自动根据时段设置主题
-        function automode(){
-            if (getCookie('theme_manual')) setCookie('theme_manual', 0);  // disable manual mode
-            let date = new Date(),
-                hour = date.getHours(),
-                min = date.getMinutes(),
-                sec = date.getSeconds(),
-                start = <?php echo get_option('site_darkmode_start',17); ?>,
-                end = <?php echo get_option('site_darkmode_end',9); ?>;
-            hour>=end&&hour<start || hour==end&&min>=0&&sec>=0 ? setCookie('theme_mode','light') : setCookie('theme_mode','dark');
-            document.body.className = getCookie('theme_mode');  //change apperance after cookie updated
-            // // 1. 创建媒体查询对象
-            // const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            // // 2. 定义一个函数来处理主题切换
-            // function handleColorSchemeChange(e) {
-            //     if (e.matches) {
-            //         // 用户偏好深色模式 (dark)
-            //         setCookie('theme_mode','dark');
-            //         document.body.className = 'dark';
-            //     } else {
-            //         // 用户偏好浅色模式 (light) 或未设置/系统不支持
-            //         setCookie('theme_mode','light');
-            //         document.body.className = 'light';
-            //     }
-            // }
-            // // 3. 初始执行一次，设置当前主题
-            // handleColorSchemeChange(colorSchemeQuery);
-            // // 4. 监听媒体查询的变化
-            // colorSchemeQuery.addEventListener('change', handleColorSchemeChange);
-        };
+    ?>
     </script>
 <?php
     if(get_option('site_leancloud_switcher')){ //DO NOT use "defer" in script
