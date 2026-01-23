@@ -230,6 +230,7 @@
     }
     function add_options_submenu_rss() {
 ?>
+        <div class="wrap <?php if (isset($_COOKIE['theme_mode_panel'])) echo $_COOKIE['theme_mode_panel']; ?>">
         <style>
             :root{
                 --panel-theme: <?php echo get_option('site_theme','#eb6844'); ?>;
@@ -269,7 +270,7 @@
                 }
             }
             /**
-            ** UE Enhancements 2026
+            ** ui/UE Enhancements 2026
             **/
             .fixed .switchTab:active {
                 transform: scale(0.95) translateY(20px);
@@ -278,54 +279,102 @@
                 transition-duration: .35s;
                 transform: scale(0.95) translateY(0);
             }
-            .feeds:active {
+            /*.feeds:active,*/
+            .feeds details summary:active,
+            .feeds a:active {
                 transform: scale(0.99);
             }
-            .feeds {
+            .feeds details summary,
+            .feeds,
+            .feeds a {
+                display: block;
                 transition: transform .35s ease;
                 /*transition: transform .35s cubic-bezier(0.68, -0.55, 0.27, 1.55)!important;*/
             }
-            body.dark #wpbody-content {
+            .wrap.dark {
                 background-image: radial-gradient(rgb(23 34 46) 1px, rgb(10, 20, 28) 1px);
             }
-            body.dark .switchTab {
+            .wrap.dark h1 b {
+                color: transparent;
+                background: -webkit-linear-gradient(180deg, transparent 0%, #fafafa 50%);
+                background: linear-gradient(270deg, transparent 0%, #fafafa 50%);
+                -webkit-background-clip: text;
+                background-clip: text;
+            }
+            .wrap.dark .switchTab {
                 color: #ccc;
                 background-image: radial-gradient(rgb(18 27 36) 2px, rgb(10, 20, 28, .5) 2px);
                 border-color: rgb(28 41 52);
             }
-            body.dark .switchTab li.active,
-            body.dark .switchTab li:active {
+            .wrap.dark .switchTab li.active,
+            .wrap.dark .switchTab li:active {
                 box-shadow: 0 0 0 4px rgb(28 41 52), 0 0 0 6px var(--panel-theme);
             }
-            body.dark h1,
-            body.dark .feeds .info b {
+            .wrap.dark h1,
+            .wrap.dark .feeds .info b {
                 color: #eee;
                 text-shadow: none!important;
             }
-            body.dark .feeds {
+            .wrap.dark .feeds {
                 color: #999;
                 border-color: rgb(28 41 52);
             }
-            body.dark input,
-            /*body.dark select,*/
-            body.dark textarea {
+            /*.wrap.dark select,*/
+            .wrap.dark input,
+            .wrap.dark textarea {
                 color: #ccc;
                 background: rgb(14 22 30);
                 border-color: rgb(28 41 52);
             }
+            /*
+            ** prefers-color-scheme
+            ** fix Flicker on page refresh
+            */
+            @media (prefers-color-scheme: dark) {
+                body {
+                    background: rgb(10, 20, 28);
+                }
+            }
+            #wpbody-content {
+                padding-bottom: 0;
+            }
+            .wrap {
+                background-image: radial-gradient(#eee 1px, #fafafa 1px);
+                background-size: 10px 10px;
+                padding-bottom: 5%;
+                margin: auto;
+            }
+            .feeds {padding: 20px 0;border-bottom:1px solid #eee;/*margin-bottom:15px;*/}
+            .feeds a {font-size:medium}
+            .feeds p a {font-size:small}
+            .feeds .info {margin-bottom:15px}
+            .feeds .info img,
+            .feeds .info i,
+            .feeds .info b {vertical-align:middle}
+            .feeds .info a {display:inline-block;color: initial;text-decoration: none;font-size: small;}
+            .feeds .info img {width:25px;height:25px;border-radius:50%}
+            .feeds .info b {margin:auto 7px auto 5px;opacity:.75}
+            .feeds .pub {opacity: .75;font-style:italic}
+            .feeds .rest ol {margin-left:3rem}
+            .feeds details summary:hover {text-decoration:underline}
+            .feeds details summary {cursor:pointer;user-select:none;-webkit-user-select:none;}
             /*.switchTab li:active {*/
             /*    transform: scale(1.05)!important;*/
             /*}*/
+            .logs-container {
+                padding: 10px;
+                border-radius: 10px;
+            }
             /*.feeds a,*/
             .switchTab li {
                 display: inline-block;
                 transition: transform .35s ease;
                 /*transition: inherit;*/
             }
-            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{transform:translateY(20px);/*width:max-content;top: 55px;width: 360px;transition-duration: .55s;padding: 5px;*/}.switchTab{border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, #fff 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0!important}
+            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{transform:translateY(20px);/*width:max-content;top: 55px;width: 360px;transition-duration: .55s;padding: 5px;*/}.switchTab{overflow:hidden;border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, #fff 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;box-shadow: -5px -5px 20px 15px currentColor;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0!important}
         </style>
         <!--<h1 style="text-align: center;font-size: 4rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> RSS <b>Feeds</b></h1>-->
-        <h1 style="text-align: center;font-size: 3.6rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b><span style="color:var(--panel-theme)"> RSS </span>Feeds</b></h1><!--<p style="letter-spacing:normal;margin-bottom:auto;">导航分类为友情链接分类</p>-->
+        <h1 style="text-align: center;font-size: 3.6rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b><span style="color:var(--panel-theme);text-shadow:20px -20px 100px currentColor;"> RSS </span>Feeds</b></h1><!--<p style="letter-spacing:normal;margin-bottom:auto;">导航分类为友情链接分类</p>-->
         <div class="switchTab">
             <ul>
                 <?php 
@@ -467,6 +516,7 @@
                 <p><textarea id="" class="logs-container" placeholder="点击上方选项卡以切换查询" style="width:100%;height:150px;" readonly=""></textarea></p>
             </div>
         </form>
+        </div>
 <?php
     }
     
@@ -480,6 +530,7 @@
         // if(get_option('site_logo_switcher')){
             register_setting( 'baw-settings-group', 'site_logo' );
             register_setting( 'baw-settings-group', 'site_logos' );
+            register_setting( 'baw-settings-group', 'site_logo_svg' );
         // }
         register_setting( 'baw-settings-group', 'site_single_switcher' );
         register_setting( 'baw-settings-group', 'site_single_includes' );
@@ -821,7 +872,7 @@
             if($the_cat->count>=1) array_push($cats_haschild, $the_cat);  //push 1st category which has posts
         }
 ?>
-    <div class="wrap settings">
+    <div class="wrap settings <?php if (isset($_COOKIE['theme_mode_panel'])) echo $_COOKIE['theme_mode_panel']; ?>">
         <style>
             :root{
                 --panel-theme: <?php echo get_option('site_theme','#eb6844'); ?>;
@@ -861,10 +912,10 @@
                     /*will-change: transform;*/
                 }
             }
-        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;overscroll-behavior:contain;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fff 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fff 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 8px;border-radius: 25px;border-top-left-radius:0;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 25%, currentColor 255%);}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 15px var(--panel-theme);padding: 3px 6px!important;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > th{padding: 15px 0 15px 35px;color: var(--panel-theme)!important;}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr:hover > td{background:inherit;padding: 15px 25px 15px 0;}.form-table tr:hover{border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(90deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(0deg, #f5f7f9 0, #fff);background:white;}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table tr:hover{box-shadow:0 0 20px rgb(0 0 0 / 5%);}.form-table tr{border-radius: 18px;position: relative;z-index: 1;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;transition: padding .35s ease;border-radius:inherit;border-top-left-radius: 0;border-bottom-left-radius: 0;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.35);}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:#1d2327;/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;overscroll-behavior:contain;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fff 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fff 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 8px;border-radius: 25px;border-top-left-radius:0;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 25%, currentColor 255%);}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 15px var(--panel-theme);padding: 3px 6px!important;background:transparent;border-color:transparent;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > th{padding: 15px 0 15px 35px;color: var(--panel-theme)!important;}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr:hover > td{background:inherit;padding: 15px 25px 15px 0;}.form-table tr:hover{border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(90deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(0deg, #f5f7f9 0, #fff);background:white;}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table tr:hover{box-shadow:0 0 20px rgb(0 0 0 / 5%);}.form-table tr{border-radius: 18px;position: relative;z-index: 1;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;transition: padding .35s ease;border-radius:inherit;border-top-left-radius: 0;border-bottom-left-radius: 0;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.35);}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:rgb(10, 20, 28);/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{/*background:var(--panel-theme);border-color:transparent;*/}.upload_button{margin-left:10px!important;background:black;border-radius:50px;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;font-size: smaller;font-weight:bold;text-align: center;color: var(--panel-theme);background: rgb(0 0 0 / 5%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;backdrop-filter:blur(10px);}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius: 10px;position: relative;overflow: hidden;}label.upload.upload_preview_list{margin-right: 0}
-            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}
+            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{overflow:hidden;border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;box-shadow: -5px -5px 20px 15px currentColor;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}
             .smtp{margin-left:10px;vertical-align:middle;}
             #loading.responsed{-webkit-animation-duration:.35s!important;animation-duration:.35s!important;}
             #loading.responsing{-webkit-animation:rotateloop .5s infinite linear;animation:rotateloop .5s infinite linear}
@@ -923,62 +974,88 @@
             **  Enhancements
             **  2025
             **/
-            body.dark #wpbody-content {
+            .upload_preview.img[src=''] {
+                visibility: hidden;
+            }
+            .wrap.dark {
                 background-image: radial-gradient(rgb(23 34 46) 1px, rgb(10, 20, 28) 1px);
             }
-            body.dark .switchTab {
+            .wrap.dark .switchTab {
                 color: #ccc;
                 background-image: radial-gradient(rgb(18 27 36) 2px, rgb(10, 20, 28, .5) 2px);
                 border-color: rgb(28 41 52);
             }
-            body.dark input[type=button] {
+            .wrap.dark input[type=button] {
                 box-shadow: 0 0 0 3px rgb(28 41 52), 0 0 0 4px #2271b1;
             }
-            body.dark .switchTab li.active,
-            body.dark .switchTab li:active {
+            .wrap.dark .switchTab li.active,
+            .wrap.dark .switchTab li:active {
                 box-shadow: 0 0 0 4px rgb(28 41 52), 0 0 0 6px var(--panel-theme);
             }
-            body.dark input[type=text],
-            body.dark input[type=number],
-            body.dark input[type=checkbox],
-            /*body.dark input[type=button],*/
-            /*body.dark select,*/
-            body.dark textarea {
+            /*.wrap.dark input[type=button],*/
+            /*.wrap.dark select,*/
+            .wrap.dark input[type=text],
+            .wrap.dark input[type=number],
+            .wrap.dark input[type=checkbox],
+            .wrap.dark textarea {
                 color: #ccc;
                 background: rgb(14 22 30);
                 border-color: #666;
             }
-            body.dark ul.cached_post_list li,
-            body.dark textarea {
+            .wrap.dark input[type=text],
+            .wrap.dark h1 b.num,
+            .wrap.dark ul.cached_post_list li,
+            .wrap.dark textarea {
                 border-color: rgb(28 41 52);
             }
-            body.dark .checkbox > input[type=checkbox]:checked,
-            body.dark .form-table td input.array-text {
+            .wrap.dark .checkbox > input[type=checkbox]:checked,
+            .wrap.dark .form-table td input.array-text {
                 background: rgb(14 22 30)!important;
             }
-            body.dark .form-table td input.array-text {
+            .wrap.dark .form-table td input.array-text {
                 color: #666;
                 border-color: rgb(32 43 52);
             }
-            body.dark .upload .dynamic_dom {
+            .wrap.dark .upload .dynamic_dom {
                 color: #ccc;
                 background: rgb(23 34 46);
             }
-            body.dark ul.cached_post_list li:after,
-            body.dark ul.cached_post_list li,
-            body.dark .form-table tr:hover {
-                background: rgb(28 41 52);
+            .wrap.dark ul.cached_post_list li:after,
+            .wrap.dark ul.cached_post_list li,
+            .wrap.dark .form-table tr:hover {
+                background: rgb(23 34 46);
             }
-            body.dark .child_option td {
+            .wrap.dark .child_option td {
                 background: linear-gradient(90deg, transparent 0%, rgb(23 34 46) 100%);
                 background: -webkit-linear-gradient(0deg, transparent 0%, rgb(23 34 46) 100%);
             }
-            body.dark .form-table th,
-            body.dark .form-table .checkbox label,
-            body.dark .wrap.settings,
-            body.dark .wrap h1 {
+            .wrap.dark .form-table th,
+            .wrap.dark .form-table .checkbox label,
+            .wrap.dark h1,
+            .wrap.dark {
                 color: #eee;
                 text-shadow: none!important;
+            }
+            .wrap.dark h1 b {
+                color: transparent;
+                background: -webkit-linear-gradient(0deg, transparent -10%, #fafafa 100%);
+                background: linear-gradient(90deg, transparent 0%, #fafafa 100%);
+                background-clip: text;
+                -webkit-background-clip: text;
+            }
+            @media (prefers-color-scheme: dark) {
+                body {
+                    /*background: #1d2327;*/
+                    background: rgb(10, 20, 28);
+                }
+            }
+            #wpbody-content {
+                padding-bottom: 0;
+            }
+            .wrap {
+                background-image: radial-gradient(#eee 1px, #fafafa 1px);
+                background-size: 10px 10px;
+                padding-bottom: 5%;
             }
             .fixed p.submit:first-child:active {
                 transform: scale(0.95) translateX(-150px);
@@ -1023,10 +1100,6 @@
             input[type=number],
             input[type=button] {
                 transition: transform .15s ease;
-            }
-            #wpbody-content {
-                background-image: radial-gradient(#eee 1px, #fafafa 1px);
-                background-size: 10px 10px;
             }
             @keyframes sliderSwitch {
                 0% {
@@ -1168,7 +1241,7 @@
                 float: none!important;
             }
         </style>
-        <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>&#60;<span style="color:var(--panel-theme)">&#47;</span>&#62;</b><p style="letter-spacing:normal;margin-bottom:auto;"> 主题部分页面提供 LeanCloud 第三方 BAAS 数据储存服务<sup> （使用此主题需一定<ins>开发经验</ins>） </sup> </p></h1>
+        <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>&#60;<span style="color:var(--panel-theme);text-shadow: -10px 0 30px currentColor;">&#47;</span>&#62;</b><p style="letter-spacing:normal;margin-bottom:auto;opacity:.75;"> 主题部分页面提供 LeanCloud 第三方 BAAS 数据储存服务<sup> （使用此主题需一定<ins>开发经验</ins>） </sup> </p></h1>
         <!--<hr/>-->
         <div class="switchTab">
             <ul>
@@ -1186,7 +1259,7 @@
             <?php settings_fields( 'baw-settings-group' ); // 设置字段 这个函数取代了 nonce magic, action field, and page_options ?>
             <?php do_settings_sections( 'baw-settings-group' ); // 这个函数取代了表单字段标记形式本身 ?>
             <div class="formtable basic">
-                <h1><b class="num" style="color:var(--panel-theme);box-shadow:-5px -5px 0 rgb(255 255 255 / 50%);">01</b>基本信息<p class="en">BASIC INFO</p></h1>
+                <h1><b class="num" style="color:var(--panel-theme);box-shadow:-5px -5px 0 rgb(115 115 115 / 15%);">01</b>基本信息<p class="en">BASIC INFO</p></h1>
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row">博主昵称</th>
@@ -1271,7 +1344,7 @@
                                 // }else{
                                 //     $status = $value ? "checked" : "check";
                                 // };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_logo_switcher_label">站点 logo 图片（默认显示文字类型的站点名称</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:steelblue;" class="btn">LOGO</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_logo_switcher_label">站点 logo 图片，开启后可指定深色显示LOGO（默认显示<del>文字类型的站点名称</del>SVG(XTy)，可自适应深色显示模式</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:steelblue;" class="btn">LOGO</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1284,9 +1357,9 @@
                                     <?php 
                                         $opt = 'site_logo';
                                         $value = get_option($opt);
-                                        $preset = $img_cdn.'/images/svg/XTy_115x35.svg';
-                                        $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        echo '<p class="description" id="site_logo_label">站点 LOGO 图片链接（应用于全站，留空默认预设LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY 矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
+                                        // $preset = $img_cdn.'/images/svg/XTy_115x35.svg';
+                                        // $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
+                                        echo '<p class="description" id="site_logo_label">站点 LOGO 图片链接（应用于全站，留空默认SVG</p><label for="'.$opt.'" class="upload"><img src="'.$value.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY 矢量图" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
                                     ?>
                                 </td>
                             </tr>
@@ -1296,9 +1369,33 @@
                                     <?php 
                                         $opt = 'site_logos';
                                         $value = get_option($opt);
-                                        $preset = get_option('site_logo', $img_cdn.'/images/svg/XTy_115x35_light.svg');
-                                        $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        echo '<p class="description" id="site_logos_label">站点 LOGO（深色）图片链接（应用于深色模式，默认上方LOGO</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 XTY（深色）矢量图" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
+                                        // $preset = get_option('site_logo', $img_cdn.'/images/svg/XTy_115x35_light.svg');
+                                        // $value ? $preset=$value : update_option($opt, $preset);
+                                        echo '<p class="description" id="site_logos_label">站点 LOGO（深色）图片链接（应用于深色模式，默认上方LOGO，留空默认SVG</p><label for="'.$opt.'" class="upload"><img src="'.$value.'" class="upload_preview img" style="width:80px;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用上方 LOGO" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $logo; ?>">
+                                <th scope="row">— LOGO 矢量代码<sup id="tips">SVG</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_logo_svg';
+                                        $value = get_option($opt);
+                                        $preset = '<svg height=35px style="enable-background:new 0 0 115 35" version=1.1 viewBox="0 0 115 35" width=115px xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink>
+	<style>
+		body.dark .st0 { fill: var(--preset-s); }
+		.st0 { fill:var(--preset-5a); }
+		.st1{ fill:var(--theme-color); }
+	</style>
+	<polyline class=st0 id=y_2_ points="109.8,0 79.2,35 72.4,35 103,0 " />
+	<polygon class=st1 id=ty_2_ points="79.2,0 72.4,0 76.8,5.1 81.3,10.3 88.1,10.3 " />
+	<rect class=st0 height=35 id=t_2_ width=5.1 x=54.6 y=0 />
+	<polygon class=st1 id=xt_1_ points="33.7,10.3 26.9,10.3 31.3,5.1 35.8,0 42.7,0 " />
+	<polyline class=st0 id=x_4_ points="5.2,0 35.8,35 42.6,35 12,0 " />
+	<polygon class=st0 id=x_3_ points="12,35 5.2,35 9.7,29.9 14.2,24.8 21,24.8 " />
+</svg>';
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;
+                                        echo '<p class="description" id="site_logo_svg_label">站点 LOGO 矢量代码（注：开启任意图片LOGO后此项失效，可参照默认值<code> body.dark </code>样式适应深色模式</p><textarea name="'.$opt.'" id="'.$opt.'" rows="8" placeholder="此项始终存在默认值">'.$preset.'</textarea>';
                                     ?>
                                 </td>
                             </tr>
@@ -2406,7 +2503,7 @@
                 </table>
             </div>
             <div class="formtable index">
-                <h1><b class="num" style="color:blueviolet;box-shadow:-5px -5px 0 rgb(138 43 226 / 10%);">03</b>页面配置<p class="en">PAGES CONFS</p></h1>
+                <h1><b class="num" style="color: crimson;box-shadow: -5px -5px 0 rgb(237 20 61 / 10%);">03</b>页面配置<p class="en">PAGES CONFS</p></h1>
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row">试验性内容<sup class="dualdata">Exp</sup></th>
@@ -3540,7 +3637,7 @@ const maps = {
                 </table>
             </div>
             <div class="formtable sidebar">
-                <h1><b class="num" style="color:hotpink;box-shadow:-5px -5px 0 rgb(255 105 180 / 10%);">04</b>边栏设置<p class="en">SIDEBAR SETTINGS</p></h1>
+                <h1><b class="num" style="color: orange;box-shadow: -5px -5px 0 rgb(255 165 0 / 10%);">04</b>边栏设置<p class="en">SIDEBAR SETTINGS</p></h1>
                 <table class="form-table sidebar">
                     <tr valign="top">
                         <th scope="row">Pixiv 排行（挂件）</th>
@@ -3556,7 +3653,7 @@ const maps = {
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">p站挂件（可自定义至多展示50数量</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:hotpink;" class="btn">PIXIV</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">p站挂件（可自定义至多展示50数量</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:lightpink;" class="btn">PIXIV</span></label>';
                             ?>
                         </td>
                     </tr>

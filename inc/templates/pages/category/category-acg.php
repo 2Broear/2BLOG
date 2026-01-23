@@ -117,10 +117,10 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                 opacity: 1;
             }
         }
-        div.blink {
+        /*div.blink {*/
             /*animation: blinker .5s infinite alternate ease;*/
             /*-webkit-animation: blinker .5s infinite alternate ease;*/
-        }
+        /*}*/
         .rcmd-boxes .info .inbox .inbox-headside:before {
             /*content: none;*/
             /*display: none;*/
@@ -133,9 +133,15 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
             /*transform: none;*/
             will-change: initial;
         }
-        .rcmd-boxes .info .inbox .inbox-headside img{
+        .rcmd-boxes .info .inbox .inbox-headside a {
+            margin: 0 auto;
+        }
+        .rcmd-boxes .info .inbox .inbox-headside a,
+        .rcmd-boxes .info .inbox .inbox-headside img {
             /*transform: none;*/
             will-change: auto;
+            user-select: none;
+            -webkit-user-drag: none;
         }
         .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon:before,
         .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon:after{

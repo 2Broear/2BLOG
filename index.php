@@ -246,7 +246,7 @@
                 <div class="weBlog-Description-inside">
                     <div class="weBlog-Description-inside-content">
                         <span>
-                            <small style="filter: url(#x);"><b style="font-size:xx-large;">👋</b><strong> hoooooola! <?php //echo get_option('site_nick', get_bloginfo('name')); ?> </strong></small>
+                            <small style="filter: url(#x);"><b style="font-size:xx-large;">👋</b><strong> <?php echo get_option('site_nick', get_bloginfo('name')); ?>! </strong></small>
                             <p> 「<?php bloginfo('description') ?>」 </p>
                         </span>
                     </div>

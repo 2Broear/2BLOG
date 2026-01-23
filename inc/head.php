@@ -65,9 +65,36 @@
             display: block!important;
             left: 0;
         }
+        @keyframes zoomer {
+            0% {
+                transform: translate(-50%, -50%) scale(1.15);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .win-top video {
+            /*transform: translate(-50%, -50%) scale(1.25);*/
+            animation: zoomer 5s 1 forwards ease-in-out;
+            -webkit-animation: zoomer 5s 1 forwards ease-in-out;
+        }
+        .win-top .counter h1, 
+        .win-top .counter h2 {
+            animation-timing-function: linear(0 0%, 0 1.8%, 0.01 3.6%, 0.03 6.35%, 0.07 9.1%, 0.13 11.4%, 0.19 13.4%, 0.27 15%, 0.34 16.1%, 0.54 18.35%, 0.66 20.6%, 0.72 22.4%, 0.77 24.6%, 0.81 27.3%, 0.85 30.4%, 0.88 35.1%, 0.92 40.6%, 0.94 47.2%, 0.96 55%, 0.98 64%, 0.99 74.4%, 1 86.4%, 1 100%)!important;
+        }
+        /*body { background-size: 10px 10px; }*/
         @media (prefers-color-scheme: dark) {
-            body.dark .content-all {
-                /*background: black;*/
+            /** theme_mode[auto]: dark  ***/
+            /*body,*/
+            .content-all,
+            .win-top:after {
+                background-image: radial-gradient(var(--preset-3a) 1px, var(--preset-2b) 1px);
+            }
+            /** theme_mode[manual]: light  ***/
+            /*body.light,*/
+            body.light .content-all,
+            body.light .win-top:after {
+                background-image: radial-gradient(var(--preset-e) 1px, var(--preset-fa) 1px);
             }
         }
     </style>
@@ -81,10 +108,12 @@
         body.dark #supports em.warmhole {filter: invert(1);}
         details > * {margin-left: 20px!important;}
         details > summary {margin: auto!important;}
-        <?php if(get_option('site_logo_switcher')) echo 'body.dark .mobile-vision .m-logo span,body.dark .logo-area span{background: url(' . get_option('site_logos') . ') no-repeat center center /cover!important;}'; ?>
-        .win-top em.digital_mask {
-            /*bottom: -50px;*/
+<?php 
+        if (get_option('site_logo_switcher')) {
+            $logos = get_option('site_logos');
+            if ($logos) echo 'body.dark .mobile-vision .m-logo span,body.dark .logo-area span{background: url(' . $logos . ') no-repeat center center /cover!important;}'; 
         }
+?>
         .win-top em.digital_mask:before {
             background: linear-gradient(0deg, rgb(0 0 0 / 18%) 0%, transparent);
             background: -webkit-linear-gradient(90deg, rgb(0 0 0 / 18%) 0%, transparent);

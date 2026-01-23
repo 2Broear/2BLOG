@@ -143,6 +143,7 @@ body.dark #footer-copyright li {
 **/
 :root {
     --radius: 18px;
+    --preset-5a: rgb(47 68 87);
 }
 html, body {
     -webkit-font-smoothing: antialiased;

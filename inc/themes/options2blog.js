@@ -88,18 +88,36 @@ jQuery(document).ready(function($){
         return curPar
     }
     
+    function setCookie(name,value,path='/',days=0) {
+        let exp = new Date();
+        let exp_time = typeof days=='number'&&days>=1 ? days*(24*60*60*1000) : 24*60*60*500;
+        exp.setTime(exp.getTime() + exp_time);
+        document.cookie = name+"="+escape(value)+";expires="+exp.toGMTString()+";path=/";
+    }
+    function getCookie(cname) {
+        var name = cname+"=";
+        var ca = document.cookie.split(';');
+        for(var i=0,caLen=ca.length; i<caLen; i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c=c.substring(1);
+            if(c.indexOf(name)!=-1) return c.substring(name.length, c.length);
+        }
+        return "";
+    }
     // 自动根据时段设置主题
     (function automode() {
         const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const targetNode = document.querySelector('.wrap'); //document.body
         function handleColorSchemeChange(e) {
-            // console.log(e)
             if (e.matches) {
                 // 用户偏好深色模式优先 (dark)
-                document.body.classList.add('dark');
-                console.log('theme_mode[auto] prefers-color-scheme: dark');
+                targetNode.classList.add('dark');
+                setCookie('theme_mode_panel', 'dark');
+                console.log('theme_mode_panel[auto] prefers-color-scheme: dark');
             } else {
-                document.body.classList.remove('dark');
-                console.log('theme_mode[auto] prefers-color-scheme: default');
+                targetNode.classList.remove('dark');
+                setCookie('theme_mode_panel', 'light');
+                console.log('theme_mode_panel[auto] prefers-color-scheme: default');
             }
         }
         // 3. 初始执行一次，设置当前主题
