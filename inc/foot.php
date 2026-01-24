@@ -6,13 +6,20 @@
     console.info("<?php echo get_num_queries().'次查询，耗时'.timer_stop(0).'秒。'; ?>");
     // 自动执行一次以更正缓存(after load main.js)
     // document.body.className = '';  // reset to default(timezone) mode to clear EOCaches
-    if ( + getCookie('theme_manual')) { // use + force string to number
-        document.body.className = getCookie('theme_mode');// darkmode(); // automode();
-        console.log(`theme_mode[manual] switch-color-scheme: ${getCookie('theme_mode')}..`);
-    } else {
-        automode();
-    };
     <?php
+        $fixed_theme = get_option('site_darkmode_fixed');
+        if ($fixed_theme) {
+            echo 'console.log(`theme_mode[static] fixed-color-scheme: ' . $fixed_theme . '..`);';
+        } else {
+    ?>
+            if ( + getCookie('theme_manual')) { // use + force string to number
+                document.body.className = getCookie('theme_mode');// automode();
+                console.log(`theme_mode[manual] switch-color-scheme: ${getCookie('theme_mode')}..`);
+            } else {
+                automode();
+            };
+    <?php
+        }
         global $cat;
         $vdo_poster_sw = get_option('site_video_poster_switcher');
         $datadance = get_option('site_animated_counting_switcher');

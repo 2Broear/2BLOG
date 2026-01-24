@@ -1,5 +1,6 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <?php
+    $theme_array = get_theme_array(true);
     // wp自定义（含置顶无分页）查询函数
     function the_recent_posts($cid=0, $specific_link=false, $detail=false, $limit=null, $random=false){
         // cache db only if not-single sub-page
@@ -49,7 +50,7 @@
             if($output_sw) update_option($cache, $output); //wp_kses_post($output) caused parse issue
         }
         echo $output;
-    }
+    };
 ?>
 <html lang="zh-CN">
 <head>
@@ -109,21 +110,21 @@
         body.dark{
             --mirror-end: var(--preset-2b);
         }
-        .Fresh-ImgBoxs span:first-child a{
-            color: #4285f4;
-            background: linear-gradient(-90deg, rgb(67 133 245 / 99%) 0, transparent);
+        .Fresh-ImgBoxs span:first-child a {
+            color: <?php echo $theme_array[0];//#4285f4; ?>!important;
+            background: linear-gradient(-90deg, currentColor 0, transparent);
         }
-        .Fresh-ImgBoxs span:nth-child(2) a{
-            color: #ea4335;
-            background: linear-gradient(-90deg, rgb(234 69 55 / 99%) 0, transparent);
+        .Fresh-ImgBoxs span:nth-child(2) a {
+            color: <?php echo $theme_array[1];//#ea4335; ?>!important;
+            background: linear-gradient(-90deg, currentColor 0, transparent);
         }
         .Fresh-ImgBoxs span:nth-child(3) a{
-            color: #fbbc05;
-            background: linear-gradient(-90deg, rgb(251 189 7 / 99%) 0, transparent);
+            color: <?php echo $theme_array[2];//#fbbc05; ?>!important;
+            background: linear-gradient(-90deg, currentColor 0, transparent);
         }
         .Fresh-ImgBoxs span:last-child a{
-            color: #34a853;
-            background: linear-gradient(-90deg, rgb(53 169 83 / 99%) 0, transparent);
+            color: <?php echo $theme_array[3];//#34a853; ?>!important;
+            background: linear-gradient(-90deg, currentColor 0, transparent);
         }
         #special-img{
             position: absolute;
@@ -246,7 +247,7 @@
                 <div class="weBlog-Description-inside">
                     <div class="weBlog-Description-inside-content">
                         <span>
-                            <small style="filter: url(#x);"><b style="font-size:xx-large;">👋</b><strong> <?php echo get_option('site_nick', get_bloginfo('name')); ?>! </strong></small>
+                            <small style="filter: url(#x);"><b style="font-size:xx-large;">👋 I'm</b><strong> <?php echo get_option('site_nick', get_bloginfo('name')); ?>~ </strong></small>
                             <p> 「<?php bloginfo('description') ?>」 </p>
                         </span>
                     </div>

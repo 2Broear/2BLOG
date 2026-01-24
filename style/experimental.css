@@ -1,7 +1,13 @@
 /*
 ** overwrite ui
 */
-
+.Fresh-ImgBoxs span a:hover > b {
+    opacity: 0;
+}
+.Fresh-ImgBoxs span a:hover > i:before,
+.Fresh-ImgBoxs span a:hover {
+    color: currentColor!important;
+}
 .sub-additional,
 .additional {
     min-width: 112%;
@@ -71,12 +77,25 @@ nav .nav-wrap .nav-slider {
 /*
 ** experimental style futures
 */
+body.dark .load button:active,
+body.dark .v .vlist .vcard .vh .vat:hover,
+.resource-windows div ul li a:hover,
+.recommendation:hover > #recommend-inside .recommend-newsImg div a#rel,
+footer a:hover {
+    color: var(--theme-color)!important;
+}
 .adscene {
     margin-bottom: 15px!important;
 }
 .slider-menu {
     background-image: radial-gradient(var(--preset-3a) 1px, var(--preset-2b) 1px)!important;
     background-size: 10px 10px!important;
+}
+.inside-functions .box div.dark.disabled {
+    opacity: .5;
+}
+.inside-functions .box div.dark.disabled {
+    pointer-events: auto!important;
 }
 .inside-functions .box div:active {
     transition: transform .35s ease;
@@ -144,6 +163,7 @@ body.dark #footer-copyright li {
 :root {
     --radius: 18px;
     --preset-5a: rgb(47 68 87);
+    --preset-6a: rgb(62 90 115);
 }
 html, body {
     -webkit-font-smoothing: antialiased;

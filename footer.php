@@ -386,13 +386,28 @@
     <div class="functions-tool">
         <div class="inside-functions">
             <div class="box">
-                <div class="dark" title="主题切换" onclick="darkmode()">
+                <?php
+                    $fixed_theme = get_option('site_darkmode_fixed');
+                    $theme_class = '';
+                    $theme_title = '主题切换';
+                    $theme_titles = '点击根据时段自动设置主题';
+                    $theme_event = 'darkmode()';
+                    $theme_events = 'automode()';
+                    if ($fixed_theme) {
+                        $static_text = '已禁用（已启用 ' . $fixed_theme . ' 常驻）';
+                        $theme_class = ' disabled';
+                        $theme_title = $theme_title . $static_text;
+                        $theme_titles = $theme_titles . $static_text;
+                        $theme_event = $theme_events = '';
+                    }
+                ?>
+                <div class="dark<?php echo $theme_class; ?>" title="<?php echo $theme_title; ?>" onclick="<?php echo $theme_event; ?>">
                     <i class="icom icon-moon"></i>
                     <!--<svg id="scale"><circle cx="20" cy="20" r="20" /></svg>-->
                 </div>
                 <div class="top" title="返回顶部"><em>顶</em></div>
                 <div class="bottom" title="跳至顶部"><em>底</em></div>
-                <div class="pagePer" title="点击根据时段自动设置主题" onclick="automode()">
+                <div class="pagePer<?php echo $theme_class; ?>" title="<?php echo $theme_titles; ?>" onclick="<?php echo $theme_events; ?>">
                     <strong data-percent="0"></strong>
                     <i style>
                         <span class="wave"></span>

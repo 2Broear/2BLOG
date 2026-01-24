@@ -228,9 +228,73 @@
     function add_settings_menus() {
         add_menu_page(__('2BLOG - RSS 订阅聚合'), __('RSS 友链订阅'), 'read', $GLOBALS['RSS_PAGE_NAME'], 'add_options_submenu_rss', 'dashicons-rss');  // 创建新的顶级菜单
     }
+    function the_panel_theme() {
+        if (!get_option('site_darkmode_switcher')) return;
+        $fixed_theme = get_option('site_darkmode_fixed');
+        if ($fixed_theme) {
+            echo $fixed_theme;
+            return;
+        }
+        echo isset($_COOKIE['theme_mode_panel']) ? $_COOKIE['theme_mode_panel'] : '';
+    }
+    function auto_panel_theme() {
+    ?>
+        <script type="text/javascript">
+        //     function presetDarkmode() {
+        //     	const head = document.getElementsByTagName('head')[0],
+        //     		  style = document.createElement('style');
+        // 	    style.textContent = `body { background: rgb(10, 20, 28); }`;
+        // 		head.appendChild(style);
+        //     }
+            function setCookie(name,value,path='/',days=0) {
+                let exp = new Date();
+                let exp_time = typeof days=='number'&&days>=1 ? days*(24*60*60*1000) : 24*60*60*500;
+                exp.setTime(exp.getTime() + exp_time);
+                document.cookie = name+"="+escape(value)+";expires="+exp.toGMTString()+";path=/";
+            }
+            function getCookie(cname) {
+                var name = cname+"=";
+                var ca = document.cookie.split(';');
+                for(var i=0,caLen=ca.length; i<caLen; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0)==' ') c=c.substring(1);
+                    if(c.indexOf(name)!=-1) return c.substring(name.length, c.length);
+                }
+                return "";
+            }
+            // 自动根据时段设置主题
+            function automode() {
+                const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                const targetNode = document.querySelector('.wrap'); //document.body
+                function handleColorSchemeChange(e) {
+                    if (e.matches) {
+                        // 用户偏好深色模式优先 (dark)
+                        // presetDarkmode();
+                        targetNode.classList.add('dark');
+                        setCookie('theme_mode_panel', 'dark');
+                        console.log('theme_panel[auto] prefers-color-scheme: dark');
+                    } else {
+                        targetNode.classList.remove('dark');
+                        setCookie('theme_mode_panel', 'light');
+                        console.log('theme_panel[auto] prefers-color-scheme: default');
+                    }
+                }
+                // 3. 初始执行一次，设置当前主题
+                handleColorSchemeChange(colorSchemeQuery);
+                // 4. 监听媒体查询的变化
+                colorSchemeQuery.addEventListener('change', handleColorSchemeChange);
+            }
+    <?php 
+        $fixed_theme = get_option('site_darkmode_fixed');
+        // if ($fixed_theme === 'dark') wp_enqueue_style('main-styles', get_template_directory_uri() . '/css/style.css', array(), filemtime(get_template_directory() . '/css/style.css'), false);
+        echo $fixed_theme ? 'console.log(`theme_mode[static] fixed-color-scheme: ' . $fixed_theme . '..`);' : 'automode();';
+    ?>
+        </script>
+    <?php
+    }
     function add_options_submenu_rss() {
 ?>
-        <div class="wrap <?php if (isset($_COOKIE['theme_mode_panel'])) echo $_COOKIE['theme_mode_panel']; ?>">
+        <div class="wrap <?php the_panel_theme(); ?>">
         <style>
             :root{
                 --panel-theme: <?php echo get_option('site_theme','#eb6844'); ?>;
@@ -330,11 +394,11 @@
             ** prefers-color-scheme
             ** fix Flicker on page refresh
             */
-            @media (prefers-color-scheme: dark) {
-                body {
-                    background: rgb(10, 20, 28);
-                }
-            }
+            /*@media (prefers-color-scheme: dark) {*/
+            /*    body {*/
+            /*        background: rgb(10, 20, 28);*/
+            /*    }*/
+            /*}*/
             #wpbody-content {
                 padding-bottom: 0;
             }
@@ -343,6 +407,8 @@
                 background-size: 10px 10px;
                 padding-bottom: 5%;
                 margin: auto;
+                /* fix of background-flicker on darkmode */
+                min-height: 100vh;
             }
             .feeds {padding: 20px 0;border-bottom:1px solid #eee;/*margin-bottom:15px;*/}
             .feeds a {font-size:medium}
@@ -518,6 +584,8 @@
         </form>
         </div>
 <?php
+        // execute after wrap dom
+        auto_panel_theme();
     }
     
     // 注册设置
@@ -526,6 +594,8 @@
         register_setting( 'baw-settings-group', 'site_avatar' );
         register_setting( 'baw-settings-group', 'site_bgimg' );
         register_setting( 'baw-settings-group', 'site_theme' );
+        register_setting( 'baw-settings-group', 'site_theme_array' );
+        register_setting( 'baw-settings-group', 'site_theme_rand_sw' );
         register_setting( 'baw-settings-group', 'site_logo_switcher' );
         // if(get_option('site_logo_switcher')){
             register_setting( 'baw-settings-group', 'site_logo' );
@@ -675,6 +745,7 @@
         // if(get_option('site_darkmode_switcher')){
             register_setting( 'baw-settings-group', 'site_darkmode_start' );
             register_setting( 'baw-settings-group', 'site_darkmode_end' );
+            register_setting( 'baw-settings-group', 'site_darkmode_fixed' );
         // }
         register_setting( 'baw-settings-group', 'site_avatar_mirror' );
         register_setting( 'baw-settings-group', 'site_pixiv_switcher' );
@@ -789,6 +860,7 @@
         register_setting( 'baw-settings-group', 'site_contact_twitter' );
         register_setting( 'baw-settings-group', 'site_contact_steam' );
     }
+    // $theme_blocks  = 'dodgerblue, crimson, orange, limegreen';
     $templates_info = array(
         'news' => get_cat_by_template('news'),
         'notes' => get_cat_by_template('notes'),
@@ -872,7 +944,7 @@
             if($the_cat->count>=1) array_push($cats_haschild, $the_cat);  //push 1st category which has posts
         }
 ?>
-    <div class="wrap settings <?php if (isset($_COOKIE['theme_mode_panel'])) echo $_COOKIE['theme_mode_panel']; ?>">
+    <div class="wrap settings <?php the_panel_theme(); ?>">
         <style>
             :root{
                 --panel-theme: <?php echo get_option('site_theme','#eb6844'); ?>;
@@ -912,7 +984,7 @@
                     /*will-change: transform;*/
                 }
             }
-        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;overscroll-behavior:contain;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fff 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fff 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 8px;border-radius: 25px;border-top-left-radius:0;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 25%, currentColor 255%);}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 15px var(--panel-theme);padding: 3px 6px!important;background:transparent;border-color:transparent;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > th{padding: 15px 0 15px 35px;color: var(--panel-theme)!important;}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr:hover > td{background:inherit;padding: 15px 25px 15px 0;}.form-table tr:hover{border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(90deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(0deg, #f5f7f9 0, #fff);background:white;}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table tr:hover{box-shadow:0 0 20px rgb(0 0 0 / 5%);}.form-table tr{border-radius: 18px;position: relative;z-index: 1;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;transition: padding .35s ease;border-radius:inherit;border-top-left-radius: 0;border-bottom-left-radius: 0;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.35);}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:rgb(10, 20, 28);/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;overscroll-behavior:contain;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fff 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fff 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 8px;border-radius: 25px;border-top-left-radius:0;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 25%, currentColor 255%);}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 20px var(--panel-theme);padding: 3px 6px!important;background:transparent;border-color:transparent;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > th{padding: 15px 0 15px 35px;color: var(--panel-theme)!important;}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr:hover > td{background:inherit;padding: 15px 25px 15px 0;}.form-table tr:hover{border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(90deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(0deg, #f5f7f9 0, #fff);background:white;}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table tr:hover{box-shadow:0 0 20px rgb(0 0 0 / 5%);}.form-table tr{border-radius: 18px;position: relative;z-index: 1;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;transition: padding .35s ease;border-radius:inherit;border-top-left-radius: 0;border-bottom-left-radius: 0;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.35);}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:rgb(10, 20, 28);/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{/*background:var(--panel-theme);border-color:transparent;*/}.upload_button{margin-left:10px!important;background:black;border-radius:50px;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;font-size: smaller;font-weight:bold;text-align: center;color: var(--panel-theme);background: rgb(0 0 0 / 5%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;backdrop-filter:blur(10px);}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius: 10px;position: relative;overflow: hidden;}label.upload.upload_preview_list{margin-right: 0}
             .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{overflow:hidden;border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;box-shadow: -5px -5px 20px 15px currentColor;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}
@@ -974,9 +1046,6 @@
             **  Enhancements
             **  2025
             **/
-            .upload_preview.img[src=''] {
-                visibility: hidden;
-            }
             .wrap.dark {
                 background-image: radial-gradient(rgb(23 34 46) 1px, rgb(10, 20, 28) 1px);
             }
@@ -1043,12 +1112,23 @@
                 background-clip: text;
                 -webkit-background-clip: text;
             }
-            @media (prefers-color-scheme: dark) {
-                body {
-                    /*background: #1d2327;*/
-                    background: rgb(10, 20, 28);
-                }
+            .wrap.dark .btn,
+            .wrap.dark h1 b.num {
+                filter: brightness(1.25) contrast(1.25);
             }
+            .wrap.dark .btn {
+                text-shadow: 0px -5px 15px currentColor;
+            }
+            /*
+            ** prefers-color-scheme
+            ** fix of background-flicker on darkmode
+            */
+            /*@media (prefers-color-scheme: dark) {*/
+            /*    body {*/
+                    /*background: #1d2327;*/
+            /*        background: rgb(10, 20, 28);*/
+            /*    }*/
+            /*}*/
             #wpbody-content {
                 padding-bottom: 0;
             }
@@ -1056,6 +1136,11 @@
                 background-image: radial-gradient(#eee 1px, #fafafa 1px);
                 background-size: 10px 10px;
                 padding-bottom: 5%;
+                /* fix of background-flicker on darkmode */
+                min-height: 100vh;
+            }
+            .upload_preview.img[src=''] {
+                visibility: hidden;
             }
             .fixed p.submit:first-child:active {
                 transform: scale(0.95) translateX(-150px);
@@ -1139,12 +1224,27 @@
                 font-size: smaller;
                 /*pointer-events: none;*/
             }
+            h1 b.num:before {
+                content: '';
+                display: block;
+                width: 100%;
+                height: 100%;
+                background: -webkit-linear-gradient(315deg, currentColor 0%, transparent 80%);
+                background: linear-gradient(135deg, currentColor 0%, transparent 80%);
+                border-radius: inherit;
+                position: absolute;
+                top: -5px;
+                left: -5px;
+                opacity: .25;
+            }
             h1 b.num {
                 border-color: currentColor;
                 background: white;
                 border: 1px solid #fafafa;
                 /*font-style: normal;*/
-                text-shadow: -10px -10px 20px currentColor;
+                text-shadow: -15px -15px 20px currentColor;
+                box-shadow: -5px -5px 0 rgb(215 215 215 / 15%);
+                position: relative;
             }
             label:hover input[type=checkbox] + * {
                 opacity: 1 !important;
@@ -1255,67 +1355,14 @@
         </div>
         <!--<hr/>-->
         <form method="post" action="options.php">
-            <?php submit_button('立即提交'); ?>
-            <?php settings_fields( 'baw-settings-group' ); // 设置字段 这个函数取代了 nonce magic, action field, and page_options ?>
-            <?php do_settings_sections( 'baw-settings-group' ); // 这个函数取代了表单字段标记形式本身 ?>
+            <?php 
+                submit_button('立即提交');
+                settings_fields( 'baw-settings-group' ); // 设置字段 这个函数取代了 nonce magic, action field, and page_options
+                do_settings_sections( 'baw-settings-group' ); // 这个函数取代了表单字段标记形式本身
+                $theme_array = get_theme_array(true); //$theme_blocks; //explode(',', get_option('site_theme_array'));
+            ?>
             <div class="formtable basic">
-                <h1><b class="num" style="color:var(--panel-theme);box-shadow:-5px -5px 0 rgb(115 115 115 / 15%);">01</b>基本信息<p class="en">BASIC INFO</p></h1>
-                <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row">博主昵称</th>
-                        <td>
-                            <p class="description" id="site_nick_label">网站标题、底部描述、文章作者、来源等信息均会使用到此信息（默认站点名称）</p>
-                            <?php
-                                $value = get_option( 'site_nick', '' );
-                                $preset = get_bloginfo('name');
-                                if(!$value) update_option( 'site_nick', $preset );else $preset=$value;
-                            ?>
-                            <input type="text" name="site_nick" id="site_nick" class="middle-text" value="<?php echo esc_attr($preset); ?>" placeholder="博主昵称">
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">个人头像</th>
-                        <td>
-                            <?php 
-                                $opt = 'site_avatar';
-                                $value = get_option($opt);
-                                $mail = 'wapuu@wordpress.example';//get_bloginfo('admin_email');
-                                // !$mail ? $mail="wapuu@wordpress.example" : $mail;
-                                $preset = 'https:' . get_option('site_avatar_mirror','//cravatar.cn/') . 'avatar/' . md5($mail) . '?s=300';
-                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if avatar unset
-                                echo '<p class="description" id="site_avatar_label">个人头像，用于笔记栈、关于等页面（默认管理员邮箱 gravatar 头像</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="border-radius: 100%;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 gravatar 头像" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">背景图片</th>
-                        <td>
-                            <?php
-                                $opt = 'site_bgimg';
-                                $value = get_option($opt);
-                                $preset = $img_cdn.'/images/fox.jpg';  
-                                // $preset = 'https:'.get_option('site_avatar_mirror','//sdn.geekzu.org/').'/avatar/?d=identicon&s=300';
-                                $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="">默认背景图，用于各页面调用背景图（默认随机 gravatar 背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">站点关键词</th>
-                        <td>
-                            <input type="text" name="site_keywords" id="site_keywords" class="regular-text" value="<?php echo esc_attr(get_option('site_keywords')); ?>" placeholder="站点关键词">
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">站点描述</th>
-                        <td>
-                            <textarea name="site_description" id="site_description" placeholder="站点描述"><?php echo esc_attr(get_option('site_description')); ?></textarea>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="formtable common">
-                <h1><b class="num" style="color:dodgerblue;box-shadow:-5px -5px 0 rgb(30 144 255 / 10%);">02</b>通用控制<p class="en">COMMON CONTROLS</p></h1>
+                <h1><b class="num" style="color:var(--panel-theme);">01</b>基本信息<p class="en">BASIC INFO</p></h1>
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row">主题颜色</th>
@@ -1327,6 +1374,30 @@
                                 if(!$value) update_option($opt, $preset);else $preset=$value;
                                 echo '<label for="'.$opt.'"><p class="description" id="site_theme_label">此选项将重写网站主题色及后台设置高亮，即时生效（默认 #eb6844</p><input type="color" name="'.$opt.'" id="'.$opt.'" value="' . $preset . '"/></label>';
                             ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">随机主题</th>
+                        <td>
+                            <?php
+                                $opt = 'site_theme_rand_sw';
+                                $status = check_status($opt);
+                                $theme_blocks = get_theme_array(); //get_option('site_theme_array'); //
+                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">根据自定义颜色值，访问页面时将<b>随机</b>调用其中一项作为主色调</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">RandTheme</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top" class="child_option dynamic_opts <?php echo $ads = get_option('site_theme_rand_sw') ? 'dynamic_optshow' : false; ?>">
+                        <th scope="row">— 色块数组</th>
+                        <td>
+                            <p class="description" id="site_theme_array_label">自定义一组颜色值（同时应用于设置页面与首页色块），使用逗号“,”间隔（留空默认使用预设值用于背景及首页色块</p>
+                            <?php
+                                $opt = 'site_theme_array';
+                                $value = get_option($opt);
+                                $preset = $theme_blocks . ', ' . get_option('site_theme');
+                                if(!$value) update_option($opt, $preset);else $preset=$value;
+                            ?>
+                            <input type="text" name="site_theme_array" id="site_theme_array" class="regular-text" placeholder="主题色数组" value="<?php echo $preset; ?>"/>
                         </td>
                     </tr>
                     <tr valign="top" class="dynamic_box logo">
@@ -1402,6 +1473,72 @@
                     <?php
                         // }
                     ?>
+                    <tr valign="top">
+                        <th scope="row">博主昵称</th>
+                        <td>
+                            <p class="description" id="site_nick_label">网站标题、底部描述、文章作者、来源等信息均会使用到此信息（默认站点名称）</p>
+                            <?php
+                                $value = get_option( 'site_nick', '' );
+                                $preset = get_bloginfo('name');
+                                if(!$value) update_option( 'site_nick', $preset );else $preset=$value;
+                            ?>
+                            <input type="text" name="site_nick" id="site_nick" class="middle-text" value="<?php echo esc_attr($preset); ?>" placeholder="博主昵称">
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">个人头像</th>
+                        <td>
+                            <?php 
+                                $opt = 'site_avatar';
+                                $value = get_option($opt);
+                                $mail = 'wapuu@wordpress.example';//get_bloginfo('admin_email');
+                                // !$mail ? $mail="wapuu@wordpress.example" : $mail;
+                                $preset = 'https:' . get_option('site_avatar_mirror','//cravatar.cn/') . 'avatar/' . md5($mail) . '?s=300';
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if avatar unset
+                                echo '<p class="description" id="site_avatar_label">个人头像，用于笔记栈、关于等页面（默认管理员邮箱 gravatar 头像</p><label for="'.$opt.'" class="upload"><img src="'.$preset.'" class="upload_preview img" style="border-radius: 100%;" /></label><input type="text" name="'.$opt.'" placeholder="默认使用 gravatar 头像" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">背景图片</th>
+                        <td>
+                            <?php
+                                $opt = 'site_bgimg';
+                                $value = get_option($opt);
+                                $preset = $img_cdn.'/images/fox.jpg';  
+                                // $preset = 'https:'.get_option('site_avatar_mirror','//sdn.geekzu.org/').'/avatar/?d=identicon&s=300';
+                                $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
+                                echo '<p class="description" id="">默认背景图，用于各页面调用背景图（默认随机 gravatar 背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">站点关键词</th>
+                        <td>
+                            <input type="text" name="site_keywords" id="site_keywords" class="regular-text" value="<?php echo esc_attr(get_option('site_keywords')); ?>" placeholder="站点关键词">
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">站点描述</th>
+                        <td>
+                            <textarea name="site_description" id="site_description" placeholder="站点描述"><?php echo esc_attr(get_option('site_description')); ?></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="formtable common">
+                <h1><b class="num" style="color: <?php echo $theme_array[0]; ?>">02</b>通用控制<p class="en">COMMON CONTROLS</p></h1>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">试验性内容<sup class="dualdata">Exp</sup></th>
+                        <td>
+                            <?php
+                                $opt = 'site_experimental_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">试验性（全站）UI/UE 内容（开启后可体验最新页面样式内容</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Experimental</b></label>';
+                            ?>
+                        </td>
+                    </tr>
                     <tr valign="top">
                         <th scope="row">导航 Icon</th>
                         <td>
@@ -1481,43 +1618,82 @@
                         // }
                     ?>
                     <tr valign="top">
-                        <th scope="row">站点头部公告<sup class="dualdata" title="“多数据”">BaaS</sup></th>
+                        <th scope="row">图片懒加载</th>
                         <td>
                             <?php
-                                $opt = 'site_inform_switcher';
+                                $opt = 'site_lazyload_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">部分页面头部公告显示内容（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">站点公告</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">开启文章/部分页面图片使用 Lazyload 懒加载（默认关闭 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LazyLoad</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">深色模式</th>
+                        <td>
+                            <?php
+                                $opt = 'site_darkmode_switcher';
+                                $value = get_option($opt);
+                                $start = get_option( 'site_darkmode_start', '' );
+                                $end = get_option( 'site_darkmode_end', '' );
+                                //设置默认开启（仅适用存在默认值的checkbox）
+                                if(!$value&&!$start&&!$end){
+                                    update_option($opt, "on_default");
+                                    $status="checked";
+                                }else{
+                                    $status = $value ? "checked" : "check";
+                                };
+                                echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_switcher_label">开启后将根据时段自动切换主题（默认晚17至早9<br />⚠️注意：主题默认支持根据系统配置自动设置主题深浅色（同时支持手动切换）。此项启用时，将按照此处<b>配置的深浅色时段</b>自动配置显示模式<br />（若当前系统为深色模式，此时切换系统为浅色将无法自动生效，因为此处权配置显示时段重高于系统默认配置</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">DarkMode</b></label>';
                             ?>
                         </td>
                     </tr>
                     <?php
-                        // if(get_option('site_inform_switcher')){
+                        // if(get_option('site_darkmode_switcher')){
                     ?>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_inform_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 公告数量</th>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $darkmode = get_option('site_darkmode_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 开启时间</th>
                                 <td>
                                     <?php
-                                        $opt = 'site_inform_num';
+                                        $opt = 'site_darkmode_start';
                                         $value = get_option($opt);
-                                        $preset = 3;  //默认填充数据
+                                        $preset = 17;  //默认开启（时）间
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">公告展示数量（默认展示 最新发布 的 3 条公告</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        echo '<p class="description" id="site_darkmode_start_label">开启时间（大于13点小于24点</p><input type="number" min="13" max="24" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>
-                    <?php 
-                        // } 
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $darkmode; ?>">
+                                <th scope="row">— 关闭时间</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_darkmode_end';
+                                        $value = get_option($opt);
+                                        $preset = 9;  //默认关闭（时）间
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_darkmode_end_label">关闭时间（大于1点小于12点</p><input type="number" min="1" max="12" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $darkmode; ?>">
+                                <th scope="row">— 固定模式<sup>FixedTheme</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_darkmode_fixed';
+                                        $arrobj = array(
+                                            array('name'=>'浅色', 'value'=>'light'),
+                                            array('name'=>'深色', 'value'=>'dark'),
+                                        );
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_fixed_label">开启后可全站（包括后台）保持指定主题显示模式（注：此项将忽略系统自动切换，并同时禁用手动切换主题功能</p><select name="'.$opt.'" id="'.$opt.'"><option value="">未指定</option>';
+                                            foreach ($arrobj as $arr){
+                                                $val = $arr['value'];
+                                                echo '<option value="'.$val.'"';if(get_option($opt)==$val)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
+                                            }
+                                        echo '</select></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php
+                        // }
                     ?>
-                    <tr valign="top">
-                        <th scope="row">面包屑导航</th>
-                        <td>
-                            <?php
-                                $opt = 'site_breadcrumb_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">快捷导航</b></label>';
-                            ?>
-                        </td>
-                    </tr>
                     <tr valign="top" class="">
                         <th scope="row">分类导航层级</th>
                         <td>
@@ -1834,65 +2010,6 @@
                     <?php 
                         // }
                     ?>
-                    <tr valign="top">
-                        <th scope="row">深色模式</th>
-                        <td>
-                            <?php
-                                $opt = 'site_darkmode_switcher';
-                                $value = get_option($opt);
-                                $start = get_option( 'site_darkmode_start', '' );
-                                $end = get_option( 'site_darkmode_end', '' );
-                                //设置默认开启（仅适用存在默认值的checkbox）
-                                if(!$value&&!$start&&!$end){
-                                    update_option($opt, "on_default");
-                                    $status="checked";
-                                }else{
-                                    $status = $value ? "checked" : "check";
-                                };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_switcher_label">开启后将根据时段自动切换主题（默认晚17至早9<br />⚠️注意：主题默认支持根据系统配置自动设置主题深浅色（同时支持手动切换）。此项启用时，将按照此处<b>配置的深浅色时段</b>自动配置显示模式（若当前系统为深色模式，此时切换系统为浅色将无法自动生效，因为此处权配置显示时段重高于系统默认配置</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">自动模式</b></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <?php
-                        // if(get_option('site_darkmode_switcher')){
-                    ?>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $darkmode = get_option('site_darkmode_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 开启时间</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_darkmode_start';
-                                        $value = get_option($opt);
-                                        $preset = 17;  //默认开启（时）间
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_darkmode_start_label">开启时间（大于13点小于24点</p><input type="number" min="13" max="24" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $darkmode; ?>">
-                                <th scope="row">— 关闭时间</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_darkmode_end';
-                                        $value = get_option($opt);
-                                        $preset = 9;  //默认关闭（时）间
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_darkmode_end_label">关闭时间（大于1点小于12点</p><input type="number" min="1" max="12" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                    <?php
-                        // }
-                    ?>
-                    <tr valign="top">
-                        <th scope="row">图片懒加载</th>
-                        <td>
-                            <?php
-                                $opt = 'site_lazyload_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">开启文章/部分页面图片使用 Lazyload 懒加载（默认关闭 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LazyLoad</b></label>';
-                            ?>
-                        </td>
-                    </tr>
                     <tr valign="top">
                         <th scope="row">站点 CDN 加速</th>
                         <td>
@@ -2503,15 +2620,43 @@
                 </table>
             </div>
             <div class="formtable index">
-                <h1><b class="num" style="color: crimson;box-shadow: -5px -5px 0 rgb(237 20 61 / 10%);">03</b>页面配置<p class="en">PAGES CONFS</p></h1>
+                <h1><b class="num" style="color: <?php echo $theme_array[1]; ?>">03</b>页面配置<p class="en">PAGES CONFS</p></h1>
                 <table class="form-table">
                     <tr valign="top">
-                        <th scope="row">试验性内容<sup class="dualdata">Exp</sup></th>
+                        <th scope="row">站点头部公告<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
                             <?php
-                                $opt = 'site_experimental_switcher';
+                                $opt = 'site_inform_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">试验性（全站）UI/UE 内容（开启后可体验最新页面样式内容</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Experimental</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">部分页面头部公告显示内容（支持第三方数据储存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">站点公告</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        // if(get_option('site_inform_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_inform_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 公告数量</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_inform_num';
+                                        $value = get_option($opt);
+                                        $preset = 3;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">公告展示数量（默认展示 最新发布 的 3 条公告</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <?php 
+                        // } 
+                    ?>
+                    <tr valign="top">
+                        <th scope="row">面包屑导航</th>
+                        <td>
+                            <?php
+                                $opt = 'site_breadcrumb_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_breadcrumb_switcher_label">页面当前位置（面包屑导航</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">快捷导航</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -3637,7 +3782,7 @@ const maps = {
                 </table>
             </div>
             <div class="formtable sidebar">
-                <h1><b class="num" style="color: orange;box-shadow: -5px -5px 0 rgb(255 165 0 / 10%);">04</b>边栏设置<p class="en">SIDEBAR SETTINGS</p></h1>
+                <h1><b class="num" style="color: <?php echo $theme_array[2]; ?>">04</b>边栏设置<p class="en">SIDEBAR SETTINGS</p></h1>
                 <table class="form-table sidebar">
                     <tr valign="top">
                         <th scope="row">Pixiv 排行（挂件）</th>
@@ -3772,7 +3917,7 @@ const maps = {
                 </table>
             </div>
             <div class="formtable footer">
-                <h1><b class="num" style="color:limegreen;box-shadow:-5px -5px 0 rgb(50 205 50 / 10%);">05</b>页尾设置<p class="en">FOOTER SETTINGS</p></h1>
+                <h1><b class="num" style="color: <?php echo $theme_array[3]; ?>">05</b>页尾设置<p class="en">FOOTER SETTINGS</p></h1>
                 <table class="form-table footer">
                     <tr valign="top">
                         <th scope="row">底部近期文章</th>
@@ -4156,5 +4301,7 @@ const maps = {
         </form>
     </div>
 <?php
+    // execute after wrap dom
+    auto_panel_theme();
     }
 ?>

@@ -1,4 +1,16 @@
 <?php
+    /*
+     *--------------------------------------------------------------------------
+     * 2026 FEATS
+     * FUNC
+     *--------------------------------------------------------------------------
+    */
+    function get_theme_array($explode = false, $default_blocks  = 'dodgerblue, crimson, orange, limegreen') {
+        $theme_blocks = $default_blocks;
+        $themes_array = get_option('site_theme_array');
+        if ($themes_array) $theme_blocks = $themes_array;
+        return $explode ? explode(',', $theme_blocks) : $theme_blocks;
+    }
     // 检查并返回 xhr 请求携带参数
     function get_request_param(string $param, $defaults = false) {
         $res = null;
@@ -1466,23 +1478,28 @@
     */
     // 动态主题模式
     function theme_mode($returns = false) {
-        if(get_option('site_darkmode_switcher')){
-            if(!array_key_exists('sidebar_status', $_COOKIE)) {
-                global $theme_manual;
-                if(!$theme_manual) {  //if theme_manual actived  || $_COOKIE['theme_manual'] != '0'
-                    $hour = current_time('G');
-                    $start = get_option('site_darkmode_start');
-                    $end = get_option('site_darkmode_end');
-                    $res = $hour>=$end&&$hour<$start || $hour==$end&&current_time('i')>=0&&current_time('s')>=0 ? 'light' : 'dark';
-                    if ($returns) return $res;
-                    echo $res;
-                };
-            }else{
-                if ($returns) return $_COOKIE['theme_mode'];
-                // bug of top-header
-                if (isset($_COOKIE['theme_mode'])) echo $_COOKIE['theme_mode'];
-            }
+        if (!get_option('site_darkmode_switcher')) return;
+        $fixed_theme = get_option('site_darkmode_fixed');
+        if ($fixed_theme) {
+            if ($returns) return $fixed_theme;
+            echo $fixed_theme;
+            return;
         }
+        if (!array_key_exists('sidebar_status', $_COOKIE)) {
+            global $theme_manual;
+            if (!$theme_manual) {  //if theme_manual actived  || $_COOKIE['theme_manual'] != '0'
+                $hour = current_time('G');
+                $start = get_option('site_darkmode_start');
+                $end = get_option('site_darkmode_end');
+                $res = $hour>=$end&&$hour<$start || $hour==$end&&current_time('i')>=0&&current_time('s')>=0 ? 'light' : 'dark';
+                if ($returns) return $res;
+                echo $res;
+            };
+            return;
+        }
+        if ($returns) return $_COOKIE['theme_mode'];
+        // bug of top-header
+        if (isset($_COOKIE['theme_mode'])) echo $_COOKIE['theme_mode'];
     }
     //lazyload 图懒加载
     if (get_option('site_lazyload_switcher')) {

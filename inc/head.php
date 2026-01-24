@@ -1,7 +1,4 @@
 <?php 
-    global $cat, $src_cdn, $img_cdn;
-    $cat = $cat ? $cat : get_page_cat_id(current_slug());
-    $theme = get_option('site_theme', "#eb6844");
     $viewmode = get_request_param('viewmode');
     if (is_single() && $viewmode && $viewmode === 'map') {
         echo '<style>img,video,figure {max-width: 100%;height: auto;object-fit: cover;margin: auto auto 10px;padding: 0;}.chatGPT {display: none;}p {opacity: .75;line-height: 23px;font-size: 14px;}</style>';
@@ -10,6 +7,15 @@
         echo $content = str_replace('data-src', 'loading="lazy" src', $content);
         // exit page load
         exit;
+    }
+    global $cat, $src_cdn, $img_cdn;
+    $cat = $cat ? $cat : get_page_cat_id(current_slug());
+    $theme = get_option('site_theme', "#eb6844");
+    // random theme-color
+    if (get_option('site_theme_rand_sw')) { // && count($theme_array) > 2
+        $theme_array = get_theme_array(true); //explode(',', $theme_blocks);
+        $key = array_rand($theme_array, 1);
+        $theme = $theme_array[$key];
     }
 ?>
 <title><?php echo get_site_title(); ?></title>

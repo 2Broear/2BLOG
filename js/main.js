@@ -103,7 +103,7 @@
     function setupVideoPoster(second,quality,base64){
         const videos = document.querySelectorAll('video');
         if (!videos[0]) {
-            console.log(`setupVideoPoster[${i}] Not found`);
+            console.log(`setupVideoPoster Not found`);
             return;
         }
         for(let i=0,vdoLen=videos.length;i<vdoLen;i++){
