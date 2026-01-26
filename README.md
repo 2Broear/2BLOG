@@ -52,7 +52,7 @@ __Preview Site__ ：[演示站点](http://wpk.2broear.com) （演示并不代表
 > 
 > ~~__LBMS__ 为个人需求，故无法保证其可用性，__无需使用 leancloud 时请无视其所有相关文档__ ）~~
 
-![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/screenshot.png "theme overview")
+![2blog_wordpress_theme](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/screenshot2026.jpg "theme overview")
 
 主题结构
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ wordpress 后台设置分为  __基本信息__ 、 __通用控制__ 、 __页面
 
 5. ___页尾控制___ 选项，页面底部有一些文章、评论及联系方式的展示设置，还包括各支持图标展示设置及站外（沟通）插件控制，左侧主要有 __近期文章 和 近期评论__ 选项卡，_所有选项均按选项下方提示操作即可。_ 
 
-![2blog_theme_setting](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/basic.png "2blog basiclly set")
+![2blog_theme_setting](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/settings2026.jpg "2blog basiclly set")
 
 ### LBMS 后台（选读）
 <details>
@@ -102,6 +102,8 @@ lbms 后台将在 __`通用控制`__ 中的 _leancloud_ 选项开启后自动创
 ![2blog_lbms_ui](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/edit.png "lbms UI")
 
 </details>
+
+![2blog_theme_setting](https://raw.githubusercontent.com/2Broear/2BLOG/main/screenshots/rssfeeds2026.jpg "2blog rss_feeds")
 
 文档说明
 ====================================================================================================================================================================
