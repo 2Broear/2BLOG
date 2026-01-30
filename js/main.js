@@ -495,8 +495,8 @@
     
     if (site_tool) {
         // scrollTo && article_tool
-        site_tool.querySelector(".top").onclick=()=>window.scrollTo(0,0);
-        site_tool.querySelector(".bottom").onclick=()=>window.scrollTo(0,99999);
+        site_tool.querySelector(".top").onclick=()=>window.scrollTo(0, 0);
+        site_tool.querySelector(".bottom").onclick=()=>window.scrollTo(0, document.body.offsetHeight); //99999
         // site_tool.querySelector(".top").onclick=()=>window.requestAnimationFrame(function(){window.scrollTo(0,0);});
         // site_tool.querySelector(".bottom").onclick=()=>window.requestAnimationFrame(function(){window.scrollTo(0,99999);});
     }

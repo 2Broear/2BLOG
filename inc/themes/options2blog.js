@@ -333,6 +333,18 @@ jQuery(document).ready(function($){
                 case t.id == 'site_theme':
                     theme_root.style.setProperty("--panel-theme", t.value); //this.value
                     break;
+                case t.classList == 'block_colors':
+                    t.style.color = t.value;
+                    const updateList = t.parentNode.parentNode.querySelector('#site_theme_array');
+                    const lastValue = t.dataset.last;
+                    updateList.value = updateList.value.replace(lastValue, t.value);
+                    // select updated(not lastValue) context
+                    const presetIndex = updateList.value.indexOf(t.value); //lastValue
+                    updateList.focus();
+                    updateList.setSelectionRange(presetIndex, presetIndex + t.value.length); //lastValue
+                    // update latest value
+                    t.dataset.last = t.value;
+                    break;
                 case t.classList.contains('live-update'):
                     const updateTarget = t.parentNode.querySelector('.update-target');
                     if (updateTarget) {

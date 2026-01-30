@@ -5,7 +5,8 @@
      * FUNC
      *--------------------------------------------------------------------------
     */
-    function get_theme_array($explode = false, $default_blocks  = 'dodgerblue, crimson, orange, limegreen') {
+    function get_theme_array($explode = false, $default_blocks  = '#4285f4, #ea4335, #fbbc05, #34a853') {
+        //use hex insted of 'dodgerblue, crimson, orange, limegreen' in case of color-input identify issue
         $theme_blocks = $default_blocks;
         $themes_array = get_option('site_theme_array');
         if ($themes_array) $theme_blocks = $themes_array;
@@ -439,7 +440,7 @@
                     $output_child = $data->child;
                     $output_count = count($output_child);
                     if ($output_limit > $output_count) $output_limit = $output_count;
-                    $output_string .= '<details class="rest" open><summary> 浏览其余 '.$output_limit.' 篇文章 </summary><ol>';
+                    $output_string .= '<details class="rest" close><summary> 浏览其余 '.$output_limit.' 篇文章 </summary><ol>';
                     foreach ($output_child as $key => $child) {
                         if ($key >= $output_limit) break;
                         $output_string .= '<li><a href="'.$child->link.'" target="_blank">'.$child->title.'</a>
@@ -1684,9 +1685,31 @@
     // 挂载文章 chatGPT AI 摘要 mount article chatgpt
     // 注意页面缓存 携带过期URL参数
     function article_ai_abstract($content) {
-        global $src_cdn; //custom_cdn_src(0, true)
+        global $src_cdn; //custom_cdn_src(0, 1)
         $chatgpt_cat = in_chatgpt_cat();
-        return $chatgpt_cat&&is_single() ? '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span title="对话模型">' . get_option('site_chatgpt_model', 'OPENAI') . '</span></p><p class="response load">Standby API Responsing..</p></blockquote><script type="module">const responser = document.querySelector(".chatGPT .response");try {import("'.custom_cdn_src(1, 1).'/js/module.js").then((module)=>send_ajax_request("get", "'.get_api_refrence("gpt").'", false, (res)=>{let _json=JSON.parse(res),_string="No response inbound.";if(_json.choices){_string=_json.choices[0].message.content;}else if(_json.text){_string=_json.text;}else{_string=_json.error.message;}module.words_typer(responser, _string, 25, true);console.log(_json.error)}));}catch(e){console.warn("dom responser not found, check backend.",e)}</script>' . $content : $content; //get_api_refrence("gpt", true)
+        if ($chatgpt_cat && is_single()) {
+            $type_string = get_option('site_chatgpt_type_sw') ? 'module.words_typer(responser, _string, 25, "' . get_option('site_chatgpt_type_shuffle', 'false') . '");' : 'responser.textContent = _string; responser.className = "response";';
+        return '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span title="对话模型">' . get_option('site_chatgpt_model', 'OPENAI') . '</span></p><p class="response load">Standby API Responsing..</p></blockquote>
+<script type="module">
+    const responser = document.querySelector(".chatGPT .response");
+    try {
+        import("' . $src_cdn . '/js/module.js").then((module) => send_ajax_request("get", "'.get_api_refrence("gpt").'", false, (res) => {
+            let _json = JSON.parse(res),
+                _string = "No response inbound.";
+            if (_json.choices) {
+                _string = _json.choices[0]?.message?.content ? _json.choices[0].message.content : _json.choices[0].text;
+            } else {
+                _string = _json.error.message;
+            }
+            ' . $type_string . '
+            console.log(_json.error)
+        }));
+    } catch (e) {
+        console.warn("dom responser not found, check backend.", e)
+    }
+</script>' . $content;
+        }
+        return $content; //get_api_refrence("gpt", true)
     }
     add_filter( 'the_content', 'article_ai_abstract', 10);
     

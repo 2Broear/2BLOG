@@ -686,8 +686,10 @@
             register_setting( 'baw-settings-group', 'site_chatgpt_proxy' );
             register_setting( 'baw-settings-group', 'site_chatgpt_auth' );
             register_setting( 'baw-settings-group', 'site_chatgpt_dir' );
-            register_setting( 'baw-settings-group', 'site_chatgpt_desc_sw' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_type_sw' );
+                register_setting( 'baw-settings-group', 'site_chatgpt_type_shuffle' );
             register_setting( 'baw-settings-group', 'site_chatgpt_feed_sw' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_desc_sw' );
             // register_setting( 'baw-settings-group', 'site_chatgpt_require' );
         register_setting( 'baw-settings-group', 'site_marker_switcher' );
             register_setting( 'baw-settings-group', 'site_marker_max' );
@@ -984,7 +986,7 @@
                     /*will-change: transform;*/
                 }
             }
-        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;overscroll-behavior:contain;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fff 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fff 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 8px;border-radius: 25px;border-top-left-radius:0;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 25%, currentColor 255%);}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 20px var(--panel-theme);padding: 3px 6px!important;background:transparent;border-color:transparent;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;}p.description{font-size:small}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > th{padding: 15px 0 15px 35px;color: var(--panel-theme)!important;}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr:hover > td{background:inherit;padding: 15px 25px 15px 0;}.form-table tr:hover{border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(90deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(0deg, #f5f7f9 0, #fff);background:white;}.form-table tr{padding: 0 15px;border:2px solid transparent;border-bottom:1px solid #e9e9e9;border-left:3px solid transparent;}.form-table tr:hover{box-shadow:0 0 20px rgb(0 0 0 / 5%);}.form-table tr{border-radius: 18px;position: relative;z-index: 1;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;transition: padding .35s ease;border-radius:inherit;border-top-left-radius: 0;border-bottom-left-radius: 0;}.form-table tr:last-child{border-bottom:none}.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.35);}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:rgb(10, 20, 28);/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;padding:5px 0;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;overscroll-behavior:contain;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fff 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fff 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 8px;border-radius: 25px;border-top-left-radius:0;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 25%, currentColor 255%);}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 20px var(--panel-theme);padding: 3px 6px!important;background:transparent;border-color:transparent;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;}p.description{font-size:small;}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > th{padding: 15px 0 15px 35px;color: var(--panel-theme)!important;}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr:hover > td{background:inherit;padding: 15px 25px 15px 0;}.form-table tr:hover{border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(90deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(0deg, #f5f7f9 0, #fff);background:white;}.form-table tr{}.form-table tr:hover{box-shadow:0 0 20px rgb(0 0 0 / 5%);}.form-table tr{padding: 0 15px;border:2px solid transparent;/*border-bottom:1px solid #e9e9e9;*/border-left:3px solid transparent;border-radius: 18px;position: relative;z-index: 1;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;transition: padding .35s ease;border-radius:inherit;border-top-left-radius: 0;border-bottom-left-radius: 0;}/*.form-table tr:last-child{border-bottom:none}*/.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.35);}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:rgb(10, 20, 28);/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{/*background:var(--panel-theme);border-color:transparent;*/}.upload_button{margin-left:10px!important;background:black;border-radius:50px;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;font-size: smaller;font-weight:bold;text-align: center;color: var(--panel-theme);background: rgb(0 0 0 / 5%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;backdrop-filter:blur(10px);}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius: 10px;position: relative;overflow: hidden;}label.upload.upload_preview_list{margin-right: 0}
             .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{overflow:hidden;border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;box-shadow: -5px -5px 20px 15px currentColor;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}
@@ -1046,6 +1048,14 @@
             **  Enhancements
             **  2025
             **/
+            /*p.description {*/
+            /*    opacity: .75;*/
+            /*}*/
+            .child_option td b,
+            .form-table b {
+                font-style: normal;
+                font-size: smaller;
+            }
             .wrap.dark {
                 background-image: radial-gradient(rgb(23 34 46) 1px, rgb(10, 20, 28) 1px);
             }
@@ -1114,10 +1124,14 @@
             }
             .wrap.dark .btn,
             .wrap.dark h1 b.num {
-                filter: brightness(1.25) contrast(1.25);
+                filter: brightness(1.25) contrast(1.35);
             }
             .wrap.dark .btn {
                 text-shadow: 0px -5px 15px currentColor;
+            }
+            .wrap.dark img[alt=wormhole],
+            .wrap.dark img[alt=notbyai] {
+                filter: invert(1);
             }
             /*
             ** prefers-color-scheme
@@ -1270,6 +1284,7 @@
                 transition: all .35s ease;
                 border-top-right-radius: 15px!important;
             }
+            .wrap.dark input[type=checkbox]:checked,
             input[type=checkbox]:checked:focus {
                 color: var(--panel-theme);
                 border-color: currentColor;
@@ -1340,6 +1355,31 @@
                 max-width: 0;
                 float: none!important;
             }
+            .theme_blocks input[type=color]:last-child {
+                margin-right: 5px;
+            }
+            .theme_blocks input[type=color]:hover {
+                opacity: 1;
+                border-color: transparent;
+            }
+            .theme_blocks input[type=color] {
+                display: inline-block;
+                width: 38px;
+                height: 14px;
+                padding: 0 5px!important;
+                border-radius: 15px!important;
+                margin-right: 15px;
+                border: 1px solid whitesmoke;
+                background: currentColor;
+                box-shadow: 10px 0px 20px currentColor;
+                position: relative;
+                /*overflow: hidden;*/
+                cursor: pointer;
+                opacity: .75;
+            }
+            /*.wrap.dark .theme_blocks input[type=color] {*/
+            /*    box-shadow: 0 0 15px currentColor;*/
+            /*}*/
         </style>
         <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>&#60;<span style="color:var(--panel-theme);text-shadow: -10px 0 30px currentColor;">&#47;</span>&#62;</b><p style="letter-spacing:normal;margin-bottom:auto;opacity:.75;"> 主题部分页面提供 LeanCloud 第三方 BAAS 数据储存服务<sup> （使用此主题需一定<ins>开发经验</ins>） </sup> </p></h1>
         <!--<hr/>-->
@@ -1372,7 +1412,7 @@
                                 $value = get_option($opt);
                                 $preset = "#eb6844";
                                 if(!$value) update_option($opt, $preset);else $preset=$value;
-                                echo '<label for="'.$opt.'"><p class="description" id="site_theme_label">此选项将重写网站主题色及后台设置高亮，即时生效（默认 #eb6844</p><input type="color" name="'.$opt.'" id="'.$opt.'" value="' . $preset . '"/></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_theme_label">此选项将重写网站主题色及后台设置高亮，支持颜色选择器自动取色（后台即时生效，预设默认值 #eb6844</p><input type="color" name="'.$opt.'" id="'.$opt.'" value="' . $preset . '"/></label>';
                             ?>
                         </td>
                     </tr>
@@ -1387,10 +1427,10 @@
                             ?>
                         </td>
                     </tr>
-                    <tr valign="top" class="child_option dynamic_opts <?php echo $ads = get_option('site_theme_rand_sw') ? 'dynamic_optshow' : false; ?>">
-                        <th scope="row">— 色块数组</th>
+                    <tr valign="top" class="child_option">
+                        <th scope="row">主题色块 <sup>Blocks</sup></th>
                         <td>
-                            <p class="description" id="site_theme_array_label">自定义一组颜色值（同时应用于设置页面与首页色块），使用逗号“,”间隔（留空默认使用预设值用于背景及首页色块</p>
+                            <p class="description" id="site_theme_array_label">自定义一组色值，使用逗号“,”间隔，支持颜色选择器自动取色（后台即时生效，此项同时应用于设置页面及首页卡片色块，预设默认值 + 主题色</p>
                             <?php
                                 $opt = 'site_theme_array';
                                 $value = get_option($opt);
@@ -1398,6 +1438,14 @@
                                 if(!$value) update_option($opt, $preset);else $preset=$value;
                             ?>
                             <input type="text" name="site_theme_array" id="site_theme_array" class="regular-text" placeholder="主题色数组" value="<?php echo $preset; ?>"/>
+                            <ul class="theme_blocks">
+                                <?php
+                                    foreach ($theme_array as $arr) {
+                                        $arr = trim($arr);
+                                        echo '<input class="block_colors" type="color" style="color:'.$arr.'" value="'.$arr.'" data-last="'.$arr.'" />';
+                                    }
+                                ?>
+                            </ul>
                         </td>
                     </tr>
                     <tr valign="top" class="dynamic_box logo">
@@ -1513,15 +1561,16 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">站点关键词</th>
-                        <td>
-                            <input type="text" name="site_keywords" id="site_keywords" class="regular-text" value="<?php echo esc_attr(get_option('site_keywords')); ?>" placeholder="站点关键词">
-                        </td>
-                    </tr>
-                    <tr valign="top">
                         <th scope="row">站点描述</th>
                         <td>
                             <textarea name="site_description" id="site_description" placeholder="站点描述"><?php echo esc_attr(get_option('site_description')); ?></textarea>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">站点关键词</th>
+                        <td>
+                            <textarea name="site_keywords" id="site_keywords" placeholder="站点关键词"><?php echo esc_attr(get_option('site_keywords')); ?></textarea>
+                            <!--<input type="text" name="site_keywords" id="site_keywords" class="large-text" value="<?php echo esc_attr(get_option('site_keywords')); ?>" placeholder="站点关键词">-->
                         </td>
                     </tr>
                 </table>
@@ -1562,7 +1611,7 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">Progress Bar</th>
+                        <th scope="row">Progresser</th>
                         <td>
                             <?php
                                 $opt = 'site_progress_bar_switcher';
@@ -1573,7 +1622,7 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">Google Adsense</th>
+                        <th scope="row">Adsense</th>
                         <td>
                             <?php
                                 $opt = 'site_ads_switcher';
@@ -1682,7 +1731,7 @@
                                             array('name'=>'浅色', 'value'=>'light'),
                                             array('name'=>'深色', 'value'=>'dark'),
                                         );
-                                        echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_fixed_label">开启后可全站（包括后台）保持指定主题显示模式（注：此项将忽略系统自动切换，并同时禁用手动切换主题功能</p><select name="'.$opt.'" id="'.$opt.'"><option value="">未指定</option>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_fixed_label">开启后可全站（包括后台）保持指定主题显示模式（注：此项将忽略系统自动切换，并同时禁用手动切换主题功能</p><select name="'.$opt.'" id="'.$opt.'"><option value=""> 默认 </option>';
                                             foreach ($arrobj as $arr){
                                                 $val = $arr['value'];
                                                 echo '<option value="'.$val.'"';if(get_option($opt)==$val)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
@@ -2516,6 +2565,16 @@
                     <?php
                         // }
                     ?>
+                    <tr valign="top" class="">
+                        <th scope="row">评论邮件提醒</th>
+                        <td>
+                            <?php
+                                $opt = 'site_wpmail_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_wpmail_switcher_label">WP自带评论审核提醒邮件（博主，此选项为定制模板邮件（两者均需上方 SMTP 配置测试通过后才能收到邮件提醒，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>邮件提醒</b></label>';
+                            ?>
+                        </td>
+                    </tr>
                     <tr valign="top">
                         <th scope="row">SMTP 发件服务配置</th>
                         <td>
@@ -2526,7 +2585,7 @@
                                 $status = $value ? "checked" : "check";
                                 echo '<label for="'.$opt.'"><p class="description" id="site_smtp_switcher_label">SMTP 发件服务配置（配置smtp时默认使用常规设置内的管理员邮箱（状态：'.$status;
                                 // if($state) echo '<u style="color:forestgreen">发件测试已通过</u>';else echo '<u style="color:orangered">配置未通过测试</u>';
-                                echo '，如已通过但未收到邮件请检查授权码及服务器是否全部配置正确</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>SMTP 配置</b></label>';
+                                echo '，如已通过但未收到邮件请检查授权码及服务器是否全部配置正确</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>邮件配置</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2587,16 +2646,6 @@
                     <?php
                         // }
                     ?>
-                    <tr valign="top" class="">
-                        <th scope="row">评论邮件提醒</th>
-                        <td>
-                            <?php
-                                $opt = 'site_wpmail_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_wpmail_switcher_label">WP自带评论审核提醒邮件（博主，此选项为定制模板邮件（两者均需上方 SMTP 配置测试通过后才能收到邮件提醒，状态：'.$status.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$status.'/><b>邮件提醒</b></label>';
-                            ?>
-                        </td>
-                    </tr>
                     <tr valign="top" class="">
                         <th scope="row">禁用 XML-RPC 服务（防爆破）</th>
                         <td>
@@ -2676,7 +2725,7 @@
                             <?php
                                 $opt = 'site_single_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">非展示型分类文章默认使用相应单页模板（开启指定分类下的文章将<u> 默认不显示文章链接 </u>（只可在归档中查阅</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">展示型文章</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">非展示型分类文章默认使用相应单页模板（开启指定分类下的文章将<u> 默认不显示文章链接 </u>（只可在归档中查阅</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">展示分类</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -3173,6 +3222,255 @@
                                 }
                             ?>
                     <tr valign="top">
+                        <th scope="row"> AI 文章摘要 <sup>AI</sup> </th>
+                        <td>
+                            <?php
+                                $opt = 'site_chatgpt_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 AI 摘要，内建本地文件缓存机制，仅首次请求返回付费（目前支持 3 个模型 api（chatgpt / kimi / deepseek）请根据不同 model 选择合适的 max token</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:purple" class="btn">文章摘要</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt = get_option('site_chatgpt_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— API Key <sup title="兼容选项">OPENAI</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_apikey';
+                                        $value = get_option($opt);
+                                        echo '<p class="description" id="">API Kyes 账号密钥（兼容密钥</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="API Key" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— API Proxy <sup title="兼容选项">OPENAI</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_proxy';
+                                        $value = get_option($opt);
+                                        $preset = 'https://api.openai.com';  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="">API 反代链接（默认 https://api.openai.com，可选兼容接口 https://api.moonshot.cn、https://api.deepseek.com</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Proxy URL" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— API Lists <sup title="兼容选项">OPENAI</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_apis';
+                                        $value = get_option($opt);
+                                        $models = ['/v1/chat/completions', '/v1/completions', '/chat/completions'];
+                                        if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
+                                        echo '<label for="'.$opt.'"><p class="description" id="">API 接口列表，/v1/completions 接口会调用 prompt（默认 /v1/chat/completions</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                            foreach ($models as $mod) {
+                                                echo '<option value="'.$mod.'"';
+                                                if($value==$mod) echo('selected="selected"');
+                                                echo '>'.$mod.'</option>';
+                                            }
+                                        echo '</select></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— API Model <sup title="兼容选项">OPENAI</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_model';
+                                        $value = get_option($opt);
+                                        $models = ['gpt-3.5-turbo','text-davinci-003','Curie', 'moonshot-v1-8k','moonshot-v1-32k','moonshot-v1-128k','deepseek-chat','deepseek-coder'];
+                                        if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
+                                        echo '<label for="'.$opt.'"><p class="description" id="">可选 AI 对话模型，默认使用 gpt-3.5-turbo，<a href="https://openai.com/pricing" target="_blank">价格参考</a>，可选 Moonshot 系列模型，<a href="https://platform.moonshot.cn/docs/pricing/chat" target="_blank">价格参考</a>，可选 Deepseek 系列模型，<a href="https://api-docs.deepseek.com/zh-cn/quick_start/pricing" target="_blank">价格参考</a></p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                            foreach ($models as $mod){
+                                                echo '<option value="'.$mod.'"';
+                                                if($value==$mod) echo('selected="selected"');
+                                                echo '>'.$mod.'</option>';
+                                            }
+                                        echo '</select></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— Max Token</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_tokens';
+                                        $value = get_option($opt);
+                                        $preset = 4096;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">限制消耗 token 总数，openAI 限制中文请求字符 token*2：请求 prompt 最大限制 4096，默认实际可用 3700+ prompt_token，余下 392 字符为 completion_token 响应预设占位，估算可返回150中文字符左右。（默认4096，预留（减少）196</p><input type="number" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— Temperature</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_temper';
+                                        $value = get_option($opt);
+                                        $preset = 0.8;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">返回内容随机程度（最小0.0，默认0.8</p><input type="number" min="0.0" max="" step="0.1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 合并分割请求</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_merge_sw';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景（更新：DeepSeek API 不限制用户并发量），开启自动计算文章字符请求所需 token 若大于模型限制 token （<u>gpt-3.5 默认 4096，限制输入 3700+</u>）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（内容 token 小于规定内仅请求一次</p><p>chat 模型下免费账号<a href="https://platform.openai.com/account/rate-limits" target="_blank">每分钟限制请求（RPM）为3次</a>（若请求返回 context_length_exceeded 错误代码时可尝试开启下方<b> “始终合并请求” </b>选项，<u><i>为节省 token 此项默认关闭</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 始终合并请求</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_merge_ingore';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于合并分割请求失败（二次请求 token 大于 4096）时，忽略后续返回错误并追加生成文章尾段摘要，再合并<b>首次+末尾</b>摘要生成<b>综合摘要</b></p><p>开启此项同样会消耗至少3次请求（不与分割请求叠加，可能丢失部分文章中段内容，<u><i>但可始终保持文章首尾逻辑</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Always Summarize</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 已缓存数据（更新）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_caches';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">本地已缓存文章摘要数据，勾选后<ins> 提交保存 </ins>以显示记录（倒序，默认最近10条）<b>。点击文章ID可删除对应记录（不可逆）</b>，<ins>悬浮文章ID</ins> 可查看文章标题及摘要</p><p>删除文章摘要记录后，<u><i>重新访问文章以更新摘要</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Cached Posts</b></label>';
+                                        if (get_option($opt)) {
+                                            // global $cached_post;
+                                            if (!$cached_post) {
+                                                include(get_template_directory() . '/plugin/'.get_option('site_chatgpt_dir').'/gpt_data.php');
+                                            }
+                                            $res_cls_obj = json_decode(json_encode(array_reverse($cached_post)));
+                                            $echo_count = 0;
+                                            $echo_limit = 10;
+                                            echo '<ul class="cached_post_list">';
+                                            foreach ($res_cls_obj as $cached_pid => $cached_post){
+                                                $echo_count++;
+                                                $text_res = api_get_resultText($cached_post);
+                                                if(!$text_res){
+                                                    $text_res = $cached_pid.' => NULL';
+                                                }
+                                                $cached_post_content = preg_replace('/.*\n/','', $text_res);
+                                                $cached_post_pid = preg_replace('/[^0-9]/', '', $cached_pid);
+                                                $cached_post_title = get_the_title($cached_post_pid);
+                                                echo '<li data-id="'.$cached_post_pid.'" data-content="'.str_replace('"',"'",$cached_post_content).'" title="'.$cached_post_title.'"></li>';
+                                                if($echo_count>=$echo_limit) break;
+                                            }
+                                            echo '</ul>';
+                                    ?>
+                                            <script>const cached_posts=document.querySelector('.cached_post_list');cached_posts.onclick=(e)=>{e=e||window.event;let t=e.target||e.srcElement;if(!t)return;while(t!=cached_posts){if(t.nodeName.toUpperCase()==='LI'){const cached_pid=t.dataset.id,cached_title=t.title;if(confirm('确认删除（更新）：'+cached_title+' 摘要内容？')){return new Promise(function(resolve,reject){var ajax=new XMLHttpRequest();ajax.open('get',"<?php echo get_stylesheet_directory_uri().'/plugin/'.get_option('site_chatgpt_dir').'/gpt.php?pid='; ?>"+cached_pid+"&del=1");ajax.onreadystatechange=function(){if(this.readyState!=4)return;if(this.status==200){resolve();t.remove();if(this.responseText==404) alert('此记录先前已被清除（可能刷新过快，尝试重新刷新）');}else{reject(this.status)}};ajax.withCredentials=true;ajax.send()}).catch(function(err){console.log(err)})}else{console.log(cached_pid+' canceled.')}break}else{t=t.parentNode}}}</script>
+                                    <?php
+                                        }
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 开启页面（多选）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_includes';
+                                        $value = get_option($opt);
+                                        if(!$value){
+                                            $preset_str = $templates_info['weblog']->term_id.',';
+                                            update_option($opt, $preset_str );
+                                            $value = $preset_str;
+                                        }
+                                        echo '<p class="description" id="site_bottom_nav_label">指定开启 chatGPT AI 摘要文章页面（使用逗号“ , ”分隔，可选多个分类</p><div class="checkbox">';
+                                        output_article_opts($opt, $value);
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" readonly value="' . $value . '" placeholder="请选择"/></div>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 同步文章 RSS 摘要</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_feed_sw';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">使用文章AI摘要填充 rss 页面 feed 内容（启用此项可减少页面缓存数据调用</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AI RSS</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 同步文章 SEO 描述</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_desc_sw';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">使用文章AI摘要填充 文章页面 description 描述（引入本地缓存文件过大可能影响性能</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AI SEO</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 打字机效果</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_type_sw';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">使用打字机效果填充摘要文本，可能的 CLS 影响</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Words Typer</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 混淆打字文本</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_type_shuffle';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">一次性加载混淆文本，避免频繁更新页面造成 CLS 性能影响</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Shuffle Words</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— auth Directory</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_dir';
+                                        $value = get_option($opt);
+                                        $preset = 'authentication';  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="">GPT 文件目录（留空默认 authentication</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="normal-text" placeholder="chatGPT auth directory" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <tr valign="top">
+                        <th scope="row"> 划线标记 <sup>Beta</sup> </th>
+                        <td>
+                            <?php
+                                $opt = 'site_marker_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">开启后<del>默认通用</del>文章模板页面<del>（可禁用文章模板）</del>使用划线标记功能（该功能目前仅限评论用户使用，用户信息自动与 <u>通用控制->评论系统</u> 同步获取</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:forestgreen" class="btn">划线标记</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $marker_sw = get_option('site_marker_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 最大标记数量</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_marker_max';
+                                        $value = get_option($opt);
+                                        $preset = 3;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">Marker 最大标记数量（最大展示10个，默认开启 3 个</p><input type="number" max="10" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <tr valign="top">
+                        <th scope="row"> 流式传输 API <sup>SSE</sup> </th>
+                        <td>
+                            <?php
+                                $opt = 'site_stream_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_switcher_label">后端 api 数据流式传输至前端（EventStream 接收输出，支持marker、gpt..</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">EventStream</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
                         <th scope="row"> 足迹地图 </th>
                         <td>
                             <?php
@@ -3365,235 +3663,6 @@ const maps = {
                                     ?>
                                 </td>
                             </tr>
-                    <tr valign="top">
-                        <th scope="row"> AI 文章摘要 <sup>AI</sup> </th>
-                        <td>
-                            <?php
-                                $opt = 'site_chatgpt_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 AI 摘要，内建本地文件缓存机制，仅首次请求返回付费（目前支持 3 个模型 api（chatgpt / kimi / deepseek）请根据不同 model 选择合适的 max token</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:purple" class="btn">文章摘要</span></label>';
-                            ?>
-                        </td>
-                    </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt = get_option('site_chatgpt_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— API Key <sup title="兼容选项">OPENAI</sup></th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_apikey';
-                                        $value = get_option($opt);
-                                        echo '<p class="description" id="">API Kyes 账号密钥（兼容密钥</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="API Key" value="' . $value . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— API Proxy <sup title="兼容选项">OPENAI</sup></th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_proxy';
-                                        $value = get_option($opt);
-                                        $preset = 'https://api.openai.com';  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="">API 反代链接（默认 https://api.openai.com，可选兼容接口 https://api.moonshot.cn、https://api.deepseek.com</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Proxy URL" value="' . $value . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— API Lists <sup title="兼容选项">OPENAI</sup></th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_apis';
-                                        $value = get_option($opt);
-                                        $models = ['/v1/chat/completions', '/v1/completions', '/chat/completions'];
-                                        if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
-                                        echo '<label for="'.$opt.'"><p class="description" id="">API 接口列表，/v1/completions 接口会调用 prompt（默认 /v1/chat/completions</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
-                                            foreach ($models as $mod) {
-                                                echo '<option value="'.$mod.'"';
-                                                if($value==$mod) echo('selected="selected"');
-                                                echo '>'.$mod.'</option>';
-                                            }
-                                        echo '</select></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— API Model <sup title="兼容选项">OPENAI</sup></th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_model';
-                                        $value = get_option($opt);
-                                        $models = ['gpt-3.5-turbo','text-davinci-003','Curie', 'moonshot-v1-8k','moonshot-v1-32k','moonshot-v1-128k','deepseek-chat','deepseek-coder'];
-                                        if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
-                                        echo '<label for="'.$opt.'"><p class="description" id="">可选 AI 对话模型，默认使用 gpt-3.5-turbo，<a href="https://openai.com/pricing" target="_blank">价格参考</a>，可选 Moonshot 系列模型，<a href="https://platform.moonshot.cn/docs/pricing/chat" target="_blank">价格参考</a>，可选 Deepseek 系列模型，<a href="https://api-docs.deepseek.com/zh-cn/quick_start/pricing" target="_blank">价格参考</a></p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
-                                            foreach ($models as $mod){
-                                                echo '<option value="'.$mod.'"';
-                                                if($value==$mod) echo('selected="selected"');
-                                                echo '>'.$mod.'</option>';
-                                            }
-                                        echo '</select></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— Max Token</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_tokens';
-                                        $value = get_option($opt);
-                                        $preset = 4096;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">限制消耗 token 总数，openAI 限制中文请求字符 token*2：请求 prompt 最大限制 4096，默认实际可用 3700+ prompt_token，余下 392 字符为 completion_token 响应预设占位，估算可返回150中文字符左右。（默认4096，预留（减少）196</p><input type="number" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— Temperature</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_temper';
-                                        $value = get_option($opt);
-                                        $preset = 0.8;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">返回内容随机程度（最小0.0，默认0.8</p><input type="number" min="0.0" max="" step="0.1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— 合并分割请求</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_merge_sw';
-                                        $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于长篇文章场景（更新：DeepSeek API 不限制用户并发量），开启自动计算文章字符请求所需 token 若大于模型限制 token （<u>gpt-3.5 默认 4096，限制输入 3700+</u>）则取消全文请求并自动将文章分割为上下文两段分别请求摘要，请求完成后合并上下文摘要内容再请求全文综合摘要。开启此项后若遇到长文，至少会消耗 3 次请求（内容 token 小于规定内仅请求一次</p><p>chat 模型下免费账号<a href="https://platform.openai.com/account/rate-limits" target="_blank">每分钟限制请求（RPM）为3次</a>（若请求返回 context_length_exceeded 错误代码时可尝试开启下方<b> “始终合并请求” </b>选项，<u><i>为节省 token 此项默认关闭</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Summarize summaries</b></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— 始终合并请求</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_merge_ingore';
-                                        $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">此项主要用于合并分割请求失败（二次请求 token 大于 4096）时，忽略后续返回错误并追加生成文章尾段摘要，再合并<b>首次+末尾</b>摘要生成<b>综合摘要</b></p><p>开启此项同样会消耗至少3次请求（不与分割请求叠加，可能丢失部分文章中段内容，<u><i>但可始终保持文章首尾逻辑</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Always Summarize</b></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— 已缓存数据（更新）</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_caches';
-                                        $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">本地已缓存文章摘要数据，勾选后<ins> 提交保存 </ins>以显示记录（倒序，默认最近10条）<b>。点击文章ID可删除对应记录（不可逆）</b>，<ins>悬浮文章ID</ins> 可查看文章标题及摘要</p><p>删除文章摘要记录后，<u><i>重新访问文章以更新摘要</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Cached Posts</b></label>';
-                                        if (get_option($opt)) {
-                                            // global $cached_post;
-                                            if (!$cached_post) {
-                                                include(get_template_directory() . '/plugin/'.get_option('site_chatgpt_dir').'/gpt_data.php');
-                                            }
-                                            $res_cls_obj = json_decode(json_encode(array_reverse($cached_post)));
-                                            $echo_count = 0;
-                                            $echo_limit = 10;
-                                            echo '<ul class="cached_post_list">';
-                                            foreach ($res_cls_obj as $cached_pid => $cached_post){
-                                                $echo_count++;
-                                                $text_res = api_get_resultText($cached_post);
-                                                if(!$text_res){
-                                                    $text_res = $cached_pid.' => NULL';
-                                                }
-                                                $cached_post_content = preg_replace('/.*\n/','', $text_res);
-                                                $cached_post_pid = preg_replace('/[^0-9]/', '', $cached_pid);
-                                                $cached_post_title = get_the_title($cached_post_pid);
-                                                echo '<li data-id="'.$cached_post_pid.'" data-content="'.str_replace('"',"'",$cached_post_content).'" title="'.$cached_post_title.'"></li>';
-                                                if($echo_count>=$echo_limit) break;
-                                            }
-                                            echo '</ul>';
-                                    ?>
-                                            <script>const cached_posts=document.querySelector('.cached_post_list');cached_posts.onclick=(e)=>{e=e||window.event;let t=e.target||e.srcElement;if(!t)return;while(t!=cached_posts){if(t.nodeName.toUpperCase()==='LI'){const cached_pid=t.dataset.id,cached_title=t.title;if(confirm('确认删除（更新）：'+cached_title+' 摘要内容？')){return new Promise(function(resolve,reject){var ajax=new XMLHttpRequest();ajax.open('get',"<?php echo get_stylesheet_directory_uri().'/plugin/'.get_option('site_chatgpt_dir').'/gpt.php?pid='; ?>"+cached_pid+"&del=1");ajax.onreadystatechange=function(){if(this.readyState!=4)return;if(this.status==200){resolve();t.remove();if(this.responseText==404) alert('此记录先前已被清除（可能刷新过快，尝试重新刷新）');}else{reject(this.status)}};ajax.withCredentials=true;ajax.send()}).catch(function(err){console.log(err)})}else{console.log(cached_pid+' canceled.')}break}else{t=t.parentNode}}}</script>
-                                    <?php
-                                        }
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— 开启页面（多选）</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_includes';
-                                        $value = get_option($opt);
-                                        if(!$value){
-                                            $preset_str = $templates_info['weblog']->term_id.',';
-                                            update_option($opt, $preset_str );
-                                            $value = $preset_str;
-                                        }
-                                        echo '<p class="description" id="site_bottom_nav_label">指定开启 chatGPT AI 摘要文章页面（使用逗号“ , ”分隔，可选多个分类</p><div class="checkbox">';
-                                        output_article_opts($opt, $value);
-                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" readonly value="' . $value . '" placeholder="请选择"/></div>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— 同步文章 RSS 摘要</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_feed_sw';
-                                        $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">使用文章AI摘要填充 rss 页面 feed 内容（启用此项可减少页面缓存数据调用</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AI RSS</b></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— 同步文章 SEO 描述</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_desc_sw';
-                                        $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">使用文章AI摘要填充 文章页面 description 描述（引入本地缓存文件过大可能影响性能</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AI SEO</b></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— auth Directory</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_dir';
-                                        $value = get_option($opt);
-                                        $preset = 'authentication';  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="">GPT 文件目录（留空默认 authentication</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="normal-text" placeholder="chatGPT auth directory" value="' . $value . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                    <tr valign="top">
-                        <th scope="row"> 划线标记 <sup>Beta</sup> </th>
-                        <td>
-                            <?php
-                                $opt = 'site_marker_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">开启后<del>默认通用</del>文章模板页面<del>（可禁用文章模板）</del>使用划线标记功能（该功能目前仅限评论用户使用，用户信息自动与 <u>通用控制->评论系统</u> 同步获取</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:forestgreen" class="btn">划线标记</span></label>';
-                            ?>
-                        </td>
-                    </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $marker_sw = get_option('site_marker_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— 最大标记数量</th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_marker_max';
-                                        $value = get_option($opt);
-                                        $preset = 3;  //默认填充数据
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">Marker 最大标记数量（最大展示10个，默认开启 3 个</p><input type="number" max="10" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                    <tr valign="top">
-                        <th scope="row"> 流式传输 API <sup>SSE</sup> </th>
-                        <td>
-                            <?php
-                                $opt = 'site_stream_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_switcher_label">后端 api 数据流式传输至前端（EventStream 接收输出，支持marker、gpt..</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">EventStream</b></label>';
-                            ?>
-                        </td>
-                    </tr>
                     <tr valign="top">
                         <th scope="row">动画 - 滚动加载</th>
                         <td>
@@ -4029,7 +4098,7 @@ const maps = {
                             <?php
                                 $opt = 'site_beian_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_beian_switcher_label">网站备案信息（国外服务器请无视此选项</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">网站备案号</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_beian_switcher_label">网站备案信息（国外服务器请无视此选项</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">备案号</b></label>';
                             ?>
                         </td>
                     </tr>

@@ -440,6 +440,8 @@
                                     console.debug(memoLoaded);
                                     return;
                                 }
+                                // memos_more.dataset.counts = 999;
+                                // query all memos_records for counts
                                 send_ajax_request("GET", memos_url, '', function(res){
                                     const memos_res = JSON.parse(res);
                                     memos_more.dataset.counts = memos_res.length;

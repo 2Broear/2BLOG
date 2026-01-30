@@ -9,7 +9,7 @@
     <?php
         $fixed_theme = get_option('site_darkmode_fixed');
         if ($fixed_theme) {
-            echo 'console.log(`theme_mode[static] fixed-color-scheme: ' . $fixed_theme . '..`);';
+            echo 'console.log(`theme_mode[fixed] hold-color-scheme: ' . $fixed_theme . '..`);';
         } else {
     ?>
             if ( + getCookie('theme_manual')) { // use + force string to number
@@ -274,9 +274,10 @@
                 const Statics = {
                     tag: 'A',
                     show: 'show',
-                    move: 'move',
-                    duration: 250
+                    hide: 'hide',
+                    duration: 150
                 };
+                let lastRect = null;  // lastest dom rect info
                 let Transfer = (dom, x = 0, y = 0, width = 0, height = 0, callback = null)=> {
                     if (!Basics.detects.validDom(dom)) return;  // invalid dom
                     dom.style.cssText = `transform: translate(${x}px, ${y}px); transition-duration: ${Statics.duration}ms`;
@@ -287,49 +288,39 @@
                     callback?.();
                 };
                 let Engager = (e, target = null, callback = null)=> {
-                    if (Basics.detects.validDom(target)) {
-                        const targetRect = target.getBoundingClientRect();
-                        Transfer(navSlider, targetRect.left, targetRect.top, targetRect.width, targetRect.height, callback);
-                        return;
-                    };
-                    const node = e.target;
+                    const node = e ? e.target : target;
                     if (node.nodeName !== Statics.tag) return;  // invalid dom or target tag
-                    Engager(null, node, engaged); //, engage
-                    // navSlider.classList.add(Statics.move);
-                    // Engager(null, node, ()=> {
-                    //     navSlider.classList.remove(Statics.move);
-                    //     const nodeRect = node.getBoundingClientRect();
-                    //     const nodeHeight = nodeRect.height;
-                    //     engage();
-                    //     Transfer(navSlider, nodeRect.left, nodeRect.top, nodeRect.width, nodeHeight, engaged);
-                    // });
+                    navSlider.classList.remove(Statics.hide);  // enable transform transition
+                    const targetRect = node.getBoundingClientRect();
+                    lastRect = targetRect;  // update last dom rect
+                    const callbacks = callback || engaged;
+                    Transfer(navSlider, targetRect.left, targetRect.top, targetRect.width, targetRect.height, callbacks);
+                    if (Basics.detects.validDom(target)) disengage();  // disable transform transition after Transfer-tansform
+                    // Engager(null, node, engaged);
                 };
                 let engage = ()=> {
                     navSlider.classList.add(Statics.show);
                 };
                 let disengage = ()=> {
+                    navSlider.classList.add(Statics.hide);  // disable transform transition
+                    navSlider.style.transform = `translate(${lastRect.x + 1}px, ${lastRect.y + 1}px)`;  // set lastest x,y coords + offsets(+1)
                     navSlider.classList.remove(Statics.show);
-                    // navSlider.style.width = navSlider.style.height = '';  // (remove any-attr to re-active engaged-transitionend events)
                 };
                 let engaged = ()=> {
                     if (EventBus.has(navSlider, 'transitionend')) return;
                     // Bind transition event from callback to prevent init default position(engage call())
                     EventBus.bind(navSlider, 'transitionend', (e)=> {
-                        if (e.propertyName === 'transform') engage();  // (??set as any-transitionend to re-active events)
+                        if (e.propertyName === 'transform') {
+                            engage();  // (??set as any-transitionend to re-active events)
+                        }
                     });
                 };
-                // init event listener
-                // EventBus.bind(navSlider, 'transitionstart', (e)=> {
-                //     navSlider.classList.add(Statics.move);
-                // });
-                // EventBus.bind(navSlider, 'transitionend', (e)=> {
-                //     navSlider.classList.remove(Statics.move);
-                // });
-                EventBus.bind(navContainer, 'pointerover', Engager);
-                // !! pointer-leave event delay must bigger than transition-duration(Statics.duration)
-                EventBus.bind(navContainer, 'pointerleave', Closure.throttler(disengage, Statics.duration + 100));
                 // init default position
                 Engager(null, navContainer?.querySelector(Statics.tag));
+                // init event listener
+                EventBus.bind(navContainer, 'pointerover', Engager);
+                // !! pointer-leave event delay must bigger than transition-duration(Statics.duration)
+                EventBus.bind(navContainer, 'pointerleave', disengage); //Closure.throttler(disengage, Statics.duration + 100)
             }
         <?php
             }

@@ -100,7 +100,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
             padding: 20px 15px;
             letter-spacing: 0;
             text-decoration: none;
-            font-size: 2rem;
+            font-size: 2.35rem;
         }
         .rcmd-boxes .inbox-clip.subcat h2{
             padding: 15px 10px;
@@ -260,7 +260,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                                             $dataCls = ' blink';
                                             $cat_num = '0';
                                         }
-                                        $output .= '<div class="'.$cat_slug.$dataCls.'" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2 style="--data-count:'.$cat_count.'"><sup>+</sup></h2><p>'.$the_cat->name.'/'.strtoupper($cat_slug).'</p></a></div>'; //'.$cat_num.'
+                                        $output .= '<div class="'.$cat_slug.$dataCls.'" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2 style="--data-count:'.$cat_count.'"><sup>+</sup></h2><p>'.$the_cat->name.' / <small>'.strtoupper($cat_slug).'</small></p></a></div>'; //'.$cat_num.'
                                     }
                                     if($output_sw) update_option('site_acg_stats_cache', wp_kses_post($output));
                                 }

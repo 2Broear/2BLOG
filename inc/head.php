@@ -41,13 +41,6 @@
         html, body {
             font: normal 16px/normal system-ui,"Microsoft YaHei","微软雅黑","Microsoft JhengHei","Hiragino Sans GB","WenQuanYi Micro Hei",Arial,Helvetica,Lucida Grande,Tahoma,sans-serif;
         }
-        body.dark .vquote .vheader #avatar {
-            color: var(--preset-4a)!important;
-        }
-        body.dark .vquote .vwrap .vheader .vinput:focus,
-        body.dark .vquote .vedit {
-            background: var(--preset-4a)!important;
-        }
         body.dark .weblog-tree-core-r, 
         body.dark .news-ppt div:first-of-type, 
         body.dark .pageSwitcher a {
@@ -63,6 +56,13 @@
         body.dark .friends-boxes .deals .inbox .inbox-inside.aside a#loadRSSFeeds {
             background: var(--preset-2bs);
         }
+        /*body.dark .vquote .vheader #avatar {*/
+        /*    color: var(--preset-4a)!important;*/
+        /*}*/
+        /*body.dark .vquote .vwrap .vheader .vinput:focus,*/
+        /*body.dark .vquote .vedit {*/
+        /*    background: var(--preset-4a)!important;*/
+        /*}*/
         .footer-contact a .preview img {
             width: auto;
             height: auto;
@@ -205,7 +205,7 @@
                         callback(t,e);
                         break;
                     }
-                    if(t.id===ids || t.classList && t.classList.contains(ids) || t.nodeName.toUpperCase()===ids.toUpperCase()){
+                    if(t.id && t.id===ids || t.classList && t.classList.contains(ids) || t.nodeName.toUpperCase()===ids.toUpperCase()){
                         // callback?.();
                         if(callback&&typeof callback==='function') callback(t,e); //callback(t) || callback(t); // callback.apply(this, ...arguments);
                         break;

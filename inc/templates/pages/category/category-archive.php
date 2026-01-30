@@ -80,6 +80,10 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
             /*animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);*/
             /*-webkit-animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);*/
         }
+        .win-top .counter h1 sup {
+            opacity: .5;
+            position: absolute;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -115,7 +119,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                             $blink = get_option('site_animated_counting_switcher') ? ' blink' : false;
                             foreach ($archive_yearly as $archive){
                                 $counts = $archive['count'];
-                                $output .= '<div class="'.$blink.'" data-count="'.$counts.'"><a href="'.$archive['link'].'" rel="nofollow"><b>'.$archive['title'].'</b><h1 data-count="'.$counts.'" style="--data-count:'.$counts.'"></h1><p>篇发布记录</p></a></div>'; //'.$counts.'
+                                $output .= '<div class="'.$blink.'" data-count="'.$counts.'"><a href="'.$archive['link'].'" rel="nofollow"><b>'.$archive['title'].'</b><h1 data-count="'.$counts.'" style="--data-count:'.$counts.'"></h1><p>发布记录</p></a></div>'; //'.$counts.'<sup>+</sup>
                             }
                             if($output_sw) update_option('site_archive_count_cache', wp_kses_post($output));
                             // unset($archive_yearly);
@@ -132,7 +136,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                     $curYear = gmdate('Y', time() + 3600*8);
                     // 输出文章归档热度（每日自动更新）
                     function the_archive_contributions() {
-                        global $caches_sw, $caches_inc, $archive_slug;
+                        global $caches_sw, $caches_inc, $archive_slug, $curYear;
                         $output = '';
                         $output_sw = false;
                         if($caches_sw) {
@@ -143,10 +147,10 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                         $GLOBALS['color_middle'] = '#40c463';
                         $GLOBALS['color_heavy'] = '#30a14e';
                         $GLOBALS['color_more'] = '#216e39';
-                        echo '<h5><strong> Yearly Contribution  </strong><ul class="cs_tips"><li></li><li style="color:'.$GLOBALS['color_light'].'"></li><li style="color:'.$GLOBALS['color_middle'].'"></li><li style="color:'.$GLOBALS['color_heavy'].'"></li><li style="color:'.$GLOBALS['color_more'].'"></li></ul></h5>';
+                        echo '<h5><strong title="Yearly ' . $curYear . '"> Contribution </strong><ul class="cs_tips"><li></li><li style="color:'.$GLOBALS['color_light'].'"></li><li style="color:'.$GLOBALS['color_middle'].'"></li><li style="color:'.$GLOBALS['color_heavy'].'"></li><li style="color:'.$GLOBALS['color_more'].'"></li></ul></h5>';
                         if(!$output || !$output_sw){  // no-cache or cache-disabled
                             $GLOBALS['archive_daily'] = get_post_archives('daily','post',9999); //$archive_daily
-                            global $curYear; //$curYear = gmdate('Y', time() + 3600*8);
+                            // global $curYear; //$curYear = gmdate('Y', time() + 3600*8);
                             $curday = gmdate('md', time() + 3600*8); //date('md'); //$today = date('d');
                             $tomon = date('m');
                             $lastYear = $curYear-1;
