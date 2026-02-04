@@ -334,10 +334,14 @@ jQuery(document).ready(function($){
                     theme_root.style.setProperty("--panel-theme", t.value); //this.value
                     break;
                 case t.classList == 'block_colors':
-                    t.style.color = t.value;
+                    const theme_blocks = document.querySelector('form');
                     const updateList = t.parentNode.parentNode.querySelector('#site_theme_array');
                     const lastValue = t.dataset.last;
+                    t.style.color = t.value;
+                    // update list value
                     updateList.value = updateList.value.replace(lastValue, t.value);
+                    // update css var(dynamic theme_blocks updates)
+                    theme_blocks.style.cssText = theme_blocks.style.cssText.replace(lastValue, t.value);
                     // select updated(not lastValue) context
                     const presetIndex = updateList.value.indexOf(t.value); //lastValue
                     updateList.focus();

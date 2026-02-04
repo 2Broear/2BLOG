@@ -41,7 +41,7 @@
 /*.rcmd-boxes .inbox-clip h2 sup,*/
 .rcmd-boxes .inbox-clip h2:before{
     content: attr(id);
-    color: var(--preset-9);
+    /*color: var(--preset-9);*/
     font-size: 15rem;
     font-weight: bold;
     letter-spacing: 15px;

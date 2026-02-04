@@ -874,7 +874,7 @@
                 case 'full':
                     $avatar_statu = $status_standby ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$loadimg.'" alt="'.$link_name.'" draggable="false">';
                     $rel_statu = $rel ? $rel : 'friends';
-                    $output .= '<div class="inbox flexboxes '.$status_class.' '.$sex.'"><div class="inbox-inside flexboxes"><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impression.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'" data-status="' . $status_code . '"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div>' . $rss_feeds;
+                    $output .= '<div class="inbox flexboxes '.$status_class.' '.$sex.'"><div class="inbox-inside flexboxes"><a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'" data-status="' . $status_code . '"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impression.'</div>' . $rss_feeds;
                     $output .= '</div>';
                     break;
                 case 'half':
@@ -1406,7 +1406,7 @@
                 $ch = curl_init($api_url);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // 返回响应，而不是直接输出
                 curl_setopt($ch, CURLOPT_HEADER, false); // 不需要返回响应头
-                curl_setopt($ch, CURLOPT_TIMEOUT, 180);  // 3分钟请求限制
+                curl_setopt($ch, CURLOPT_TIMEOUT, 300);  // 5m请求限制
                 $res = curl_exec($ch);
                 if (curl_errno($ch)) {
                     // 触发 curl 重试（一次）

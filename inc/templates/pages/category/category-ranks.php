@@ -130,8 +130,8 @@ function the_comment_ranks($t1='常客',$c1='近期访问较频繁的童鞋',$t2
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/ranking.css?v=<?php echo get_theme_info(); ?>" />
+    <?php get_head(); ?>
     <style>
         .ranking ul li span#range {
             max-height: 150px;
@@ -153,6 +153,10 @@ function the_comment_ranks($t1='常客',$c1='近期访问较频繁的童鞋',$t2
         }
         .ranking #ranked {
             margin-bottom: 5%;
+        }
+        .ranking #ranked,
+        .ranks .ranking p {
+            color: inherit;
         }
     </style>
 </head>

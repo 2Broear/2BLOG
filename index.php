@@ -75,11 +75,12 @@
         .Fresh-ImgBoxs span a {
             font-family: cursive,monospace,serif,fangsong;
             font-size: 4.5em;
-            padding: 10% 0;
-            transition: .75s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            padding: 5% 0;
+            transition: .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
         .Fresh-ImgBoxs span a b {
             filter: url(#x);
+            transition: .35s ease;
         }
         .Fresh-ImgBoxs span i{
             font-size: 7rem;
@@ -199,9 +200,6 @@
             /*position: relative;*/
             margin: 0 auto;
         }
-        .recommendation #recommend-inside {
-            color: var(--preset-6);
-        }
         .recommendation #recommend-inside .recommend-newsImg {
             border-radius: inherit;
             /*overflow: inherit;*/
@@ -212,20 +210,23 @@
             border-width: 2px;
             border-top: none;
         }
+        /*.recommendation #recommend-inside {*/
+        /*    color: var(--preset-6);*/
+        /*}*/
         .acg_window-content-inside_left-list li a {
-            color: var(--preset-6);
+            /*color: var(--preset-6);*/
+            border-color: transparent!important;
+            margin: auto;
+            padding: 5px 15px 15px;
         }
         .acg_window-content-inside_left-list li a sup {
             opacity: .75;
-        }
-        .resource-windows div ul li:hover {
-            /*background-color: transparent;*/
         }
         .resource-windows div ul li {
             border-radius: var(--radius);
         }
         .resource-windows div ul li a {
-            color: var(--preset-6);
+            color: inherit;
         }
     </style>
 </head>

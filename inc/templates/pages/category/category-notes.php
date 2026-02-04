@@ -7,9 +7,17 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <?php get_head(); ?>
 	<link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/notes.css?v=<?php echo get_theme_info(); ?>" />
+    <?php get_head(); ?>
 	<style> 
+	    .content-all-windows {
+            overflow-y: inherit;
+            padding: 0 15px;
+        }
+        .win-nav {
+            width: 30.5%;
+            margin-right: 15px;
+        }
 	    .win-top h5 {
 	        font-weight: 800;
 	        filter: url(#x);
@@ -17,6 +25,9 @@
 	    article .info span.valine-comment-count:before {
 	        margin-right: 3px;
 	        opacity: .75;
+	    }
+	    .win-content article h1 {
+	        font-size: 1.2rem;
 	    }
     </style>
 </head>

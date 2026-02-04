@@ -56,6 +56,13 @@
             /*font-style: italic;*/
             /*letter-spacing: 3px;*/
         }
+        body.dark .about_blocks li.intro_right .mbit:before {
+            opacity: .2;
+        }
+        .about_blocks li.intro_right .mbit:before {
+            opacity: .1;
+            /*font-size: 2.85rem;*/
+        }
         iframe.netease_embed {
             /*margin: 0 auto;*/
             display: block;
@@ -88,6 +95,7 @@
         }
         .about_blocks li.intro_right .mbit .mbit_intro a {
             box-shadow: 0px 0 0px 5px rgb(51 164 116 / 10%);
+            /*box-shadow: none;*/
         }
         .In-core-head .head-inside::before {z-index: -1}
         .In-core-head .head-inside {
@@ -161,7 +169,7 @@
                                 </div>
                             </li>
                             <li class="intro_right">
-                                <div class="mbit" data-mbit="<?php $mbit_array_result = explode('/', get_option('site_mbit_result_array'));echo strtoupper($mbit_array_result[1]); ?>">
+                                <div class="mbit" data-mbit="<?php $mbit_array_result = explode('/', get_option('site_mbit_result_array'));echo $mbit_array_result[1];//strtoupper(); ?>">
                                     <div class="mbit_intro">
                                         <p> MBTI 16 Personalities<!--<sup> (Oct 21, 2022) </sup>--> </p>
                                         <a href="https://www.16personalities.com/<?php $mbit_abbr=$mbit_array_result[0];echo strpos($mbit_abbr,'-')!==false ? substr($mbit_abbr,0,4) : $mbit_abbr; ?>" style="color:#33a474;" target="_blank" title="more about <?php echo $res_type=strtoupper($mbit_abbr); ?>"><b><?php echo $res_type; ?></b></a>

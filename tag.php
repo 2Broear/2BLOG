@@ -41,7 +41,8 @@
     <?php get_footer(); ?>
 </footer>
 </div>
+<?php get_foot(); ?>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/main.js"></script>
+<!--<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/main.js"></script>-->
 <!-- inHtmlJs -->
 </body></html>

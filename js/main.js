@@ -394,7 +394,7 @@
     
     function darkmode() {
         setCookie('theme_manual', 1);  // set cookie to manual (disable auto detect)
-        getCookie('theme_mode')!="dark" ? setCookie('theme_mode','dark','/',1) : setCookie('theme_mode','light','/',1);
+        getCookie('theme_mode') == "dark" ? setCookie('theme_mode','light','/',1) : setCookie('theme_mode','dark','/',1);  // 1 day expires
         const theme_mode = getCookie('theme_mode');
         document.body.className = theme_mode;  //change apperance after cookie updated
         console.warn(`theme_mode[manual] switch-color-scheme: ${theme_mode}`);

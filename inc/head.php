@@ -41,8 +41,9 @@
         html, body {
             font: normal 16px/normal system-ui,"Microsoft YaHei","微软雅黑","Microsoft JhengHei","Hiragino Sans GB","WenQuanYi Micro Hei",Arial,Helvetica,Lucida Grande,Tahoma,sans-serif;
         }
+        /*body.dark .news-ppt div:first-of-type, */
+        body.dark .news-content-right-recommend,
         body.dark .weblog-tree-core-r, 
-        body.dark .news-ppt div:first-of-type, 
         body.dark .pageSwitcher a {
             background: var(--preset-3b);
         }
@@ -89,20 +90,20 @@
             animation-timing-function: linear(0 0%, 0 1.8%, 0.01 3.6%, 0.03 6.35%, 0.07 9.1%, 0.13 11.4%, 0.19 13.4%, 0.27 15%, 0.34 16.1%, 0.54 18.35%, 0.66 20.6%, 0.72 22.4%, 0.77 24.6%, 0.81 27.3%, 0.85 30.4%, 0.88 35.1%, 0.92 40.6%, 0.94 47.2%, 0.96 55%, 0.98 64%, 0.99 74.4%, 1 86.4%, 1 100%)!important;
         }
         /*body { background-size: 10px 10px; }*/
-        @media (prefers-color-scheme: dark) {
+        /*@media (prefers-color-scheme: dark) {*/
             /** theme_mode[auto]: dark  ***/
             /*body,*/
-            .content-all,
-            .win-top:after {
-                background-image: radial-gradient(var(--preset-3a) 1px, var(--preset-2b) 1px);
-            }
+        /*    .content-all,*/
+        /*    .win-top:after {*/
+        /*        background-image: radial-gradient(var(--preset-3a) 1px, var(--preset-2b) 1px);*/
+        /*    }*/
             /** theme_mode[manual]: light  ***/
             /*body.light,*/
-            body.light .content-all,
-            body.light .win-top:after {
-                background-image: radial-gradient(var(--preset-e) 1px, var(--preset-fa) 1px);
-            }
-        }
+        /*    body.light .content-all,*/
+        /*    body.light .win-top:after {*/
+        /*        background-image: radial-gradient(var(--preset-e) 1px, var(--preset-fa) 1px);*/
+        /*    }*/
+        /*}*/
     </style>
 <?php
     }

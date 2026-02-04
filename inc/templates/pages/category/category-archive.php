@@ -119,7 +119,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                             $blink = get_option('site_animated_counting_switcher') ? ' blink' : false;
                             foreach ($archive_yearly as $archive){
                                 $counts = $archive['count'];
-                                $output .= '<div class="'.$blink.'" data-count="'.$counts.'"><a href="'.$archive['link'].'" rel="nofollow"><b>'.$archive['title'].'</b><h1 data-count="'.$counts.'" style="--data-count:'.$counts.'"></h1><p>发布记录</p></a></div>'; //'.$counts.'<sup>+</sup>
+                                $output .= '<div class="'.$blink.'" data-count="'.$counts.'"><a href="'.$archive['link'].'" rel="nofollow"><b>'.$archive['title'].'</b><h1 data-count="'.$counts.'" style="--data-count:'.$counts.'"></h1><p>篇发布记录</p></a></div>'; //'.$counts.'<sup>+</sup>
                             }
                             if($output_sw) update_option('site_archive_count_cache', wp_kses_post($output));
                             // unset($archive_yearly);
@@ -147,7 +147,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                         $GLOBALS['color_middle'] = '#40c463';
                         $GLOBALS['color_heavy'] = '#30a14e';
                         $GLOBALS['color_more'] = '#216e39';
-                        echo '<h5><strong title="Yearly ' . $curYear . '"> Contribution </strong><ul class="cs_tips"><li></li><li style="color:'.$GLOBALS['color_light'].'"></li><li style="color:'.$GLOBALS['color_middle'].'"></li><li style="color:'.$GLOBALS['color_heavy'].'"></li><li style="color:'.$GLOBALS['color_more'].'"></li></ul></h5>';
+                        echo '<h5><strong title="Yearly ' . $curYear . '"> Contributions </strong><ul class="cs_tips"><li></li><li style="color:'.$GLOBALS['color_light'].'"></li><li style="color:'.$GLOBALS['color_middle'].'"></li><li style="color:'.$GLOBALS['color_heavy'].'"></li><li style="color:'.$GLOBALS['color_more'].'"></li></ul></h5>';
                         if(!$output || !$output_sw){  // no-cache or cache-disabled
                             $GLOBALS['archive_daily'] = get_post_archives('daily','post',9999); //$archive_daily
                             // global $curYear; //$curYear = gmdate('Y', time() + 3600*8);
@@ -273,7 +273,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                         $note_count = get_yearly_cat_count($cur_year, $note_temp_id);
                         $blog_count = get_yearly_cat_count($cur_year, $blog_temp_id);
                         $rest_count = $pids_count - ($news_count + $note_count + $blog_count);
-                        $output_stats = '<span class="stat_'.$cur_year.' stats">📈📉统计：<b><a href="'.esc_url(home_url('/?s&cid='.$news_temp_id.'&year='.$cur_year)).'" target="_blank">'.$news_temp_name.'</a></b> '.$news_count.'篇、 <b><a href="'.esc_url(home_url('/?s&cid='.$note_temp_id.'&year='.$cur_year)).'" target="_blank">'.$note_temp_name.'</a></b> '.$note_count.'篇、 <b><a href="'.esc_url(home_url('/?s&cid='.$blog_temp_id.'&year='.$cur_year)).'" target="_blank">'.$blog_temp_name.'</a></b> '.$blog_count.'篇、 <b>其他类型</b> '.$rest_count.'篇。</span>';
+                        $output_stats = '<div class="data-info"><span class="stat_'.$cur_year.' stats">📈📉统计：<b><a href="'.esc_url(home_url('/?s&cid='.$news_temp_id.'&year='.$cur_year)).'" target="_blank">'.$news_temp_name.'</a></b> '.$news_count.'篇、 <b><a href="'.esc_url(home_url('/?s&cid='.$note_temp_id.'&year='.$cur_year)).'" target="_blank">'.$note_temp_name.'</a></b> '.$note_count.'篇、 <b><a href="'.esc_url(home_url('/?s&cid='.$blog_temp_id.'&year='.$cur_year)).'" target="_blank">'.$blog_temp_name.'</a></b> '.$blog_count.'篇、 <b>其他类型</b> '.$rest_count.'篇。</span></div>';
                     }
                     // SAME COMPARE AS $found $limit
                     $load_btns = $posts_count>=$async_loads ? '<sup class="call lively-click-115" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="'.wp_create_nonce($cur_year."_posts_ajax_nonce").'">加载更多</sup>' : '<sup class="call disabled" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="disabled">已全部载入</sup>';
@@ -325,7 +325,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                                 $output_data = json_decode($output_data); //, true
                                 if (!$output_data) {
                                     // 注意EO缓存！Refresh updates
-                                    echo '<div class="fade-item"><div class="data-info lively-click-099"><h2>' . $output_year . ' 年度发布 🔁</h2><span class="stat_'.$output_year.' stats">📈📉统计：<b>Updated data for ' . $output_year . ' (<a href="javascript:void(0);" onclick="window.location.reload()">Refresh updates..</a>)</b></span></div>';
+                                    echo '<div class="fade-item"><div class="data-info"><h2>' . $output_year . ' 年度发布 🔁</h2><span class="stat_'.$output_year.' stats">📈📉统计：<b>Updated data for ' . $output_year . ' (<a href="javascript:void(0);" onclick="window.location.reload()">Refresh updates..</a>)</b></span></div>';
                                     update_archive_year($output_year, $output_sw);
                                     echo '</div>';
                                     continue;

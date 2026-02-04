@@ -356,7 +356,9 @@
                 /*transition: transform .35s cubic-bezier(0.68, -0.55, 0.27, 1.55)!important;*/
             }
             .wrap.dark {
-                background-image: radial-gradient(rgb(23 34 46) 1px, rgb(10, 20, 28) 1px);
+                /*background-image: radial-gradient(rgb(23 34 46) 1px, rgb(10, 20, 28) 1px);*/
+                background-color: rgb(10, 20, 28);
+                background-image: radial-gradient(rgb(23 34 46) 1px, transparent 1px), radial-gradient(rgb(23 34 46) 1px, transparent 1px);
             }
             .wrap.dark h1 b {
                 color: transparent;
@@ -390,6 +392,9 @@
                 background: rgb(14 22 30);
                 border-color: rgb(28 41 52);
             }
+            .wrap.dark .switchTab li.active:before {
+                box-shadow: -5px -5px 20px 15px currentColor;
+            }
             /*
             ** prefers-color-scheme
             ** fix Flicker on page refresh
@@ -403,8 +408,12 @@
                 padding-bottom: 0;
             }
             .wrap {
-                background-image: radial-gradient(#eee 1px, #fafafa 1px);
-                background-size: 10px 10px;
+                /*background-image: radial-gradient(#eee 1px, #fafafa 1px);*/
+                /*background-size: 10px 10px;*/
+                background-color: #fafafa;
+                background-image: radial-gradient(#eee 1px, transparent 1px), radial-gradient(#eee 1px, transparent 1px);
+                background-size: 12px 12px;
+                background-position: 0 0, 6px 6px;
                 padding-bottom: 5%;
                 margin: auto;
                 /* fix of background-flicker on darkmode */
@@ -437,7 +446,7 @@
                 transition: transform .35s ease;
                 /*transition: inherit;*/
             }
-            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{transform:translateY(20px);/*width:max-content;top: 55px;width: 360px;transition-duration: .55s;padding: 5px;*/}.switchTab{overflow:hidden;border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, #fff 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;box-shadow: -5px -5px 20px 15px currentColor;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0!important}
+            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{transform:translateY(20px);/*width:max-content;top: 55px;width: 360px;transition-duration: .55s;padding: 5px;*/}.switchTab{overflow:hidden;border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, #fff 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0!important}
         </style>
         <!--<h1 style="text-align: center;font-size: 4rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> RSS <b>Feeds</b></h1>-->
         <h1 style="text-align: center;font-size: 3.6rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b><span style="color:var(--panel-theme);text-shadow:20px -20px 100px currentColor;"> RSS </span>Feeds</b></h1><!--<p style="letter-spacing:normal;margin-bottom:auto;">导航分类为友情链接分类</p>-->
@@ -989,7 +998,7 @@
         p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;padding:5px 0;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;overscroll-behavior:contain;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fff 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fff 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 8px;border-radius: 25px;border-top-left-radius:0;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 25%, currentColor 255%);}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 20px var(--panel-theme);padding: 3px 6px!important;background:transparent;border-color:transparent;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;}p.description{font-size:small;}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > th{padding: 15px 0 15px 35px;color: var(--panel-theme)!important;}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr:hover > td{background:inherit;padding: 15px 25px 15px 0;}.form-table tr:hover{border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(90deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(0deg, #f5f7f9 0, #fff);background:white;}.form-table tr{}.form-table tr:hover{box-shadow:0 0 20px rgb(0 0 0 / 5%);}.form-table tr{padding: 0 15px;border:2px solid transparent;/*border-bottom:1px solid #e9e9e9;*/border-left:3px solid transparent;border-radius: 18px;position: relative;z-index: 1;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;transition: padding .35s ease;border-radius:inherit;border-top-left-radius: 0;border-bottom-left-radius: 0;}/*.form-table tr:last-child{border-bottom:none}*/.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.35);}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:rgb(10, 20, 28);/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{/*background:var(--panel-theme);border-color:transparent;*/}.upload_button{margin-left:10px!important;background:black;border-radius:50px;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;font-size: smaller;font-weight:bold;text-align: center;color: var(--panel-theme);background: rgb(0 0 0 / 5%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;backdrop-filter:blur(10px);}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius: 10px;position: relative;overflow: hidden;}label.upload.upload_preview_list{margin-right: 0}
-            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{overflow:hidden;border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;box-shadow: -5px -5px 20px 15px currentColor;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}
+            .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{overflow:hidden;border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}
             .smtp{margin-left:10px;vertical-align:middle;}
             #loading.responsed{-webkit-animation-duration:.35s!important;animation-duration:.35s!important;}
             #loading.responsing{-webkit-animation:rotateloop .5s infinite linear;animation:rotateloop .5s infinite linear}
@@ -1057,7 +1066,9 @@
                 font-size: smaller;
             }
             .wrap.dark {
-                background-image: radial-gradient(rgb(23 34 46) 1px, rgb(10, 20, 28) 1px);
+                /*background-image: radial-gradient(rgb(23 34 46) 1px, rgb(10, 20, 28) 1px);*/
+                background-color: rgb(10, 20, 28);
+                background-image: radial-gradient(rgb(23 34 46) 1px, transparent 1px), radial-gradient(rgb(23 34 46) 1px, transparent 1px);
             }
             .wrap.dark .switchTab {
                 color: #ccc;
@@ -1133,6 +1144,9 @@
             .wrap.dark img[alt=notbyai] {
                 filter: invert(1);
             }
+            .wrap.dark .switchTab li.active:before {
+                box-shadow: -5px -5px 20px 15px currentColor;
+            }
             /*
             ** prefers-color-scheme
             ** fix of background-flicker on darkmode
@@ -1147,8 +1161,12 @@
                 padding-bottom: 0;
             }
             .wrap {
-                background-image: radial-gradient(#eee 1px, #fafafa 1px);
-                background-size: 10px 10px;
+                /*background-image: radial-gradient(#eee 1px, #fafafa 1px);*/
+                /*background-size: 10px 10px;*/
+                background-color: #fafafa;
+                background-image: radial-gradient(#eee 1px, transparent 1px), radial-gradient(#eee 1px, transparent 1px);
+                background-size: 12px 12px;
+                background-position: 0 0, 6px 6px;
                 padding-bottom: 5%;
                 /* fix of background-flicker on darkmode */
                 min-height: 100vh;
@@ -1394,12 +1412,12 @@
             </ul>
         </div>
         <!--<hr/>-->
-        <form method="post" action="options.php">
+        <form method="post" action="options.php" style="--block-one: <?php $theme_array = get_theme_array(true); echo trim($theme_array[0]); ?>;--block-two: <?php echo trim($theme_array[1]);; ?>;--block-three: <?php echo trim($theme_array[2]);; ?>;--block-four: <?php echo trim($theme_array[3]); ?>;">
             <?php 
                 submit_button('立即提交');
                 settings_fields( 'baw-settings-group' ); // 设置字段 这个函数取代了 nonce magic, action field, and page_options
                 do_settings_sections( 'baw-settings-group' ); // 这个函数取代了表单字段标记形式本身
-                $theme_array = get_theme_array(true); //$theme_blocks; //explode(',', get_option('site_theme_array'));
+                 //$theme_blocks; //explode(',', get_option('site_theme_array'));
             ?>
             <div class="formtable basic">
                 <h1><b class="num" style="color:var(--panel-theme);">01</b>基本信息<p class="en">BASIC INFO</p></h1>
@@ -1553,10 +1571,10 @@
                             <?php
                                 $opt = 'site_bgimg';
                                 $value = get_option($opt);
-                                $preset = $img_cdn.'/images/fox.jpg';  
+                                $preset = 'https://s0.wp.com/mshots/v1/' . get_bloginfo('url') . '?w=&h=&quality=100'; // $img_cdn.'/images/fox.jpg';
                                 // $preset = 'https:'.get_option('site_avatar_mirror','//sdn.geekzu.org/').'/avatar/?d=identicon&s=300';
                                 $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                echo '<p class="description" id="">默认背景图，用于各页面调用背景图（默认随机 gravatar 背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
+                                echo '<p class="description" id="">默认背景图，用于各页面调用（默认站点首页预览</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '" placeholder="'.$preset.'"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
                             ?>
                         </td>
                     </tr>
@@ -1576,7 +1594,7 @@
                 </table>
             </div>
             <div class="formtable common">
-                <h1><b class="num" style="color: <?php echo $theme_array[0]; ?>">02</b>通用控制<p class="en">COMMON CONTROLS</p></h1>
+                <h1><b class="num" style="color: var(--block-one);">02</b>通用控制<p class="en">COMMON CONTROLS</p></h1>
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row">试验性内容<sup class="dualdata">Exp</sup></th>
@@ -2669,7 +2687,7 @@
                 </table>
             </div>
             <div class="formtable index">
-                <h1><b class="num" style="color: <?php echo $theme_array[1]; ?>">03</b>页面配置<p class="en">PAGES CONFS</p></h1>
+                <h1><b class="num" style="color: var(--block-two);">03</b>页面配置<p class="en">PAGES CONFS</p></h1>
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row">站点头部公告<sup class="dualdata" title="“多数据”">BaaS</sup></th>
@@ -3851,7 +3869,7 @@ const maps = {
                 </table>
             </div>
             <div class="formtable sidebar">
-                <h1><b class="num" style="color: <?php echo $theme_array[2]; ?>">04</b>边栏设置<p class="en">SIDEBAR SETTINGS</p></h1>
+                <h1><b class="num" style="color: var(--block-three);">04</b>边栏设置<p class="en">SIDEBAR SETTINGS</p></h1>
                 <table class="form-table sidebar">
                     <tr valign="top">
                         <th scope="row">Pixiv 排行（挂件）</th>
@@ -3986,7 +4004,7 @@ const maps = {
                 </table>
             </div>
             <div class="formtable footer">
-                <h1><b class="num" style="color: <?php echo $theme_array[3]; ?>">05</b>页尾设置<p class="en">FOOTER SETTINGS</p></h1>
+                <h1><b class="num" style="color: var(--block-four);">05</b>页尾设置<p class="en">FOOTER SETTINGS</p></h1>
                 <table class="form-table footer">
                     <tr valign="top">
                         <th scope="row">底部近期文章</th>

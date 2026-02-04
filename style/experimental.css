@@ -1,6 +1,40 @@
 /*
 ** overwrite ui
 */
+.friends-boxes .deals .inbox .inbox-headside img {
+    border-top-left-radius: 50%;
+    border-bottom-right-radius: var(--radius);
+    /*border-top-right-radius: var(--radius);*/
+}
+.friends-boxes .deals .inbox .inbox-headside {
+    z-index: 0;
+}
+.friends-boxes .deals .inbox.girl .inbox-inside::after {
+    right: auto;
+    left: 0;
+    bottom: -10px;
+    transform: rotate(45deg);
+}
+.friends-boxes .deals .inbox:hover > .inbox-inside .inbox-aside span.lowside-title h4 {
+    max-width: none;
+}
+.friends-boxes .deals.exchanged .inbox .inbox-aside span.lowside-title h4 {
+    max-width: 7em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.friends-boxes .deals.tech .inbox .inbox-inside a.inbox-aside {
+    margin: 5px auto 15px!important;
+}
+.friends-boxes .deals.tech .inbox .inbox-headside img {
+    border-radius: 50%;
+}
+/*.friends-boxes .deals.exchanged .inbox .inbox-aside {*/
+/*    margin-right: 15px;*/
+/*}*/
+.news-article-container h3 {
+    font-size: 1.15rem;
+}
 .Fresh-ImgBoxs span a:hover > b {
     opacity: 0;
 }
@@ -34,7 +68,7 @@
     top: -50px;
 }
 nav .nav-wrap .nav-slider.show {
-    opacity: .1;
+    opacity: .05;
     transition-property: all;
 }
 nav .nav-wrap .nav-slider.hide {
@@ -78,33 +112,71 @@ nav .nav-wrap .nav-slider {
 /*
 ** experimental style futures
 */
+.about_blocks li.intro_right .mbit .mbit_intro a {
+    /*padding: 5px 12px!important;*/
+    margin: -10px -10px 10px!important;
+}
+.footer-detector {
+    opacity: .88;
+}
 .footer-detector::before {
     opacity: .35;
 }
+.friends-boxes .inbox-clip h2:before,
+.friends-boxes .inbox-clip h2:after {
+    width: 5px;
+}
+.friends-boxes .inbox-clip h2:before {
+    box-shadow: -78px 0 var(--preset-okay), 78px 0 var(--preset-caution);
+}
+.friends-boxes .inbox-clip h2:after {
+    box-shadow: -88px 0 var(--preset-caution), 88px 0 var(--preset-okay);
+}
 /*.footer-ul,*/
 /*.footer-right a,*/
-.footer-detector,
-.archive-tree,
-header>nav#tipson .top-bar-tips,
+/*.friends-boxes .inbox-clip,*/
+/*header form .m-search,*/
+/*.archive-tree ul li a,*/
+/*.friends-boxes .deals.rcmd .inbox .inbox-inside,*/
+/*.topic h2,*/
+/*.topic-inside i,*/
 .inside_of_block nav.main-nav ul li a,
+.ranks .ranking,
+.box_down ul li .details,
+.friends-boxes .deals .inbox .inbox-aside,
+.win-content article h1 a,
+.resource-windows div,
+.friends-boxes .inbox-clip,
+.weblog-tree-box .tree-box-title h3,
+.archive-tree ul,
+.footer-detector,
+header>nav#tipson .top-bar-tips,
 .weBlog-Description .weBlog-Description-inside {
     color: var(--preset-5a);
 }
-/*.inside_of_block nav.main-nav ul li a {*/
-/*    opacity: .88;*/
+/*.news-content-right-download ol,*/
+/*.news-content-right-download ol li a,*/
+.about_blocks li.intro_right .mbit .mbit_intro,
+.recommendation #recommend-inside,
+.acg_window-content-inside_left-list li a,
+.resource-windows div ul,
+.friends-boxes .deals .inbox a,
+.friends-boxes .deals .inboxSliderCard .slideBox a,
+.about_blocks li.intro_right .mbit:before,
+.rcmd-boxes .inbox-clip h2,
+.rcmd-boxes .inbox-clip h2:before,
+.news-inside-content h2 a {
+    color: var(--preset-6a);
+}
+/*body.dark .friends-boxes .deals .inboxSliderCard .slideBox a {*/
+/*    color: var(--preset-link);*/
 /*}*/
-/*.additional.metabox li a {*/
-/*    opacity: 1;*/
-/*}*/
-/*.footer-recommend a,*/
-/*.footer-quickway a {*/
-/*    color: var(--preset-4a);*/
-/*}*/
-/*.footer-right a {*/
-/*    opacity: .75;*/
-/*}*/
+.friends-boxes .deals .inbox span.ssl {
+    background: var(--preset-6a);
+}
+.about_blocks li.intro_right .mbit .mbit_intro p,
 .win-top .counter h2 sup {
-    opacity: .75;
+    opacity: .75!important;
     position: absolute;
 }
 body.dark .load button:active,
@@ -174,15 +246,25 @@ body.dark .article_index a,
 .rcmd-boxes .info .inbox {
     background-color: var(--preset-e);
 }
+/*.friends-boxes .deals .inboxSliderCard .slideBox a,*/
+.friends-boxes ul,
+.friends-boxes ol,
 .rcmd-boxes .info .inbox .inbox-aside,
 blockquote.wp-block-quote p,
-.friends-boxes .deals .inboxSliderCard .slideBox a,
 #footer-copyright li {
     color: var(--preset-6);
 }
-body.dark .friends-boxes .deals .inboxSliderCard .slideBox a,
+/*body.dark .friends-boxes .deals .inboxSliderCard .slideBox a,*/
+body.dark .acg_window-content-inside_left-list li a,
+body.dark .friends-boxes ul,
+body.dark .friends-boxes ol,
 body.dark #footer-copyright li {
     color: var(--preset-9);
+}
+body.dark .archive-tree ul,
+body.dark .friends-boxes .deals .inbox .inbox-aside,
+body.dark .win-content article h1 a {
+    color: var(--preset-c);
 }
 /**
 **
@@ -204,13 +286,16 @@ html, body {
 .content-all {
     background-image: radial-gradient(var(--preset-e) 1px, var(--preset-fa) 1px);
     background-size: 10px 10px;
-    /** Performance Issue **/
     /*background-attachment: fixed;*/
+ /*   background-image: radial-gradient(var(--preset-e) 1px, transparent 1px), radial-gradient(var(--preset-e) 1px, transparent 1px);*/
+	/*background-size: 12px 12px;*/
+	/*background-position: 0 0, 6px 6px;*/
 }
 /*body.dark footer .container,*/
 body.dark .win-top:after,
 body.dark .content-all {
     background-image: radial-gradient(var(--preset-3a) 1px, var(--preset-2b) 1px);
+    /*background-image: radial-gradient(var(--preset-3a) 1px, transparent 1px), radial-gradient(var(--preset-3a) 1px, transparent 1px);*/
 }
 /**
 ** index
@@ -286,18 +371,20 @@ body.dark .resource-windows div ul li a:focus {
     color: var(--theme-color)!important;
     background: var(--preset-fa);
 }
+body.dark .rcmd-boxes .info .inbox .inbox-more a,
 /*.v .vlist .vcard.true,*/
 /*.v .vlist .vcard:hover,*/
 body.dark .wp-block-table table {
-    background: var(--preset-2b);
+    background: var(--preset-2b)!important;
 }
 .wp-block-table table,
 .pageSwitcher a {
     background: var(--preset-f);
     background-color: var(--preset-f);
 }
+/*.news-ppt div:first-of-type,*/
+.news-content-right-recommend,
 .news-content-right-download,
-.news-ppt div:first-of-type,
 .main-root ul li:nth-child(even),
 .weblog-tree-core-r {
     background: var(--preset-f);
@@ -305,8 +392,8 @@ body.dark .wp-block-table table {
     box-shadow: rgb(0 0 0 / 5%) 0 0 20px;
     transition-property: transform!important;
 }
-.win-content article p,
 .news-content-right-download ol,
+.win-content article p,
 .v .vlist .vcard .vh .vat,
 #comment_txt p,
 .news-inside-content .news-core_area p {
@@ -317,8 +404,9 @@ body.dark .wp-block-table table {
 }
 /*body.dark .v .vlist .vcard.true,*/
 /*body.dark .v .vlist .vcard:hover,*/
+/*body.dark .news-ppt div:first-of-type,*/
+body.dark .news-content-right-recommend,
 body.dark .weblog-tree-core-r,
-body.dark .news-ppt div:first-of-type,
 body.dark .pageSwitcher a {
     background: var(--preset-3b);
     border-color: var(--preset-3a);
@@ -366,8 +454,8 @@ body.dark .v .vlist .vcard .vquote .vcard:hover {
 .v .vlist .vcard {
     border: 1px solid transparent;
 }
-.v .vlist .vcard .vcontent.expand,
-.v .vlist .vcard .vcontent img#draw {
+/*.v .vlist .vcard .vcontent img#draw,*/
+.v .vlist .vcard .vcontent.expand {
     border-radius: var(--radius);
 }
 .v .vlist .vcard .vcontent p {
@@ -377,8 +465,18 @@ body.dark .rcmd-boxes .info .inbox .inbox-aside,
 body.dark .v .vlist .vcard .vcontent p {
     color: var(--preset-c);
 }
+body.dark .v canvas,
 body.dark .v .vlist .vcard .vcontent img#draw {
-    background: var(--preset-4a);
+    /*background: var(--preset-4a);*/
+    background-image: repeating-conic-gradient(var(--preset-3a) 0% 25%, transparent 0% 50%);
+}
+.v canvas,
+.v .vlist .vcard .vcontent img#draw {
+    /*background: var(--preset-s);*/
+	/*background-position: 0 0, 32px 32px;*/
+    background-size: 22px 22px;
+    background-color: transparent;
+    background-image: repeating-conic-gradient(var(--preset-e) 0% 25%, transparent 0% 50%);
 }
 /**
 ** archive
@@ -499,14 +597,13 @@ footer a {
 /*.content-all a:active,*/
 /*.friends-boxes .inbox-clip:active,*/
 /*.v .vwrap .vedit .vctrl span:active,*/
+.article_index .in_dex a:active,
 .inside_of_block nav.main-nav ul li a:active,
 .mobile-vision span:active,
 .slider-menu-inside i:active,
 .slider-menu_body ul li a:active,
 .inside_of_block .logo-area:active,
 .Fresh-ImgBoxs span:active,
-.resource-windows div:active,
-.weBlog-Description .weBlog-Description-inside-content:active,
 .win-top .counter a:active,
 .news-article-head-tools span:active,
 .load button:active,
@@ -533,6 +630,7 @@ header>nav#tipson .top-bar-tips a:active,
 .additional ol:active,
 .news-window:active,
 #acg_window-bottom:active,
+.resource-windows div:active,
 /*.news-slidebar-window>#translatez > div:active,*/
 .news-content-right-download:active,
 .win-nav .nav-header:active,
@@ -544,6 +642,7 @@ a.markable .tools .toolInside:active,
 footer a:active,
 figure a:active,
 /*.v .vlist .vquote .vcard:active,*/
+.weBlog-Description .weBlog-Description-inside-content:active,
 .lively-click-098:active {
     transform: scale(0.98);
 }
@@ -562,7 +661,6 @@ details summary:active,
 .acg_window-content-inside_left-list li a:active,
 .news-content-right-download ol li a:active,
 .friends-boxes .deals .inbox:active,
-.article_index .in_dex a:active,
 .rcmd-boxes .info .inbox:active,
 .footer-detector:active,
 .v .vlist .vcard .vhead .vnick:active,

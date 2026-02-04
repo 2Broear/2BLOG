@@ -183,7 +183,7 @@ iframe.bilibili_embed{
     transform: rotate(-90deg);
     -webkit-transform: rotate(-90deg);
 }
-.load button:hover{border-color:var(--theme-color);color:var(--theme-color)}
+.load button:hover{color:var(--theme-color);/*border-color:var(--theme-color);*/}
 .load button:active{background-color:var(--theme-color);border-color:var(--theme-color);color:var(--preset-f)!important;}
 .load button{color:var(--preset-9);background:transparent;font-size:14px;line-height:40px;padding:0 35px;border:1px solid var(--preset-9);border-radius:25px;cursor:pointer;user-select:none}
 .load button.none{color:var(--preset-c);background-color:var(--preset-fa);border-style:none;position:relative;padding:0 20px;pointer-events:none}
