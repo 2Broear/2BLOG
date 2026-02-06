@@ -1,13 +1,24 @@
 /*
 ** overwrite ui
 */
+body.dark footer #footer-support-board {
+    background-color: var(--preset-3a);
+}
+body.dark #footer-contact-way {
+    background-color: var(--preset-3b)!important;
+}
+body.dark #footer-copyright {
+    background-color: var(--preset-2a);
+}
 .friends-boxes .deals .inbox .inbox-headside img {
     border-top-left-radius: 50%;
-    border-bottom-right-radius: var(--radius);
-    /*border-top-right-radius: var(--radius);*/
+    /*border-bottom-right-radius: var(--radius);*/
+    border-top-right-radius: var(--radius);
 }
 .friends-boxes .deals .inbox .inbox-headside {
     z-index: 0;
+    /*width: 68%;*/
+    align-items: baseline;
 }
 .friends-boxes .deals .inbox.girl .inbox-inside::after {
     right: auto;
@@ -24,7 +35,7 @@
     text-overflow: ellipsis;
 }
 .friends-boxes .deals.tech .inbox .inbox-inside a.inbox-aside {
-    margin: 5px auto 15px!important;
+    margin: 5px auto 10px!important;
 }
 .friends-boxes .deals.tech .inbox .inbox-headside img {
     border-radius: 50%;
@@ -34,6 +45,14 @@
 /*}*/
 .news-article-container h3 {
     font-size: 1.15rem;
+}
+.resource-windows div {
+    border-top-left-radius: calc(var(--radius) * 2);
+    /*border-bottom-left-radius: calc(var(--radius) * 2.5);*/
+    box-shadow: rgba(0, 0, 0, 0.025) -20px -20px 20px;
+}
+.Fresh-ImgBoxs span {
+    border-top-right-radius: calc(var(--radius) * 2);
 }
 .Fresh-ImgBoxs span a:hover > b {
     opacity: 0;
@@ -60,6 +79,10 @@
 .inside_of_block nav.main-nav ul li.sec_level:hover > .additional {
     padding-top: 30px;
 }
+/*.main-header-all.barSetUp,*/
+.main-header-all.barSetDown {
+    backdrop-filter: blur(1px);
+}
 .main-header-all.barSetUp {
     pointer-events: none;
     /*visibility: hidden;*/
@@ -68,7 +91,7 @@
     top: -50px;
 }
 nav .nav-wrap .nav-slider.show {
-    opacity: .05;
+    opacity: .075;
     transition-property: all;
 }
 nav .nav-wrap .nav-slider.hide {
@@ -113,13 +136,14 @@ nav .nav-wrap .nav-slider {
 ** experimental style futures
 */
 .about_blocks li.intro_right .mbit .mbit_intro a {
-    /*padding: 5px 12px!important;*/
+    padding: 6px 12px!important;
     margin: -10px -10px 10px!important;
 }
-.footer-detector {
-    opacity: .88;
-}
-.footer-detector::before {
+/*.footer-detector {*/
+/*    opacity: .88;*/
+/*}*/
+.footer-detector::before,
+.footer-detector::after {
     opacity: .35;
 }
 .friends-boxes .inbox-clip h2:before,
@@ -138,8 +162,8 @@ nav .nav-wrap .nav-slider {
 /*header form .m-search,*/
 /*.archive-tree ul li a,*/
 /*.friends-boxes .deals.rcmd .inbox .inbox-inside,*/
-/*.topic h2,*/
-/*.topic-inside i,*/
+.topic h2,
+.topic-inside i,
 .inside_of_block nav.main-nav ul li a,
 .ranks .ranking,
 .box_down ul li .details,
@@ -151,26 +175,25 @@ nav .nav-wrap .nav-slider {
 .archive-tree ul,
 .footer-detector,
 header>nav#tipson .top-bar-tips,
+.rcmd-boxes .inbox-clip h2,
 .weBlog-Description .weBlog-Description-inside {
     color: var(--preset-5a);
 }
-/*.news-content-right-download ol,*/
-/*.news-content-right-download ol li a,*/
+/*.recommendation #recommend-inside,*/
+#tech_window-top,
+.tech_window-content li a,
+.news-content-right-download ol li a,
 .about_blocks li.intro_right .mbit .mbit_intro,
-.recommendation #recommend-inside,
 .acg_window-content-inside_left-list li a,
 .resource-windows div ul,
 .friends-boxes .deals .inbox a,
 .friends-boxes .deals .inboxSliderCard .slideBox a,
 .about_blocks li.intro_right .mbit:before,
-.rcmd-boxes .inbox-clip h2,
 .rcmd-boxes .inbox-clip h2:before,
 .news-inside-content h2 a {
     color: var(--preset-6a);
 }
-/*body.dark .friends-boxes .deals .inboxSliderCard .slideBox a {*/
-/*    color: var(--preset-link);*/
-/*}*/
+#icon-technology em,
 .friends-boxes .deals .inbox span.ssl {
     background: var(--preset-6a);
 }
@@ -179,10 +202,10 @@ header>nav#tipson .top-bar-tips,
     opacity: .75!important;
     position: absolute;
 }
+/*.recommendation:hover > #recommend-inside .recommend-newsImg div a#rel,*/
+.resource-windows div ul li a:hover,
 body.dark .load button:active,
 body.dark .v .vlist .vcard .vh .vat:hover,
-.resource-windows div ul li a:hover,
-.recommendation:hover > #recommend-inside .recommend-newsImg div a#rel,
 footer a:hover {
     color: var(--theme-color)!important;
 }
@@ -192,6 +215,9 @@ footer a:hover {
 .slider-menu {
     background-image: radial-gradient(var(--preset-3a) 1px, var(--preset-2b) 1px)!important;
     background-size: 10px 10px!important;
+}
+.inside-functions .box .pagePer {
+    border-width: 3px;
 }
 .inside-functions .box div.dark.disabled {
     opacity: .5;
@@ -217,15 +243,29 @@ footer a:hover {
 header>nav#tipson .top-bar-tips {
     z-index: 9999;
 }
+.win-top.bg .main-header-all {
+    box-shadow: rgb(0 0 0 / 2%) 0px 20px 20px;
+    background: rgba(255,255,255,.88);
+}
+.win-top.bg .main-header-all,
+.main-header-all:hover {
+    mask: none;
+    /*backdrop-filter: none;*/
+}
 .main-header-all {
     z-index: 9998;
     animation-duration: .55s;
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+    background: linear-gradient(180deg, var(--preset-f) 50%, transparent 100%);
+    background: -webkit-linear-gradient(top, var(--preset-f) 50%, transparent 100%);
+    mask: -webkit-linear-gradient(top, var(--preset-f) 80%, transparent 100%);
+    /*backdrop-filter: blur(1px);*/
 }
 .article_index .in_dex,
 header>nav#tipson .top-bar-tips {
     backdrop-filter: saturate(150%) blur(5px);
-    -webkit-backdrop-filter: saturate(150%) blur(5px);
+    -webkit-backdrop-filter: saturate(200%) blur(5px);
     background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);
     background-size: 4px 4px;
     /*background-color: rgba(255,255,255, .55);*/
@@ -254,7 +294,8 @@ blockquote.wp-block-quote p,
 #footer-copyright li {
     color: var(--preset-6);
 }
-/*body.dark .friends-boxes .deals .inboxSliderCard .slideBox a,*/
+body.dark .news-content-right-download ol li a,
+body.dark .friends-boxes .deals .inboxSliderCard .slideBox a,
 body.dark .acg_window-content-inside_left-list li a,
 body.dark .friends-boxes ul,
 body.dark .friends-boxes ol,
@@ -337,10 +378,12 @@ body.dark .recommendation #recommend-inside .recommend-newsContent {
     border-radius: 0;
     letter-spacing: 5px;
     /*font-size: 1rem;*/
-    /*margin: 15px auto;*/
-    /*line-height: 45px;*/
-    /*max-width: 90%;*/
-    /*border-radius: calc(var(--radius) / 1.5);*/
+    line-height: 50px;
+    margin: 8px auto;
+    max-width: 95%;
+    border-radius: var(--radius);
+    backdrop-filter: brightness(1.25) blur(10px);
+    border-color: var(--preset-6);
 }
 .recommendation #recommend-inside:active > .recommend-newsImg div a#rel {
     /*transform: scale(1.15);*/
@@ -360,6 +403,10 @@ body.dark .recommendation #recommend-inside .recommend-newsContent {
 }
 body.dark .resource-windows div ul li a:focus {
     background: var(--preset-3a);
+}
+body.dark .resource-windows div {
+    background: linear-gradient(90deg, var(--preset-3a) 0, var(--mirror-end));
+    background: -webkit-linear-gradient(0deg, var(--preset-3a) 0, var(--mirror-end));
 }
 /**
 ** news && weblog && valine comments
@@ -476,7 +523,7 @@ body.dark .v .vlist .vcard .vcontent img#draw {
 	/*background-position: 0 0, 32px 32px;*/
     background-size: 22px 22px;
     background-color: transparent;
-    background-image: repeating-conic-gradient(var(--preset-e) 0% 25%, transparent 0% 50%);
+    background-image: repeating-conic-gradient(var(--preset-d) 0% 25%, transparent 0% 50%);
 }
 /**
 ** archive
@@ -496,6 +543,7 @@ body.dark .archive-tree ul li a {
 **/
 .friends-boxes .deals .inboxSliderCard {
     color: var(--preset-9);
+    padding-bottom: 10px;
 }
 body.dark .friends-boxes .deals .inboxSliderCard {
     color: var(--preset-6);
@@ -504,6 +552,7 @@ body.dark .friends-boxes .deals .inboxSliderCard {
 ** etc
 **/
 /*.body-basically .Introduce,*/
+#news-article-head h1,
 .main {
     color: var(--preset-4a);
 }

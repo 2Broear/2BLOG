@@ -74,9 +74,13 @@
         }
         .Fresh-ImgBoxs span a {
             font-family: cursive,monospace,serif,fangsong;
-            font-size: 4.5em;
-            padding: 5% 0;
+            font-size: 2rem;
+            line-height: 4rem;
+            padding: 10% 0;
             transition: .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        .Fresh-ImgBoxs span a:hover > i {
+            font-size: 5rem;
         }
         .Fresh-ImgBoxs span a b {
             filter: url(#x);
@@ -103,11 +107,6 @@
             /*filter: invert(1);*/
             /*animation: colorfull ease 3s .5s;*/
         }
-        <?php
-            $baas = get_option('site_leancloud_switcher');
-            $weblog = get_option('site_techside_switcher');
-            if($weblog) echo '.special-display{width:30.5%;/*width:32%*/}';
-        ?>
         body.dark{
             --mirror-end: var(--preset-2b);
         }
@@ -228,6 +227,11 @@
         .resource-windows div ul li a {
             color: inherit;
         }
+        <?php
+            $baas = get_option('site_leancloud_switcher');
+            $techside = get_option('site_techside_switcher');
+            if($techside) echo '.special-display{width:30.5%;/*width:32%*/}';
+        ?>
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -256,22 +260,20 @@
             </div>
             <div class="banner">
                 <div class="banner-inside">
-                    <iframe id="panorama" frameborder="no" style="/*min-height: 250px;*/"></iframe>
-                    <!--<ul>-->
-                        <?php
-                            // $banner_array = explode(',',get_option('site_banner_array',''));
-                            // $banner_array_count = count($banner_array);
-                            // for($i=0;$i<$banner_array_count;$i++){
-                            //     $banner_url = trim($banner_array[$i]);
-                            //     if($banner_url) echo '<li style="background: url() no-repeat center center /cover;">' . do_shortcode('[custom_video src="' . $banner_url . '" poster]') . '</li>'; //'.$banner_url.'
-                            // }
-                        ?>
-                    <!--</ul>-->
-                    <div class="switcher">
-                        <span id="banner-prev" class="banner_prew"></span>
-                        <span id="banner-next" class="banner_next"></span>
-                    </div>
-                    <div class="dots"></div>
+                <?php
+                    $banner_array = get_option('site_banner_array');
+                    if ($banner_array) {
+                        echo '<ul>';
+                        $banner_array = explode(',', get_option('site_banner_array'));
+                        foreach ($banner_array as $banner) {
+                            $banner_url = trim($banner);
+                            if($banner_url) echo '<li style="background: url() no-repeat center center /cover;">' . do_shortcode('[custom_video src="' . $banner_url . '" poster]') . '</li>'; //'.$banner_url.'
+                        }
+                        echo '/<ul><div class="switcher"><span id="banner-prev" class="banner_prew"></span><span id="banner-next" class="banner_next"></span></div><div class="dots"></div>';
+                    } else {
+                        echo '<iframe id="panorama" frameborder="no" style="/*min-height: 250px;*/"></iframe>';
+                    }
+                ?>
                 </div>
             </div>
         </div>
@@ -334,134 +336,123 @@
 </div>
     <div class="main-top-part pixiv flexboxes wow fadeInUp" data-wow-delay="0.2s">
         <div class="Fresh-ImgBoxs flexboxes">
-          <?php
-              $cardnav_array = explode(';', get_option('site_cardnav_array'));
-              $cardnav_array_count = count($cardnav_array);
-              for($i=0;$i<$cardnav_array_count;$i++){
-                  $each_card = explode('/', $cardnav_array[$i]);
-                  if($each_card[0]){
-                      $card_slug = trim($each_card[0]);
-                      $card_nick = trim($each_card[1]);
-                      $card_term = get_category_by_slug($card_slug) ? get_category_by_slug($card_slug) : get_category(1);  // 1 for UNCATEGORIZED
-                      if(!$card_nick) $card_nick=get_category_by_slug($card_slug)->name;  //incase non diy nick
-                      if($card_slug){  //incase end with ";"
-                        echo '<span class="'.$card_slug.'"><a href="'.get_category_link($card_term->term_id).'"> <b>' . $card_nick . '</b><i class="icom icon-'.$card_slug.'"></i></a></span>';
-                      }
-                  }
-              }
-          ?>
+        <?php
+            $cardnav_array = explode(',', get_option('site_cardnav_includes'));
+            foreach ($cardnav_array as $cardnav) {
+                $card_term = get_category_by_slug($cardnav) ? get_category_by_slug($cardnav) : get_category(1);  // 1 for UNCATEGORIZED
+                if($cardnav){  //incase end with ";"
+                    echo '<span class="'.$cardnav.'"><a href="'.get_category_link($card_term->term_id).'"> <b>' . $card_term->name . '</b><i class="icom icon-'.$cardnav.'"></i></a></span>';
+                }
+            }
+        ?>
         </div>
     </div>
     <div class="main-top-part flexboxes wow fadeInUp" data-wow-delay="0.3s">
         <!-- 右 -->
         <div class="resource-windows flexboxes">
             <?php
-                $load_arr = [get_cat_by_template('news'), get_cat_by_template('notes')];
-                if($weblog)  array_push($load_arr, get_cat_by_template('weblog'));
-                $load_arr_count = count($load_arr);
                 $site_per_posts = get_option('site_per_posts');
                 $rand_count = $site_per_posts; //mt_rand($site_per_posts, $site_per_posts+1);
-                for($i=0;$i<$load_arr_count;$i++){
-                    if (empty($load_arr[$i])) continue;
+                $friends = '2bfriends';
+                foreach ($cardnav_array as $cardnav) {
+                    if (!$cardnav || $cardnav == $friends) {
+                        continue;
+                    }
+                    $card_term = get_category_by_slug($cardnav) ? get_category_by_slug($cardnav) : get_category(1);  // 1 for UNCATEGORIZED
             ?>
                     <div id="news-window">
                         <span class='resource-windows-top'>
                             <span class='resource-windows-top_inside'></span>
-                            <h3><?php echo $load_arr[$i]->name; ?></h3>
+                            <h3><?php echo $card_term->name; ?></h3>
                         </span>
                         <ul class="news-list" id="mainNews">
                             <?php 
-                                the_recent_posts($load_arr[$i]->term_id, true, false, $rand_count); //6-$i
+                                the_recent_posts($card_term->term_id, true, false, $rand_count); //6-$i
                             ?>
                         </ul>
                     </div>
             <?php
                 }
+                if (in_array($friends, $cardnav_array)) {
             ?>
-            <div id="news-window">
-                <span class='resource-windows-top'>
-                    <span class='resource-windows-top_inside'></span>
-                    <h3>随机 · 链</h3>
-                </span>
-                <ul class="news-list special_display" id="mainNews">
-                    <?php 
-                        if($baas && strpos(get_option('site_leancloud_category'), 'category-2bfriends.php')!==false){
-                    ?>
-                            <script type="text/javascript"> //addAscending createdAt
-                                new AV.Query("link").addDescending("updatedAt").equalTo('mark','friends').find().then(result=>{
-                                    for (let i=0,resLen=<?php echo $site_per_posts; ?>; i<resLen;i++) {
-                                        document.querySelector(".special_display").innerHTML += `<li><a href="${result[i].attributes.link}" class="inbox-aside" target="_blank" rel="randlink">${result[i].attributes.name}</a></li>`;
-                                    };
-                                })
-                            </script>
-                    <?php
-                        }else{
-                            $ranklink = get_site_bookmarks(get_option('site_list_links_category'), 'rand', 'ASC', $rand_count);
-                            $ranklinks = get_site_links($ranklink, 'list'); //, true
-                            echo empty($ranklink) ? '<li><a href="">' . $ranklinks . '</a></li>' : $ranklinks;
-                        }
-                    ?>
-                </ul>
-            </div>
+                <div id="news-window">
+                    <span class='resource-windows-top'>
+                        <span class='resource-windows-top_inside'></span>
+                        <h3>随机 · 链</h3>
+                    </span>
+                    <ul class="news-list special_display" id="mainNews">
+                        <?php 
+                            if($baas && strpos(get_option('site_leancloud_category'), 'category-2bfriends.php')!==false){
+                        ?>
+                                <script type="text/javascript"> //addAscending createdAt
+                                    new AV.Query("link").addDescending("updatedAt").equalTo('mark','friends').find().then(result=>{
+                                        for (let i=0,resLen=<?php echo $site_per_posts; ?>; i<resLen;i++) {
+                                            document.querySelector(".special_display").innerHTML += `<li><a href="${result[i].attributes.link}" class="inbox-aside" target="_blank" rel="randlink">${result[i].attributes.name}</a></li>`;
+                                        };
+                                    })
+                                </script>
+                        <?php
+                            } else {
+                                $ranklink = get_site_bookmarks(get_option('site_list_links_category'), 'rand', 'ASC', $rand_count);
+                                $ranklinks = get_site_links($ranklink, 'list'); //, true
+                                echo empty($ranklink) ? '<li><a href="">' . $ranklinks . '</a></li>' : $ranklinks;
+                            }
+                        ?>
+                    </ul>
+                </div>
+            <?php
+                }
+            ?>
         </div>
-        <!-- 左 -->
-        <!--<div class="special-display">-->
-        <!--    <ul class="flexboxes">-->
-        <!--        <li id="special-img" style="background: url() center /cover;">-->
-        <!--            <video src="<?php //echo get_option('site_list_bg'); ?>" poster="<?php //echo get_option('site_list_bg'); ?>" preload="" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload"></video>-->
-        <!--        </li>-->
-        <!--    </ul>-->
-        <!--</div>-->
     </div>
     <!--<div class="main-middle-allpart"></div>-->
     <div class="main-bottom-allpart">
         <!-- 左文窗 ，右图-->
         <div class="main-bottom-ta">
         <?php
-            if(!$weblog){
+            if ($techside) {
         ?>
             <div id="tech-acg-inside_tech" class="flexboxes wow fadeInUp" data-wow-delay="0.15s">
                 <span id="tech_window" style="width:100%">
                     <div class="newsBox-supTitle flexboxes" id="tech_window-top">
                         <span class="newsBox-supTitle-iDescription" id="icon-technology">
-                            <em>LOG</em><i class="icom icon-weblog"></i>
+                            <em>TECH</em><i class="icom icon-weblog"></i>
                         </span>
-                        <h2><?php echo $blog_temp = get_cat_by_template('weblog');if (!empty($blog_temp)) echo $blog_temp->name; ?></h2>
+                        <h2> Techside<sup> + </sup> </h2>
                     </div>
                     <ul class="tech_window-content">
-                        <?php 
-                            $query_cid = get_option('site_techside_cid');
-                            if($baas&&strpos(get_option('site_leancloud_category'), 'category-weblog.php')!==false){
-                                // leancloud avos（标准li结构）查询
-                                function avos_posts_query($cid=0, $els=null){
-                                    $slug = get_category($cid)->slug;
-                            ?>
-                                    <script type="text/javascript">
-                                        new AV.Query("<?php echo $slug; ?>").addDescending("createdAt").limit(<?php echo get_option('site_per_posts', get_option('posts_per_page')); ?>).find().then(result=>{
-                                            for (let i=0,resLen=result.length; i<resLen;i++) {
-                                                let res = result[i],
-                                                    title = res.attributes.title,
-                                                    content = res.attributes.content.replace(/</g,"&lt;").replace(/>/g,"&gt;");
-                                                document.querySelector("<?php echo $els ?>").innerHTML += `<li title='${content}'><a href="/<?php echo $slug ?>#${res.id}" target="_self" rel="nofollow">${title}</a></i>`;
-                                            };
-                                        })
-                                    </script>
-                            <?php
-                                }
-                                avos_posts_query($query_cid,".tech_window-content");
-                            }else{
-                                the_recent_posts($query_cid);
-                            }
-                            // $baas&&strpos(get_option('site_leancloud_category'), 'category-weblog.php')!==false ? avos_posts_query($query_cid,".tech_window-content") : the_recent_posts($query_cid);
+                    <?php 
+                        $query_cid = get_option('site_techside_cid');
+                        if ($baas && strpos(get_option('site_leancloud_category'), 'category-weblog.php') !== false) {
+                            // leancloud avos（标准li结构）查询
+                            function avos_posts_query($cid=0, $els=null){
+                                $slug = get_category($cid)->slug;
                         ?>
-                    </ul>
-                    <div class="newsBox-subText-Description" id="tech_window-bottom">
+                                <script type="text/javascript">
+                                    new AV.Query("<?php echo $slug; ?>").addDescending("createdAt").limit(<?php echo get_option('site_per_posts', get_option('posts_per_page')); ?>).find().then(result=>{
+                                        for (let i=0,resLen=result.length; i<resLen;i++) {
+                                            let res = result[i],
+                                                title = res.attributes.title,
+                                                content = res.attributes.content.replace(/</g,"&lt;").replace(/>/g,"&gt;");
+                                            document.querySelector("<?php echo $els ?>").innerHTML += `<li title='${content}'><a href="/<?php echo $slug ?>#${res.id}" target="_self" rel="nofollow">${title}</a></i>`;
+                                        };
+                                    })
+                                </script>
                         <?php
-                            // $query_str = get_template_bind_cat('category-weblog.php')->slug;
-                            $query_slug = !isset(get_category($query_cid)->errors) ? get_category($query_cid)->slug : get_category(1)->slug;
-                            echo '<a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper($query_slug).'</b></a>';
-                        ?>
-                    </div>
+                            }
+                            avos_posts_query($query_cid,".tech_window-content");
+                        } else {
+                            the_recent_posts($query_cid);
+                        }
+                        // $baas&&strpos(get_option('site_leancloud_category'), 'category-weblog.php')!==false ? avos_posts_query($query_cid,".tech_window-content") : the_recent_posts($query_cid);
+                    ?>
+                    </ul>
+                    <!--<div class="newsBox-subText-Description" id="tech_window-bottom">-->
+                    <?php
+                        // $query_slug = !isset(get_category($query_cid)->errors) ? get_category($query_cid)->slug : get_category(1)->slug;
+                        // echo '<a href="'.get_category_link($query_cid).'" rel="nofollow"><b>'.strtoupper($query_slug).'</b></a>';
+                    ?>
+                    <!--</div>-->
                 </span>
             </div>
         <?php
@@ -609,9 +600,9 @@
     <?php get_footer(); ?>
 </footer>
 <?php 
-    if(get_option('site_chat_switcher')) echo '<script src="'.get_option('site_chat').'"></script>';
+    if (get_option('site_chat_switcher')) echo '<script src="'.get_option('site_chat').'"></script>';
     get_foot();
+    if ($banner_array) echo '<script type="text/javascript" src="' . $src_cdn . '/js/banner.js"></script>';
 ?>
-<!--<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/banner.js?v=<?php echo get_theme_info(); ?>"></script>-->
 <!--<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/cursor.js"></script>-->
 </body></html>

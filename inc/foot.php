@@ -147,7 +147,9 @@
     // }
 <?php
     $acgcid = get_cat_by_template('acg','term_id');
+    $linkcid = get_cat_by_template('2bfriends','term_id');
     $acgpage = $acgcid==$cat || cat_is_ancestor_of($acgcid, $cat);
+    $linkpage = $linkcid==$cat || cat_is_ancestor_of($linkcid, $cat);
     if ($acgpage) {
 ?>
         const worker = new Worker('<?php echo custom_cdn_src(0,1); ?>/js/worker.js');
@@ -262,15 +264,18 @@
         import("<?php echo $src_cdn; ?>/js/utils.js").then((mod)=> {
             const { _EventBus, _Closure, _Basics, VisibilityObserver } = mod;
         <?php
-            // nav slider
             if (get_option('site_nav_slider_switcher')) {
         ?>
+            /**
+             *  @site
+             *  nav slider
+             **/
             const Basics = new _Basics();
+            const EventBus = new _EventBus();
+            const Closure = new _Closure();
             const navContainer = document.querySelector('.main-nav');
             if (Basics.detects.validDom(navContainer)) {
                 const navSlider = navContainer?.querySelector('.nav-slider');
-                const EventBus = new _EventBus();
-                const Closure = new _Closure();
                 const Statics = {
                     tag: 'A',
                     show: 'show',
@@ -324,37 +329,40 @@
             }
         <?php
             }
-            // lazyLoad images
+            /**
+             *  @site
+             *  lazyLoad images
+             **/
             if(get_option('site_lazyload_switcher')) {
         ?>
-            const lazyImgs = document.querySelectorAll("body img[data-src]");
-            if (lazyImgs.length) {
-                const loadImgSrc = "<?php global $img_cdn;echo $img_cdn; ?>/images/loading_3_color_tp.png";
-                const setAcgBackground = (t)=> {<?php echo $acgpage ? 'setupBlurColor(t, getParByCls(t, "inbox"));' : 'console.debug("not in acg page.");'; ?>}
-                // visibility observer
-                const visibilityObserver = new VisibilityObserver({
-                    threshold: 0.1, // 10%可见时触发
-                    rootMargin: '10px' // 提前10px检测
-                });
-                // observer images
-                lazyImgs.forEach((img)=> {
-                    visibilityObserver.observe(img, (entry) => {
-                        const image = entry.target;
-                        const datasrc = image.dataset.src;
-                        if (!image.dataset.src) {
-                            console.warn('no data-src found on img', image);
-                            return;
-                        }
-                        if (entry.target.src === datasrc) {
-                            console.debug('image data-src settled.');
-                            return;
-                        }
-                        // entry.target.src = entry.isVisible ? datasrc : loadImgSrc;  // BUG of inVisible loadImgSrc
-                        if (entry.isVisible) entry.target.src = datasrc;
-                        <?php if ($acgpage) echo 'entry.target.onload = ()=> setupBlurColor(entry.target, getParByCls(entry.target, "inbox"));'; ?>
+                const lazyImgs = document.querySelectorAll("body img[data-src]");
+                if (lazyImgs.length) {
+                    const loadImgSrc = "<?php global $img_cdn;echo $img_cdn; ?>/images/loading_3_color_tp.png";
+                    const setAcgBackground = (t)=> {<?php echo $acgpage ? 'setupBlurColor(t, getParByCls(t, "inbox"));' : 'console.debug("not in acg page.");'; ?>}
+                    // visibility observer
+                    const visibilityObserver = new VisibilityObserver({
+                        threshold: 0.1, // 10%可见时触发
+                        rootMargin: '10px' // 提前10px检测
                     });
-                });
-            }
+                    // observer images
+                    lazyImgs.forEach((img)=> {
+                        visibilityObserver.observe(img, (entry) => {
+                            const image = entry.target;
+                            const datasrc = image.dataset.src;
+                            if (!image.dataset.src) {
+                                console.warn('no data-src found on img', image);
+                                return;
+                            }
+                            if (entry.target.src === datasrc) {
+                                console.debug('image data-src settled.');
+                                return;
+                            }
+                            // entry.target.src = entry.isVisible ? datasrc : loadImgSrc;  // BUG of inVisible loadImgSrc
+                            if (entry.isVisible) entry.target.src = datasrc;
+                            <?php if ($acgpage) echo 'entry.target.onload = ()=> setupBlurColor(entry.target, getParByCls(entry.target, "inbox"));'; ?>
+                        });
+                    });
+                }
         <?php
             } elseif($acgpage) {
         ?>
@@ -369,6 +377,33 @@
                             setupBlurColor(img, getParByCls(img, "inbox"));
                         }
                     });
+                }
+        <?php
+            }
+            if ($linkpage && !get_option('site_links_auto_slider')) {
+        ?>
+                /**
+                 *  @2bfriends
+                 *  default slideBox behavior
+                 **/
+                const slideBox = document.querySelector('.inboxSliderCard');
+                if (Basics.detects.validDom(slideBox)) {
+                    if (!document.body.scrollTo) {
+                        Element.prototype.scrollTo = function (x, y) {
+                            this.scrollLeft = x;
+                            this.scrollTop = y;
+                        }
+                    }
+                    EventBus.bind(slideBox, 'wheel', Closure.throttler((e) => {
+                        e.preventDefault();
+                        const wheelDelta = e.deltaY;
+                        let currentPos = slideBox.scrollLeft;
+                        currentPos += wheelDelta * 5;
+                        // console.log(currentPos);
+                        // if (currentPos == 0) // limites
+                        // if (wheelDelta < 0) // scroll up
+                        slideBox.scrollTo(currentPos, 0);
+                    }, 360, true));
                 }
         <?php
             }

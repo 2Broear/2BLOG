@@ -1498,6 +1498,7 @@ body.dark .vheader #avatar{color:var(--preset-3a);}
 body.dark .news-window:nth-child(even),
 body.dark .v .vwrap .vheader .vinput,body.dark .vheader{background:var(--preset-3b);border-color:transparent;border-right-style:none}
 body.dark header>nav#tipson .top-bar-tips{color:var(--preset-9);background:var(--preset-3a);border-color:var(--preset-2a);}
+body.dark .win-top.bg .main-header-all,
 body.dark .mobile-search .ms-inside,
 body.dark .main-header-all{background: linear-gradient(var(--preset-3b) 50%, transparent 100%);background: -webkit-linear-gradient(top, var(--preset-3b) 50%, transparent 100%);box-shadow: none;/*rgba(0,0,0,0.18) 0 2px 18px*/}
 body.dark .top-bar-tips span#doc-progress-bar:before, body.dark .top-bar-tips span#doc-progress-bar:after{background:linear-gradient(left,var(--theme-color) 0%,var(--preset-2a) 100%);background:-webkit-linear-gradient(left,var(--theme-color) 0%,var(--preset-2a) 100%)}

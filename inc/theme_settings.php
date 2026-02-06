@@ -652,7 +652,8 @@
         register_setting( 'baw-settings-group', 'site_catnav_deepth' );
         
         register_setting( 'baw-settings-group', 'site_rcmdside_cid' );
-        register_setting( 'baw-settings-group', 'site_cardnav_array' );
+        register_setting( 'baw-settings-group', 'site_cardnav_includes' );
+        // register_setting( 'baw-settings-group', 'site_cardnav_array' );
         // register_setting( 'baw-settings-group', 'site_list_bg' );
         register_setting( 'baw-settings-group', 'site_list_links_category' );
         register_setting( 'baw-settings-group', 'site_tagcloud_switcher' );
@@ -2840,12 +2841,12 @@
                             <?php
                                 $opt = 'site_banner_array';
                                 $value = get_option($opt);
-                                $preset = $img_cdn.'/images/fox.jpg,';
+                                $preset = ''; //$img_cdn.'/images/fox.jpg,';
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update
                                 $arr = explode(',', trim($preset));
                                 $arr_count = count($arr);
                             ?>
-                                <p class="description" id="site_banner_array_label">首页 banner 组图数组（使用逗号“ , ”分隔，图库中按住“CTRL”多选图片/视频</p>
+                                <p class="description" id="site_banner_array_label">首页 banner 组图数组，使用逗号“ , ”分隔，图库中按住“CTRL”多选图片/视频（缺省默认使用预设全景预览</p>
                                     <label for="upload_banner_button" class="upload upload_preview_list">
                             <?php
                                         for($i=0;$i<$arr_count;$i++){
@@ -2856,7 +2857,7 @@
                                         }
                             ?>
                                     </label>
-                                <input type="text" name="<?php echo $opt ?>" placeholder="<?php echo $preset; ?>" class="large-text upload_field" value="<?php echo $preset; ?>" style="max-width:88%" />
+                                <input type="text" name="<?php echo $opt ?>" class="large-text upload_field" value="<?php echo $preset; ?>" style="max-width:88%" placeholder="选择媒体文件" />
                                 <input id="upload_banner_button" type="button" class="button-primary upload_button multi" data-multi=true data-type=0 value="选择媒体" />
                         </td>
                     </tr>
@@ -2874,15 +2875,40 @@
                             ?>
                         </td>
                     </tr>
+                    <!--<tr valign="top">-->
+                    <!--    <th scope="row">首页 - 卡片导航</th>-->
+                    <!--    <td>-->
+                            <?php
+                                // $opt = 'site_cardnav_array';
+                                // $value = get_option($opt);
+                                // $preset = 'news/文; notes/筆; weblog/記; links/友'; 
+                                // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                // echo '<p class="description" id="site_cardnav_array_label">展示在首页的导航卡片，使用分号“ ; ”分隔（使用斜杠“ / ”自定义名称（留空默认分类名称）如 news/文; notes/笔...</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $preset . '"/>';
+                            ?>
+                    <!--    </td>-->
+                    <!--</tr>-->
                     <tr valign="top">
-                        <th scope="row">首页 - 卡片导航</th>
+                        <th scope="row">首页 - 卡片导航 / 列表</th>
                         <td>
                             <?php
-                                $opt = 'site_cardnav_array';
+                                $opt = 'site_cardnav_includes';  //unique str
                                 $value = get_option($opt);
-                                $preset = 'news/文; notes/筆; weblog/記; links/友'; 
-                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                echo '<p class="description" id="site_cardnav_array_label">展示在首页的导航卡片，使用分号“ ; ”分隔（使用斜杠“ / ”自定义名称（留空默认分类名称）如 news/文; notes/笔...</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $preset . '"/>';
+                                $async_opts = array($templates_info['news'], $templates_info['notes'],  $templates_info['weblog'],  $templates_info['acg'],  $templates_info['2bfriends']);
+                                if(!$value){
+                                    $preset_str = $async_opts[0]->slug.','.$async_opts[1]->slug.','.$async_opts[2]->slug.','.$async_opts[3]->slug.',';
+                                    update_option($opt, $preset_str);
+                                    $value = $preset_str;
+                                }
+                                echo '<p class="description" id="">展示在首页的导航卡片及对应文章列表，可多选（默认选择前四个</p><div class="checkbox">';
+                                $async_array = explode(',',trim($value));  // NO "," Array
+                                // $pre_array_count = count($async_array);
+                                foreach ($async_opts as $option) {
+                                    if ($option->error) continue;
+                                    $opts_slug = $option->slug;
+                                    $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
+                                    echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
+                                }
+                                echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" readonly value="' . $value . '" placeholder="请选择"/></div>';;
                             ?>
                         </td>
                     </tr>
@@ -2940,7 +2966,7 @@
                     <!--    </td>-->
                     <!--</tr>-->
                     <tr valign="top">
-                        <th scope="row">首页 - 日志日记<sup class="dualdata" title="“多数据”">BaaS</sup></th>
+                        <th scope="row">首页 - TECH 单栏<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
                             <?php
                                 $opt = 'site_techside_switcher';
@@ -2953,7 +2979,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_techside_switcher_label">开启首页科技资讯栏目（默认开启，选择任意项后可手动关闭，支持多分类及baas数据</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">WEBLOG</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_techside_switcher_label">开启首页科技资讯栏目（默认开启，选择任意项后可手动关闭，支持多分类及baas数据</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">TECH</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -3802,7 +3828,7 @@ const maps = {
                                 $value = get_option($opt);
                                 $preset = 'after/64; before/67; after/69; after/71; before/53;'; 
                                 if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                echo '<p class="description" id="site_cardnav_array_label">展示在关于页面的MBIT图表数据，使用分号“ ; ”分隔（使用斜杠“ / ”分隔类型和占比，如 before/64; after/67;...</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $preset . '"/>';
+                                echo '<p class="description" id="">展示在关于页面的MBIT图表数据，使用分号“ ; ”分隔（使用斜杠“ / ”分隔类型和占比，如 before/64; after/67;...</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $preset . '"/>';
                             ?>
                         </td>
                     </tr>
@@ -3814,7 +3840,7 @@ const maps = {
                                     $value = get_option($opt);
                                     $preset = 'infp-a/mediator'; 
                                     if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                    echo '<p class="description" id="site_cardnav_array_label">MBIT测试人格类型，使用斜杠“ / ”分隔（规则同上</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text" value="' . $preset . '"/>';
+                                    echo '<p class="description" id="">MBIT测试人格类型，使用斜杠“ / ”分隔（规则同上</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text" value="' . $preset . '"/>';
                                 ?>
                             </td>
                         </tr>

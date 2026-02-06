@@ -61,7 +61,7 @@
         }
         .about_blocks li.intro_right .mbit:before {
             opacity: .1;
-            /*font-size: 2.85rem;*/
+        	text-transform: uppercase;
         }
         iframe.netease_embed {
             /*margin: 0 auto;*/
@@ -107,6 +107,10 @@
         }
         .body-basically .Introduce {
             color: var(--preset-4a);
+        }
+        .about_blocks li.intro_right .mbit .mbit_range li.active span em:before {
+            /*opacity: 1;*/
+            border-radius: inherit;
         }
         .about_blocks li.intro_right .mbit .mbit_range li span:before, 
         .about_blocks li.intro_right .mbit .mbit_range li span:after {

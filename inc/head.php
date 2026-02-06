@@ -115,6 +115,7 @@
         body.dark #supports em.warmhole {filter: invert(1);}
         details > * {margin-left: 20px!important;}
         details > summary {margin: auto!important;}
+        nav .nav-wrap .nav-slider {opacity: 0;}
 <?php 
         if (get_option('site_logo_switcher')) {
             $logos = get_option('site_logos');
@@ -192,12 +193,12 @@
                 }, delay);
             };
         }
-        function bindEventClick(parent, ids, callback){
+        function bindEventClick(parent, ids, callback, events = 'onclick'){
             if (!parent) {
                 console.warn('bindEventClick failed', parent);
                 return;
             }
-            parent.onclick=(e)=>{
+            parent[events] = (e)=> {
                 e = e || window.event;
                 let t = e.target || e.srcElement;
                 if(!t) return;
@@ -227,8 +228,7 @@
         function automode() {
             const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
             function handleColorSchemeChange(e) {
-                // console.log(e.matches)
-                if (getCookie('theme_manual')) setCookie('theme_manual', 0);  // disable manual mode/prefers
+                setCookie('theme_manual', 0);  // disable manual mode if (getCookie('theme_manual')) 
                 if (e.matches) {
                     // 用户偏好深色模式优先 (dark)
                     document.body.className = 'dark';
