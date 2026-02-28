@@ -202,6 +202,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         }
         .rcmd-boxes .info .inbox .inbox-more a {
             border-radius: inherit;
+            border-width: calc(var(--radius) / 1.5);
         }
         .rcmd-boxes .info .inbox .inbox-more a.loading,
         .rcmd-boxes .info .inbox .inbox-more a.disabled {
@@ -260,14 +261,14 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                                             $dataCls = ' blink';
                                             $cat_num = '0';
                                         }
-                                        $output .= '<div class="'.$cat_slug.$dataCls.'" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2 style="--data-count:'.$cat_count.'"><sup>+</sup></h2><p>'.$the_cat->name.' / <small>'.strtoupper($cat_slug).'</small></p></a></div>'; //'.$cat_num.'
+                                        $output .= '<div class="'.$cat_slug.$dataCls.'" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2 style="--data-count:'.$cat_count.'" data-count="'.$cat_count.'"><sup>+</sup></h2><p>'.$the_cat->name.' / <small>'.strtoupper($cat_slug).'</small></p></a></div>'; //'.$cat_num.'
                                     }
                                     if($output_sw) update_option('site_acg_stats_cache', wp_kses_post($output));
                                 }
                             }else{
                                 $the_cat = get_category($cat);
                                 $cat_count = $the_cat->count;
-                                $output .= '<div class="" data-count='.$cat_count.'><h2 class="single" style="--data-count:'.$cat_count.'"><sup>+</sup></h2><p>'.$the_cat->name.'/'.$the_cat->slug.'</p></div>'; //'.$cat_count.'
+                                $output .= '<div class="" data-count='.$cat_count.'><h2 class="single" style="--data-count:'.$cat_count.'" data-count="'.$cat_count.'"><sup>+</sup></h2><p>'.$the_cat->name.'/'.$the_cat->slug.'</p></div>'; //'.$cat_count.'
                             }
                             echo wp_kses_post($output);
                         }

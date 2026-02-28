@@ -1475,7 +1475,8 @@ body.dark::-webkit-scrollbar-track, body.dark .v .vwrap .vedit .vemojis::-webkit
 body.dark, body.dark #footer-contact-way,body.dark .weblog-tree-core-l #weblog-circle,body.dark .friends-boxes .deals .inbox.standby .inbox-inside{background-color:var(--preset-2b)!important;border-color:transparent!important;}
 /*body.dark .inside-functions .box,*/
 body.dark .v .vlist .vcard .vcontent.expand:after{background:-webkit-linear-gradient(180deg,hsla(0,0%,100%,0),var(--preset-3a));background:linear-gradient(180deg,hsla(0,0%,100%,0),var(--preset-3a))}
-body.dark .v .vlist .vcard .vquote.overview:before{background:-webkit-gradient(linear,left top,left bottom,from(rgba(255, 255, 255, 0)),to(var(--preset-3a)));background:-webkit-gradient(linear,left top,left bottom,from(rgba(255, 255, 255, 0)),to(var(--preset-3a)))}
+body.dark .v .vlist .vcard .vquote.overview:before, 
+body.dark .v .vlist .children.overview:before {background:-webkit-gradient(linear,left top,left bottom,from(rgba(255, 255, 255, 0)),to(var(--preset-3a)));background:-webkit-gradient(linear,left top,left bottom,from(rgba(255, 255, 255, 0)),to(var(--preset-3a)))}
 /*body.dark .v .vlist .vcard .vcontent img#draw{background: var(--preset-3a);border-radius: var(--radius);}*/
 
 body.dark .box_down ul li .details div i,
@@ -1490,10 +1491,12 @@ body.dark .load button:active,body.dark .v .vbtn:active,body.dark .win-content .
 body.dark .inside-functions .box div:hover > span{background-color:var(--theme-color)}
 
 body.dark .v code, body.dark .v pre,body.dark .v .vlist .vcard .vhead .vsys,body.dark .v .vlist .vcard.true .vhead .vtop,body.dark .resource-windows div ul li:hover,body.dark .tech_window-content li:hover,body.dark .news-article-container h5,body.dark .v .vwrap .vheader .vinput:focus{background-color:var(--preset-3a)!important;}
-body.dark .v .vlist .vcard .vquote,body.dark .v .vlist .vcard .vh{border-style:none}
+body.dark .v .vlist .vcard .vquote, body.dark .v .vlist .children,
+body.dark .v .vlist .vcard .vh{border-style:none}
 body.dark .wp_comments:hover,
 body.dark .news-article-container ul.children .wp_comments:hover,
-body.dark .v .vlist .vcard .vquote .vcard:hover{background:var(--preset-3a)!important;}
+body.dark .v .vlist .vcard .vquote .vcard:hover, body.dark .v .vlist .children .vcard:hover
+{background:var(--preset-3a)!important;}
 body.dark .vheader #avatar{color:var(--preset-3a);}
 body.dark .news-window:nth-child(even),
 body.dark .v .vwrap .vheader .vinput,body.dark .vheader{background:var(--preset-3b);border-color:transparent;border-right-style:none}

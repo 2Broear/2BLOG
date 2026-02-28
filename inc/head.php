@@ -195,7 +195,7 @@
         }
         function bindEventClick(parent, ids, callback, events = 'onclick'){
             if (!parent) {
-                console.warn('bindEventClick failed', parent);
+                console.warn('bindEventClick failed on node: ', parent);
                 return;
             }
             parent[events] = (e)=> {
@@ -212,7 +212,6 @@
                         if(callback&&typeof callback==='function') callback(t,e); //callback(t) || callback(t); // callback.apply(this, ...arguments);
                         break;
                     }
-                    // console.log('origin', t);
                     t = t.parentNode;
                 }
             };

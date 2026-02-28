@@ -42,7 +42,7 @@
                 $par_cid = get_category($cid)->parent;
                 $par_slug = $par_cid!=0&&get_category($par_cid)->slug!='/' ? get_category($par_cid)->slug : get_category($cid)->slug;
                 $post_cat = get_the_category($post->ID);
-                $loc_id = $par_slug==$acg_slug ? ($post_cat[0]->parent!=0 ? $post_cat[0]->slug : $post_cat[1]->slug) : 'pid_'.get_the_ID();
+                $loc_id = $par_slug==$acg_slug ? $post_cat[0]->slug : 'pid_'.get_the_ID(); //$post_cat[0]->parent==0 ? $post_cat[1]->slug : $post_cat[0]->slug;
                 $pre_link = $specific_link || !$acg_single_sw ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="'.get_category_link($cid).'#'.$loc_id.'" target="_self" rel="nofollow">';
                 $output .= '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
             endwhile;
@@ -269,12 +269,13 @@
                             $banner_url = trim($banner);
                             if($banner_url) echo '<li style="background: url() no-repeat center center /cover;">' . do_shortcode('[custom_video src="' . $banner_url . '" poster]') . '</li>'; //'.$banner_url.'
                         }
-                        echo '/<ul><div class="switcher"><span id="banner-prev" class="banner_prew"></span><span id="banner-next" class="banner_next"></span></div><div class="dots"></div>';
+                        echo '</ul><div class="switcher"><span id="banner-prev" class="banner_prew"></span><span id="banner-next" class="banner_next"></span></div>';
                     } else {
                         echo '<iframe id="panorama" frameborder="no" style="/*min-height: 250px;*/"></iframe>';
                     }
                 ?>
                 </div>
+                <?php if ($banner_array) echo '<div class="dots"></div>'; ?>
             </div>
         </div>
         <!-- 右 -->
@@ -571,7 +572,7 @@
                                             echo $output_string;
                                             return;
                                         }
-                                        echo '<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"><p id="hitokoto"> NO Tags Found.  </p></span>';
+                                        echo '<p id="hitokoto"> NO Tags Found.  </p>'; //<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"></span>
                                     }
                                     the_tag_clouds('span'); 
                                 ?>

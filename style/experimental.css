@@ -1,6 +1,40 @@
 /*
 ** overwrite ui
 */
+.win-top h5 span {
+    border-radius: calc(var(--radius) / 2);
+    border-top-right-radius: calc(var(--radius) * 2);
+}
+.recommendation #recommend-inside span.content-core {
+    /*padding: 0 10px;*/
+    background: inherit;
+    overflow: visible;
+    transition: padding .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+.recommendation #recommend-inside span p {
+    margin-top: -30px;
+    background: inherit;
+    border-radius: var(--radius);
+    padding: 15px;
+    box-shadow: rgb(0 0 0 / 5%) 0px -20px 20px;
+    transition: margin .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+.recommendation #recommend-inside span.content-tail aside.personal_stand p {
+    box-shadow: none;
+}
+.recommendation #recommend-inside span.content-tail {
+    padding: 0;
+}
+
+/*.newsBox-supTitle h2 {*/
+/*    margin: 0 auto;*/
+/*}*/
+/*.newsBox-supTitle-iDescription i {*/
+/*    padding: 20px 25px;*/
+/*}*/
+#icon-technology, #icon-acg {
+    border: none;
+}
 body.dark footer #footer-support-board {
     background-color: var(--preset-3a);
 }
@@ -80,6 +114,7 @@ body.dark #footer-copyright {
     padding-top: 30px;
 }
 /*.main-header-all.barSetUp,*/
+/*.win-top.blur .main-header-all,*/
 .main-header-all.barSetDown {
     backdrop-filter: blur(1px);
 }
@@ -91,7 +126,7 @@ body.dark #footer-copyright {
     top: -50px;
 }
 nav .nav-wrap .nav-slider.show {
-    opacity: .075;
+    opacity: .088;
     transition-property: all;
 }
 nav .nav-wrap .nav-slider.hide {
@@ -105,6 +140,8 @@ nav .nav-wrap .nav-slider {
     top: 0;
     left: 0;
     z-index: 9;
+    background: linear-gradient(var(--theme-color) 50%, transparent 100%);
+    background: -webkit-linear-gradient(top, var(--theme-color) 50%, transparent 100%);
     border-radius: var(--radius);
     transition: ease;
     /*transition-property: width, height, opacity;*/
@@ -233,6 +270,7 @@ footer a:hover {
     /*box-shadow: 0 0 20px var(--preset-c);*/
     border: 2px solid var(--preset-4a);
     font-weight: bold;
+    will-change: auto;
 }
 #tech_window-bottom,
 #acg_window-bottom,
@@ -302,6 +340,8 @@ body.dark .friends-boxes ol,
 body.dark #footer-copyright li {
     color: var(--preset-9);
 }
+body.dark .friends-boxes .deals .inbox .inbox-inside.aside a,
+body.dark .rcmd-boxes .inbox-clip h2,
 body.dark .archive-tree ul,
 body.dark .friends-boxes .deals .inbox .inbox-aside,
 body.dark .win-content article h1 a {
@@ -369,6 +409,17 @@ body.dark .recommendation #recommend-inside .recommend-newsContent {
     box-sizing: border-box;
     max-width: 98%;
 }
+.recommendation #recommend-inside:hover span.content-core {
+    padding: 0 5px;
+}
+.recommendation #recommend-inside:hover span.content-core p {
+    margin-top: -50px;
+    /*line-height: 2rem;*/
+}
+/*.recommendation #recommend-inside:active span.content-core p {*/
+/*    margin-top: -25px;*/
+/*    box-shadow: none;*/
+/*}*/
 .recommendation #recommend-inside:hover > .recommend-newsImg div a#rel {
     color: var(--preset-f);
     border-color: transparent;
@@ -384,6 +435,8 @@ body.dark .recommendation #recommend-inside .recommend-newsContent {
     border-radius: var(--radius);
     backdrop-filter: brightness(1.25) blur(10px);
     border-color: var(--preset-6);
+    margin: 15px auto;
+    max-width: 90%;
 }
 .recommendation #recommend-inside:active > .recommend-newsImg div a#rel {
     /*transform: scale(1.15);*/
@@ -463,38 +516,60 @@ body.dark #comment_txt p,
 body.dark .news-inside-content .news-core_area p {
     color: var(--preset-9)!important;
 }
-.v .vlist .vcard .vquote.overview:before {
+.v .vlist .children.overview:before, .v .vlist .vcard .vquote.overview:before {
     border-radius: inherit;
 }
-.v .vlist .vcard .vquote {
+.v .vlist .vcard .vquote, .v .vlist .children {
     border-radius: var(--radius);
 }
+.news-article-container .v .vlist .children {
+    margin-left: 5em;
+}
+.v .vlist .children {
+    /*margin-top: 0;*/
+    margin-left: 4em;
+    /*padding: 1em;*/
+    padding: 12px;
+}
+.v .vlist .children .children {
+    margin-left: 0;
+    /*padding-left: 0;*/
+}
+/*body.dark .v .vlist .vcard:hover + .children,*/
+body.dark .v .vlist .children:hover,
+body.dark .v .vlist .vcard:hover {
+    background: var(--preset-3b);
+}
 /*body.dark .v .vlist .vcard .vquote,*/
+body.dark .v .vlist .children:hover,
 body.dark .v .vlist .vcard:hover {
     border-color: var(--preset-4b);
 }
 /*body.dark .v .vlist .vcard .vquote,*/
-body.dark .v .vlist .vcard .vquote .vcard:hover {
+body.dark .v .vlist .vcard .vquote .vcard:hover, body.dark .v .vlist .children .vcard:hover {
     background-image: repeating-linear-gradient(211deg, var(--preset-3a) 0, var(--preset-3a) 2px, transparent 2px, transparent 4px)!important;
     background-color: var(--preset-3b)!important;
 }
 /*.v .vlist .vcard .vquote,*/
-.v .vlist .vcard .vquote .vcard:hover {
+.v .vlist .vcard .vquote .vcard:hover, .v .vlist .children .vcard:hover {
     background-image: repeating-linear-gradient(211deg, var(--preset-s) 0, var(--preset-s) 2px, transparent 2px, transparent 4px)!important;
     background-color: var(--preset-f)!important;
     /*border: 1px solid var(--preset-s);*/
 }
-.v .vlist .vcard .vquote .vcard {
+.v .vlist .vcard .vquote .vcard, .v .vlist .children .vcard {
     transition-property: transform, top!important;
 }
 .v .vwrap .vedit .vemojis img {
     overflow: visible;
 }
+/*.v .vlist .vcard:hover + .children,*/
 .v .vlist .vcard.true,
+.v .vlist .children:hover,
 .v .vlist .vcard:hover {
     border-color: var(--preset-e);
     box-shadow: 0 0 20px rgb(0 0 0 / 5%);
 }
+.v .vlist .children:hover, 
 .v .vlist .vcard .vquote:hover {
     border-color: transparent;
 }
@@ -515,7 +590,7 @@ body.dark .v .vlist .vcard .vcontent p {
 body.dark .v canvas,
 body.dark .v .vlist .vcard .vcontent img#draw {
     /*background: var(--preset-4a);*/
-    background-image: repeating-conic-gradient(var(--preset-3a) 0% 25%, transparent 0% 50%);
+    background-image: repeating-conic-gradient(var(--preset-4a) 0% 25%, transparent 0% 50%);
 }
 .v canvas,
 .v .vlist .vcard .vcontent img#draw {
@@ -524,6 +599,10 @@ body.dark .v .vlist .vcard .vcontent img#draw {
     background-size: 22px 22px;
     background-color: transparent;
     background-image: repeating-conic-gradient(var(--preset-d) 0% 25%, transparent 0% 50%);
+    border-radius: var(--radius);
+}
+.v canvas {
+    /*width: 100%;*/
 }
 /**
 ** archive
@@ -593,6 +672,7 @@ body.dark .load button {
 .inside_of_block nav.main-nav ul li a.choosen::after {
     border-radius: 3px;
     opacity: .15;
+    max-width: 58%;
 }
 .additional .links-more li a {
     margin: auto!important;
@@ -640,7 +720,8 @@ footer a {
 **  disabled transform
 **/
 #vcomments.v.drawing .vwrap,
-#vcomments.v.drawing .vlist .vcard {
+#vcomments.v.drawing .vlist .vcard,
+#vcomments.v.drawing .vlist .children {
     transform: none!important;
 }
 /*.content-all a:active,*/
@@ -660,7 +741,7 @@ footer a {
 .rcmd-boxes .info .inbox.more:active,
 .ibox .iboxes:active,
 .share a:active,
-form:active,
+header form:active,
 .lively-click:active {
     transform: scale(0.92);
 }
@@ -691,7 +772,7 @@ a.markable .tools .toolInside:active,
 footer a:active,
 figure a:active,
 /*.v .vlist .vquote .vcard:active,*/
-.weBlog-Description .weBlog-Description-inside-content:active,
+/*.weBlog-Description .weBlog-Description-inside-content:active,*/
 .lively-click-098:active {
     transform: scale(0.98);
 }
@@ -701,6 +782,7 @@ details summary:active,
 .about_blocks:active,
 .v .vwrap:active,
 .v .vlist .vcard:active,
+.v .vlist .children:active,
 .lively-click-099:active {
     transform: scale(0.99);
 }
@@ -785,7 +867,7 @@ a.markable .tools .toolInside span:active,
 .Fresh-ImgBoxs span,
 .resource-windows div,
 .resource-windows div ul li,
-.weBlog-Description .weBlog-Description-inside-content,
+/*.weBlog-Description .weBlog-Description-inside-content,*/
 .acg_window-content-inside_right .tags,
 .acg_window-content-inside_right .tags span,
 .acg_window-content-inside_left-list,
@@ -815,6 +897,7 @@ a.markable .tools .toolInside span:active,
 .pageSwitcher a,
 .v .vbtn,
 .v .vlist .vcard,
+.v .vlist .children,
 /*.v .vlist .vcard .vh .vat,*/
 .v .vwrap .vedit .vctrl span,
 .v .vwrap .vedit .vemojis img,
@@ -836,7 +919,7 @@ a.markable .tools .toolInside span,
 #html2img,
 #html2img #cancel,
 details summary,
-form,
+header form,
 figure a,
 footer a,
 .stats a,

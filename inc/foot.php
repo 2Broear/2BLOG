@@ -112,6 +112,10 @@
                             dataDancing(document.querySelectorAll(".win-top .counter div"), "h1", 200, 25);  // dom reflow performance issue
                         }
     <?php
+                    } else {
+    ?>
+                            document.head.getElementsByTagName('style')[0].textContent += `.win-top .counter h1:before,.win-top .counter h2:before {/*content: "0";content: var(--data-count);*/content: attr(data-count);}`;
+    <?php
                     }
                     break;
                 case get_cat_by_template('about','term_id'):

@@ -29,7 +29,7 @@
 </head>
 <body class="<?php echo $default_theme; ?>">
 <div class="content-all">
-    <div class="win-top bg">
+    <div class="win-top blur">
         <?php
             if (get_option('site_footprint_switcher')) {
                 $default_api = get_api_refrence('map');

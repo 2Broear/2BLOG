@@ -102,7 +102,7 @@
             <?php
                 }
             ?>
-            <div class="weblog-tree-core <?php $origin_cmt='Wordpress';$third_cmt = get_option('site_third_comments');echo $third_cmt!=$origin_cmt ? 'reply' : ''; ?>" style="padding-top:15px;">
+            <div class="weblog-tree-core<?php $third_cmt = get_option('site_third_comments');echo $third_cmt ? ' reply' : ''; //$origin_cmt='Wordpress';echo $third_cmt!=$origin_cmt ?>" style="padding-top:15px;">
                 <?php
                     $async_sw = get_option('site_async_switcher');
                     $weblog_slug = get_cat_by_template('weblog','slug'); //current_slug();
@@ -130,7 +130,7 @@
                             'posts_per_page' => $async_loads,  //use left_query counts
                         )));
                         // Empty card if null reponsed
-                        if(!$log_query->have_posts()) echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t="'.current_slug(true).'"></i><h1> 这里，<b>空空的~</b> </h1></div>';  //<b>'.current_slug(true).'</b> 
+                        if(!$log_query->have_posts()) echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t="'.current_slug(true).'"></i><h1><b>空空如也~</b> </h1></div>';  //<b>'.current_slug(true).'</b> 
                         while ($log_query->have_posts()):
                             $log_query->the_post();
                             // $post_feeling = get_post_meta($post->ID, "post_feeling", true);
@@ -365,7 +365,7 @@
                         range.select();
                     }
                 };
-            weblog.onclick=(e)=>{
+            weblog.onclick = (e)=> {
                 e = e || window.event;
                 let t = e.target || e.srcElement;
                 if(!t) return;
@@ -378,12 +378,13 @@
                         editor.value = "";
                         editor.setAttribute('placeholder', '回复片段：'+t.innerText);
                         const cores = getParByCls(t, 'weblog-tree-box').querySelector('#core-info'),
-                              quote = `\n> __${t.innerText}__ \n> ${cores ? cores.innerText.replace(/\n/g,"").substr(0,88) : ".."}...`;
+                              ctext = cores ? cores.innerText.replace(/\n/g,"").substr(0,88) : "..",
+                              quote = `<?php echo $third_cmt == 'Wordpress' ? '\n<blockquote class="vquotes"><strong>${t.innerText}</strong><q>${ctext}...</q></blockquote>' : '\n> __${t.innerText}__ \n> ${ctext}...'; ?>`;
                         editor.style.cssText="min-height:150px;opacity:.75;";
                         editor.value = quote;//this.id; '\n'+
                         selectText(editor, 0, 0); //editor.setSelectionRange(0,0);
                         editor.oninput=function(){
-                            if(this.value.indexOf(quote)==-1 || this.value.substr(this.value.length-3,this.value.length)!='...'){
+                            if(this.value.indexOf(quote)==-1 || this.value.substr(this.value.length-3, this.value.length) != "<?php echo $third_cmt ? 'te>' : '...'; ?>"){
                                 this.value = quote;
                                 selectText(editor, 0, 0); //editor.setSelectionRange(0,0);
                             }

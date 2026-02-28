@@ -125,10 +125,10 @@
         function the_turnstile_response() {
             $cf_response = get_request_param('cf-turnstile-response');
             $recaptcha = isset($cf_response) ? sanitize_text_field($cf_response) : '';
-            if (empty($recaptcha))
-                wp_die( __("<b>ERROR:</b> please select <b>I'm not a robot!</b><p><a href='javascript:history.back()'>« Back</a></p>"));
-            else if (!is_valid_captcha($recaptcha))
-                wp_die( __("<b>please select I'm not a robot!</b>"));
+            if (empty($recaptcha)) {
+                wp_die( __("<b>ERROR:</b> Please complete <b>turnstile verification</b> before comment!<p><a href='javascript:history.back()'>« Back</a></p>"));
+            } else if (!is_valid_captcha($recaptcha))
+                wp_die( __("Please complete <b>turnstile verification</b> before comment.."));
         }
         add_action('init', function() {
             if (!is_user_logged_in() ) {
@@ -140,6 +140,15 @@
                     return $submit_field;
                 });
             }
+            // add_filter('comment_form_default_fields','comment_form_add_ewai');
+            // function comment_form_add_ewai($fields) {
+            //     $label1 = __( '国家/地区' );
+            //     $fields['guojia'] = '<p>
+            //     <label for="guojia">{$label1}</label>
+            //     <input id="guojia" name="guojia" type="text" value="{$value1}" size="30" />
+            //     </p>';
+            //     return $fields;
+            // }
         });
         add_action('pre_comment_on_post', function() {
             if (cloudflare_key()[2])
@@ -163,6 +172,10 @@
             <script>
                 // https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/
                 function onTurnstileLoad() {
+                    if (!document.getElementById("widget-container")) {
+                        console.warn('turnstile exited without container!');
+                        return;
+                    }
                     let turnstileId = turnstile.render("#widget-container", {
                         sitekey: "<?php echo get_option('site_cloudflare_turnstile_sitekey'); ?>",
                         language: "cn",
@@ -170,12 +183,22 @@
                         // appearance: "interaction-only", // visible for suspected-visitors only
                         theme: "<?php theme_mode(); ?>",
                         callback: function (token) {
-                            console.log("Challenge completed:", token);
-                            const pushBtn = document.getElementById("pushBtn");
-                            pushBtn.dataset.token = token;
-                            pushBtn.dataset.tid = turnstileId;
-                            // document.body.dataset.turnstileToken = token;
-                            // document.body.dataset.turnstileTokenId = turnstileId;
+                            // console.log("Challenge completed:", token);
+                            // const pushBtn = document.getElementById("pushBtn");
+                            const pushForm = document.querySelector('input[name=cf-turnstile-response]');
+                            if (pushForm) {
+                                pushForm.dataset.tid = turnstileId;
+                                pushForm.value = token;
+                                // form submit without ajax (campatiable with thire-comments)
+                                const vbox = document.querySelector('.vwrap .vedit'),
+                                      vresponse = vbox?.querySelector('input[name=cf-turnstile-response]');
+                                if (vresponse) vresponse.remove();
+                                vbox?.appendChild(pushForm.cloneNode());
+                            }
+                            // if (pushBtn) {
+                            //     pushBtn.dataset.token = token;
+                            //     pushBtn.dataset.tid = turnstileId;
+                            // }
                         },
                         "error-callback": function (errorCode) {
                             console.error("Turnstile error:", errorCode);
@@ -662,6 +685,8 @@
         $cdn_api = get_option('site_cdn_api');
         $cdn_auth = get_option('site_chatgpt_auth');
         $res = new stdClass();
+        $res->s = '';
+        $res->t = 0;
         if ($cdn_switch && $cdn_api && $cdn_auth) {
             $stamp10x = time();
             $stamp16x = dechex($stamp10x);
@@ -1515,7 +1540,7 @@
     // 站点logo
     function site_logo($darkmode = false) {
         if (get_option('site_logo_switcher')) {
-            $logo_src = $darkmode ? get_option('site_logo') : get_option('site_logos');
+            $logo_src = $darkmode ? get_option('site_logos') : get_option('site_logo');
             if ($logo_src) {
                 echo '<span style="background: url(' . $logo_src . ') no-repeat center center /cover;"></span>';
                 return;
@@ -1719,6 +1744,36 @@
      *--------------------------------------------------------------------------
     */
     
+// //Comment Field Order
+// add_filter( 'comment_form_fields', 'mo_comment_fields_custom_order' );
+// function mo_comment_fields_custom_order( $fields ) {
+//     $comment_field = $fields['comment'];
+//     $author_field = $fields['author'];
+//     $email_field = $fields['email'];
+//     $url_field = $fields['url'];
+//     $cookies_field = $fields['cookies'];
+//     unset( $fields['comment'] );
+//     unset( $fields['author'] );
+//     unset( $fields['email'] );
+//     unset( $fields['url'] );
+//     unset( $fields['cookies'] );
+//     // the order of fields is the order below, change it as needed:
+//     $fields['author'] = $author_field;
+//     $fields['email'] = $email_field;
+//     $fields['url'] = $url_field;
+//     $fields['comment'] = $comment_field;
+//     $fields['cookies'] = $cookies_field;
+//     // done ordering, now return the fields:
+//     return $fields;
+// }
+
+    // https://developer.wordpress.org/reference/functions/comment_reply_link/
+    function wpdocs_comment_reply_link_class( $class ) {
+    	$class = str_replace( "comment-reply-link", "comment-reply-link vat noslide", $class );
+    	return $class;
+    }
+    add_filter( 'comment_reply_link', 'wpdocs_comment_reply_link_class' );
+    
     // 双数据页面类型（分类、页面）切换评论
     function dual_data_comments(){
         if(!is_category()){
@@ -1767,7 +1822,47 @@
         // 挂载 WordPress 评论提交的接口
         add_action('comment_post', 'push_weixin', 10, 2);
     }
+   
+    // 垃圾评论屏蔽词
+    // add_filter( 'pre_comment_approved', function($approved, $commentdata) {
+    //     $blacklist = get_option('site_comment_blacklists');
+    //     // If the comment URL field has anything in it, mark as spam
+    //     // if ( ! empty( $commentdata['comment_author_url'] ) ) $approved = 'spam';
+    //     // If the comment contains 'binance' then mark as spam
+    //     if ( str_contains( $commentdata['comment_content'], $blacklist ) ) $approved = 'spam';
+    //     return $approved;
+    // }, 10, 2);
     
+    // 解决 base64 图片 data: 协议被移除的问题
+    add_filter( 'kses_allowed_protocols', 'allow_data_protocol_in_comments' );
+    function allow_data_protocol_in_comments( $protocols ) {
+        // 将 'data' 添加到协议数组
+        $protocols[] = 'data';
+        return $protocols;
+    }
+    // 允许发送 img 标签（表情包）
+    add_filter( 'wp_kses_allowed_html', 'allow_img_tags_in_comments', 10, 2 );
+    function allow_img_tags_in_comments( $allowed_html, $context ) {
+        // 仅在评论内容这个上下文中生效
+        if ( $context === 'pre_comment_content' ) {
+            // 如果 img 标签尚未被允许，则添加它及其常用属性
+            if ( ! isset( $allowed_html['img'] ) ) {
+                $allowed_html['img'] = array(
+                    'id'    => true,
+                    'src'    => true,
+                    'alt'    => true,
+                    'class'  => true,
+                    'data-src'    => true,
+                    'style'  => false,  // false: xss issue
+                    'width'  => true,
+                    'height' => true,
+                    'loading' => true,
+                );
+            }
+        }
+        return $allowed_html;
+    }
+ 
     //*****  WordPress AJAX Comments Setup etc (comment reply/paginate)  *****//
     
     // AJAX 回复评论
@@ -1776,8 +1871,8 @@
         function wp_child_comments_loop($cur_comment){
             $child_comment = $cur_comment->get_children(array(
                 'hierarchical' => 'threaded',
-                // 'status'       => 'approve',
                 'order'        => 'ASC',
+                // 'status'       => 'approve',
                 // 'orderby'=>'order_clause',
                 // 'meta_query'=>array(
                 //   'order_clause' => 'comment_parent'
@@ -1803,33 +1898,46 @@
             if($approved=='0') $content = '<small style="opacity:.5">[ 评论未审核，通过后显示 ]</small>';
             if($parent>0) $content = '<a href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
     ?>
-            <div class="wp_comments" id="comment-<?php echo $id; ?>">
-                <div class="vh" rootid="<?php echo $id; ?>">
+            <div class="vcard" id="comment-<?php echo $id; ?>">
+                <a class="noslide" rel="nofollow" href="<?php echo $link; ?>" target="_blank">
+                    <?php 
+                        if (get_option('show_avatars')) {
+                            echo '<img class="vimg" '.$lazysrc.'="'.match_mail_avatar($email).'" width=50 height=50 alt="user_avatar" />';
+                            unset($lazysrc);
+                        }
+                    ?>
+                </a>
+                <div class="vh" rootid="comment-<?php echo $id; ?>">
                     <div class="vhead">
-                        <a rel="nofollow" href="<?php echo $link; ?>" target="_blank">
-                            <?php if(get_option('show_avatars')) echo '<img class="avatar" '.$lazysrc.'="'.match_mail_avatar($email).'" width=50 height=50 />'; ?>
+                        <a class="vnick" rel="nofollow" href="<?php echo $link; ?>" target="_blank">
+                            <em><?php echo $nick; ?></em>
                         </a>
+                        <?php
+                            if($email==get_option('site_smtp_mail', get_bloginfo('admin_email'))) echo '<span class="vsys admin">admin</span>';
+                            echo '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
+                            if($approved=="0") echo '<span class="vsys auditing">待审核</span>';
+                        ?>
+                    </div>
+                    <div class="vmeta">
+                        <span class="vtime"><?php echo date('Y-m-d', strtotime($comment->comment_date)); ?></span>
+                        <span class="vedited"></span>
+                        <?php 
+                            if ($approved=="1") {
+                                if (get_option('site_ajax_comment_switcher')) {
+                                    echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$id.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$id.'" data-respondelement="respond" data-replyto="'.$nick.'" aria-label="正在回复给：@'.$nick.'">回复</a>';
+                                    // unset($post);
+                                } else {
+                                    echo comment_reply_link(array_merge($args, array(
+                                        'reply_text' => '回复',
+                                        'depth' => $depth, 
+                                        'max_depth' => $args['max_depth']
+                                    )));
+                                }
+                            }
+                        ?>
                     </div>
                     <div class="vcontent">
-                        <div class="vinfo">
-                            <a rel="nofollow" href="<?php echo $link; ?>" target="_blank"><?php echo $nick; ?></a>
-                            <?php
-                                if($email==get_option('site_smtp_mail', get_bloginfo('admin_email'))) echo '<span class="admin">admin</span>';
-                                echo '<span class="useragent">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
-                                if($approved=="0") echo '<span class="auditing">待审核</span>';
-                            ?>
-                            <div class="vtime"><?php echo date('Y-m-d', strtotime($comment->comment_date)); ?></div>
-                            <?php 
-                                if($approved){
-                                    // global $wp;
-                                    // $current_url = home_url( add_query_arg( array(), $wp->request ) );
-                                    $locate = 'comment-'.$id;
-                                    echo '<a rel="nofollow" class="comment-reply-link" href="javascript:void(0);" data-commentid="'.$id.'" data-postid="'.$post->ID.'" data-belowelement="'.$locate.'" data-respondelement="respond" data-replyto="'.$nick.'" aria-label="正在回复给：@'.$nick.'">回复</a>'; //'.$current_url.'?replytocom='.$id.'#respond  //'.$locate.'
-                                    // unset($wp);
-                                }
-                            ?>
-                        </div>
-                        <?php echo '<p>'.$content.'</p>'; ?>
+                        <?php echo $content; //'<p>'.$content.'</p>'; //comment_text();?>
                     </div>
                 </div>
             </div>
@@ -1868,18 +1976,18 @@
             if($cur_comment->comment_parent==0) return $cur_comment; //$child_comment
         }
         // Ajax request comments output
-        function ajaxLoadComments(){
+        function ajaxLoadComments() {
             $pid = get_request_param('pid');
             check_ajax_referer($pid.'_comment_ajax_nonce');  // 检查 nonce
             $comments_array = [];
             $comments = get_comments(array(
                 'post_id' => $pid,
                 'orderby' => 'comment_date',
-                'order'   => 'DESC',
+                'order'   => get_option('comment_order'),
                 // 'status'  => 'approve',
                 'number'  => get_request_param('limit'),
                 'offset'  => get_request_param('offset'),
-                'parent'  => 0,
+                'parent'  => 0, // root comments
                 // 'comment__not_in' => [2,14],
             ));
             foreach($comments as $each){

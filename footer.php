@@ -204,6 +204,9 @@
                         </style>
                 <?php
                     } else {
+                ?>
+                        <!--<script src="<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/Valine/valine.js?v=<?php echo get_theme_info(); ?>"></script>-->
+                <?php
                         $comments = get_comments(
                             array(
                                 'number' => $post_per, //get_option('posts_per_page')

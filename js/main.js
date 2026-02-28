@@ -393,13 +393,14 @@
     }
     
     function darkmode() {
+        console.log(document.cookie);
         setCookie('theme_manual', 1);  // enable manual mode (disable automode)
         let theme_mode = 'dark';
         if (getCookie('theme_mode') == "dark") theme_mode = 'light';  // 1 day expires
-        console.warn(`theme_mode[manual] switch-color-scheme: ${theme_mode}`);
         // set as theme_mode && record new theme_mode
         document.body.className = theme_mode;  
         setCookie('theme_mode', theme_mode, '/', 1);
+        console.warn(`theme_mode[manual] switch-color-scheme: ${theme_mode}`);
     }
     
     /*  

@@ -1400,7 +1400,7 @@
             /*    box-shadow: 0 0 15px currentColor;*/
             /*}*/
         </style>
-        <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>&#60;<span style="color:var(--panel-theme);text-shadow: -10px 0 30px currentColor;">&#47;</span>&#62;</b><p style="letter-spacing:normal;margin-bottom:auto;opacity:.75;"> 主题部分页面提供 LeanCloud 第三方 BAAS 数据储存服务<sup> （使用此主题需一定<ins>开发经验</ins>） </sup> </p></h1>
+        <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>&#60;<span style="color:var(--panel-theme);text-shadow: -10px 0 30px currentColor;">&#47;</span>&#62;</b><p style="letter-spacing:normal;margin-bottom:auto;opacity:.75;"> 第三方 LeanCloud 数据储存服务将于 2027 停服，相关设置将停用<sup> （此主题需<ins>开发经验</ins>） </sup> </p></h1>
         <!--<hr/>-->
         <div class="switchTab">
             <ul>
@@ -1533,7 +1533,7 @@
 	<polygon class=st0 id=x_3_ points="12,35 5.2,35 9.7,29.9 14.2,24.8 21,24.8 " />
 </svg>';
                                         if(!$value) update_option($opt, $preset);else $preset=$value;
-                                        echo '<p class="description" id="site_logo_svg_label">站点 LOGO 矢量代码（注：开启任意图片LOGO后此项失效，可参照默认值<code> body.dark </code>样式适应深色模式</p><textarea name="'.$opt.'" id="'.$opt.'" rows="8" placeholder="此项始终存在默认值">'.$preset.'</textarea>';
+                                        echo '<p class="description" id="site_logo_svg_label">站点 LOGO 矢量代码（注：开启任意图片LOGO后此项失效，可使用<code> body.dark </code>或<code> prefers-color-scheme </code>自适应深色样式</p><textarea name="'.$opt.'" id="'.$opt.'" rows="8" placeholder="此项始终存在默认值">'.$preset.'</textarea>';
                                     ?>
                                 </td>
                             </tr>
@@ -2346,23 +2346,28 @@
                     </tr>
                             <!-- Wordpress -->
                             <tr valign="top" class="child_option dynamic_opts <?php echo $wordpress_statu = $third_comment=='Wordpress' ? 'dynamic_optshow Wordpress' : 'dynamic_opts Wordpress' ?>">
-                                <th scope="row">— Ajax 评论加载</th>
+                                <th scope="row">— Ajax 评论</th>
                                 <td>
                                     <?php
                                         $opt = 'site_ajax_comment_switcher';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后免刷新页面评论（提交评论及回复</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AJAX Comments</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后免刷新页面评论，实现无感评论及回复等操作</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AJAX Comments</b></label>';
                                     ?>
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $wordpress_statu; ?>">
-                                <th scope="row">— Ajax 评论翻页</th>
+                                <th scope="row">— Ajax 翻页</th>
                                 <td>
                                     <?php
                                         $opt = 'site_ajax_comment_paginate';
                                         $status = check_status($opt);
                                         $premise = get_option('site_ajax_comment_switcher');
-                                        $tips = !$premise ? '未开启上方 Ajax 评论支持，此选项应在其开启后使用，否则可能导致无法正常评论' : '开启后免刷新加载评论（替代 PREV/NEXT 翻页按钮';
+                                        $tips = '开启免刷新加载评论，替代 PREV/NEXT 翻页按钮并支持评论标签（关闭上方Ajax 评论后此项将自动关闭';
+                                        if (get_option($opt) && !$premise) {
+                                            update_option('site_ajax_comment_paginate', '');
+                                        } else {
+                                            $tips .= '<p>⚠️注：可前往<a href="/wp-admin/options-discussion.php" target="_blank"> 讨论->评论分页 </a>中配置 默认显示评论排序，启用此项后建议默认显示<code> 尾页 </code>顶部显示<code> 新的 </code></p>';
+                                        }
                                         $check = !$premise ? 'disabled' : '';
                                         echo '<label for="'.$opt.'"><p class="description" id="">'.$tips.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$check.' '.$status.' /> <b class="'.$status.'">AJAX Pagination</b></label>';
                                     ?>
@@ -2458,7 +2463,7 @@
                                     <?php
                                         $opt = 'site_comment_blacklists';
                                         $value = get_option($opt);
-                                        echo '<p class="description" id="site_comment_serverchan_label">屏蔽指定评论内容，使用 “|” 分隔关键词（非模糊匹配</p><textarea name="'.$opt.'" id="'.$opt.'">'.$value.'</textarea>';  //<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Comment BlackList" value="' . $value . '"/>
+                                        echo '<p class="description" id="site_comment_serverchan_label">屏蔽指定评论内容，使用 “|” 分隔关键词（非模糊匹配</p><textarea name="'.$opt.'" id="'.$opt.'" placeholder="Comment BlackList">'.$value.'</textarea>';  //<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="Comment BlackList" value="' . $value . '"/>
                                     ?>
                                 </td>
                             </tr>
@@ -2919,24 +2924,7 @@
                                 $opt = 'site_list_links_category';
                                 $value = get_option($opt);
                                 $lists = get_links_category();
-                                // $defaults = new stdClass();
-                                // $defaults->name = '所有类目';
-                                // $defaults->slug = '';
-                                // if (!empty($lists)) array_unshift($lists, $defaults);
-                                // // print_r($lists);
-                                // if(!$value) update_option($opt, $defaults->slug);else $preset=$value;
-                                // echo '<label for="'.$opt.'"><p class="description" id="">首页随机友链列表指定分类（默认显示所有类目</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
-                                //     if (empty($lists)) {
-                                //         echo '<option value="'.$defaults->slug.'" selected="selected">'.$defaults->name.'</option>';
-                                //     } else {
-                                //         foreach ($lists as $list){
-                                //             echo '<option value="'.$list->slug.'"';
-                                //             if($value==$list->slug) echo('selected="selected"');
-                                //             echo '>'.$list->name.'</option>';
-                                //         }
-                                //     }
-                                // echo '</select></label>';
-                                if(!$value) {
+                                if($lists && !$value) {
                                     $preset_ids = '';
                                     foreach ($lists as $list) {
                                         $preset_ids .= $list->term_id . ',';
@@ -2945,11 +2933,13 @@
                                     $value = $preset_ids;
                                 }
                                 echo '<p class="description" id="">首页随机友链列表指定分类（默认所有类目</p><div class="checkbox">';
-                                $async_array = explode(',',trim($value));  // NO "," Array
-                                foreach ($lists as $list) {
-                                    $opts_id = $list->term_id;
-                                    $checking = in_array($opts_id, $async_array) ? 'checked' : '';
-                                    echo '<input id="'.$opt.'_'.$opts_id.'" type="checkbox" value="'.$opts_id.'" '.$checking.' /><label for="'.$opt.'_'.$opts_id.'">'.$list->name.'</label>';
+                                if ($lists) {
+                                    $async_array = explode(',',trim($value));  // NO "," Array
+                                    foreach ($lists as $list) {
+                                        $opts_id = $list->term_id;
+                                        $checking = in_array($opts_id, $async_array) ? 'checked' : '';
+                                        echo '<input id="'.$opt.'_'.$opts_id.'" type="checkbox" value="'.$opts_id.'" '.$checking.' /><label for="'.$opt.'_'.$opts_id.'">'.$list->name.'</label>';
+                                    }
                                 }
                                 echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" readonly value="' . $value . '" placeholder="默认全选"/></div>';
                             ?>
@@ -2979,6 +2969,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
+                                // $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_techside_switcher_label">开启首页科技资讯栏目（默认开启，选择任意项后可手动关闭，支持多分类及baas数据</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">TECH</b></label>';
                             ?>
                         </td>
@@ -3000,18 +2991,6 @@
                                     ?>
                                 </td>
                             </tr>
-                            <!--<tr valign="top" class="child_option dynamic_optshow">-->
-                            <!--    <th scope="row">— 分类侧栏图片</th>-->
-                            <!--    <td>-->
-                                    <?php
-                                        // $opt = 'site_techside_bg';
-                                        // $value = get_option($opt);
-                                        // $preset =  $img_cdn.'/images/google_flush.gif';//Tech-x4.png
-                                        // $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        // echo '<p class="description" id="site_bgimg_label">分类背景图，列表旁调用图片（默认背景图</p><label for="'.$opt.'" class="upload"><em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em></label><input type="text" name="'.$opt.'" placeholder="'.$preset.'" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button" data-type=1 value="选择图片" />';
-                                    ?>
-                            <!--    </td>-->
-                            <!--</tr>-->
                     <?php
                         // }
                     ?>
@@ -3029,6 +3008,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
+                                // $status = check_status($opt);
                                 echo '<label for="'.$opt.'"><p class="description" id="site_acgnside_switcher_label">开启首页科技资讯栏目（默认开启，选择任意项后可手动关闭，支持多分类及baas数据</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">ACGN</b></label>';
                             ?>
                         </td>
@@ -3778,12 +3758,13 @@ const maps = {
                                         echo '<p class="description" id="">指定检测友链分类状态，使用逗号“ , ”分隔</p><div class="checkbox">';
                                         $exist_array = explode(',',trim($value));  // NO "," Array
                                         $links_array = get_links_category();
-                                        // print_r($links_array);
-                                        foreach ($links_array as $link_category) {
-                                            if (!$link_category) continue;
-                                            $link_slug = $link_category->slug;
-                                            $checking = in_array($link_slug, $exist_array) ? 'checked' : '';
-                                            echo '<input id="'.$opt.'_'.$link_slug.'" type="checkbox" value="'.$link_slug.'" '.$checking.' /><label for="'.$opt.'_'.$link_slug.'">'.$link_category->name.'</label>';
+                                        if ($links_array) {
+                                            foreach ($links_array as $link_category) {
+                                                if (!$link_category) continue;
+                                                $link_slug = $link_category->slug;
+                                                $checking = in_array($link_slug, $exist_array) ? 'checked' : '';
+                                                echo '<input id="'.$opt.'_'.$link_slug.'" type="checkbox" value="'.$link_slug.'" '.$checking.' /><label for="'.$opt.'_'.$link_slug.'">'.$link_category->name.'</label>';
+                                            }
                                         }
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" readonly value="' . $value . '" placeholder="请选择"/></div>';
                                     ?>

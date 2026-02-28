@@ -22,7 +22,7 @@ jQuery(document).ready(function($){
         };
     }
 
-    function bindEvents(events = 'onclick', parent, ids, callback) {
+    function bindEvents(parent, ids, callback, events = 'onclick') {
         if (!parent) {
             console.warn('bindEvents failed', parent);
             return;
@@ -168,7 +168,7 @@ jQuery(document).ready(function($){
 
 // ***  ROW JAVASCRIPT FUNCTIONs (AFTER DOCUMENT LOADED) *** //
     
-    bindEvents('onclick', document, '', (t, e)=> {
+    bindEvents(document, '', (t, e)=> {
         // console.log(t)
         switch (true) {
             case t.classList && t.classList.contains('dynamic_dom'):
@@ -326,7 +326,7 @@ jQuery(document).ready(function($){
     if(blog_settings) {
         
         //onchange/onpropertychange only active when off-focus
-        bindEvents('oninput', switch_form, '', throttle((t)=> {
+        bindEvents(switch_form, '', throttle((t)=> {
             // console.log(t);
             if (!t.classList) return;
             switch (true) {
@@ -363,7 +363,7 @@ jQuery(document).ready(function($){
                 default:
                     // console.warn(t);
             }
-        }, 250));
+        }, 250), 'oninput');
         
         // 多选框同步逻辑
         const checkboxes = document.querySelectorAll('.checkbox');
@@ -620,7 +620,7 @@ jQuery(document).ready(function($){
         if (switchtab[0]) switchtab[0].classList.add(activecls);  // clearClass then active
     }
     
-    bindEvents('onclick', document.querySelector(".switchTab"), 'li', (t)=> {
+    bindEvents(document.querySelector(".switchTab"), 'li', (t)=> {
         pushParam('tab', t.id);
         // location.search = '?page=2blog-settings&tab='+t.id;
         clearClass(switchtab, activecls);  // clear actived class
@@ -634,7 +634,7 @@ jQuery(document).ready(function($){
     const reloader = 'reloadFeeds';
     if (contents) {
         // const reloadFeeds = contents.querySelector('.reloadFeeds');
-        bindEvents('onclick', contents, '', (t)=> { //reloader
+        bindEvents(contents, '', (t)=> { //reloader
             if (t.id==='reloadCount') {
                 const reloadFeeds = t.parentNode.querySelector('.reloadFeeds');
                 t.onchange = t.onpropertychange = ()=> reloadFeeds.dataset.limit = t.value;
@@ -755,7 +755,7 @@ jQuery(document).ready(function($){
             updateNode.focus();
         };
         
-        bindEvents('onchange', rsslogs, '', (t)=> {
+        bindEvents(rsslogs, '', (t)=> {
             if (!t.classList) return;
             const selectedOption = t.options[t.selectedIndex];
             let year_value = selected_year.selectedOptions[0].value ? selected_year.selectedOptions[0].value : 0;
@@ -854,6 +854,6 @@ jQuery(document).ready(function($){
                     console.error('Error fetching progress:', error);
                 });
             }
-        });
+        }, 'onchange');
     }
 });
