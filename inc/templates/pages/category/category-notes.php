@@ -20,7 +20,7 @@
         }
 	    .win-top h5 {
 	        font-weight: 800;
-	        filter: url(#x);
+	        /*filter: url(#x);*/
 	    }
 	    article .info span.valine-comment-count:before {
 	        margin-right: 3px;
@@ -46,7 +46,7 @@
 	    echo do_shortcode('[custom_video src="' . $video_src . '" poster="' . $poster_src . '"]');
     ?>
 	<!--<span id="fixed" style="background:inherit"></span>-->
-	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s"><span></span> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '好记性不如烂键盘'; ?><!--<strong>烂键盘</strong>--> </h5>
+	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s"><span></span> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '好记性，不如烂键盘。'; ?><!--<strong>烂键盘</strong>--> </h5>
 </div>
 <div class="content-all-windows">
 	<div class="win-nav-content">
@@ -141,7 +141,7 @@
                                     <?php 
                                         $cats = get_the_category();
                                         foreach ($cats as $cat){
-                                            if($cat->slug!=$temp->slug) echo '<em> '.$cat->name.' </em>';  //leave a blank at the end of em
+                                            if($cat->slug!=$temp->slug) echo '<em> #'.$cat->name.' </em>';  //<a href="'.get_the_permalink($cat->term_id).'">
                                         }
                                     ?>
                                 </span>

@@ -41,7 +41,7 @@ function the_comment_ranks($t1='常客',$c1='近期访问较频繁的童鞋',$t2
             $rankdata = get_comment_ranks();
             $datalen = count($rankdata);
             $databox = '';
-            $loopmax = 5; // 3 plus 匿名者/2broear
+            $loopmax = 3; // 5 plus 匿名者/2broear
             // function commenter_filter($callback) {
             //     $callback();
             // }

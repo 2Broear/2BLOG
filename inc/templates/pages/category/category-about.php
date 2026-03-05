@@ -94,7 +94,7 @@
             border: 1px solid rgb(200 200 200 / 35%);
         }
         .about_blocks li.intro_right .mbit .mbit_intro a {
-            border-width: 3px;
+            border-width: 2px;
             box-shadow: 0px 0 0px 5px rgb(51 164 116 / 10%);
             /*box-shadow: none;*/
         }
@@ -119,6 +119,9 @@
         }
         blockquote p {
             margin: 10px auto;
+        }
+        .body-basically table td {
+            color: var(--preset-6);
         }
     </style>
 </head>

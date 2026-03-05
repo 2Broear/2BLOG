@@ -85,6 +85,7 @@
             animation: zoomer 5s 1 forwards ease-in-out;
             -webkit-animation: zoomer 5s 1 forwards ease-in-out;
         }
+        .win-top video,
         .win-top .counter h1, 
         .win-top .counter h2 {
             animation-timing-function: linear(0 0%, 0 1.8%, 0.01 3.6%, 0.03 6.35%, 0.07 9.1%, 0.13 11.4%, 0.19 13.4%, 0.27 15%, 0.34 16.1%, 0.54 18.35%, 0.66 20.6%, 0.72 22.4%, 0.77 24.6%, 0.81 27.3%, 0.85 30.4%, 0.88 35.1%, 0.92 40.6%, 0.94 47.2%, 0.96 55%, 0.98 64%, 0.99 74.4%, 1 86.4%, 1 100%)!important;
@@ -201,9 +202,9 @@
             parent[events] = (e)=> {
                 e = e || window.event;
                 let t = e.target || e.srcElement;
-                if(!t) return;
-                while(t!=parent){
-                    if(!ids || ids==="") {
+                // if (!t) return;
+                while (t && t != parent) {
+                    if(!ids || ids == "") {
                         callback(t,e);
                         break;
                     }

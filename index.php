@@ -83,10 +83,10 @@
             font-size: 5rem;
         }
         .Fresh-ImgBoxs span a b {
-            filter: url(#x);
             transition: .35s ease;
         }
-        .Fresh-ImgBoxs span i{
+        .Fresh-ImgBoxs span i {
+            /*filter: url(#x);*/
             font-size: 7rem;
             right: -15%;
         }
@@ -125,6 +125,9 @@
         .Fresh-ImgBoxs span:last-child a{
             color: <?php echo $theme_array[3];//#34a853; ?>!important;
             background: linear-gradient(-90deg, currentColor 0, transparent);
+        }
+        #acg_window-top {
+            border-color: transparent;
         }
         #special-img{
             position: absolute;
@@ -252,7 +255,7 @@
                 <div class="weBlog-Description-inside">
                     <div class="weBlog-Description-inside-content">
                         <span>
-                            <small style="filter: url(#x);"><b style="font-size:xx-large;">👋 I'm</b><strong> <?php echo get_option('site_nick', get_bloginfo('name')); ?>~ </strong></small>
+                            <small><b style="font-size:2.35rem;">👋 I'm</b><strong> <?php echo get_option('site_nick', get_bloginfo('name')); ?>~ </strong></small>
                             <p> 「<?php bloginfo('description') ?>」 </p>
                         </span>
                     </div>

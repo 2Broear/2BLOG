@@ -148,8 +148,9 @@
                         </script>
                 <?php
                     } elseif ($third_cmt=='Twikoo') {
+                        $third_twikoo = get_option('site_twikoo_version');
                 ?>
-                        <script src="<?php echo 'https://cdn.staticfile.org/twikoo/' . get_option('site_twikoo_version'). '/twikoo.min.js'; ?>"></script>
+                        <script src="<?php echo $third_twikoo ? $third_twikoo : $src_cdn . '/js/Twikoo/twikoo.min.js'; ?>"></script>
                         <script>
                             twikoo.init({
                                 envId: '<?php echo $twikoo_envid = get_option('site_twikoo_envid'); ?>',

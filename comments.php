@@ -144,10 +144,10 @@
             // $commenter = wp_get_current_commenter();
             $text_submit = '提交评论';
             $text_loadmore = '加载更多评论';
-            $cf_turnstile_wordpress = get_cf_turnstile('Wordpress'); //get_option('site_cloudflare_turnstile') && 
+            $cf_turnstile_wordpress = get_cf_turnstile('Wordpress');
 ?>
+        <div id="vcomments" class="v">
             <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/valine.css?v=<?php echo get_theme_info(); ?>" />
-            <div id="vcomments" class="v">
             <?php 
                 if ($cf_turnstile_wordpress) {
                     echo '<div id="widget-container"></div>';
@@ -240,20 +240,19 @@
                     'orderby' => 'comment_date', //comment_ID
                     'order'   => get_option('comment_order'),
                     // 'hierarchical' => true,
-                    // 'status'  => 'approve', // approved only
                     'offset'  => 0,
                     'parent'  => 0  // top comments only
                 ));
                 $comments_all = get_comments(array(
                     'post_id' => $post_ID,
-                    // 'status' => 'approve',
+                    'status'  => 'approve', // approved only
                     'count'  => true,
                     'parent'  => 0  // top comments only
                 ));
                 $comment_count = count($comments);
             ?>
             <div class="wp_comment_count">
-                <?php echo '<strong id="count">'.$comments_all.'</strong> 条评论'; ?>
+                <?php echo '<strong id="count">'.$comments_all.'</strong> 人评论'; ?>
             </div>
             <div class="vlist" id="comments">
             <?php
@@ -423,7 +422,6 @@
         <?php
             }
         ?>
-            </div>
             <script type="text/javascript">
                 const admin_md5mail = "<?php echo md5(get_option('site_smtp_mail', get_bloginfo('admin_email'))); ?>"; //preset for wp_comment
                 const comment_loads = <?php echo $per_page; ?>;
@@ -459,7 +457,7 @@
                             comment_repeat: '检测到重复评论，您似乎已经提交过这条评论了！',
                             comment_limits: '您提交评论的速度太快了，请稍后再发表评论。',
                             comment_error: '抱歉，服务器错误，请稍后再试。',
-                            comment_counter: '条评论',
+                            comment_counter: '人评论',
                             comment_submit: '提交中..',
                             comment_loaded: '已加载全部评论',
                             turnstile_error: '重置 turnstile 发生错误！',
@@ -1194,14 +1192,6 @@
                         this.dom = dom;
                     }
                 });
-                // Object.defineProperty(vcomments.init.prototype, 'box', {
-                //     get() {
-                //         return this.dom;
-                //     },
-                //     set(dom) {
-                //         this.dom = dom;
-                //     }
-                // });
                 
                 const comments_init = new vcomments.init(vcomments.dom.box);
                 // register events
@@ -1210,7 +1200,8 @@
                 comments_init.initCanvas();
                 console.log(comments_init);
             </script>
-        <?php
+        </div>
+    <?php
         }
     }else{
         echo '<p class="disabled_comment">* 抱歉，由于某些原因已关闭页面评论</p>';

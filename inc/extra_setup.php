@@ -37,6 +37,11 @@
      * https://redpishi.com/wordpress-tutorials/cloudflare-turnstile-captcha-wordpress/
      *--------------------------------------------------------------------------
     */
+    function get_cf_turnstile($comments = 'Wordpress') {
+        $cf_turnstile = get_option('site_cloudflare_turnstile');
+        $turnstile_comments = explode(',', get_option('site_cloudflare_turnstile_comments'));
+        return $cf_turnstile && in_array($comments, $turnstile_comments);
+    }
     if (get_option('site_cloudflare_turnstile')) {
         
         function cloudflare_key() {
@@ -159,11 +164,6 @@
         /*
          * Third-Party Comment valine/twikoo
          */
-        function get_cf_turnstile($comments = 'Wordpress') {
-            $cf_turnstile = get_option('site_cloudflare_turnstile');
-            $turnstile_comments = explode(',', get_option('site_cloudflare_turnstile_comments'));
-            return $cf_turnstile && in_array($comments, $turnstile_comments);
-        }
         function the_cf_turnstile() {
     ?>
             <style>.cf-turnstile.hide{display:none;}.cf-turnstile{margin-top:15px;}#widget-container{width:100%;}</style>

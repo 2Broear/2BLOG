@@ -32,7 +32,7 @@
 			    $poster_src = $video_src ? $video_src : get_meta_image($cat, $img_cdn.'/images/guestbook.jpg');
 			    echo do_shortcode('[custom_video src="' . $video_src . '" poster="' . $poster_src . '"]');
 		    ?>
-            <h5> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? '<span>'.$cat_desc.'</span>' : '畅所<b style="font-family:sans-serif;">，</b><span>你の欲言。</span>'; ?> </h5>
+            <h5> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? '<span>'.$cat_desc.'</span>' : '畅所<b style="font-family:sans-serif;">，</b><span>你の欲言~</span>'; ?> </h5>
         </div>
 		<div class="content-all-windows" style="padding-top:0;">
             <?php 

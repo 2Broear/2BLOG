@@ -366,6 +366,7 @@
                 background: linear-gradient(270deg, transparent 0%, #fafafa 50%);
                 -webkit-background-clip: text;
                 background-clip: text;
+                filter: url(#x);
             }
             .wrap.dark .switchTab {
                 color: #ccc;
@@ -448,6 +449,19 @@
             }
             .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{transform:translateY(20px);/*width:max-content;top: 55px;width: 360px;transition-duration: .55s;padding: 5px;*/}.switchTab{overflow:hidden;border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, #fff 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}h1 b{font-weight:900!important;font-style:italic;letter-spacing:normal;}#wpcontent{padding:0!important}
         </style>
+        <svg style="display: none;">
+            <defs>
+                <filter id="x" height="500%">
+                    <feTurbulence baseFrequency="0.01 0.02" numOctaves="2" result="t0"></feTurbulence>
+                    <feDisplacementMap in="SourceGraphic" in2="t0" result="d0" scale="5"></feDisplacementMap>
+                    <feComposite in="SourceGraphic" in2="d0" operator="atop" result="0"></feComposite>
+                    <feTurbulence baseFrequency="1" numOctaves="2" result="t1"></feTurbulence>
+                    <feDisplacementMap in="0" in2="t1" result="d1" scale="2"></feDisplacementMap>
+                    <feComposite in="0" in2="d1" operator="atop" result="1"></feComposite>
+                    <feOffset dx="-3" dy="-3" in="1"></feOffset>
+                </filter>
+            </defs>
+        </svg>
         <!--<h1 style="text-align: center;font-size: 4rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> RSS <b>Feeds</b></h1>-->
         <h1 style="text-align: center;font-size: 3.6rem!important;font-weight:100;letter-spacing:2px;padding: 15px 0!important;text-shadow:1px 1px 0 white;"><b><span style="color:var(--panel-theme);text-shadow:20px -20px 100px currentColor;"> RSS </span>Feeds</b></h1><!--<p style="letter-spacing:normal;margin-bottom:auto;">导航分类为友情链接分类</p>-->
         <div class="switchTab">
@@ -1133,6 +1147,7 @@
                 background: linear-gradient(90deg, transparent 0%, #fafafa 100%);
                 background-clip: text;
                 -webkit-background-clip: text;
+                filter: url(#x);
             }
             .wrap.dark .btn,
             .wrap.dark h1 b.num {
@@ -1400,6 +1415,19 @@
             /*    box-shadow: 0 0 15px currentColor;*/
             /*}*/
         </style>
+        <svg style="display: none;">
+            <defs>
+                <filter id="x" height="500%">
+                    <feTurbulence baseFrequency="0.01 0.02" numOctaves="2" result="t0"></feTurbulence>
+                    <feDisplacementMap in="SourceGraphic" in2="t0" result="d0" scale="5"></feDisplacementMap>
+                    <feComposite in="SourceGraphic" in2="d0" operator="atop" result="0"></feComposite>
+                    <feTurbulence baseFrequency="1" numOctaves="2" result="t1"></feTurbulence>
+                    <feDisplacementMap in="0" in2="t1" result="d1" scale="2"></feDisplacementMap>
+                    <feComposite in="0" in2="d1" operator="atop" result="1"></feComposite>
+                    <feOffset dx="-3" dy="-3" in="1"></feOffset>
+                </filter>
+            </defs>
+        </svg>
         <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>&#60;<span style="color:var(--panel-theme);text-shadow: -10px 0 30px currentColor;">&#47;</span>&#62;</b><p style="letter-spacing:normal;margin-bottom:auto;opacity:.75;"> 第三方 LeanCloud 数据储存服务将于 2027 停服，相关设置将停用<sup> （此主题需<ins>开发经验</ins>） </sup> </p></h1>
         <!--<hr/>-->
         <div class="switchTab">
@@ -2421,19 +2449,20 @@
                             </tr>
                             <!-- Twikoo -->
                             <tr valign="top" class="child_option dynamic_opts <?php echo $twikoo_statu = $third_comment=='Twikoo' ? 'dynamic_optshow Twikoo' : 'dynamic_opts Twikoo' ?>">
-                                <th scope="row">— 版本号</th>
+                                <th scope="row">— 版本号（外链地址）</th>
                                 <td>
                                     <?php
                                         $opt = 'site_twikoo_version';
                                         $value = get_option($opt);
-                                        $preset = '1.6.4';  //默认
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        $status_code = 0;
-                                        $url = 'https://cdn.staticfile.org/twikoo/' . $preset . '/twikoo.min.js';
-                                        if($third_comment=='Twikoo'){
-                                            $status_code = get_url_status_by_curl($url, 3); //get_url_status_by_header($url);
-                                        }
-                                        echo '<p class="description" id="site_comment_pushplus_label">twikoo.min.js 版本号（默认 1.6.4，当前文件（'.$url.'）状态：'.$status_code.'</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="small-text" placeholder="Twikoo Source" value="' . $preset . '"/>';
+                                        // $preset = '1.6.4';  //默认
+                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        // $status_code = 0;
+                                        // $url = 'https://cdn.staticfile.org/twikoo/' . $preset . '/twikoo.min.js';
+                                        // if($third_comment=='Twikoo'){
+                                        //     $status_code = get_url_status_by_curl($url, 3); //get_url_status_by_header($url);
+                                        // }
+                                        // echo '<p class="description" id="site_comment_pushplus_label">twikoo.min.js 版本号（默认 1.6.4，当前文件（'.$url.'）状态：'.$status_code.'</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="small-text" placeholder="Twikoo Source" value="' . $preset . '"/>';
+                                        echo '<p class="description" id="site_comment_pushplus_label">重写 twikoo.min.js 文件版本号（默认使用主题文件，版本号1.6.4</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="https://cdn.staticfile.org/twikoo/1.6.4/twikoo.min.js" value="' . $value . '"/>';
                                     ?>
                                 </td>
                             </tr>

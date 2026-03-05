@@ -40,7 +40,9 @@
         $cats = get_categories(meta_query_categories(0));
         if(!empty($cats)){
             global $img_cdn, $cdn_switch, $images_cdn;
+            // $no_slash = get_option('site_url_slash_sw');
             $slash_href = 'javascript:void(0)';
+            $site_url = get_site_url();
             foreach($cats as $the_cat){
                 $the_cat_id = $the_cat->term_id;
                 $the_cat_slug = $the_cat->slug;  //use slug compare current category
@@ -49,11 +51,10 @@
                 $slug_icon = $the_cat_slug!="/" ? $the_cat_slug : "more";
                 $level = !empty($catss) ? "sec_level" : "top_level";
                 $choosen = $the_cat_id==$cat&&!is_single() || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single() ? "choosen" : "";  // 当前选中栏目 || 当前选中栏目下子栏目 || 当前栏目下文章&&文章单页
-                $cur_link = get_category_link($the_cat_id);
-                $slash_link = $cur_link==get_site_url()||$cur_link==get_site_url().'/category/'||$cur_link==get_site_url().'/category' ? $slash_href : $cur_link;  // detect if use $slash_link
-                // $slash_name = $slash_link===$slash_href
+                $cur_link = get_category_link($the_cat_id); //if ($no_slash) strpos('/', $site_url)!==false
+                if (str_replace('com/', 'com', $cur_link)==$site_url||$cur_link==$site_url.'/category/'||$cur_link==$site_url.'/category') $cur_link = $slash_href; //if ($no_slash) strpos('/', $site_url)!==false
                 $site_icon = $use_icon ? '<i class="icom icon-'.$slug_icon.'"></i>' : '';
-                if($the_cat_slug!='uncategorized') echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.$slash_link.'" class="'.$choosen.'" rel="nofollow">' . $site_icon . $the_cat->name.'</a>';  //liwrapper
+                if($the_cat_slug!='uncategorized') echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.$cur_link.'" class="'.$choosen.'" rel="">' . $site_icon . $the_cat->name.'</a>';  //liwrapper
                 if(!empty($catss) && $deepth>=2){
                     $metanav_array = explode(',', get_option('site_metanav_array'));
                     if(get_option('site_metanav_switcher') && in_array($the_cat_slug, $metanav_array)){ //strpos(get_option('site_metanav_array'),$the_cat_slug)!==false
@@ -113,9 +114,9 @@
                                 $the_cats_name = '<b>'.$the_cats_name.'</b>';
                             }
                             $choosen = $the_cats_id==$cat || cat_is_ancestor_of($the_cats_id, $cat) || in_category($the_cats_id)&&is_single() ? "choosen 2nd" : "2nd";  // current choosen detect
-                            $cur_link = get_category_link($the_cats_id);
-                            $slash_link = $cur_link==get_site_url()||$cur_link==get_site_url().'/category/'||$cur_link==get_site_url().'/category' ? $slash_href : $cur_link;  // detect if use $slash_link
-                            echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent." ".$level.'"><a href="'.$slash_link.'" class="'.$choosen.'" rel="nofollow">'.$the_cats_name.'</a>';  //liwrapper
+                            $cur_link = get_category_link($the_cats_id); //if ($no_slash) strpos('/', $site_url)!==false
+                            if (str_replace('com/', 'com', $cur_link)==$site_url||$cur_link==$site_url.'/category/'||$cur_link==$site_url.'/category') $cur_link = $slash_href; //if ($no_slash) strpos('/', $site_url)!==false
+                            echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats->category_parent." ".$level.'"><a href="'.$cur_link.'" class="'.$choosen.'" rel="">'.$the_cats_name.'</a>';  //liwrapper
                             if(!empty($catsss) && $deepth>=3){
                                 echo $mobile ? '<ul class="links-moress">' : '<div class="sub-additional"><ol class="links-more">';
                                 foreach($catsss as $the_catss){
