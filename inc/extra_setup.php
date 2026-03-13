@@ -1448,7 +1448,9 @@
                 if ($res) report_logs('（定时任务）' . $link_slug . ' 已更新于：' . date("Y-m-d H:i:s"), true); // json_decode($res)[0]->lastUpdate
             }
             report_logs("（定时任务）所有 RSS 缓存已更新.....................\n\n\n", true); // 记录日志
-            wp_cache_flush(); // bug: to clear wp_options caches
+            if (function_exists('wp_cache_flush')) {
+                wp_cache_flush(); // bug: to clear wp_options caches
+            }
         }
     }
     
@@ -1913,7 +1915,7 @@
                             <em><?php echo $nick; ?></em>
                         </a>
                         <?php
-                            if($email==get_option('site_smtp_mail', get_bloginfo('admin_email'))) echo '<span class="vsys admin">admin</span>';
+                            if ($email == get_bloginfo('admin_email')) echo '<span class="vsys vadmin">admin</span>';
                             echo '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
                             if($approved=="0") echo '<span class="vsys auditing">待审核</span>';
                         ?>
@@ -2045,7 +2047,47 @@
             die();
         }
         add_action('wp_ajax_update_db_data', 'update_db_data');
-        add_action('wp_ajax_nopriv_update_db_data', 'update_db_data');
+        // 不允许未登录用户执行
+        // add_action('wp_ajax_nopriv_update_db_data', 'update_db_data');
+    }
+    
+    // 限制每篇文章保存 5 个修订版本
+    // define('WP_POST_REVISIONS', 5);
+    // 临时清理修订版本和自动草稿
+    if (get_option('site_wpdb_optimize_switcher')) {
+        function update_wp_posts_revisions() {
+            global $wpdb;
+            $table_name = $wpdb->posts;
+            $query = "DELETE FROM {$table_name} WHERE post_status='auto-draft' OR post_type='revision'";
+            $res = $wpdb->query($query);
+            // 2. 执行 OPTIMIZE TABLE（只有删除了数据才需要优化）
+            if ($res > 0) {
+                $optimize_result = $wpdb->query("OPTIMIZE TABLE {$table_name}");
+                if (false === $optimize_result) {
+                    // OPTIMIZE 失败不影响主流程，只记录警告
+                    echo "OPTIMIZE TABLE 优化失败: " . $wpdb->last_error . '<br />';
+                } else {
+                    echo "OPTIMIZE TABLE 表优化完成<br />";
+                }
+            }
+            // 调试输出（仅管理员可见）
+            if (current_user_can('manage_options')) {
+                echo false === $res ? "wp_posts 数据库更新失败，错误信息: " . esc_html($wpdb->last_error) : "wp_posts 查询成功，更新了 " . intval($res) . " 行。";
+            }
+            return $res;
+        }
+        // 然后在 PHP 端处理：
+        function clear_wp_revisions() {
+            check_ajax_referer('clear_wp_posts_revisions_nonce');  // 检查 nonce
+            update_wp_posts_revisions();
+            if (function_exists('wp_cache_flush')) {
+                wp_cache_flush(); // bug: to clear memcached caches
+            }
+            die();
+        }
+        add_action('wp_ajax_clear_wp_revisions', 'clear_wp_revisions');
+        // 不允许未登录用户执行
+        // add_action('wp_ajax_nopriv_clear_wp_revisions', 'clear_wp_revisions');
     }
     
     /*

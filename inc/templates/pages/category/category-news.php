@@ -17,12 +17,12 @@
             background: none;
         }
         .news-window:nth-child(even) span.news-window-img::after{
-            background: linear-gradient(45deg, rgba(255,255,255,1) 36%, rgba(255,255,255,0.15) 66%, rgba(255,255,255,1) 90%);
-            background: -webkit-linear-gradient(45deg, rgba(255,255,255,1) 36%, rgba(255,255,255,0.15) 66%, rgba(255,255,255,1) 90%);
+            background: linear-gradient(45deg, rgba(255,255,255,1) 18%, transparent 66%, rgba(255,255,255,1) 88%);
+            background: -webkit-linear-gradient(45deg, rgba(255,255,255,1) 18%, transparent 66%, rgba(255,255,255,1) 88%);
         }
         body.dark .news-window:nth-child(even) span.news-window-img::after{
-            background: linear-gradient(45deg, var(--preset-2b) 36%, rgba(48, 48, 48, 0.15) 66%, var(--preset-2a) 90%);
-            background: -webkit-linear-gradient(45deg, var(--preset-2b) 36%, rgba(0, 0, 0, 0.15) 66%, var(--preset-2a) 90%);
+            background: linear-gradient(45deg, var(--preset-2b) 18%, rgba(48, 48, 48, 0.15) 66%, var(--preset-2a) 88%);
+            background: -webkit-linear-gradient(45deg, var(--preset-2b) 18%, rgba(0, 0, 0, 0.15) 66%, var(--preset-2a) 88%);
         }
         .news-window:nth-child(even) h2.entry-title {
             font-size: 1rem;

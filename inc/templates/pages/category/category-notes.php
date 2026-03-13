@@ -46,7 +46,7 @@
 	    echo do_shortcode('[custom_video src="' . $video_src . '" poster="' . $poster_src . '"]');
     ?>
 	<!--<span id="fixed" style="background:inherit"></span>-->
-	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s"><span></span> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '好记性，不如烂键盘。'; ?><!--<strong>烂键盘</strong>--> </h5>
+	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s"><b> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '好记性，不如烂键盘。'; ?></b><!--<strong>烂键盘</strong>--> </h5>
 </div>
 <div class="content-all-windows">
 	<div class="win-nav-content">

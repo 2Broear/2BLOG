@@ -234,6 +234,23 @@ jQuery(document).ready(function($){
                     xhr.send('action=update_cronjobs&nonce=' + t.dataset.nonce + '&interval=' + updateScheduleValue);
                 }
                 break;
+            case t.id === 'updateRevision':
+                if (false === confirm(`确认清理数据库（revision）缓存？（请备份数据库后再进行操作！）`)) {
+                    return;
+                }
+                jQuery.post(t.dataset.url, {
+                    action: t.dataset.action,
+                    _ajax_nonce: t.dataset.nonce,
+                }, function(response, status) {
+                    if (status !== 'success') {
+                        t.value = '清理出现问题：' . status;
+                        return;
+                    }
+                    alert(decodeURIComponent(response));
+                    t.value = '已完成清理';
+                    t.disabled = 'true';
+                });
+                break;
             case t.id === 'updateDomain':
                 const context = t.value;
                 const options = t.dataset.options;
@@ -262,7 +279,7 @@ jQuery(document).ready(function($){
                 }
                 // console.log(before, after);
                 jQuery.post(t.dataset.url, {
-                    action: 'update_db_data',
+                    action: t.dataset.action,
                     before: encodeURIComponent(before),
                     after: encodeURIComponent(after),
                     options: encodeURIComponent(options),

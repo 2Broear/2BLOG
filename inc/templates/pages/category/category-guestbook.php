@@ -9,13 +9,11 @@
 <head>
     <?php get_head(); ?>
     <style>
-        #reverse_rotate{direction: rtl;unicode-bidi: bidi-override;transform:rotate(180deg);display: inline-block;}
-        .content-all-windows{display: block!important;}
-        .win-top h5{font-family: "Playfair Display",宋体 , serif!important;}
-        #vcomments{padding:0!important;}
-        /*@media screen and (max-width: 600px) {*/
-        /*    .win-top h5{padding: 15% 5%;font-size: 2.33rem!important;}*/
-        /*}*/
+        #reverse_rotate {direction: rtl;unicode-bidi: bidi-override;transform:rotate(180deg);display: inline-block;}
+        .content-all-windows {display: block!important;}
+        .win-top h5 {font-family: "Playfair Display",宋体 , serif!important;}
+        #vcomments {padding:0!important;}
+        .typed-cursor {color: white; background: transparent;}
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -32,7 +30,15 @@
 			    $poster_src = $video_src ? $video_src : get_meta_image($cat, $img_cdn.'/images/guestbook.jpg');
 			    echo do_shortcode('[custom_video src="' . $video_src . '" poster="' . $poster_src . '"]');
 		    ?>
-            <h5> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? '<span>'.$cat_desc.'</span>' : '畅所<b style="font-family:sans-serif;">，</b><span>你の欲言~</span>'; ?> </h5>
+            <h5> 
+            <?php 
+                $typing_effects = get_option('site_animated_typing_switcher') && in_array(current_slug(), explode(',', get_option('site_animated_typing_includes')));
+                $cat_desc = get_category($cat)->category_description;
+                $cat_text = $cat_desc ? $cat_desc : '畅所<b style="font-family:sans-serif;">，</b>';
+                if (!$typing_effects) $cat_text .= '<span>你の欲言~</span>';
+                echo '<div class="typed">' . $cat_text . '<span id="typed"></span></div>';
+            ?> 
+            </h5>
         </div>
 		<div class="content-all-windows" style="padding-top:0;">
             <?php 

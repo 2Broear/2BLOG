@@ -265,6 +265,44 @@
 </script>
 <script type="module">
     try {
+    <?php
+        $page_slug = is_home() ? '/' : current_slug();  // in case of custom '/' includes
+        $typing_effects = get_option('site_animated_typing_switcher') && in_array($page_slug, explode(',', get_option('site_animated_typing_includes')));
+        if ($typing_effects) {
+    ?>
+        import('<?php echo $src_cdn; ?>/js/bin/typed.js?v=<?php echo get_theme_info(); ?>x').then((mod)=> {
+            <?php
+                switch ($page_slug) {
+                    case get_cat_by_template('guestbook', 'slug'):
+                        $type_array = array("欲言。", "你の欲言。");
+                        break;
+                    default:
+                        $type_array = array(get_option('site_nick', get_bloginfo('name'))); //"尔之欲语~",
+                        break;
+                }
+                echo 'const typedArray = ' . json_encode($type_array) . ';' . PHP_EOL; 
+            ?>
+            const increase_init_ms = 15, //0
+                  increase_step_ms = 1000; //1000
+            for(let i=0, l=typedArray.length; i<l; i++) {
+                let increase_count = i>0 ? i*increase_step_ms : increase_step_ms;
+                typedArray[i] = typedArray[i] + `^${increase_init_ms + increase_count}`;
+            }
+            var typed = new Typed('#typed', {
+                strings: typedArray,
+                typeSpeed: 50,
+                backSpeed: 15,
+                backDelay: 50,
+                loop: false,
+                loopCount: Infinity,
+                // showCursor: false,
+                // cursorChar: '|',
+                // autoInsertCss: true,
+            });
+        });
+    <?php
+        }
+    ?>
         import("<?php echo $src_cdn; ?>/js/utils.js").then((mod)=> {
             const { _EventBus, _Closure, _Basics, VisibilityObserver } = mod;
         <?php

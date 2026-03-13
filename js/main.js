@@ -393,7 +393,7 @@
     }
     
     function darkmode() {
-        console.log(document.cookie);
+        // console.log(document.cookie);
         setCookie('theme_manual', 1);  // enable manual mode (disable automode)
         let theme_mode = 'dark';
         if (getCookie('theme_mode') == "dark") theme_mode = 'light';  // 1 day expires

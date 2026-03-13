@@ -168,7 +168,9 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon h3{
             margin: 12px auto auto;
         }
-        
+        .rcmd-boxes .info .inbox .inbox-aside span {
+            line-height: 18px;
+        }
         .rcmd-boxes .info .inbox .inbox-aside .both .gamespot{
             color: gold;
             /*color: orange;*/

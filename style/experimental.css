@@ -16,9 +16,37 @@ body.dark .empty_card {
     opacity: .75;
     text-indent: 2px;
 }
+.win-top video {
+    transform: translate(-50%, -50%) scale(1);
+}
+.win-top em.digital_mask {
+    top: 0;
+}
+/*@keyframes profileScale {*/
+/*	0%{*/
+/*		transform: scale(0.8);*/
+/*		opacity: .5;*/
+/*	}*/
+/*	100%{*/
+/*		transform: scale(1.3);*/
+/*		opacity: 0;*/
+/*	}*/
+/*}*/
+/*.In-core-head #head-photo:before {*/
+/*    background: currentColor;*/
+/*}*/
+/*.news-window:nth-child(even) {*/
+/*    border-width: 1px;*/
+/*}*/
+#news-tail_info ul li {
+    color: var(--preset-8);
+}
 .news-window-img {
+    border-width: 2px;
     border-radius: 50%;
     border-top-left-radius: var(--radius);
+    box-shadow: rgb(0 0 0 / 8%) -10px -10px 20px;
+    background: var(--preset-fa);
 }
 /*.body-basically h2,*/
 .bg h1 a,
@@ -29,17 +57,25 @@ body.dark .empty_card {
 .win-top h5 span,
 .win-top .counter h1,
 .win-top .counter h2,
-.footer-detector,
+.footer-detector span,
 .glitch {
     filter: url(#x);
 }
+/*@keyframes glitch {*/
+/*    0% {*/
+/*        filter: url();*/
+/*    }*/
+/*    100% {*/
+/*        filter: url(#x);*/
+/*    }*/
+/*}*/
 /*.body-basically h2,*/
 /*.bg h1 a,*/
 .about_blocks li.intro_right .mbit:before,
 .friends-boxes .inbox-clip h2,
 .win-top .counter h1,
 .win-top .counter h2,
-.win-top h5.workRange,
+.win-top h5.workRange b,
 .win-top h5 span,
 .stroked_text {
     -webkit-text-fill-color: transparent;
@@ -49,8 +85,9 @@ body.dark .empty_card {
     -webkit-text-fill-color: currentColor;
 }
 .about_blocks li.intro_right .mbit:before {
-    font-style: italic;
     -webkit-text-stroke: 1.5px;
+    font-style: italic;
+    text-transform: capitalize;
 }
 .win-top h5:before {
     width: 66%;
@@ -366,8 +403,10 @@ header>nav#tipson .top-bar-tips {
     box-shadow: none;
     background: linear-gradient(180deg, var(--preset-f) 50%, transparent 100%);
     background: -webkit-linear-gradient(top, var(--preset-f) 50%, transparent 100%);
-    mask: -webkit-linear-gradient(top, var(--preset-f) 80%, transparent 100%);
     /*backdrop-filter: blur(1px);*/
+    /*** !!bug of losing transition! ***/
+    mask: linear-gradient(top, var(--preset-f) 80%, transparent 100%);
+    mask: -webkit-linear-gradient(top, var(--preset-f) 80%, transparent 100%);
 }
 .article_index .in_dex,
 header>nav#tipson .top-bar-tips {
@@ -578,6 +617,7 @@ body.dark .wp-block-table table {
 /*body.dark .v .vlist .vcard.true,*/
 /*body.dark .v .vlist .vcard:hover,*/
 /*body.dark .news-ppt div:first-of-type,*/
+body.dark .news-window-img,
 body.dark .news-content-right-recommend,
 body.dark .weblog-tree-core-r,
 body.dark .pageSwitcher a {
@@ -1106,4 +1146,56 @@ body.dark .inside-functions .box div.dark svg {
     top: inherit;
     left: inherit;
     transform: inherit;
+}
+
+.v .vlist .vcard .vhead .vsys::after,
+.v .vlist .vcard .vhead .vadmin::after,
+.v .vlist .vcard .vhead .vsys::before,
+.v .vlist .vcard .vhead .vadmin::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    display: block;
+    color: inherit;
+    background: currentColor;
+    border-radius: inherit;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    opacity: .1;
+}
+.v .vlist .vcard .vhead .vsys::after,
+.v .vlist .vcard .vhead .vadmin::after {
+    background: transparent;
+    border: 1px solid currentColor;
+    box-sizing: border-box;
+    opacity: .2;
+    padding: 0;
+    margin: auto;
+}
+body.dark .v .vlist .vcard .vhead .vsys {
+    color: var(--preset-9)!important;
+}
+body.dark .v .vlist .vcard .vhead .vadmin {
+    color: var(--theme-color)!important;
+    border-color: transparent!important;
+    box-shadow: var(--mirror-start) 1px 2.2px 1px -1.8px inset, currentColor -1px -2.2px 1px -1.8px inset;
+}
+.v .vlist .vcard .vhead .vsys,
+.v .vlist .vcard .vhead .vadmin {
+    position: relative;
+    /*overflow: hidden;*/
+    border-color: transparent!important;
+}
+.v .vlist .vcard .vhead .vsys {
+    color: var(--preset-5a)!important;
+    background: transparent!important;
+    opacity: .52;
+}
+.v .vlist .vcard .vhead .vadmin {
+    color: var(--theme-color)!important;
+    opacity: 1!important;
+    /*border-color: currentColor!important;*/
+    /*box-shadow: currentColor 1px 2.2px 1px -1.8px inset, currentColor -1px -2.2px 1px -1.8px inset;*/
 }

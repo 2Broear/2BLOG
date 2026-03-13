@@ -3,6 +3,15 @@
     Template name: 关于模板
     Template Post Type: page
 */
+    $mbit_array_result = explode('/', get_option('site_mbit_result_array'));
+    $mbit_abbr = isset($mbit_array_result[0]) ? strtoupper($mbit_array_result[0]) : 'MBTI';
+    if (strpos($mbit_abbr, '-') !== false) {
+        $mbit_split = explode('-', $mbit_abbr);
+        $mbit_abbr = substr($mbit_abbr, 0, 4);
+    } else {
+        $mbit_split = [];
+    }
+    $mbit_avatar = 'https://www.16personalities.com/static/images/personality-types/avatars/email/large/' . $mbit_abbr . '_male.png?v=1';
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -10,6 +19,25 @@
     <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/about.css?v=<?php echo get_theme_info(); ?>" />
     <style>
+        .about_blocks li.intro_right .mbit {
+            position: relative;
+            overflow: hidden;
+        }
+        .about_blocks li.intro_right .mbit::after {
+            content: '';
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: url(<?php echo $mbit_avatar; ?>) no-repeat;/* center center /contain */
+            background-size: contain;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            opacity: .2;
+            z-index: 0;
+            mask: linear-gradient(top, var(--preset-f) 88%, transparent 100%);
+            mask: -webkit-linear-gradient(top, var(--preset-f) 36%, transparent 100%);
+        }
         /*.about_blocks li.intro_right .mbit .mbit_range li:nth-child(1) span em,*/
         .about_blocks li.intro_right .mbit .mbit_range li:nth-child(1) span em::after{
             background: #4398AD;
@@ -57,10 +85,11 @@
             /*letter-spacing: 3px;*/
         }
         body.dark .about_blocks li.intro_right .mbit:before {
-            opacity: .2;
+            opacity: .36;
         }
         .about_blocks li.intro_right .mbit:before {
-            opacity: .1;
+            opacity: .18;
+        	/*text-transform: capitalize;*/
         	text-transform: uppercase;
         }
         iframe.netease_embed {
@@ -93,10 +122,16 @@
             padding: 10px;
             border: 1px solid rgb(200 200 200 / 35%);
         }
+        .about_blocks li.intro_right .mbit .mbit_intro {
+            z-index: 1;
+        }
         .about_blocks li.intro_right .mbit .mbit_intro a {
             border-width: 2px;
             box-shadow: 0px 0 0px 5px rgb(51 164 116 / 10%);
             /*box-shadow: none;*/
+        }
+        .In-core-head .profile {
+            margin-bottom: 15px;
         }
         .In-core-head .head-inside::before {z-index: -1}
         .In-core-head .head-inside {
@@ -177,10 +212,10 @@
                                 </div>
                             </li>
                             <li class="intro_right">
-                                <div class="mbit" data-mbit="<?php $mbit_array_result = explode('/', get_option('site_mbit_result_array'));echo $mbit_array_result[1];//strtoupper(); ?>">
+                                <div class="mbit" data-mbit="<?php echo isset($mbit_array_result[1]) ? $mbit_array_result[1] : 'MBTI';//strtoupper(); ?>">
                                     <div class="mbit_intro">
                                         <p> MBTI 16 Personalities<!--<sup> (Oct 21, 2022) </sup>--> </p>
-                                        <a href="https://www.16personalities.com/<?php $mbit_abbr=$mbit_array_result[0];echo strpos($mbit_abbr,'-')!==false ? substr($mbit_abbr,0,4) : $mbit_abbr; ?>" style="color:#33a474;" target="_blank" title="more about <?php echo $res_type=strtoupper($mbit_abbr); ?>"><b><?php echo $res_type; ?></b></a>
+                                        <a href="https://www.16personalities.com/<?php echo $mbit_abbr; ?>" style="color:#33a474;" target="_blank" title="more about <?php echo $mbit_abbr; ?>"><b><?php echo $mbit_abbr . '-' . $mbit_split[1]; ?></b></a>
                                     </div>
                                     <ol class="mbit_range">
                                         <?php

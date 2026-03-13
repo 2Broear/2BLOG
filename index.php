@@ -230,6 +230,9 @@
         .resource-windows div ul li a {
             color: inherit;
         }
+        .weBlog-Description .weBlog-Description-inside-content span.typed-cursor {
+            display: none;
+        }
         <?php
             $baas = get_option('site_leancloud_switcher');
             $techside = get_option('site_techside_switcher');
@@ -255,7 +258,16 @@
                 <div class="weBlog-Description-inside">
                     <div class="weBlog-Description-inside-content">
                         <span>
-                            <small><b style="font-size:2.35rem;">👋 I'm</b><strong> <?php echo get_option('site_nick', get_bloginfo('name')); ?>~ </strong></small>
+                            <small>
+                                <b style="font-size:2.35rem;">👋 I'm</b>
+                                <strong> 
+                                    <?php 
+                                        $typing_effects = get_option('site_animated_typing_switcher') && in_array('/', explode(',', get_option('site_animated_typing_includes')));
+                                        $site_nick = get_option('site_nick', get_bloginfo('name'));
+                                        echo $typing_effects ? '<b id="typed"></b>~' : $site_nick . '~'; //' . $site_nick . '
+                                    ?> 
+                                </strong>
+                            </small>
                             <p> 「<?php bloginfo('description') ?>」 </p>
                         </span>
                     </div>

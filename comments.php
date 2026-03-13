@@ -144,6 +144,7 @@
             // $commenter = wp_get_current_commenter();
             $text_submit = '提交评论';
             $text_loadmore = '加载更多评论';
+            $admin_email = get_bloginfo('admin_email');
             $cf_turnstile_wordpress = get_cf_turnstile('Wordpress');
 ?>
         <div id="vcomments" class="v">
@@ -257,7 +258,7 @@
             <div class="vlist" id="comments">
             <?php
                 function custom_comment($comment, $args, $depth) {
-                    global $lazysrc, $wp_ajax_comment;
+                    global $lazysrc, $wp_ajax_comment, $admin_email;
                     $GLOBALS['comment'] = $comment; 
                     $approved = $comment->comment_approved;
                     // $tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
@@ -278,7 +279,7 @@
                                     <em><?php comment_author(); ?></em>
                                 </a>
                                 <?php
-                                    if (get_comment_author_email() == get_bloginfo('admin_email')) echo '<span class="vsys admin">admin</span>';
+                                    if (get_comment_author_email() == $admin_email) echo '<span class="vsys vadmin">admin</span>';
                                     $userAgent = get_userAgent_info($comment->comment_agent);
                                     echo '<span class="vsys">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
                                     if($approved=="0") echo '<span class="vsys auditing">待审核</span>';
@@ -423,7 +424,7 @@
             }
         ?>
             <script type="text/javascript">
-                const admin_md5mail = "<?php echo md5(get_option('site_smtp_mail', get_bloginfo('admin_email'))); ?>"; //preset for wp_comment
+                const admin_md5mail = "<?php echo md5($admin_email); ?>"; //preset for wp_comment
                 const comment_loads = <?php echo $per_page; ?>;
                 const avatar_cdn = "<?php echo get_option('site_avatar_mirror'); ?>";
                 const admin_ajax = "<?php echo admin_url('admin-ajax.php'); ?>";
@@ -749,12 +750,12 @@
                                   approve = child.comment_approved,
                                   content = child.comment_content,//strip_tags(child.comment_content),
                                   user_agent = child._comment_agent,
-                                  is_admin = email == admin_md5mail ? '<span class="admin">admin</span>' : '',
+                                  is_admin = email == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
                                   is_approved = approve=="0" ? '<span class="auditing vsys">待审核</span>' : '',
                                   replytocom = approve=="1" ? `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>` : "";
                               if(approve=="0") content = '<small style="opacity:.5">[ '+content+' ]</small>'; //${cururl}?replytocom=${id}#respond
                               // track-back (childCommentsLoop insert after output)
-                              output += `<div class="vcard" id="comment-${id}"><a class="noslide" rel="nofollow" href="${link}" target="_blank"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a><span class="vsys admin">admin</span><span class="vsys useragent">Safari / macOS</span></div><div class="vmeta"><span class="vtime">${child.comment_date}</span><span class="vedited"></span>${replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${nick}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
+                              output += `<div class="vcard" id="comment-${id}"><a class="noslide" rel="nofollow" href="${link}" target="_blank"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a>${is_admin}<span class="vsys useragent">${user_agent.browser+" / "+user_agent.system}</span>${is_approved}</div><div class="vmeta"><span class="vtime">${child.comment_date}</span><span class="vedited"></span>${replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${nick}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
                            }
                         }
                         return output;
@@ -944,7 +945,7 @@
                                                     content = each_post.comment_content,//strip_tags(each_post.comment_content),
                                                     approve = each_post.comment_approved,
                                                     if_child = childs ? '<ul class="children" data-cpid="'+id+'">'+that.childComments(childs)+'</ul>' : '',
-                                                    is_admin = md5mail == admin_md5mail ? '<span class="vsys admin">admin</span>' : '',
+                                                    is_admin = md5mail == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
                                                     is_approved = approve=='0' ? '<span class="vsys auditing">待审核</span>' : '',
                                                     replytocom = approve=='1' ? `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>` : "";
                                                 if(approve=="0") content = '<small style="opacity:.5">[ '+content+' ]</small>'; //${cururl}?replytocom=${id}#respond
@@ -1075,7 +1076,7 @@
                                                         comment_replyto = t.dataset.replyto ? '<a href="#comment-'+comment_pid+'">@'+t.dataset.replyto+'</a> , ' : '',
                                                         comment_info = '<span class="auditing vsys"> Auditing / Previews </span>';
                                                     if(a_val=="<?php echo $user_name; ?>"&&e_val=="<?php echo $user_mail; ?>"){
-                                                        comment_info = admin_md5mail=="<?php echo md5($user_mail); ?>" ? '<span class="vsys admin">admin</span><span class="vsys useragent"> Comments Preview </span>' : '<span class="vsys useragent"> Comments / Preview </span>';
+                                                        comment_info = admin_md5mail=="<?php echo md5($user_mail); ?>" ? '<span class="vsys vadmin">admin</span>' : '<span class="vsys useragent"> Comment Preview </span>';
                                                     }
                                                     temp_comment.classList.add("vcard"); //wp_comments
                                                     temp_comment.innerHTML = `<a class="noslide" rel="nofollow" href="" target="_blank"> <img class="vimg" src="${that.vinfo.querySelector('.avatar img').src}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid=""> <div class="vhead"> <a class="vnick" rel="nofollow" href="" target="_blank"> <em>${a_val}</em> </a> ${comment_info}</div> <div class="vmeta"> <span class="vtime">${temp_date.toLocaleDateString()}</span> <span class="vedited"></span> </div> <div class="vcontent"> <p>${comment_replyto} ${filter_c_val}</p> </div> </div>`;

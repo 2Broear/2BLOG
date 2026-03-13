@@ -336,6 +336,11 @@
             /**
             ** ui/UE Enhancements 2026
             **/
+            #update-nag, .update-nag,
+            .notice-warning {
+                position: absolute;
+                margin-left: 2%;
+            }
             .fixed .switchTab:active {
                 transform: scale(0.95) translateY(20px);
             }
@@ -692,6 +697,8 @@
         register_setting( 'baw-settings-group', 'site_mbit_result_array' );
         register_setting( 'baw-settings-group', 'site_animated_scrolling_switcher' );
         register_setting( 'baw-settings-group', 'site_animated_counting_switcher' );
+        register_setting( 'baw-settings-group', 'site_animated_typing_switcher' );
+            register_setting( 'baw-settings-group', 'site_animated_typing_includes' );
         
         register_setting( 'baw-settings-group', 'site_memos_switcher' );
             register_setting( 'baw-settings-group', 'site_memos_apikey' );
@@ -837,8 +844,9 @@
             register_setting( 'baw-settings-group', 'site_smtp_pswd' );
         // }
         register_setting( 'baw-settings-group', 'site_wpmail_switcher' );
-        register_setting( 'baw-settings-group', 'site_xmlrpc_switcher' );
         register_setting( 'baw-settings-group', 'site_imgcrop_switcher' );
+        register_setting( 'baw-settings-group', 'site_xmlrpc_switcher' );
+        register_setting( 'baw-settings-group', 'site_wpdb_optimize_switcher' );
         
         register_setting( 'baw-settings-group', 'site_rss_categories' );
         register_setting( 'baw-settings-group', 'site_rss_update_interval' );
@@ -887,7 +895,11 @@
         register_setting( 'baw-settings-group', 'site_contact_steam' );
     }
     // $theme_blocks  = 'dodgerblue, crimson, orange, limegreen';
+    $templates_index = new stdClass();
+    $templates_index->name = 'Index';
+    $templates_index->slug = '/';
     $templates_info = array(
+        '/' => $templates_index,
         'news' => get_cat_by_template('news'),
         'notes' => get_cat_by_template('notes'),
         'weblog' => get_cat_by_template('weblog'),
@@ -1010,7 +1022,7 @@
                     /*will-change: transform;*/
                 }
             }
-        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;padding:5px 0;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;overscroll-behavior:contain;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fff 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fff 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 8px;border-radius: 25px;border-top-left-radius:0;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 25%, currentColor 255%);}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 20px var(--panel-theme);padding: 3px 6px!important;background:transparent;border-color:transparent;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;}p.description{font-size:small;}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > th{padding: 15px 0 15px 35px;color: var(--panel-theme)!important;}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr:hover > td{background:inherit;padding: 15px 25px 15px 0;}.form-table tr:hover{border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(90deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(0deg, #f5f7f9 0, #fff);background:white;}.form-table tr{}.form-table tr:hover{box-shadow:0 0 20px rgb(0 0 0 / 5%);}.form-table tr{padding: 0 15px;border:2px solid transparent;/*border-bottom:1px solid #e9e9e9;*/border-left:3px solid transparent;border-radius: 18px;position: relative;z-index: 1;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;transition: padding .35s ease;border-radius:inherit;border-top-left-radius: 0;border-bottom-left-radius: 0;}/*.form-table tr:last-child{border-bottom:none}*/.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.35);}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0px 20px 20px 0px rgb(0 0 0 / 15%);border:3px solid var(--panel-theme)!important;background:rgb(10, 20, 28);/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
+        p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;padding:5px 0;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;overscroll-behavior:contain;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fff 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fff 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 8px;border-radius: 25px;border-top-left-radius:0;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 25%, currentColor 255%);}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 20px var(--panel-theme);padding: 3px 6px!important;background:transparent;border-color:transparent;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;}p.description{font-size:small;}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > th{padding: 15px 0 15px 35px;color: var(--panel-theme)!important;}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr:hover > td{background:inherit;padding: 15px 25px 15px 0;}.form-table tr:hover{border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(90deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(0deg, #f5f7f9 0, #fff);background:white;}.form-table tr{}.form-table tr:hover{box-shadow:0 0 20px rgb(0 0 0 / 5%);}.form-table tr{padding: 0 15px;border:2px solid transparent;/*border-bottom:1px solid #e9e9e9;*/border-left:3px solid transparent;border-radius: 18px;position: relative;z-index: 1;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;transition: padding .35s ease;border-radius:inherit;border-top-left-radius: 0;border-bottom-left-radius: 0;}/*.form-table tr:last-child{border-bottom:none}*/.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.35);}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0 0 20px 0px var(--panel-theme);border:3px solid var(--panel-theme)!important;background:rgb(10, 20, 28);/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
             .upload_button:focus,.upload_button:hover{background:var(--panel-theme)!important;box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--panel-theme)!important;border-color:transparent!important;}.upload_button.multi{/*background:var(--panel-theme);border-color:transparent;*/}.upload_button{margin-left:10px!important;background:black;border-radius:50px;}
             label.upload:before{content: "点击更换";width: 100%;height: 100%;font-size: smaller;font-weight:bold;text-align: center;color: var(--panel-theme);background: rgb(0 0 0 / 5%);box-sizing:border-box;border-radius: inherit;position: absolute;top: 0;left: 0;opacity:0;line-height:55px;backdrop-filter:blur(10px);}label.upload:hover:before{opacity:1}label.upload{display:inline-block;margin: auto 15px;border-radius: 10px;position: relative;overflow: hidden;}label.upload.upload_preview_list{margin-right: 0}
             .formtable{display:none;}.formtable.show{display:block;}.fixed p.submit:first-child{transform:translateX(-150px);/*right:-80px*/}.switchTab.fixed{/*position: fixed;width: 100%;top: 32px;left:0;padding-left:160px;*/}.fixed .switchTab{/*width:max-content;top: 55px;width: 360px;*/transform:translateY(20px);transition-duration: .55s;/*padding: 5px;*/}.switchTab{overflow:hidden;border-radius: 50px;border-top-right-radius:0;width:100%;max-width:max-content;padding:10px 20px;transition:transform .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);margin:0 auto;top:32px;position:sticky;z-index: 9;box-sizing:border-box;box-shadow:rgb(0 0 0 / 5%) 0px 20px 20px;border: 1px solid #eee;box-sizing: border-box;/*transition: top .35s ease;top: -32px;padding: 0;background: rgb(255 255 255 / 75%);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(20px);background: linear-gradient(0deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));background: -webkit-linear-gradient(90deg, rgb(245 247 249 / 66%) 0, rgb(255 255 255 / 88%));*/background-image: radial-gradient(rgb(255 255 255 / 55%) 2px, rgb(255 255 255) 2px);background-size: 4px 4px;backdrop-filter: saturate(150%) blur(5px);-webkit-backdrop-filter: saturate(150%) blur(5px);}.switchTab ul{margin:auto;padding:0;text-align:center;}.switchTab li:active{transform:scale(0.85);-webkit-transform:scale(0.85);will-change:transform;}.switchTab li.active:before{content: '';display: block;width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: inherit;background: currentColor;opacity: .15;}.switchTab li.active{color:var(--panel-theme);}.switchTab li:hover{color:var(--panel-theme);}.switchTab li.active,.switchTab li:hover b{text-shadow:none}.switchTab li.active,.switchTab li:active{color: var(--panel-theme);box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--panel-theme);}.switchTab li{display:inline-block;padding:5px 15px;margin:10px 2px;cursor:pointer;font-size:initial;font-style:normal;font-weight:bold;border-radius:25px;user-select: none;-webkit-user-select: none;transition:transform .15s ease;position:relative;border-top-right-radius: 0;}
@@ -1079,6 +1091,11 @@
             .form-table b {
                 font-style: normal;
                 font-size: smaller;
+            }
+            #update-nag, .update-nag,
+            .notice-warning {
+                position: absolute;
+                margin-left: 2%;
             }
             .wrap.dark {
                 /*background-image: radial-gradient(rgb(23 34 46) 1px, rgb(10, 20, 28) 1px);*/
@@ -1403,7 +1420,7 @@
                 padding: 0 5px!important;
                 border-radius: 15px!important;
                 margin-right: 15px;
-                border: 1px solid whitesmoke;
+                border: 1px solid #0a141c;
                 background: currentColor;
                 box-shadow: 10px 0px 20px currentColor;
                 position: relative;
@@ -2146,7 +2163,7 @@
                                     <?php 
                                         $site_cdn_img = get_option('site_cdn_img');
                                         $default_options = $option_str; //urlencode(json_encode($options));
-                                        echo '<input id="updateDomain" class="update-target" type="button" value="更新数据库" disabled data-options="' . $default_options . '" data-before="' . $site_cdn_img . '" data-url=" ' . admin_url('admin-ajax.php') . '" data-nonce="' . wp_create_nonce('dbupdate_ajax_nonce') . '" title="提交修改后可在此单独更新修改前旧值为最新" />';
+                                        echo '<input id="updateDomain" class="update-target" type="button" value="更新数据库" disabled data-action="update_db_data" data-options="' . $default_options . '" data-before="' . $site_cdn_img . '" data-url=" ' . admin_url('admin-ajax.php') . '" data-nonce="' . wp_create_nonce('dbupdate_ajax_nonce') . '" title="提交修改后可在此单独更新修改前旧值为最新" />';
                                     ?>
                                     <input type="text" name="site_cdn_img" id="site_cdn_img" class="middle-text live-update" placeholder="site_cdn_img" value="<?php echo $site_cdn_img; ?>"/>
                                 </td>
@@ -2700,16 +2717,6 @@
                         // }
                     ?>
                     <tr valign="top" class="">
-                        <th scope="row">禁用 XML-RPC 服务（防爆破）</th>
-                        <td>
-                            <?php
-                                $opt = 'site_xmlrpc_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">防止攻击者绕过 wordpress 登录限制消耗系统资源（禁用后将无法使用 wp 官方APP及相关接口</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">XML-RPC</b></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top" class="">
                         <th scope="row">禁用图片上传自动裁剪</th>
                         <td>
                             <?php
@@ -2719,6 +2726,39 @@
                             ?>
                         </td>
                     </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">禁用 XML-RPC 服务（防爆破）</th>
+                        <td>
+                            <?php
+                                $opt = 'site_xmlrpc_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">防止攻击者绕过 wordpress 登录限制消耗系统资源（禁用后将无法使用 wp 官方APP及相关接口</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">XML-RPC</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">数据库冗余 清理优化</th>
+                        <td>
+                            <?php
+                                $opt = 'site_wpdb_optimize_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_cdn_switcher_label">开启刷新页面后可清理其他数据库冗余文件（任何涉及数据库操作务必提前备份！ </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">WPDB Optimization</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                        // if(get_option('site_cdn_switcher')){
+                    ?>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $wpdb_clear = get_option('site_wpdb_optimize_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 文章历史修订版本</th>
+                                <td>
+                                    <p class="description" id="site_cdn_img_label">清理储存于 <code>wp_posts</code> 表中存放的所有文章（revisions）历史修订版本（此项不会清理上传附件或特殊文章类型</p>
+                                    <?php
+                                        $optimize_statu = $wpdb_clear ? ' enabled ' : ' disabled ';
+                                        echo '<input id="updateRevision" class="update-target" type="button" value="更新数据库"' . $optimize_statu . 'data-action="clear_wp_revisions" data-url="' . admin_url('admin-ajax.php') . '" data-nonce="' . wp_create_nonce('clear_wp_posts_revisions_nonce') . '" title="清除文章历史修订版本" />';
+                                    ?>
+                                </td>
+                            </tr>
                 </table>
             </div>
             <div class="formtable index">
@@ -3736,7 +3776,41 @@ const maps = {
                             ?>
                         </td>
                     </tr>
-                    
+                    <tr valign="top">
+                        <th scope="row">动画 - 打字机效果</th>
+                        <td>
+                            <?php
+                                $opt = 'site_animated_typing_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">启用位于页面背景上的文字打字机效果，可多选开启页面（若此项修改提交后无效 可通过 更新/发布/删除 文章重建缓存</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:springgreen" class="btn">打字动画</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_animated_typing_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 开启页面（多选）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_animated_typing_includes';  //unique str
+                                        $value = get_option($opt);
+                                        $async_opts = array($templates_info['guestbook'], $templates_info['/']);
+                                        // if(!$value){
+                                        //     $preset_str = $async_opts[0]->slug.',';
+                                        //     update_option($opt, $preset_str);
+                                        //     $value = $preset_str;
+                                        // }
+                                        echo '<p class="description" id="">指定开启动画页面，使用逗号“ , ”分隔（默认开启留言板页面</p><div class="checkbox">';
+                                        $async_array = explode(',',trim($value));  // NO "," Array
+                                        // $pre_array_count = count($async_array);
+                                        foreach ($async_opts as $option) {
+                                            if (isset($option->error)) continue;
+                                            $opts_slug = $option->slug;
+                                            $checking = in_array($opts_slug, $async_array) ? 'checked' : '';
+                                            echo '<input id="'.$opt.'_'.$opts_slug.'" type="checkbox" value="'.$opts_slug.'" '.$checking.' /><label for="'.$opt.'_'.$opts_slug.'">'.$option->name.'</label>';
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" readonly value="' . $value . '" placeholder="请选择"/></div>';;
+                                    ?>
+                                </td>
+                            </tr>
                     <!-- Links options -->
                     <tr valign="top">
                         <th scope="row">友链 - RSS 卡片</th>

@@ -303,7 +303,7 @@
               </li>
               </ul>
               <ul class="friend_links">
-                <h2>朋友圈</h2>
+                <h2>博友圈</h2>
                 <li class="friendsBox">
                     <?php 
                         if($baas && strpos(get_option('site_leancloud_category'), 'category-2bfriends.php')!==false){
