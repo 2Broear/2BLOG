@@ -154,7 +154,7 @@
     $linkcid = get_cat_by_template('2bfriends','term_id');
     $acgpage = $acgcid==$cat || cat_is_ancestor_of($acgcid, $cat);
     $linkpage = $linkcid==$cat || cat_is_ancestor_of($linkcid, $cat);
-    if ($acgpage) {
+    if ($acgpage || is_search() || is_archive()) {
 ?>
         const worker = new Worker('<?php echo custom_cdn_src(0,1); ?>/js/worker.js');
         const getAverageRGB = function(imgEl){var blockSize=5,defaultRGB={r:255,g:255,b:255},canvas=document.createElement('canvas'),context=canvas.getContext&&canvas.getContext('2d'),data,width,height,i=-4,length,rgb={r:0,g:0,b:0},count=0;if(!context){return defaultRGB}height=canvas.height=imgEl.naturalHeight||imgEl.offsetHeight||imgEl.height;width=canvas.width=imgEl.naturalWidth||imgEl.offsetWidth||imgEl.width;context.drawImage(imgEl,0,0);try{data=context.getImageData(0,0,width,height)}catch(e){return defaultRGB}length=data.data.length;while((i+=blockSize*4)<length){++count;rgb.r+=data.data[i];rgb.g+=data.data[i+1];rgb.b+=data.data[i+2]}rgb.r=~~(rgb.r/count);rgb.g=~~(rgb.g/count);rgb.b=~~(rgb.b/count);return rgb},
@@ -261,43 +261,74 @@
         }
 <?php
     }
+    $page_slug = is_home() ? '/' : current_slug();  // in case of custom '/' includes
+    $typing_effects = get_option('site_animated_typing_switcher') && in_array($page_slug, explode(',', get_option('site_animated_typing_includes')));
+    if ($typing_effects) {
+?>
+    asyncLoad('<?php echo $src_cdn; ?>/js/bin/typed.js?v=<?php echo get_theme_info(); ?>x', function() {
+        <?php
+            switch ($page_slug) {
+                case get_cat_by_template('guestbook', 'slug'):
+                    $type_array = array("欲言。", "你の欲言。");
+                    break;
+                default:
+                    $type_array = array(get_option('site_nick', get_bloginfo('name'))); //"尔之欲语~",
+                    break;
+            }
+            echo 'const typedArray = ' . json_encode($type_array) . ';' . PHP_EOL; 
+        ?>
+        const increase_init_ms = 15, //0
+              increase_step_ms = 1000; //1000
+        for(let i=0, l=typedArray.length; i<l; i++) {
+            let increase_count = i>0 ? i*increase_step_ms : increase_step_ms;
+            typedArray[i] = typedArray[i] + `^${increase_init_ms + increase_count}`;
+        }
+        var typed = new Typed('#typed', {
+            strings: typedArray,
+            typeSpeed: 50,
+            backSpeed: 15,
+            backDelay: 50,
+            loop: false,
+            loopCount: Infinity,
+            // showCursor: false,
+            // cursorChar: '|',
+            // autoInsertCss: true,
+        });
+    });
+<?php
+    }
 ?>
 </script>
 <script type="module">
     try {
     <?php
-        $page_slug = is_home() ? '/' : current_slug();  // in case of custom '/' includes
-        $typing_effects = get_option('site_animated_typing_switcher') && in_array($page_slug, explode(',', get_option('site_animated_typing_includes')));
-        if ($typing_effects) {
+        if (get_option('site_magnetic_effect_switcher')) {
     ?>
-        import('<?php echo $src_cdn; ?>/js/bin/typed.js?v=<?php echo get_theme_info(); ?>x').then((mod)=> {
-            <?php
-                switch ($page_slug) {
-                    case get_cat_by_template('guestbook', 'slug'):
-                        $type_array = array("欲言。", "你の欲言。");
-                        break;
-                    default:
-                        $type_array = array(get_option('site_nick', get_bloginfo('name'))); //"尔之欲语~",
-                        break;
-                }
-                echo 'const typedArray = ' . json_encode($type_array) . ';' . PHP_EOL; 
-            ?>
-            const increase_init_ms = 15, //0
-                  increase_step_ms = 1000; //1000
-            for(let i=0, l=typedArray.length; i<l; i++) {
-                let increase_count = i>0 ? i*increase_step_ms : increase_step_ms;
-                typedArray[i] = typedArray[i] + `^${increase_init_ms + increase_count}`;
-            }
-            var typed = new Typed('#typed', {
-                strings: typedArray,
-                typeSpeed: 50,
-                backSpeed: 15,
-                backDelay: 50,
-                loop: false,
-                loopCount: Infinity,
-                // showCursor: false,
-                // cursorChar: '|',
-                // autoInsertCss: true,
+        import('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/magnet.js?v=<?php echo get_theme_info(); ?>').then((mod)=> {
+            const { magnetCurosr } = mod;
+            // use keyword "new" to point to init method.
+            new magnetCurosr.init({
+                static: {
+                    // class: {
+                    //     engager: 'magnetic_links',
+                    // },
+                    // magnetic: false,
+                    magnetic_step: 0.25,
+                    scale: {
+                        engaged: 1.05,
+                    },
+                    cursor: {
+                        pointer: true,
+                    },
+                    theme: {
+                        light: 'var(--preset-fa)',
+                        heavy: 'var(--preset-link)',
+                        focus: 'var(--preset-6a)'
+                    },
+                },
+                element: {
+                    follower: false,
+                },
             });
         });
     <?php
@@ -380,7 +411,6 @@
                 const lazyImgs = document.querySelectorAll("body img[data-src]");
                 if (lazyImgs.length) {
                     const loadImgSrc = "<?php global $img_cdn;echo $img_cdn; ?>/images/loading_3_color_tp.png";
-                    const setAcgBackground = (t)=> {<?php echo $acgpage ? 'setupBlurColor(t, getParByCls(t, "inbox"));' : 'console.debug("not in acg page.");'; ?>}
                     // visibility observer
                     const visibilityObserver = new VisibilityObserver({
                         threshold: 0.1, // 10%可见时触发
@@ -401,23 +431,21 @@
                             }
                             // entry.target.src = entry.isVisible ? datasrc : loadImgSrc;  // BUG of inVisible loadImgSrc
                             if (entry.isVisible) entry.target.src = datasrc;
-                            <?php if ($acgpage) echo 'entry.target.onload = ()=> setupBlurColor(entry.target, getParByCls(entry.target, "inbox"));'; ?>
+                            <?php //if ($acgpage) echo 'entry.target.onload = ()=> setupBlurColor(entry.target, getParByCls(entry.target, "inbox"));'; ?>
                         });
                     });
                 }
         <?php
-            } elseif($acgpage) {
+            }
+            if($acgpage || is_search() || is_archive()) {
         ?>
                 // setupBlurColor all acg imgs
                 const acg_imgs = document.querySelectorAll('.rcmd-boxes .info .inbox .inbox-headside img');
                 if (acg_imgs.length) {
                     acg_imgs.forEach((img)=> {
-                        setupBlurColor(img, getParByCls(img, "inbox"));
+                        // setupBlurColor(img, getParByCls(img, "inbox"));
                         // ??missing load imgs..
-                        img.onload = ()=> {
-                            // console.log('onload',img)
-                            setupBlurColor(img, getParByCls(img, "inbox"));
-                        }
+                        img.onload = ()=> setupBlurColor(img, getParByCls(img, "inbox"));
                     });
                 }
         <?php

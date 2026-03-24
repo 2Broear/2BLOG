@@ -30,7 +30,7 @@
 			    $poster_src = $video_src ? $video_src : get_meta_image($cat, $img_cdn.'/images/guestbook.jpg');
 			    echo do_shortcode('[custom_video src="' . $video_src . '" poster="' . $poster_src . '"]');
 		    ?>
-            <h5> 
+            <h5 class="magnetics"> 
             <?php 
                 $typing_effects = get_option('site_animated_typing_switcher') && in_array(current_slug(), explode(',', get_option('site_animated_typing_includes')));
                 $cat_desc = get_category($cat)->category_description;

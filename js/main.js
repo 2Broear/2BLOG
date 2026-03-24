@@ -644,12 +644,14 @@
             // progress_ball.querySelector(".pagePer strong").innerText = page_percent+"%";
             progress_ball.querySelector(".pagePer i").style.transform = `translateY(${100-page_percent}%)`;
             progress_wave.classList.add("active");
-            progress_bar.classList.add("active");
-            progress_bar.style.opacity = 1;
-            progress_bar.style.transform = `translateX(${page_percent-100}%)`;
+            if (progress_bar) {
+                progress_bar.classList.add("active");
+                progress_bar.style.opacity = 1;
+                progress_bar.style.transform = `translateX(${page_percent-100}%)`;
+            }
             if(scrollTop==0 || scrollTop+windowHeight>=clientHeight){  // 到达顶部（底部）执行
                 progress_wave.classList.remove("active");
-                progress_bar.classList.remove("active");
+                if (progress_bar) progress_bar.classList.remove("active");
             }
             // TOC extends
             if(!aindex) return;

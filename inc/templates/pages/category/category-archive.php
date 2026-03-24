@@ -119,7 +119,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                             $blink = get_option('site_animated_counting_switcher') ? ' blink' : false;
                             foreach ($archive_yearly as $archive){
                                 $counts = $archive['count'];
-                                $output .= '<div class="'.$blink.'" data-count="'.$counts.'"><a href="'.$archive['link'].'" rel="nofollow"><b>'.$archive['title'].'</b><h1 data-count="'.$counts.'" style="--data-count:'.$counts.'"></h1><p>篇发布记录</p></a></div>'; //'.$counts.'<sup>+</sup>
+                                $output .= '<div class="'.$blink.' magnetic" data-magnet-scale="1.15" data-count="'.$counts.'"><a href="'.$archive['link'].'" rel="nofollow"><b>'.$archive['title'].'</b><h1 data-count="'.$counts.'" style="--data-count:'.$counts.'"></h1><p>篇发布记录</p></a></div>'; //'.$counts.'<sup>+</sup>
                             }
                             if($output_sw) update_option('site_archive_count_cache', wp_kses_post($output));
                             // unset($archive_yearly);

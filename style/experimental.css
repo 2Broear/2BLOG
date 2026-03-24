@@ -1,6 +1,33 @@
 /*
 ** overwrite ui
 */
+.banner {
+    background: -webkit-linear-gradient(180deg, var(--mirror-end) 0, var(--mirror-end));
+    box-shadow: rgba(0, 0, 0, 0.025) -20px 0px 20px;
+}
+.banner .banner-inside {
+    /*padding: 15px;*/
+    padding: 2px;
+    box-sizing: border-box;
+}
+/*.functions-tool .inside-functions.pull-up .top {*/
+/*    transform: translate(-50%, -77px);*/
+/*}*/
+/*.functions-tool .inside-functions.pull-up .dark {*/
+/*    transform: translate(-63px, -63px);*/
+/*}*/
+/*.functions-tool .inside-functions.pull-up .bottom {*/
+/*    transform: translate(-77px, -50%);*/
+/*}*/
+/*.inside_of_block nav.main-nav .links-more li:hover > a {*/
+/*    background: transparent;*/
+/*}*/
+body.dark .wp-block-table table tr:nth-child(even) {
+    background: var(--preset-3b);
+}
+.wp-block-table table tr:nth-child(even) {
+    background: var(--preset-fa);
+}
 body.dark .empty_card {
     box-shadow: none;
 }
@@ -42,10 +69,10 @@ body.dark .empty_card {
     color: var(--preset-8);
 }
 .news-window-img {
-    border-width: 2px;
-    border-radius: 50%;
-    border-top-left-radius: var(--radius);
-    box-shadow: rgb(0 0 0 / 8%) -10px -10px 20px;
+    border-width: 2px!important;
+    border-radius: 50%!important;
+    border-top-left-radius: var(--radius)!important;
+    box-shadow: rgb(0 0 0 / 5%) -10px -10px 20px;
     background: var(--preset-fa);
 }
 /*.body-basically h2,*/
@@ -57,7 +84,7 @@ body.dark .empty_card {
 .win-top h5 span,
 .win-top .counter h1,
 .win-top .counter h2,
-.footer-detector span,
+.footer-detector span#end-obj,
 .glitch {
     filter: url(#x);
 }
@@ -220,33 +247,6 @@ body.dark #footer-copyright {
     pointer-events: none;
     /*visibility: hidden;*/
 }
-.main-header-all.barSetDown nav .nav-slider {
-    top: -50px;
-}
-nav .nav-wrap .nav-slider.show {
-    opacity: .088;
-    transition-property: all;
-}
-nav .nav-wrap .nav-slider.hide {
-    transition-property: none;
-}
-nav .nav-wrap .nav-slider {
-    opacity: 0;
-    /*min-width: 10px;*/
-    min-height: 20px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9;
-    background: linear-gradient(var(--theme-color) 50%, transparent 100%);
-    background: -webkit-linear-gradient(top, var(--theme-color) 50%, transparent 100%);
-    border-radius: var(--radius);
-    transition: ease;
-    /*transition-property: width, height, opacity;*/
-    /*transition: linear(0 0%, 0 1.8%, 0.01 3.6%, 0.03 6.35%, 0.07 9.1%, 0.13 11.4%, 0.19 13.4%, 0.27 15%, 0.34 16.1%, 0.54 18.35%, 0.66 20.6%, 0.72 22.4%, 0.77 24.6%, 0.81 27.3%, 0.85 30.4%, 0.88 35.1%, 0.92 40.6%, 0.94 47.2%, 0.96 55%, 0.98 64%, 0.99 74.4%, 1 86.4%, 1 100%);*/
-    /*background: -webkit-linear-gradient(0deg, var(--mirror-start) 0, var(--mirror-end));*/
-    pointer-events: none;
-}
 @keyframes valueSetUp {
     0% {
         opacity: 1;
@@ -293,6 +293,7 @@ nav .nav-wrap .nav-slider {
     box-shadow: -88px 0 var(--preset-caution), 88px 0 var(--preset-okay);
 }
 .friends-boxes .inbox-clip h2 {
+    margin-top: auto;
     font-weight: bold;
     letter-spacing: 3px;
     -webkit-text-stroke: 0.58px;
@@ -346,6 +347,7 @@ header>nav#tipson .top-bar-tips,
     /*font-style: italic;*/
 }
 /*.recommendation:hover > #recommend-inside .recommend-newsImg div a#rel,*/
+.win-content article:hover > h1 a,
 .resource-windows div ul li a:hover,
 body.dark .load button:active,
 body.dark .v .vlist .vcard .vh .vat:hover,
@@ -371,9 +373,15 @@ footer a:hover {
 .inside-functions .box div:active {
     transition: transform .35s ease;
 }
+body.dark .inside-functions .box div {
+    /*box-shadow: 0 0 20px var(--preset-c);*/
+    box-shadow: var(--mirror-start) 1px 2.2px 1px -1.8px inset, var(--theme-color) -1px -2.2px 1px -1.8px inset;
+}
+.inside-functions .box div:hover {
+    transition: .35s ease!important;
+}
 .inside-functions .box div {
     transition: transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    /*box-shadow: 0 0 20px var(--preset-c);*/
     border: 2px solid var(--preset-4a);
     font-weight: bold;
     will-change: auto;
@@ -457,6 +465,25 @@ body.dark .friends-boxes .deals .inbox .inbox-aside,
 body.dark .win-content article h1 a {
     color: var(--preset-c);
 }
+body.dark .friends-boxes .deals .inbox .inbox-inside.aside a#loadRSSFeeds,
+body.dark .friends-boxes .deals .inbox .inbox-inside,
+body.dark .additional.metabox ol,
+body.dark .links-more,
+body.dark .about_blocks,
+body.dark .v .vlist .vcard:hover,
+/*body.dark .rcmd-boxes .info .inbox,*/
+/*body.dark .v .vlist .vcard .vquote .vcard:hover,*/
+body.dark .topic,
+body.dark .pageSwitcher a,
+body.dark .news-window-img,
+body.dark .banner .banner-inside,
+body.dark .news-window:nth-child(even),
+body.dark .v .vlist .vcard .vhead .vsys,
+body.dark .download_boxes .dld_box .dld_box_wrap,
+body.dark .weblog-tree-core-r, body.dark .load button {
+    box-shadow: var(--preset-5a) 1px 2.2px 1px -1.8px inset, var(--preset-4a) -1px -2.2px 1px -1.8px inset;
+    border-width: 1px !important;
+}
 /**
 **
 **  Experimental Feats
@@ -500,12 +527,15 @@ body.dark .content-all {
 body.dark .recommendation #recommend-inside .recommend-newsContent {
     border-color: transparent!important;
 }
+body.dark .recommendation #recommend-inside .recommend-newsImg div a#rel {
+    border-color: transparent;
+    box-shadow: var(--mirror-start) 1px 2.2px 1px -1.8px inset, var(--mirror-end) -1px -2.2px 1px -1.8px inset;
+}
 .recommendation #recommend-inside .recommend-newsImg div a#rel {
     color: var(--mirror);
     /*letter-spacing: 1px;*/
     background: var(--preset-2bs);
-    /*border: 1px solid var(--preset-6);*/
-    box-shadow: var(--mirror-start) 1px 2.2px 1px -1.8px inset, var(--mirror-end) -1px -2.2px 1px -1.8px inset;
+    border: 1px solid var(--preset-6);
     backdrop-filter: blur(14px);
     margin: 18px auto;
     max-width: 14em;
@@ -578,6 +608,9 @@ body.dark .resource-windows div {
 .news-article-inside {
     border: 2px solid var(--preset-f);
 }
+.pageSwitcher {
+    margin-top: 25px;
+}
 .pageSwitcher a:hover {
     color: var(--theme-color)!important;
     background: var(--preset-fa);
@@ -632,6 +665,9 @@ body.dark .news-inside-content .news-core_area p {
 .v .vlist .children.overview:before, .v .vlist .vcard .vquote.overview:before {
     border-radius: inherit;
 }
+/*.v .vlist .vcard .vcontent img#draw,*/
+.banner .banner-inside iframe,
+.v .vlist .vcard .vcontent.expand,
 .v .vlist .vcard .vquote, .v .vlist .children {
     border-radius: var(--radius);
 }
@@ -688,10 +724,6 @@ body.dark .v .vlist .vcard .vquote .vcard:hover, body.dark .v .vlist .children .
 }
 .v .vlist .vcard {
     border: 1px solid transparent;
-}
-/*.v .vlist .vcard .vcontent img#draw,*/
-.v .vlist .vcard .vcontent.expand {
-    border-radius: var(--radius);
 }
 .v .vlist .vcard .vcontent p {
     color: var(--preset-6);
@@ -756,7 +788,7 @@ body.dark .friends-boxes .deals .inboxSliderCard {
     color: var(--preset-4a);
 }
 footer #footer-support-board {
-    box-shadow: 0px -20px 20px rgb(0 0 0 / 5%);
+    box-shadow: 0px -20px 20px rgb(0 0 0 / 3%);
 }
 /*.load button:hover {*/
 /*    border-color: transparent!important;*/
@@ -789,6 +821,7 @@ body.dark .load button {
     padding: 25px 15px;
     margin: 15px auto;
 }
+.links-more li::before,
 .inside_of_block nav.main-nav ul li a.choosen::after {
     border-radius: 3px;
     opacity: .15;
@@ -866,7 +899,7 @@ footer a {
 .share a:active,
 header form:active,
 .lively-click:active {
-    transform: scale(0.92);
+    transform: scale(0.92)!important;
 }
 /*.inside_of_block nav.main-nav:active,*/
 /*.In-core-head .profile:active,*/
@@ -897,7 +930,7 @@ figure a:active,
 /*.v .vlist .vquote .vcard:active,*/
 /*.weBlog-Description .weBlog-Description-inside-content:active,*/
 .lively-click-098:active {
-    transform: scale(0.98);
+    transform: scale(0.98)!important;
 }
 /*.archive-tree ul li a.link:active,*/
 .download_boxes .dld_box .dld_box_wrap:active,
@@ -907,7 +940,7 @@ details summary:active,
 .v .vlist .vcard:active,
 .v .vlist .children:active,
 .lively-click-099:active {
-    transform: scale(0.99);
+    transform: scale(0.99)!important;
 }
 /*.additional.metaboxes li a:active,*/
 .additional li a:active,
@@ -945,13 +978,13 @@ details summary:active,
     transform: scale(1.15) translate(-50%, -50%)!important;
 }
 .inside-functions .box div.dark:active {
-    transform: scale(0.95) translate(-66px, -66px);
+    transform: scale(0.95) translate(-66px, -66px)!important;
 }
 .inside-functions .box div.top:active {
-    transform: scale(0.95) translate(-50%, -80px);
+    transform: scale(0.95) translate(-50%, -80px)!important;
 }
 .inside-functions .box div.bottom:active {
-    transform: scale(0.95) translate(-80px, -50%);
+    transform: scale(0.95) translate(-80px, -50%)!important;
 }
 /*.win-content article h1:active,*/
 /*.news-inside-content h2 a:active,*/
@@ -965,7 +998,8 @@ details summary:active,
 .cs-tree span:active,
 .news-window-img a:active,
 .v .vlist .vcard .vh .vat:active,
-.v .vwrap .vedit .vemojis img:active,
+.v .vwrap .vedit .vemojis img:hover,
+/*.v .vwrap .vedit .vemojis img:active,*/
 .resource-windows div ul li:active,
 a.markable .tools .toolInside span:active,
 .lively-click-115:active {
@@ -1177,6 +1211,7 @@ body.dark .inside-functions .box div.dark svg {
 body.dark .v .vlist .vcard .vhead .vsys {
     color: var(--preset-9)!important;
 }
+body.dark .v .vlist .vcard .vhead .auditing,
 body.dark .v .vlist .vcard .vhead .vadmin {
     color: var(--theme-color)!important;
     border-color: transparent!important;
@@ -1191,11 +1226,23 @@ body.dark .v .vlist .vcard .vhead .vadmin {
 .v .vlist .vcard .vhead .vsys {
     color: var(--preset-5a)!important;
     background: transparent!important;
-    opacity: .52;
+    opacity: .58;
 }
+.v .vlist .vcard .vhead .auditing,
 .v .vlist .vcard .vhead .vadmin {
     color: var(--theme-color)!important;
     opacity: 1!important;
     /*border-color: currentColor!important;*/
     /*box-shadow: currentColor 1px 2.2px 1px -1.8px inset, currentColor -1px -2.2px 1px -1.8px inset;*/
+}
+.v .vlist .vcard .vhead .auditing,
+body.dark .v .vlist .vcard .vhead .auditing {
+    color: var(--preset-caution)!important;
+}
+
+
+@media screen and (max-width:960px) {
+    .wp-block-table table tr td {
+        padding: 10px 5px!important;
+    }
 }

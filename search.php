@@ -100,7 +100,7 @@
 </footer>
 </div>
 <!-- siteJs -->
-<script type="text/javascript" src="<?php echo $src_cdn; ?>/js/main.js"></script>
+<?php get_foot(); ?>
 <!-- inHtmlJs -->
 <script type="text/javascript">
     // document.addEventListener('load', function(){

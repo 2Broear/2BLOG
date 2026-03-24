@@ -52,15 +52,15 @@
                     <div id="news-article-head">
                         <div class="news-article-head-tools">
                             <div class="tools-inside-block">
-                                <?php if(get_option('site_not_ai_switcher')) echo '<span><a href="//notbyai.fyi" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);padding:5px"></a></span>'; ?>
-                                <span id="full-view" title="满屏切换" style="<?php echo !$sidebar ? 'pointer-events:none;opacity:.5;' : false; ?>">
+                                <?php if(get_option('site_not_ai_switcher')) echo '<span class="magnetic"><a href="//notbyai.fyi" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);padding:5px"></a></span>'; ?>
+                                <span id="full-view" class="magnetic" title="满屏切换" style="<?php echo !$sidebar ? 'pointer-events:none;opacity:.5;' : false; ?>">
                                     <em><?php echo $sidebar  ? "全屏阅读" : "展开边栏"; ?></em>
                                 </span>
-                                <span id="font-plus" title="字体大小">
+                                <span id="font-plus" class="magnetic" title="字体大小">
                                     <em><?php $fontsize = !array_key_exists('article_fontsize',$_COOKIE) ? 0 : $_COOKIE['article_fontsize'];echo $fontsize ? "A-" : "A+"; ?></em>
                                 </span>
                                 <!--<span id="s2t2s-switch" title="简繁切换"><em>简</em></span>-->
-                                <?php $rights = get_post_meta($post->ID, "post_rights", true);if($rights&&$rights!='请选择') echo '<span id="copyright-sign" title="版权声明"><em>' . $rights . '</em></span>'; ?>
+                                <?php $rights = get_post_meta($post->ID, "post_rights", true);if($rights&&$rights!='请选择') echo '<span id="copyright-sign" class="magnetic" title="版权声明"><em>' . $rights . '</em></span>'; ?>
                             </div>
                         </div>
                         <h1> <?php the_title(); ?> </h1>

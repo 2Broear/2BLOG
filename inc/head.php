@@ -36,7 +36,7 @@
 <?php 
     if (get_option('site_experimental_switcher')) {
 ?>
-    <link type="text/css" rel="stylesheet" href="<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/style/experimental.css" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/style/experimental.css" />
     <style>
         html, body {
             font: normal 16px/normal system-ui,"Microsoft YaHei","微软雅黑","Microsoft JhengHei","Hiragino Sans GB","WenQuanYi Micro Hei",Arial,Helvetica,Lucida Grande,Tahoma,sans-serif;
@@ -57,13 +57,6 @@
         body.dark .friends-boxes .deals .inbox .inbox-inside.aside a#loadRSSFeeds {
             background: var(--preset-2bs);
         }
-        /*body.dark .vquote .vheader #avatar {*/
-        /*    color: var(--preset-4a)!important;*/
-        /*}*/
-        /*body.dark .vquote .vwrap .vheader .vinput:focus,*/
-        /*body.dark .vquote .vedit {*/
-        /*    background: var(--preset-4a)!important;*/
-        /*}*/
         .footer-contact a .preview img {
             width: auto;
             height: auto;
@@ -90,27 +83,38 @@
         .win-top .counter h2 {
             animation-timing-function: linear(0 0%, 0 1.8%, 0.01 3.6%, 0.03 6.35%, 0.07 9.1%, 0.13 11.4%, 0.19 13.4%, 0.27 15%, 0.34 16.1%, 0.54 18.35%, 0.66 20.6%, 0.72 22.4%, 0.77 24.6%, 0.81 27.3%, 0.85 30.4%, 0.88 35.1%, 0.92 40.6%, 0.94 47.2%, 0.96 55%, 0.98 64%, 0.99 74.4%, 1 86.4%, 1 100%)!important;
         }
-        /*body { background-size: 10px 10px; }*/
-        /*@media (prefers-color-scheme: dark) {*/
-            /** theme_mode[auto]: dark  ***/
-            /*body,*/
-        /*    .content-all,*/
-        /*    .win-top:after {*/
-        /*        background-image: radial-gradient(var(--preset-3a) 1px, var(--preset-2b) 1px);*/
-        /*    }*/
-            /** theme_mode[manual]: light  ***/
-            /*body.light,*/
-        /*    body.light .content-all,*/
-        /*    body.light .win-top:after {*/
-        /*        background-image: radial-gradient(var(--preset-e) 1px, var(--preset-fa) 1px);*/
-        /*    }*/
-        /*}*/
     </style>
 <?php
     }
-    // echo '<link type="text/css" rel="stylesheet" href="' . custom_cdn_src(0,1) . '/style/experimental.css?v=' . get_theme_info() . '" />';
 ?>
     <style>
+        .main-header-all.barSetDown nav .nav-slider {
+            top: -50px;
+        }
+        nav .nav-wrap .nav-slider.show {
+            opacity: .088;
+            transition-property: all;
+        }
+        nav .nav-wrap .nav-slider.hide {
+            transition-property: none;
+        }
+        nav .nav-wrap .nav-slider {
+            opacity: 0;
+            /*min-width: 10px;*/
+            min-height: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9;
+            background: linear-gradient(var(--theme-color) 50%, transparent 100%);
+            background: -webkit-linear-gradient(top, var(--theme-color) 50%, transparent 100%);
+            border-radius: var(--radius);
+            transition: ease;
+            /*transition-property: width, height, opacity;*/
+            /*transition: linear(0 0%, 0 1.8%, 0.01 3.6%, 0.03 6.35%, 0.07 9.1%, 0.13 11.4%, 0.19 13.4%, 0.27 15%, 0.34 16.1%, 0.54 18.35%, 0.66 20.6%, 0.72 22.4%, 0.77 24.6%, 0.81 27.3%, 0.85 30.4%, 0.88 35.1%, 0.92 40.6%, 0.94 47.2%, 0.96 55%, 0.98 64%, 0.99 74.4%, 1 86.4%, 1 100%);*/
+            /*background: -webkit-linear-gradient(0deg, var(--mirror-start) 0, var(--mirror-end));*/
+            pointer-events: none;
+        }
         .inside_of_block nav.main-nav ul li a {font-weight: bold;}
         .additional.metabox li p {font-weight: normal;opacity: .75;}
         body.dark #supports em.warmhole {filter: invert(1);}

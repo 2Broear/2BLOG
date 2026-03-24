@@ -10,15 +10,15 @@
         adsense_shortcode('adsense_list_context');
 ?>
     <div class="share" style="<?php if(!$comment_sw) echo 'margin-top:15px'; ?>">
-        <a id="dislike" title="有点东西（Like）" href="javascript:;" data-action="like" data-id="<?php echo $pid=get_the_ID(); ?>" data-nonce="<?php echo wp_create_nonce($pid."_post_like_ajax_nonce"); ?>" class="<?php if(isset($_COOKIE['post_liked_'.$post_ID])) echo 'liked';?>" <?php if(!$comment_sw) echo 'onclick="postLike(this)"'; ?>><?php if($comment_sw) echo '<div class="user"><small></small><div id="list"></div></div>'; ?>
-            <span id="like" class="count">
+        <a id="dislike" class="magnetics" title="有点东西（Like）" href="javascript:;" data-action="like" data-id="<?php echo $pid=get_the_ID(); ?>" data-nonce="<?php echo wp_create_nonce($pid."_post_like_ajax_nonce"); ?>" class="<?php if(isset($_COOKIE['post_liked_'.$post_ID])) echo 'liked';?>" <?php if(!$comment_sw) echo 'onclick="postLike(this)"'; ?>><?php if($comment_sw) echo '<div class="user"><small></small><div id="list"></div></div>'; ?>
+            <span id="like" class="count magnetic">
                 <i id="counter"><?php $like=get_post_meta($post_ID,'post_liked',true);echo $like ? $like : '0'; ?></i>
                 <em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -478px 4px"></em>
             </span>
         </a>
         <a id="qq" class="disabled" title="分享QQ" href="https://connect.qq.com/widget/shareqq/index.html?<?php echo $para_str = 'url='.get_permalink().'&p='.custom_excerpt(50, true).'&title='.get_the_title().'&summary='.custom_excerpt(100, true).'&pics='.get_postimg(); ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
-        <a id="qzone" title="分享空间（QZone）" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?<?php echo $para_str; ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
-        <a id="Poster" title="图文海报（Poster）"><span id="recall" onclick="getPoster(this)"><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
+        <a id="qzone" class="magnetic" title="分享空间（QZone）" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?<?php echo $para_str; ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
+        <a id="Poster" class="magnetic" title="图文海报（Poster）"><span id="recall" onclick="getPoster(this)"><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
         <!--<img decoding="async" loading="lazy" data-src="<?php echo $img_cdn; ?>/images/bilibili_wink.webp" alt="bilibili_wink" style="margin: 0 auto;">-->
     </div>
     <script>
@@ -155,7 +155,7 @@
                     the_cf_turnstile();
                 }
             ?>
-            <div class="vwrap">
+            <div class="vwrap magnetic" data-magnet-scale="1" data-magnet-step="0.015">
                 <form action="<?php echo esc_url(home_url('/')); ?>wp-comments-post.php" method="post" style="height: auto;border-radius: inherit;">
                     <div class="vheader item3">
                         <div class="avatar">
@@ -200,7 +200,7 @@
                         <div class="vcontrol">
                             <div class="col col-80 text-right">
                                 <button type="button" id="repushBtn" class="vsubmit vbtn" style="display:none"> 重新提交 </button>
-                                <button id="pushBtn" type="submit" class="submit_btn vsubmit vbtn" value="<?php echo $text_submit; ?>" data-pid="<?php echo $post_ID; ?>" data-cid="0" />回复</button>
+                                <button id="pushBtn" type="submit" class="submit_btn vsubmit vbtn magnetic" value="<?php echo $text_submit; ?>" data-pid="<?php echo $post_ID; ?>" data-cid="0" />回复</button>
                                 <?php //cancel_comment_reply_link('取消回复'); ?>
                             </div>
                         </div>
@@ -263,7 +263,7 @@
                     $approved = $comment->comment_approved;
                     // $tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
             ?>
-                    <div class="vcard" id="comment-<?php comment_ID(); ?>">
+                    <div class="vcard magnetics" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php comment_ID(); ?>">
                         <a class="noslide" rel="nofollow" href="<?php comment_author_url(); ?>" target="_blank">
                             <?php 
                                 if (get_option('show_avatars')) {
@@ -281,8 +281,8 @@
                                 <?php
                                     if (get_comment_author_email() == $admin_email) echo '<span class="vsys vadmin">admin</span>';
                                     $userAgent = get_userAgent_info($comment->comment_agent);
-                                    echo '<span class="vsys">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
                                     if($approved=="0") echo '<span class="vsys auditing">待审核</span>';
+                                    echo '<span class="vsys">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
                                 ?>
                             </div>
                             <div class="vmeta">
@@ -364,7 +364,7 @@
         <?php
             if (have_comments()) { //$comment_count>=1
         ?>
-            <nav class="pageSwitcher dev">
+            <nav class="pageSwitcher dev magnetic">
                 <?php 
                     if ($wp_ajax_comment_paginate) {
                         $load_class = 'loadmore';
@@ -387,7 +387,7 @@
                             if ( empty( $label ) ) {
                                 $label = __( '&laquo; Older Comments' );
                             }
-                            return '<a class="loadmore noslide wp" href="' . esc_url( get_comments_pagenum_link( $prevpage ) ) . '" ' . apply_filters( 'previous_comments_link_attributes', '' ) . '><i class="icom"></i>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '</a>';
+                            return '<a class="loadmore noslide wp magnetic" href="' . esc_url( get_comments_pagenum_link( $prevpage ) ) . '" ' . apply_filters( 'previous_comments_link_attributes', '' ) . '><i class="icom"></i>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '</a>';
                         }
                         // 下一页评论
                         function get_next_comments_html( $label = '', $max_page = 0 ) {
@@ -413,7 +413,7 @@
                             if ( empty( $label ) ) {
                                 $label = __( 'Newer Comments &raquo;' );
                             }
-                            return '<a class="loadmore noslide wp" href="' . esc_url( get_comments_pagenum_link( $nextpage, $max_page ) ) . '" ' . apply_filters( 'next_comments_link_attributes', '' ) . '>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '<i class="icom left"></i></a>';
+                            return '<a class="loadmore noslide wp magnetic" href="' . esc_url( get_comments_pagenum_link( $nextpage, $max_page ) ) . '" ' . apply_filters( 'next_comments_link_attributes', '' ) . '>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '<i class="icom left"></i></a>';
                         }
                         echo get_previous_comments_html("PREV COMMENTS");
                         echo get_next_comments_html("NEXT COMMENTS");
@@ -755,7 +755,7 @@
                                   replytocom = approve=="1" ? `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>` : "";
                               if(approve=="0") content = '<small style="opacity:.5">[ '+content+' ]</small>'; //${cururl}?replytocom=${id}#respond
                               // track-back (childCommentsLoop insert after output)
-                              output += `<div class="vcard" id="comment-${id}"><a class="noslide" rel="nofollow" href="${link}" target="_blank"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a>${is_admin}<span class="vsys useragent">${user_agent.browser+" / "+user_agent.system}</span>${is_approved}</div><div class="vmeta"><span class="vtime">${child.comment_date}</span><span class="vedited"></span>${replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${nick}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
+                              output += `<div class="vcard magnetics" data-magnet-scale="1" data-magnet-step="0.015" id="comment-${id}"><a class="noslide" rel="nofollow" href="${link}" target="_blank"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a>${is_admin + is_approved}<span class="vsys useragent">${user_agent.browser+" / "+user_agent.system}</span></div><div class="vmeta"><span class="vtime">${child.comment_date}</span><span class="vedited"></span>${replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${nick}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
                            }
                         }
                         return output;
@@ -953,7 +953,7 @@
                                                 // DO NOT use comment_list.innerHTML, innerHTML will refresh dom list (caused: binded event lose efficacy)
                                                 appendList.id = "comments-"+id;
                                                 appendList.classList.add("vcard"); //wp_comments
-                                                appendList.innerHTML += `<a class="noslide" rel="nofollow" href="${link}" target="_blank"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_post.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow" href="${link}" target="_blank"> <em>${nick}</em> </a> ${is_admin}<span class="vsys useragent">${user_agent.browser+" / "+user_agent.system}</span> ${is_approved}</div> <div class="vmeta"> <span class="vtime">${each_post.comment_date}</span> <span class="vedited"></span> ${replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
+                                                appendList.innerHTML += `<a class="noslide" rel="nofollow" href="${link}" target="_blank"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_post.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow" href="${link}" target="_blank"> <em>${nick}</em> </a> ${is_admin + is_approved}<span class="vsys useragent">${user_agent.browser+" / "+user_agent.system}</span></div> <div class="vmeta"> <span class="vtime">${each_post.comment_date}</span> <span class="vedited"></span> ${replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
                                                 that.vlist.appendChild(appendList);
                                                 that.vlist.innerHTML += if_child;
                                             }

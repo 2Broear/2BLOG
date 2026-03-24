@@ -118,9 +118,25 @@
             padding: 5px;
             border-radius: 1px 1px 0 0;
         }
+        .wp-block-table table tr td:nth-child(2) {
+            width: 20%;
+        }
+        .wp-block-table table tr td:last-child {
+            /*border-right-color: inherit;*/
+        }
+        .wp-block-table table tr td:empty {
+            /*display: none;*/
+            border-right-color: transparent;
+            background: transparent;
+        }
         .wp-block-table table tr td {
-            padding: 10px;
+            text-align: center;
+            padding: 15px 35px;
             border: 1px solid rgb(200 200 200 / 35%);
+        }
+        .wp-block-table table tr td img {
+            /*max-width: 36%;*/
+            /*display: inline-block;*/
         }
         .about_blocks li.intro_right .mbit .mbit_intro {
             z-index: 1;
@@ -129,6 +145,9 @@
             border-width: 2px;
             box-shadow: 0px 0 0px 5px rgb(51 164 116 / 10%);
             /*box-shadow: none;*/
+        }
+        .about_blocks li.intro_right .mbit .mbit_intro a b {
+            cursor: pointer;
         }
         .In-core-head .profile {
             margin-bottom: 15px;
@@ -174,7 +193,7 @@
         <div class="Introduce-window" style="width: 100%;">
             <div class="Introduce-core">
                 <div class="In-core-head">
-                    <div class="about_blocks">
+                    <div class="about_blocks magnetic" data-magnet-scale="1.015" data-magnet-step="0.015">
                         <ul>
                             <li class="intro_left">
                                 <div class="profile">
@@ -215,7 +234,7 @@
                                 <div class="mbit" data-mbit="<?php echo isset($mbit_array_result[1]) ? $mbit_array_result[1] : 'MBTI';//strtoupper(); ?>">
                                     <div class="mbit_intro">
                                         <p> MBTI 16 Personalities<!--<sup> (Oct 21, 2022) </sup>--> </p>
-                                        <a href="https://www.16personalities.com/<?php echo $mbit_abbr; ?>" style="color:#33a474;" target="_blank" title="more about <?php echo $mbit_abbr; ?>"><b><?php echo $mbit_abbr . '-' . $mbit_split[1]; ?></b></a>
+                                        <a class="magnetic" href="https://www.16personalities.com/<?php echo $mbit_abbr; ?>" style="color:#33a474;" target="_blank" title="more about <?php echo $mbit_abbr; ?>"><b><?php echo $mbit_abbr . '-' . $mbit_split[1]; ?></b></a>
                                     </div>
                                     <ol class="mbit_range">
                                         <?php

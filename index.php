@@ -2,11 +2,11 @@
 <?php
     $theme_array = get_theme_array(true);
     // wp自定义（含置顶无分页）查询函数
-    function the_recent_posts($cid=0, $specific_link=false, $detail=false, $limit=null, $random=false){
+    function the_recent_posts($cid=0, $specific_link=false, $detail=false, $limit=null, $random=false) {
         // cache db only if not-single sub-page
         $output = '';
         $output_sw = false;
-        if(get_option('site_cache_switcher')) {
+        if (get_option('site_cache_switcher')) {
             $temp = get_category($cid);
             if (isset($temp->slug)) {
                 $temp_slug = $temp->slug;
@@ -16,12 +16,12 @@
                 $output = $output_sw ? get_option($cache) : '';
             }
         }
-        if(!$output || !$output_sw){
+        if (!$output || !$output_sw) {
             // $output = get_recent_posts($cid, $specific_link, $detail, $limit, $random);
             global $post;
             $acg_slug = get_cat_by_template('acg','slug');
             $acg_single_sw = get_option('site_single_switcher');
-            if($acg_single_sw){
+            if ($acg_single_sw) {
                 $includes = get_option('site_single_includes');
                 $acg_single_sw = in_array($acg_slug, explode(',', $includes));
             }
@@ -44,7 +44,7 @@
                 $post_cat = get_the_category($post->ID);
                 $loc_id = $par_slug==$acg_slug ? $post_cat[0]->slug : 'pid_'.get_the_ID(); //$post_cat[0]->parent==0 ? $post_cat[1]->slug : $post_cat[0]->slug;
                 $pre_link = $specific_link || !$acg_single_sw ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="'.get_category_link($cid).'#'.$loc_id.'" target="_self" rel="nofollow">';
-                $output .= '<li class="'.$topset.'">'.$pre_link . $title . '</a></li>';
+                $output .= '<li class="'.$topset.' magnetic">'.$pre_link . $title . '</a></li>';
             endwhile;
             wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
             if($output_sw) update_option($cache, $output); //wp_kses_post($output) caused parse issue
@@ -256,7 +256,7 @@
         <div class="weBlog-banner flexboxes wow fadeInUp" data-wow-delay="0.1s">
             <div class="weBlog-Description" style="margin-top:0;">
                 <div class="weBlog-Description-inside">
-                    <div class="weBlog-Description-inside-content">
+                    <div class="weBlog-Description-inside-content magnetics">
                         <span>
                             <small>
                                 <b style="font-size:2.35rem;">👋 I'm</b>
@@ -294,7 +294,7 @@
             </div>
         </div>
         <!-- 右 -->
-        <div class="recommendation wow fadeInUp hfeed" data-wow-delay="0.2s">
+        <div class="recommendation wow fadeInUp hfeed magnetic" data-magnet-scale="1" data-magnet-step="0.05" data-wow-delay="0.2s">
             <?php
                 $rcmd_cat = get_option('site_rcmdside_cid');
                 $rcmd_arr = array(
@@ -327,7 +327,7 @@
                           <a href="<?php the_permalink() ?>" aria-label="bg">
                             <span id="lowerbg" style="background:url('<?php echo get_postimg(0,$post->ID,true); ?>') center 40% no-repeat;background-size:cover;"></span>
                           </a>
-                          <a href="<?php the_permalink() ?>" id="rel" rel="bookmark" target="_blank">
+                          <a href="<?php the_permalink() ?>" id="rel" class="" rel="bookmark" target="_blank">
                             <b><?php the_title() ?></b>
                           </a>
                         </div>
@@ -356,8 +356,8 @@
             $cardnav_array = explode(',', get_option('site_cardnav_includes'));
             foreach ($cardnav_array as $cardnav) {
                 $card_term = get_category_by_slug($cardnav) ? get_category_by_slug($cardnav) : get_category(1);  // 1 for UNCATEGORIZED
-                if($cardnav){  //incase end with ";"
-                    echo '<span class="'.$cardnav.'"><a href="'.get_category_link($card_term->term_id).'"> <b>' . $card_term->name . '</b><i class="icom icon-'.$cardnav.'"></i></a></span>';
+                if ($cardnav) {  //incase end with ";"
+                    echo '<span class="'.$cardnav.' magnetic"><a href="'.get_category_link($card_term->term_id).'"> <b>' . $card_term->name . '</b><i class="icom icon-'.$cardnav.'"></i></a></span>';
                 }
             }
         ?>
@@ -376,7 +376,7 @@
                     }
                     $card_term = get_category_by_slug($cardnav) ? get_category_by_slug($cardnav) : get_category(1);  // 1 for UNCATEGORIZED
             ?>
-                    <div id="news-window">
+                    <div id="news-window" class="magnetics">
                         <span class='resource-windows-top'>
                             <span class='resource-windows-top_inside'></span>
                             <h3><?php echo $card_term->name; ?></h3>
@@ -527,12 +527,12 @@
                         </li>
                     <?php
                         }else{
-                            echo '<style>.acg_window-content li.acg_window-content-inside_right{display:block}.acg_window-content-inside_right .tags{font-family: math, cursive,monospace,serif,fangsong;padding: 0 15px;margin-top: 15px;}</style>';
+                            echo '<style>.acg_window-content li.acg_window-content-inside_right{display:block}.acg_window-content-inside_right .tags{font-family: math, cursive,monospace,serif,fangsong;padding: 0 5%;margin-top: 15px;}</style>';
                         }
                         if($tag_sw){
                     ?>
                         <li class="acg_window-content-inside_right"<?php if(!$acg_sw) echo ' style="width: 100%;position: relative;"'; ?>>
-                            <div class="tags">
+                            <div class="tags magnetics">
                                 <?php 
                                     // 自定义标签云
                                     function the_tag_clouds($html_tag="li") {
@@ -540,7 +540,7 @@
                                         $caches_sw = get_option('site_cache_switcher');
                                         $caches_inc = get_option('site_cache_includes');
                                         $caches_name = 'site_tag_clouds_cache';
-                                        if ($caches_sw && !get_option('site_tagcloud_auto_caches')) {
+                                        if ($caches_sw) { // && !get_option('site_tagcloud_auto_caches')
                                             $output_sw = in_array('tagclouds', explode(',', $caches_inc));
                                             $output_caches = get_option($caches_name);
                                             if ($output_sw && $output_caches) {
@@ -576,7 +576,7 @@
                                                     $color_font = $rand_opt<=5 && $rand_font<=$max_font/2 ? 'color:var(--theme-color)' : '';
                                                 }
                                                 $rand_opt = $rand_opt==10 ? $rand_opt=1 : '0.'.$rand_opt;  // use dot
-                                                $output_string .= '<'.$html_tag.' data-count="'.$tag_count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';'.$color_font.'" title="'.$tag_count.' 篇<'.$tag->name.'>文章">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
+                                                $output_string .= '<'.$html_tag.' class="magnetic" data-count="'.$tag_count.'"><a href="'.get_tag_link($tag->term_id).'" target="_blank" style="font-size:'.$rand_font.'px;opacity:'.$rand_opt.';font-weight:'.$bold_font.';'.$color_font.'" title="'.$tag_count.' 篇 '.$tag->name.' 文章">'.$tag->name.'</a></'.$html_tag.'>'; //<sup>'.$tag->count.'</sup>
                                             };
                                             // standard updates
                                             if ($output_sw) {
@@ -587,7 +587,7 @@
                                             echo $output_string;
                                             return;
                                         }
-                                        echo '<p id="hitokoto"> NO Tags Found.  </p>'; //<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"></span>
+                                        echo '<p id="hitokoto" class="magnetic"> NO Tags Found.  </p>'; //<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"></span>
                                     }
                                     the_tag_clouds('span'); 
                                 ?>

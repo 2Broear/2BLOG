@@ -635,6 +635,7 @@
         register_setting( 'baw-settings-group', 'site_icon_switcher' );
         register_setting( 'baw-settings-group', 'site_nav_slider_switcher' );
         register_setting( 'baw-settings-group', 'site_progress_bar_switcher' );
+        register_setting( 'baw-settings-group', 'site_progress_tip_switcher' );
         register_setting( 'baw-settings-group', 'site_keywords' );
         register_setting( 'baw-settings-group', 'site_description' );
         register_setting( 'baw-settings-group', 'site_support' );
@@ -679,7 +680,7 @@
         // if(get_option('site_tagcloud_switcher')){
             register_setting( 'baw-settings-group', 'site_tagcloud_num' );
             register_setting( 'baw-settings-group', 'site_tagcloud_max' );
-            register_setting( 'baw-settings-group', 'site_tagcloud_auto_caches' );
+            // register_setting( 'baw-settings-group', 'site_tagcloud_auto_caches' );
         // }
         register_setting( 'baw-settings-group', 'site_footprint_switcher' );
             register_setting( 'baw-settings-group', 'site_footprint_map' );
@@ -699,6 +700,7 @@
         register_setting( 'baw-settings-group', 'site_animated_counting_switcher' );
         register_setting( 'baw-settings-group', 'site_animated_typing_switcher' );
             register_setting( 'baw-settings-group', 'site_animated_typing_includes' );
+        register_setting( 'baw-settings-group', 'site_magnetic_effect_switcher' );
         
         register_setting( 'baw-settings-group', 'site_memos_switcher' );
             register_setting( 'baw-settings-group', 'site_memos_apikey' );
@@ -1643,16 +1645,6 @@
                 <h1><b class="num" style="color: var(--block-one);">02</b>通用控制<p class="en">COMMON CONTROLS</p></h1>
                 <table class="form-table">
                     <tr valign="top">
-                        <th scope="row">试验性内容<sup class="dualdata">Exp</sup></th>
-                        <td>
-                            <?php
-                                $opt = 'site_experimental_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">试验性（全站）UI/UE 内容（开启后可体验最新页面样式内容</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Experimental</b></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top">
                         <th scope="row">导航 Icon</th>
                         <td>
                             <?php
@@ -1664,24 +1656,24 @@
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">导航 Slider</th>
-                        <td>
-                            <?php
-                                $opt = 'site_nav_slider_switcher';
-                                $value = get_option($opt);
-                                $status = $value ? "checked" : "check";
-                                echo '<label for="'.$opt.'"><p class="description" id="">站点导航跟随模块，开启后透明主题色块可跟随鼠标移动标记链接（暂仅支持PC端</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:dodgerblue;" class="btn">Slider</span></label>';
-                            ?>
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">Progresser</th>
+                        <th scope="row">Progresser PageLoad</th>
                         <td>
                             <?php
                                 $opt = 'site_progress_bar_switcher';
                                 $value = get_option($opt);
                                 $status = $value ? "checked" : "check";
                                 echo '<label for="'.$opt.'"><p class="description" id="">站点顶部加载条，开启后全站使用</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style=";" class="btn">NProgress</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Progresser Document</th>
+                        <td>
+                            <?php
+                                $opt = 'site_progress_tip_switcher';
+                                $value = get_option($opt);
+                                $status = $value ? "checked" : "check";
+                                echo '<label for="'.$opt.'"><p class="description" id="">站点顶部进度条，开启后全站使用（⚠️注：进度条为文档滚动进度，而非<code>NProgress</code>页面进度条</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style=";" class="btn">DProgress</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -1730,16 +1722,6 @@
                     <?php
                         // }
                     ?>
-                    <tr valign="top">
-                        <th scope="row">图片懒加载</th>
-                        <td>
-                            <?php
-                                $opt = 'site_lazyload_switcher';
-                                $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">开启文章/部分页面图片使用 Lazyload 懒加载（默认关闭 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LazyLoad</b></label>';
-                            ?>
-                        </td>
-                    </tr>
                     <tr valign="top">
                         <th scope="row">深色模式</th>
                         <td>
@@ -2123,6 +2105,16 @@
                     <?php 
                         // }
                     ?>
+                    <tr valign="top">
+                        <th scope="row">图片懒加载</th>
+                        <td>
+                            <?php
+                                $opt = 'site_lazyload_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_lazyload_switcher_label">开启文章/部分页面图片使用 Lazyload 懒加载（默认关闭 </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">LazyImage</b></label>';
+                            ?>
+                        </td>
+                    </tr>
                     <tr valign="top">
                         <th scope="row">站点 CDN 加速</th>
                         <td>
@@ -2742,7 +2734,7 @@
                             <?php
                                 $opt = 'site_wpdb_optimize_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_cdn_switcher_label">开启刷新页面后可清理其他数据库冗余文件（任何涉及数据库操作务必提前备份！ </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">WPDB Optimization</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_cdn_switcher_label">开启刷新页面后可清理其他数据库冗余文件（任何涉及数据库操作务必提前备份！ </p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">WPDB Optimizer</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2764,6 +2756,16 @@
             <div class="formtable index">
                 <h1><b class="num" style="color: var(--block-two);">03</b>页面配置<p class="en">PAGES CONFS</p></h1>
                 <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">试验性内容<sup class="dualdata">Exp</sup></th>
+                        <td>
+                            <?php
+                                $opt = 'site_experimental_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">试验性（全站）UI/UE 内容（开启后可体验最新页面样式内容</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Experimental</b></label>';
+                            ?>
+                        </td>
+                    </tr>
                     <tr valign="top">
                         <th scope="row">站点头部公告<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
@@ -3156,16 +3158,16 @@
                                 ?>
                             </td>
                         </tr>
-                        <tr valign="top" class="child_option dynamic_opts <?php echo $tags; ?>">
-                            <th scope="row">— 始终更新缓存</th>
-                            <td>
+                        <!--<tr valign="top" class="child_option dynamic_opts <?php //echo $tags; ?>">-->
+                        <!--    <th scope="row">— 始终更新缓存</th>-->
+                        <!--    <td>-->
                                 <?php
-                                    $opt = 'site_tagcloud_auto_caches';
-                                    $status = check_status($opt);
-                                    echo '<label for="'.$opt.'"><p class="description" id="">自动更新标签云缓存（开启后访问标签云时将始终更新缓存为最新，默认每日自动更新</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">禁用缓存</b></label>';
+                                    // $opt = 'site_tagcloud_auto_caches';
+                                    // $status = check_status($opt);
+                                    // echo '<label for="'.$opt.'"><p class="description" id="">自动更新标签云缓存（开启后访问标签云时将始终更新缓存为最新，默认每日自动更新</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">禁用缓存</b></label>';
                                 ?>
-                            </td>
-                        </tr>
+                        <!--    </td>-->
+                        <!--</tr>-->
                     <tr valign="top">
                         <th scope="row"> 缓存索引 - 页面配置 </th>
                         <td>
@@ -3757,6 +3759,27 @@ const maps = {
                                 </td>
                             </tr>
                     <tr valign="top">
+                        <th scope="row">交互 - 导航滑块</th>
+                        <td>
+                            <?php
+                                $opt = 'site_nav_slider_switcher';
+                                $value = get_option($opt);
+                                $status = $value ? "checked" : "check";
+                                echo '<label for="'.$opt.'"><p class="description" id="">站点导航跟随模块，开启后透明主题色块可跟随鼠标移动标记链接（暂仅支持PC端</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:dodgerblue;" class="btn">导航滑块</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">交互 - 磁吸效果</th>
+                        <td>
+                            <?php
+                                $opt = 'site_magnetic_effect_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">开启PC页面元素“磁吸”效果，可使用<code> magnetic </code>类名启用自定义元素（全局启用区域：导航metaBox、页面底部Title、左上角Logo、右下角进度球</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:darkcyan" class="btn">磁吸元素</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                    <tr valign="top">
                         <th scope="row">动画 - 滚动加载</th>
                         <td>
                             <?php
@@ -4060,7 +4083,7 @@ const maps = {
                                         $value = get_option($opt);
                                         $preset = $img_cdn.'/images/newyear.gif';
                                         $value ? $preset=$value : update_option($opt, $preset);  //auto update option to default if avatar unset
-                                        echo '<p class="description" id="">倒计时背景图片/视频（默认新年 gif </p><label for="'.$opt.'" class="upload"><a class="dynamic_dom" data-dom="video" data-src="' . $preset . '" title="加载预览">加载视频</a></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button multi" data-type value="选取媒体" />';  //<em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em>
+                                        echo '<p class="description" id="">倒计时背景图片/视频（默认新年 gif </p><label for="'.$opt.'" class="upload"><a class="dynamic_dom" data-dom="video" data-src="' . $preset . '" title="加载预览">加载媒体</a></label><input type="text" name="'.$opt.'" class="regular-text upload_field" value="' . $preset . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button multi" data-type value="选取媒体" />';  //<em class="upload_preview bg" style="background:url('.$preset.') center center /cover;"></em>
                                     ?>
                                 </td>
                             </tr>

@@ -9,6 +9,14 @@
 <head>
     <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/about.css?v=<?php echo get_theme_info(); ?>" />
+    <style>
+        .body-basically h2 {
+            text-align: left!important;
+        }
+        .body-basically .Introduce {
+            color: var(--preset-5a);
+        }
+    </style>
 </head>
 <body class="<?php theme_mode(); ?>">
 <div class="content-all">
@@ -24,7 +32,7 @@
 		    $poster_src = $video_src ? $video_src : get_meta_image($cat, $img_cdn.'/images/privacy.jpg');
 		    echo do_shortcode('[custom_video src="' . $video_src . '" poster="' . $poster_src . '"]');
 	    ?>
-	    <h5><?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '<span> 隐私</span> 协议'; ?></h5>
+	    <h5 class="magnetic"><?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '<span> 隐私</span> 协议'; ?></h5>
     </div>
     <div class="content-all-windows">
         <div class="Introduce-window" style="width: 100%;">

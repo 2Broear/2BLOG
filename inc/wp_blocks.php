@@ -116,7 +116,7 @@
     function custom_imgbox_shortcode($atts, $content = null) {
         $img = isset($atts['img']) ? $atts['img'] : '';
         $title = isset($atts['title']) ? $atts['title'] : 'No Text';
-        return '<div class="ibox"><div class="iboxes"><img src="'.$img.'" alt="'.$title.'" decoding="async"><mark>'.$title.'</mark></div></div>';
+        return '<div class="ibox"><div class="iboxes magnetic" data-magnet-scale="1" data-magnet-step="0.05"><img src="'.$img.'" alt="'.$title.'" decoding="async"><mark>'.$title.'</mark></div></div>';
     }
     function custom_sidebar_ad_shortcode($atts){
         $sup = isset($atts['sup']) ? $atts['sup'] : '中意此款主题吗';
@@ -163,7 +163,7 @@
             $icon = get_option('site_avatar') ? get_option('site_avatar') : get_site_icon_url();
             $avatar = '<em style="background:url('.$icon.') center center /cover;width: 23px;height: 23px;border-radius: 50%;display: inline-block;vertical-align: middle;"></em>';
         }
-        return '<div class="ibox quotes"><div class="iboxes" style="background:url() center center /cover;"><img src="'.get_postimg(0,$pid,true).'" alt="'.$title.'"><h3><a href="'.get_the_permalink($pid).'" target="_blank">'.$title.'</a></h3><div class="content"><p>'.$excerpt.'</p></div><mark>'.$avatar.' '.$author.' '.get_the_time('d/m/Y', $pid).' '.get_tag_list($pid, 1, "/").' | '.getPostViews($pid).' views.</mark></div></div>';
+        return '<div class="ibox quotes"><div class="iboxes magnetic" data-magnet-step="0.05"><img src="'.get_postimg(0,$pid,true).'" alt="'.$title.'"><h3><a href="'.get_the_permalink($pid).'" target="_blank">'.$title.'</a></h3><div class="content"><p>'.$excerpt.'</p></div><mark>'.$avatar.' '.$author.' '.get_the_time('d/m/Y', $pid).' '.get_tag_list($pid, 1, "/").' | '.getPostViews($pid).' views.</mark></div></div>';
     }
     
     // 注册短代码

@@ -34,7 +34,7 @@
         $use_icon = get_option('site_icon_switcher');
         $site_icon = $use_icon ? '<i class="icom icon-more"></i>' : '';
         $choosen = is_home() ? 'choosen' : '';
-        echo '<li class="cat_0 top_level"><a href="/" class="'.$choosen.'">'.$site_icon.'首页</a></li>';
+        echo '<li class="cat_0 top_level magnetic" data-magnet-scale="" data-magnet-step=""><a href="/" class="'.$choosen.'">'.$site_icon.'首页</a></li>';
         $cat = $cat ? $cat : get_page_cat_id(current_slug());  // if is_page() then rewrite cat to cid // echo $cat;
         // print_r(get_category($cat));
         $cats = get_categories(meta_query_categories(0));
@@ -54,14 +54,14 @@
                 $cur_link = get_category_link($the_cat_id); //if ($no_slash) strpos('/', $site_url)!==false
                 if (str_replace('com/', 'com', $cur_link)==$site_url||$cur_link==$site_url.'/category/'||$cur_link==$site_url.'/category') $cur_link = $slash_href; //if ($no_slash) strpos('/', $site_url)!==false
                 $site_icon = $use_icon ? '<i class="icom icon-'.$slug_icon.'"></i>' : '';
-                if($the_cat_slug!='uncategorized') echo '<li class="cat_'.$the_cat_id.' '.$level.'"><a href="'.$cur_link.'" class="'.$choosen.'" rel="">' . $site_icon . $the_cat->name.'</a>';  //liwrapper
-                if(!empty($catss) && $deepth>=2){
+                if ($the_cat_slug!='uncategorized') echo '<li class="cat_'.$the_cat_id.' '.$level.' magnetic" data-magnet-step="0.15"><a href="'.$cur_link.'" class="'.$choosen.'" rel="">' . $site_icon . $the_cat->name.'</a>';  //liwrapper magnetic
+                if (!empty($catss) && $deepth>=2) {
                     $metanav_array = explode(',', get_option('site_metanav_array'));
                     if(get_option('site_metanav_switcher') && in_array($the_cat_slug, $metanav_array)){ //strpos(get_option('site_metanav_array'),$the_cat_slug)!==false
                         $metaimg_array = explode(',', get_option('site_metanav_image'));
                         $metaCls = in_array($the_cat_slug, $metaimg_array) ? "metaboxes" : "";  // must else for each-loop //strpos(get_option('site_metanav_image'), $the_cat_slug)!==false
                         //METABOX RICH INFO
-                        echo $mobile ? '<ul class="links-mores '.$metaCls.'">' : '<div class="additional metabox '.$metaCls.'"><ol class="links-more">';
+                        echo $mobile ? '<ul class="links-mores '.$metaCls.'">' : '<div class="additional metabox '.$metaCls.'"><ol class="links-more magnetic" data-magnet-scale="" data-magnet-step="0.15">';
                         foreach($catss as $the_cats){
                             $the_cats_id = $the_cats->term_id;
                             $the_cats_par = $the_cats->category_parent;
@@ -89,7 +89,7 @@
                                 echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats_par." ".$level.'"><a href="'.get_category_link($the_cats_id).'" class="'.$choosen.'">'.$the_cats_name.$cats_desc.'</a>';
                             }
                             if(!empty($catsss) && $deepth>=3){
-                                echo $mobile ? '<ul class="links-moress">' : '<div class="sub-additional metabox"><ol class="links-more">';
+                                echo $mobile ? '<ul class="links-moress">' : '<div class="sub-additional metabox"><ol class="links-more">'; // magnetic
                                 foreach($catsss as $the_catss){
                                     $the_catss_id = $the_catss->term_id;
                                     $the_catss_name = $mobile ? $the_catss->name : '<b>'.$the_catss->name.'</b>';
@@ -102,8 +102,8 @@
                             }
                         }
                         echo $mobile ? "</ul>" : "</ol></div>";
-                    }else{  //elseif($the_cat_slug!=$metaArray[$i]){
-                        echo $mobile ? '<ul class="links-mores">' : '<div class="additional"><ol class="links-more">';
+                    } else {  //elseif($the_cat_slug!=$metaArray[$i]){
+                        echo $mobile ? '<ul class="links-mores">' : '<div class="additional"><ol class="links-more magnetic" data-magnet-scale="1" data-magnet-step="0.15">';
                         foreach($catss as $the_cats){
                             $the_cats_id = $the_cats->term_id;
                             $catsss = get_categories(meta_query_categories($the_cats_id));
@@ -198,12 +198,12 @@
                 </div>
             </div>
         </div>
-        <span id="doc-progress-bar"></span>
+        <?php if (get_option('site_progress_bar_switcher')) echo '<span id="doc-progress-bar"></span>'; ?>
     </div>
     <div class="main-header-all">
         <div class="block_of_down_element">
             <div class="inside_of_block" isBottom="no">
-                <div class="logo-area" title="<?php echo get_option('site_nick', get_bloginfo('name')); ?> - <?php bloginfo('name') ?>">
+                <div class="logo-area magnetic" data-magnet-scale="" data-magnet-step="" title="<?php echo get_option('site_nick', get_bloginfo('name')); ?> - <?php bloginfo('name') ?>">
                     <a href="<?php bloginfo('url') ?>" aria-label="logo"><?php site_logo(); ?></a>
                 </div>
                 <nav class="main-nav">

@@ -31,6 +31,37 @@
         }
         return trim($res);
     }
+    
+    if (get_option('site_magnetic_effect_switcher')) {
+        // 只针对 core/image 块
+        function custom_core_image_block_attributes($block_content, $block) {
+            // 检查是否是 image 或 video 块
+            if ($block['blockName'] !== 'core/image' && $block['blockName'] !== 'core/video') {
+                return $block_content;
+            }
+            // 根据不同的块类型使用不同的匹配模式
+            $replacement = '$1 magnetic" data-magnet-scale="1.025" data-magnet-step="0.025"';
+            if ($block['blockName'] === 'core/image') {
+                // 匹配 figure 元素（wp-block-image）
+                $pattern = '/(<figure[^>]*class="wp-block-image[^"]*)/i';;
+                $block_content = preg_replace($pattern, $replacement, $block_content);
+            } elseif ($block['blockName'] === 'core/video') {
+                // 匹配 figure 元素（wp-block-video）
+                $pattern = '/(<figure[^>]*class="wp-block-video[^"]*)/i';
+                $block_content = preg_replace($pattern, $replacement, $block_content);
+            }
+            
+            return $block_content;
+        }
+        add_filter('render_block', 'custom_core_image_block_attributes', 10, 2);
+        
+    }
+function weplugins_customize_paginate_links($link) {
+    error_log('paginate_links filter triggered: ' . $link); // 查看错误日志
+    $link = str_replace('page-numbers', 'custom-page-numbers', $link);
+    return $link;
+}
+add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
     /*
      *--------------------------------------------------------------------------
      * Cloudflare Turnstile CAPTCHA
@@ -899,12 +930,12 @@
                 case 'full':
                     $avatar_statu = $status_standby ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$loadimg.'" alt="'.$link_name.'" draggable="false">';
                     $rel_statu = $rel ? $rel : 'friends';
-                    $output .= '<div class="inbox flexboxes '.$status_class.' '.$sex.'"><div class="inbox-inside flexboxes"><a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'" data-status="' . $status_code . '"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impression.'</div>' . $rss_feeds;
+                    $output .= '<div class="inbox flexboxes magnetic '.$status_class.' '.$sex.'" data-magnet-scale="" data-magnet-step="0.15"><div class="inbox-inside flexboxes"><a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'" data-status="' . $status_code . '"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impression.'</div>' . $rss_feeds;
                     $output .= '</div>';
                     break;
                 case 'half':
                     $rel_statu = $rel ? $rel : 'recommends';
-                    $output .= '<div class="inbox '.$status_class.' '.$sex.'"><div class="inbox-inside flexboxes">'.$impression.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'" data-status="' . $status_code . '"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div>' . $rss_feeds; //<em></em>
+                    $output .= '<div class="inbox magnetic '.$status_class.' '.$sex.'"><div class="inbox-inside flexboxes" data-magnet-scale="" data-magnet-step="0.15">'.$impression.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'" data-status="' . $status_code . '"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div>' . $rss_feeds; //<em></em>
                     $output .= '</div>';
                     break;
                 case 'list':
@@ -913,14 +944,14 @@
                     break;
                 default:
                     $rel_statu = $status_standby ? 'nofollow' : 'followed';
-                    $output .= '<a href="'.$link_url.'" class="'.$status_class.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" data-status="' . $status_code . '">'.$link_name.'</a>'; // data-status="'.get_url_status_by_curl($link_url, 3).'"
+                    $output .= '<a href="'.$link_url.'" class="'.$status_class.' magnetics" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" data-status="' . $status_code . '" data-magnet-scale="1.15" data-magnet-step="0.75">'.$link_name.'</a>'; // data-status="'.get_url_status_by_curl($link_url, 3).'"
                     break;
             }
         }
         // unset($lazysrc, $loadimg);
         return $output;
     }
-    
+
     // search/tag page posts with styles
     function the_posts_with_styles($queryString, $rewrite_query=false){
         if(is_archive() || is_search() || check_request_param('cid')){
@@ -985,6 +1016,11 @@
                         .weblog-tree-box .tree-box-content {
                             color: var(--preset-6);
                         }
+                        .rcmd-boxes .info .inbox .inbox-headside:before {
+                            /*z-index: 0;*/
+                            opacity: .15;
+                            pointer-events: none;
+                        }
                 	</style>
             <?php
                 }
@@ -1033,7 +1069,7 @@
                             <article class="<?php if($post_orderby>1) echo 'topset icom'; ?> news-window wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                                 <div class="news-window-inside">
                                     <?php
-                                        if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img class="lazy" '.$lazyhold.' src="'.$loadimg.'" /></a></span>';
+                                        if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img magnetic"><a href="'.get_the_permalink().'"><img class="lazy" '.$lazyhold.' src="'.$loadimg.'" /></a></span>';
                                     ?>
                                     <div class="news-inside-content">
                                         <h2 class="entry-title">
@@ -1073,7 +1109,7 @@
                                     </span>
                                     <span id="weblog-circle"></span>
                                 </div>
-                                <div class="weblog-tree-core-r">
+                                <div class="weblog-tree-core-r magnetic" data-magnet-scale="1" data-magnet-step="0.05">
                                     <div class="weblog-tree-box">
                                         <div class="tree-box-title">
                                             <a href="<?php the_permalink() ?>" id="<?php the_title(); ?>" target="_self">
@@ -1101,12 +1137,14 @@
             ?>
                             <div class="rcmd-boxes flexboxes">
                                 <div class="info anime flexboxes">
-                                    <div class="inbox flexboxes">
+                                    <div class="inbox flexboxes magnetic" data-magnet-scale="1.25" data-magnet-step="">
                                         <div class="inbox-headside flexboxes">
+                                            <a href="<?php the_permalink(); ?>">
+                                                <?php
+                                                    echo '<img '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous">'; //<img class="bg" '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'">
+                                                ?>
+                                            </a>
                                             <span class="author"><?php echo $post_feeling = get_post_meta($post->ID, "post_feeling", true); ?></span>
-                                            <?php
-                                                echo '<img '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous">'; //<img class="bg" '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'">
-                                            ?>
                                         </div>
                                         <div class="inbox-aside">
                                             <span class="lowside-title">
@@ -1120,7 +1158,7 @@
                                 </div>
                             </div>
             <?php
-                        }else{
+                        } else {
                             // results doen't match in_category template, like pages..
             ?>
                             <article class="<?php if($post_orderby>1) echo 'topset'; ?> cat-<?php echo $post->ID ?>">
@@ -1155,6 +1193,8 @@
                 $pages = paginate_links(array(
                     'prev_text' => __('上一页'),
                     'next_text' => __('下一页'),
+                    // 'before_page_number' => '<span class="page-number-wrapper" data-page="',
+                    // 'after_page_number'  => '"></span>',
                     'type' => 'plaintext',
                     'screen_reader_text' => null,
                     'total' => $maximun_page,  //总页数
@@ -1531,11 +1571,13 @@
     }
     //lazyload 图懒加载
     if (get_option('site_lazyload_switcher')) {
-        $lazysrc = 'data-src';
-        add_filter('the_content', 'lazyload_images', 10);  // 设置 priority 低于 custom_cdn_src
-        function lazyload_images($content){
-            return preg_replace('/\<img(.*)src=("[^"]*")/i', '<img $1 data-src=$2', $content);
+        // $lazysrc = 'data-src';
+        function lazyload_images($content) {
+            return preg_replace('/\<img(.*?)src=("[^"]*")/i', '<img$1data-src=$2', $content);
+            // return preg_replace('/\<img([^>]*?)src=("[^"]*")([^>]*>)/i', '<img$1data-src=$2$3', $content);
         }
+        // 设置 priority 高于 replace_cdn_img（延后执行）
+        add_filter('the_content', 'lazyload_images', 12);
         // replace comments images url
         add_filter('comment_text' , 'lazyload_images', 20, 2);
     }
@@ -1684,7 +1726,7 @@
                 $each_index = trim($index_array[$i]);
                 if($each_index){
                     if(in_category($each_index)){
-                        $content = '<div class="article_index '.$auto_fold.'" data-index="'.$match_m.'"><div class="in_dex"><p title="折叠/展开"><b>文章目录</b><i class="icom"></i></p><ul>' . $ul_li . '</ul></div></div>' . $content;
+                        $content = '<div class="article_index '.$auto_fold.' magnetic" data-index="'.$match_m.'"><div class="in_dex"><p title="折叠/展开"><b>文章目录</b><i class="icom"></i></p><ul>' . $ul_li . '</ul></div></div>' . $content;
                     }
                 }
             }
@@ -1900,7 +1942,7 @@
             if($approved=='0') $content = '<small style="opacity:.5">[ 评论未审核，通过后显示 ]</small>';
             if($parent>0) $content = '<a href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
     ?>
-            <div class="vcard" id="comment-<?php echo $id; ?>">
+            <div class="vcard magnetics" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $id; ?>">
                 <a class="noslide" rel="nofollow" href="<?php echo $link; ?>" target="_blank">
                     <?php 
                         if (get_option('show_avatars')) {
@@ -1916,8 +1958,8 @@
                         </a>
                         <?php
                             if ($email == get_bloginfo('admin_email')) echo '<span class="vsys vadmin">admin</span>';
-                            echo '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
                             if($approved=="0") echo '<span class="vsys auditing">待审核</span>';
+                            echo '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
                         ?>
                     </div>
                     <div class="vmeta">
@@ -2238,5 +2280,4 @@
             add_action("delete_attachment", 'delete_video_attachment_capture');
         }
     };
-    
 ?>

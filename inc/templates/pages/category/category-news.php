@@ -16,6 +16,9 @@
         body.dark .news-window:nth-child(odd) .news-window-inside{
             background: none;
         }
+        .news-window:nth-child(even) span.news-window-img {
+            position: initial;
+        }
         .news-window:nth-child(even) span.news-window-img::after{
             background: linear-gradient(45deg, rgba(255,255,255,1) 18%, transparent 66%, rgba(255,255,255,1) 88%);
             background: -webkit-linear-gradient(45deg, rgba(255,255,255,1) 18%, transparent 66%, rgba(255,255,255,1) 88%);
@@ -24,6 +27,9 @@
             background: linear-gradient(45deg, var(--preset-2b) 18%, rgba(48, 48, 48, 0.15) 66%, var(--preset-2a) 88%);
             background: -webkit-linear-gradient(45deg, var(--preset-2b) 18%, rgba(0, 0, 0, 0.15) 66%, var(--preset-2a) 88%);
         }
+        /*.news-window:nth-child(even) .news-window-img a {*/
+        /*    padding: 0;*/
+        /*}*/
         .news-window:nth-child(even) h2.entry-title {
             font-size: 1rem;
         }
@@ -65,7 +71,7 @@
                                 $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                                 $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                         ?>
-                                <article class="<?php if($post_orderby>1) echo 'topset icom'; ?> news-window wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
+                                <article class="<?php if($post_orderby>1) echo 'topset icom'; ?> news-window wow magnetics" data-magnet-scale="1" data-magnet-step="0.025" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                                     <div class="news-window-inside">
                                         <?php
                                             $postimg = get_postimg();
@@ -75,7 +81,7 @@
                                                 $lazyhold = '';
                                                 $loadimg = $postimg;
                                             }
-                                            if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img"><a href="'.get_the_permalink().'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.get_the_title().'" /></a></span>'; //get_postimg() || 
+                                            if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img magnetic"><a href="'.get_the_permalink().'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.get_the_title().'" /></a></span>'; //get_postimg() || 
                                         ?>
                                         <div class="news-inside-content" style="<?php //echo $hasimg_style; ?>">
                                             <h2 class="entry-title">
@@ -118,6 +124,8 @@
                         echo paginate_links(array(
                             'prev_text' => __('上一页'),
                             'next_text' => __('下一页'),
+                            // 'before_page_number' => '<span class="magnetic" data-magnet-scale="" data-magnet-step="">',
+                            // 'after_page_number'  => '</span>',
                             'type' => 'plaintext',
                             'screen_reader_text' => null,
                             'total' => $total_pages,  //总页数

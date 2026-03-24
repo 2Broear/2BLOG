@@ -23,7 +23,7 @@
     </footer>
 </div>
 <div class="poster active">
-    <div id="html2img">
+    <div id="html2img" class="magnetic" data-magnet-scale="1" data-magnet-step="0.05">
         <div id="html2canvas">
             <div id="loadbox">
                 <img id="loading" src="<?php echo $parameters['loading']; ?>" />

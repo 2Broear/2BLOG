@@ -46,12 +46,12 @@
 	    echo do_shortcode('[custom_video src="' . $video_src . '" poster="' . $poster_src . '"]');
     ?>
 	<!--<span id="fixed" style="background:inherit"></span>-->
-	<h5 class="workRange wow fadeInUp" data-wow-delay="0.2s"><b> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '好记性，不如烂键盘。'; ?></b><!--<strong>烂键盘</strong>--> </h5>
+	<h5 class="workRange wow fadeInUp magnetics" data-wow-delay="0.2s"><b> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '好记性，不如烂键盘。'; ?></b><!--<strong>烂键盘</strong>--> </h5>
 </div>
 <div class="content-all-windows">
 	<div class="win-nav-content">
 		<div class="win-nav">
-			<div class="nav-header workRange wow fadeInUp" style="background: url(<?php echo get_option('site_bgimg'); ?>) center center / cover">
+			<div class="nav-header workRange wow fadeInUp magnetic" data-magnet-step="0.05" style="background: url(<?php echo get_option('site_bgimg'); ?>) center center / cover">
 				<span>
 					<a href="/" target="_blank" style="border-radius: inherit;display: block">
 					    <?php echo '<img '.$lazysrc.'="'.get_option('site_avatar').'" alt="'.get_bloginfo('name').'" />'; ?>
@@ -82,7 +82,7 @@
                                         $catss = get_categories(meta_query_categories($the_cat_id, 'ASC', 'seo_order'));
                                         $deepth = !empty($catss) ? $deepth++ : $deepth; //$level = !empty($catss) ? $deepth++ : $deepth;
                                         $choosen = $the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single() ? "choosen" : "";
-                                        echo '<li class="cat_'.$the_cat_id.' level_'.$deepth.'"><a href="'.get_category_link($the_cat).'" id="'.$the_cat->slug.'" class="'.$choosen.'">'.$the_cat->name.'</a>';
+                                        echo '<li class="cat_'.$the_cat_id.' level_'.$deepth.' magnetic"><a href="'.get_category_link($the_cat).'" id="'.$the_cat->slug.'" class="'.$choosen.'">'.$the_cat->name.'</a>';
                                         if(!empty($catss)){
                                             echo '<div class="sub-root"><ol>';
                                             sub_recursive_navigator($catss, $deepth);
@@ -126,7 +126,7 @@
                         $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                         $post_rights = get_post_meta($post->ID, "post_rights", true);
                 ?>
-                        <article class="<?php if($post_orderby>1) echo 'topset '; ?>cat-<?php echo $post->ID ?>">
+                        <article class="<?php if($post_orderby>1) echo 'topset '; ?>cat-<?php echo $post->ID ?> magnetics" data-magnet-scale="1" data-magnet-step="0.015">
                             <h1>
                                 <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
                                 <?php 
