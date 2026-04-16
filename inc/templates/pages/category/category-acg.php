@@ -97,6 +97,9 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
     <link preload type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/acg.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
     <style>
+        .rcmd-boxes .fade-item {
+            width: 100%;
+        }
         .rcmd-boxes .inbox-clip h2{
             padding: 20px 15px;
             letter-spacing: 0;
@@ -267,7 +270,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                                             $dataCls = ' blink magnetic';
                                             $cat_num = '0';
                                         }
-                                        $output .= '<div class="'.$cat_slug.$dataCls.'" data-magnet-scale="1.15" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2 style="--data-count:'.$cat_count.'" data-count="'.$cat_count.'"><sup>+</sup></h2><p>'.$the_cat->name.' / <small>'.strtoupper($cat_slug).'</small></p></a></div>'; //'.$cat_num.'
+                                        $output .= '<div class="'.$cat_slug.$dataCls.'" data-magnet-scale="1.25" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2 style="--data-count:'.$cat_count.'" data-count="'.$cat_count.'"><sup>+</sup></h2><p>'.$the_cat->name.' / <small>'.strtoupper($cat_slug).'</small></p></a></div>'; //'.$cat_num.'
                                     }
                                     if($output_sw) update_option('site_acg_stats_cache', wp_kses_post($output));
                                 }
@@ -327,7 +330,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                 ?>
                 <div id="comment_txt" class="wow fadeInUp" data-wow-delay="0.25s">
                     <?php 
-                        the_page_content(current_slug());  //the_content();
+                        // the_page_content(current_slug());  //the_content();
                         dual_data_comments();  // query comments from database before include
                     ?>
                 </div>
@@ -396,7 +399,8 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                         extra_str = "",
                         post_rating = item.rating;
                     temp.id = "pid_"+item.id;
-                    temp.classList.add("inbox", "flexboxes");
+                    temp.classList.add("inbox", "flexboxes", 'magnetic');
+                    temp.dataset.magnetScale = 1.25;
                     if(item.rcmd){
                         const both_class = post_rating ? " both" : "",
                               rcmd_title = post_rating ? 'GOLD Recommendation' : 'Personal Recommends'
@@ -405,7 +409,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                     }else{
                         extra_str = post_rating ? '<div class="game-ratings ign"><div class="ign hexagon" title="IGN High Grades"><h3>'+post_rating+'</h3></div></div>' : '';
                     }
-                    temp.innerHTML = `<div class="inbox-headside flexboxes magnetic" data-magnet-scale="1.25" data-magnet-step=""><a href="${item.link || 'javascript:void(0);'}" target="_self"><img src="${item.poster}" alt="${item.subtitle}" crossorigin="Anonymous"></a><span class="author">${item.subtitle}</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="${item.link || 'javascript:void(0);'}" target="_self">${item.title}</a></h4></span><span class="lowside-description"><p>${item.excerpt.substr(0,52)}..</p></span>${extra_str}</div>`; //<img class="bg" src="${item.poster}">
+                    temp.innerHTML = `<div class="inbox-headside flexboxes"><a href="${item.link || 'javascript:void(0);'}" target="_self"><img src="${item.poster}" alt="${item.subtitle}" crossorigin="Anonymous"></a><span class="author">${item.subtitle}</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="${item.link || 'javascript:void(0);'}" target="_self">${item.title}</a></h4></span><span class="lowside-description"><p>${item.excerpt.substr(0,52)}..</p></span>${extra_str}</div>`; //<img class="bg" src="${item.poster}">
                     fragment.appendChild(temp);
                     // setup ajax-load images blur-color
                     if(item.poster) {

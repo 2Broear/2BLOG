@@ -119,7 +119,7 @@
                     $total_pages = $left_query->max_num_pages;  //total pages
                     // Empty card if null reponsed
                     if(!$left_query->have_posts()){
-                        echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';  //<b>'.current_slug(true).'</b> 
+                        echo '<div class="empty_card magnetic"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';  //<b>'.current_slug(true).'</b> 
                     }
                     while ($left_query->have_posts()):
                         $left_query->the_post();
@@ -139,10 +139,12 @@
                                 <span class="classify" id="">
                                     <i class="icom"></i>
                                     <?php 
-                                        $cats = get_the_category();
-                                        foreach ($cats as $cat){
-                                            if($cat->slug!=$temp->slug) echo '<em> #'.$cat->name.' </em>';  //<a href="'.get_the_permalink($cat->term_id).'">
-                                        }
+                                        // $cats = get_the_category();
+                                        // foreach ($cats as $cat) {
+                                        //     if($cat->slug!=$temp->slug) echo '<em> #'.$cat->name.' </em>';  //<a href="'.get_the_permalink($cat->term_id).'">
+                                        // }
+                                        $cats = get_article_category();
+                                        echo $cats ? '<em> #'.$cats->name.' </em>' : '<em>Uncategorized</em>'; // 输出 child_cat 的名称
                                     ?>
                                 </span>
                                 <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>

@@ -299,6 +299,8 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                         foreach ($this_cats as $this_cat) {
                             $output_cat .= '<span id="'.$this_cat->term_id.'">'.$this_cat->name.'</span>';
                         }
+                        // $cats = get_article_category();
+                        // $output_cat .= $cats ? '<span id="'.$this_cat->term_id.'">'.$this_cat->name.'</span>' : '<span id="Uncategorized">Uncategorized</span>';
                         $output_content .= $output_cat.'</sup></a></li>';
                     };
                     // $output .= 

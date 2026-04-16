@@ -155,7 +155,7 @@
                     the_cf_turnstile();
                 }
             ?>
-            <div class="vwrap magnetic" data-magnet-scale="1" data-magnet-step="0.015">
+            <div class="vwrap magnetics" data-magnet-scale="1" data-magnet-step="0.015">
                 <form action="<?php echo esc_url(home_url('/')); ?>wp-comments-post.php" method="post" style="height: auto;border-radius: inherit;">
                     <div class="vheader item3">
                         <div class="avatar">

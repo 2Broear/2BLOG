@@ -13,6 +13,9 @@
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/highlight/agate.m.css" />
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/fancybox.css" />
     <style>
+        .article_index {
+            position: sticky!important;
+        }
 	    figure .wp-block-gallery figcaption{max-width:66%;}
         figure{
             text-align: left;

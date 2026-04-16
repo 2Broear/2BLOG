@@ -132,242 +132,241 @@
                     console.log(`marker load from remote`, res);
                     // user identification.. (MUST before output all keys for the first-time user-mid gets)
                     let _outputMarkers = ()=> {
-                            // !!!BUG: stream 流多次执行 _outputMarkers() 无法即时更新 data 数据??
-                            const _d_mid = d_mid ? d_mid : marker.data.user.mid;
-                            // const _d_list = d_list ? d_list : marker.data.list;
-                            const localMarks = Object.keys(d_list);
-                            const {code, msg = 'no messages.'} = res;
-                            if(code && code!==200) {
-                                console.log('Abort on _outputMarkers:', msg);
-                                if(localMarks.length > 0) {
-                                    // clear all local-data
-                                    localMarks.forEach(mark=> {
-                                        console.log(`a non-updated local-marker(${mark}: ${getCookie(mark)}) was found, deleting.. (this mark should not be exists, perhaps caused by deletion failure)`);
-                                        delCookie(mark, d_path);
-                                    });
-                                }
-                                return;
-                            }
-                            let _eachMarks = (mark, user)=> {
-                                let {nick, text, date, uid, rid, note} = mark,
-                                    isOtherUserMark = user !== _d_mid;
-                                if (!rid || !uid) {
-                                    console.warn(`wrong rid|uid`, mark);
-                                    return;
-                                }
-                                // URIError: URI malformed
-                                try {
-                                    if (nick) nick = decodeURIComponent(nick); //console.log('nick',nick)
-                                    if (text) text = decodeURIComponent(text);
-                                    if (note) note = decodeURIComponent(note);
-                                } catch(err) {
-                                    console.log(err);
-                                }
-                                // console.log(user, mark);
-                                let frag_mark = marks.cloneNode(true),
-                                    frag_tool = tools.cloneNode(true), 
-                                    tool_inside = finder(frag_tool, c_toolIn, 1),
-                                    tool_mark = finder(frag_tool, c_mark, 1),
-                                    tool_note = finder(frag_tool, c_note, 1),
-                                    mark_indexes = uid.match('(\\d+)-(\\d+)'),
-                                    mark_index = mark_indexes[1] > e_effectsArea.children.length-1 ? 0 : mark_indexes[1],
-                                    mark_paragraph = e_effectsArea.children[mark_index];
-                                // remove close button if marker does not belongs
-                                if(isOtherUserMark) {
-                                    const close_btn = finder(frag_tool, c_close, 1);
-                                    close_btn.remove(); //if(valider(close_btn)) 
-                                }
-                                // traversal context nodes(fix wordpress bug of wraped group)
-                                const is_mark_paragraph_wrapped = mark_paragraph.childNodes[0].nodeType==1 && mark_paragraph.childElementCount<=1;
-                                if(!mark_paragraph.textContent.includes(text) || is_mark_paragraph_wrapped) {
-                                    const effectChildNodes = is_mark_paragraph_wrapped ? mark_paragraph.childNodes[0].children : e_effectsArea.children;
-                                    console.warn(`mark_uid(${mark_index}) has diff record on mark_paragraph(perhaps context wrapped changed), traversal nodes on..`, effectChildNodes);
-                                    for (let i=0,l=effectChildNodes.length;i<l;i++) {
-                                        if(effectChildNodes[i].textContent.includes(text)) {
-                                            mark_index = i;
-                                            break;
-                                        }
-                                    }
-                                    mark_paragraph = effectChildNodes[mark_index];
-                                    console.log(`traversal found effectChildNodes[${mark_index}] on `, mark_paragraph);
-                                }
-                                // load users avatar
-                                const tool_avatars = finder(tool_inside, c_avatars, 1), // update append-avatars dom
-                                      tool_avatar = new Image();
-                                tool_avatar.alt = nick;
-                                tool_avatar.src = `${s_avatar}avatar/${user}?d=mp&s=100&v=1.3.10`;
-                                tool_avatars.appendChild(tool_avatar);
-                                let multUserMarkContext = ` ${s_ctxMarked}`,
-                                    likes = mark.like;
-                                if(isObject(likes)) {
-                                    console.warn(`confused(mixed) index of likes on mark#${rid}(should be typeof array)`, likes);
-                                    likes = Object.values(likes); // 重新索引数组（避免后端 like 数组索引混乱
-                                }
-                                if(likes && likes.length>=1) {
-                                    const multUserMarkExtra = likes.length>s_likeMax ? likes.length - s_likeMax : "";
-                                    multUserMarkContext = ` 等${multUserMarkExtra}人${s_ctxMarked}`;
-                                    const avatar_fragment = document.createDocumentFragment();
-                                    for(let i=0;i<likes.length;i++) {
-                                        if(i>=s_likeMax) break;
-                                        const temp_avatar = new Image();
-                                        temp_avatar.id = temp_avatar.alt = likes[i];
-                                        temp_avatar.src = `${s_avatar}avatar/${likes[i]}?d=mp&s=100&v=1.3.10`;
-                                        avatar_fragment.appendChild(temp_avatar);
-                                    }
-                                    tool_avatars.appendChild(avatar_fragment);
-                                }
-                                frag_mark.classList.add(c_done);
-                                frag_mark.textContent = text;
-                                frag_mark.dataset.uid = uid;
-                                frag_mark.dataset.rid = rid;
-                                frag_mark.title = `${nick} marked at ${date}`;
-                                tool_mark.className = `${c_mark} ${c_disabled}`;
-                                let markedContext = nick + multUserMarkContext;
-                                if(note&&note.length >=1) {
-                                    tool_mark.nextElementSibling.remove(); // "|"
-                                    finder(tool_note, "", 1, "label").textContent = note;
-                                }else{
-                                    tool_note.previousElementSibling.remove(); // "|"
-                                    tool_note.remove();
-                                }
-                                // additional like button ~~only if not(noted) others mark~~
-                                if(isOtherUserMark) { // && isMarkerAccessable()
-                                    const tool_like = document.createElement('SPAN');
-                                    tool_like.className = c_like;
-                                    tool_like.dataset.liked = '';
-                                    tool_like.textContent = s_ctxLike;
-                                    tool_like.title = `认同${s_ctxLike}👍`;
-                                    if (likes && likes.includes(_d_mid)) {
-                                        tool_like.dataset.liked = 1;
-                                        tool_like.textContent = s_ctxLiked;
-                                        tool_like.classList.add(c_liked); //c_disabled
-                                        tool_like.title = `认同${s_ctxLiked}👎`;
-                                    }
-                                    tool_inside.appendChild(tool_like);
-                                }
-                                tool_mark.textContent = markedContext;
-                                frag_mark.appendChild(frag_tool);
-                                // write in (wordpress bug: group caused frag_tool outside)
-                                const specific_chars = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-                                if (mark_paragraph) {
-                                    mark_paragraph.innerHTML = mark_paragraph.innerHTML.replace(specific_chars, frag_mark.outerHTML);
-                                } else {
-                                    console.warn('invalid mark_paragraph!', mark_paragraph);
-                                }
-                            };
-                            // 输出 所有用户标记
-                            if(s_dataStream) {
-                                // res.forEach(mark=> {
-                                //     _eachMarks(mark, res.eventId);
-                                // });
-                                const user = res.eventId;
-                                // console.warn(d_mid, marker.data.user);
-                                if(_d_mid === user) {
-                                    let local_counts = marker.data._counts + 1;
-                                    _conf.static.dataCount = local_counts; //s_dataCount
-                                    marker.data = {counts: local_counts}; //s_dataCount
-                                    // Object.freeze(_conf.static); // 无法每次请求后冻结 _conf 对象 static 成员
-                                }
-                                _eachMarks(res, user);
-                            }else{
-                                Object.keys(res).forEach(user=> {
-                                    let userMarks = Object.values(res[user]); // 重新索引数组对象（避免后端 mark_data 数组对象索引混乱
-                                    // console.log(userMarks)
-                                    if(!userMarks || userMarks==null) return;
-                                    // compare curUserMid is curUser, then update currentUserCounts from remote
-                                    if(_d_mid === user) {
-                                        let remote_counts = userMarks.length;
-                                        _conf.static.dataCount = remote_counts; //s_dataCount
-                                        marker.data = {counts: remote_counts}; //s_dataCount
-                                        // 冻结 _conf 对象 static 成员 for dataCount edit limits
-                                        Object.freeze(_conf.static);
-                                    }
-                                    userMarks.forEach(mark=> {
-                                        _eachMarks(mark, user);
-                                    });
-                                });
-                            }
-                            // 校验 当前用户标记
-                            let curUserMarks = s_dataStream ? res : res[_d_mid],
-                                isMarkerStream  = s_dataStream && isObject(curUserMarks),
-                                isMarkerStreamUser = curUserMarks.eventId === _d_mid;
-                            if(!curUserMarks) return;
-                            if(!s_dataStream) curUserMarks = Object.values(curUserMarks); // 重新索引数组对象（避免手动删除 mark_data 索引混乱
-                            // 返回本地记录中不存在于远程记录的元素（始终检验）
+                        // !!!BUG: stream 流多次执行 _outputMarkers() 无法即时更新 data 数据??
+                        const _d_mid = d_mid ? d_mid : marker.data.user.mid;
+                        // const _d_list = d_list ? d_list : marker.data.list;
+                        const localMarks = Object.keys(d_list);
+                        const {code, msg = 'no messages.'} = res;
+                        if(code && code!==200) {
+                            console.log('Abort on _outputMarkers:', msg);
                             if(localMarks.length > 0) {
-                                let existNonDeletedMarks = [];
-                                if(isMarkerStream) {
-                                    // match curUserMarks that exists on localMarks
-                                    const localNotInRemote = !localMarks.some(local => {
-                                        return local === s_dataPrefix + curUserMarks.rid;
-                                    });
-                                    if(localNotInRemote && isMarkerStreamUser) {
-                                        existNonDeletedMarks.push(s_dataPrefix + curUserMarks.rid);
-                                    }
-                                }else{
-                                    existNonDeletedMarks = localMarks.filter(local => {
-                                        // localNotInRemote: delete local marks which is non-existent from remote
-                                        const localNotInRemote = !curUserMarks.some(remote => {
-                                                  return local === s_dataPrefix + remote.rid;
-                                              });
-                                        return localNotInRemote;
-                                    });
-                                }
-                                if(existNonDeletedMarks.length > 0) {
-                                    console.warn('existNonDeletedMarks', existNonDeletedMarks);
-                                    existNonDeletedMarks.forEach(mark=> {
-                                        console.log(`a local marker was found on non-existent remoteMarks(perhaps server delays), del cookie(${mark}: ${getCookie(mark)}) from local..`, '(existNonDeletedMarks: slow-down the frequency!)');
-                                        // update(del) local-record
-                                        delCookie(mark, d_path); // no need for dom changes
-                                    });
-                                }else{
-                                    console.debug('remoteMarks: ALL MATCHED');
-                                }
-                            }
-                            // 对比返回的远程用户标记与本地记录（仅存在记录检查）
-                            // 返回数据（已响应）—>对比本地记录（未匹配到本地记录）—>新增本地记录
-                            let existNonUpdatedMarks = [];
-                            if(isMarkerStream) {
-                                // remoteNotInLocal: push curUserMarks which is non-existent from local
-                                const remoteNotInLocal = !localMarks.some(local => {
-                                          return s_dataPrefix + curUserMarks.rid === local;
-                                      });
-                                if(remoteNotInLocal && isMarkerStreamUser) {
-                                    existNonUpdatedMarks.push(curUserMarks);
-                                }
-                            }else if(Array.isArray(curUserMarks) && curUserMarks.length > 0){
-                                existNonUpdatedMarks = curUserMarks.filter(remote => {
-                                    // remoteNotInLocal: delete remote marks which is non-existent from local
-                                    const remoteNotInLocal = !localMarks.some(local => {
-                                              return s_dataPrefix + remote.rid === local;
-                                          });
-                                    return remoteNotInLocal;
+                                // clear all local-data
+                                localMarks.forEach(mark=> {
+                                    console.log(`a non-updated local-marker(${mark}: ${getCookie(mark)}) was found, deleting.. (this mark should not be exists, perhaps caused by deletion failure)`);
+                                    delCookie(mark, d_path);
                                 });
                             }
-                            if(existNonUpdatedMarks.length > 0) {
-                                const _d_caches = d_caches ? d_caches : marker.data._caches;
-                                console.log('existNonUpdatedMarks', existNonUpdatedMarks);
-                                existNonUpdatedMarks.forEach(marks=> {
-                                    const mark_rid = marks.rid,
-                                          mark_cname = s_dataPrefix + mark_rid,
-                                          cached_ts = JSON.parse(_d_caches)[mark_cname];
-                                    // update localMarks only if localStorage exists(incase of any other user device get involved)
-                                    if(cached_ts) {
-                                        console.log(`a remote marker(${mark_cname}: ${cached_ts}) was found on non-existent localMarks(perhaps server delays), add cookie to local..`, '(existNonUpdatedMarks: slow-down the frequency!)');
-                                        // update(add) local-data instantly
-                                        setCookie(mark_cname, cached_ts, d_path, s_dataAlive); // dom changes(no longer needed)
-                                        // marker.data = {counts: remote_counts}; //s_dataCount
-                                    }else{
-                                        console.log(`marker(${mark_rid}) belongs to another device(not found in localStorage)`);
-                                    }
-                                });
+                            return;
+                        }
+                        let _eachMarks = (mark, user)=> {
+                            let {nick, text, date, uid, rid, note} = mark,
+                                isOtherUserMark = user !== _d_mid;
+                            if (!rid || !uid) {
+                                console.warn(`wrong rid|uid`, mark);
                                 return;
                             }
-                            console.debug('localMarks: ALL MATCHED');
+                            // URIError: URI malformed
+                            try {
+                                if (nick) nick = decodeURIComponent(nick); //console.log('nick',nick)
+                                if (text) text = decodeURIComponent(text);
+                                if (note) note = decodeURIComponent(note);
+                            } catch(err) {
+                                console.log(err);
+                            }
+                            // console.log(user, mark);
+                            let frag_mark = marks.cloneNode(true),
+                                frag_tool = tools.cloneNode(true), 
+                                tool_inside = finder(frag_tool, c_toolIn, 1),
+                                tool_mark = finder(frag_tool, c_mark, 1),
+                                tool_note = finder(frag_tool, c_note, 1),
+                                mark_indexes = uid.match('(\\d+)-(\\d+)'),
+                                mark_index = mark_indexes[1] > e_effectsArea.children.length-1 ? 0 : mark_indexes[1],
+                                mark_paragraph = e_effectsArea.children[mark_index];
+                            // remove close button if marker does not belongs
+                            if(isOtherUserMark) {
+                                const close_btn = finder(frag_tool, c_close, 1);
+                                close_btn.remove(); //if(valider(close_btn)) 
+                            }
+                            // traversal context nodes(fix wordpress bug of wraped group)
+                            const is_mark_paragraph_wrapped = mark_paragraph.childNodes[0].nodeType==1 && mark_paragraph.childElementCount<=1;
+                            if(!mark_paragraph.textContent.includes(text) || is_mark_paragraph_wrapped) {
+                                const effectChildNodes = is_mark_paragraph_wrapped ? mark_paragraph.childNodes[0].children : e_effectsArea.children;
+                                console.warn(`mark_uid(${mark_index}) has diff record on mark_paragraph(perhaps context wrapped changed), traversal nodes on..`, effectChildNodes);
+                                for (let i=0,l=effectChildNodes.length;i<l;i++) {
+                                    if(effectChildNodes[i].textContent.includes(text)) {
+                                        mark_index = i;
+                                        break;
+                                    }
+                                }
+                                mark_paragraph = effectChildNodes[mark_index];
+                                console.log(`traversal found effectChildNodes[${mark_index}] on `, mark_paragraph);
+                            }
+                            // load users avatar
+                            const tool_avatars = finder(tool_inside, c_avatars, 1), // update append-avatars dom
+                                  tool_avatar = new Image();
+                            tool_avatar.alt = nick;
+                            tool_avatar.src = `${s_avatar}avatar/${user}?d=mp&s=100&v=1.3.10`;
+                            tool_avatars.appendChild(tool_avatar);
+                            let multUserMarkContext = ` ${s_ctxMarked}`,
+                                likes = mark.like;
+                            if(isObject(likes)) {
+                                console.warn(`confused(mixed) index of likes on mark#${rid}(should be typeof array)`, likes);
+                                likes = Object.values(likes); // 重新索引数组（避免后端 like 数组索引混乱
+                            }
+                            if(likes && likes.length>=1) {
+                                const multUserMarkExtra = likes.length>s_likeMax ? likes.length - s_likeMax : "";
+                                multUserMarkContext = ` 等${multUserMarkExtra}人${s_ctxMarked}`;
+                                const avatar_fragment = document.createDocumentFragment();
+                                for(let i=0;i<likes.length;i++) {
+                                    if(i>=s_likeMax) break;
+                                    const temp_avatar = new Image();
+                                    temp_avatar.id = temp_avatar.alt = likes[i];
+                                    temp_avatar.src = `${s_avatar}avatar/${likes[i]}?d=mp&s=100&v=1.3.10`;
+                                    avatar_fragment.appendChild(temp_avatar);
+                                }
+                                tool_avatars.appendChild(avatar_fragment);
+                            }
+                            frag_mark.classList.add(c_done);
+                            frag_mark.textContent = text;
+                            frag_mark.dataset.uid = uid;
+                            frag_mark.dataset.rid = rid;
+                            frag_mark.title = `${nick} marked at ${date}`;
+                            tool_mark.className = `${c_mark} ${c_disabled}`;
+                            let markedContext = nick + multUserMarkContext;
+                            if(note&&note.length >=1) {
+                                tool_mark.nextElementSibling.remove(); // "|"
+                                finder(tool_note, "", 1, "label").textContent = note;
+                            }else{
+                                tool_note.previousElementSibling.remove(); // "|"
+                                tool_note.remove();
+                            }
+                            // additional like button ~~only if not(noted) others mark~~
+                            if(isOtherUserMark) { // && isMarkerAccessable()
+                                const tool_like = document.createElement('SPAN');
+                                tool_like.className = c_like;
+                                tool_like.dataset.liked = '';
+                                tool_like.textContent = s_ctxLike;
+                                tool_like.title = `认同${s_ctxLike}👍`;
+                                if (likes && likes.includes(_d_mid)) {
+                                    tool_like.dataset.liked = 1;
+                                    tool_like.textContent = s_ctxLiked;
+                                    tool_like.classList.add(c_liked); //c_disabled
+                                    tool_like.title = `认同${s_ctxLiked}👎`;
+                                }
+                                tool_inside.appendChild(tool_like);
+                            }
+                            tool_mark.textContent = markedContext;
+                            frag_mark.appendChild(frag_tool);
+                            // write in (wordpress bug: group caused frag_tool outside)
+                            const specific_chars = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+                            if (mark_paragraph) {
+                                mark_paragraph.innerHTML = mark_paragraph.innerHTML.replace(specific_chars, frag_mark.outerHTML);
+                            } else {
+                                console.warn('invalid mark_paragraph!', mark_paragraph);
+                            }
                         };
+                        // 输出 所有用户标记
+                        if(s_dataStream) {
+                            // res.forEach(mark=> {
+                            //     _eachMarks(mark, res.eventId);
+                            // });
+                            const user = res.eventId;
+                            // console.warn(d_mid, marker.data.user);
+                            if(_d_mid === user) {
+                                let local_counts = marker.data._counts + 1;
+                                _conf.static.dataCount = local_counts; //s_dataCount
+                                marker.data = {counts: local_counts}; //s_dataCount
+                                // Object.freeze(_conf.static); // 无法每次请求后冻结 _conf 对象 static 成员
+                            }
+                            _eachMarks(res, user);
+                        }else{
+                            Object.keys(res).forEach(user=> {
+                                let userMarks = Object.values(res[user]); // 重新索引数组对象（避免后端 mark_data 数组对象索引混乱
+                                // console.log(userMarks)
+                                if(!userMarks || userMarks==null) return;
+                                // compare curUserMid is curUser, then update currentUserCounts from remote
+                                if(_d_mid === user) {
+                                    let remote_counts = userMarks.length;
+                                    _conf.static.dataCount = remote_counts; //s_dataCount
+                                    marker.data = {counts: remote_counts}; //s_dataCount
+                                    // 冻结 _conf 对象 static 成员 for dataCount edit limits
+                                    Object.freeze(_conf.static);
+                                }
+                                userMarks.forEach(mark=> {
+                                    _eachMarks(mark, user);
+                                });
+                            });
+                        }
+                        // 校验 当前用户标记
+                        let curUserMarks = s_dataStream ? res : res[_d_mid],
+                            isMarkerStream  = s_dataStream && isObject(curUserMarks),
+                            isMarkerStreamUser = curUserMarks.eventId === _d_mid;
+                        if(!curUserMarks) return;
+                        if(!s_dataStream) curUserMarks = Object.values(curUserMarks); // 重新索引数组对象（避免手动删除 mark_data 索引混乱
+                        // 返回本地记录中不存在于远程记录的元素（始终检验）
+                        if(localMarks.length > 0) {
+                            let existNonDeletedMarks = [];
+                            if(isMarkerStream) {
+                                // match curUserMarks that exists on localMarks
+                                const localNotInRemote = !localMarks.some(local => {
+                                    return local === s_dataPrefix + curUserMarks.rid;
+                                });
+                                if(localNotInRemote && isMarkerStreamUser) {
+                                    existNonDeletedMarks.push(s_dataPrefix + curUserMarks.rid);
+                                }
+                            }else{
+                                existNonDeletedMarks = localMarks.filter(local => {
+                                    // localNotInRemote: delete local marks which is non-existent from remote
+                                    const localNotInRemote = !curUserMarks.some(remote => {
+                                              return local === s_dataPrefix + remote.rid;
+                                          });
+                                    return localNotInRemote;
+                                });
+                            }
+                            if(existNonDeletedMarks.length > 0) {
+                                console.warn('existNonDeletedMarks', existNonDeletedMarks);
+                                existNonDeletedMarks.forEach(mark=> {
+                                    console.log(`a local marker was found on non-existent remoteMarks(perhaps server delays), del cookie(${mark}: ${getCookie(mark)}) from local..`, '(existNonDeletedMarks: slow-down the frequency!)');
+                                    // update(del) local-record
+                                    delCookie(mark, d_path); // no need for dom changes
+                                });
+                            }else{
+                                console.debug('remoteMarks: ALL MATCHED');
+                            }
+                        }
+                        // 对比返回的远程用户标记与本地记录（仅存在记录检查）
+                        // 返回数据（已响应）—>对比本地记录（未匹配到本地记录）—>新增本地记录
+                        let existNonUpdatedMarks = [];
+                        if(isMarkerStream) {
+                            // remoteNotInLocal: push curUserMarks which is non-existent from local
+                            const remoteNotInLocal = !localMarks.some(local => {
+                                      return s_dataPrefix + curUserMarks.rid === local;
+                                  });
+                            if(remoteNotInLocal && isMarkerStreamUser) {
+                                existNonUpdatedMarks.push(curUserMarks);
+                            }
+                        }else if(Array.isArray(curUserMarks) && curUserMarks.length > 0){
+                            existNonUpdatedMarks = curUserMarks.filter(remote => {
+                                // remoteNotInLocal: delete remote marks which is non-existent from local
+                                const remoteNotInLocal = !localMarks.some(local => {
+                                          return s_dataPrefix + remote.rid === local;
+                                      });
+                                return remoteNotInLocal;
+                            });
+                        }
+                        if(existNonUpdatedMarks.length > 0) {
+                            const _d_caches = d_caches ? d_caches : marker.data._caches;
+                            console.log('existNonUpdatedMarks', existNonUpdatedMarks);
+                            existNonUpdatedMarks.forEach(marks=> {
+                                const mark_rid = marks.rid,
+                                      mark_cname = s_dataPrefix + mark_rid,
+                                      cached_ts = JSON.parse(_d_caches)[mark_cname];
+                                // update localMarks only if localStorage exists(incase of any other user device get involved)
+                                if(cached_ts) {
+                                    console.log(`a remote marker(${mark_cname}: ${cached_ts}) was found on non-existent localMarks(perhaps server delays), add cookie to local..`, '(existNonUpdatedMarks: slow-down the frequency!)');
+                                    // update(add) local-data instantly
+                                    setCookie(mark_cname, cached_ts, d_path, s_dataAlive); // dom changes(no longer needed)
+                                    // marker.data = {counts: remote_counts}; //s_dataCount
+                                }else{
+                                    console.log(`marker(${mark_rid}) belongs to another device(not found in localStorage)`);
+                                }
+                            });
+                            return;
+                        }
+                        console.debug('localMarks: ALL MATCHED');
+                    };
                     // re-update on userinfo->mail changed.
                     if(isMarkerUserUpdate()) {
-                        console.log(`marker user updated: ${e_userMail.value} (counts: ${d_counts})`);
                         _md5update(_outputMarkers);
                         return;
                     }
@@ -673,23 +672,28 @@
                 let valid_statu = true;
                 if(!anonymous) {
                     const {mail, nick} = marker.data.user;
+                    const commentInfo = marker.init._conf.element.commentInfo;
                     if (mail) {
                         const validEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
                         const emailValid = validEmail.test(decodeURIComponent(mail));
                         if (!emailValid) console.warn('Abort on invalid email provided!', mail);
                         return emailValid;
                     } else {
-                        console.warn('Abort on invalid email provided!', mail);
-                        // safari redefined(exists user with empty cookie records)
-                        // BUG!!!
-                        // if (!marker.status.isMarkerUserUpdate() && marker.status.isMarkerAccessable()) {
-                        //     console.warn('Exist User with Empty cookie Records, redefined init..');
-                        //     marker.dom.initiate(marker, true);
-                        // }
-                        return false;
+                        if (commentInfo.userMail) {
+                            console.log('redefined email data..', mail);
+                            marker.dom.initiate(marker, true);
+                        } else {
+                            // safari redefined(exists user with empty cookie records)
+                            // BUG!!!
+                            // if (!marker.status.isMarkerUserUpdate() && marker.status.isMarkerAccessable()) {
+                            //     console.warn('Exist User with Empty cookie Records, redefined init..');
+                            //     marker.dom.initiate(marker, true);
+                            // }
+                            console.warn('Abort on invalid email provided!', mail);
+                            return false;
+                        }
                     }
-                    const commentInfo = marker.init._conf.element.commentInfo,
-                          userinfo = Object.entries(commentInfo);
+                    const userinfo = Object.entries(commentInfo);
                     for(let i=0;i<userinfo.length;i++){
                         let key = userinfo[i][0],
                             val = userinfo[i][1];
@@ -1328,9 +1332,9 @@
                             alert('Unregistered user, you must comment(fullfill name/email) before marking-off!');
                             e_commentArea.focus();
                         };
-                        clicker(e_effectsArea, c_mark, debouncer((t)=>tips4unregister(t), 300));
-                        clicker(e_effectsArea, c_like, debouncer((t)=>tips4unregister(t), 300));
-                        clicker(e_effectsArea, c_close, debouncer((t)=>tips4unregister(t), 300));
+                        // clicker(e_effectsArea, c_mark, debouncer((t)=>tips4unregister(t), 300));
+                        // clicker(e_effectsArea, c_like, debouncer((t)=>tips4unregister(t), 300));
+                        // clicker(e_effectsArea, c_close, debouncer((t)=>tips4unregister(t), 300));
                         throw new Error('marker unavailable, register init failed..');
                     }
                     // bind events

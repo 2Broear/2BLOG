@@ -130,7 +130,7 @@
                             'posts_per_page' => $async_loads,  //use left_query counts
                         )));
                         // Empty card if null reponsed
-                        if(!$log_query->have_posts()) echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t="'.current_slug(true).'"></i><h1><b>空空如也~</b> </h1></div>';  //<b>'.current_slug(true).'</b> 
+                        if(!$log_query->have_posts()) echo '<div class="empty_card magnetic"><i class="icomoon icom icon-'.current_slug().'" data-t="'.current_slug(true).'"></i><h1><b>空空如也~</b> </h1></div>';  //<b>'.current_slug(true).'</b> 
                         while ($log_query->have_posts()):
                             $log_query->the_post();
                             // $post_feeling = get_post_meta($post->ID, "post_feeling", true);
@@ -146,7 +146,7 @@
                                     </span>
                                     <span id="weblog-circle"></span>
                                 </div>
-                                <div class="weblog-tree-core-r magnetic" data-magnet-scale="1" data-magnet-step="0.05">
+                                <div class="weblog-tree-core-r magnetics" data-magnet-scale="1" data-magnet-step="0.05">
                                     <!--<a class="anchor"></a>-->
                                     <div id="<?php echo 'pid_'.get_the_ID() ?>" class="weblog-tree-box">
                                         <div class="tree-box-title">
@@ -258,7 +258,7 @@
                             index = res.attributes.index,
                             dates = res.attributes.dates,
                             today = res.attributes.today;
-                        loadContent.innerHTML += '<div class="weblog-tree-core-record i'+index+'" data-type="'+type+'"><div class="weblog-tree-core-l"><span id="weblog-timeline" data-year="'+today.y+'" data-month="'+today.m+'" data-day="'+today.d+'">'+dates+'</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r magnetic" data-magnet-scale="1" data-magnet-step="0.05"><div class="weblog-tree-box"><div class="tree-box-title"><h3 id="'+res.id+'" class="<?php echo $reply_quote; ?>">'+title+'</h3></div><div class="tree-box-content"><span id="core-info"><p>'+main+'</p></span><span id="other-info"><h4> Ps. </h4><p>'+ps+'</p><p id="sub">'+dates+'</p></span></div></div></div></div>';
+                        loadContent.innerHTML += '<div class="weblog-tree-core-record i'+index+'" data-type="'+type+'"><div class="weblog-tree-core-l"><span id="weblog-timeline" data-year="'+today.y+'" data-month="'+today.m+'" data-day="'+today.d+'">'+dates+'</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r magnetics" data-magnet-scale="1" data-magnet-step="0.05"><div class="weblog-tree-box"><div class="tree-box-title"><h3 id="'+res.id+'" class="<?php echo $reply_quote; ?>">'+title+'</h3></div><div class="tree-box-content"><span id="core-info"><p>'+main+'</p></span><span id="other-info"><h4> Ps. </h4><p>'+ps+'</p><p id="sub">'+dates+'</p></span></div></div></div></div>';
                         // loadcore.appendChild(loadContent);
                         loadcore.insertBefore(loadContent, loadbox);
                     }
@@ -338,7 +338,7 @@
                             container.appendChild(fragments);
                             resourceList = container.outerHTML;
                         }
-                        temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline"><a href="javascript:;">${item.creatorName}</a> - ${ts2date(item.createdTs, false)}</span></div><div class="weblog-tree-core-r magnetic" data-magnet-scale="1" data-magnet-step="0.05"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${item.content} ${resourceList}</span><p id="sub"><sup style="float:right;">最后编辑于 ${ts2date(item.updatedTs)}</sup></p></div></div></div>`;
+                        temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline"><a href="javascript:;">${item.creatorName}</a> - ${ts2date(item.createdTs, false)}</span></div><div class="weblog-tree-core-r magnetics" data-magnet-scale="1" data-magnet-step="0.05"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${item.content} ${resourceList}</span><p id="sub"><sup style="float:right;">最后编辑于 ${ts2date(item.updatedTs)}</sup></p></div></div></div>`;
                         fragment.appendChild(temp);
                     });
                     memos_tree.insertBefore(fragment, memos_load);
@@ -379,12 +379,13 @@
                         editor.setAttribute('placeholder', '回复片段：'+t.innerText);
                         const cores = getParByCls(t, 'weblog-tree-box').querySelector('#core-info'),
                               ctext = cores ? cores.innerText.replace(/\n/g,"").substr(0,88) : "..",
-                              quote = `<?php echo $third_cmt == 'Wordpress' ? '\n<blockquote class="vquotes"><strong>${t.innerText}</strong><q>${ctext}...</q></blockquote>' : '\n> __${t.innerText}__ \n> ${ctext}...'; ?>`;
+                              quote = `<?php $wp_comment = $third_cmt == 'Wordpress';echo $wp_comment ? '\n<blockquote class="vquotes"><strong>${t.innerText}</strong><q>${ctext}...</q></blockquote>' : '\n> __${t.innerText}__ \n> ${cores ? ctext : ".."}...'; ?>`;
                         editor.style.cssText="min-height:150px;opacity:.75;";
+                        console.log(quote)
                         editor.value = quote;//this.id; '\n'+
                         selectText(editor, 0, 0); //editor.setSelectionRange(0,0);
                         editor.oninput=function(){
-                            if(this.value.indexOf(quote)==-1 || this.value.substr(this.value.length-3, this.value.length) != "<?php echo $third_cmt ? 'te>' : '...'; ?>"){
+                            if(this.value.indexOf(quote)==-1 || this.value.substr(this.value.length-3, this.value.length) != "<?php echo $wp_comment ? 'te>' : '...'; ?>"){
                                 this.value = quote;
                                 selectText(editor, 0, 0); //editor.setSelectionRange(0,0);
                             }
@@ -413,7 +414,7 @@
                                     tags = item.tag ? " - "+item.tag : "";
                                 temp.id = "pid_"+item.id;
                                 temp.classList.add("weblog-tree-core-record");
-                                temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${item.date} ${tags}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r magnetic" data-magnet-scale="1" data-magnet-step="0.05"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-title"><a href="javascript:;" target="_self"><h3 class="<?php echo $reply_quote; ?>">${item.title}</h3></a></div><div class="tree-box-content"><span id="core-info">${item.content}</span><span id="other-info"><h4> Ps. </h4><p class="feeling">${item.subtitle}</p></span><p id="sub">${item.date} ${tags}</p></div></div></div>`;
+                                temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${item.date} ${tags}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r magnetics" data-magnet-scale="1" data-magnet-step="0.05"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-title"><a href="javascript:;" target="_self"><h3 class="<?php echo $reply_quote; ?>">${item.title}</h3></a></div><div class="tree-box-content"><span id="core-info">${item.content}</span><span id="other-info"><h4> Ps. </h4><p class="feeling">${item.subtitle}</p></span><p id="sub">${item.date} ${tags}</p></div></div></div>`;
                                 fragment.appendChild(temp);
                             });
                             document.querySelector('.weblog-tree-core').insertBefore(fragment, load_box);

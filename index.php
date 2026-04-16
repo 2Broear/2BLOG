@@ -286,7 +286,7 @@
                         }
                         echo '</ul><div class="switcher"><span id="banner-prev" class="banner_prew"></span><span id="banner-next" class="banner_next"></span></div>';
                     } else {
-                        echo '<iframe id="panorama" frameborder="no" style="/*min-height: 250px;*/"></iframe>';
+                        echo '<iframe id="panorama" frameborder="no" data-src="https://node.2broear.com/"></iframe>';
                     }
                 ?>
                 </div>

@@ -10,52 +10,52 @@
     $default_key = get_request_param('key', get_option('site_footprint_apikey', $default_amap ? '51dc3eb01086b408500832ca0bfa92b9' : 'TIHBZ-GQ2C4-6VFUB-DK5G6-W3HAE-45FQD'));
     $default_path = get_request_param('path', dirname('//' . $_SERVER['SERVER_NAME'] . $_SERVER["REQUEST_URI"]));
     // print_r($default_path);
-    $default_panorama_data = get_option('site_footprint_panorama_data', '
-const panorama = {
-    global: {
-        src: "//cdn.cdmmscl.com/images/fv1org50x50m.jpg", 
-        ctx: ["污水设备车间", "前往"],
-        uvs: [0.8757278879540462, 0.903727826428567, 0.40605076349556524, 0.48124969014847924],
-        // define mesh point
-        point: {
-            x: 379.73991320053943, y: -88.8495197768429, z: -414.5114041846273,
-            px: -130, py: 30, pz: 100,
-            // navigator (width/height/deepth; rotationX,rotationY,rotationZ)
-            rx: 0, ry: 0, rz: Math.PI * 0.5,
-            width:80, height:320, deepth:5,
-            // context (width/height/size:adds)
-            cw: 320, ch: 320, cs: 32
-        },
-        // define entry point
-        entry: [],
-    },
-    dragon: {
-        src: "//cdn.cdmmscl.com/images/fv2org50x50m.jpg",
-        ctx: ["纯水设备车间", "前往"],
-        uvs: [0.6754583295687697, 0.8029043481247053, 0.30890971887284235, 0.5107758060045948],
-        // define mesh point
-        point: {
-            // entries (x,y,z; positionX,positionY,positionZ)
-            x: -20.15844995141832, y: -145.91485079560525, z: -472.9048238279224,
-            px: 0, py: 100, pz: 200,
-            // navigator (width/height/deepth; rotationX,rotationY,rotationZ)
-            width:100, height:400, deepth:10,
-            rx: -Math.PI * 0.5, ry: 0, rz: -600,
-            // context (width/height/size:adds)
-            cw: 360, ch: 360, cs: 256
-        },
-        // define entry point
-        entry: [],
-    },
-};
-// let defaultTexture = {src: "//cdn.cdmmscl.com/images/fv1org50x50m.jpg"};
-let defaultTexture = panorama.global;
-const returnsTexture = window.structuredClone ? window.structuredClone(defaultTexture) : JSON.parse(JSON.stringify(defaultTexture));
-const nextEntry_02 = panorama.dragon;
-panorama.global.entry.push(nextEntry_02);  // defaultTexture directly-push caused Infinity loop.
-nextEntry_02.entry.push(returnsTexture);  // loop back to defaultTexture
-const defaultTextureString = JSON.stringify(defaultTexture);
-const encodedTextureString = encodeURIComponent(defaultTextureString);');
+//     $default_panorama_data = get_option('site_footprint_panorama_data', '
+// const panorama = {
+//     global: {
+//         src: "//cdn.cdmmscl.com/images/fv1org50x50m.jpg", 
+//         ctx: ["污水设备车间", "前往"],
+//         uvs: [0.8757278879540462, 0.903727826428567, 0.40605076349556524, 0.48124969014847924],
+//         // define mesh point
+//         point: {
+//             x: 379.73991320053943, y: -88.8495197768429, z: -414.5114041846273,
+//             px: -130, py: 30, pz: 100,
+//             // navigator (width/height/deepth; rotationX,rotationY,rotationZ)
+//             rx: 0, ry: 0, rz: Math.PI * 0.5,
+//             width:80, height:320, deepth:5,
+//             // context (width/height/size:adds)
+//             cw: 320, ch: 320, cs: 32
+//         },
+//         // define entry point
+//         entry: [],
+//     },
+//     dragon: {
+//         src: "//cdn.cdmmscl.com/images/fv2org50x50m.jpg",
+//         ctx: ["纯水设备车间", "前往"],
+//         uvs: [0.6754583295687697, 0.8029043481247053, 0.30890971887284235, 0.5107758060045948],
+//         // define mesh point
+//         point: {
+//             // entries (x,y,z; positionX,positionY,positionZ)
+//             x: -20.15844995141832, y: -145.91485079560525, z: -472.9048238279224,
+//             px: 0, py: 100, pz: 200,
+//             // navigator (width/height/deepth; rotationX,rotationY,rotationZ)
+//             width:100, height:400, deepth:10,
+//             rx: -Math.PI * 0.5, ry: 0, rz: -600,
+//             // context (width/height/size:adds)
+//             cw: 360, ch: 360, cs: 256
+//         },
+//         // define entry point
+//         entry: [],
+//     },
+// };
+// // let defaultTexture = {src: "//cdn.cdmmscl.com/images/fv1org50x50m.jpg"};
+// let defaultTexture = panorama.global;
+// const returnsTexture = window.structuredClone ? window.structuredClone(defaultTexture) : JSON.parse(JSON.stringify(defaultTexture));
+// const nextEntry_02 = panorama.dragon;
+// panorama.global.entry.push(nextEntry_02);  // defaultTexture directly-push caused Infinity loop.
+// nextEntry_02.entry.push(returnsTexture);  // loop back to defaultTexture
+// const defaultTextureString = JSON.stringify(defaultTexture);
+// const encodedTextureString = encodeURIComponent(defaultTextureString);');
     $default_coords_data = get_option('site_footprint_data', '
 markerData = {
     points: [
@@ -514,7 +514,7 @@ markerData = {
         const customMarkerData = customMarkerSrc ? await loadLocalData(false, customMarkerSrc.endsWith(customMarkerExt) ? customMarkerSrc : customMarkerSrc + customMarkerExt) : searchQueryData('data');
         // const queryData = searchQueryData('data');
     <?php 
-        echo $default_panorama_data;
+        // echo $default_panorama_data;
         echo $default_coords_data;
         if ($default_amap) {
             $mapTheme = $default_theme === 'dark' ? 'grey' : 'white';

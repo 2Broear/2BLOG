@@ -56,7 +56,7 @@
             // marker
             if(get_option('site_marker_switcher')){
     ?>
-                asyncLoad('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/marker.js', function(){
+                asyncLoad('<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/marker.js', function(){
                     // use keyword "new" to point to init method.
                     new marker.init({
                         static: {
@@ -144,7 +144,7 @@
             setTimeout(window.queueMicrotask(()=> {
                 iframe.width = '100%';
                 iframe.height = '100%';
-                iframe.src = 'https://node.2broear.com/'; //indexs.html
+                iframe.src = iframe.dataset.src; //'https://node.2broear.com/'; //indexs.html
             }), 0);
             ;
         }
@@ -304,7 +304,7 @@
     <?php
         if (get_option('site_magnetic_effect_switcher')) {
     ?>
-        import('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/magnet.js?v=<?php echo get_theme_info(); ?>').then((mod)=> {
+        import('<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/magnet.js?v=<?php echo get_theme_info(); ?>').then((mod)=> {
             const { magnetCurosr } = mod;
             // use keyword "new" to point to init method.
             new magnetCurosr.init({

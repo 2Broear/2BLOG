@@ -36,7 +36,7 @@
 <?php 
     if (get_option('site_experimental_switcher')) {
 ?>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/style/experimental.css" />
+    <link type="text/css" rel="stylesheet" href="<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/style/experimental.css" />
     <style>
         html, body {
             font: normal 16px/normal system-ui,"Microsoft YaHei","微软雅黑","Microsoft JhengHei","Hiragino Sans GB","WenQuanYi Micro Hei",Arial,Helvetica,Lucida Grande,Tahoma,sans-serif;
@@ -237,8 +237,10 @@
                     // 用户偏好深色模式优先 (dark)
                     document.body.className = 'dark';
                     setCookie('theme_mode','dark');  // record for manual switch
-                    console.log('theme_mode[auto] prefers-color-scheme: dark');
+                    setCookie('theme_mode_prefers', 'dark');  // record prefers for php cookie init
+                    console.log('theme_mode[auto] prefers-color-scheme:', getCookie('theme_mode'));
                 } else {
+                    delCookie('theme_mode_prefers');  // del-record for php cookie init
                     // 默认调用内部主题判定规则/系统不支持
             <?php
                 if (get_option('site_darkmode_switcher')) {

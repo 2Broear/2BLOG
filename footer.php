@@ -299,7 +299,7 @@
                 </li>
                 <li class="PoweredBy2B">
                   <ins> XTyDesign </ins>
-                  <?php echo '<img src="'.$img_cdn.'/images/svg/XTy_.svg" style="max-width:66px" alt="XTY Design" />'; //'.$lazysrc.' ?>
+                  <?php echo '<img class="magnetic" src="'.$img_cdn.'/images/svg/XTy_.svg" style="max-width:66px" alt="XTY Design" />'; //'.$lazysrc.' ?>
               </li>
               </ul>
               <ul class="friend_links">

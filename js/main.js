@@ -5,8 +5,8 @@
               styleContent = `color: rgb(100,100,100);line-height:18px`,
               styleLight = `color:#3a3a3a;background:rgb(235,235,235);padding:5px 0;`,
               styleDark = `color:white;background:#3a3a3a;padding:5px 0;margin-bottom:10px`,
-              title2 = `A wordpress theme Design & Devoloped via 2BROEAR open source in 2022`;
-        console.debug(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2BROEAR %c Release https://github.com/2Broear/2BLOG %c `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
+              title2 = `WordPress Theme 2BLOG open sourced in 2022`;
+        console.log(`%c2️⃣ 2 B L O G 🅱 %c${title2} %c \n 💻2BROEAR %c Release https://github.com/2Broear/2BLOG %c `, styleTitle1, styleTitle2, styleLight, styleDark, styleContent);
     })();
     
     // if(!raf_available){
@@ -375,6 +375,7 @@
         exp.setTime(exp.getTime() + exp_time);
         document.cookie = name+"="+escape(value)+";expires="+exp.toGMTString()+";path=/";
     }
+    
     function getCookie(cname){
         var name = cname+"=";
         var ca = document.cookie.split(';');
@@ -385,6 +386,7 @@
         }
         return "";
     }
+    
     function delCookie(name){
         var exp = new Date();
         exp.setTime(exp.getTime() - 1);
@@ -393,14 +395,20 @@
     }
     
     function darkmode() {
-        // console.log(document.cookie);
         setCookie('theme_manual', 1);  // enable manual mode (disable automode)
-        let theme_mode = 'dark';
-        if (getCookie('theme_mode') == "dark") theme_mode = 'light';  // 1 day expires
-        // set as theme_mode && record new theme_mode
-        document.body.className = theme_mode;  
-        setCookie('theme_mode', theme_mode, '/', 1);
-        console.warn(`theme_mode[manual] switch-color-scheme: ${theme_mode}`);
+        let cookie = getCookie('theme_mode');
+        if (!cookie) {
+            const light = document.body.className.match(/light/i);
+            const dark = document.body.className.match(/dark/i);
+            cookie = light ? light[0] : (dark ? dark[0] : 'light');  // update current-theme(default light)
+            console.warn('themes cookie has expired.. get current-theme: ', cookie);
+        } else {
+            console.log(cookie)
+        }
+        const themes = cookie === "dark" ? 'light' : 'dark';  // expired within 1 day
+        document.body.className = themes;  // set as theme_mode && record new theme_mode
+        setCookie('theme_mode', themes, '/', 1); // 1 day expires
+        console.log(`theme_mode[manual] switch-color-scheme: ${themes}`);
     }
     
     /*  

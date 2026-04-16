@@ -378,7 +378,7 @@ body.dark .inside-functions .box div {
     box-shadow: var(--mirror-start) 1px 2.2px 1px -1.8px inset, var(--theme-color) -1px -2.2px 1px -1.8px inset;
 }
 .inside-functions .box div:hover {
-    transition: .35s ease!important;
+    transition-duration: .35s!important;
 }
 .inside-functions .box div {
     transition: transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.55);
@@ -473,12 +473,12 @@ body.dark .about_blocks,
 body.dark .v .vlist .vcard:hover,
 /*body.dark .rcmd-boxes .info .inbox,*/
 /*body.dark .v .vlist .vcard .vquote .vcard:hover,*/
+/*body.dark .v .vlist .vcard .vhead .vsys,*/
 body.dark .topic,
 body.dark .pageSwitcher a,
 body.dark .news-window-img,
 body.dark .banner .banner-inside,
 body.dark .news-window:nth-child(even),
-body.dark .v .vlist .vcard .vhead .vsys,
 body.dark .download_boxes .dld_box .dld_box_wrap,
 body.dark .weblog-tree-core-r, body.dark .load button {
     box-shadow: var(--preset-5a) 1px 2.2px 1px -1.8px inset, var(--preset-4a) -1px -2.2px 1px -1.8px inset;
@@ -1090,7 +1090,7 @@ footer a,
 .lively-click-108-central,
 .lively-click-115,
 .lively-click-115-central {
-    transition: .15s ease;
+    transition: .35s ease;
     transition-property: transform, top, background;
     /*will-change: transform;*/
 }
@@ -1186,7 +1186,7 @@ body.dark .inside-functions .box div.dark svg {
 .v .vlist .vcard .vhead .vadmin::after,
 .v .vlist .vcard .vhead .vsys::before,
 .v .vlist .vcard .vhead .vadmin::before {
-    content: '';
+    /*content: '';*/
     width: 100%;
     height: 100%;
     display: block;
@@ -1234,6 +1234,14 @@ body.dark .v .vlist .vcard .vhead .vadmin {
     opacity: 1!important;
     /*border-color: currentColor!important;*/
     /*box-shadow: currentColor 1px 2.2px 1px -1.8px inset, currentColor -1px -2.2px 1px -1.8px inset;*/
+}
+.v .vlist .vcard .vhead .vsys,
+.v .vlist .vcard .vhead .auditing,
+.v .vlist .vcard .vhead .vadmin {
+    --color-mix: color-mix(in oklab, currentColor 10%, transparent);
+    --color-mixes: color-mix(in oklab, currentColor 20%, transparent);
+    background: var(--color-mix) !important;
+    border: 1px solid var(--color-mixes) !important;
 }
 .v .vlist .vcard .vhead .auditing,
 body.dark .v .vlist .vcard .vhead .auditing {

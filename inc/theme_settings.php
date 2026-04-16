@@ -377,6 +377,7 @@
                 color: #ccc;
                 background-image: radial-gradient(rgb(18 27 36) 2px, rgb(10, 20, 28, .5) 2px);
                 border-color: rgb(28 41 52);
+                box-shadow: rgb(46 68 86) 1px 2.2px 1px -1.8px inset, rgb(18 27 36) -1px -2.2px 1px -1.8px inset;
             }
             .wrap.dark .switchTab li.active,
             .wrap.dark .switchTab li:active {
@@ -686,7 +687,7 @@
             register_setting( 'baw-settings-group', 'site_footprint_map' );
             register_setting( 'baw-settings-group', 'site_footprint_apikey' );
             register_setting( 'baw-settings-group', 'site_footprint_data' );
-            register_setting( 'baw-settings-group', 'site_footprint_panorama_data' );
+            // register_setting( 'baw-settings-group', 'site_footprint_panorama_data' );
         register_setting( 'baw-settings-group', 'site_stream_switcher' );
         register_setting( 'baw-settings-group', 'site_links_rss_cards_sw' );
             register_setting( 'baw-settings-group', 'site_links_rss_cards_manual' );
@@ -1108,6 +1109,7 @@
                 color: #ccc;
                 background-image: radial-gradient(rgb(18 27 36) 2px, rgb(10, 20, 28, .5) 2px);
                 border-color: rgb(28 41 52);
+                box-shadow: rgb(46 68 86) 1px 2.2px 1px -1.8px inset, rgb(18 27 36) -1px -2.2px 1px -1.8px inset;
             }
             .wrap.dark input[type=button] {
                 box-shadow: 0 0 0 3px rgb(28 41 52), 0 0 0 4px #2271b1;
@@ -3612,16 +3614,7 @@
                                     <?php
                                         $opt = 'site_footprint_data';
                                         $value = get_option($opt);
-                                        $preset_ = '
-// 配置贴图（maps 数据来源下方全景数据）
-const defaultTexture = maps.map_01;
-const returnsTexture = window.structuredClone ? window.structuredClone(defaultTexture) : JSON.parse(JSON.stringify(defaultTexture));
-maps.map_01.entry.push(maps.map_02);
-maps.map_02.entry.push(returnsTexture);
-const defaultTextureString = JSON.stringify(defaultTexture);
-const encodedTextureString = encodeURIComponent(defaultTextureString);
-';
-                                        $preset = $preset_ . '
+                                        $preset = '
 markerData = {
     // 配置标记点
     points: [
@@ -3638,7 +3631,7 @@ markerData = {
             latlng: "39.957363077042,116.412789588355",
             position: "39.957363077042,116.412789588355",
             thumbnail: "//img.2broear.com/2025/06/front.webp",
-            content: `<iframe src="//node.2broear.com/?data=${encodedTextureString}" frameborder="no" width="500" height="200"></iframe>`,
+            content: `<iframe src="//node.2broear.com/?texture=minecraft-night.jpg&entry=minecraft&model" frameborder="no" width="500" height="200"></iframe>`,
             context: "东城家园",
             district: "东城区",
             city: "北京",
@@ -3659,55 +3652,18 @@ markerData = {
                                     ?>
                                 </td>
                             </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $footprint; ?>">
-                                <th scope="row">— 全景数据列表（可选）</th>
-                                <td>
+                            <!--<tr valign="top" class="child_option dynamic_opts <?php echo $footprint; ?>">-->
+                            <!--    <th scope="row">— 全景数据查询参数（可选）</th>-->
+                            <!--    <td>-->
                                     <?php
-                                        $opt = 'site_footprint_panorama_data';
-                                        $value = get_option($opt);
-                                        $preset = '
-const maps = {
-    map_01: {
-        ctx: ["2BROEAR NEXT", "Heading"],
-        // src: "//img.2broear.com/2025/06/minecraft30x.jpg",
-        env: [],
-        uvs: [0.8757278879540462, 0.903727826428567, 0.40605076349556524, 0.48124969014847924],
-        point: {
-            x: 379.73991320053943, y: -88.8495197768429, z: -414.5114041846273,
-            px: -130, py: 30, pz: 0,
-            rx: 0, ry: 0, rz: Math.PI * 0.5,
-            width:80, height:320, deepth:5,
-            cw: 320, ch: 320, cs: 256
-        },
-        entry: [],
-    },
-    map_02: {
-        ctx: ["MINECRAFT", "v0.7.3"],
-        // src: "//img.2broear.com/2025/05/Ayutthaya_SD60x.mp4", 
-        env: [
-            "//img.2broear.com/2025/06/1.16_panorama_2.webp",
-            "//img.2broear.com/2025/06/1.16_panorama_0.webp",
-            "//img.2broear.com/2025/06/1.16_panorama_4s.webp",
-            "//img.2broear.com/2025/06/1.16_panorama_5s.webp", 
-            "//img.2broear.com/2025/06/1.16_panorama_1.webp",
-            "//img.2broear.com/2025/06/1.16_panorama_3.webp",
-        ],
-        uvs: [0.6754583295687697, 0.8029043481247053, 0.30890971887284235, 0.5107758060045948],
-        point: {
-            x: -20.15844995141832, y: -145.91485079560525, z: -472.9048238279224,
-            px: 0, py: 100, pz: 200,
-            width:100, height:400, deepth:10,
-            rx: -Math.PI * 0.5, ry: 0, rz: -600,
-            cw: 512, ch: 512, cs: 256
-        },
-        entry: [],
-    },
-};';
-                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="">手动填写全景地图数据（示例数据已预设：可通过设置 entry 参数以跳转其他 map（可设置回溯 map），可选设置环境地图（跳转同理</p><p><b>参数说明：</b></p><p>entry：点击进入下个场景入口（数组对象，可加入多个入口）；ctx：入口标题数组；env：环境贴图数组；uvs：可点击范围UV数组（需开启debug调试右击获取uv信息）；point：点击中心点（显示动画贴图区域，x,y,z信息需在debug调试右击事件获取；px,py,pz为自定义修饰偏移；rx,ry,rz为旋转动画贴图配置；width,height,deepth为动画贴图尺寸；cw,ch,cs为ctx入口标题画布尺寸，其中cs可调节画布/字体大小）</p><textarea name="'.$opt.'" id="'.$opt.'" rows="15" style="width: 100%;">'.$preset.'</textarea>';
+                                        // $opt = 'site_footprint_panorama_data';
+                                        // $value = get_option($opt);
+                                        // $preset = '?texture=minecraft-night.jpg&entry=minecraft&model';
+                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        // echo '<p class="description" id="">自定义全景地图数据，示例数据已预设，支持三个（本地文件相对链接）参数：<br/>@texture 指定当前全景图（缺省默认env环境贴图）；@entry 指定当前场景入口（支持context+navigator）；@model 加载指定模型（附加选项）</p><textarea name="'.$opt.'" id="'.$opt.'" rows="5" style="width: 100%;">'.$preset.'</textarea>'; //<p class="description" id="">手动填写全景地图数据（示例数据已预设：可通过设置 entry 参数以跳转其他 map（可设置回溯 map），可选设置环境地图（跳转同理</p><p><b>参数说明：</b></p><p>entry：点击进入下个场景入口（数组对象，可加入多个入口）；ctx：入口标题数组；env：环境贴图数组；uvs：可点击范围UV数组（需开启debug调试右击获取uv信息）；point：点击中心点（显示动画贴图区域，x,y,z信息需在debug调试右击事件获取；px,py,pz为自定义修饰偏移；rx,ry,rz为旋转动画贴图配置；width,height,deepth为动画贴图尺寸；cw,ch,cs为ctx入口标题画布尺寸，其中cs可调节画布/字体大小）</p>
                                     ?>
-                                </td>
-                            </tr>
+                            <!--    </td>-->
+                            <!--</tr>-->
                     <tr valign="top">
                         <th scope="row"> Memos 备忘录 </th>
                         <td>
@@ -4162,7 +4118,7 @@ const maps = {
                             <?php
                                 $opt = 'site_bottom_nav';  //unique str
                                 $value = get_option($opt);
-                                $options = array($templates_info['archive'], $templates_info['privacy'], $templates_info['footprints']); //array('privacy','archives');
+                                $options = array($templates_info['archive'], $templates_info['privacy'], $templates_info['footprints'], $templates_info['goods']); //array('privacy','archives');
                                 if(!$value){
                                     $preset_str = $options[0]->slug.','.$options[1]->slug.',';
                                     update_option($opt, $preset_str );

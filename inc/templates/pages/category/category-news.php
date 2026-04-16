@@ -64,7 +64,7 @@
                             $total_pages = $left_query->max_num_pages;  //total pages
                             // Empty card if null reponsed
                             if(!$left_query->have_posts()){
-                                echo '<div class="empty_card"><i class="icomoon icom icon-'.current_slug().'" data-t="'.current_slug().'"></i><h1> <b>>_∩</b>0ρ0st </h1></div>';  //<b>'.current_slug(true).'</b> 
+                                echo '<div class="empty_card magnetic"><i class="icomoon icom icon-'.current_slug().'" data-t="'.current_slug().'"></i><h1> <b>>_∩</b>0ρ0st </h1></div>';  //<b>'.current_slug(true).'</b> 
                             }
                             while ($left_query->have_posts()):
                                 $left_query->the_post();

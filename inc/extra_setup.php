@@ -31,6 +31,20 @@
         }
         return trim($res);
     }
+    // 获取子分类（排除父级）
+    function get_article_category($post_id = null) {
+        $categories = get_the_category($post_id);
+        
+        foreach ($categories as $category) {
+            // 如果有父级，返回该分类
+            if ($category->parent != 0) {
+                return $category;
+            }
+        }
+        
+        // 如果没有子分类，返回第一个
+        return !empty($categories) ? $categories[0] : null;
+    }
     
     if (get_option('site_magnetic_effect_switcher')) {
         // 只针对 core/image 块
@@ -1547,11 +1561,17 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
     // 动态主题模式
     function theme_mode($returns = false) {
         if (!get_option('site_darkmode_switcher')) return;
+        // wp-panel fixed theme
         $fixed_theme = get_option('site_darkmode_fixed');
         if ($fixed_theme) {
             if ($returns) return $fixed_theme;
             echo $fixed_theme;
             return;
+        }
+        // update system prefers theme
+        if (isset($_COOKIE['theme_mode_prefers'])) {
+            if ($returns) return $_COOKIE['theme_mode_prefers'];
+            echo $_COOKIE['theme_mode_prefers'];
         }
         if (!array_key_exists('sidebar_status', $_COOKIE)) {
             global $theme_manual;
