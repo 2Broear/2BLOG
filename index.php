@@ -294,7 +294,7 @@
             </div>
         </div>
         <!-- 右 -->
-        <div class="recommendation wow fadeInUp hfeed magnetic" data-magnet-scale="1" data-magnet-step="0.05" data-wow-delay="0.2s">
+        <div class="recommendation wow fadeInUp hfeed magnetics" data-magnet-scale="1" data-magnet-step="0.05" data-wow-delay="0.2s">
             <?php
                 $rcmd_cat = get_option('site_rcmdside_cid');
                 $rcmd_arr = array(
@@ -327,7 +327,7 @@
                           <a href="<?php the_permalink() ?>" aria-label="bg">
                             <span id="lowerbg" style="background:url('<?php echo get_postimg(0,$post->ID,true); ?>') center 40% no-repeat;background-size:cover;"></span>
                           </a>
-                          <a href="<?php the_permalink() ?>" id="rel" class="" rel="bookmark" target="_blank">
+                          <a href="<?php the_permalink() ?>" id="rel" class="" rel="bookmark" target="_self">
                             <b><?php the_title() ?></b>
                           </a>
                         </div>

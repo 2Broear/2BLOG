@@ -299,7 +299,7 @@
                 </li>
                 <li class="PoweredBy2B">
                   <ins> XTyDesign </ins>
-                  <?php echo '<img class="magnetic" src="'.$img_cdn.'/images/svg/XTy_.svg" style="max-width:66px" alt="XTY Design" />'; //'.$lazysrc.' ?>
+                  <?php echo '<img class="magnetics" src="'.$img_cdn.'/images/svg/XTy_.svg" style="max-width:66px" alt="XTY Design" />'; //'.$lazysrc.' ?>
               </li>
               </ul>
               <ul class="friend_links">
@@ -382,7 +382,7 @@
                   };
                   if(get_option('site_map_switcher')) echo '<li id="sitemap"><a href="'.get_bloginfo('siteurl').'/sitemap.xml" target="_blank">站点地图</a></li>';
               ?>
-              <p style="margin:auto;opacity:.75;font-size:12px;font-style:italic"> WordPress Theme <a href="//github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><b>2BLOG</b></a> open sourced in 2022 </p>
+              <p style="margin:auto;opacity:.75;font-size:12px;font-style:italic"> WordPress Theme <a href="//github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><b>2BLOG</b>™</a>  Made With ❤️ @2022 </p>
           </ul>
         </span>
       </div>

@@ -90,7 +90,7 @@
         .about_blocks li.intro_right .mbit:before {
             opacity: .18;
         	/*text-transform: capitalize;*/
-        	text-transform: uppercase;
+        	/*text-transform: uppercase;*/
         }
         iframe.netease_embed {
             /*margin: 0 auto;*/
@@ -223,9 +223,10 @@
                                 ?>
                                 <div class="head-inside wow fadeInUp" data-wow-delay="0.15s" style="background:url(<?php echo !$video ? get_meta_image($cat, get_option('site_bgimg')) : false; ?>) center center /cover;">
                                     <?php
-                                        if ($video) {
-                                            // echo '<video src="'.$video.'" poster="" preload="auto" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload" playsinline -webkit-playsinline></video>'; //'.get_meta_image($cat, get_option('site_bgimg')).'
-                                            echo '<iframe id="panorama" frameborder="no" data-src="https://node.2broear.com/?texture&entry=mbti_enfp&model=/assets/3d/draco/mbti_enfp-textured-x200_compresseds.glb"></iframe>';
+                                        if (get_option('site_mbti_panorama')) {
+                                            echo '<iframe id="panorama" frameborder="no" data-src="' . get_option('site_mbti_panorama_url') . '"></iframe>';
+                                        } else if ($video) {
+                                            echo '<video src="'.$video.'" poster="" preload="auto" autoplay="" muted="" loop="" x5-video-player-type="h5" controlslist="nofullscreen nodownload" playsinline -webkit-playsinline></video>'; //'.get_meta_image($cat, get_option('site_bgimg')).'
                                         }
                                     ?>
                                 </div>

@@ -99,6 +99,8 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
     <style>
         .rcmd-boxes .fade-item {
             width: 100%;
+            position: relative;
+            z-index: 1;
         }
         .rcmd-boxes .inbox-clip h2{
             padding: 20px 15px;
@@ -172,6 +174,9 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon h3{
             margin: 12px auto auto;
         }
+        body.dark .rcmd-boxes .info .inbox .inbox-aside span.lowside-description p {
+            opacity: .5;
+        }
         .rcmd-boxes .info .inbox .inbox-aside span {
             line-height: 18px;
         }
@@ -216,6 +221,12 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         .rcmd-boxes .info .inbox .inbox-more a.loading,
         .rcmd-boxes .info .inbox .inbox-more a.disabled {
             pointer-events: none;
+        }
+        /**
+        * fixed magnet-effect aborts
+        **/
+        .rcmd-boxes .fade-item:hover {
+            z-index: 9;
         }
     </style>
 </head>

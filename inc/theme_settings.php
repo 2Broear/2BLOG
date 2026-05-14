@@ -688,6 +688,7 @@
             register_setting( 'baw-settings-group', 'site_footprint_apikey' );
             register_setting( 'baw-settings-group', 'site_footprint_data' );
             // register_setting( 'baw-settings-group', 'site_footprint_panorama_data' );
+        register_setting( 'baw-settings-group', 'site_goods_panorama_data' );
         register_setting( 'baw-settings-group', 'site_stream_switcher' );
         register_setting( 'baw-settings-group', 'site_links_rss_cards_sw' );
             register_setting( 'baw-settings-group', 'site_links_rss_cards_manual' );
@@ -695,6 +696,8 @@
         register_setting( 'baw-settings-group', 'site_links_code_state' );
             register_setting( 'baw-settings-group', 'site_links_code_state_cats' );
             register_setting( 'baw-settings-group', 'site_links_rss_alive_state' );
+        register_setting( 'baw-settings-group', 'site_mbti_panorama' );
+            register_setting( 'baw-settings-group', 'site_mbti_panorama_url' );
         register_setting( 'baw-settings-group', 'site_mbit_array' );
         register_setting( 'baw-settings-group', 'site_mbit_result_array' );
         register_setting( 'baw-settings-group', 'site_animated_scrolling_switcher' );
@@ -3652,18 +3655,35 @@ markerData = {
                                     ?>
                                 </td>
                             </tr>
-                            <!--<tr valign="top" class="child_option dynamic_opts <?php echo $footprint; ?>">-->
-                            <!--    <th scope="row">— 全景数据查询参数（可选）</th>-->
-                            <!--    <td>-->
-                                    <?php
-                                        // $opt = 'site_footprint_panorama_data';
-                                        // $value = get_option($opt);
-                                        // $preset = '?texture=minecraft-night.jpg&entry=minecraft&model';
-                                        // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        // echo '<p class="description" id="">自定义全景地图数据，示例数据已预设，支持三个（本地文件相对链接）参数：<br/>@texture 指定当前全景图（缺省默认env环境贴图）；@entry 指定当前场景入口（支持context+navigator）；@model 加载指定模型（附加选项）</p><textarea name="'.$opt.'" id="'.$opt.'" rows="5" style="width: 100%;">'.$preset.'</textarea>'; //<p class="description" id="">手动填写全景地图数据（示例数据已预设：可通过设置 entry 参数以跳转其他 map（可设置回溯 map），可选设置环境地图（跳转同理</p><p><b>参数说明：</b></p><p>entry：点击进入下个场景入口（数组对象，可加入多个入口）；ctx：入口标题数组；env：环境贴图数组；uvs：可点击范围UV数组（需开启debug调试右击获取uv信息）；point：点击中心点（显示动画贴图区域，x,y,z信息需在debug调试右击事件获取；px,py,pz为自定义修饰偏移；rx,ry,rz为旋转动画贴图配置；width,height,deepth为动画贴图尺寸；cw,ch,cs为ctx入口标题画布尺寸，其中cs可调节画布/字体大小）</p>
-                                    ?>
-                            <!--    </td>-->
-                            <!--</tr>-->
+                    <tr valign="top">
+                        <th scope="row">好物展厅 - 全景模型</th>
+                        <td>
+                            <?php
+                                $opt = 'site_goods_panorama_data';
+                                $value = get_option($opt);
+                                $preset = '
+goodsData = [
+    {
+        title: "CyberTruck",
+        img: "https://imgs.2broear.com/2026/04/tesla_cybertrucks.jpg",
+        url: "https://node.2broear.com/?texture=panorama/wooden_studio_08_0.5k.hdr&transparency&shadow&antialias=1&roughness=0.25&metalness=0.85&fov=75&entry=tesla_cybertruck&model=/assets/3d/draco/tesla_cybertruck-x200-ess_compressed.glb",
+    },
+    {
+        title: "Tesla Model 3",
+        img: "https://imgs.2broear.com/2026/04/teslat_model3s.jpg",
+        url: "https://node.2broear.com/?texture=panorama/studio_kominka_02_0.5k.hdr&transparency&shadow&antialias&roughness=0.35&metalness=0.55&fov=52&entry=tesla_model_3&model=/assets/3d/draco/tesla_2018_model_3-edit_compressed.glb",
+    },
+    {
+        title: "Deepal SL03",
+        img: "https://imgs.2broear.com/2023/05/sl03poster888m.jpg",
+        url: "https://h5.deepal.com.cn/3d/sl03/index.html",
+    },
+];';
+                                if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                echo '<p class="description" id="">自定义3d全景模型数据，示例数据已预设，参数：@title 模型名称；@img 模型缩略图；@url 模型链接地址</p><textarea name="'.$opt.'" id="'.$opt.'" rows="15" style="width: 100%;">'.$preset.'</textarea>';
+                            ?>
+                        </td>
+                    </tr>
                     <tr valign="top">
                         <th scope="row"> Memos 备忘录 </th>
                         <td>
@@ -3884,7 +3904,7 @@ markerData = {
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">关于 - MBTI数据</th>
+                        <th scope="row">关于 - MBTI 人格</th>
                         <td>
                             <?php
                                 $opt = 'site_mbit_array';
@@ -3895,18 +3915,40 @@ markerData = {
                             ?>
                         </td>
                     </tr>
-                        <tr valign="top" class="child_option dynamic_optshow">
-                            <th scope="row">— MBIT测试结果</th>
-                            <td>
-                                <?php
-                                    $opt = 'site_mbit_result_array';
-                                    $value = get_option($opt);
-                                    $preset = 'infp-a/mediator'; 
-                                    if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                    echo '<p class="description" id="">MBIT测试人格类型，使用斜杠“ / ”分隔（规则同上</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text" value="' . $preset . '"/>';
-                                ?>
-                            </td>
-                        </tr>
+                            <tr valign="top" class="child_option dynamic_optshow">
+                                <th scope="row">— 测试数据</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_mbit_result_array';
+                                        $value = get_option($opt);
+                                        $preset = 'infp-a/mediator'; 
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="">MBIT测试人格类型，使用斜杠“ / ”分隔（规则同上</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <tr valign="top">
+                        <th scope="row">关于 - MBTI 全景</th>
+                        <td>
+                            <?php
+                                $opt = 'site_mbti_panorama';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后可指定web3d模型加载全景（该区域默认使用关于-背景视频</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">全景模型</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $panorama = get_option('site_mbti_panorama') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 全景模型链接</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_mbti_panorama_url';
+                                        $value = get_option($opt);
+                                        $preset = '//node.2broear.com/?texture&roughness=0.66&fov=52&entry=mbti_personality&model=/assets/3d/draco/mbti_enfp-textured-x200_compresseds.glb';  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">MBTI全景模型（参数）链接（可指定模型及context</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="large-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
                     <tr valign="top" class="">
                         <th scope="row">关于 - 背景视频</th>
                         <td>
@@ -3982,7 +4024,7 @@ markerData = {
                         // if(get_option('site_pixiv_switcher')){
                     ?>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $pixiv = get_option('site_pixiv_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— Pixiv 加载数量</th>
+                                <th scope="row">— 加载数量</th>
                                 <td>
                                     <?php
                                         $opt = 'site_bar_pixiv';

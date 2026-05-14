@@ -407,7 +407,7 @@
         }
         const themes = cookie === "dark" ? 'light' : 'dark';  // expired within 1 day
         document.body.className = themes;  // set as theme_mode && record new theme_mode
-        setCookie('theme_mode', themes, '/', 1); // 1 day expires
+        setCookie('theme_mode', themes, '/', 1); // 1 day expires !!bug!!
         console.log(`theme_mode[manual] switch-color-scheme: ${themes}`);
     }
     
@@ -430,6 +430,7 @@
           sidebar_window = document.querySelector(".news-slidebar-window"),
           sidebar_float = sidebar_window ? sidebar_window.querySelector('.news-content-right-window-all') : false,
           sidebar_ads = sidebar_window ? sidebar_window.querySelector(".news-ppt") : false,
+          sidebar_margin = sidebar_ads&&sidebar_ads.style.marginBottom.match(/\d+/) ? +sidebar_ads.style.marginBottom.match(/\d+/)[0] : 0,
           footer = document.querySelector('.footer-all'),
           site_tool = document.querySelector(".functions-tool"),
           progress_ball = site_tool ? site_tool.querySelector(".inside-functions") : null,
@@ -584,7 +585,7 @@
                 clientHeight = document.body.clientHeight,
                 windowHeight = window.innerHeight,
     		    page_percent = Math.round((scrollTop/(clientHeight-windowHeight))*100),
-                fixedSidebar = sidebar_window ? header.offsetHeight+(sidebar_ads ? sidebar_ads.offsetHeight : 0) : false, //sidebar_ads.offsetHeight+marginOffset
+                fixedSidebar = sidebar_window ? header.offsetHeight+(sidebar_ads ? sidebar_ads.offsetHeight + sidebar_margin : 0) : false, //sidebar_ads.offsetHeight+marginOffset
                 headbar_oh = headbar.querySelector('p#np') ? 100 : headbar.offsetHeight,
                 footerDetect = sidebar_window ? footer.querySelector(".footer-detector").offsetTop-(headbar_oh+sidebar_float.offsetHeight) : false;
             // https://stackoverflow.com/questions/31223341/detecting-scroll-direction
@@ -604,7 +605,7 @@
                 }
                 //超过侧边栏执行
                 if(sidebar_window){
-                    if(scrollTop>=fixedSidebar-5){
+                    if(scrollTop>=fixedSidebar){
                         class_switch(sidebar_float,class_fixed,null);
                         sidebar_float.style.width = sidebar_float.parentElement.offsetWidth+"px";
                     }

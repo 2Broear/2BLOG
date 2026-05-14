@@ -236,9 +236,9 @@
                 if (e.matches) {
                     // 用户偏好深色模式优先 (dark)
                     document.body.className = 'dark';
-                    setCookie('theme_mode','dark');  // record for manual switch
+                    setCookie('theme_mode','dark', '/', 1);  // record for manual switch 1 day expires
                     setCookie('theme_mode_prefers', 'dark');  // record prefers for php cookie init
-                    console.log('theme_mode[auto] prefers-color-scheme:', getCookie('theme_mode'));
+                    console.log('theme_mode[auto] prefers-color-scheme:', getCookie('theme_mode'), document.cookie);
                 } else {
                     delCookie('theme_mode_prefers');  // del-record for php cookie init
                     // 默认调用内部主题判定规则/系统不支持

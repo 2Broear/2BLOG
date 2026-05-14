@@ -1083,7 +1083,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                             <article class="<?php if($post_orderby>1) echo 'topset icom'; ?> news-window wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                                 <div class="news-window-inside">
                                     <?php
-                                        if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img magnetic"><a href="'.get_the_permalink().'"><img class="lazy" '.$lazyhold.' src="'.$loadimg.'" /></a></span>';
+                                        if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img magnetics"><a href="'.get_the_permalink().'"><img class="lazy" '.$lazyhold.' src="'.$loadimg.'" /></a></span>';
                                     ?>
                                     <div class="news-inside-content">
                                         <h2 class="entry-title">
@@ -1123,7 +1123,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                                     </span>
                                     <span id="weblog-circle"></span>
                                 </div>
-                                <div class="weblog-tree-core-r magnetic" data-magnet-scale="1" data-magnet-step="0.05">
+                                <div class="weblog-tree-core-r magnetics" data-magnet-scale="1" data-magnet-step="0.05">
                                     <div class="weblog-tree-box">
                                         <div class="tree-box-title">
                                             <a href="<?php the_permalink() ?>" id="<?php the_title(); ?>" target="_self">
@@ -1151,7 +1151,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             ?>
                             <div class="rcmd-boxes flexboxes">
                                 <div class="info anime flexboxes">
-                                    <div class="inbox flexboxes magnetic" data-magnet-scale="1.25" data-magnet-step="">
+                                    <div class="inbox flexboxes magnetics" data-magnet-scale="1.25" data-magnet-step="">
                                         <div class="inbox-headside flexboxes">
                                             <a href="<?php the_permalink(); ?>">
                                                 <?php
@@ -1561,33 +1561,41 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
     // 动态主题模式
     function theme_mode($returns = false) {
         if (!get_option('site_darkmode_switcher')) return;
-        // wp-panel fixed theme
+        // wp-panel fixed theme(1st priority)
         $fixed_theme = get_option('site_darkmode_fixed');
         if ($fixed_theme) {
             if ($returns) return $fixed_theme;
             echo $fixed_theme;
             return;
         }
-        // update system prefers theme
-        if (isset($_COOKIE['theme_mode_prefers'])) {
-            if ($returns) return $_COOKIE['theme_mode_prefers'];
-            echo $_COOKIE['theme_mode_prefers'];
-        }
-        if (!array_key_exists('sidebar_status', $_COOKIE)) {
-            global $theme_manual;
-            if (!$theme_manual) {  //if theme_manual actived  || $_COOKIE['theme_manual'] != '0'
-                $hour = current_time('G');
-                $start = get_option('site_darkmode_start');
-                $end = get_option('site_darkmode_end');
-                $res = $hour>=$end&&$hour<$start || $hour==$end&&current_time('i')>=0&&current_time('s')>=0 ? 'light' : 'dark';
-                if ($returns) return $res;
-                echo $res;
-            };
+        $theme_mode = isset($_COOKIE['theme_mode']) ? $_COOKIE['theme_mode'] : 'light';
+        $theme_manual = isset($_COOKIE['theme_manual']) ? $_COOKIE['theme_manual'] : false;
+        // client-side manual theme(2nd)
+        if ($theme_manual) {
+            if ($returns) return $theme_mode;
+            echo $theme_mode;
             return;
         }
-        if ($returns) return $_COOKIE['theme_mode'];
-        // bug of top-header
-        if (isset($_COOKIE['theme_mode'])) echo $_COOKIE['theme_mode'];
+        // client-side system prefers theme(3nd)
+        $theme_prefer = isset($_COOKIE['theme_mode_prefers']) ? $_COOKIE['theme_mode_prefers'] : false;
+        if ($theme_prefer) {
+            if ($returns) return $theme_prefer;
+            echo $theme_prefer;
+            return;
+        }
+        // wp-panel preset theme_mode
+        if (!array_key_exists('sidebar_status', $_COOKIE)) {
+            $hour = current_time('G');
+            $start = get_option('site_darkmode_start');
+            $end = get_option('site_darkmode_end');
+            $res = $hour>=$end&&$hour<$start || $hour==$end&&current_time('i')>=0&&current_time('s')>=0 ? 'light' : 'dark';
+            if ($returns) return $res;
+            echo $res;
+            return;
+        }
+        // default theme_mode
+        if ($returns) return $theme_mode;
+        echo $theme_mode;
     }
     //lazyload 图懒加载
     if (get_option('site_lazyload_switcher')) {
@@ -1791,7 +1799,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 _string = _json.error.message;
             }
             ' . $type_string . '
-            console.log(_json.error)
+            //console.log(_json.error)
         }));
     } catch (e) {
         console.warn("dom responser not found, check backend.", e)

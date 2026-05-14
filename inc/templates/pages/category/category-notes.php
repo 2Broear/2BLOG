@@ -15,7 +15,8 @@
             padding: 0 15px;
         }
         .win-nav {
-            width: 30.5%;
+            min-width: 25.5%;
+            /*width: 30.5%;*/
             margin-right: 15px;
         }
 	    .win-top h5 {
@@ -29,6 +30,11 @@
 	    .win-content article h1 {
 	        font-size: 1.2rem;
 	    }
+	    /*@media screen and (max-width: 960px) {*/
+     /*       .win-nav {*/
+     /*           width: 100% !important;*/
+     /*       }*/
+     /*   }*/
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
