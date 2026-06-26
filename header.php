@@ -54,7 +54,10 @@
                 $cur_link = get_category_link($the_cat_id); //if ($no_slash) strpos('/', $site_url)!==false
                 if (str_replace('com/', 'com', $cur_link)==$site_url||$cur_link==$site_url.'/category/'||$cur_link==$site_url.'/category') $cur_link = $slash_href; //if ($no_slash) strpos('/', $site_url)!==false
                 $site_icon = $use_icon ? '<i class="icom icon-'.$slug_icon.'"></i>' : '';
-                if ($the_cat_slug!='uncategorized') echo '<li class="cat_'.$the_cat_id.' '.$level.' magnetic" data-magnet-step="0.15"><a href="'.$cur_link.'" class="'.$choosen.'" rel="">' . $site_icon . $the_cat->name.'</a>';  //liwrapper magnetic
+                if ($the_cat_slug != 'uncategorized') {
+                    $magnetic = $cur_link === $slash_href ? ' magnetics' : ' magnetic';
+                    echo '<li class="cat_'.$the_cat_id.' '.$level.$magnetic.'" data-magnet-step="0.15"><a href="'.$cur_link.'" class="'.$choosen.'" rel="">' . $site_icon . $the_cat->name.'</a>';
+                }
                 if (!empty($catss) && $deepth>=2) {
                     $metanav_array = explode(',', get_option('site_metanav_array'));
                     if(get_option('site_metanav_switcher') && in_array($the_cat_slug, $metanav_array)){ //strpos(get_option('site_metanav_array'),$the_cat_slug)!==false
@@ -89,7 +92,7 @@
                                 echo '<li class="cat_'.$the_cats_id.' par_'.$the_cats_par." ".$level.'"><a href="'.get_category_link($the_cats_id).'" class="'.$choosen.'">'.$the_cats_name.$cats_desc.'</a>';
                             }
                             if(!empty($catsss) && $deepth>=3){
-                                echo $mobile ? '<ul class="links-moress">' : '<div class="sub-additional metabox"><ol class="links-more">'; // magnetic
+                                echo $mobile ? '<ul class="links-moress">' : '<div class="sub-additional metabox"><ol class="links-more">';
                                 foreach($catsss as $the_catss){
                                     $the_catss_id = $the_catss->term_id;
                                     $the_catss_name = $mobile ? $the_catss->name : '<b>'.$the_catss->name.'</b>';
@@ -103,7 +106,7 @@
                         }
                         echo $mobile ? "</ul>" : "</ol></div>";
                     } else {  //elseif($the_cat_slug!=$metaArray[$i]){
-                        echo $mobile ? '<ul class="links-mores">' : '<div class="additional"><ol class="links-more magnetic" data-magnet-scale="1" data-magnet-step="0.15">';
+                        echo $mobile ? '<ul class="links-mores">' : '<div class="additional"><ol class="links-more magnetic" data-magnet-scale="" data-magnet-step="0.15">';
                         foreach($catss as $the_cats){
                             $the_cats_id = $the_cats->term_id;
                             $catsss = get_categories(meta_query_categories($the_cats_id));

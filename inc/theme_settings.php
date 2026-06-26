@@ -299,6 +299,12 @@
             :root{
                 --panel-theme: <?php echo get_option('site_theme','#eb6844'); ?>;
             }
+            a {
+                color: #2271b1;
+            }
+            input {
+                /*line-height: 1.5!important;*/
+            }
             @media screen and (max-width:760px) {
                 #wpcontent,
                 .switchTab li {
@@ -723,6 +729,7 @@
             register_setting( 'baw-settings-group', 'site_chatgpt_proxy' );
             register_setting( 'baw-settings-group', 'site_chatgpt_auth' );
             register_setting( 'baw-settings-group', 'site_chatgpt_dir' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_ai_comments' );
             register_setting( 'baw-settings-group', 'site_chatgpt_type_sw' );
                 register_setting( 'baw-settings-group', 'site_chatgpt_type_shuffle' );
             register_setting( 'baw-settings-group', 'site_chatgpt_feed_sw' );
@@ -992,6 +999,12 @@
         <style>
             :root{
                 --panel-theme: <?php echo get_option('site_theme','#eb6844'); ?>;
+            }
+            a {
+                color: #2271b1;
+            }
+            input {
+                /*line-height: 1.5!important;*/
             }
             @media screen and (max-width:760px) {
                 #wpcontent,
@@ -2404,7 +2417,7 @@
                                         $opt = 'site_ajax_comment_paginate';
                                         $status = check_status($opt);
                                         $premise = get_option('site_ajax_comment_switcher');
-                                        $tips = '开启免刷新加载评论，替代 PREV/NEXT 翻页按钮并支持评论标签（关闭上方Ajax 评论后此项将自动关闭';
+                                        $tips = '开启免刷新加载评论，替代 PREV/NEXT 翻页按钮并支持评论标签，支持多层级子评论自动折叠（关闭上方Ajax 评论时此项将自动关闭';
                                         if (get_option($opt) && !$premise) {
                                             update_option('site_ajax_comment_paginate', '');
                                         } else {
@@ -3487,6 +3500,16 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— AI Comments<sup>2BER</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_ai_comments';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启评论区AI助手，评论“@2BER”激活。支持文章总结、评论区留言交互、多轮对话等（使用AI摘要相同TOKEN模型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">2BER AI</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
                                 <th scope="row">— 同步文章 RSS 摘要</th>
                                 <td>
                                     <?php
@@ -4280,7 +4303,7 @@ goodsData = [
                                     $status = $value ? "checked" : "check";
                                 };
                                 // $status = $value ? "checked" : "check";
-                                echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_switcher_label">页面底部展示“十年之约”图标（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <img src="'.$img_cdn.'/images/svg/foreverblog.svg" alt="wormhole" style="height: 15px; vertical-align:middle;"><!--<b class="'.$status.'">ForeverBlog 成员</b>--></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_switcher_label">页面底部展示“十年之约”图标（页尾图标</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <img src="'.$img_cdn.'/images/svg/foreverblog.svg" alt="foreverblog" style="height: 15px; vertical-align:middle;"><!--<b class="'.$status.'">ForeverBlog 成员</b>--></label>';
                             ?>
                         </td>
                     </tr>

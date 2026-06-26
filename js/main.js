@@ -395,20 +395,23 @@
     }
     
     function darkmode() {
-        setCookie('theme_manual', 1);  // enable manual mode (disable automode)
         let cookie = getCookie('theme_mode');
-        if (!cookie) {
+        let manual = getCookie('theme_manual');
+        let prefer = getCookie('theme_mode_prefers');
+        if (cookie) {
+            console.log(cookie, document.cookie)
+        } else {
             const light = document.body.className.match(/light/i);
             const dark = document.body.className.match(/dark/i);
             cookie = light ? light[0] : (dark ? dark[0] : 'light');  // update current-theme(default light)
             console.warn('themes cookie has expired.. get current-theme: ', cookie);
-        } else {
-            console.log(cookie)
         }
-        const themes = cookie === "dark" ? 'light' : 'dark';  // expired within 1 day
+        const themes = prefer && !manual || cookie === "dark" ? 'light' : 'dark';  // expired within 1 day
         document.body.className = themes;  // set as theme_mode && record new theme_mode
         setCookie('theme_mode', themes, '/', 1); // 1 day expires !!bug!!
         console.log(`theme_mode[manual] switch-color-scheme: ${themes}`);
+        // enable manual mode (disable automode)
+        setCookie('theme_manual', 1, '/', 365); // 1 year expires on manual
     }
     
     /*  

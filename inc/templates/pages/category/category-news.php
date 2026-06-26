@@ -33,6 +33,9 @@
         .news-window:nth-child(even) h2.entry-title {
             font-size: 1rem;
         }
+        .news-inside-content .news-core_area p {
+            text-indent: 0;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

@@ -1,6 +1,7 @@
 <?php
     global $src_cdn;
 ?>
+<div class="noise-bgs"></div>
 <script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/main.js?v=<?php //echo get_theme_info(); ?>"></script>
 <script type="text/javascript">
     console.info("<?php echo get_num_queries().'次查询，耗时'.timer_stop(0).'秒。'; ?>");
@@ -13,8 +14,9 @@
         } else {
     ?>
             if ( + getCookie('theme_manual')) { // use + force string to number
-                document.body.className = getCookie('theme_mode');// automode();
-                console.log(`theme_mode[manual] switch-color-scheme: ${getCookie('theme_mode')}..`);
+                const theme_mode = getCookie('theme_mode');
+                document.body.className = theme_mode;// automode();
+                console.log(`theme_mode[manual] switch-color-scheme: ${theme_mode}..`);
             } else {
                 automode();
             };

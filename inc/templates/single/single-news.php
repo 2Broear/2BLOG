@@ -34,6 +34,29 @@
         /*        max-height: 300px!important;*/
         /*    }*/
         /*}*/
+        .wp-block-table {
+            margin: 25px auto;
+            border-radius: 2px;
+        }
+        .news-article-container table tr td {
+            line-height: 2em;
+        }
+        .news-article-container table tr td:nth-child(odd) {
+            min-width: 10em;
+        }
+        .news-article-container table tr td img {
+            padding: 15px;
+        }
+        /*.news-article-container table tr td:nth-child(even),*/
+        .news-article-container table tr td:last-of-type {
+            text-align: left;
+        }
+        
+        @media screen and (max-width: 960px) {
+            #news-article-head h1 {
+                margin-top: 15px;
+            }
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

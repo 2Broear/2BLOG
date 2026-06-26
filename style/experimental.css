@@ -4,18 +4,57 @@
 **  @2026
 **
 **/
+.noise-bg {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  width: 200%;
+  height: 200vh;
+  background: transparent url('https://imgs.2broear.com/2026/05/noise-transparent.png') repeat 0 0;
+  background-repeat: repeat;
+  animation: noise-animation .2s infinite;
+  opacity: .9;
+  visibility: visible;
+  /*z-index: 1;*/
+  pointer-events: none;
+}
+
+@keyframes noise-animation {
+    0% { transform: translate(0,0) }
+    10% { transform: translate(-5%,-5%) }
+    20% { transform: translate(-10%,5%) }
+    30% { transform: translate(5%,-10%) }
+    40% { transform: translate(-5%,15%) }
+    50% { transform: translate(-10%,5%) }
+    60% { transform: translate(15%,0) }
+    70% { transform: translate(0,10%) }
+    80% { transform: translate(-15%,0) }
+    90% { transform: translate(10%,5%) }
+    100% { transform: translate(5%,0) }
+}
+.inside_of_block nav.main-nav ul li.th_level:hover>.sub-additional, 
+.inside_of_block nav.main-nav ul li.trd_level:hover>.sub-additional {
+    margin-left: -25px;
+}
+.additional .sub-additional {
+    padding-right: 25px;
+}
+
 .recommendation #recommend-inside .recommend-newsImg div a#rel {
     background: var(--preset-2b);
     border-color: var(--preset-6a);
 }
 .recommendation #recommend-inside:hover > .recommend-newsImg div a#rel {
-    /*color: var(--preset-5a);*/
+    color: var(--preset-5a);
     background: transparent;
     border-color: var(--mirror-end);
     font-size: 1rem;
-    line-height: 100px;
+    line-height: 50px;
     margin: 23px auto;
     max-width: 88%;
+    letter-spacing: 3px;
 }
 .recommendation #recommend-inside:hover span.content-core {
     padding: 0 20px;
@@ -42,4 +81,13 @@
 **/
 .bg h1 {
     font-size: 3.5rem;
+}
+/**
+**
+** disabled feats
+**
+**/
+.inside-functions .box div.dark:active i::after, 
+.inside-functions .box div.dark:active svg {
+    animation: none;
 }

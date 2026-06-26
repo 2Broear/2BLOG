@@ -230,6 +230,7 @@
         };
         // 自动根据时段设置主题
         function automode() {
+            // if (getCookie('theme_manual')) return;
             const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
             function handleColorSchemeChange(e) {
                 setCookie('theme_manual', 0);  // disable manual mode if (getCookie('theme_manual')) 
