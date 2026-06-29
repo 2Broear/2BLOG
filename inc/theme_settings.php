@@ -717,6 +717,9 @@
             register_setting( 'baw-settings-group', 'site_memos_proxy' );
             register_setting( 'baw-settings-group', 'site_memos_pattern' );
         register_setting( 'baw-settings-group', 'site_chatgpt_switcher' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_ai_summary' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_ai_comments' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_ai_anti_spam' );
             register_setting( 'baw-settings-group', 'site_chatgpt_includes' );
             register_setting( 'baw-settings-group', 'site_chatgpt_temper' );
             register_setting( 'baw-settings-group', 'site_chatgpt_tokens' );
@@ -729,7 +732,6 @@
             register_setting( 'baw-settings-group', 'site_chatgpt_proxy' );
             register_setting( 'baw-settings-group', 'site_chatgpt_auth' );
             register_setting( 'baw-settings-group', 'site_chatgpt_dir' );
-            register_setting( 'baw-settings-group', 'site_chatgpt_ai_comments' );
             register_setting( 'baw-settings-group', 'site_chatgpt_type_sw' );
                 register_setting( 'baw-settings-group', 'site_chatgpt_type_shuffle' );
             register_setting( 'baw-settings-group', 'site_chatgpt_feed_sw' );
@@ -2969,18 +2971,6 @@
                             ?>
                         </td>
                     </tr>
-                    <!--<tr valign="top">-->
-                    <!--    <th scope="row">首页 - 卡片导航</th>-->
-                    <!--    <td>-->
-                            <?php
-                                // $opt = 'site_cardnav_array';
-                                // $value = get_option($opt);
-                                // $preset = 'news/文; notes/筆; weblog/記; links/友'; 
-                                // if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                // echo '<p class="description" id="site_cardnav_array_label">展示在首页的导航卡片，使用分号“ ; ”分隔（使用斜杠“ / ”自定义名称（留空默认分类名称）如 news/文; notes/笔...</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" value="' . $preset . '"/>';
-                            ?>
-                    <!--    </td>-->
-                    <!--</tr>-->
                     <tr valign="top">
                         <th scope="row">首页 - 卡片导航 / 列表</th>
                         <td>
@@ -3034,16 +3024,6 @@
                             ?>
                         </td>
                     </tr>
-                    <!--<tr valign="top">-->
-                    <!--    <th scope="row">首页 - 列表背景</th>-->
-                    <!--    <td>-->
-                            <?php
-                                // $opt = 'site_list_bg';
-                                // $value = get_option( $opt, '' );
-                                // echo '<p class="description" id="site_about_video_label">首页卡片导航下方左侧背景图（带动画</p><label for="'.$opt.'" class="upload"><a class="dynamic_dom" data-dom="video" data-src="' . $preset . '" title="加载预览">加载视频</a></label><input type="text" name="'.$opt.'" placeholder="列表背景" class="regular-text upload_field" value="' . $value . '"/><input id="'.$opt.'" type="button" class="button-primary upload_button multi" data-type="" value="选取文件">';
-                            ?>
-                    <!--    </td>-->
-                    <!--</tr>-->
                     <tr valign="top">
                         <th scope="row">首页 - TECH 单栏<sup class="dualdata" title="“多数据”">BaaS</sup></th>
                         <td>
@@ -3335,16 +3315,46 @@
                                 }
                             ?>
                     <tr valign="top">
-                        <th scope="row"> AI 文章摘要 <sup>AI</sup> </th>
+                        <th scope="row"> AI Powered Tools <sup>AI</sup> </th>
                         <td>
                             <?php
                                 $opt = 'site_chatgpt_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 AI 摘要，内建本地文件缓存机制，仅首次请求返回付费（目前支持 3 个模型 api（chatgpt / kimi / deepseek）请根据不同 model 选择合适的 max token</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:purple" class="btn">文章摘要</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 AI 摘要，内建本地文件缓存机制，仅首次请求返回付费（目前支持 3 个模型 api（chatgpt / kimi / deepseek）请根据不同 model 选择合适的 max token</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:mediumpurple" class="btn">AI Tools</span></label>';
                             ?>
                         </td>
                     </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt = get_option('site_chatgpt_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— AI Summary<sup>POST</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_ai_summary';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启文章AI总结，可选开启页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AI Summary</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— AI Comments<sup>2BER</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_ai_comments';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启评论区AI助手，评论“@2BER”激活。支持文章总结、评论区留言交互、多轮对话等（使用AI摘要相同TOKEN模型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">2BER AI</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                    <th scope="row">— AI Spamer<sup>ANTI</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_ai_anti_spam';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启评论区AI垃圾评论审核（使用AI摘要相同TOKEN模型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AI AntiSpam</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
                                 <th scope="row">— API Key <sup title="兼容选项">OPENAI</sup></th>
                                 <td>
                                     <?php
@@ -3390,7 +3400,7 @@
                                     <?php
                                         $opt = 'site_chatgpt_model';
                                         $value = get_option($opt);
-                                        $models = ['gpt-3.5-turbo','text-davinci-003','Curie', 'moonshot-v1-8k','moonshot-v1-32k','moonshot-v1-128k','deepseek-chat','deepseek-coder'];
+                                        $models = ['gpt-3.5-turbo','text-davinci-003','Curie', 'moonshot-v1-8k','moonshot-v1-32k','moonshot-v1-128k','kimi-k2.5','kimi-k2.6','deepseek-chat','deepseek-coder'];
                                         if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
                                         echo '<label for="'.$opt.'"><p class="description" id="">可选 AI 对话模型，默认使用 gpt-3.5-turbo，<a href="https://openai.com/pricing" target="_blank">价格参考</a>，可选 Moonshot 系列模型，<a href="https://platform.moonshot.cn/docs/pricing/chat" target="_blank">价格参考</a>，可选 Deepseek 系列模型，<a href="https://api-docs.deepseek.com/zh-cn/quick_start/pricing" target="_blank">价格参考</a></p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
                                             foreach ($models as $mod){
@@ -3483,7 +3493,7 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— 开启页面（多选）</th>
+                                <th scope="row">— 开启页面（AI Summary）</th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_includes';
@@ -3496,16 +3506,6 @@
                                         echo '<p class="description" id="site_bottom_nav_label">指定开启 chatGPT AI 摘要文章页面（使用逗号“ , ”分隔，可选多个分类</p><div class="checkbox">';
                                         output_article_opts($opt, $value);
                                         echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="middle-text array-text" readonly value="' . $value . '" placeholder="请选择"/></div>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— AI Comments<sup>2BER</sup></th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_ai_comments';
-                                        $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启评论区AI助手，评论“@2BER”激活。支持文章总结、评论区留言交互、多轮对话等（使用AI摘要相同TOKEN模型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">2BER AI</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -3535,7 +3535,7 @@
                                     <?php
                                         $opt = 'site_chatgpt_type_sw';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">使用打字机效果填充摘要文本，可能的 CLS 影响</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Words Typer</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">使用打字机效果填充摘要文本，可能的 CLS 影响</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">TypeWriter</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -3545,7 +3545,7 @@
                                     <?php
                                         $opt = 'site_chatgpt_type_shuffle';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">一次性加载混淆文本，避免频繁更新页面造成 CLS 性能影响</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Shuffle Words</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">一次性加载混淆文本，避免频繁更新页面造成 CLS 性能影响</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Shuffle Type</b></label>';
                                     ?>
                                 </td>
                             </tr>

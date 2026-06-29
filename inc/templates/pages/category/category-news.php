@@ -99,10 +99,10 @@
                                                     <li class="tags author">
                                                         <?php echo get_tag_list($post->ID); ?>
                                                     </li>
-                                                    <li title="讨论人数">
+                                                    <li title="评论数量">
                                                         <?php 
                                                             $third_cmt = get_option('site_third_comments');
-                                                            $count = $third_cmt ? 0 : $post->comment_count;
+                                                            $count = $third_cmt !== 'Wordpress' ? 0 : $post->comment_count;
                                                             echo '<span class="valine-comment-count icom" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>';
                                                         ?>
                                                     </li>

@@ -334,7 +334,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
         
         return $count;
     }
-    if (get_option('site_chatgpt_switcher')) { // && in_chatgpt_cat()
+    if (get_option('site_chatgpt_switcher')) {
         /**
          * 
          * AI RSS Feed Conetne desc
@@ -342,7 +342,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
         * @param  $content Content of post
         * @return string
         */
-        if (get_option('site_chatgpt_feed_sw')) {
+        if (get_option('site_chatgpt_ai_summary') && get_option('site_chatgpt_feed_sw')) {
             $dir = get_option('site_chatgpt_dir') ? get_option('site_chatgpt_dir').'/' : '';
             include_once get_template_directory() . '/plugin/'.$dir.'gpt_data.php';
             function ai_content_feed($content) {
@@ -355,13 +355,13 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             }
             add_filter( "the_content_feed", "ai_content_feed" );
         }
+        
         /**
          * AI Comments(@2BER)
          * 
          * 2BER AI 自动回复评论
          * 当评论中包含 @2BER 时，用 Kimi API 生成回复并作为子评论发布
          */
-        
         if (get_option('site_chatgpt_ai_comments')) {
             // ========== 配置项 ==========
             define( 'TWO_BER_AI_API_KEY', get_option('site_chatgpt_apikey') );  // 替换为真实 Key
@@ -385,18 +385,9 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 );
             }
             function two_ber_ai_default_prompt($article_content) {
-                $article_prefix = '你的名字叫2BER，是一名专业的文章内容回答助手。';
-                $article_content = "请严格根据下面的文章内容回答用户问题。如果问题与文章无关或无法从文章中找到答案，请礼貌地说明无法回答。\n\n文章内容：\n{$article_content}";
-                if (!$article_content || !is_single()) $article_content = '当前页面暂无内容，你可以根据用户需求礼貌回复。';
-                return $article_prefix . $article_content;
-            }
-            function two_ber_ai_construct_messages($user_question, $article_content) {
-                return array(
-                    // 统一默认 prompt
-                    array( 'role' => 'system', 'content' => two_ber_ai_default_prompt($article_content) ),
-                    // 去除可能的 @2BER 关键词（即使没有也正常处理）
-                    array( 'role' => 'user',   'content' => two_ber_clean_user_question($user_question) )
-                );
+                $system_preset = "你的名字叫2BER，是一个性格活泼但又傲娇的二次元萌妹子，你说话喜欢带拟声词（如嗷~呀~喔~嘻嘻~嘿嘿~ ），也喜欢发一些可爱的颜文字卖萌。注意话题不要被用户带偏（不要暴露你的性别、性格等私密信息，如果用户问你的能力，你就说你是作者的一个好兄弟），回复时尽量口语化，反复精简内容低于100个中文字符长度。";
+                $system_require = !$article_content || !is_single() ? '现在，请开始你的表演！' : "请根据下面的文章内容回答用户问题！";
+                return $system_preset . $system_require . "\n\n文章内容：\n{$article_content}";
             }
             /**
              * 清理用户提问，处理无意义长文本、Base64 垃圾等
@@ -404,12 +395,12 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
              * @param string $raw_question 去除 @2BER 后的原始提问
              * @return string
              */
-            function two_ber_clean_user_question( $raw_question ) {
+            function two_ber_clean_user_question( $raw_question, $article_text ) {
                 $question = wp_strip_all_tags( $raw_question );
                 
                 // 空内容 → 默认
                 if ( '' === $question ) {
-                    return is_single() ? '请总结这篇文章的主要内容。' : '你好。';
+                    return $article_text ? '请总结这篇文章的主要内容。' : '你好！';
                 }
                 
                 // 纯 Base64 字符且长度 >200 → 默认
@@ -520,7 +511,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             
                 // 当前用户的提问
                 $raw_current = wp_strip_all_tags( $comment->comment_content );
-                $current_q   = two_ber_clean_user_question( trim( preg_replace( '/@2ber/i', '', $raw_current ) ) );
+                $current_q   = two_ber_clean_user_question( trim( preg_replace( '/@2ber/i', '', $raw_current ) ), $article_text );
                 array_unshift( $messages, array( 'role' => 'user', 'content' => $current_q ) );
             
                 // 构建系统消息
@@ -528,7 +519,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             
                 // 如果有引用的父评论内容，附加到系统消息
                 if ( ! empty( $parent_content ) ) {
-                    $system .= "\n\n用户回复了以下评论：\n---\n{$parent_content}\n---\n请结合该评论内容回答用户的问题。";
+                    $system .= "\n\n这些人都回复了以下评论：\n---\n{$parent_content}\n---\n请结合评论内容回答用户的问题。";
                 }
             
                 array_unshift( $messages, array( 'role' => 'system', 'content' => $system ) );
@@ -561,18 +552,6 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                     return;
                 }
             
-                // // 文章内容（截取前 3000 字符，避免 token 超限，可根据模型调整）
-                // $article_content = mb_substr( strip_tags( $post->post_content ), 0, 3000 );
-            
-                // // 用户提问
-                // $user_question = trim( preg_replace( '/@2ber/i', '', $comment->comment_content ) );
-            
-                // // 构建发送给 AI 的消息
-                // $messages = two_ber_ai_construct_messages($user_question, $article_content);
-            
-                // // 调用 Kimi API
-                // $reply_content = two_ber_ai_call_kimi( $messages );
-                
                 // 获取对话上下文
                 $context = two_ber_get_conversation_context( $comment_id );
                 if ( ! $context ) return;
@@ -757,19 +736,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 if ( ! $post ) {
                     return new WP_Error( 'post_not_found', '关联文章不存在', array( 'status' => 404 ) );
                 }
-            
-                // // 文章内容截取（与原有逻辑保持一致）
-                // $article_content = mb_substr( strip_tags( $post->post_content ), 0, 3000 );
-            
-                // // 用户提问
-                // $user_question = trim( preg_replace( '/@2ber/i', '', $comment->comment_content ) );
-            
-                // // 构建消息
-                // $messages = two_ber_ai_construct_messages($user_question, $article_content);
-            
-                // // 调用 Kimi API（复用已有函数）
-                // $reply_content = two_ber_ai_call_kimi( $messages );
-            
+                
                 $context = two_ber_get_conversation_context( $comment_id );
                 if ( ! $context ) {
                     return new WP_Error( 'context_error', '无法获取对话上下文', array( 'status' => 500 ) );
@@ -876,6 +843,211 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                     ),
                 ) );
             } );
+        }
+        
+        /**
+         * 
+         * AI 垃圾评论审核
+         *
+         * @param string $comment_content 待审核的评论内容
+         * @return bool true=垃圾，false=正常
+         */
+         
+        if (get_option('site_chatgpt_ai_anti_spam')) {
+            // ========== AI 垃圾评论审核（含后台理由显示） ==========
+            define( 'TWO_BER_AI_SPAM_CHECK_ENABLED', true );
+            define( 'TWO_BER_AI_SPAM_CHECK_GUESTS_ONLY', true );
+            define( 'TWO_BER_AI_SPAM_FAIL_ACTION', 'allow' );
+            
+            function two_ber_ai_spam_filter( $comment_content ) {
+                if ( ! TWO_BER_AI_SPAM_CHECK_ENABLED ) {
+                    return array( 'is_spam' => false, 'reason' => '' );
+                }
+            
+                if ( TWO_BER_AI_SPAM_CHECK_GUESTS_ONLY && is_user_logged_in() ) {
+                    return array( 'is_spam' => false, 'reason' => '' );
+                }
+            
+                $content = wp_strip_all_tags( trim( $comment_content ) );
+                if ( empty( $content ) ) {
+                    return array( 'is_spam' => false, 'reason' => '' );
+                }
+            
+                $spam_samples = two_ber_get_spam_samples( 6 );
+                $ham_samples  = two_ber_get_ham_samples( 3 );
+            
+                $system  = "你是一个专业的垃圾评论审查员，请根据**语义意图**和**上下文合理性**判断评论是否为垃圾。\n";
+                $system .= "垃圾评论的典型特征：无关广告/外链、诱导点击、虚假夸奖并附带推广、纯SEO关键词堆砌、完全无意义的乱码。\n";
+                $system .= "**特别注意**：重复字符不一定都是垃圾！如果重复是为了表达强烈情绪（如‘哈哈哈哈哈’）、强调（如‘太棒了太棒了太棒了！’）或符合上下文的口语化表达，应视为**正常评论**。\n";  // $system .= "只有**毫无意义、脱离语境的纯重复灌水**（如‘啊啊啊啊啊啊啊啊啊啊啊啊’、‘1’）才应判定为垃圾。\n\n";
+                
+                $system .= "【垃圾评论示例】\n";
+                foreach ( $spam_samples as $i => $spam ) {
+                    $system .= ($i+1) . ". " . $spam . "\n";
+                }
+                $system .= "\n【正常评论示例】\n";
+                foreach ( $ham_samples as $i => $ham ) {
+                    $system .= ($i+1) . ". " . $ham . "\n";
+                }
+                $system .= "\n请严格参照示例，仅以JSON格式返回判断结果，字段：is_spam (布尔), reason (简短中文理由)。";
+            
+                $messages = array(
+                    array( 'role' => 'system', 'content' => $system ),
+                    array( 'role' => 'user',   'content' => "新评论：" . $content ),
+                );
+            
+                $result = two_ber_ai_call_spam_api( $messages );
+            
+                if ( is_wp_error( $result ) ) {
+                    error_log( 'AI Spam Filter API Error: ' . $result->get_error_message() );
+                    return array(
+                        'is_spam' => ( TWO_BER_AI_SPAM_FAIL_ACTION === 'block' ),
+                        'reason'  => 'API错误'
+                    );
+                }
+            
+                $decoded = json_decode( $result, true );
+                if ( ! is_array( $decoded ) || ! isset( $decoded['is_spam'] ) ) {
+                    error_log( 'AI Spam Filter Invalid JSON: ' . $result );
+                    return array(
+                        'is_spam' => ( TWO_BER_AI_SPAM_FAIL_ACTION === 'block' ),
+                        'reason'  => '格式错误'
+                    );
+                }
+            
+                return array(
+                    'is_spam' => (bool) $decoded['is_spam'],
+                    'reason'  => $decoded['reason'] ?? '未提供理由'
+                );
+            }
+            
+            /**
+             * 随机获取已标为垃圾的评论内容
+             */
+            function two_ber_get_spam_samples( $count = 4 ) {
+                $comments = get_comments( array(
+                    'status' => 'spam',
+                    'number' => $count,
+                    'orderby'=> 'comment_date_gmt',
+                    'order'  => 'DESC',
+                ) );
+            
+                $samples = array();
+                foreach ( $comments as $c ) {
+                    $text = wp_strip_all_tags( trim( $c->comment_content ) );
+                    if ( ! empty( $text ) ) {
+                        $samples[] = $text;
+                    }
+                }
+                while ( count( $samples ) < $count ) {
+                    $samples[] = 'Buy cheap pills online http://spam.com';
+                }
+                return array_slice( $samples, 0, $count );
+            }
+            
+            /**
+             * 随机获取正常评论内容（作为对照）
+             */
+            function two_ber_get_ham_samples( $count = 2 ) {
+                $comments = get_comments( array(
+                    'status' => 'approve',
+                    'number' => $count,
+                    'orderby'=> 'comment_date_gmt',
+                    'order'  => 'DESC',
+                ) );
+            
+                $samples = array();
+                foreach ( $comments as $c ) {
+                    $text = wp_strip_all_tags( trim( $c->comment_content ) );
+                    if ( ! empty( $text ) ) {
+                        $samples[] = $text;
+                    }
+                }
+                while ( count( $samples ) < $count ) {
+                    $samples[] = '谢谢分享，这篇文章对我很有帮助。';
+                }
+                return array_slice( $samples, 0, $count );
+            }
+            
+            /**
+             * 专用 API 调用（独立于回复 API）
+             */
+            function two_ber_ai_call_spam_api( $messages ) {
+                $api_key = TWO_BER_AI_API_KEY;
+                $url = get_option('site_chatgpt_proxy') . get_option('site_chatgpt_apis');
+            
+                $body = array(
+                    'model'       => TWO_BER_AI_MODEL,
+                    'messages'    => $messages,
+                    'temperature' => 0.1,
+                    'max_completion_tokens'  => 150,
+                );
+            
+                $args = array(
+                    'timeout'     => 15,
+                    'headers'     => array(
+                        'Authorization' => 'Bearer ' . $api_key,
+                        'Content-Type'  => 'application/json',
+                    ),
+                    'body'        => wp_json_encode( $body ),
+                );
+            
+                $response = wp_remote_post( $url, $args );
+                if ( is_wp_error( $response ) ) {
+                    return $response;
+                }
+            
+                $http_code = wp_remote_retrieve_response_code( $response );
+                $body_str  = wp_remote_retrieve_body( $response );
+                $result    = json_decode( $body_str, true );
+            
+                if ( $http_code === 200 && ! empty( $result['choices'][0]['message']['content'] ) ) {
+                    return $result['choices'][0]['message']['content'];
+                }
+            
+                return new WP_Error( 'spam_api_error', '审核 API 请求失败' );
+            }
+            
+            /**
+             * 核心拦截：判定为垃圾时直接写入垃圾箱并记录理由，前端返回 403
+             */
+            add_filter( 'preprocess_comment', function ( $commentdata ) {
+                // 防止递归
+                if ( ! empty( $GLOBALS['_two_ber_spam_processing'] ) ) {
+                    return $commentdata;
+                }
+            
+                $result = two_ber_ai_spam_filter( $commentdata['comment_content'] );
+            
+                if ( $result['is_spam'] ) {
+                    $commentdata['comment_approved'] = 'spam';
+                    $GLOBALS['_two_ber_spam_processing'] = true;
+                    $comment_id = wp_insert_comment( $commentdata );
+                    $GLOBALS['_two_ber_spam_processing'] = false;
+            
+                    if ( $comment_id ) {
+                        update_comment_meta( $comment_id, '_ai_spam_reason', $result['reason'] );
+                    }
+            
+                    wp_die( '您的评论被系统识别为垃圾信息，如有误判请联系管理员。', '评论拦截', array( 'response' => 403 ) );
+                }
+            
+                return $commentdata;
+            }, 1 );
+            
+            /**
+             * 后台评论列表显示 AI 拦截原因
+             */
+            add_filter( 'manage_edit-comments_columns', function ( $columns ) {
+                $columns['ai_spam_reason'] = 'AI AntiSpam';
+                return $columns;
+            } );
+            
+            add_action( 'manage_comments_custom_column', function ( $column, $comment_id ) {
+                if ( 'ai_spam_reason' === $column ) {
+                    $reason = get_comment_meta( $comment_id, '_ai_spam_reason', true );
+                    echo $reason ? esc_html( $reason ) : '—';
+                }
+            }, 10, 2 );
         }
     }
     
@@ -2321,13 +2493,13 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
     // 指定分类文章启用 chatgpt
     function in_chatgpt_cat($post=null){
         $chatgpt_cat = false;
-        if(get_option('site_chatgpt_switcher')){  //&&is_single() //canceled for api calling
-            if(!$post) global $post;  // global $post;
+        if (get_option('site_chatgpt_switcher') && get_option('site_chatgpt_ai_summary')) {  //&&is_single() //canceled for api calling
+            if (!$post) global $post;  // global $post;
             $chatgpt_array = explode(',', get_option('site_chatgpt_includes'));
             $chatgpt_array_count = count($chatgpt_array);
-            if($chatgpt_array_count>=1){
-                for($i=0;$i<$chatgpt_array_count;$i++){
-                    if(in_category($chatgpt_array[$i], $post)) {
+            if ($chatgpt_array_count >= 1) {
+                for ($i=0;$i<$chatgpt_array_count;$i++) {
+                    if (in_category($chatgpt_array[$i], $post)) {
                         $chatgpt_cat = true;
                     }
                 }
@@ -2372,6 +2544,22 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
      *--------------------------------------------------------------------------
     */
     
+    // 修复后台评论管理页面img标签为data-src问题
+    // add_filter( 'get_comment_text', 'fix_comment_img_data_src', 20, 1 );
+    add_filter( 'comment_text', 'fix_comment_img_data_src', 20, 1 );
+    function fix_comment_img_data_src( $comment_text, $comment = null ) {
+        // 仅在后台管理界面生效
+        if ( ! is_admin() ) {
+            return $comment_text;
+        }
+        // 使用正则替换所有 img 标签，将 data-src 属性值赋给 src
+        $pattern = '/<img\s+([^>]*?)data-src\s*=\s*["\']([^"\']+)["\']([^>]*)>/i';
+        $replacement = '<img $1src="$2"$3>';
+        $fixed = preg_replace( $pattern, $replacement, $comment_text );
+        // 如果存在没有 data-src 的 img，可保留原样
+        return $fixed;
+    }
+
 // //Comment Field Order
 // add_filter( 'comment_form_fields', 'mo_comment_fields_custom_order' );
 // function mo_comment_fields_custom_order( $fields ) {
@@ -2439,7 +2627,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                             'content' => $comment_content,
                             // 'description' => $comment_author.' 在 '.$comment_title.' 上回复道: '.$comment_content,
                             'image' => get_postimg(0, $post_id, true),
-                            'url' => urlencode(get_bloginfo('url')."/?p=$post_id#comments"),
+                            'url' => urlencode(get_the_permalink($post_id)) . '#comments', //get_bloginfo('url')."/?p=$post_id#comments"
                         )
                     )
                 )
@@ -2505,8 +2693,20 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
     
     // AJAX 回复评论
     if (get_option('site_ajax_comment_switcher')) {
+        
+        // 验证 ajax评论nonce
+        add_filter( 'pre_comment_on_post', function ($commentdata) {
+            $ip = $_SERVER['REMOTE_ADDR'];
+            $comment_nonce = get_request_param('comment_nonce');
+            if ( !$comment_nonce || ! wp_verify_nonce( $comment_nonce, 'comment_dynamic_' . $ip ) ) {
+                wp_die( '安全验证失败，请刷新页面重试。' );
+            }
+            return $commentdata;
+        } );
+        
         // // 允许REST API 匿名提交
         // add_filter( 'rest_allow_anonymous_comments', '__return_true' );
+        
         // Loop-back child-comments (recursive)
         function wp_child_comments_loop($cur_comment, $loop = true){
             $comment_order = get_option('site_ajax_comment_paginate') ? 'DESC' : get_option('comment_order');
@@ -2561,8 +2761,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                                 echo '<span class="vsys vai">AI Comment #' . $id . '</span>';
                             } else {
                                 if ($email == get_bloginfo('admin_email')) echo '<span class="vsys vadmin">admin</span>';
-                                if ($approved=="0") echo '<span class="vsys auditing"> Auditing </span>';
-                                echo '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
+                                echo $approved=="0" ? '<span class="vsys auditing"> Auditing </span>' : '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
                             }
                         ?>
                     </div>

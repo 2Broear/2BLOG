@@ -217,11 +217,21 @@
                             )
                         );
                         // https://www.boke8.net/wordpress-function-get-comments.html
-                        foreach($comments as $each){
+                        foreach ($comments as $each) {
                             $id = $each->comment_ID;
                             $parent = $each->comment_parent;
                             $content = $each->comment_content;
                             if($parent>0) $content = '<span data-href="#comment-' . $parent . '">@'. get_comment_author($parent) . '</span> , ' . $content;
+                            // filter image&canvas
+                            $content = preg_replace_callback('/<img\s+[^>]*>/i', function($matches) {
+                                $tag = $matches[0];
+                                // 检查是否包含 id="draw" 或 id='draw'
+                                if (preg_match('/\bid\s*=\s*["\']draw["\']/i', $tag)) {
+                                    return ' [Canvas  Element] ';
+                                } else {
+                                    return ' [ Custom Image ] ';
+                                }
+                            }, $content);
                             $content = strip_tags($content);
                 ?>
                             <li>

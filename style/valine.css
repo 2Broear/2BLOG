@@ -14,6 +14,7 @@ body.dark .v .vlist .vcard .vhead .vsys.vai {
 /*    opacity: .75;*/
 }
 
+
 .v .vlist .vcard .vquote.overview .vcard:nth-child(n+4),
 .v .vlist .children.overview .vcard:nth-child(n+4) {
     display: none;
@@ -30,6 +31,13 @@ body.dark .v .vlist .vcard .vhead .vsys.vai {
 i.icomoon, .pageSwitcher.dev a i,
 .inside_of_block nav.main-nav ul li a i {
     color: currentColor;
+}
+.pageSwitcher.dev a {
+    padding: 12px 25px;
+}
+.pageSwitcher.dev a.disabled {
+    background: transparent;
+    box-shadow: none;
 }
 
 #vcomments.disabled_reply .vsubmit {

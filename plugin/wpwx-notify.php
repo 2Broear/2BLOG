@@ -5,7 +5,7 @@
     // https://wordpress.stackexchange.com/questions/69184/how-to-load-wordpress-on-non-wp-page
     parse_str($_SERVER['QUERY_STRING'], $parameters);
     // 判断url传参或form表单参数
-    if($parameters){
+    if ($parameters) {
         $url = $parameters['url'];
         $title = $parameters['title'];
         $image = $parameters['image'];
@@ -13,15 +13,16 @@
         $mail = $parameters['mail'];
         $content = $parameters['content'];
         // $description = $parameters['description'];
-    }else{
-        $url = $_POST['url'] ? $_POST['url'] : $_GET['url'];
-        $title = $_POST['title'] ? $_POST['title'] : $_GET['title'];
-        $image = $_POST['image'] ? $_POST['image'] : $_GET['image'];
-        $name = $_POST['name'] ? $_POST['name'] : $_GET['name'];
-        $mail = $_POST['mail'] ? $_POST['mail'] : $_GET['mail'];
-        $content = $_POST['content'] ? $_POST['content'] : $_GET['content'];
+    } else {
+        $url = get_request_param('url');
+        $title = get_request_param('title');
+        $image = get_request_param('image');
+        $name = get_request_param('name');
+        $mail = get_request_param('mail');
+        $content = get_request_param('content');
         // $description = $_POST['description'] ? $_POST['description'] : $_GET['description'];
     }
+    $url = urldecode($url);
     $avatar = match_mail_avatar($mail);
     $description = "昵称: $name \n邮箱: $mail \n评论: $content";
     header("Content-type:text/html;charset=utf-8");  // 声明页面header
@@ -55,8 +56,7 @@
     }
     // 获取新的access_token
     function getNewToken($corpid,$corpsecret){
-        $url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={$corpid}&corpsecret={$corpsecret}";
-        $access_token_Arr =  https_request($url);
+        $access_token_Arr =  https_request("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={$corpid}&corpsecret={$corpsecret}");
         return $access_token_Arr['access_token'];
     }
     // curl请求函数

@@ -326,7 +326,7 @@ article a {
 }
 .win-content article .infos {
 	color: #a7a7a7;
-	max-width: 36%;
+	max-width: 50%;
 	font-size: 12px;
 	position: relative;
 	text-align: right;
@@ -339,6 +339,7 @@ article .infos span {
 	display: inline-block;
 	padding-left: 3px;
 	vertical-align: middle;
+	margin-bottom: 5px;
 }
 article .infos span#keywords {
 	color: var(--preset-8);

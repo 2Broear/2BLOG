@@ -57,7 +57,7 @@
 <div class="content-all-windows">
 	<div class="win-nav-content">
 		<div class="win-nav">
-			<div class="nav-header workRange wow fadeInUp magnetic" data-magnet-step="0.05" style="background: url(<?php echo get_option('site_bgimg'); ?>) center center / cover">
+			<div class="nav-header workRange wow fadeInUp magnetics" data-magnet-step="0.05" style="background: url(<?php echo get_option('site_bgimg'); ?>) center center / cover">
 				<span>
 					<a href="/" target="_blank" style="border-radius: inherit;display: block">
 					    <?php echo '<img '.$lazysrc.'="'.get_option('site_avatar').'" alt="'.get_bloginfo('name').'" />'; ?>
