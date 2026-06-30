@@ -3320,7 +3320,7 @@
                             <?php
                                 $opt = 'site_chatgpt_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 AI 摘要，内建本地文件缓存机制，仅首次请求返回付费（目前支持 3 个模型 api（chatgpt / kimi / deepseek）请根据不同 model 选择合适的 max token</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:mediumpurple" class="btn">AI Tools</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">指定文章类型中自动生成 AI 摘要，内建本地文件缓存机制，仅首次请求返回付费（目前支持 3 个模型 api（chatgpt / kimi / deepseek）请根据不同 model 选择合适的 max token</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:mediumpurple" class="btn">AI Powers</span></label>';
                             ?>
                         </td>
                     </tr>

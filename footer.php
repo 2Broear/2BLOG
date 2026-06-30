@@ -227,7 +227,7 @@
                                 $tag = $matches[0];
                                 // 检查是否包含 id="draw" 或 id='draw'
                                 if (preg_match('/\bid\s*=\s*["\']draw["\']/i', $tag)) {
-                                    return ' [Canvas  Element] ';
+                                    return ' [ Canvas  Element ] ';
                                 } else {
                                     return ' [ Custom Image ] ';
                                 }

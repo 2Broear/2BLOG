@@ -58,7 +58,7 @@
             // marker
             if(get_option('site_marker_switcher')){
     ?>
-                asyncLoad('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/marker.js', function(){
+                asyncLoad('<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/marker.js', function(){
                     // use keyword "new" to point to init method.
                     new marker.init({
                         static: {
@@ -83,8 +83,8 @@
                             effectsArea: document.querySelector('.content'),
                             commentArea: document.querySelector('#vcomments textarea') || document.querySelector('#twikoo textarea') || document.querySelector('.wp_comment_box textarea'),
                             commentInfo: {
-                                userNick: document.querySelector('input[name=nick]'),
-                                userMail: document.querySelector('input[name=mail]'),
+                                userNick: document.querySelector('input[name=author]'), //nick
+                                userMail: document.querySelector('input[name=email]'), //mail
                             }
                         },
                     });

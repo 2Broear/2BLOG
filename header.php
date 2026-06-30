@@ -206,7 +206,7 @@
     <div class="main-header-all">
         <div class="block_of_down_element">
             <div class="inside_of_block" isBottom="no">
-                <div class="logo-area magnetic" data-magnet-scale="" data-magnet-step="" title="<?php echo get_option('site_nick', get_bloginfo('name')); ?> - <?php bloginfo('name') ?>">
+                <div class="logo-area magnetic" data-magnet-scale="" data-magnet-step="0.15" title="<?php echo get_option('site_nick', get_bloginfo('name')); ?> - <?php bloginfo('name') ?>">
                     <a href="<?php bloginfo('url') ?>" aria-label="logo"><?php site_logo(); ?></a>
                 </div>
                 <nav class="main-nav">

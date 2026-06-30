@@ -3012,7 +3012,7 @@ body.dark .news-inside-content .news-core_area p {
     border-radius: var(--radius);
 }
 .news-article-container .v .vlist .children {
-    margin-left: 5em;
+    margin-left: 5%;
 }
 .v .vlist .children {
     /*margin-top: 0;*/
@@ -3235,7 +3235,6 @@ footer a {
 .load button:active,
 .body-basically .Introduce p a:active,
 .rcmd-boxes .info .inbox.more:active,
-.ibox .iboxes:active,
 .share a:active,
 header form:active,
 .lively-click:active {
@@ -3267,6 +3266,7 @@ header>nav#tipson .top-bar-tips a:active,
 a.markable .tools .toolInside:active,
 footer a:active,
 figure a:active,
+.ibox .iboxes:active,
 /*.v .vlist .vquote .vcard:active,*/
 /*.weBlog-Description .weBlog-Description-inside-content:active,*/
 .lively-click-098:active {

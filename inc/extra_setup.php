@@ -366,7 +366,60 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             // ========== 配置项 ==========
             define( 'TWO_BER_AI_API_KEY', get_option('site_chatgpt_apikey') );  // 替换为真实 Key
             define( 'TWO_BER_AI_MODEL', get_option('site_chatgpt_model') );     // Kimi 模型，可按需调整
+            /**
+             * 纯 @2BER 重复检查（基于已存在的 AI 子回复）
+             * 优先级 0，早于 AI 垃圾审核，避免浪费 API
+             * （仅文章页面）
+             */
+            add_filter( 'preprocess_comment', function ( $commentdata ) {
+                $content = $commentdata['comment_content'];
+                $cleaned = trim( preg_replace( '/@2ber/i', '', strip_tags( $content ) ) );
+                
+                if ( '' === $cleaned) {
+                    $post_id = $commentdata['comment_post_ID'];
+                    $post_type = get_post_type( $post_id );
+                    // 仅拦截 'post' 文章类型
+                    if ( 'post' !== $post_type ) {
+                        return $commentdata;
+                    }
+                    
+                    // 1. 找出当前文章下所有 AI 子回复（它们带有 _2ber_ai_reply 标记）
+                    $ai_replies = get_comments( [
+                        'post_id'   => $post_id,
+                        'status'    => 'approve',
+                        'meta_key'  => '_2ber_ai_reply',
+                        'number'    => 20,      // 一般不会超过 20 条摘要请求
+                        'orderby'   => 'comment_date_gmt',
+                        'order'     => 'DESC',
+                    ] );
             
+                    if ( empty( $ai_replies ) ) {
+                        return $commentdata;
+                    }
+            
+                    // 2. 收集这些 AI 回复的父评论 ID，去重
+                    $parent_ids = array_unique( wp_list_pluck( $ai_replies, 'comment_parent' ) );
+            
+                    // 3. 检查这些父评论中是否包含纯 @2BER
+                    foreach ( $parent_ids as $pid ) {
+                        $parent = get_comment( $pid );
+                        if ( ! $parent ) continue;
+            
+                        $parent_clean = trim( preg_replace( '/@2ber/i', '', strip_tags( $parent->comment_content ) ) );
+                        if ( '' === $parent_clean ) {
+                            // 找到第一个匹配的，直接拦截
+                            // 如果想返回具体的 AI 内容，可以取对应的 $ai_reply 对象
+                            wp_die(
+                                '检测到重复请求，AI 已经为这篇文章生成过摘要了。',
+                                '重复摘要',
+                                [ 'response' => 422 ]
+                            );
+                        }
+                    }
+                }
+            
+                return $commentdata;
+            }, 0 ); // 优先级 0，最早执行
             /**
              * 返回默认 AI 回复子评论信息
              */
@@ -395,7 +448,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
              * @param string $raw_question 去除 @2BER 后的原始提问
              * @return string
              */
-            function two_ber_clean_user_question( $raw_question, $article_text ) {
+            function two_ber_clean_user_question( $raw_question, $article_text = '' ) {
                 $question = wp_strip_all_tags( $raw_question );
                 
                 // 空内容 → 默认
@@ -446,7 +499,9 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             
                     // 标记该评论正在处理，防止重复计划任务
                     update_comment_meta( $comment_id, '_2ber_ai_processing', 1 );
-            
+                    
+                    // 清除可能存在的旧任务，防止重复忽略
+                    wp_clear_scheduled_hook( 'two_ber_ai_reply_event', array( $comment_id ) );
                     // 安排一次性后台任务，5秒后执行（避免高峰拥堵，也确保评论已完全写入）
                     wp_schedule_single_event( time() + 5, 'two_ber_ai_reply_event', array( $comment_id ) );
                 }
@@ -485,7 +540,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                         if ( get_comment_meta( $parent->comment_ID, '_2ber_ai_reply', true ) ) {
                             // 当前是用户追问
                             $raw_user = wp_strip_all_tags( $current->comment_content );
-                            $user_q   = two_ber_clean_user_question( trim( preg_replace( '/@2ber/i', '', $raw_user ) ) );
+                            $user_q   = two_ber_clean_user_question( trim( preg_replace( '/@2ber/i', '', $raw_user ) ), $article_text );
             
                             array_unshift( $messages, array( 'role' => 'user', 'content' => $user_q ) );
                             array_unshift( $messages, array( 'role' => 'assistant', 'content' => $parent->comment_content ) );
@@ -493,7 +548,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                         } else {
                             // 父评论是普通用户评论，视为根提问
                             $raw_root = wp_strip_all_tags( $parent->comment_content );
-                            $root_q   = two_ber_clean_user_question( trim( preg_replace( '/@2ber/i', '', $raw_root ) ) );
+                            $root_q   = two_ber_clean_user_question( trim( preg_replace( '/@2ber/i', '', $raw_root ) ), $article_text );
                             array_unshift( $messages, array( 'role' => 'user', 'content' => $root_q ) );
                             break;
                         }
@@ -535,20 +590,23 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
              * @param int $comment_id 原评论 ID
              */
             function two_ber_ai_process_reply( $comment_id ) {
-                // 再次检查是否已处理（防止并发）
+                // 再次检查是否已处理（防止并发/processing）
                 if ( get_comment_meta( $comment_id, '_2ber_ai_replied', true ) ) {
+                    delete_comment_meta( $comment_id, '_2ber_ai_processing' );
                     return;
                 }
             
                 // 获取原评论对象
                 $comment = get_comment( $comment_id );
                 if ( ! $comment ) {
+                    delete_comment_meta( $comment_id, '_2ber_ai_processing' );
                     return;
                 }
             
                 $post_id    = $comment->comment_post_ID;
                 $post       = get_post( $post_id );
                 if ( ! $post ) {
+                    delete_comment_meta( $comment_id, '_2ber_ai_processing' );
                     return;
                 }
             
@@ -568,7 +626,9 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             
                 // 插入 AI 回复作为子评论
                 $ai_comment_data = two_ber_ai_comment_data($post_id, $comment_id, $reply_content);
-            
+                // 使 AI 回复跟随父评论的审核状态（避免新用户待审核时 AI 回复却直接显示）
+                $parent_status = $comment->comment_approved;
+                $ai_comment_data['comment_approved'] = $parent_status;
                 $ai_comment_id = wp_insert_comment( $ai_comment_data );
             
                 if ( $ai_comment_id ) {
@@ -750,6 +810,9 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             
                 // 插入 AI 子评论
                 $ai_comment_data = two_ber_ai_comment_data($comment->comment_post_ID, $comment_id, $reply_content);
+                // 使 AI 回复跟随父评论的审核状态（避免新用户待审核时 AI 回复却直接显示）
+                $parent_status = $comment->comment_approved;
+                $ai_comment_data['comment_approved'] = $parent_status;
                 $ai_comment_id = wp_insert_comment( $ai_comment_data );
             
                 if ( ! $ai_comment_id ) {
@@ -2560,29 +2623,6 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
         return $fixed;
     }
 
-// //Comment Field Order
-// add_filter( 'comment_form_fields', 'mo_comment_fields_custom_order' );
-// function mo_comment_fields_custom_order( $fields ) {
-//     $comment_field = $fields['comment'];
-//     $author_field = $fields['author'];
-//     $email_field = $fields['email'];
-//     $url_field = $fields['url'];
-//     $cookies_field = $fields['cookies'];
-//     unset( $fields['comment'] );
-//     unset( $fields['author'] );
-//     unset( $fields['email'] );
-//     unset( $fields['url'] );
-//     unset( $fields['cookies'] );
-//     // the order of fields is the order below, change it as needed:
-//     $fields['author'] = $author_field;
-//     $fields['email'] = $email_field;
-//     $fields['url'] = $url_field;
-//     $fields['comment'] = $comment_field;
-//     $fields['cookies'] = $cookies_field;
-//     // done ordering, now return the fields:
-//     return $fields;
-// }
-
     // https://developer.wordpress.org/reference/functions/comment_reply_link/
     function wpdocs_comment_reply_link_class( $class ) {
     	$class = str_replace( "comment-reply-link", "comment-reply-link vat noslide", $class );
@@ -2736,13 +2776,14 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             $approved = $comment->comment_approved;
             $content = $comment->comment_content; //esc_html();// //strip_tags(); XSS Secure Issues!!!
             $parent = $comment->comment_parent;
-            if ($approved=='0') $content = '<small style="opacity:.5">[ 评论未审核，通过后显示 ]</small>';
+            $un_approved = $approved == '0';
+            if ($un_approved) $content = '<small style="opacity:.5">[ 等待评论审核，通过正常显示。 ]</small>';
             if ($parent>0) $content = '<a href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
             $is_ai_comment = get_comment_meta( $id, '_2ber_ai_reply', true ) || get_comment_meta( $id, '_2ber_ai_processing', true ); //&& $comment->user_id === 0;
             // apply ai reply status
             ajax_ai_reply_status($comment);
     ?>
-            <div class="vcard magnetics<?php echo $is_ai_comment ? ' ai' : ''; ?>" data-ai-pending="<?php echo $comment->two_ber_ai_pending ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $id; ?>">
+            <div class="vcard magnetics<?php echo $is_ai_comment ? ' ai' : '';if ($un_approved) echo ' auditing'; ?>" data-ai-pending="<?php echo $comment->two_ber_ai_pending ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $id; ?>">
                 <a class="noslide" rel="nofollow" href="<?php echo $link; ?>" target="_blank">
                     <?php 
                         if (get_option('show_avatars')) {
@@ -2761,7 +2802,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                                 echo '<span class="vsys vai">AI Comment #' . $id . '</span>';
                             } else {
                                 if ($email == get_bloginfo('admin_email')) echo '<span class="vsys vadmin">admin</span>';
-                                echo $approved=="0" ? '<span class="vsys auditing"> Auditing </span>' : '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
+                                echo $un_approved ? '<span class="vsys auditing"> Auditing </span>' : '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
                             }
                         ?>
                     </div>
@@ -2769,7 +2810,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                         <span class="vtime"><?php echo date('Y-m-d', strtotime($comment->comment_date)); ?></span>
                         <span class="vedited"></span>
                         <?php 
-                            if ($approved=="1") {
+                            if (!$un_approved) {
                                 if (get_option('site_ajax_comment_switcher')) {
                                     echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$id.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$id.'" data-respondelement="respond" data-replyto="'.$nick.'" aria-label="正在回复给：@'.$nick.'">回复</a>';
                                     // unset($post);
@@ -2829,7 +2870,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             if(count($child_comment)>=1){
                 // $child_comment = json_decode(json_encode($child_comment), true); // Objects to Array object
                 foreach ($child_comment as $child) {
-                    if($child->comment_approved=='0') $child->comment_content = '评论未审核，通过后显示';
+                    if($child->comment_approved=='0') $child->comment_content = '等待评论审核，通过正常显示。';
                     // use privacy data encryption
                     $child->comment_author_IP = sha1($child->comment_author_IP);
                     $child->comment_author_email = md5($child->comment_author_email);

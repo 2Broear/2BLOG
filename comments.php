@@ -327,7 +327,7 @@
                                 <?php
                                     $content = $comment->comment_content; //strip_tags($comment->comment_content);
                                     $parent = $comment->comment_parent;
-                                    if($approved=='0') $content = '<small style="opacity:.5">[ 评论未审核，通过后显示 ]</small>';
+                                    if($approved=='0') $content = '<small style="opacity:.5">[ 等待评论审核，通过正常显示。 ]</small>';
                                     if($parent>0) $content = '<a href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
                                     echo $content; //'<p>'.$content.'</p>'; //comment_text();
                                 ?>
@@ -420,7 +420,7 @@
                         $load_class = 'loadmore';
                         if ($comment_count === $comments_all) {
                             $load_class = $load_class . ' disabled';
-                            $text_loadmore = '没有更多评论';
+                            $text_loadmore = '已加载全部评论';
                         }
                         echo '<a href="javascript:;" class="' . $load_class . ' noslide magnetic" data-click="0" data-load="'.$comment_count.'" data-counts="'.$comments_all.'" data-nonce="'.wp_create_nonce($post_ID."_comment_ajax_nonce").'">'.$text_loadmore.'</a>';
                     } else {
@@ -506,7 +506,8 @@
                             comment_more: "加载更多评论",
                             comment_cancel: '取消回复',
                             comment_block: "您的评论被系统拒绝，请等待管理员审核！",
-                            comment_repeat: '检测到重复评论，您似乎已经提交过这条评论了！',
+                            comment_repeat: '检测到重复评论，您似乎已经提交过这条评论了！', //'检测到重复评论，这条评论似乎已经被提交过了！'
+                            comment_repeats: '检测到重复请求，2BER AI 已经为这篇文章生成过摘要了！',
                             comment_limits: '您提交评论的速度太快了，请稍后再发表评论。',
                             comment_error: '抱歉，服务器错误，请稍后再试。',
                             comment_counter: '条评论',
@@ -806,7 +807,7 @@
                                   is_admin = email == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
                                   is_auditing = child.comment_approved == 0,
                                   is_approved = is_auditing ? '<span class="auditing vsys">Auditing</span>' : '',
-                                  replytocom = !is_auditing ? `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>` : "";
+                                  replytocom = is_auditing ? '' : `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>`;
                               if (is_auditing) {
                                   content = '<small style="opacity:.5">[ '+content+' ]</small>'; //${cururl}?replytocom=${id}#respond
                                   user_agent = '';
@@ -817,7 +818,7 @@
                                   ai_class = ' ai';
                               }
                               // track-back (childCommentsLoop insert after output)
-                              output += `<div class="vcard magnetics${ai_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0.015" id="comment-${id}"><a class="noslide" rel="nofollow" href="${link}" target="_blank"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent}</div><div class="vmeta"><span class="vtime">${child.comment_date}</span><span class="vedited"></span>${replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${nick}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
+                              output += `<div class="vcard magnetics${ai_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0.015" id="comment-${id}"><a class="noslide" rel="nofollow" href="${link}" target="_blank"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent}</div><div class="vmeta"><span class="vtime">${new Date(child.comment_date).toLocaleDateString()}</span><span class="vedited"></span>${replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${nick}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
                            }
                         }
                         return output;
@@ -1016,7 +1017,7 @@
                                                     is_admin = md5mail == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
                                                     is_auditing = each_comment.comment_approved == 0,
                                                     is_approved = is_auditing ? '<span class="vsys auditing">待审核</span>' : '',
-                                                    replytocom = !is_auditing ? `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>` : "";
+                                                    replytocom = is_auditing ? '' : `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>`;
                                                 if (is_auditing) {
                                                     content = '<small style="opacity:.5">[ '+content+' ]</small>'; //${cururl}?replytocom=${id}#respond
                                                     user_agent = '';
@@ -1033,7 +1034,7 @@
                                                 appendList.dataset.magnetScale = '1';
                                                 appendList.dataset.magnetStep = "0.015";
                                                 appendList.classList.add("vcard"); //wp_comments
-                                                appendList.innerHTML += `<a class="noslide" rel="nofollow" href="${link}" target="_blank"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_comment.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow" href="${link}" target="_blank"> <em>${nick}</em> </a> ${ai_reply + is_admin + is_approved + user_agent}</div> <div class="vmeta"> <span class="vtime">${each_comment.comment_date}</span> <span class="vedited"></span> ${replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
+                                                appendList.innerHTML += `<a class="noslide" rel="nofollow" href="${link}" target="_blank"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_comment.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow" href="${link}" target="_blank"> <em>${nick}</em> </a> ${ai_reply + is_admin + is_approved + user_agent}</div> <div class="vmeta"> <span class="vtime">${new Date(each_comment.comment_date).toLocaleDateString()}</span> <span class="vedited"></span> ${replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
                                                 that.vlist.appendChild(appendList);
                                                 that.vlist.innerHTML += if_child;
                                             }
@@ -1334,12 +1335,7 @@
                                                             }
                                                         } else {
                                                             console.log('is direct insert');
-                                                            if (ai_comments) {
-                                                                wrap_ul.appendChild(comment);
-                                                                that.vlist.insertBefore(wrap_ul, that.vlist.children[1]);  // (insert as second
-                                                            } else {
-                                                                that.vlist.insertBefore(comment, that.vlist.firstElementChild);
-                                                            }
+                                                            that.vlist.insertBefore(comment, that.vlist.firstElementChild);
                                                         }
                                                         //update comment_count at level-0 submit
                                                         that.vcount.innerHTML = `<strong id="count"> ${(parseInt(that.vcount.innerText)+1)}</strong> ${that.reply_obj.context.comment_counter}`;
@@ -1349,11 +1345,12 @@
                                                     container.innerHTML = res;
                                                     // !!!bad selector on comment_order changed while comment_pid===0!!!
                                                     let reply_comment = +comment_pid === 0 ? container.querySelector(`.v .vlist .vcard`) : container.querySelector(`.v .vlist .vcard#comment-${comment_pid}`).nextElementSibling;
-                                                    console.log(container, reply_comment);
+                                                    // console.log(container, reply_comment);
                                                     // update reply_comment on child-reply for newest comment id (classList detects for $wp_ajax_comment_paginate disabled)
                                                     if (reply_comment.dataset.cpid || reply_comment.classList.contains('children')) reply_comment = reply_comment.lastElementChild;
                                                     reply_comment_id = reply_comment.id.match(/\d+/)[0];
                                                     let comment_info = '<span class="auditing vsys"> Awaiting </span>',
+                                                        replytocom = reply_comment.classList.contains('auditing') ? '' : `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${reply_comment_id}" data-postid="${comment_cid}" data-belowelement="comment-${reply_comment_id}" data-respondelement="respond">回复</a>`, //reply_comment.dataset.aiPending
                                                         temp_comment = document.createElement("div"),
                                                         comment_replyto = t.dataset.replyto ? '<a href="#comment-'+comment_pid+'">@'+t.dataset.replyto+'</a> , ' : '';
                                                     if (a_val=="<?php echo $user_name; ?>" && e_val=="<?php echo $user_mail; ?>") {
@@ -1361,7 +1358,7 @@
                                                     }
                                                     temp_comment.id = 'comment-' + reply_comment_id;
                                                     temp_comment.className = 'vcard magnetics comment_preview'; //wp_comments
-                                                    temp_comment.innerHTML = `<a class="noslide" rel="nofollow" href="" target="_blank"> <img class="vimg" src="${that.vinfo.querySelector('.avatar img').src}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid=""> <div class="vhead"> <a class="vnick" rel="nofollow" href="" target="_blank"> <em>${a_val}</em> </a> ${comment_info}<span class="vsys useragent"> Comment Preview </span></div> <div class="vmeta"> <span class="vtime">${new Date().toLocaleDateString()}</span> <span class="vedited"></span><a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${reply_comment_id}" data-postid="${comment_cid}" data-belowelement="comment-${reply_comment_id}" data-respondelement="respond">回复</a></div> <div class="vcontent"> <p>${comment_replyto} ${filter_c_val}</p> </div> </div>`;
+                                                    temp_comment.innerHTML = `<a class="noslide" rel="nofollow" href="" target="_blank"> <img class="vimg" src="${that.vinfo.querySelector('.avatar img').src}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid=""> <div class="vhead"> <a class="vnick" rel="nofollow" href="" target="_blank"> <em>${a_val}</em> </a> ${comment_info}<span class="vsys useragent"> Comment Preview </span></div> <div class="vmeta"> <span class="vtime">${new Date().toLocaleDateString()}</span> <span class="vedited"></span>${replytocom}</div> <div class="vcontent"> <p>${comment_replyto} ${filter_c_val}</p> </div> </div>`;
                                                     // console.log(temp_comment);
                                                     appendComment(temp_comment);  // appen preview comments
                                                 <?php
@@ -1382,8 +1379,10 @@
                                                         let reply_link = temp_comment.querySelector('.comment-reply-link');
                                                         if (comment_preview) comment_preview.classList.remove('comment_preview');
                                                         // update current to normal-replyto
-                                                        reply_link.dataset.replyto = comment_nick.textContent;
-                                                        reply_link.setAttribute('aria-label', `正在回复给：@${comment_nick.textContent}`);
+                                                        if (reply_link && comment_nick) {
+                                                            reply_link.dataset.replyto = comment_nick.textContent;
+                                                            reply_link.setAttribute('aria-label', `正在回复给：@${comment_nick.textContent}`);
+                                                        }
                                                         // comment @2ber ai filter
                                                         if (reply_comment_id === comment_pid && that.vlist.querySelector(`.vcard#comment-${replied_id}`)) { //null === filter_c_val.toLowerCase().match('2ber')
                                                             console.warn('canceled ai-reply.');
@@ -1419,7 +1418,7 @@
                                                             ?>
                                                             comment_nick.textContent = '2BER';
                                                             // remove current reply info on processing..
-                                                            comment_clone.querySelector('.comment-reply-link').remove();
+                                                            if (reply_link) comment_clone.querySelector('.comment-reply-link').remove();
                                                             // update new comment_sibings node.
                                                             const comment_sibings = comment_preview.nextElementSibling;
                                                             const comment_parents = comment_preview.parentNode;
@@ -1451,7 +1450,7 @@
                                                             if (ai_comments.classList.contains('children')) ai_comments.parentNode.dataset.cpid = comment_pid;
                                                             // updaet final-reply info
                                                             comment_nick = ai_comments.querySelector('.vnick em');
-                                                            ai_comments.querySelector('.vmeta').innerHTML += `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${replied_id}" data-postid="${comment_cid}" data-belowelement="comment-${replied_id}" data-respondelement="respond" data-replyto="${comment_nick.textContent}" aria-label="正在回复给：@${comment_nick.textContent}">回复</a>`;
+                                                            if (reply_link) ai_comments.querySelector('.vmeta').innerHTML += `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${replied_id}" data-postid="${comment_cid}" data-belowelement="comment-${replied_id}" data-respondelement="respond" data-replyto="${comment_nick.textContent}" aria-label="正在回复给：@${comment_nick.textContent}">回复</a>`;
                                                         }
                                                     }, (data)=> {
                                                         <?php
@@ -1494,6 +1493,9 @@
                                                         break;
                                                     case 409:
                                                         err = that.reply_obj.context.comment_repeat;
+                                                        break;
+                                                    case 422:
+                                                        err = that.reply_obj.context.comment_repeats;
                                                         break;
                                                     case 429:
                                                         err = that.reply_obj.context.comment_limits;
