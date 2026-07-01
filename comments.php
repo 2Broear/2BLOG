@@ -370,10 +370,12 @@
                         }
                         wp_comments_template($each);
                         // 遍历子评论列表 https://wp-kama.com/function/WP_Comment::get_children
+                        $comment_order = get_option('site_ajax_comment_paginate') ? 'ASC' : get_option('comment_order');
                         $child_comment = $each->get_children(array(
                             'hierarchical' => 'threaded',
+                            'order'        => $comment_order, //get_option('comment_order'), //
+                            'orderby' => 'comment_date_gmt',
                             // 'status'       => 'approve',
-                            'order'        => 'ASC', //get_option('comment_order'), //
                             // 'default_comments_page' => get_option('default_comments_page'), //newest
                             // 'orderby'=>'order_clause',
                             // 'meta_query'=>array(
@@ -1158,7 +1160,7 @@
                                                         console.warn('Max retry limited, AI is busy now..');
                                                         busy?.(data);
                                                     }
-                                                }, 3000);
+                                                }, 2000);
                                             } else if (data.status === 'completed') {
                                                 console.log(data);
                                             }
@@ -1278,6 +1280,8 @@
                                     that.filterComments((filter_c_val, filter_exit)=> {
                                         if (filter_exit) {
                                             alert(filter_c_val);
+                                            t.textContent = t.value = "<?php echo $text_submit; ?>";
+                                            that.dom.classList.remove(that.reply_obj.context.class_no_reply);  //disable reply
                                             return;
                                         }
                                         that.clears(); // clear canvas
@@ -1360,6 +1364,8 @@
                                                     temp_comment.className = 'vcard magnetics comment_preview'; //wp_comments
                                                     temp_comment.innerHTML = `<a class="noslide" rel="nofollow" href="" target="_blank"> <img class="vimg" src="${that.vinfo.querySelector('.avatar img').src}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid=""> <div class="vhead"> <a class="vnick" rel="nofollow" href="" target="_blank"> <em>${a_val}</em> </a> ${comment_info}<span class="vsys useragent"> Comment Preview </span></div> <div class="vmeta"> <span class="vtime">${new Date().toLocaleDateString()}</span> <span class="vedited"></span>${replytocom}</div> <div class="vcontent"> <p>${comment_replyto} ${filter_c_val}</p> </div> </div>`;
                                                     // console.log(temp_comment);
+                                                    let comment_nick = temp_comment.querySelector('.vnick em');
+                                                    let reply_link = temp_comment.querySelector('.comment-reply-link');
                                                     appendComment(temp_comment);  // appen preview comments
                                                 <?php
                                                     if ($ai_comment) {
@@ -1371,12 +1377,10 @@
                                                      * 
                                                      */
                                                     let ai_comments;
-                                                    const ai_reconnect = 15;
+                                                    const ai_reconnect = 15; // 15 * 2000ms
                                                     handle_ai_comments(reply_comment_id, (data, retried)=> {
                                                         const replied_id = data?.reply_id;
                                                         let comment_preview = that.vlist.querySelector('.comment_preview');
-                                                        let comment_nick = temp_comment.querySelector('.vnick em');
-                                                        let reply_link = temp_comment.querySelector('.comment-reply-link');
                                                         if (comment_preview) comment_preview.classList.remove('comment_preview');
                                                         // update current to normal-replyto
                                                         if (reply_link && comment_nick) {
@@ -1453,11 +1457,12 @@
                                                             if (reply_link) ai_comments.querySelector('.vmeta').innerHTML += `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${replied_id}" data-postid="${comment_cid}" data-belowelement="comment-${replied_id}" data-respondelement="respond" data-replyto="${comment_nick.textContent}" aria-label="正在回复给：@${comment_nick.textContent}">回复</a>`;
                                                         }
                                                     }, (data)=> {
+                                                        const respond_context = "Try aggin later, 2BER AI might busy now..";
                                                         <?php
                                                             if ($words_typer) {
-                                                                echo 'words_typer(ai_comments.querySelector(".vcontent p"), "Come back later, AI might busy now..", 25, "' . $shuffle_typer . '");';
+                                                                echo 'words_typer(ai_comments.querySelector(".vcontent p"), respond_context, 25, "' . $shuffle_typer . '");';
                                                             } else {
-                                                                echo 'ai_comments.querySelector(".vcontent p").textContent = "Come back later, AI might busy now..", 25, ";';
+                                                                echo 'ai_comments.querySelector(".vcontent p").textContent = respond_context;';
                                                             }
                                                         ?>
                                                     }, ai_reconnect);

@@ -450,7 +450,7 @@ table tr.openyear {
 		overflow-x: scroll;
 	}
 	.bg h1 {
-		font-size: 1.75rem;
+		font-size: 3rem;
 		border-radius:var(--radius);
 		margin-bottom: 20%;
 	}

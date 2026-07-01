@@ -2419,7 +2419,7 @@
                                         $opt = 'site_ajax_comment_paginate';
                                         $status = check_status($opt);
                                         $premise = get_option('site_ajax_comment_switcher');
-                                        $tips = '开启免刷新加载评论，替代 PREV/NEXT 翻页按钮并支持评论标签，支持多层级子评论自动折叠（关闭上方Ajax 评论时此项将自动关闭';
+                                        $tips = '开启免刷新加载评论，替代 PREV/NEXT 翻页按钮并支持评论标签，支持子级评论自动折叠，支持部分打字机效果（关闭上方Ajax 评论时此项将自动关闭';
                                         if (get_option($opt) && !$premise) {
                                             update_option('site_ajax_comment_paginate', '');
                                         } else {
@@ -3325,22 +3325,22 @@
                         </td>
                     </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt = get_option('site_chatgpt_switcher') ? 'dynamic_optshow' : false; ?>">
-                                <th scope="row">— AI Summary<sup>POST</sup></th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_ai_summary';
-                                        $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启文章AI总结，可选开启页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AI Summary</b></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
                                 <th scope="row">— AI Comments<sup>2BER</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_ai_comments';
                                         $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">开启评论区AI助手，评论“@2BER”激活。支持文章总结、评论区留言交互、多轮对话等（使用AI摘要相同TOKEN模型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">2BER AI</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— AI Summary<sup>POST</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_ai_summary';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启文章AI总结，可选开启页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AI Summary</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -3545,7 +3545,7 @@
                                     <?php
                                         $opt = 'site_chatgpt_type_shuffle';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">一次性加载混淆文本，避免频繁更新页面造成 CLS 性能影响</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Shuffle Type</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">一次性加载混淆文本，避免频繁更新页面造成 CLS 性能影响</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">ShuffleWords</b></label>';
                                     ?>
                                 </td>
                             </tr>

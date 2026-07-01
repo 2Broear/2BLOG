@@ -1,4 +1,43 @@
 <?php
+// // 临时调试：列出 comment_post 上所有回调的来源信息
+// add_action('init', function() {
+//     global $wp_filter;
+//     $hook = $wp_filter['comment_post'] ?? null;
+//     if ( ! $hook instanceof WP_Hook ) return;
+    
+//     foreach ( $hook->callbacks as $priority => $callbacks ) {
+//         foreach ( $callbacks as $idx => $callback ) {
+//             $func = $callback['function'];
+//             $info = 'unknown';
+//             if ( is_array( $func ) ) {
+//                 $class  = is_object( $func[0] ) ? get_class( $func[0] ) : $func[0];
+//                 $method = $func[1];
+//                 try {
+//                     $ref = new ReflectionMethod( $class, $method );
+//                     $info = $ref->getFileName() . ':' . $ref->getStartLine();
+//                 } catch ( Exception $e ) {
+//                     $info = $class . '::' . $method;
+//                 }
+//             } elseif ( is_string( $func ) ) {
+//                 try {
+//                     $ref = new ReflectionFunction( $func );
+//                     $info = $ref->getFileName() . ':' . $ref->getStartLine();
+//                 } catch ( Exception $e ) {
+//                     $info = $func;
+//                 }
+//             } elseif ( $func instanceof Closure ) {
+//                 // 闭包：反射可拿到定义位置
+//                 try {
+//                     $ref = new ReflectionFunction( $func );
+//                     $info = $ref->getFileName() . ':' . $ref->getStartLine();
+//                 } catch ( Exception $e ) {
+//                     $info = 'Closure (no file)';
+//                 }
+//             }
+//             error_log( "[Comment Hook Source] priority={$priority} idx={$idx} -> {$info}" );
+//         }
+//     }
+// });
     /*
      *--------------------------------------------------------------------------
      * 2026 FEATS
@@ -910,39 +949,38 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
         
         /**
          * 
-         * AI 垃圾评论审核
+         * AI 垃圾评论审核（异步 + 本地前置过滤）
          *
          * @param string $comment_content 待审核的评论内容
          * @return bool true=垃圾，false=正常
          */
-         
         if (get_option('site_chatgpt_ai_anti_spam')) {
-            // ========== AI 垃圾评论审核（含后台理由显示） ==========
             define( 'TWO_BER_AI_SPAM_CHECK_ENABLED', true );
             define( 'TWO_BER_AI_SPAM_CHECK_GUESTS_ONLY', true );
             define( 'TWO_BER_AI_SPAM_FAIL_ACTION', 'allow' );
-            
+        
+            // ---------- 原有函数，完全不变 ----------
             function two_ber_ai_spam_filter( $comment_content ) {
                 if ( ! TWO_BER_AI_SPAM_CHECK_ENABLED ) {
                     return array( 'is_spam' => false, 'reason' => '' );
                 }
-            
+        
                 if ( TWO_BER_AI_SPAM_CHECK_GUESTS_ONLY && is_user_logged_in() ) {
                     return array( 'is_spam' => false, 'reason' => '' );
                 }
-            
+        
                 $content = wp_strip_all_tags( trim( $comment_content ) );
                 if ( empty( $content ) ) {
                     return array( 'is_spam' => false, 'reason' => '' );
                 }
-            
+        
                 $spam_samples = two_ber_get_spam_samples( 6 );
                 $ham_samples  = two_ber_get_ham_samples( 3 );
-            
+        
                 $system  = "你是一个专业的垃圾评论审查员，请根据**语义意图**和**上下文合理性**判断评论是否为垃圾。\n";
                 $system .= "垃圾评论的典型特征：无关广告/外链、诱导点击、虚假夸奖并附带推广、纯SEO关键词堆砌、完全无意义的乱码。\n";
-                $system .= "**特别注意**：重复字符不一定都是垃圾！如果重复是为了表达强烈情绪（如‘哈哈哈哈哈’）、强调（如‘太棒了太棒了太棒了！’）或符合上下文的口语化表达，应视为**正常评论**。\n";  // $system .= "只有**毫无意义、脱离语境的纯重复灌水**（如‘啊啊啊啊啊啊啊啊啊啊啊啊’、‘1’）才应判定为垃圾。\n\n";
-                
+                $system .= "**特别注意**：重复字符不一定都是垃圾！如果重复是为了表达强烈情绪（如‘哈哈哈哈哈’）、强调（如‘太棒了太棒了太棒了！’）或符合上下文的口语化表达，应视为**正常评论**。\n";
+        
                 $system .= "【垃圾评论示例】\n";
                 foreach ( $spam_samples as $i => $spam ) {
                     $system .= ($i+1) . ". " . $spam . "\n";
@@ -952,14 +990,14 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                     $system .= ($i+1) . ". " . $ham . "\n";
                 }
                 $system .= "\n请严格参照示例，仅以JSON格式返回判断结果，字段：is_spam (布尔), reason (简短中文理由)。";
-            
+        
                 $messages = array(
                     array( 'role' => 'system', 'content' => $system ),
                     array( 'role' => 'user',   'content' => "新评论：" . $content ),
                 );
-            
+        
                 $result = two_ber_ai_call_spam_api( $messages );
-            
+        
                 if ( is_wp_error( $result ) ) {
                     error_log( 'AI Spam Filter API Error: ' . $result->get_error_message() );
                     return array(
@@ -967,7 +1005,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                         'reason'  => 'API错误'
                     );
                 }
-            
+        
                 $decoded = json_decode( $result, true );
                 if ( ! is_array( $decoded ) || ! isset( $decoded['is_spam'] ) ) {
                     error_log( 'AI Spam Filter Invalid JSON: ' . $result );
@@ -976,16 +1014,13 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                         'reason'  => '格式错误'
                     );
                 }
-            
+        
                 return array(
                     'is_spam' => (bool) $decoded['is_spam'],
                     'reason'  => $decoded['reason'] ?? '未提供理由'
                 );
             }
-            
-            /**
-             * 随机获取已标为垃圾的评论内容
-             */
+        
             function two_ber_get_spam_samples( $count = 4 ) {
                 $comments = get_comments( array(
                     'status' => 'spam',
@@ -993,7 +1028,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                     'orderby'=> 'comment_date_gmt',
                     'order'  => 'DESC',
                 ) );
-            
+        
                 $samples = array();
                 foreach ( $comments as $c ) {
                     $text = wp_strip_all_tags( trim( $c->comment_content ) );
@@ -1006,10 +1041,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 }
                 return array_slice( $samples, 0, $count );
             }
-            
-            /**
-             * 随机获取正常评论内容（作为对照）
-             */
+        
             function two_ber_get_ham_samples( $count = 2 ) {
                 $comments = get_comments( array(
                     'status' => 'approve',
@@ -1017,7 +1049,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                     'orderby'=> 'comment_date_gmt',
                     'order'  => 'DESC',
                 ) );
-            
+        
                 $samples = array();
                 foreach ( $comments as $c ) {
                     $text = wp_strip_all_tags( trim( $c->comment_content ) );
@@ -1030,21 +1062,18 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 }
                 return array_slice( $samples, 0, $count );
             }
-            
-            /**
-             * 专用 API 调用（独立于回复 API）
-             */
+        
             function two_ber_ai_call_spam_api( $messages ) {
                 $api_key = TWO_BER_AI_API_KEY;
                 $url = get_option('site_chatgpt_proxy') . get_option('site_chatgpt_apis');
-            
+        
                 $body = array(
                     'model'       => TWO_BER_AI_MODEL,
                     'messages'    => $messages,
                     'temperature' => 0.1,
                     'max_completion_tokens'  => 150,
                 );
-            
+        
                 $args = array(
                     'timeout'     => 15,
                     'headers'     => array(
@@ -1053,58 +1082,120 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                     ),
                     'body'        => wp_json_encode( $body ),
                 );
-            
+        
                 $response = wp_remote_post( $url, $args );
                 if ( is_wp_error( $response ) ) {
                     return $response;
                 }
-            
+        
                 $http_code = wp_remote_retrieve_response_code( $response );
                 $body_str  = wp_remote_retrieve_body( $response );
                 $result    = json_decode( $body_str, true );
-            
+        
                 if ( $http_code === 200 && ! empty( $result['choices'][0]['message']['content'] ) ) {
                     return $result['choices'][0]['message']['content'];
                 }
-            
+        
                 return new WP_Error( 'spam_api_error', '审核 API 请求失败' );
             }
-            
-            /**
-             * 核心拦截：判定为垃圾时直接写入垃圾箱并记录理由，前端返回 403
-             */
+        
+            // ---------- 1. 本地前置过滤（不阻塞，只使用 WordPress 原生关键词） ----------
             add_filter( 'preprocess_comment', function ( $commentdata ) {
-                // 防止递归
-                if ( ! empty( $GLOBALS['_two_ber_spam_processing'] ) ) {
-                    return $commentdata;
-                }
-            
-                $result = two_ber_ai_spam_filter( $commentdata['comment_content'] );
-            
-                if ( $result['is_spam'] ) {
-                    $commentdata['comment_approved'] = 'spam';
-                    $GLOBALS['_two_ber_spam_processing'] = true;
-                    $comment_id = wp_insert_comment( $commentdata );
-                    $GLOBALS['_two_ber_spam_processing'] = false;
-            
-                    if ( $comment_id ) {
-                        update_comment_meta( $comment_id, '_ai_spam_reason', $result['reason'] );
+                $content = $commentdata['comment_content'];
+        
+                // 黑名单关键词 → 直接拦截
+                $disallowed = get_option( 'disallowed_keys' );
+                if ( ! empty( $disallowed ) ) {
+                    $keys = explode( "\n", $disallowed );
+                    foreach ( $keys as $key ) {
+                        $key = trim( $key );
+                        if ( empty( $key ) ) continue;
+                        $pattern = '/\b' . preg_quote( $key, '/' ) . '\b/i';
+                        if ( preg_match( $pattern, $content ) ) {
+                            wp_die( '您的评论被系统识别为垃圾信息，如有误判请联系管理员。', '评论拦截', array( 'response' => 403 ) );
+                        }
                     }
-            
-                    wp_die( '您的评论被系统识别为垃圾信息，如有误判请联系管理员。', '评论拦截', array( 'response' => 403 ) );
                 }
+        
+                // 审核关键词 → 进入待审核（不再进入异步 AI 审核）
+                $moderation = get_option( 'moderation_keys' );
+                if ( ! empty( $moderation ) ) {
+                    $keys = explode( "\n", $moderation );
+                    foreach ( $keys as $key ) {
+                        $key = trim( $key );
+                        if ( empty( $key ) ) continue;
+                        $pattern = '/\b' . preg_quote( $key, '/' ) . '\b/i';
+                        if ( preg_match( $pattern, $content ) ) {
+                            $commentdata['comment_approved'] = 0;
+                            // 标记已由本地处理，异步任务看到后会跳过
+                            $commentdata['_local_moderated'] = true;
+                            return $commentdata;
+                        }
+                    }
+                }
+        
+                // // ---- 3. 自定义本地硬规则（前端过滤）
+                // $clean_content = wp_strip_all_tags( $content );
+                // $site_comment_blacklists = get_option('site_comment_blacklists');
+                // $spam_phrases = $site_comment_blacklists ? explode('|', $site_comment_blacklists) : [ 'cheap pills', 'buy now', 'viagra', 'casino', '赚取', '加微信', '加Q', '免费领取' ];
+                // $lower = mb_strtolower( $clean_content );
+                // foreach ( $spam_phrases as $phrase ) {
+                //     if ( mb_stripos( $lower, $phrase ) !== false ) {
+                //         wp_die( '您的评论包含违规内容，如有误判请联系管理员。', '评论拦截', [ 'response' => 403 ] );
+                //     }
+                // }
             
                 return $commentdata;
-            }, 1 );
-            
-            /**
-             * 后台评论列表显示 AI 拦截原因
-             */
+            }, 0 ); // 优先级 0，最早执行
+        
+            // ---------- 2. 异步 AI 审核任务 ----------
+            add_action( 'comment_post', function ( $comment_id, $comment_approved, $commentdata ) {
+                // 跳过已确定的垃圾、回收站
+                if ( $comment_approved === 'spam' || $comment_approved === 'trash' ) return;
+                // 跳过登录用户（按配置）
+                if ( TWO_BER_AI_SPAM_CHECK_GUESTS_ONLY && is_user_logged_in() ) return;
+                // 跳过已被本地审核关键词挂起的评论
+                if ( ! empty( $commentdata['_local_moderated'] ) ) return;
+        
+                // 避免重复计划
+                if ( get_comment_meta( $comment_id, '_ai_spam_review_planned', true ) ) return;
+        
+                update_comment_meta( $comment_id, '_ai_spam_review_planned', 1 );
+                wp_schedule_single_event( time() + 5, 'two_ber_ai_spam_review', array( $comment_id ) );
+            }, 10, 3 );
+        
+            // 注册异步审核动作
+            add_action( 'two_ber_ai_spam_review', function ( $comment_id ) {
+                $comment = get_comment( $comment_id );
+                if ( ! $comment || $comment->comment_approved === 'spam' || $comment->comment_approved === 'trash' ) {
+                    delete_comment_meta( $comment_id, '_ai_spam_review_planned' );
+                    return;
+                }
+        
+                // 再次确认没有被本地关键词挂起（保险）
+                if ( $comment->comment_approved == 0 && get_comment_meta( $comment_id, '_local_moderated', true ) ) {
+                    delete_comment_meta( $comment_id, '_ai_spam_review_planned' );
+                    return;
+                }
+        
+                $result = two_ber_ai_spam_filter( $comment->comment_content );
+        
+                if ( $result['is_spam'] ) {
+                    // 移入垃圾箱
+                    wp_spam_comment( $comment_id );
+                    update_comment_meta( $comment_id, '_ai_spam_reason', $result['reason'] );
+                    error_log( "Async AI spam caught: comment_id=$comment_id reason={$result['reason']}" );
+                }
+        
+                delete_comment_meta( $comment_id, '_ai_spam_review_planned' );
+            } );
+        
+            // ---------- 3. 后台显示 AI 拦截原因 ----------
             add_filter( 'manage_edit-comments_columns', function ( $columns ) {
                 $columns['ai_spam_reason'] = 'AI AntiSpam';
                 return $columns;
             } );
-            
+        
             add_action( 'manage_comments_custom_column', function ( $column, $comment_id ) {
                 if ( 'ai_spam_reason' === $column ) {
                     $reason = get_comment_meta( $comment_id, '_ai_spam_reason', true );
@@ -1113,6 +1204,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             }, 10, 2 );
         }
     }
+    
     
     /*
      *--------------------------------------------------------------------------
@@ -2607,6 +2699,176 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
      *--------------------------------------------------------------------------
     */
     
+    // 默认储存评论 COOKIE
+    function coffin_set_cookies( $comment, $user, $cookies_consent) {
+    	$cookies_consent = true;
+    	wp_set_comment_cookies($comment, $user, $cookies_consent);
+    }
+    add_action('set_comment_cookies','coffin_set_cookies',10,3);
+    
+    /**
+     * ===========================
+     * 评论通知异步优化（全部通知，含博主、微信、访客回复）
+     * ===========================
+     */
+     
+    // 评论微信提醒（博主）
+    if ( get_option('site_wpwx_notify_switcher') ) {
+    
+        // 实际发送微信的函数（内部调用 wp_remote_post，在延迟回调中执行）
+        function push_weixin_async( $comment_id ) {
+            $comment = get_comment( $comment_id );
+            if ( ! $comment ) return false;
+    
+            $post_id       = $comment->comment_post_ID;
+            $admin_mail    = get_bloginfo('admin_email');
+            $comment_mail  = $comment->comment_author_email;
+            $comment_author     = $comment->comment_author;
+            $comment_title      = '《' . get_the_title($post_id) . '》 上有新评论啦~';
+            $comment_content    = strip_tags($comment->comment_content);
+    
+            if ( $comment_mail != $admin_mail ) {
+                $url = custom_cdn_src(0, 1) . '/plugin/wpwx-notify.php';
+                wp_remote_post( $url, array(
+                    'blocking' => false,
+                    'timeout'  => 1,
+                    'body'     => array(
+                        'name'    => $comment_author,
+                        'mail'    => $comment_mail,
+                        'title'   => $comment_title,
+                        'content' => $comment_content,
+                        'image'   => get_postimg(0, $post_id, true),
+                        'url'     => urlencode(get_the_permalink($post_id)) . '#comments',
+                    ),
+                ));
+                return true;
+            }
+            return false;
+        }
+    
+        // 延迟回调：WP-Cron 触发时再真正执行微信发送
+        add_action( 'delayed_weixin_notify', 'send_weixin_notify_later' );
+        function send_weixin_notify_later( $comment_id ) {
+            push_weixin_async( $comment_id );
+        }
+    
+        // 主钩子：只安排延迟任务，不做任何网络操作
+        add_action( 'comment_post', 'schedule_weixin_notifications', 10, 2 );
+        function schedule_weixin_notifications( $comment_id, $comment_approved ) {
+            $comment = get_comment( $comment_id );
+            if ( ! $comment ) return;
+    
+            $admin_mail = get_bloginfo('admin_email');
+            $is_not_admin = ( $comment->comment_author_email != $admin_mail );
+    
+            if ( $is_not_admin ) {
+                // 5 秒后由 WP-Cron 触发真正的微信推送
+                wp_schedule_single_event( time() + 5, 'delayed_weixin_notify', array( $comment_id ) );
+            }
+        }
+    }
+    
+    // 评论邮件提醒（博主+访客）
+    if ( get_option('site_wpmail_switcher') && get_option('site_third_comments') == 'Wordpress' ) {
+        // disengage default notify from wp
+        remove_action('comment_post', 'wp_new_comment_notify_moderator', 10);
+        remove_action('comment_post', 'wp_new_comment_notify_postauthor', 10);
+        
+        // 默认评论前置@（调用时插入文本）// 评论添加@（提交时写入数据库）https://www.ludou.org/wordpress-comment-reply-add-at.html
+        function wp_comment_at($comment_text, $comment='') {
+            if ( empty($comment) || !is_object($comment) ) {
+                return $comment_text;   // 参数无效，原样返回
+            }
+            $parent = $comment->comment_parent;
+            if ( $parent > 0 ) {
+                $comment_text = '<a href="#comment-' . $parent . '">@'. get_comment_author($parent) . '</a> , ' . $comment_text;
+            }
+            return $comment_text;
+        }
+        add_filter('comment_text' , 'wp_comment_at', 20, 2);
+        
+        //1. 博主邮件发送核心（不变） ----------
+        function wp_notify_admin_mail( $comment_id, $comment_approved ) {
+            global $img_cdn;
+            $comment = get_comment( $comment_id );
+            if ( ! $comment ) return;
+    
+            $parent_id  = $comment->comment_parent ? $comment->comment_parent : 0;
+            $admin_mail = get_bloginfo('admin_email');
+            $user_mail  = $comment->comment_author_email;
+    
+            $title = ' 「' . get_the_title($comment->comment_post_ID) . '」 收到一条来自 '.$comment->comment_author.' 的留言！';
+            $body  = '<style>.box{background-color:white;border-bottom:2px solid #EB6844;border-radius:10px;box-shadow:rgba(0,0,0,0.08) 0 0 18px;line-height:180%;width:500px;margin:50px auto;color:#555555;font-family:"Century Gothic","Trebuchet MS","Hiragino Sans GB",微软雅黑,"Microsoft Yahei",Tahoma,Helvetica,Arial,"SimSun",sans-serif;font-size:12px;}.box .head{border-bottom:1px solid whitesmoke;font-size:14px;font-weight:normal;padding-bottom:15px;margin-bottom:15px;text-align:center;line-height:28px;}.box .head h3{margin-bottom:0;margin:0;}.box .head .title{color:#EB6844;font-weight:bold;}.box .body{padding:0 15px;}.box .body .content{background-color:#f5f5f5;padding:10px 15px;margin:18px 0;word-wrap:break-word;border-radius:5px;}a{text-decoration:none!important;color:#EB6844;}img{max-width:100%;display:block;margin:0 auto;border-radius:inherit;border-bottom-left-radius:unset;border-bottom-right-radius:unset;}.button:hover{background:#EB6844;color:#ffffff;}.button{display:block;margin:0 auto;width:15%;line-height:35px;padding:0 15px;border:1px solid currentColor;border-radius:50px;text-align:center;font-weight:bold;}</style><div class="box"><img src="'.$img_cdn.'/images/google.gif"><h2 class="head"><span class="title">「'. get_option("blogname") .'」上有一条新评论！</span><p><a class="button"href="' . htmlspecialchars(get_comment_link($parent_id)) . '"target="_blank">点击查看</a></p></h2><div class="body"><p><strong>' . trim($comment->comment_author) . '：</strong></p><div class="content"><p><a class="at"href="#624a75eb1122b910ec549633">' . trim($comment->comment_content) . '</a></p></div></div></div>';
+            $header = "\nContent-Type: text/html; charset=" . get_option('blog_charset') . "\n";
+    
+            if ( $user_mail != $admin_mail ) {
+                wp_mail( $admin_mail, $title, $body, $header );
+            }
+        }
+    
+        //3. 访客回复邮件发送核心（原 wp_notify_guest_mail 剥离为纯发送函数）
+        function wp_notify_guest_mail_send( $comment_id ) {
+            $comment = get_comment( $comment_id );
+            if ( ! $comment ) return;
+    
+            // 只有回复才发，并且不能是垃圾评论（这里再检查一次状态）
+            $parent_id = $comment->comment_parent ? $comment->comment_parent : '';
+            if ( $parent_id === '' ) return;
+            if ( $comment->comment_approved === 'spam' ) return;
+    
+            $admin_mail = get_bloginfo('admin_email');
+            $parent_comment = get_comment( $parent_id );
+            if ( ! $parent_comment ) return;
+    
+            $tomail = trim( $parent_comment->comment_author_email );
+            // 被回复者是博主时不发（避免和博主通知重复）
+            if ( $tomail == $admin_mail ) return;
+    
+            global $img_cdn;
+            $title = '👉 叮咚！您在 「' . get_option("blogname") . '」 上有一条新回复！';
+            $body  = '<style>.box{background-color:white;border-bottom:2px solid #EB6844;border-radius:10px;box-shadow:rgba(0,0,0,0.08) 0 0 18px;line-height:180%;width:500px;margin:50px auto;color:#555555;font-family:"Century Gothic","Trebuchet MS","Hiragino Sans GB",微软雅黑,"Microsoft Yahei",Tahoma,Helvetica,Arial,"SimSun",sans-serif;font-size:12px;}.box .head{border-bottom:1px solid whitesmoke;font-size:14px;font-weight:normal;padding-bottom:15px;margin-bottom:15px;text-align:center;line-height:28px;}.box .head h3{margin-bottom:0;margin:0;}.box .head .title{color:#EB6844;font-weight:bold;}.box .body{padding:0 15px;}.box .body .content{background-color:#f5f5f5;padding:10px 15px;margin:18px 0;word-wrap:break-word;border-radius:5px;}a{text-decoration:none!important;color:#EB6844;}img{max-width:100%;display:block;margin:0 auto;border-radius:inherit;border-bottom-left-radius:unset;border-bottom-right-radius:unset;}.button:hover{background:#EB6844;color:#ffffff;}.button{display:block;margin:0 auto;width:15%;line-height:35px;padding:0 15px;border:1px solid currentColor;border-radius:50px;text-align:center;font-weight:bold;}</style><div class="box"><img src="'.$img_cdn.'/images/google_flush.gif"><div class="head"><h2>'. trim($parent_comment->comment_author) .'，</h2>有人回复了你在《' . get_the_title($comment->comment_post_ID) . '》上的评论！</div>&nbsp;&nbsp;&nbsp;你评论的：<div class="body"><div class="content"><p>' . trim($parent_comment->comment_content) . '</p></div><p>被<strong> ' . trim($comment->comment_author) . ' </strong>回复：</p><div class="content"><p><a class="at" href="#">' . trim($comment->comment_content) . '</a></p></div><p style="margin:20px auto"><a class="button"href="' . htmlspecialchars(get_comment_link($parent_id)) . '"target="_blank"rel="noopener">点击查看</a></p><p><center><b style="opacity:.5">此邮件由系统发送无需回复，</b>欢迎再来<a href="' . get_bloginfo('url') . '"target="_blank"rel="noopener"> '. get_option("blogname") .' </a>游玩！</center></p></div></div>';
+            $headers = "From: \"" . get_option('blogname') . "\" <".$admin_mail.">\nContent-Type: text/html; charset=" . get_option('blog_charset') . "\n";
+    
+            wp_mail( $tomail, $title, $body, $headers );
+        }
+    
+        // 4. 延迟邮件回调（博主 & 访客）
+        // 博主延迟邮件
+        add_action( 'delayed_comment_mail', 'send_comment_mail_later' );
+        function send_comment_mail_later( $comment_id ) {
+            wp_notify_admin_mail( $comment_id, 1 );
+        }
+    
+        // 访客延迟邮件
+        add_action( 'delayed_guest_mail', 'send_guest_mail_later' );
+        function send_guest_mail_later( $comment_id ) {
+            wp_notify_guest_mail_send( $comment_id );
+        }
+    
+        //5. 主钩子：评论提交时安排所有异步通知
+        add_action( 'comment_post', 'schedule_comment_notifications', 10, 2 );
+        function schedule_comment_notifications( $comment_id, $comment_approved ) {
+            $comment = get_comment( $comment_id );
+            if ( ! $comment ) return;
+    
+            $admin_mail = get_bloginfo('admin_email');
+            $is_not_admin = ( $comment->comment_author_email != $admin_mail );
+    
+            if ( $is_not_admin ) {
+                // 博主邮件延迟 10 秒发送
+                wp_schedule_single_event( time() + 10, 'delayed_comment_mail', array( $comment_id ) );
+            }
+    
+            // 访客回复提醒：只要有父评论，并且当前评论不是垃圾（初步判断避免无意义事件）
+            $parent_id = $comment->comment_parent ? $comment->comment_parent : '';
+            if ( $parent_id !== '' && $comment->comment_approved !== 'spam' ) {
+                // 延迟 10 秒发送，避免同步 SMTP 阻塞
+                wp_schedule_single_event( time() + 15, 'delayed_guest_mail', array( $comment_id ) );
+            }
+        }
+    }
+    
+    
     // 修复后台评论管理页面img标签为data-src问题
     // add_filter( 'get_comment_text', 'fix_comment_img_data_src', 20, 1 );
     add_filter( 'comment_text', 'fix_comment_img_data_src', 20, 1 );
@@ -2643,42 +2905,6 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
         load_theme_partial('/comments.php');
     }
     
-    // 评论企业微信应用通知
-    if(get_option('site_wpwx_notify_switcher') && get_option('site_third_comments')=='Wordpress'){  //微信推送消息
-        function push_weixin($comment_id) {
-            // global $src_cdn;
-            $comment = get_comment($comment_id);
-            $post_id = $comment->comment_post_ID;
-            $admin_mail = get_bloginfo('admin_email'); //get_option('site_smtp_mail', get_bloginfo('admin_email'));
-            $comment_mail = $comment->comment_author_email;
-            $comment_author = $comment->comment_author;
-            $comment_title = '《' . get_the_title($post_id) . '》 上有新评论啦~';
-            $comment_content = strip_tags($comment->comment_content);
-            // 一个 POST 请求
-            $options = array(
-                'http' => array(
-                    'method' => 'POST',
-                    'header' => 'Content-type: application/x-www-form-urlencoded',
-                    'content' => http_build_query(
-                        array(
-                            'name' => $comment_author,
-                            'mail' => $comment_mail,  // 'avatar' => match_mail_avatar($comment_mail),
-                            'title' => $comment_title,
-                            'content' => $comment_content,
-                            // 'description' => $comment_author.' 在 '.$comment_title.' 上回复道: '.$comment_content,
-                            'image' => get_postimg(0, $post_id, true),
-                            'url' => urlencode(get_the_permalink($post_id)) . '#comments', //get_bloginfo('url')."/?p=$post_id#comments"
-                        )
-                    )
-                )
-            );
-            // 评论邮件不为博主邮件时，因 wpwx-notify.php 内部需调用 wp core，故不可使用 cdn('src'/'api') 相对路径
-            if($comment_mail!=$admin_mail) return file_get_contents(custom_cdn_src(0, 1) . '/plugin/wpwx-notify.php',false,stream_context_create($options));else return false; // $src_cdn custom_cdn_src('api', true)
-        }
-        // 挂载 WordPress 评论提交的接口
-        add_action('comment_post', 'push_weixin', 10, 2);
-    }
-   
     // 垃圾评论屏蔽词
     // add_filter( 'pre_comment_approved', function($approved, $commentdata) {
     //     $blacklist = get_option('site_comment_blacklists');
@@ -2749,10 +2975,11 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
         
         // Loop-back child-comments (recursive)
         function wp_child_comments_loop($cur_comment, $loop = true){
-            $comment_order = get_option('site_ajax_comment_paginate') ? 'DESC' : get_option('comment_order');
+            $comment_order = get_option('site_ajax_comment_paginate') ? 'ASC' : get_option('comment_order');
             $child_comment = $cur_comment->get_children(array(
                 'hierarchical' => 'threaded',
                 'order'        => $comment_order,
+                'orderby' => 'comment_date_gmt',
                 // 'status'       => 'approve',
                 // 'orderby'=>'order_clause',
                 // 'meta_query'=>array(
@@ -2920,7 +3147,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
     }
     
     if (get_option('site_cdn_switcher')) {
-        function replace_db_data($db_table = 'options', $db_row = 'option_value', $old_value, $new_value) {
+        function replace_db_data($old_value, $new_value, $db_table = 'options', $db_row = 'option_value') {
             global $wpdb;
             $query = $wpdb->prepare("UPDATE {$wpdb->prefix}{$db_table} SET $db_row = REPLACE($db_row, %s, %s)", $old_value, $new_value);
             $res = $wpdb->query($query);
@@ -2939,9 +3166,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 foreach ($split_comma as $split_item) {
                     if ($split_item) { // && is_array($split_item)
                         $split_equal = explode('=', $split_item);
-                        // print_r($split_equal[0]);
-                        // print_r($split_equal[1]);
-                        replace_db_data($split_equal[0], $split_equal[1], $data_before, $data_after);
+                        replace_db_data($data_before, $data_after, $split_equal[0], $split_equal[1]);
                     }
                 };
             } else {
@@ -2953,7 +3178,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                     ['comments', 'comment_content'], // wp_comments
                 );
                 foreach ($update_list as $update_item) {
-                    replace_db_data($update_item[0], $update_item[1], $data_before, $data_after);
+                    replace_db_data($data_before, $data_after, $update_item[0], $update_item[1]);
                 };
             }
             die();
