@@ -1,43 +1,4 @@
 <?php
-// // 临时调试：列出 comment_post 上所有回调的来源信息
-// add_action('init', function() {
-//     global $wp_filter;
-//     $hook = $wp_filter['comment_post'] ?? null;
-//     if ( ! $hook instanceof WP_Hook ) return;
-    
-//     foreach ( $hook->callbacks as $priority => $callbacks ) {
-//         foreach ( $callbacks as $idx => $callback ) {
-//             $func = $callback['function'];
-//             $info = 'unknown';
-//             if ( is_array( $func ) ) {
-//                 $class  = is_object( $func[0] ) ? get_class( $func[0] ) : $func[0];
-//                 $method = $func[1];
-//                 try {
-//                     $ref = new ReflectionMethod( $class, $method );
-//                     $info = $ref->getFileName() . ':' . $ref->getStartLine();
-//                 } catch ( Exception $e ) {
-//                     $info = $class . '::' . $method;
-//                 }
-//             } elseif ( is_string( $func ) ) {
-//                 try {
-//                     $ref = new ReflectionFunction( $func );
-//                     $info = $ref->getFileName() . ':' . $ref->getStartLine();
-//                 } catch ( Exception $e ) {
-//                     $info = $func;
-//                 }
-//             } elseif ( $func instanceof Closure ) {
-//                 // 闭包：反射可拿到定义位置
-//                 try {
-//                     $ref = new ReflectionFunction( $func );
-//                     $info = $ref->getFileName() . ':' . $ref->getStartLine();
-//                 } catch ( Exception $e ) {
-//                     $info = 'Closure (no file)';
-//                 }
-//             }
-//             error_log( "[Comment Hook Source] priority={$priority} idx={$idx} -> {$info}" );
-//         }
-//     }
-// });
     /*
      *--------------------------------------------------------------------------
      * 2026 FEATS
@@ -405,10 +366,65 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             // ========== 配置项 ==========
             define( 'TWO_BER_AI_API_KEY', get_option('site_chatgpt_apikey') );  // 替换为真实 Key
             define( 'TWO_BER_AI_MODEL', get_option('site_chatgpt_model') );     // Kimi 模型，可按需调整
+            define( 'TWO_BER_AI_MAX_REPLIES_PER_PARENT', 5 );  // 每个父评论下 AI 回复最大数量
             /**
-             * 纯 @2BER 重复检查（基于已存在的 AI 子回复）
-             * 优先级 0，早于 AI 垃圾审核，避免浪费 API
-             * （仅文章页面）
+             * 向上查找评论的根评论（顶级评论）
+             */
+            function two_ber_get_root_comment_id( $comment_id ) {
+                while ( $comment_id ) {
+                    $comment = get_comment( $comment_id );
+                    if ( ! $comment || $comment->comment_parent == 0 ) {
+                        return $comment_id;
+                    }
+                    $comment_id = $comment->comment_parent;
+                }
+                return 0;
+            }
+            /**
+             * 统计根评论下所有子孙评论中 AI 回复的数量
+             */
+            function two_ber_count_ai_replies_under_root( $root_id ) {
+                static $cache = array(); // 简单静态缓存，同一请求内不重复查询
+                if ( isset( $cache[ $root_id ] ) ) {
+                    return $cache[ $root_id ];
+                }
+            
+                $count = 0;
+                // 先查直接子评论中的 AI 回复
+                $children = get_comments( array(
+                    'parent'  => $root_id,
+                    'status'  => [ 'approve', 'hold' ],
+                    'fields'  => 'ids', // 只取 ID，性能更好
+                ) );
+            
+                foreach ( $children as $child_id ) {
+                    if ( get_comment_meta( $child_id, '_2ber_ai_reply', true ) ) {
+                        $count++;
+                    }
+                    // 递归统计孙子辈（如果子评论不是 AI 回复，仍可能有孙辈 AI 回复）
+                    $count += two_ber_count_ai_replies_under_root( $child_id );
+                }
+            
+                $cache[ $root_id ] = $count;
+                return $count;
+            }
+            /**
+             * 检查父评论下 AI 回复是否已达上限（统计已批准 + 待审核）
+             */
+            function two_ber_check_ai_reply_limit_for_comment( $comment_parent_id ) {
+                // 顶级评论（直接对文章提问）不限制（或者也可以限制，根据需求）
+                if ( $comment_parent_id == 0 ) {
+                    return true;
+                }
+            
+                // 找到根评论 ID
+                $root_id = two_ber_get_root_comment_id( $comment_parent_id );
+                $count = two_ber_count_ai_replies_under_root( $root_id );
+            
+                return $count < TWO_BER_AI_MAX_REPLIES_PER_PARENT;
+            }
+            /**
+             * 纯 @2BER 重复检查（基于已存在的 AI 子回复） （仅文章页面）
              */
             add_filter( 'preprocess_comment', function ( $commentdata ) {
                 $content = $commentdata['comment_content'];
@@ -459,6 +475,24 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             
                 return $commentdata;
             }, 0 ); // 优先级 0，最早执行
+            /**
+             * 父评论下 AI 评论数量检查，超限拒绝入库
+             */
+            add_filter( 'preprocess_comment', function ( $commentdata ) {
+                $content = $commentdata['comment_content'];
+                $is_reply_to_ai = ( ! empty( $commentdata['comment_parent'] ) && get_comment_meta( $commentdata['comment_parent'], '_2ber_ai_reply', true ) );
+            
+                if ( preg_match( '/@2ber/i', $content ) || $is_reply_to_ai ) {
+                    if ( ! two_ber_check_ai_reply_limit_for_comment( $commentdata['comment_parent'] ) ) {
+                        wp_die(
+                            '该讨论下的 AI 回复数量已达上限（' . TWO_BER_AI_MAX_REPLIES_PER_PARENT . '条），无法再发起新提问。',
+                            'AI 回复上限',
+                            [ 'response' => 418 ]
+                        );
+                    }
+                }
+                return $commentdata;
+            }, 1 );
             /**
              * 返回默认 AI 回复子评论信息
              */
@@ -761,35 +795,6 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 }
             }, 10, 2 );
             
-            
-            /**
-             * 注册 REST API 路由（GET）
-             */
-            add_action( 'rest_api_init', function () {
-                register_rest_route( 'two-ber/v1', '/ai-reply', array(
-                    'methods'             => 'GET',           // 唯一改动：POST → GET
-                    'callback'            => 'two_ber_api_handle_reply',
-                    'permission_callback' => function () {
-                        // 仅允许有管理评论权限的用户调用；可根据需要调整
-                        // return current_user_can( 'moderate_comments' );
-                        // return true;
-                        $user = wp_get_current_user();
-                        return new WP_REST_Response( array(
-                            'logged_in' => is_user_logged_in(),
-                            'user_id'   => $user->ID,
-                            'roles'     => $user->roles,
-                            'can_moderate' => current_user_can( 'moderate_comments' ),
-                        ) );
-                    },
-                    'args'                => array(
-                        'comment_id' => array(
-                            'required'          => true,
-                            'type'              => 'integer',
-                            'sanitize_callback' => 'absint',
-                        ),
-                    ),
-                ) );
-            } );
             /**
              * 获取已存在的 AI 子回复（如果存在）
              *
@@ -805,70 +810,72 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             
                 return ! empty( $replies ) ? $replies[0] : null;
             }
+            
             /**
-             * API 处理函数：执行或获取 AI 回复
-             *
-             * @param WP_REST_Request $request
-             * @return WP_REST_Response|WP_Error
+             * 注册 REST API 重试机制
+             * （重试次数 + 冷却限制 + 前端 nonce 校验）
              */
-            function two_ber_api_handle_reply( $request ) {
-                $comment_id = $request->get_param( 'comment_id' );
-                $comment    = get_comment( $comment_id );
+            add_action( 'rest_api_init', function () {
+                register_rest_route( 'two-ber/v1', '/ai-retry', array(
+                    'methods'  => 'GET',
+                    'callback' => function ( $request ) {
+                        $comment_id = $request->get_param( 'comment_id' );
+                        $comment    = get_comment( $comment_id );
+                        if ( ! $comment ) {
+                            return new WP_Error( 'not_found', '评论不存在', array( 'status' => 404 ) );
+                        }
             
-                if ( ! $comment ) {
-                    return new WP_Error( 'comment_not_found', '评论不存在', array( 'status' => 404 ) );
-                }
+                        // 已有回复，直接返回
+                        $existing = two_ber_get_existing_ai_reply( $comment_id );
+                        if ( $existing ) {
+                            return rest_ensure_response( array(
+                                'success'  => true,
+                                'cached'   => true,
+                                'reply_id' => $existing->comment_ID,
+                                'reply_content'    => $existing->comment_content,
+                            ) );
+                        }
+                        
+                        // 冷却检查
+                        $cooldown = 30;
+                        $last_retry = get_transient( 'ai_retry_' . $comment_id );
+                        if ( $last_retry ) {
+                            $remaining = $cooldown - ( time() - $last_retry );
+                            return new WP_Error( 'retry_cooldown', "请等待 {$remaining} 秒后再试", array( 'status' => 429 ) );
+                        }
+                        set_transient( 'ai_retry_' . $comment_id, time(), $cooldown );
             
-                // 1. 如果已经有过 AI 回复，直接返回子评论内容
-                $existing_ai_comment = two_ber_get_existing_ai_reply( $comment_id );
-                if ( $existing_ai_comment ) {
-                    return rest_ensure_response( array(
-                        'success'    => true,
-                        'cached'     => true,                // 标明是历史结果
-                        'reply'      => $existing_ai_comment->comment_content,
-                        'reply_id'   => $existing_ai_comment->comment_ID,
-                    ) );
-                }
+                        // 清理旧标记，准备重新触发
+                        delete_comment_meta( $comment_id, '_2ber_ai_replied' );
+                        delete_comment_meta( $comment_id, '_2ber_ai_processing' );
             
-                // 2. 未回复，则执行 AI 生成并插入子评论
-                $post = get_post( $comment->comment_post_ID );
-                if ( ! $post ) {
-                    return new WP_Error( 'post_not_found', '关联文章不存在', array( 'status' => 404 ) );
-                }
-                
-                $context = two_ber_get_conversation_context( $comment_id );
-                if ( ! $context ) {
-                    return new WP_Error( 'context_error', '无法获取对话上下文', array( 'status' => 500 ) );
-                }
-                
-                $reply_content = two_ber_ai_call_kimi( $context['messages'] );
-                
-                if ( is_wp_error( $reply_content ) ) {
-                    return new WP_Error( 'ai_api_error', $reply_content->get_error_message(), array( 'status' => 502 ) );
-                }
+                        // 设置处理中标记，并安排后台任务（与自动回复完全相同的钩子）
+                        update_comment_meta( $comment_id, '_2ber_ai_processing', 1 );
+                        wp_clear_scheduled_hook( 'two_ber_ai_reply_event', array( $comment_id ) );
+                        wp_schedule_single_event( time() + 5, 'two_ber_ai_reply_event', array( $comment_id ) );
             
-                // 插入 AI 子评论
-                $ai_comment_data = two_ber_ai_comment_data($comment->comment_post_ID, $comment_id, $reply_content);
-                // 使 AI 回复跟随父评论的审核状态（避免新用户待审核时 AI 回复却直接显示）
-                $parent_status = $comment->comment_approved;
-                $ai_comment_data['comment_approved'] = $parent_status;
-                $ai_comment_id = wp_insert_comment( $ai_comment_data );
-            
-                if ( ! $ai_comment_id ) {
-                    return new WP_Error( 'insert_failed', 'AI 回复插入失败', array( 'status' => 500 ) );
-                }
-            
-                // 标记原评论已回复，同时标记 AI 回复自身
-                update_comment_meta( $comment_id, '_2ber_ai_replied', 1 );
-                update_comment_meta( $ai_comment_id, '_2ber_ai_reply', 1 );
-            
-                return rest_ensure_response( array(
-                    'success'  => true,
-                    'cached'   => false,
-                    'reply'    => $reply_content,
-                    'reply_id' => $ai_comment_id,
+                        // 立即返回，告诉前端“已安排，请轮询”
+                        return rest_ensure_response( array(
+                            'success'  => true,
+                            'scheduled'=> true,
+                        ) );
+                    },
+                    'permission_callback' => function ( $request ) {
+                        $nonce = $request->get_param( '_wpnonce' );
+                        return $nonce && wp_verify_nonce( $nonce, 'wp_rest' );
+                    },
+                    'args' => array(
+                        'comment_id' => array(
+                            'required' => true,
+                            'type'     => 'integer',
+                        ),
+                        '_wpnonce' => array(
+                            'required' => true,
+                            'type'     => 'string',
+                        ),
+                    ),
                 ) );
-            }
+            } );
             
             /**
              * 注册 AI 回复状态查询端点
@@ -954,6 +961,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
          * @param string $comment_content 待审核的评论内容
          * @return bool true=垃圾，false=正常
          */
+         
         if (get_option('site_chatgpt_ai_anti_spam')) {
             define( 'TWO_BER_AI_SPAM_CHECK_ENABLED', true );
             define( 'TWO_BER_AI_SPAM_CHECK_GUESTS_ONLY', true );

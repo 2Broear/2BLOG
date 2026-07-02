@@ -504,13 +504,15 @@
                         last_reply: null,
                         context: {
                             reply: '回复',
+                            retry: 'Retry Reply',
                             loading: "加载中..",
                             comment_more: "加载更多评论",
                             comment_cancel: '取消回复',
                             comment_block: "您的评论被系统拒绝，请等待管理员审核！",
                             comment_repeat: '检测到重复评论，您似乎已经提交过这条评论了！', //'检测到重复评论，这条评论似乎已经被提交过了！'
                             comment_repeats: '检测到重复请求，2BER AI 已经为这篇文章生成过摘要了！',
-                            comment_limits: '您提交评论的速度太快了，请稍后再发表评论。',
+                            comment_limit: '您提交评论的速度太快了，请稍后再发表评论。',
+                            comment_limits: '该评论下的 AI 回复数量已达上限，无法再发起新提问。',
                             comment_error: '抱歉，服务器错误，请稍后再试。',
                             comment_counter: '条评论',
                             comment_submit: '提交中..',
@@ -905,7 +907,142 @@
                                     // console.log(t.value)
                             }
                         }, 'oninput');
+                <?php
+                    if ($wp_ajax_comment) {
+                        if ($ai_comment) {
+                ?>
+                        // filter ai-reply comments
+                        function handle_ai_comments(comment_id, process, callback, busy, max = 15, attempts = 0) {
+                            // send_ajax_request("get", `/wp-json/two-ber/v1/ai-reply-status?comment_id=${comment_id}`, false, (data)=> {
+                            fetch(`/wp-json/two-ber/v1/ai-reply-status?comment_id=${comment_id}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                callback?.(data);
+                                if (data.status === 'processing' && attempts < max) {
+                                    setTimeout(() => {
+                                        ++attempts;
+                                        console.log(`ai-reply-status: ${data.status}（${attempts}/${max}）`);
+                                        process(attempts, max);
+                                        handle_ai_comments(comment_id, process, callback, busy, max, attempts);
+                                        if (attempts == max) {
+                                            console.warn('Empty Responsed, AI is busy now..');
+                                            busy?.(comment_id, data);
+                                        }
+                                    }, 2000);
+                                } else if (data.status === 'completed') {
+                                    console.log(data);
+                                }
+                            });
+                        }
+                <?php
+                        }
+                        if ($words_typer) {
+                ?>
+                        /**
+                         * 打字机效果
+                         * @param {HTMLElement} el        - 目标元素
+                         * @param {string}      str      - 要输出的字符串
+                         * @param {number}      speed    - 每个字符的间隔时间（毫秒）
+                         * @param {boolean}     replace  - true: 替换模式（原字符逐个替换为 str 的字符）；
+                         *                                 false: 追加模式（先清空再逐个追加）
+                         * @returns {Promise<void>}
+                         */
+                        function words_typer(el, str, speed = 100, replace = false) {
+                            // ---------- 参数校验 ----------
+                            if (!(el instanceof HTMLElement)) {
+                                console.warn('words_typer: 第一个参数必须为 HTMLElement');
+                                return Promise.reject(new Error('Invalid element'));
+                            }
                         
+                            if (typeof str !== 'string' || str.trim() === '') {
+                                console.warn('words_typer: 字符串无效，使用占位文本');
+                                str = 'invalid string or NULL Responsed.';
+                            }
+                        
+                            // ---------- 清除之前的定时器 ----------
+                            if (el._typerTimer) {
+                                el._typerTimer.forEach(timer => clearTimeout(timer));
+                                el._typerTimer = [];
+                            }
+                            el._typerTimer = []; // 存储本次所有定时器
+                        
+                            // 辅助：延迟函数
+                            const wait = (ms) => new Promise(resolve => {
+                                const timer = setTimeout(resolve, ms);
+                                el._typerTimer.push(timer);
+                            });
+                        
+                            // ---------- 移除加载状态 ----------
+                            el.classList.remove('load', 'done');
+                        
+                            // ---------- 第一阶段：清空（或保留）原有内容 ----------
+                            const originalText = el.textContent;
+                        
+                            return (async () => {
+                                try {
+                                    // ---------- 模式判断 ----------
+                                    if (!replace) {
+                                        // ---------- 追加模式 ----------
+                                        // 1. 删除原有文本（如果非空）
+                                        if (originalText.length > 0) {
+                                            const chars = originalText.split('');
+                                            for (let i = chars.length - 1; i >= 0; i--) {
+                                                chars.pop();
+                                                el.textContent = chars.join('');
+                                                await wait(5); // 删除速度固定为 5ms，可调整
+                                            }
+                                        }
+                        
+                                        // 2. 逐个追加新字符
+                                        for (let i = 0; i < str.length; i++) {
+                                            el.textContent += str[i];
+                                            await wait(speed);
+                                        }
+                        
+                                        // 3. 标记完成
+                                        el.classList.add('done');
+                                        return;
+                                    }
+                        
+                                    // ---------- 替换模式 ----------
+                                    // 将原文本转为数组
+                                    let currentChars = originalText.split('');
+                                    const targetChars = str.split('');
+                        
+                                    // 确定最大长度
+                                    const maxLen = Math.max(currentChars.length, targetChars.length);
+                        
+                                    for (let i = 0; i < maxLen; i++) {
+                                        // 如果当前索引超出原长度，则追加新字符
+                                        if (i >= currentChars.length) {
+                                            currentChars.push(targetChars[i]);
+                                        }
+                                        // 如果目标索引超出目标长度，则删除多余字符
+                                        else if (i >= targetChars.length) {
+                                            currentChars.pop();
+                                        }
+                                        // 否则替换对应位置的字符
+                                        else {
+                                            currentChars[i] = targetChars[i];
+                                        }
+                        
+                                        el.textContent = currentChars.join('');
+                                        await wait(speed);
+                                    }
+                        
+                                    // 标记完成
+                                    el.classList.add('done');
+                        
+                                } catch (error) {
+                                    console.error('打字效果出错:', error);
+                                    throw error;
+                                }
+                            })();
+                        }
+                <?php
+                        }
+                    }
+                ?>
                         // Realtime Clicks
                         bindEventClick(this.dom, '', function(t, e) {
                             if (t.id) {
@@ -1055,7 +1192,7 @@
                             * 
                             **/
                             (function() {
-                                // if (t.id && t.id == "cancel-comment-reply-link") 
+                                // normal reply
                                 if (t.classList.contains(that.reply_obj.context.class_replying)) {
                                     that.cancelReply(t, true);
                                     return;
@@ -1088,6 +1225,51 @@
                                     // that.cancelReply(t, true);  // comments return
                                     // update real-time canvas size&&returns newest drawHistory
                                     that.resizeCanvas(true);
+                                };
+                                // retry ai reply
+                                if (t.classList.contains('comment-retry-link')) {
+                                    t.classList.remove('comment-retry-link'); // disable retry
+                                    const commentId = t.dataset.commentid;
+                                    const ai_comments = getParByCls(t, 'vcard'); //t.parentNode.parentNode
+                                    const vcontent = ai_comments.querySelector(".vcontent p");
+                                    let standby_context = `Standby, AI is now retrying your request..`;
+                                    <?php echo $words_typer ? 'words_typer(vcontent, standby_context, 25, "' . $shuffle_typer . '");' : 'vcontent.textContent = standby_context;'; ?>
+                                    function enableLink(cls = 'comment-retry-link', ctx = '', data) {
+                                        t.classList.add(cls);
+                                        t.textContent = t.value = ctx ? ctx : that.reply_obj.context.retry;
+                                        if (data) {
+                                            t.dataset.commentid = data.reply_id;
+                                            t.dataset.belowelement = 'comment-' + data.reply_id;
+                                        }
+                                    }
+                                    fetch(`/wp-json/two-ber/v1/ai-retry?comment_id=${commentId}&_wpnonce=${t.dataset.nonce}`)
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data.cached) {
+                                            <?php echo $output_words = $words_typer ? 'words_typer(vcontent, data.reply_content, 25, "' . $shuffle_typer . '");' : 'vcontent.textContent = data.reply_content;'; ?>
+                                            // enable normal-reply
+                                            enableLink('comment-reply-link', that.reply_obj.context.reply, data);
+                                        } else if (data.scheduled) {
+                                            handle_ai_comments(commentId, (attempts, max)=> {
+                                                if (!vcontent) return;
+                                                // direct updates, no need for words_typer.
+                                                vcontent.textContent = standby_context + `（${max - attempts}）`;
+                                            }, (data)=> {
+                                                if (data.status === 'completed') {
+                                                    <?php echo $output_words; ?>
+                                                    // enable normal-reply (update replied commentid)
+                                                    enableLink('comment-reply-link', that.reply_obj.context.reply, data);
+                                                }
+                                            }, (err)=> {
+                                                alert('Failed on retry AI reply, Please try again later..');
+                                            });
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        console.warn(error);
+                                        enableLink();  // enable retry
+                                    })
+                                    // .finally(() => {});
                                 };
                             })();
                             /**
@@ -1142,137 +1324,6 @@
                                 (function(t) {
                                 <?php 
                                     if ($cf_turnstile_wordpress) echo 'if (!that.validTurnstileToken()) return;';  // return-reply(inside func) on turnstile-enabled with invalid TurnstileToken
-                                    if ($ai_comment) {
-                                ?>
-                                    // filter ai-reply comments
-                                    function handle_ai_comments(comment_id, callback, busy, max = 15, attempts = 0) {
-                                        // send_ajax_request("get", `/wp-json/two-ber/v1/ai-reply-status?comment_id=${comment_id}`, false, (data)=> {
-                                        fetch(`/wp-json/two-ber/v1/ai-reply-status?comment_id=${comment_id}`)
-                                        .then(res => res.json())
-                                        .then(data => {
-                                            callback?.(data);
-                                            if (data.status === 'processing' && attempts < max) {
-                                                setTimeout(() => {
-                                                    ++attempts;
-                                                    console.log(`ai-reply-status: ${data.status}（${attempts}/${max}）`);
-                                                    handle_ai_comments(comment_id, callback, busy, max, attempts);
-                                                    if (attempts == max) {
-                                                        console.warn('Max retry limited, AI is busy now..');
-                                                        busy?.(data);
-                                                    }
-                                                }, 2000);
-                                            } else if (data.status === 'completed') {
-                                                console.log(data);
-                                            }
-                                        });
-                                    }
-                                    <?php
-                                        if ($words_typer) {
-                                    ?>
-                                        /**
-                                         * 打字机效果
-                                         * @param {HTMLElement} el        - 目标元素
-                                         * @param {string}      str      - 要输出的字符串
-                                         * @param {number}      speed    - 每个字符的间隔时间（毫秒）
-                                         * @param {boolean}     replace  - true: 替换模式（原字符逐个替换为 str 的字符）；
-                                         *                                 false: 追加模式（先清空再逐个追加）
-                                         * @returns {Promise<void>}
-                                         */
-                                        function words_typer(el, str, speed = 100, replace = false) {
-                                            // ---------- 参数校验 ----------
-                                            if (!(el instanceof HTMLElement)) {
-                                                console.warn('words_typer: 第一个参数必须为 HTMLElement');
-                                                return Promise.reject(new Error('Invalid element'));
-                                            }
-                                        
-                                            if (typeof str !== 'string' || str.trim() === '') {
-                                                console.warn('words_typer: 字符串无效，使用占位文本');
-                                                str = 'invalid string or NULL Responsed.';
-                                            }
-                                        
-                                            // ---------- 清除之前的定时器 ----------
-                                            if (el._typerTimer) {
-                                                el._typerTimer.forEach(timer => clearTimeout(timer));
-                                                el._typerTimer = [];
-                                            }
-                                            el._typerTimer = []; // 存储本次所有定时器
-                                        
-                                            // 辅助：延迟函数
-                                            const wait = (ms) => new Promise(resolve => {
-                                                const timer = setTimeout(resolve, ms);
-                                                el._typerTimer.push(timer);
-                                            });
-                                        
-                                            // ---------- 移除加载状态 ----------
-                                            el.classList.remove('load', 'done');
-                                        
-                                            // ---------- 第一阶段：清空（或保留）原有内容 ----------
-                                            const originalText = el.textContent;
-                                        
-                                            return (async () => {
-                                                try {
-                                                    // ---------- 模式判断 ----------
-                                                    if (!replace) {
-                                                        // ---------- 追加模式 ----------
-                                                        // 1. 删除原有文本（如果非空）
-                                                        if (originalText.length > 0) {
-                                                            const chars = originalText.split('');
-                                                            for (let i = chars.length - 1; i >= 0; i--) {
-                                                                chars.pop();
-                                                                el.textContent = chars.join('');
-                                                                await wait(5); // 删除速度固定为 5ms，可调整
-                                                            }
-                                                        }
-                                        
-                                                        // 2. 逐个追加新字符
-                                                        for (let i = 0; i < str.length; i++) {
-                                                            el.textContent += str[i];
-                                                            await wait(speed);
-                                                        }
-                                        
-                                                        // 3. 标记完成
-                                                        el.classList.add('done');
-                                                        return;
-                                                    }
-                                        
-                                                    // ---------- 替换模式 ----------
-                                                    // 将原文本转为数组
-                                                    let currentChars = originalText.split('');
-                                                    const targetChars = str.split('');
-                                        
-                                                    // 确定最大长度
-                                                    const maxLen = Math.max(currentChars.length, targetChars.length);
-                                        
-                                                    for (let i = 0; i < maxLen; i++) {
-                                                        // 如果当前索引超出原长度，则追加新字符
-                                                        if (i >= currentChars.length) {
-                                                            currentChars.push(targetChars[i]);
-                                                        }
-                                                        // 如果目标索引超出目标长度，则删除多余字符
-                                                        else if (i >= targetChars.length) {
-                                                            currentChars.pop();
-                                                        }
-                                                        // 否则替换对应位置的字符
-                                                        else {
-                                                            currentChars[i] = targetChars[i];
-                                                        }
-                                        
-                                                        el.textContent = currentChars.join('');
-                                                        await wait(speed);
-                                                    }
-                                        
-                                                    // 标记完成
-                                                    el.classList.add('done');
-                                        
-                                                } catch (error) {
-                                                    console.error('打字效果出错:', error);
-                                                    throw error;
-                                                }
-                                            })();
-                                        }
-                                    <?php
-                                        }
-                                    }
                                 ?>
                                     t.textContent = t.value = that.reply_obj.context.comment_submit;
                                     that.dom.classList.add(that.reply_obj.context.class_no_reply);  //disable reply
@@ -1377,8 +1428,12 @@
                                                      * 
                                                      */
                                                     let ai_comments;
-                                                    const ai_reconnect = 15; // 15 * 2000ms
-                                                    handle_ai_comments(reply_comment_id, (data, retried)=> {
+                                                    let standby_context = `Standby, AI is now responsing your request..`;
+                                                    handle_ai_comments(reply_comment_id, (attempts, max)=> {
+                                                        if (!ai_comments) return;
+                                                        // direct updates, no need for words_typer.
+                                                        ai_comments.querySelector(".vcontent p").textContent = standby_context + `（${max - attempts}）`;
+                                                    }, (data)=> {
                                                         const replied_id = data?.reply_id;
                                                         let comment_preview = that.vlist.querySelector('.comment_preview');
                                                         if (comment_preview) comment_preview.classList.remove('comment_preview');
@@ -1396,12 +1451,11 @@
                                                             data = JSON.stringify(data);
                                                             console.warn(data);
                                                             if (ai_comments) {
-                                                                ai_comments.querySelector('.vcontent p').textContent = data;
+                                                                ai_comments.querySelector(".vcontent p").textContent = data;
                                                                 // ai_comments.remove();
                                                             }
                                                             return;
                                                         }
-                                                        let is_childs_reply;
                                                         if (!ai_comments) {
                                                             const comment_clone = temp_comment.cloneNode(true);
                                                             comment_clone.id = 'comment-' + reply_comment_id;
@@ -1412,21 +1466,13 @@
                                                             // update 2ber(ai) info
                                                             comment_nick = comment_clone.querySelector('.vnick em');
                                                             comment_clone.querySelector('.vcontent').innerHTML = `<a href="#comment-${reply_comment_id}">@${comment_nick.textContent}</a>，<p></p>`;
-                                                            const respond_context = `Standby, AI is now responsing your request(${ai_reconnect})..`;
-                                                            <?php
-                                                                if ($words_typer) {
-                                                                    echo 'words_typer(comment_clone.querySelector(".vcontent p"), respond_context, 35, "' . $shuffle_typer . '");';
-                                                                } else {
-                                                                    echo 'comment_clone.querySelector(".vcontent p").textContent = respond_context;';
-                                                                }
-                                                            ?>
-                                                            comment_nick.textContent = '2BER';
+                                                            <?php echo $words_typer ? 'words_typer(comment_clone.querySelector(".vcontent p"), standby_context, 35, "' . $shuffle_typer . '");' : 'comment_clone.querySelector(".vcontent p").textContent = standby_context;'; ?>;
                                                             // remove current reply info on processing..
                                                             if (reply_link) comment_clone.querySelector('.comment-reply-link').remove();
                                                             // update new comment_sibings node.
                                                             const comment_sibings = comment_preview.nextElementSibling;
                                                             const comment_parents = comment_preview.parentNode;
-                                                            is_childs_reply = comment_parents.classList.contains('children');
+                                                            const is_childs_reply = comment_parents.classList.contains('children');
                                                             // comment_preview.classList.remove('comment_preview');
                                                             if (is_childs_reply) {
                                                                 ai_comments = comment_clone;
@@ -1443,29 +1489,19 @@
                                                             }
                                                         }
                                                         if (data.status === 'completed') {
-                                                            <?php
-                                                                if ($words_typer) {
-                                                                    echo 'words_typer(ai_comments.querySelector(".vcontent p"), data.reply_content, 25, "' . $shuffle_typer . '");';
-                                                                } else {
-                                                                    echo 'ai_comments.querySelector(".vcontent p").textContent = data.reply_content;';
-                                                                }
-                                                            ?>
+                                                            standby_context = data.reply_content;
+                                                            <?php echo $words_typer ? 'words_typer(ai_comments.querySelector(".vcontent p"), standby_context, 25, "' . $shuffle_typer . '");' : 'ai_comments.querySelector(".vcontent p").textContent = standby_context;'; ?>;
                                                             ai_comments.id = 'comment-' + replied_id;
                                                             if (ai_comments.classList.contains('children')) ai_comments.parentNode.dataset.cpid = comment_pid;
                                                             // updaet final-reply info
                                                             comment_nick = ai_comments.querySelector('.vnick em');
-                                                            if (reply_link) ai_comments.querySelector('.vmeta').innerHTML += `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${replied_id}" data-postid="${comment_cid}" data-belowelement="comment-${replied_id}" data-respondelement="respond" data-replyto="${comment_nick.textContent}" aria-label="正在回复给：@${comment_nick.textContent}">回复</a>`;
+                                                            if (reply_link) ai_comments.querySelector('.vmeta').innerHTML += `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${replied_id}" data-postid="${comment_cid}" data-belowelement="comment-${replied_id}" data-respondelement="respond" data-replyto="2BER" aria-label="正在回复给：@2BER">回复</a>`;
                                                         }
-                                                    }, (data)=> {
-                                                        const respond_context = "Try aggin later, 2BER AI might busy now..";
-                                                        <?php
-                                                            if ($words_typer) {
-                                                                echo 'words_typer(ai_comments.querySelector(".vcontent p"), respond_context, 25, "' . $shuffle_typer . '");';
-                                                            } else {
-                                                                echo 'ai_comments.querySelector(".vcontent p").textContent = respond_context;';
-                                                            }
-                                                        ?>
-                                                    }, ai_reconnect);
+                                                    }, (replied_id)=> {
+                                                        ai_comments.querySelector('.vmeta').innerHTML += `<a rel="nofollow" class="vat noslide comment-retry-link" href="javascript:void(0);" data-commentid="${replied_id}" data-postid="${comment_cid}" data-belowelement="comment-${replied_id}" data-respondelement="respond" data-replyto="2BER" aria-label="正在回复给：@2BER" data-nonce="<?php echo wp_create_nonce( 'wp_rest' ); ?>">${that.reply_obj.context.retry}</a>`;
+                                                        standby_context = "Sorry, 2BER AI might busy now.. (You can retry once via Retry-Button on the right)";
+                                                        <?php echo $words_typer ? 'words_typer(ai_comments.querySelector(".vcontent p"), standby_context, 25, "' . $shuffle_typer . '");' : 'ai_comments.querySelector(".vcontent p").textContent = standby_context;'; ?>;
+                                                    });
                                                 <?php
                                                     }
                                                 ?>
@@ -1503,6 +1539,9 @@
                                                         err = that.reply_obj.context.comment_repeats;
                                                         break;
                                                     case 429:
+                                                        err = that.reply_obj.context.comment_limit;
+                                                        break;
+                                                    case 418:
                                                         err = that.reply_obj.context.comment_limits;
                                                         break;
                                                     case 500:
