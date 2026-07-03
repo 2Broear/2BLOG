@@ -505,70 +505,70 @@
                 ?>
                         <div class="formtable <?php echo $link_slug; ?>">
                             <?php
-                                // use of mysql caches
-                                $output_json = '';
+                                // ---------- 原有变量（请根据实际上下文保留） ----------
+                                // $link_slug      - 当前链接分类 slug
+                                // $link_marks     - 该分类下的所有链接对象
+                                // $caches_sw      - 全局缓存开关
+                                // $caches_inc     - 缓存包含列表字符串
+                                // $output_limit   - 默认输出数量（未使用时可忽略）
+                                // $output_chunk   - 分块大小（未使用时可忽略）
+                                
                                 $caches_name = 'site_rss_' . $link_slug . '_cache';
-                                if($caches_sw) {
+                                $output_sw   = false;
+                                $output_json = '';
+                                
+                                if ($caches_sw) {
                                     $output_sw = in_array('rssfeeds', explode(',', $caches_inc));
-                                    $output_caches = get_option($caches_name);
-                                    if ($output_sw && $output_caches) {
-                                        $output_json = $output_caches;
-                                        $output_data = json_decode($output_json);
-                                        $output_date = isset($output_data[0]->lastUpdate) ? $output_data[0]->lastUpdate : '0000-00-00';
-                                        $link_api = get_api_refrence('rss');  //, true with auth-param
-                                        // $link_api = get_plugin_refrence('rss', true);
-                                        date_default_timezone_set('Asia/Shanghai');
-                                        // print_r('(' . date('Y-m-d H:i:s', strtotime('today 06:00 Asia/Shanghai')) . ') ' . strtotime('today 06:00 Asia/Shanghai'));
-                                        // print_r(wp_get_schedules());
-                                        // wp_clear_scheduled_hook('scheduled_rss_feeds_updates_hook');
-                                        $scheduled_ts = wp_next_scheduled('scheduled_rss_feeds_updates_hook');
-                                        if($scheduled_ts) {
-                                            // wp_unschedule_event($scheduled_ts, 'scheduled_rss_feeds_updates_hook');
-                                            $scheduled_ts = 'Scheduled updates: ' . date('Y-m-d H:i:s', $scheduled_ts) . ' (' . time() .' -> ' . $scheduled_ts . ')<br/>';
-                                            print_r("<i style='float:left;opacity:.75;'>$scheduled_ts</i>");
-                                        }
-                                        $reload_limits = get_option('site_rss_update_count', 3);
-                                        echo "<p style='text-align:right;margin-bottom:35px;'>$caches_name ($output_date) <a href='javascript:;' class='reloadFeeds' data-cat='$link_slug' data-limit=$reload_limits data-update=1 data-output=1 data-clear=0 data-api='$link_api'> reload $link_slug *</a>&nbsp;<input type='number' id='reloadCount' class='small-text' value=$reload_limits min=1 max=99 style='max-width: 3em;margin-left: 15px;border-radius: 50px;border-top-right-radius: 0;' /></p>"; //
-                                    }
+                                    $output_json = get_option($caches_name);
                                 }
-                                // $output_json length will be 0 if non-caches loaded
-                                if(strlen($output_json)===0 || !$output_sw) {
-                                    // $output_array = array();
-                                    $subscribed_urls = array();
-                                    foreach ($link_marks as $link_mark) {
-                                        $rss_url = $link_mark->link_rss;
-                                        if ($rss_url && $link_mark->link_visible==='Y') {
-                                            array_push($subscribed_urls, $link_mark);
-                                        }
-                                    }
-                                    
-                                    // fetch_rss_feeds_via_url plus array_chunk limits
-                                    $output_json = parse_rss_data($subscribed_urls, $output_limit, $output_chunk);
-                                    
-                                    if($output_json && $output_sw) {
-                                        echo 'updating caches..';
-                                        update_option($caches_name, wp_kses_post(preg_replace( "/\s(?=\s)/","\1", $output_json )));
-                                        // update_option($caches_name, $output_json);
-                                    } else {
-                                        if($caches_sw) {
-                                            // if (in_array('rssfeeds', explode(',', $caches_inc)))
-                                            echo '<p style="text-align:center">No rss feeds/caches found on category ' . $link_slug . ' or cache disabled</p>';
-                                        }
-                                    }
+                                
+                                // 显示状态信息（无论有无缓存都显示控制栏）
+                                date_default_timezone_set('Asia/Shanghai');
+                                $output_date = '无缓存';
+                                $reload_limits = get_option('site_rss_update_count', 3);
+                                
+                                if ($output_sw && $output_json) {
+                                    $output_data = json_decode($output_json);
+                                    $output_date = isset($output_data[0]->lastUpdate) ? $output_data[0]->lastUpdate : '0000-00-00';
                                 }
-                                $subscribed_urls = array();
-                                foreach ($link_marks as $link_mark) {
-                                    // $rss_url = $link_mark->link_rss;
-                                    // if ($rss_url && $link_mark->link_visible==='Y') {
-                                        array_push($subscribed_urls, $link_mark->link_url);
-                                    // }
+                                
+                                // 定时任务信息
+                                $scheduled_ts = wp_next_scheduled('scheduled_rss_feeds_updates_hook');
+                                $schedule_info = '';
+                                if ($scheduled_ts) {
+                                    $schedule_info = 'Scheduled updates: ' . date('Y-m-d H:i:s', $scheduled_ts) . ' (' . time() . ' -> ' . $scheduled_ts . ')<br/>';
+                                    echo "<i style='float:left;opacity:.75;'>$schedule_info</i>";
                                 }
-                                // print_r($output_json);
-                                // print_r('<pre>');
-                                // print_r($subscribed_urls);
-                                // print_r('</pre>');
-                                $output_data = json_decode($output_json);
-                                the_rss_feeds($output_data);
+                                
+                                // 输出控制栏
+                                $rest_update_url = rest_url('rss-feeds/v1/category/' . $link_slug . '/update');
+                                $nonce = wp_create_nonce('wp_rest'); // REST API 需要 nonce（若已登录 cookie 认证可省略，但为了安全建议加上）
+                                ?>
+                                <p style="text-align:right;margin-bottom:35px;">
+                                    <?php echo esc_html($caches_name); ?> (<?php echo esc_html($output_date); ?>)
+                                    <a href="javascript:;" 
+                                       class="reloadFeeds" 
+                                       data-cat="<?php echo esc_attr($link_slug); ?>" 
+                                       data-limit="<?php echo esc_attr($reload_limits); ?>" 
+                                       data-api="<?php echo esc_url($rest_update_url); ?>"
+                                       data-nonce="<?php echo esc_attr($nonce); ?>">
+                                       reload <?php echo esc_html($link_slug); ?> *
+                                    </a>
+                                    <input type="number" id="reloadCount_<?php echo esc_attr($link_slug); ?>" 
+                                           class="small-text reloadLimit" 
+                                           value="<?php echo esc_attr($reload_limits); ?>" 
+                                           min="1" max="99" 
+                                           style="max-width: 3em;margin-left: 15px;border-radius: 50px;border-top-right-radius: 0;" />
+                                </p>
+                                
+                                <?php
+                                // 输出 RSS 内容
+                                if ($output_sw && $output_json) {
+                                    $output_data = json_decode($output_json);
+                                    the_rss_feeds($output_data, $reload_limits);
+                                } else {
+                                    echo '<p style="text-align:center">暂无 RSS 缓存，请点击上方「reload」按钮生成。</p>';
+                                }
                             ?>
                         </div>
                 <?php
@@ -808,6 +808,7 @@
         // }      
         register_setting( 'baw-settings-group', 'site_leancloud_switcher' );
         register_setting( 'baw-settings-group', 'site_third_comments' );
+            register_setting( 'baw-settings-group', 'site_comment_autofill' );
             register_setting( 'baw-settings-group', 'site_comment_blacklists' );
             register_setting( 'baw-settings-group', 'site_comment_blockoutside' );
             register_setting( 'baw-settings-group', 'site_forbidden_outsideborder' );
@@ -2391,7 +2392,7 @@
                                 $value = get_option($opt);
                                 $comments_options = ['Wordpress', 'Valine', 'Twikoo'];
                                 if(!$value) update_option($opt, $comments_options[0]);else $preset=$value;  //auto update option to default if unset
-                                echo '<label for="'.$opt.'"><p class="description" id="">可选第三方评论系统（开启后需填配置项</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">'; //<option value="">WordPress</option>
+                                echo '<label for="'.$opt.'"><p class="description" id="">可选第三方评论系统（开启后需填配置项<br>若使用原生评论，可前往<a href="/wp-admin/options-discussion.php" target="_blank"> 讨论->评论分页 </a>配置<code> 默认显示评论页面->尾页，在每页顶部显示评论->新的 </code>为最新评论，相反则为旧时评论</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">'; //<option value="">WordPress</option>
                                     foreach ($comments_options as $arr){
                                         echo '<option value="'.$arr.'"';
                                         if($value==$arr) echo('selected="selected"');
@@ -2423,10 +2424,20 @@
                                         if (get_option($opt) && !$premise) {
                                             update_option('site_ajax_comment_paginate', '');
                                         } else {
-                                            $tips .= '<p>⚠️注：可前往<a href="/wp-admin/options-discussion.php" target="_blank"> 讨论->评论分页 </a>中配置 默认显示评论排序，启用此项后建议默认显示<code> 尾页 </code>顶部显示<code> 新的 </code></p>';
+                                            $tips .= '<p>⚠️开启后会自动忽视评论分页配置中的 <code>默认显示评论页面 </code> </p>';
                                         }
                                         $check = !$premise ? 'disabled' : '';
                                         echo '<label for="'.$opt.'"><p class="description" id="">'.$tips.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$check.' '.$status.' /> <b class="'.$status.'">AJAX Pagination</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $wordpress_statu; ?>">
+                                <th scope="row">— 自动填充</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_comment_autofill';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后当用户输入邮箱后，即时更新用户 gravatar 头像，若该用户已有留言还可自动填充该用户其他信息</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">自动填充</b></label>';
                                     ?>
                                 </td>
                             </tr>

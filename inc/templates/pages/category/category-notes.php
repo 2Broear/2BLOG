@@ -27,9 +27,6 @@
 	        margin-right: 3px;
 	        opacity: .75;
 	    }
-	    .win-content article h1 {
-	        font-size: 1.2rem;
-	    }
 	    /*@media screen and (max-width: 960px) {*/
      /*       .win-nav {*/
      /*           width: 100% !important;*/

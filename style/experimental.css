@@ -99,6 +99,18 @@ body.dark .news-article-container .v .vlist .children:hover {
 .bg h1 {
     font-size: 3.5rem;
 }
+.win-content article h1 {
+    font-size: 1.5rem;
+}
+/**
+**
+** articles
+**
+**/
+#news-article-head h1 {
+    font-family: serif;
+    font-size: 3rem;
+}
 /**
 **
 ** disabled feats

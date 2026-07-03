@@ -211,8 +211,8 @@
                         $comments = get_comments(
                             array(
                                 'number' => $post_per, //get_option('posts_per_page')
-                                'orderby' => 'comment_date',
-                                'order' => 'DESC',
+                                'order'   => get_option('comment_order'),
+                                'orderby' => 'comment_date_gmt',
                                 'status' => 'approve'  // 仅输出已通过审核的评论数量
                             )
                         );

@@ -658,47 +658,86 @@ jQuery(document).ready(function($){
                 return;
             }
             if (t.classList && t.classList.contains(reloader)) {
-                const dataset = t.dataset;
-                const api_url = dataset.api;
-                const api_file = api_url.substring(api_url.lastIndexOf('/'), api_url.indexOf('?'));
-                const container = contents.querySelector(`.formtable.${dataset.cat}.${switchcls}`);
+                // const dataset = t.dataset;
+                // const api_url = dataset.api;
+                // const api_file = api_url.substring(api_url.lastIndexOf('/'), api_url.indexOf('?'));
+                // const container = contents.querySelector(`.formtable.${dataset.cat}.${switchcls}`);
+                
+                const cat = t.dataset.cat;
+                const limitInput = document.getElementById('reloadCount_' + cat);
+                const limit = limitInput ? limitInput.value : 3;
+                const api = t.dataset.api;
+                const nonce = t.dataset.nonce;
                 // console.log(`loading url: ${api_url}`);
-                if (!confirm(`重新拉取 ${dataset.cat} 中所有 rss 数据（${dataset.limit}条）？`)) return;
-                t.textContent = `fetching ${dataset.cat}...`;
+                if (!confirm(`重新拉取 ${cat} 中所有 rss 数据（${limit}条）？`)) return;
+                t.textContent = `fetching ${cat}...`;
                 t.classList.remove(reloader);
-                // async
-                async function use_api_salt() {
-                    const api_salt = await get_api_salt(api_file);
-                    // get_api_salt(api_file, (api_salt)=> {
-                        const new_url = api_url.substring(0, api_url.indexOf('?')) + `?s=${api_salt.s}&t=${api_salt.t}`;
-                        // console.log(new_url);
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('GET', `${new_url}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, true);
-                        xhr.onprogress = function(event) {
-                          if (event.lengthComputable) {
-                            var percentComplete = event.loaded / event.total * 100;
-                            console.log('Progress: ' + percentComplete + '%');
-                          }
-                        };
-                        xhr.onload = function() {
-                          if (xhr.status === 200) {
-                            container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ xhr.responseText }`;
-                            console.log('data fullfilled.');
-                            alert(`${dataset.cat} rss data loaded.`);
-                          } else {
-                                t.classList.add(reloader);
-                                t.textContent = `reload failed, reload ${dataset.cat}?`;
-                          }
-                        };
-                        xhr.onerror = function(err) {
-                            console.warn(err);
-                            t.classList.add(reloader);
-                            t.textContent = `reload failed, reload ${dataset.cat}?`;
-                        }
-                        xhr.send();
-                    // });
-                }
-                use_api_salt();
+                // // async
+                // async function use_api_salt() {
+                //     const api_salt = await get_api_salt(api_file);
+                //     // get_api_salt(api_file, (api_salt)=> {
+                //         const new_url = api_url.substring(0, api_url.indexOf('?')) + `?s=${api_salt.s}&t=${api_salt.t}`;
+                //         // console.log(new_url);
+                //         var xhr = new XMLHttpRequest();
+                //         xhr.open('GET', `${new_url}&cat=${dataset.cat}&limit=${dataset.limit}&update=${dataset.update}&output=${dataset.output}&clear=${dataset.clear}`, true);
+                //         xhr.onprogress = function(event) {
+                //           if (event.lengthComputable) {
+                //             var percentComplete = event.loaded / event.total * 100;
+                //             console.log('Progress: ' + percentComplete + '%');
+                //           }
+                //         };
+                //         xhr.onload = function() {
+                //           if (xhr.status === 200) {
+                //             container.innerHTML = `<p style="text-align:right">site_rss_${dataset.cat}_cache Reloaded, <u>${dataset.cat} reloaded!</u></p> ${ xhr.responseText }`;
+                //             console.log('data fullfilled.');
+                //             alert(`${dataset.cat} rss data loaded.`);
+                //           } else {
+                //                 t.classList.add(reloader);
+                //                 t.textContent = `reload failed, reload ${dataset.cat}?`;
+                //           }
+                //         };
+                //         xhr.onerror = function(err) {
+                //             console.warn(err);
+                //             t.classList.add(reloader);
+                //             t.textContent = `reload failed, reload ${dataset.cat}?`;
+                //         }
+                //         xhr.send();
+                //     // });
+                // }
+                // use_api_salt();
+            
+                // 显示加载状态（可选）
+                t.textContent = '更新中...';
+                t.style.pointerEvents = 'none';
+            
+                fetch(api, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-WP-Nonce': nonce
+                    },
+                    body: JSON.stringify({
+                        limit: parseInt(limit, 10),
+                        chunk: 10  // 可根据需要调整
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // 刷新页面以显示最新缓存（简单可靠）
+                        alert('数据已提交刷新，可刷新页面等待数据更新')
+                        // location.reload();
+                    } else {
+                        alert('更新失败：' + (data.message || '未知错误'));
+                        t.textContent = 'reload ' + cat + ' *';
+                        t.style.pointerEvents = 'auto';
+                    }
+                })
+                .catch(err => {
+                    alert('请求失败：' + err);
+                    t.textContent = 'reload ' + cat + ' *';
+                    t.style.pointerEvents = 'auto';
+                });
             }
         });
         

@@ -11,17 +11,6 @@
     $do_output = get_request_param('output');
     $do_update = get_request_param('update');
     
-    // if ($do_query) {
-    // }
-    // $do_refresh = get_request_param('refresh');
-    // if ($do_refresh) {
-    //     wp_clear_scheduled_hook('scheduled_rss_feeds_updates_hook');
-    //     echo 200;
-    //     exit;
-    // }
-    // $do_format = get_request_param('format');
-    // $use_cache = get_request_param('cache');
-    // $use_sse = get_request_param('sse');
     $links_slug = get_links_category('slug');
     if (!in_array($query_cat, $links_slug)) {
         $error_msg = $query_cat ? '<pre>Unknown category: "' . $query_cat . '", Please try again.</pre>' : '<pre>Empty category! Please specify a cat param.</pre>';
@@ -51,11 +40,6 @@
         $output_sw = in_array('rssfeeds', explode(',', $caches_inc));
         $output_caches = get_option($caches_name);
         if ($output_sw && !$do_update && $output_caches) {
-            // print_r(json_encode(['caches loaded.']));
-            // if ($output_caches === '') {
-            //     print_r(json_encode([]));
-            //     exit;
-            // }
             if (!$do_output) {
                 if ($do_query) {
                     $output_caches = json_decode($output_caches);

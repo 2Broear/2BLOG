@@ -100,21 +100,23 @@
         $user_name = array_key_exists("comment_author_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_" . COOKIEHASH] : false;
         $user_mail = array_key_exists("comment_author_email_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_email_" . COOKIEHASH] : false;
         $user_link = array_key_exists("comment_author_url_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_url_" . COOKIEHASH] : false;
-        if (is_user_logged_in()) {
+        $user_logged = is_user_logged_in();
+        if ($user_logged) {
             $wp_user = get_currentuserinfo();// global $current_user;// print_r($wp_user);
             $user_name = $wp_user->user_nicename; // $_COOKIE["comment_author_" . COOKIEHASH];
             $user_mail = $wp_user->user_email; // $_COOKIE["comment_author_email_" . COOKIEHASH];
             $user_link = $wp_user->user_url; // $_COOKIE["comment_author_url_" . COOKIEHASH];
         }
+        $add_tips = get_option('site_comment_autofill') && !$user_logged ? '（输入邮箱可即时更新头像、自动填充用户信息<sup> 若有 </sup>）' : '（您的评论信息会自动保存到浏览器）';
         if ($comment_sw) {
-            $welcome="既来之则留之~ 欢迎在下方留言评论，提交评论后还可以撤销或重新编辑。（Valine 会自动保存您的评论信息到浏览器）";
+            $welcome="既来之则留之~ 欢迎在下方留言评论，提交评论后还可以撤销或重新编辑。"; //
         } elseif ($twikoo_sw) {
             $welcome="既来之则留之~ 欢迎在下方留言评论";
         } else {
-            $wp_login = is_user_logged_in() ? '<small> ( Logged as <a href="'.wp_login_url(get_permalink()).'" title="已登录为管理员，默认管理员信息评论，若需其他评论信息，请登出！">'.$user_name.'</a> ) </small>' : '';
-            $welcome='欢迎您，'.$user_name.'！您可以在这里畅言您的的观点与见解！'.$wp_login;//<input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes" checked="checked"> <label for="wp-comment-cookies-consent">自动保存我的评论数据以便下次使用。</label>
+            // $wp_login = $user_logged ? '<small> ( Logged as <a href="'.wp_login_url(get_permalink()).'" title="已登录为管理员，默认管理员信息评论，若需其他评论信息，请登出！">'.$user_name.'</a> ) </small>' : '';
+            $welcome='欢迎您，'.$user_name.'！您可以在这里畅言您的的观点与见解！'; //.$wp_login;
         };
-        echo '<div class="main"><span id="respond"><h2> 评论留言 </h2></span><p class="comment-form-cookies-consent">'.$welcome.'</p></div>';
+        echo '<div class="main"><span id="respond"><h2> 评论留言 </h2></span><p class="comment-form-cookies-consent">'.$welcome.$add_tips.'</p></div>';
         if (is_single()) {
 ?>
             <script type="text/javascript">
@@ -239,14 +241,14 @@
             </div>
             <?php
                 $per_page = get_option('comments_per_page', 15);
-                $comment_order = get_option('site_ajax_comment_paginate') ? 'DESC' : get_option('comment_order');
+                $comment_order = get_option('comment_order'); //get_option('site_ajax_comment_paginate') ? 'DESC' : get_option('comment_order');
                 $comments = get_comments(array(
                     'post_id' => $post_ID,
-                    'number'  => $per_page,
-                    'orderby' => 'comment_date', //comment_ID
+                    'orderby' => 'comment_date_gmt', //comment_ID
                     'order'   => $comment_order,
+                    'number'  => $per_page,
                     // 'status'  => 'approve', // approved only
-                    // 'default_comments_page' => 'newest',
+                    // 'default_comments_page' => 'newest', //get_option('default_comments_page')
                     // 'hierarchical' => true,
                     'offset'  => 0,
                     'parent'  => 0  // top comments only
@@ -370,17 +372,13 @@
                         }
                         wp_comments_template($each);
                         // 遍历子评论列表 https://wp-kama.com/function/WP_Comment::get_children
-                        $comment_order = get_option('site_ajax_comment_paginate') ? 'ASC' : get_option('comment_order');
+                        // $comment_order = get_option('site_ajax_comment_paginate') ? 'ASC' : get_option('comment_order');
                         $child_comment = $each->get_children(array(
                             'hierarchical' => 'threaded',
                             'order'        => $comment_order, //get_option('comment_order'), //
                             'orderby' => 'comment_date_gmt',
                             // 'status'       => 'approve',
-                            // 'default_comments_page' => get_option('default_comments_page'), //newest
-                            // 'orderby'=>'order_clause',
-                            // 'meta_query'=>array(
-                            //   'order_clause' => 'comment_parent'
-                            // )
+                            // 'default_comments_page' => 'newest', //get_option('default_comments_page')
                         ));
                         $child_count = count($child_comment);
                         if ($child_count >= 1) {
@@ -866,7 +864,10 @@
                 Object.defineProperty(vcomments.init.prototype, 'dispatchEvents', {
                     value: function() {
                         const that = this;
-                        // RealtimeAvatar
+                    <?php
+                        if (get_option('site_comment_autofill')) {
+                    ?>
+                        // Realtime Avatar & Info
                         (function() {
                             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                                   email = that.vinfo.querySelector('input[type=email]'),
@@ -876,23 +877,34 @@
                                 that.realtime_fields = that.vinfo;
                                 throw new Error('email-field not exist, fallback to preset node..');
                             };
-                            email.onchange = function(e) {
+                            email.onchange = async function(e) {
                                 let mail = this.value;
                                 if(!regex.test(mail)){
                                     console.log('invalid email.');
                                     return;
-                                };
-                                send_ajax_request("get", '<?php echo custom_cdn_src('default', true).'/plugin/gravatar.php' ?>?jump=0&email='+mail, false, (res)=>{
-                                    try{
-                                        let resed = JSON.parse(res);
-                                        resed.code==200 ? avatar.setAttribute('src',resed.msg) : console.warn(resed.err);
-                                    }catch(e){
-                                        avatar.setAttribute('src',res);
-                                    }
-                                });
+                                }
+                                // send_ajax_request("get", '<?php echo custom_cdn_src('default', true).'/plugin/gravatar.php' ?>?jump=0&email='+mail, false, (res)=>{
+                                //     try{
+                                //         let resed = JSON.parse(res);
+                                //         resed.code==200 ? avatar.setAttribute('src',resed.msg) : console.warn(resed.err);
+                                //     }catch(e){
+                                //         avatar.setAttribute('src',res);
+                                //     }
+                                // });
+                                const res = await fetch(`/wp-json/comment-info/v1/by-email?email=${encodeURIComponent(mail)}`);
+                                const data = await res.json();
+                            
+                                // 自动填充昵称、网址
+                                if (data.name) that.vinfo.querySelector("input[name=author]").value = data.name;
+                                if (data.url) that.vinfo.querySelector("input[name=url]").value = data.url;
+                            
+                                // 更新头像
+                                if (data.avatar_url) avatar.src = data.avatar_url;
                             }
                         })();
-                        
+                    <?php
+                        }
+                    ?>
                         // Realtime Changes
                         bindEventClick(this.dom, '', function(t, e) {
                             if (!t.id) return;

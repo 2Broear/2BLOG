@@ -4,19 +4,12 @@
     Template Post Type: page
 */
 /**
- * 获取评论排行数据（按评论数降序）
- * 
- * @return array 对象数组，包含 name, mail, link, count
- */
-/**
  * 获取评论排行数据（按评论数降序，排除管理员）
  * 
  * @return array 对象数组，包含 name, mail, link, count
  */
 function get_comment_ranks() {
     global $wpdb;
-
-    // 获取管理员邮箱并安全排除
     $admin_email = get_option('admin_email');
 
     $results = $wpdb->get_results($wpdb->prepare("
@@ -24,7 +17,9 @@ function get_comment_ranks() {
             MAX(comment_author) AS comment_author,
             comment_author_email,
             MAX(comment_author_url) AS comment_author_url,
-            COUNT(*) AS cnt
+            COUNT(*) AS cnt,
+            MIN(comment_date) AS first_date,
+            MAX(comment_date) AS last_date
         FROM $wpdb->comments
         WHERE comment_approved = '1'
           AND comment_author_email != ''
@@ -36,13 +31,14 @@ function get_comment_ranks() {
     $comments_data = [];
     foreach ($results as $row) {
         $obj = new stdClass();
-        $obj->name  = $row->comment_author;
-        $obj->mail  = $row->comment_author_email;
-        $obj->link  = $row->comment_author_url;
-        $obj->count = (int) $row->cnt;
+        $obj->name       = $row->comment_author;
+        $obj->mail       = $row->comment_author_email;
+        $obj->link       = $row->comment_author_url;
+        $obj->count      = (int) $row->cnt;
+        $obj->first_date = $row->first_date;
+        $obj->last_date  = $row->last_date;
         $comments_data[] = $obj;
     }
-
     return $comments_data;
 }
 
@@ -117,7 +113,8 @@ function the_comment_ranks($t1 = '常客', $c1 = '近期访问较频繁的童鞋
                     $img_src = ($lazyhold === '') ? $avatar : (isset($loadimg) ? $loadimg : '');
     
                     $percent = $get_range_percent($count, $range_max);
-                    $output .= '<li><span id="avatar" data-t="' . $count . '"><a href="' . esc_url($link) . '" target="_blank"><img ' . $lazyhold . ' src="' . esc_url($img_src) . '" title="这家伙留了 ' . $count . ' 条评论！" alt="' . esc_attr($name) . '" /></a></span>';
+                    $title_text = sprintf('首次评论于 %s 最近评论 %s', $user->first_date, $user->last_date);
+                    $output .= '<li><span id="avatar" data-t="' . $count . '"><a href="' . esc_url($link) . '" target="_blank"><img ' . $lazyhold . ' src="' . esc_url($img_src) . '" title="' . esc_attr($title_text) . '" alt="' . esc_attr($name) . '" /></a></span>'; // title="这家伙留了 ' . $count . ' 条评论！"
                     $output .= '<span id="range" style=""><em style="height:' . $percent . '%"><span class="wave active"></span></em></span>';
                     $output .= '<a href="' . esc_url($link) . '" target="_self"><b title="' . esc_attr($name) . '">' . $name . '</b></a></li>';
                 }
@@ -137,7 +134,8 @@ function the_comment_ranks($t1 = '常客', $c1 = '近期访问较频繁的童鞋
                     $lazyhold = (isset($lazysrc) && $lazysrc != 'src') ? 'data-src="' . $avatar . '"' : '';
                     $img_src = ($lazyhold === '') ? $avatar : (isset($loadimg) ? $loadimg : '');
     
-                    $output .= '<li title="TA 在本站已有 ' . $count . ' 条评论"><span id="avatar"><a href="' . esc_url($link) . '" target="_blank"><img ' . $lazyhold . ' src="' . esc_url($img_src) . '" title="这家伙留了 ' . $count . ' 条评论！" alt="' . esc_attr($name) . '"></a></span>';
+                    $title_text = sprintf('首次评论于 %s 最近评论 %s', $user->first_date, $user->last_date);
+                    $output .= '<li title="' . esc_attr($title_text) . '"><span id="avatar"><a href="' . esc_url($link) . '" target="_blank"><img ' . $lazyhold . ' src="' . esc_url($img_src) . '" alt="' . esc_attr($name) . '"></a></span>';
                     $output .= '<a href="' . esc_url($link) . '" target="_blank"><b data-mail="' . esc_attr($user->mail) . '">' . $name . '</b><sup>' . $count . '+</sup></a></li>';
                 }
                 $output .= '</ul>';
