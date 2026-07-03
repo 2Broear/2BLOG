@@ -269,7 +269,7 @@
                 function custom_comment($comment, $args, $depth) {
                     global $lazysrc, $admin_email;
                     $GLOBALS['comment'] = $comment; 
-                    $approved = $comment->comment_approved;
+                    $approved = $comment->comment_approved == "1";
                     // $tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
                     // $id = get_comment_ID();
                     $comment_author = $comment->comment_author;
@@ -300,7 +300,7 @@
                                     } else {
                                         if (get_comment_author_email() == $admin_email) echo '<span class="vsys vadmin">admin</span>';
                                         $userAgent = get_userAgent_info($comment->comment_agent);
-                                        echo $approved=="0" ? '<span class="vsys auditing">Auditing</span>' : '<span class="vsys vagent">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
+                                        echo $approved ? '<span class="vsys vagent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing">Auditing</span>';
                                     }
                                 ?>
                             </div>
@@ -308,7 +308,7 @@
                                 <span class="vtime"><?php echo get_comment_time('Y-m-d'); ?></span>
                                 <span class="vedited"></span>
                                 <?php 
-                                    if ($approved=="1") {
+                                    if ($approved) {
                                         if (get_option('site_ajax_comment_switcher')) {
                                             global $post;
                                             echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$comment_ID.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$comment_ID.'" data-respondelement="respond" data-nonce="'.wp_create_nonce( 'wp_rest' ).'" data-replyto="'.$comment_author.'" aria-label="正在回复给：@'.$comment_author.'">回复</a>';
@@ -327,8 +327,8 @@
                                 <?php
                                     $content = $comment->comment_content; //strip_tags($comment->comment_content);
                                     $parent = $comment->comment_parent;
-                                    if($approved=='0') $content = '<small style="opacity:.5">[ 等待评论审核，通过正常显示。 ]</small>';
-                                    if($parent>0) $content = '<a href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
+                                    if (!$approved) $content = '<small style="opacity:.5">[ 等待评论审核，通过正常显示。 ]</small>';
+                                    if ($parent > 0) $content = '<a href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
                                     echo $content; //'<p>'.$content.'</p>'; //comment_text();
                                 ?>
                             </div>
@@ -809,7 +809,7 @@
                                   ai_class = '',
                                   is_ai_reply = child.user_id == 9527,
                                   is_admin = email == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
-                                  is_auditing = child.comment_approved == 0,
+                                  is_auditing = child.comment_approved == '0',
                                   is_approved = is_auditing ? '<span class="auditing vsys">Auditing</span>' : '',
                                   replytocom = is_auditing ? '' : `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>`;
                               if (is_auditing) {
@@ -1154,7 +1154,7 @@
                                                     is_ai_reply = each_comment.user_id == 9527,
                                                     ai_reply = '',
                                                     is_admin = md5mail == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
-                                                    is_auditing = each_comment.comment_approved == 0,
+                                                    is_auditing = each_comment.comment_approved == '0',
                                                     is_approved = is_auditing ? '<span class="vsys auditing">待审核</span>' : '',
                                                     replytocom = is_auditing ? '' : `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>`;
                                                 if (is_auditing) {
@@ -1233,6 +1233,7 @@
                                     const ai_comments = getParByCls(t, 'vcard'); //t.parentNode.parentNode
                                     const vcontent = ai_comments.querySelector(".vcontent p");
                                     let standby_context = `Standby, AI is now retrying your request..`;
+                                    let failure_context = 'Failed on retry AI reply, Please try again later..';
                                     <?php echo $words_typer ? 'words_typer(vcontent, standby_context, 25, "' . $shuffle_typer . '");' : 'vcontent.textContent = standby_context;'; ?>
                                     function enableLink(cls = 'comment-retry-link', ctx = '', data) {
                                         t.classList.add(cls);
@@ -1246,7 +1247,7 @@
                                     .then(res => res.json())
                                     .then(data => {
                                         if (data.cached) {
-                                            <?php echo $output_words = $words_typer ? 'words_typer(vcontent, data.reply_content, 25, "' . $shuffle_typer . '");' : 'vcontent.textContent = data.reply_content;'; ?>
+                                            <?php echo $output_success = $words_typer ? 'words_typer(vcontent, data.reply_content, 25, "' . $shuffle_typer . '");' : 'vcontent.textContent = data.reply_content;'; ?>
                                             // enable normal-reply
                                             enableLink('comment-reply-link', that.reply_obj.context.reply, data);
                                         } else if (data.scheduled) {
@@ -1256,12 +1257,16 @@
                                                 vcontent.textContent = standby_context + `（${max - attempts}）`;
                                             }, (data)=> {
                                                 if (data.status === 'completed') {
-                                                    <?php echo $output_words; ?>
+                                                    <?php echo $output_success; ?>
                                                     // enable normal-reply (update replied commentid)
                                                     enableLink('comment-reply-link', that.reply_obj.context.reply, data);
+                                                } else if (data.status === 'none') {
+                                                    <?php echo $output_failure = $words_typer ? 'words_typer(vcontent, failure_context, 25, "' . $shuffle_typer . '");' : 'vcontent.textContent = failure_context;'; ?>
+                                                    enableLink();  // enable retry
                                                 }
-                                            }, (err)=> {
-                                                alert('Failed on retry AI reply, Please try again later..');
+                                            }, ()=> {
+                                                <?php echo $output_failure; ?>
+                                                enableLink();  // enable retry
                                             });
                                         }
                                     })
@@ -1380,7 +1385,7 @@
                                                     } else {
                                                         let outside_child_list = check_child_reply?.nextElementSibling;
                                                         if (check_child_reply) {
-                                                            console.log('is check_child_reply');
+                                                            // console.log('is check_child_reply');
                                                             if (outside_child_list && outside_child_list.classList.contains('children')){
                                                                 outside_child_list.appendChild(comment);  // child-list exist (case: child-list next to wp_comments)
                                                             } else {
@@ -1389,7 +1394,7 @@
                                                                 that.vlist.insertBefore(wrap_ul, outside_child_list);  // (insert next to wp_comments)
                                                             }
                                                         } else {
-                                                            console.log('is direct insert');
+                                                            // console.log('is direct insert');
                                                             that.vlist.insertBefore(comment, that.vlist.firstElementChild);
                                                         }
                                                         //update comment_count at level-0 submit
@@ -1466,6 +1471,7 @@
                                                             // update 2ber(ai) info
                                                             comment_nick = comment_clone.querySelector('.vnick em');
                                                             comment_clone.querySelector('.vcontent').innerHTML = `<a href="#comment-${reply_comment_id}">@${comment_nick.textContent}</a>，<p></p>`;
+                                                            comment_nick.textContent = '2BER';  // update 2BER nick
                                                             <?php echo $words_typer ? 'words_typer(comment_clone.querySelector(".vcontent p"), standby_context, 35, "' . $shuffle_typer . '");' : 'comment_clone.querySelector(".vcontent p").textContent = standby_context;'; ?>;
                                                             // remove current reply info on processing..
                                                             if (reply_link) comment_clone.querySelector('.comment-reply-link').remove();

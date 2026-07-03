@@ -16,6 +16,10 @@ body.dark .news-article-container .v .vlist .children:hover {
 .v .vlist .vcard .vhead .vsys.vai {
     display: inline-block!important;
 }
+.v .vlist .children {
+    font-size: inherit;
+    margin-left: 5%!important;
+}
 
 .noise-bg {
   position: fixed;
@@ -107,12 +111,12 @@ body.dark .news-article-container .v .vlist .children:hover {
 
 /**
 **
-** contrast fixes
+** blog contrast fixes
 **
 **/
-.v .vlist .children {
-    font-size: inherit;
-    margin-left: 5%!important;
+/*body.dark .win-content article h3,*/
+body.dark .win-content article h2 {
+    color: var(--preset-f);
 }
 body.dark .win-content article {
     color: var(--preset-c);

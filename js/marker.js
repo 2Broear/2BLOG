@@ -112,15 +112,15 @@
                     a.${c_line} .${c_tool} span.${c_like}{width:auto;height:auto;font-size:10px;line-height:12px;padding:1px 5px;margin:-5px;border-radius:25px;background:limegreen;font-weight:bold;}
                     a.${c_line} .${c_tool} span.${c_liked}{background:orangered;}
                     @media (prefers-color-scheme: dark) {
-                        a.${c_line} .${c_tool} .${c_avatars} img{opacity:1;border-color:#4a4a4a}
-                        a.${c_line} .${c_tool} span.${c_like},a.${c_line} .${c_tool} span.${c_close},a.${c_line} .${c_tool} .${c_note}{color: #4a4a4a!important;}
+                        a.${c_line} .${c_tool} .${c_avatars} img{opacity:1;border-color:var(--preset-4a)}
+                        a.${c_line} .${c_tool} span.${c_like},a.${c_line} .${c_tool} span.${c_close},a.${c_line} .${c_tool} .${c_note}{color: var(--preset-4a)!important;}
                         a.${c_line} .${c_tool} .${c_note} label,a.${c_line} .${c_tool} .${c_note} input{color: lightgray!important;}
-                        a.${c_line} .${c_tool} .${c_toolIn}{color: lightgray;border-color: #4a4a4a;background: -webkit-linear-gradient(90deg, #3a3a3a 0, #4a4a4a);background: linear-gradient(0deg, #3a3a3a 0, #4a4a4a);}
+                        a.${c_line} .${c_tool} .${c_toolIn}{color: lightgray;border-color: var(--preset-5a);background: -webkit-linear-gradient(90deg, var(--preset-3a) 0, var(--preset-4a));background: linear-gradient(0deg, var(--preset-3a) 0, var(--preset-4a));}
                     }
-                    body.dark a.${c_line} .${c_tool} .${c_avatars} img{opacity:1;border-color:#3a3a3a}
-                    body.dark a.${c_line} .${c_tool} span.${c_like},body.dark a.${c_line} .${c_tool} span.${c_close},body.dark a.${c_line} .${c_tool} .${c_note}{color: #4a4a4a!important;}
+                    body.dark a.${c_line} .${c_tool} .${c_avatars} img{opacity:1;border-color:var(--preset-3a)}
+                    body.dark a.${c_line} .${c_tool} span.${c_like},body.dark a.${c_line} .${c_tool} span.${c_close},body.dark a.${c_line} .${c_tool} .${c_note}{color: var(--preset-4a)!important;}
                     body.dark a.${c_line} .${c_tool} .${c_note} label,body.dark a.${c_line} .${c_tool} .${c_note} input{color: lightgray!important;}
-                    body.dark a.${c_line} .${c_tool} .${c_toolIn}{color: lightgray;border-color: #4a4a4a;background: -webkit-linear-gradient(90deg, #3a3a3a 0, #4a4a4a);background: linear-gradient(0deg, #3a3a3a 0, #4a4a4a);}
+                    body.dark a.${c_line} .${c_tool} .${c_toolIn}{color: lightgray;border-color: var(--preset-5a);background: -webkit-linear-gradient(90deg, var(--preset-3a) 0, var(--preset-4a));background: linear-gradient(0deg, var(--preset-3a) 0, var(--preset-4a));}
                 `;
                 if(s_lineKeepTop) style.textContent += `a.${c_line} .${c_tool}{padding:10px 0 50px;opacity:1;z-index:1;}a.${c_line}.${c_done} .${c_tool} .${c_note}{margin:0 0 10px 10px;}`;
                 document.head.appendChild(style);

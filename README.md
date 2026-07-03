@@ -307,6 +307,7 @@ Futures todo & bugs
 - ✅ ~~新增 Marker 文章标记~~
 - ✅ ~~新增 RSS 友链阅读器~~
 - ✅ ~~集成 Valine 自定义功能到 WordPress 评论~~
+- ✅ ~~集成 WordPress 2BER AI 评论/审核功能~~
 
 ### bug
 <details>

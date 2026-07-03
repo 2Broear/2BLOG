@@ -8,8 +8,10 @@ body.dark .v .vlist .vcard .vhead .vsys.vai {
 .v .vlist .vcard .vh .vsys.vai {
     color: rebeccapurple!important;
 }
+body.dark .v .vlist .vcard.ai .vh .vat,
+.v .vlist .vcard.ai .vh .vat,
 .v .vlist .vcard.ai .vh .vnick em {
-    color: mediumpurple; 
+    color: mediumpurple!important; 
 /*    font-weight: bold;*/
 /*    opacity: .75;*/
 }

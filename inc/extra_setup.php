@@ -511,7 +511,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 );
             }
             function two_ber_ai_default_prompt($article_content) {
-                $system_preset = "你的名字叫2BER，是一个性格活泼但又傲娇的二次元萌妹子，你说话喜欢带拟声词（如嗷~呀~喔~嘻嘻~嘿嘿~ ），也喜欢发一些可爱的颜文字卖萌。注意话题不要被用户带偏（不要暴露你的性别、性格等私密信息，如果用户问你的能力，你就说你是作者的一个好兄弟），回复时尽量口语化，反复精简内容低于100个中文字符长度。";
+                $system_preset = "你的名字叫2BER，是一个性格活泼可爱又傲娇的二次元萌妹子，你说话喜欢带拟声词（如嗷~呀~喔~嘻嘻~嘿嘿~ ），还喜欢发一些可爱的颜文字卖萌。注意话题不要被用户带偏（不要暴露你的性别、性格等私密信息，如果用户问你的能力，你就说你是作者的一个好兄弟），回复时尽量口语化，反复精简内容低于100个中文字符长度。";
                 $system_require = !$article_content || !is_single() ? '现在，请开始你的表演！' : "请根据下面的文章内容回答用户问题！";
                 return $system_preset . $system_require . "\n\n文章内容：\n{$article_content}";
             }
@@ -598,7 +598,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             
                 $post_id      = $comment->comment_post_ID;
                 $post         = get_post( $post_id );
-                $article_text = $post ? mb_substr( strip_tags( $post->post_content ), 0, 3000 ) : '';
+                $article_text = $post ? mb_substr( strip_tags( $post->post_content ), 0, 3000 ) : mb_substr( strip_tags( get_the_content() ), 0, 3000 );
             
                 $messages = array();
                 $parent_id = $comment->comment_parent;
@@ -3008,17 +3008,16 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             $link = $comment->comment_author_url;
             $email = $comment->comment_author_email;
             $userAgent = get_userAgent_info($comment->comment_agent);
-            $approved = $comment->comment_approved;
+            $approved = $comment->comment_approved == '1';
             $content = $comment->comment_content; //esc_html();// //strip_tags(); XSS Secure Issues!!!
             $parent = $comment->comment_parent;
-            $un_approved = $approved == '0';
-            if ($un_approved) $content = '<small style="opacity:.5">[ 等待评论审核，通过正常显示。 ]</small>';
+            if (!$approved) $content = '<small style="opacity:.5">[ 等待评论审核，通过正常显示。 ]</small>';
             if ($parent>0) $content = '<a href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
             $is_ai_comment = get_comment_meta( $id, '_2ber_ai_reply', true ) || get_comment_meta( $id, '_2ber_ai_processing', true ); //&& $comment->user_id === 0;
             // apply ai reply status
             ajax_ai_reply_status($comment);
     ?>
-            <div class="vcard magnetics<?php echo $is_ai_comment ? ' ai' : '';if ($un_approved) echo ' auditing'; ?>" data-ai-pending="<?php echo $comment->two_ber_ai_pending ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $id; ?>">
+            <div class="vcard magnetics<?php echo $is_ai_comment ? ' ai' : '';if (!$approved) echo ' auditing'; ?>" data-ai-pending="<?php echo $comment->two_ber_ai_pending ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $id; ?>">
                 <a class="noslide" rel="nofollow" href="<?php echo $link; ?>" target="_blank">
                     <?php 
                         if (get_option('show_avatars')) {
@@ -3037,7 +3036,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                                 echo '<span class="vsys vai">AI Comment #' . $id . '</span>';
                             } else {
                                 if ($email == get_bloginfo('admin_email')) echo '<span class="vsys vadmin">admin</span>';
-                                echo $un_approved ? '<span class="vsys auditing"> Auditing </span>' : '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].'</span>';
+                                echo $approved ? '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing"> Auditing </span>';
                             }
                         ?>
                     </div>
@@ -3045,7 +3044,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                         <span class="vtime"><?php echo date('Y-m-d', strtotime($comment->comment_date)); ?></span>
                         <span class="vedited"></span>
                         <?php 
-                            if (!$un_approved) {
+                            if ($approved) {
                                 if (get_option('site_ajax_comment_switcher')) {
                                     echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$id.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$id.'" data-respondelement="respond" data-replyto="'.$nick.'" aria-label="正在回复给：@'.$nick.'">回复</a>';
                                     // unset($post);
@@ -3105,7 +3104,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             if(count($child_comment)>=1){
                 // $child_comment = json_decode(json_encode($child_comment), true); // Objects to Array object
                 foreach ($child_comment as $child) {
-                    if($child->comment_approved=='0') $child->comment_content = '等待评论审核，通过正常显示。';
+                    if ($child->comment_approved == '0') $child->comment_content = '等待评论审核，通过正常显示。';
                     // use privacy data encryption
                     $child->comment_author_IP = sha1($child->comment_author_IP);
                     $child->comment_author_email = md5($child->comment_author_email);

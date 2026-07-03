@@ -132,7 +132,7 @@ function get_download_posts($cats, $order=1){
 		</div>
 		<div style="max-width:1102px;margin:0 auto">
             <?php 
-                the_content();// the_page_content(current_slug());  //
+                echo '<p>'.get_the_content().'</p>';// the_page_content(current_slug());  //
                 dual_data_comments();
             ?>
         </div>
