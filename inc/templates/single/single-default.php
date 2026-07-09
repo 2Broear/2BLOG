@@ -32,9 +32,14 @@
 	    }
 	    .bg h1 a{
 	        animation-duration: 1.5s;
-	        /*animation-delay: .5s;*/
-	        /*filter: url(#x);*/
-	        /*font-size: xxx-large;*/
+            filter: none;
+            /*width: 100%;*/
+            /*height: 68%;*/
+            /*position: absolute;*/
+            /*bottom: 0;*/
+            /*left: 0;*/
+            /*z-index: -1;*/
+            /*filter: url(#x);*/
 	    }
 	    figure.wp-block-gallery > figure{
 	        /*min-height: 222px;*/

@@ -14,7 +14,8 @@
         adsense_shortcode('adsense_list_context');
 ?>
     <div class="share" style="<?php if(!$comment_sw) echo 'margin-top:15px'; ?>">
-        <a id="dislike" class="magnetics" title="有点东西（Like）" href="javascript:;" data-action="like" data-id="<?php echo $pid=get_the_ID(); ?>" data-nonce="<?php echo wp_create_nonce($pid."_post_like_ajax_nonce"); ?>" class="<?php if(isset($_COOKIE['post_liked_'.$post_ID])) echo 'liked';?>" <?php if(!$comment_sw) echo 'onclick="postLike(this)"'; ?>><?php if($comment_sw) echo '<div class="user"><small></small><div id="list"></div></div>'; ?>
+        <a id="dislike" class="magnetics" title="有点东西（Like）" href="javascript:;" data-action="like" data-id="<?php echo $pid=get_the_ID(); ?>" data-nonce="<?php echo wp_create_nonce($pid."_post_like_ajax_nonce"); ?>" class="<?php if(isset($_COOKIE['post_liked_'.$post_ID])) echo 'liked';?>" <?php if(!$comment_sw) echo 'onclick="postLike(this)"'; ?>>
+            <!--<div class="user"><small>本文海星⭐️不？要不点个赞👍再走，这样还能留个名~</small><div id="list"></div></div> -->
             <span id="like" class="count magnetic">
                 <i id="counter"><?php $like=get_post_meta($post_ID,'post_liked',true);echo $like ? $like : '0'; ?></i>
                 <em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -478px 4px"></em>
@@ -174,7 +175,7 @@
                         <input class="vurl vinput" type="url" id="url" name="url" placeholder="网址" autocapitalize="off" autocomplete="off" autocorrect="off" value="<?php echo $user_link; ?>" />
                     </div>
                     <div class="vedit txt-right">
-                        <textarea name="comment" id="veditor" class="veditor vinput" placeholder="<?php $placeholder = $ai_comment ? '快来“@2BER”获取你的专属AI回复！' : '快来玩右下角的“涂鸦画板”！';$replytocom = array_key_exists('replytocom',$parameters) ? $parameters['replytocom'] : false;echo $replytocom ? '正在回复给：@'.get_comment_author($replytocom) : $placeholder; ?>"></textarea>
+                        <textarea name="comment" id="veditor" class="veditor vinput" placeholder="<?php $placeholder = $ai_comment ? '快来“@2BER”领取你的专属回复！' : '快来玩右下角的“涂鸦画板”！';$replytocom = array_key_exists('replytocom',$parameters) ? $parameters['replytocom'] : false;echo $replytocom ? '正在回复给：@'.get_comment_author($replytocom) : $placeholder; ?>"></textarea>
                         <?php
                             // if ($cf_turnstile_wordpress && !$wp_ajax_comment) echo '<input type="hidden" name="cf-turnstile-response" id="cf-turnstile-response" value="0">';  // send turnstile token
                             echo get_comment_id_fields($post_ID);
@@ -206,7 +207,7 @@
                         <div class="vcontrol">
                             <div class="col col-80 text-right">
                                 <button type="button" id="repushBtn" class="vsubmit vbtn" style="display:none"> 重新提交 </button>
-                                <button id="pushBtn" type="submit" class="submit_btn vsubmit vbtn magnetic" value="<?php echo $text_submit; ?>" data-pid="<?php echo $post_ID; ?>" data-cid="0" data-nonce="<?php echo wp_create_nonce( 'comment_dynamic_' . $_SERVER['REMOTE_ADDR'] ); //wp_create_nonce( 'comment_form' ); ?>" />回复</button>
+                                <button id="pushBtn" type="submit" class="submit_btn vsubmit vbtn magnetic" value="<?php echo $text_submit; ?>" data-pid="<?php echo $post_ID; ?>" data-cid="0" data-nonce="<?php echo wp_create_nonce( 'comment_dynamic_' ); //wp_create_nonce( 'comment_form' ); ?>" />回复</button>
                                 <?php //cancel_comment_reply_link('取消回复'); ?>
                             </div>
                         </div>
@@ -242,10 +243,11 @@
             <?php
                 $per_page = get_option('comments_per_page', 15);
                 $comment_order = get_option('comment_order'); //get_option('site_ajax_comment_paginate') ? 'DESC' : get_option('comment_order');
+                // Basic Common Comments(comment_parent==0)
                 $comments = get_comments(array(
                     'post_id' => $post_ID,
-                    'orderby' => 'comment_date_gmt', //comment_ID
                     'order'   => $comment_order,
+                    'orderby' => 'comment_date_gmt',
                     'number'  => $per_page,
                     // 'status'  => 'approve', // approved only
                     // 'default_comments_page' => 'newest', //get_option('default_comments_page')
@@ -313,7 +315,8 @@
                                     if ($approved) {
                                         if (get_option('site_ajax_comment_switcher')) {
                                             global $post;
-                                            echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$comment_ID.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$comment_ID.'" data-respondelement="respond" data-nonce="'.wp_create_nonce( 'wp_rest' ).'" data-replyto="'.$comment_author.'" aria-label="正在回复给：@'.$comment_author.'">回复</a>';
+                                            $tips = $is_ai_comment ? '追问AI无需@' : '回复ta的评论';
+                                            echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$comment_ID.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$comment_ID.'" data-respondelement="respond" data-nonce="'.wp_create_nonce( 'wp_rest' ).'" data-replyto="'.$comment_author.'" title="'.$tips.'" aria-label="正在回复给：@'.$comment_author.'">回复</a>';
                                             // unset($post);
                                         } else {
                                             echo comment_reply_link(array_merge($args, array(
@@ -372,10 +375,9 @@
                         }
                         wp_comments_template($each);
                         // 遍历子评论列表 https://wp-kama.com/function/WP_Comment::get_children
-                        // $comment_order = get_option('site_ajax_comment_paginate') ? 'ASC' : get_option('comment_order');
                         $child_comment = $each->get_children(array(
                             'hierarchical' => 'threaded',
-                            'order'        => $comment_order, //get_option('comment_order'), //
+                            'order'        => 'ASC', // fixed ASC on ajax_paginate $comment_order
                             'orderby' => 'comment_date_gmt',
                             // 'status'       => 'approve',
                             // 'default_comments_page' => 'newest', //get_option('default_comments_page')
@@ -437,7 +439,7 @@
                             if ( empty( $label ) ) {
                                 $label = __( '&laquo; Older Comments' );
                             }
-                            return '<a class="loadmore noslide wp magnetic" href="' . esc_url( get_comments_pagenum_link( $prevpage ) ) . '" ' . apply_filters( 'previous_comments_link_attributes', '' ) . '><i class="icom"></i>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '</a>';
+                            return '<span><a class="loadmore noslide wp magnetic" href="' . esc_url( get_comments_pagenum_link( $prevpage ) ) . '" ' . apply_filters( 'previous_comments_link_attributes', '' ) . '><i class="icom"></i>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '</a></span>';
                         }
                         // 下一页评论
                         function get_next_comments_html( $label = '', $max_page = 0 ) {
@@ -463,7 +465,7 @@
                             if ( empty( $label ) ) {
                                 $label = __( 'Newer Comments &raquo;' );
                             }
-                            return '<a class="loadmore noslide wp magnetic" href="' . esc_url( get_comments_pagenum_link( $nextpage, $max_page ) ) . '" ' . apply_filters( 'next_comments_link_attributes', '' ) . '>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '<i class="icom left"></i></a>';
+                            return '<span><a class="loadmore noslide wp magnetic" href="' . esc_url( get_comments_pagenum_link( $nextpage, $max_page ) ) . '" ' . apply_filters( 'next_comments_link_attributes', '' ) . '>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '<i class="icom left"></i></a></span>';
                         }
                         echo get_previous_comments_html("PREV COMMENTS");
                         echo get_next_comments_html("NEXT COMMENTS");
@@ -510,7 +512,7 @@
                             comment_repeat: '检测到重复评论，您似乎已经提交过这条评论了！', //'检测到重复评论，这条评论似乎已经被提交过了！'
                             comment_repeats: '检测到重复请求，2BER AI 已经为这篇文章生成过摘要了！',
                             comment_limit: '您提交评论的速度太快了，请稍后再发表评论。',
-                            comment_limits: '该评论下的 AI 回复数量已达上限，无法再发起新提问。',
+                            comment_limits: '该楼层下的 AI 回复数量已达上限，无法再发起新提问！',
                             comment_error: '抱歉，服务器错误，请稍后再试。',
                             comment_counter: '条评论',
                             comment_submit: '提交中..',
@@ -524,7 +526,7 @@
                             class_replying: 'replying',
                             class_no_reply: 'disabled_reply',
                             class_disabled: 'disabled',
-                            class_loading: 'loading',
+                            class_loading: 'vloading',
                             class_drawing: 'drawing',
                             emojis_bilibili: 'bilibili 小电视',
                             emojis_heo: 'HOE 表情包',
@@ -788,44 +790,6 @@
                     }
                     if ($wp_ajax_comment) {
                 ?>
-                    childComments: function loop(childs) {
-                        let output = "";
-                        if (childs) {
-                          //console.log(childs);  //Objects
-                          childs = Object.values(childs);  //Objects to Array Object
-                          //console.log(childs);  //Array Object
-                          for(let i=0,childLen=childs.length;i<childLen;i++){
-                              let child = childs[i],
-                                  id = child.comment_ID,
-                                  nick = child.comment_author,
-                                  link = child.comment_author_url,
-                                  email = child.comment_author_email,
-                                  parent = child.comment_parent,
-                                  content = child.comment_content,//strip_tags(child.comment_content),
-                                  user_agent =  `<span class="vsys useragent">${child._comment_agent.browser+" / "+child._comment_agent.system}</span>`,
-                                  ai_reply = '',
-                                  ai_class = '',
-                                  is_ai_reply = child.user_id == 9527,
-                                  is_admin = email == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
-                                  is_auditing = child.comment_approved == '0',
-                                  is_approved = is_auditing ? '<span class="auditing vsys">Auditing</span>' : '',
-                                  replytocom = is_auditing ? '' : `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>`;
-                              if (is_auditing) {
-                                  content = '<small style="opacity:.5">[ '+content+' ]</small>'; //${cururl}?replytocom=${id}#respond
-                                  user_agent = '';
-                              }
-                              if (is_ai_reply) {
-                                  ai_reply = `<span class="vsys vai">AI Comment #${id}</span>`;
-                                  user_agent = '';
-                                  ai_class = ' ai';
-                              }
-                              // track-back (childCommentsLoop insert after output)
-                              output += `<div class="vcard magnetics${ai_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0.015" id="comment-${id}"><a class="noslide" rel="nofollow" href="${link}" target="_blank"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent}</div><div class="vmeta"><span class="vtime">${new Date(child.comment_date).toLocaleDateString()}</span><span class="vedited"></span>${replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${nick}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
-                           }
-                        }
-                        return output;
-                    },
-                    
                     cancelReply: function(t, redraw = false) {
                         if (!t && this.reply_obj.last_reply) t = this.reply_obj.last_reply; // case of cancel from successed submit
                         // clear last_reply state
@@ -859,6 +823,44 @@
                 <?php
                     }
                 ?>
+                    childComments: function loop(childs) {
+                        let output = "";
+                        if (childs) {
+                          //console.log(childs);  //Objects
+                          childs = Object.values(childs);  //Objects to Array Object
+                          //console.log(childs);  //Array Object
+                          for(let i=0,childLen=childs.length;i<childLen;i++){
+                              let child = childs[i],
+                                  id = child.comment_ID,
+                                  nick = child.comment_author,
+                                  link = child.comment_author_url,
+                                  email = child.comment_author_email,
+                                  parent = child.comment_parent,
+                                  content = child.comment_content,//strip_tags(child.comment_content),
+                                  user_agent =  `<span class="vsys useragent">${child._comment_agent.browser+" / "+child._comment_agent.system}</span>`,
+                                  ai_reply = '',
+                                  ai_class = '',
+                                  is_ai_reply = child.user_id == 9527,
+                                  is_admin = email == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
+                                  is_auditing = child.comment_approved == '0',
+                                  is_approved = is_auditing ? '<span class="auditing vsys">Auditing</span>' : '',
+                                  tips = is_ai_reply ? '追问AI无需@' : '回复ta的评论',
+                                  replytocom = is_auditing ? '' : `<a rel="nofollow" class="vat noslide comment-reply-link" title="${tips}" href="<?php $wp_ajax_paginate_only = $wp_ajax_comment_paginate&&!$wp_ajax_comment;echo $wp_ajax_paginate_only ? '${child._comment_replytocom}' : 'javascript:;'; ?>" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>`;
+                              if (is_auditing) {
+                                  content = '<small style="opacity:.5">[ '+content+' ]</small>'; //${cururl}?replytocom=${id}#respond
+                                  user_agent = '';
+                              }
+                              if (is_ai_reply) {
+                                  ai_reply = `<span class="vsys vai">AI Comment #${id}</span>`;
+                                  user_agent = '';
+                                  ai_class = ' ai';
+                              }
+                              output += `<div class="vcard magnetics${ai_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0.015" id="comment-${id}"><a class="noslide" rel="nofollow" href="${link}" target="_blank"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent}</div><div class="vmeta"><span class="vtime">${new Date(child.comment_date).toLocaleDateString()}</span><span class="vedited"></span>${replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${child._comment_reply}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
+                           }
+                        }
+                        return output;
+                    },
+                    
                 });
                 
                 Object.defineProperty(vcomments.init.prototype, 'dispatchEvents', {
@@ -1111,9 +1113,15 @@
                                     console.debug(t);
                                     // code
                             }
-                    <?php
-                        if ($wp_ajax_comment) {
-                    ?>
+                            /**
+                             * children comment extends
+                             * logic
+                             * 
+                             **/
+                            if (t.classList.contains('extend_addon')) {
+                                t.parentNode.classList.remove('overview');
+                                t.remove();
+                            }
                             /**
                             * 
                             * load more
@@ -1131,8 +1139,9 @@
                                     // return;
                                 } else {
                                     clicks++;
-                                    t.innerText = that.reply_obj.context.loading;
-                                    t.classList.add(that.reply_obj.context.class_loading, that.reply_obj.context.class_disabled);
+                                    t.innerText = ''; //that.reply_obj.context.loading
+                                    t.parentNode.classList.add(that.reply_obj.context.class_loading);
+                                    t.classList.add(that.reply_obj.context.class_disabled);
                                     t.setAttribute('data-click', clicks);
                                     send_ajax_request("post", admin_ajax, parse_ajax_parameter({
                                             "action": "ajaxLoadComments",
@@ -1146,7 +1155,8 @@
                                                 posts_count = posts_array.length,
                                                 loads_count = loads + posts_count;
                                             t.innerText = that.reply_obj.context.comment_more;
-                                            t.classList.remove(that.reply_obj.context.class_loading, that.reply_obj.context.class_disabled);
+                                            t.parentNode.classList.remove(that.reply_obj.context.class_loading);
+                                            t.classList.remove(that.reply_obj.context.class_disabled);
                                             loads_count>=counts ? t.setAttribute('data-load', counts) :  t.setAttribute('data-load', loads_count);  // update current loaded(limit judge)
                                             for (let i=0; i<posts_count; i++) {
                                                 let each_comment = posts_array[i],
@@ -1168,7 +1178,8 @@
                                                     is_admin = md5mail == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
                                                     is_auditing = each_comment.comment_approved == '0',
                                                     is_approved = is_auditing ? '<span class="vsys auditing">待审核</span>' : '',
-                                                    replytocom = is_auditing ? '' : `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>`;
+                                                    tips = is_ai_reply ? '追问AI无需@' : '回复ta的评论',
+                                                    replytocom = is_auditing ? '' : `<a rel="nofollow" class="vat noslide comment-reply-link" title="${tips}" href="<?php echo $wp_ajax_paginate_only ? '${each_comment._comment_replytocom}' : 'javascript:;'; ?>" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>`;
                                                 if (is_auditing) {
                                                     content = '<small style="opacity:.5">[ '+content+' ]</small>'; //${cururl}?replytocom=${id}#respond
                                                     user_agent = '';
@@ -1198,6 +1209,9 @@
                                     );
                                 }
                             }
+                    <?php
+                        if ($wp_ajax_comment) {
+                    ?>
                             /**
                             * comment reply handler
                             * logic
@@ -1290,15 +1304,6 @@
                                 };
                             })();
                             /**
-                             * children comment extends
-                             * logic
-                             * 
-                             **/
-                            if (t.classList.contains('extend_addon')) {
-                                t.parentNode.classList.remove('overview');
-                                t.remove();
-                            }
-                            /**
                              * comment submit handler
                              * logic
                              * 
@@ -1360,17 +1365,19 @@
                                         //         'X-WP-Nonce': t.dataset.nonce  // 需前端传入
                                         //     },
                                         //     body: JSON.stringify({
-                                        //         post: postId,
-                                        //         content: commentContent,
-                                        //         parent: comment_pid || 0
+                                        //         content: encodeURIComponent(filter_c_val),
+                                        //         author_name: a_val,
+                                        //         author_url: that.vinfo.querySelector("input[name=url]").value,
+                                        //         author_email: e_val,
+                                        //         post: comment_cid,
+                                        //         parent: comment_pid || 0,
+                                        //         "cf-turnstile-response": that.verify?.value, //t.dataset.token,
                                         //     })
                                         // })
                                         // .then(res => res.json())
                                         // .then(data => {
                                         //     // 直接拿到 comment_id
-                                        //     const commentId = data.id;
-                                        //     // 立即轮询 AI 状态
-                                        //     // handle_ai_comments(commentId, (data)=> {})
+                                        //     let reply_comment_id = data.id;
                                         // });
                                         send_ajax_request("post", "<?php echo esc_url(home_url('')) . '/wp-comments-post.php'; //admin_url('admin-ajax.php');// ?>", 
                                             parse_ajax_parameter({
@@ -1381,11 +1388,12 @@
                                                 "comment_post_ID": comment_cid,
                                                 "comment_parent": comment_pid,
                                                 "cf-turnstile-response": that.verify?.value, //t.dataset.token,
-                                                // 'action': 'wp-comments-post',
                                                 'comment_nonce': t.dataset.nonce,
-                                            }, true), function(res) {
+                                            }, true), function(res, result) {
+                                                const responseId = result.responseURL.match(/comment_id=(\d+)/);
                                                 let container = document.createElement('div');
-                                                let reply_comment_id = 0;
+                                                let reply_comment_id = responseId && responseId[1] ? responseId[1] : 0;
+                                                // console.log(responseId, reply_comment_id)
                                                 function appendComment(comment, ai_comments = false) {
                                                     const inside_child_reply = getParByCls(t, 'children'),
                                                           check_child_reply = getParByCls(t, 'vcard'); //wp_comments
@@ -1420,9 +1428,9 @@
                                                     // console.log(container, reply_comment);
                                                     // update reply_comment on child-reply for newest comment id (classList detects for $wp_ajax_comment_paginate disabled)
                                                     if (reply_comment.dataset.cpid || reply_comment.classList.contains('children')) reply_comment = reply_comment.lastElementChild;
-                                                    reply_comment_id = reply_comment.id.match(/\d+/)[0];
+                                                    // reply_comment_id = reply_comment.id.match(/\d+/)[0];
                                                     let comment_info = '<span class="auditing vsys"> Awaiting </span>',
-                                                        replytocom = reply_comment.classList.contains('auditing') ? '' : `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${reply_comment_id}" data-postid="${comment_cid}" data-belowelement="comment-${reply_comment_id}" data-respondelement="respond">回复</a>`, //reply_comment.dataset.aiPending
+                                                        replytocom = reply_comment.classList.contains('auditing') ? '' : `<a rel="nofollow" class="vat noslide comment-reply-link" title="回复ta的评论" href="javascript:void(0);" data-commentid="${reply_comment_id}" data-postid="${comment_cid}" data-belowelement="comment-${reply_comment_id}" data-respondelement="respond">回复</a>`, //reply_comment.dataset.aiPending
                                                         temp_comment = document.createElement("div"),
                                                         comment_replyto = t.dataset.replyto ? '<a href="#comment-'+comment_pid+'">@'+t.dataset.replyto+'</a> , ' : '';
                                                     if (a_val=="<?php echo $user_name; ?>" && e_val=="<?php echo $user_mail; ?>") {
@@ -1513,10 +1521,10 @@
                                                             if (ai_comments.classList.contains('children')) ai_comments.parentNode.dataset.cpid = comment_pid;
                                                             // updaet final-reply info
                                                             comment_nick = ai_comments.querySelector('.vnick em');
-                                                            if (reply_link) ai_comments.querySelector('.vmeta').innerHTML += `<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="${replied_id}" data-postid="${comment_cid}" data-belowelement="comment-${replied_id}" data-respondelement="respond" data-replyto="2BER" aria-label="正在回复给：@2BER">回复</a>`;
+                                                            if (reply_link) ai_comments.querySelector('.vmeta').innerHTML += `<a rel="nofollow" class="vat noslide comment-reply-link" title="追问AI无需@" href="javascript:void(0);" data-commentid="${replied_id}" data-postid="${comment_cid}" data-belowelement="comment-${replied_id}" data-respondelement="respond" data-replyto="2BER" aria-label="正在回复给：@2BER">回复</a>`;
                                                         }
                                                     }, (replied_id)=> {
-                                                        ai_comments.querySelector('.vmeta').innerHTML += `<a rel="nofollow" class="vat noslide comment-retry-link" href="javascript:void(0);" data-commentid="${replied_id}" data-postid="${comment_cid}" data-belowelement="comment-${replied_id}" data-respondelement="respond" data-replyto="2BER" aria-label="正在回复给：@2BER" data-nonce="<?php echo wp_create_nonce( 'wp_rest' ); ?>">${that.reply_obj.context.retry}</a>`;
+                                                        ai_comments.querySelector('.vmeta').innerHTML += `<a rel="nofollow" class="vat noslide comment-retry-link" href="javascript:void(0);" data-commentid="${replied_id}" data-postid="${comment_cid}" data-belowelement="comment-${replied_id}" data-respondelement="respond" data-replyto="2BER" aria-label="重试回复给：@2BER" data-nonce="<?php echo wp_create_nonce( 'wp_rest' ); ?>">${that.reply_obj.context.retry}</a>`;
                                                         standby_context = "Sorry, 2BER AI might busy now.. (You can retry once via Retry-Button on the right)";
                                                         <?php echo $words_typer ? 'words_typer(ai_comments.querySelector(".vcontent p"), standby_context, 25, "' . $shuffle_typer . '");' : 'ai_comments.querySelector(".vcontent p").textContent = standby_context;'; ?>;
                                                     });

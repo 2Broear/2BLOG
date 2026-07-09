@@ -113,8 +113,8 @@ function the_comment_ranks($t1 = '常客', $c1 = '近期访问较频繁的童鞋
                     $img_src = ($lazyhold === '') ? $avatar : (isset($loadimg) ? $loadimg : '');
     
                     $percent = $get_range_percent($count, $range_max);
-                    $title_text = sprintf('首次评论于 %s 最近评论 %s', $user->first_date, $user->last_date);
-                    $output .= '<li><span id="avatar" data-t="' . $count . '"><a href="' . esc_url($link) . '" target="_blank"><img ' . $lazyhold . ' src="' . esc_url($img_src) . '" title="' . esc_attr($title_text) . '" alt="' . esc_attr($name) . '" /></a></span>'; // title="这家伙留了 ' . $count . ' 条评论！"
+                    $title_text = sprintf('首次评论于 %s，最近评论 %s', $user->first_date, $user->last_date);
+                    $output .= '<li><span id="avatar" data-t="' . $count . '"><a href="' . esc_url($link) . '" target="_blank"><img ' . $lazyhold . ' src="' . esc_url($img_src) . '" title="' . esc_attr($title_text) . '" alt="' . esc_attr($name) . '" /></a></span>';
                     $output .= '<span id="range" style=""><em style="height:' . $percent . '%"><span class="wave active"></span></em></span>';
                     $output .= '<a href="' . esc_url($link) . '" target="_self"><b title="' . esc_attr($name) . '">' . $name . '</b></a></li>';
                 }
@@ -134,7 +134,7 @@ function the_comment_ranks($t1 = '常客', $c1 = '近期访问较频繁的童鞋
                     $lazyhold = (isset($lazysrc) && $lazysrc != 'src') ? 'data-src="' . $avatar . '"' : '';
                     $img_src = ($lazyhold === '') ? $avatar : (isset($loadimg) ? $loadimg : '');
     
-                    $title_text = sprintf('首次评论于 %s 最近评论 %s', $user->first_date, $user->last_date);
+                    $title_text = sprintf('首次评论于 %s，最近评论 %s', substr($user->first_date, 0, 10), substr($user->last_date, 0, 10));
                     $output .= '<li title="' . esc_attr($title_text) . '"><span id="avatar"><a href="' . esc_url($link) . '" target="_blank"><img ' . $lazyhold . ' src="' . esc_url($img_src) . '" alt="' . esc_attr($name) . '"></a></span>';
                     $output .= '<a href="' . esc_url($link) . '" target="_blank"><b data-mail="' . esc_attr($user->mail) . '">' . $name . '</b><sup>' . $count . '+</sup></a></li>';
                 }
@@ -144,12 +144,16 @@ function the_comment_ranks($t1 = '常客', $c1 = '近期访问较频繁的童鞋
             // t3 组：索引 13 开始，最多到第 50 名（索引 49）
             if ($datalen > 13) {
                 $output .= '<h1>' . esc_html($t3) . '</h1><p>' . esc_html($c3) . '</p><ul id="ranked">';
-                $max_t3 = min($datalen, 50);
+                $max_t3 = min($datalen, 100);
                 for ($i = 13; $i < $max_t3; $i++) {
                     $user = $rankdata[$i];
+                    $link  = $user->link ?: '#';
                     $name  = $user->name ?: '匿名者';
+                    if ($name === '2BER') {
+                        break;
+                    }
                     $count = $user->count ?: 0;
-                    $output .= '<li><p>' . esc_html($name) . '<sup>' . $count . '</sup></p></li>';
+                    $output .= '<li><p title="这家伙就留了 ' . $count . ' 条评论！"><a href="' . esc_url($link) . '" target="_blank">' . esc_html($name) . '</a></p></li>';
                 }
                 $output .= '</ul>';
             }

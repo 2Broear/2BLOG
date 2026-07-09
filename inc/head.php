@@ -229,11 +229,18 @@
             return curEl;
         };
         // 自动根据时段设置主题
-        function automode() {
+        function automode(manual = false) {
             // if (getCookie('theme_manual')) return;
             const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
             function handleColorSchemeChange(e) {
-                setCookie('theme_manual', 0);  // disable manual mode if (getCookie('theme_manual')) 
+                // ✅ 新增：如果当前是手动模式，忽略系统主题变化
+                if (!manual && +getCookie('theme_manual')) {
+                    console.log('theme_mode[auto] ignored because manual mode is active');
+                    return;
+                }
+        
+                setCookie('theme_manual', 0);  // 确保为自动模式
+                
                 if (e.matches) {
                     // 用户偏好深色模式优先 (dark)
                     document.body.className = 'dark';

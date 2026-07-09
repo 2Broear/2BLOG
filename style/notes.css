@@ -45,7 +45,7 @@
 .win-nav .nav-header a{color:var(--theme-color);font-size:smaller}
 .nav-body{padding:5px 0;font-size:14px}
 .nav-body .main-root{margin:0;border-radius:var(--radius);text-align:left;border-radius:var(--radius);}
-.main-root ul{color:var(--preset-6);padding:0;margin:inherit;box-sizing:border-box}
+.main-root ul{color:var(--preset-5a);padding:0;margin:inherit;box-sizing:border-box}
 .main-root ul li{width:100%;height:auto;position:relative;border-radius:var(--radius);overflow:hidden;padding: 5px;box-sizing: border-box;}
 /*.main-root ul li a.choosen,*/
 .main-root ul li:nth-child(even) a:hover{background-color:var(--preset-f)}
@@ -70,7 +70,7 @@
 
 .sub-root ol{padding:0}
 .sub-root ol li{display:block;padding:0}
-.sub-root ol li a{color:var(--preset-8);padding:0 15px;font-size:var(--min-size)}
+.sub-root ol li a{color:var(--preset-6a);padding:0 15px;font-size:var(--min-size)}
 .sub-root ol li a:hover{background-color:var(--preset-d)}
 .sub-root ol li.roots .sub-root ol a{padding:0 75px}
 .win-content.main{background:transparent!important;/*margin-bottom:10%;*/}

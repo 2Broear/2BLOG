@@ -4,7 +4,9 @@
 **  @2026
 **
 **/
-
+.empty_card {
+    padding: 10% 0 0;
+}
 .ibox.quotes a {
     color: var(--preset-5a);
 }
@@ -19,6 +21,22 @@ body.dark .news-article-container .v .vlist .children:hover {
 .v .vlist .children {
     font-size: inherit;
     margin-left: 5%!important;
+}
+.v .vlist .children .children {
+    margin-left: 0!important;
+    padding: 0;
+    box-shadow: none;
+}
+.pageSwitcher.dev a:focus {
+    box-shadow: none!important;
+}
+.pageSwitcher.dev span.vloading {
+    display: inline-block!important;
+    vertical-align: middle;
+    padding: 0;
+}
+.pageSwitcher.dev span.vloading i {
+    display: none;
 }
 
 .noise-bg {
@@ -69,7 +87,7 @@ body.dark .news-article-container .v .vlist .children:hover {
     border-color: var(--mirror-end);
     font-size: 1rem;
     line-height: 50px;
-    margin: 23px auto;
+    margin: 20px auto;
     max-width: 88%;
     letter-spacing: 3px;
 }
@@ -101,15 +119,30 @@ body.dark .news-article-container .v .vlist .children:hover {
 }
 .win-content article h1 {
     font-size: 1.5rem;
+    font-family: serif;
 }
 /**
 **
 ** articles
 **
 **/
+body.dark .news-article-window {
+    color: var(--preset-c);
+}
 #news-article-head h1 {
     font-family: serif;
     font-size: 3rem;
+}
+.bg h1 {
+    text-shadow: 5px 0px 20px color-mix(in oklab, var(--theme-color) 50%, transparent);
+    /*filter: none;*/
+}
+blockquote.wp-block-quote p {
+    color: var(--preset-5a);
+    font-family: serif;
+}
+body.dark blockquote.wp-block-quote p {
+    color: var(--preset-9)!important;
 }
 /**
 **

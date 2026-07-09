@@ -27,6 +27,9 @@
 	        margin-right: 3px;
 	        opacity: .75;
 	    }
+	    .win-content article p {
+	        opacity: 1;
+	    }
 	    /*@media screen and (max-width: 960px) {*/
      /*       .win-nav {*/
      /*           width: 100% !important;*/
@@ -122,7 +125,7 @@
                     $total_pages = $left_query->max_num_pages;  //total pages
                     // Empty card if null reponsed
                     if(!$left_query->have_posts()){
-                        echo '<div class="empty_card magnetic"><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';  //<b>'.current_slug(true).'</b> 
+                        echo '<div class="empty_card magnetic" data-magnet-scale="1" data-magnet-step=""><i class="icomoon icom icon-'.current_slug().'" data-t=" EMPTY "></i><h1> '.current_slug(true).' </h1></div>';  //<b>'.current_slug(true).'</b> 
                     }
                     while ($left_query->have_posts()):
                         $left_query->the_post();
@@ -170,6 +173,7 @@
                             'screen_reader_text' => null,
                             'total' => $total_pages,  //总页数
                             'current' => $current_page, //当前页数
+                            // 'before_page_number' => '<span class="marnetic"></span>'
                         ));
                     ?>
                 </div>

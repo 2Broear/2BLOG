@@ -2,7 +2,7 @@
     global $src_cdn;
 ?>
 <div class="noise-bgs"></div>
-<script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/main.js?v=<?php //echo get_theme_info(); ?>"></script>
+<script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
 <script type="text/javascript">
     console.info("<?php echo get_num_queries().'次查询，耗时'.timer_stop(0).'秒。'; ?>");
     // 自动执行一次以更正缓存(after load main.js)
@@ -306,7 +306,7 @@
     <?php
         if (get_option('site_magnetic_effect_switcher')) {
     ?>
-        import('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/magnet.js?v=<?php //echo get_theme_info(); ?>').then((mod)=> {
+        import('<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/magnet.js?v=<?php //echo get_theme_info(); ?>').then((mod)=> {
             const { magnetCurosr } = mod;
             // use keyword "new" to point to init method.
             new magnetCurosr.init({

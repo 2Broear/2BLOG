@@ -25,6 +25,7 @@ body.dark .v .vlist .vcard.ai .vh .vat,
 }
 .v .vlist .children.overview .extend_addon {
     color: var(--preset-link);
+    /*background: color-mix(in oklab, currentColor 10%, transparent);*/
 }
 .v .vlist .vquote.children {
     margin-left: 0;

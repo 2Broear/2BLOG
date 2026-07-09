@@ -406,7 +406,7 @@
                     $theme_title = '主题切换';
                     $theme_titles = '点击根据时段自动设置主题';
                     $theme_event = 'darkmode()';
-                    $theme_events = 'automode()';
+                    $theme_events = 'automode(true)';
                     if ($fixed_theme) {
                         $static_text = '已禁用（已启用 ' . $fixed_theme . ' 常驻）';
                         $theme_class = ' disabled';

@@ -202,7 +202,7 @@ a:link{text-decoration:none}
 blockquote{border-left: 2px solid rgba(150, 150, 150, 0.36);padding-left: 10px;margin:25px 15px;}
 blockquote:first-letter{font-size: 300%;font-weight:bold;font-style:normal;float: left;padding: 5px;margin: 5px;color: inherit;}
 blockquote p:first-child{margin-bottom: 0;/*text-indent: initial;*/}
-blockquote p{color: var(--preset-8)!important;margin:auto auto 5px ;/*text-indent: 2em;*/}
+blockquote p{margin:auto auto 5px ;/*text-indent: 2em;*/}
 blockquote p#s{font-size:var(--min-size);text-align:right;position:relative}
 blockquote p#s i{position:absolute;top:-18px;right:18px;width:66px;height:66px;opacity:.36;}
 #what_says_inside::selection{background-color:transparent}
@@ -739,7 +739,7 @@ body.dark .empty_card{
     width: 42%;
     max-width: 300px;
     margin: 5% auto;
-    border-radius: calc(var(--radius) * 2);
+    border-radius: var(--radius);
     /*background: rgb(100 100 100 / 3%);*/
     /*border: 1px solid rgb(150 150 150 / 5%);*/
     /*box-shadow: 0 1px 1px rgb(0 0 0 / 15%), 0 8px 0 -3px var(--preset-fa), 0 9px 1px -3px rgb(0 0 0 / 15%), 0 16px 0 -6px var(--preset-fa), 0 17px 2px -6px rgb(0 0 0 / 15%)*/

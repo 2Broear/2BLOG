@@ -121,7 +121,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                     exit;
                 }
                 $secretKey = cloudflare_key()[1];
-                $ip = $_SERVER['REMOTE_ADDR'];
+                $ip = get_remote_ip();
                 
                 $url_path = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
                 $data = array('secret' => $secretKey, 'response' => $captcha, 'remoteip' => $ip);
@@ -153,7 +153,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             if (!$captcha) return false;
             
             $secretKey = cloudflare_key()[1];
-            $ip = $_SERVER['REMOTE_ADDR'];
+            $ip = get_remote_ip();
             
             $url_path = $captcha_url;
             $data = array('secret' => $secretKey, 'response' => $captcha, 'remoteip' => $ip);
@@ -266,7 +266,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             }
         
             $secret_key = cloudflare_key()[1];
-            $remote_ip = $_SERVER['REMOTE_ADDR'];
+            $remote_ip = get_remote_ip();
         
             $response = wp_remote_post('https://challenges.cloudflare.com/turnstile/v0/siteverify', array(
                 'body' => array(
@@ -428,7 +428,11 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
              */
             add_filter( 'preprocess_comment', function ( $commentdata ) {
                 $content = $commentdata['comment_content'];
-                $cleaned = trim( preg_replace( '/@2ber/i', '', strip_tags( $content ) ) );
+                // 仅当原始内容包含 @2BER 时，才进行后续的“纯 @2BER 重复检查”
+                if ( ! preg_match( '/@2ber/i', $content ) ) {
+                    return $commentdata;
+                }
+                $cleaned = trim( preg_replace( '/@2ber/i', '', $content ) ); //strip_tags( $content )
                 
                 if ( '' === $cleaned) {
                     $post_id = $commentdata['comment_post_ID'];
@@ -511,7 +515,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 );
             }
             function two_ber_ai_default_prompt($article_content) {
-                $system_preset = "你的名字叫2BER，是一个性格活泼可爱又傲娇的二次元萌妹子，你说话喜欢带拟声词（如嗷~呀~喔~嘻嘻~嘿嘿~ ），还喜欢发一些可爱的颜文字卖萌。注意话题不要被用户带偏（不要暴露你的性别、性格等私密信息，如果用户问你的能力，你就说你是作者的一个好兄弟），回复时尽量口语化，反复精简内容低于100个中文字符长度。";
+                $system_preset = "你的名字叫2BER，是一个性格活泼可爱又傲娇的二次元萌妹子，你说话喜欢带拟声词（如嗷~呀~喔~嘻嘻~嘿嘿~ ），还喜欢发一些颜文字表达心情（如(`・ω・´) 、(*^▽^*)、( ﾟДﾟ)ﾉ、(｡•́︿•̀｡)、 o (╥﹏╥)）。注意话题不要被用户带偏（不要暴露你的性别、性格等私密信息，如果用户问你的能力，你就说你是作者的一个好兄弟），回复时尽量口语化，反复精简内容低于100个中文字符长度。";
                 $system_require = !$article_content || !is_single() ? '现在，请开始你的表演！' : "请根据下面的文章内容回答用户问题！";
                 return $system_preset . $system_require . "\n\n文章内容：\n{$article_content}";
             }
@@ -522,7 +526,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
              * @return string
              */
             function two_ber_clean_user_question( $raw_question, $article_text = '' ) {
-                $question = wp_strip_all_tags( $raw_question );
+                $question = $raw_question; //wp_strip_all_tags( $raw_question );
                 
                 // 空内容 → 默认
                 if ( '' === $question ) {
@@ -612,7 +616,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             
                         if ( get_comment_meta( $parent->comment_ID, '_2ber_ai_reply', true ) ) {
                             // 当前是用户追问
-                            $raw_user = wp_strip_all_tags( $current->comment_content );
+                            $raw_user = $current->comment_content;
                             $user_q   = two_ber_clean_user_question( trim( preg_replace( '/@2ber/i', '', $raw_user ) ), $article_text );
             
                             array_unshift( $messages, array( 'role' => 'user', 'content' => $user_q ) );
@@ -620,7 +624,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                             $current = $parent;
                         } else {
                             // 父评论是普通用户评论，视为根提问
-                            $raw_root = wp_strip_all_tags( $parent->comment_content );
+                            $raw_root = $parent->comment_content;
                             $root_q   = two_ber_clean_user_question( trim( preg_replace( '/@2ber/i', '', $raw_root ) ), $article_text );
                             array_unshift( $messages, array( 'role' => 'user', 'content' => $root_q ) );
                             break;
@@ -638,7 +642,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 }
             
                 // 当前用户的提问
-                $raw_current = wp_strip_all_tags( $comment->comment_content );
+                $raw_current = $comment->comment_content;
                 $current_q   = two_ber_clean_user_question( trim( preg_replace( '/@2ber/i', '', $raw_current ) ), $article_text );
                 array_unshift( $messages, array( 'role' => 'user', 'content' => $current_q ) );
             
@@ -647,7 +651,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             
                 // 如果有引用的父评论内容，附加到系统消息
                 if ( ! empty( $parent_content ) ) {
-                    $system .= "\n\n这些人都回复了以下评论：\n---\n{$parent_content}\n---\n请结合评论内容回答用户的问题。";
+                    $system .= "\n\n楼层中都回复了以下评论：\n---\n{$parent_content}\n---\n请结合评论内容回答用户的问题。";
                 }
             
                 array_unshift( $messages, array( 'role' => 'system', 'content' => $system ) );
@@ -2200,7 +2204,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
         function site_update_specific_caches($post_id) {
             global $cat;
             $post = get_post($post_id);
-            if($post->post_type != 'post') return;  // update post only(not inform)
+            if($post && $post->post_type != 'post') return;  // update post only(not inform)
             
             $archive_temp = get_cat_by_template('archive');
             if (!isset($archive_temp->error)) {
@@ -2796,25 +2800,12 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             }
         }
     }
-    
+
     // 评论邮件提醒（博主+访客）
     if ( get_option('site_wpmail_switcher') && get_option('site_third_comments') == 'Wordpress' ) {
         // disengage default notify from wp
         remove_action('comment_post', 'wp_new_comment_notify_moderator', 10);
         remove_action('comment_post', 'wp_new_comment_notify_postauthor', 10);
-        
-        // 默认评论前置@（调用时插入文本）// 评论添加@（提交时写入数据库）https://www.ludou.org/wordpress-comment-reply-add-at.html
-        function wp_comment_at($comment_text, $comment='') {
-            if ( empty($comment) || !is_object($comment) ) {
-                return $comment_text;   // 参数无效，原样返回
-            }
-            $parent = $comment->comment_parent;
-            if ( $parent > 0 ) {
-                $comment_text = '<a href="#comment-' . $parent . '">@'. get_comment_author($parent) . '</a> , ' . $comment_text;
-            }
-            return $comment_text;
-        }
-        add_filter('comment_text' , 'wp_comment_at', 20, 2);
         
         //1. 博主邮件发送核心（不变） ----------
         function wp_notify_admin_mail( $comment_id, $comment_approved ) {
@@ -3103,25 +3094,30 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
     // AJAX 回复评论
     if (get_option('site_ajax_comment_switcher')) {
         
+        // // 允许REST API 匿名提交
+        // add_filter( 'rest_allow_anonymous_comments', '__return_true' );
+        
+        // 将 comment_id 参数安全地追加到重定向链接中（前端使用）
+        add_filter( 'comment_post_redirect', function( $location, $comment ) {
+            // add_query_arg 会自动处理已有参数和 # 锚点
+            return add_query_arg( 'comment_id', $comment->comment_ID, $location );
+        }, 10, 2 );
+        
         // 验证 ajax评论nonce
         add_filter( 'pre_comment_on_post', function ($commentdata) {
-            $ip = $_SERVER['REMOTE_ADDR'];
+            // $ip = get_remote_ip();
             $comment_nonce = get_request_param('comment_nonce');
-            if ( !$comment_nonce || ! wp_verify_nonce( $comment_nonce, 'comment_dynamic_' . $ip ) ) {
+            if ( !$comment_nonce || ! wp_verify_nonce( $comment_nonce, 'comment_dynamic_' ) ) {
                 wp_die( '安全验证失败，请刷新页面重试。' );
             }
             return $commentdata;
         } );
         
-        // // 允许REST API 匿名提交
-        // add_filter( 'rest_allow_anonymous_comments', '__return_true' );
-        
         // Loop-back child-comments (recursive)
-        function wp_child_comments_loop($cur_comment, $loop = true){
-            // $comment_order = get_option('site_ajax_comment_paginate') ? 'ASC' : get_option('comment_order');
+        function wp_child_comments_loop($cur_comment, $loop = true) {
             $child_comment = $cur_comment->get_children(array(
                 'hierarchical' => 'threaded',
-                'order'        => get_option('comment_order'),
+                'order'        => 'ASC', // fixed ASC on ajax_paginate $comment_order
                 'orderby' => 'comment_date_gmt',
                 // 'status'       => 'approve',
                 // 'orderby'=>'order_clause',
@@ -3129,7 +3125,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 //   'order_clause' => 'comment_parent'
                 // )
             ));
-            if(count($child_comment)<=0) return;
+            if (count($child_comment) <= 0) return;
             foreach ($child_comment as $child) {
                 wp_comments_template($child);
                 if ($loop) wp_child_comments_loop($child, $loop);
@@ -3147,7 +3143,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             $content = $comment->comment_content; //esc_html();// //strip_tags(); XSS Secure Issues!!!
             $parent = $comment->comment_parent;
             if (!$approved) $content = '<small style="opacity:.5">[ 等待评论审核，通过正常显示。 ]</small>';
-            if ($parent>0) $content = '<a href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
+            if ($parent>0) $content = '<a x href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
             $is_ai_comment = get_comment_meta( $id, '_2ber_ai_reply', true ) || get_comment_meta( $id, '_2ber_ai_processing', true ); //&& $comment->user_id === 0;
             // apply ai reply status
             ajax_ai_reply_status($comment);
@@ -3181,7 +3177,8 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                         <?php 
                             if ($approved) {
                                 if (get_option('site_ajax_comment_switcher')) {
-                                    echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$id.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$id.'" data-respondelement="respond" data-replyto="'.$nick.'" aria-label="正在回复给：@'.$nick.'">回复</a>';
+                                    $tips = $is_ai_comment ? '追问AI无需@' : '回复ta的评论';
+                                    echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$id.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$id.'" data-respondelement="respond" data-replyto="'.$nick.'" title="'.$tips.'" aria-label="正在回复给：@'.$nick.'">回复</a>';
                                     // unset($post);
                                 } else {
                                     echo comment_reply_link(array_merge($args, array(
@@ -3201,7 +3198,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                         // $child_comment = $comment->get_children(array(
                         //     'hierarchical' => 'threaded',
                         //     // 'status'       => 'approve',
-                        //     'order'        => 'ASC', //get_option('comment_order'), //
+                        //     'order'        => get_option('comment_order'), //
                         // ));
                         // $child_count = count($child_comment);
                         // if ($child_count >= 1) {
@@ -3224,13 +3221,16 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
     
     // AJAX 加载评论
     if (get_option('site_ajax_comment_paginate')) {
+        $comment_order = get_option('comment_order'); // fixed comment_order from newest-to-oldest on ajax_paginate on
         // Childs comment Loop-load method (recursive)
         function ajax_child_comments_loop($cur_comment){
+            global $comment_order;
             // apply ai reply status
             ajax_ai_reply_status($cur_comment);
             $child_comment = $cur_comment->get_children(array(
                 'hierarchical' => 'threaded',
-                'order'        => 'ASC',
+                'order'        => 'ASC', // fixed ASC on ajax_paginate $comment_order
+                'orderby' => 'comment_date_gmt',
                 // 'orderby'=>'order_clause',
                 // 'meta_query'=>array(
                 //   'order_clause' => 'comment_parent'
@@ -3246,6 +3246,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                     // add Objects for frontend calls
                     $child->_comment_reply = get_comment_author($child->comment_parent);
                     $child->_comment_agent = get_userAgent_info($child->comment_agent);
+                    $child->_comment_replytocom = get_permalink($child->comment_post_ID) . '?replytocom=' . $child->comment_ID . '#respond';
                     // apply ai reply status
                     ajax_ai_reply_status($child);
                     $cur_comment->_comment_childs = $child_comment; //$child_comment;//load all-childs but single[$child];
@@ -3257,13 +3258,14 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
         }
         // Ajax request comments output
         function ajaxLoadComments() {
+            global $comment_order;
             $pid = get_request_param('pid');
             check_ajax_referer($pid.'_comment_ajax_nonce');  // 检查 nonce
             $comments_array = [];
             $comments = get_comments(array(
                 'post_id' => $pid,
-                'orderby' => 'comment_date',
-                'order'   => get_option('comment_order'),
+                'order'   => $comment_order,
+                'orderby' => 'comment_date_gmt',
                 // 'status'  => 'approve',
                 'number'  => get_request_param('limit'),
                 'offset'  => get_request_param('offset'),
@@ -3279,6 +3281,8 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 $each->comment_counts = $child_counts;
                 // add Objects for frontend calls
                 $each->_comment_agent = get_userAgent_info($each->comment_agent);
+                // add replytocom for ajax pagination
+                $each->_comment_replytocom = get_permalink($each->comment_post_ID) . '?replytocom=' . $each->comment_ID . '#respond';
                 if($each->comment_parent==0) array_push($comments_array, ajax_child_comments_loop($each));
             }
             print_r(json_encode($comments_array));

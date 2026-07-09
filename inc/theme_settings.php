@@ -2420,13 +2420,14 @@
                                         $opt = 'site_ajax_comment_paginate';
                                         $status = check_status($opt);
                                         $premise = get_option('site_ajax_comment_switcher');
-                                        $tips = '开启免刷新加载评论，替代 PREV/NEXT 翻页按钮并支持评论标签，支持子级评论自动折叠，支持部分打字机效果（关闭上方Ajax 评论时此项将自动关闭';
-                                        if (get_option($opt) && !$premise) {
-                                            update_option('site_ajax_comment_paginate', '');
-                                        } else {
-                                            $tips .= '<p>⚠️开启后会自动忽视评论分页配置中的 <code>默认显示评论页面 </code> </p>';
-                                        }
-                                        $check = !$premise ? 'disabled' : '';
+                                        $tips = '开启免刷新加载评论，替代 PREV/NEXT 翻页按钮并支持评论标签，支持子级评论自动折叠，支持部分打字机效果（<del>关闭上方Ajax 评论时此项将自动关闭</del>';
+                                        // if (get_option($opt) && !$premise) {
+                                        //     update_option('site_ajax_comment_paginate', '');
+                                        // } else {
+                                        //     $tips .= '<p>⚠️开启后建议配置<code>默认显示评论页面->新的</code> </p>';
+                                        //     // update_option('comment_order', 'desc');
+                                        // }
+                                        $check = '';//!$premise ? 'disabled' : '';
                                         echo '<label for="'.$opt.'"><p class="description" id="">'.$tips.'</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'" '.$check.' '.$status.' /> <b class="'.$status.'">AJAX Pagination</b></label>';
                                     ?>
                                 </td>

@@ -357,7 +357,7 @@
             ajax.onreadystatechange=function(){
                 if(this.readyState!=4) return;
                 if(this.status==200){
-                    callback&&typeof callback==='function' ? resolve(callback(this.responseText)) : resolve(this.responseText);
+                    callback&&typeof callback==='function' ? resolve(callback(this.responseText, this)) : resolve(this.responseText);
                 }else{
                     reject(this.status);
                 }
@@ -394,24 +394,27 @@
         cval!=null ? document.cookie = name+ "="+cval+";expires="+exp.toGMTString()+";path=/" : false;
     }
     
-    function darkmode() {
+    function darkmode(cookies = '') {
         let cookie = getCookie('theme_mode');
         let manual = getCookie('theme_manual');
         let prefer = getCookie('theme_mode_prefers');
+        
         if (cookie) {
-            console.log(cookie, document.cookie)
+            console.log(cookie, document.cookie);
         } else {
             const light = document.body.className.match(/light/i);
             const dark = document.body.className.match(/dark/i);
-            cookie = light ? light[0] : (dark ? dark[0] : 'light');  // update current-theme(default light)
+            cookie = light ? light[0] : (dark ? dark[0] : 'light');
             console.warn('themes cookie has expired.. get current-theme: ', cookie);
         }
-        const themes = prefer && !manual || cookie === "dark" ? 'light' : 'dark';  // expired within 1 day
-        document.body.className = themes;  // set as theme_mode && record new theme_mode
-        setCookie('theme_mode', themes, '/', 1); // 1 day expires !!bug!!
+    
+        // 修复：只有自动暗色 或 手动暗色 时才切到亮色，否则切到暗色
+        const themes = (manual == '0' && prefer === 'dark') || cookie === 'dark' ? 'light' : 'dark';
+    
+        document.body.className = themes;
+        setCookie('theme_mode', themes, '/', 1);
+        setCookie('theme_manual', 1, '/', 365); // 开启手动模式
         console.log(`theme_mode[manual] switch-color-scheme: ${themes}`);
-        // enable manual mode (disable automode)
-        setCookie('theme_manual', 1, '/', 365); // 1 year expires on manual
     }
     
     /*  

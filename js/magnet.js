@@ -132,19 +132,6 @@ const magnetCurosr = {
                     cs = _m.methods.class_sw,
                     me = _m.magnetic.entry;
                 cs(_s.element.follower, _cp);
-                // if (t.classList.contains(_ce)) {
-                //     cs(t, _cp, ()=>{
-                //         me.apply(this, [e, t, s_.scale.origin]);
-                //         // remove pressing statu instantly
-                //         const mag_in_press = document.querySelector('.'+_ce+'.'+_cp);
-                //         if(mag_in_press) mag_in_press.classList.remove(_cp);
-                //     }, ()=>me.apply(this, [e, t, s_.scale.engaged]));
-                //     return;
-                // }
-                // // bug: remove first-only // _s.element.magnets.classList.remove(_cp);
-                // // remove pressing statu from outside of the magnets
-                // const mag_in_press = document.querySelector('.'+_ce+'.'+_cp);
-                // if(mag_in_press) mag_in_press.classList.remove(_cp);
             },
             contacts: function(e, p = null) {
                 e = e || window.event;
