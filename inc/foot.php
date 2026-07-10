@@ -306,32 +306,55 @@
     <?php
         if (get_option('site_magnetic_effect_switcher')) {
     ?>
-        import('<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/magnet.js?v=<?php //echo get_theme_info(); ?>').then((mod)=> {
-            const { magnetCurosr } = mod;
-            // use keyword "new" to point to init method.
-            new magnetCurosr.init({
-                static: {
-                    // class: {
-                    //     engager: 'magnetic_links',
-                    // },
-                    // magnetic: false,
-                    magnetic_step: 0.25,
-                    scale: {
-                        engaged: 1.05,
-                    },
-                    cursor: {
-                        pointer: true,
-                    },
-                    theme: {
-                        light: 'var(--preset-fa)',
-                        heavy: 'var(--preset-link)',
-                        focus: 'var(--preset-6a)'
-                    },
+        import('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/magnets.js<?php //echo get_theme_info(); ?>').then((mod)=> {
+            const { MagneticEffect } = mod;
+            const effect = new MagneticEffect({
+            // 所有配置都在顶层，驼峰命名
+                magneticStep: 0.25,
+                scale: {
+                    engaged: 1.05,
+                    // origin 和 followed 可省略，会用默认值
+                },
+                cursor: {
+                    // pointer: true,   // 按需开启
+                },
+                theme: {
+                    light: 'var(--preset-fa)',
+                    heavy: 'var(--preset-link)',
+                    focus: 'var(--preset-6a)'
                 },
                 element: {
-                    follower: false,
-                },
+                    follower: false,     // 关闭跟随光标
+                }
             });
+            // // 销毁实例
+            // effect.destroy();
+            
+            // // use keyword "new" to point to init method.
+            // const { magnetCursor } = mod;
+            // new magnetCursor.init({
+            //     static: {
+            //         // class: {
+            //         //     engager: 'magnetic_links',
+            //         // },
+            //         // magnetic: false,
+            //         magnetic_step: 0.25,
+            //         scale: {
+            //             engaged: 1.05,
+            //         },
+            //         cursor: {
+            //             // pointer: true,
+            //         },
+            //         theme: {
+            //             light: 'var(--preset-fa)',
+            //             heavy: 'var(--preset-link)',
+            //             focus: 'var(--preset-6a)'
+            //         },
+            //     },
+            //     element: {
+            //         follower: false,
+            //     },
+            // });
         });
     <?php
         }

@@ -207,6 +207,7 @@
                         <div class="vcontrol">
                             <div class="col col-80 text-right">
                                 <button type="button" id="repushBtn" class="vsubmit vbtn" style="display:none"> 重新提交 </button>
+                                <!-- magnetic pushBtn bug:: adoptNode require re-init magnet.js -->
                                 <button id="pushBtn" type="submit" class="submit_btn vsubmit vbtn magnetic" value="<?php echo $text_submit; ?>" data-pid="<?php echo $post_ID; ?>" data-cid="0" data-nonce="<?php echo wp_create_nonce( 'comment_dynamic_' ); //wp_create_nonce( 'comment_form' ); ?>" />回复</button>
                                 <?php //cancel_comment_reply_link('取消回复'); ?>
                             </div>

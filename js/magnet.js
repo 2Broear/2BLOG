@@ -1,5 +1,5 @@
 'use strict';
-const magnetCurosr = {
+const magnetCursor = {
     dom: {
         elements: [{
             style: document.createElement('STYLE'),
@@ -8,7 +8,7 @@ const magnetCurosr = {
             spots: document.createElement('SPAN'),
         }],
         initiate: function() {
-            let _c = magnetCurosr,
+            let _c = magnetCursor,
                 _s = _c.init?.conf,
                 w_ = _s.element.follower; //null;
             const s_ = _s.static,
@@ -17,7 +17,7 @@ const magnetCurosr = {
                   color = s_.theme,
                   cur = s_.cursor.pointer ? 'auto' : (w_ ? 'none' : 'auto'),
                   sty = _e[0].style;
-            sty.innerText = `html,body{cursor:${cur};text-align:center;}.magnets:hover,.${cls.engager}:hover{/*z-index:1;*/}.${cls.engager}:hover,.magnets:hover{transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1)!important;}.${cls.engager},.magnets{transition: .35s;position:relative;transition-property: transform,opacity;/*background,cursor:inherit!important;display:inline-block;will-change:transform;*/}.magnets:hover{background:rgb(233 233 233 / 33%);/*background:${color.heavy};*/}.magnets{width:50px;height:50px;margin:15% auto;border-radius:100%;background:${color.light};border:1px solid transparent;backdrop-filter:blur(5px);}.magnets.disabled,.${cls.presser}.${cls.engager}{/*border-color: ${color.heavy};background: ${color.light};*/}.magnets.disabled{border-color:transparent;background:linear-gradient(-90deg,orange -10%,orangered 100%);background:-webkit-linear-gradient(180deg,orange -10%,orangered 100%);}.${cls.follower}{margin:5px;position:absolute;top:0;left:0;width:100%;height:100%;max-width:${s_.cursor.size}px;max-height:${s_.cursor.size}px;border-radius:100%;transition:opacity .35s ease;/*border:1px solid ${color.heavy};*/}.${cls.follower} #spot,.${cls.follower} #spots{display:block;width:15px;height:15px;background:${color.focus};border-radius:inherit;position:fixed;opacity:.5;pointer-events:none;z-index:1;/*top:50%;left:50%;transform:translate(-50%,-50%) scale(1);*/}.${cls.follower} #spot{transition:opacity .35s ease;z-index:2;/*mix-blend-mode:difference;*/}.${cls.follower} #spots{background:${color.heavy};transition:all .15s ease-out;transform:translate(-50%,-50%) scale(1.5);/*mix-blend-mode:hard-light;*/}.${cls.follower}.${cls.hider},.${cls.follower}.${cls.presser} #spots{opacity:0;transition-duration:.35s;}.${cls.follower}.${cls.presser} #spot{opacity:1;}`;
+            sty.innerText = `html,body{cursor:${cur}!important;text-align:center;}.magnets:hover,.${cls.engager}:hover{/*z-index:1;*/}.${cls.engager}:hover,.magnets:hover{transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1)!important;}.${cls.engager},.magnets{transition: .35s;position:relative;transition-property: transform,opacity;/*background,cursor:inherit!important;display:inline-block;will-change:transform;*/}.magnets:hover{background:rgb(233 233 233 / 33%);/*background:${color.heavy};*/}.magnets{width:50px;height:50px;margin:15% auto;border-radius:100%;background:${color.light};border:1px solid transparent;backdrop-filter:blur(5px);}.magnets.disabled,.${cls.presser}.${cls.engager}{/*border-color: ${color.heavy};background: ${color.light};*/}.magnets.disabled{border-color:transparent;background:linear-gradient(-90deg,orange -10%,orangered 100%);background:-webkit-linear-gradient(180deg,orange -10%,orangered 100%);}.${cls.follower}{margin:5px;position:absolute;top:0;left:0;z-index:9999;width:100%;height:100%;max-width:${s_.cursor.size}px;max-height:${s_.cursor.size}px;border-radius:100%;transition:opacity .35s ease;/*border:1px solid ${color.heavy};*/}.${cls.follower} #spot,.${cls.follower} #spots{display:block;width:15px;height:15px;background:${color.focus};border-radius:inherit;position:fixed;opacity:.5;pointer-events:none;z-index:1;/*top:50%;left:50%;transform:translate(-50%,-50%) scale(1);*/}.${cls.follower} #spot{transition:opacity .35s ease;z-index:2;/*mix-blend-mode:difference;*/}.${cls.follower} #spots{background:${color.heavy};transition:all .15s ease-out;transform:translate(-50%,-50%) scale(1.5);/*mix-blend-mode:hard-light;*/}.${cls.follower}.${cls.hider},.${cls.follower}.${cls.presser} #spots{opacity:0;transition-duration:.35s;}.${cls.follower}.${cls.presser} #spot{opacity:1;}`;
             document.head.appendChild(sty);
             if (w_) {
                 if (w_ instanceof HTMLElement === false) {
@@ -79,42 +79,42 @@ const magnetCurosr = {
                     // oc offset for cursor-offset
                     var o_x = ox - oc,
                         o_y = oy - oc;
+                    let transformStep = t.dataset.magnetStep,
+                        transformScale = t.dataset.magnetScale;
                     if (m && _s.magnetic) {
-                        let transformStep = t.dataset.magnetStep,
-                            transformScale = t.dataset.magnetScale;
                         transformStep = transformStep && !isNaN(transformStep) ? transformStep : _s.magnetic_step;
                         transformScale = transformScale && !isNaN(transformScale) ? transformScale : s;
                         let translateX = (e.clientX - o_x) * transformStep,
                             translateY = (e.clientY - o_y) * transformStep;
                         t.style.transform = `translate(${+translateX.toFixed(2) + originX}px, ${+translateY.toFixed(2) + originY}px) scale(${transformScale})`;
                     } else {
-                        // t.style.transform = `translate(${o_x}px, ${o_y}px) scale(${s})`;
-                        const i_o = _s.edge_offset + t.offsetWidth,
-                            b_w = document.documentElement.scrollWidth - i_o,
-                            b_h = document.documentElement.clientHeight - i_o,
-                            f_l = i_o - oc,
-                            f_t = f_l, //i_o - oc
-                            f_r = b_w - oc,
-                            f_b = b_h - oc,
-                            e_r = this.mods.methods.edge_reactor;
-                        if (ox <= i_o) {
-                            // top-left -> bottom-left -> left
-                            e_r(oy, i_o, b_h, ()=>t.style.transform = `translate(${f_l}px, ${f_t}px) scale(${transformScale})`, 
-                                ()=>t.style.transform = `translate(${f_l}px, ${f_b}px) scale(${transformScale})`, 
-                                ()=>t.style.transform = `translate(${f_l}px, ${o_y}px) scale(${transformScale})`);
-                        } else {
-                            if (ox >= b_w) {
-                                // top-right -> bottom-right -> right
-                                e_r(oy, i_o, b_h, ()=>t.style.transform = `translate(${f_r}px, ${f_t}px) scale(${transformScale})`, 
-                                    ()=>t.style.transform = `translate(${f_r}px, ${f_b}px) scale(${transformScale})`, 
-                                    ()=>t.style.transform = `translate(${f_r}px, ${o_y}px) scale(${transformScale})`);
-                            } else {
-                                // top -> bottom -> default
-                                e_r(oy, i_o, b_h, ()=>t.style.transform = `translate(${o_x}px, ${f_t}px) scale(${transformScale})`, 
-                                    ()=>t.style.transform = `translate(${o_x}px, ${f_b}px) scale(${transformScale})`, 
-                                    ()=>t.style.transform = `translate(${o_x}px, ${o_y}px) scale(${transformScale})`);
-                            }
-                        }
+                        t.style.transform = `translate(${o_x}px, ${o_y}px) scale(${s})`;
+                        // const i_o = _s.edge_offset + t.offsetWidth,
+                        //     b_w = document.documentElement.scrollWidth - i_o,
+                        //     b_h = document.documentElement.clientHeight - i_o,
+                        //     f_l = i_o - oc,
+                        //     f_t = f_l, //i_o - oc
+                        //     f_r = b_w - oc,
+                        //     f_b = b_h - oc,
+                        //     e_r = this.mods.methods.edge_reactor;
+                        // if (ox <= i_o) {
+                        //     // top-left -> bottom-left -> left
+                        //     e_r(oy, i_o, b_h, ()=>t.style.transform = `translate(${f_l}px, ${f_t}px) scale(${transformScale})`, 
+                        //         ()=>t.style.transform = `translate(${f_l}px, ${f_b}px) scale(${transformScale})`, 
+                        //         ()=>t.style.transform = `translate(${f_l}px, ${o_y}px) scale(${transformScale})`);
+                        // } else {
+                        //     if (ox >= b_w) {
+                        //         // top-right -> bottom-right -> right
+                        //         e_r(oy, i_o, b_h, ()=>t.style.transform = `translate(${f_r}px, ${f_t}px) scale(${transformScale})`, 
+                        //             ()=>t.style.transform = `translate(${f_r}px, ${f_b}px) scale(${transformScale})`, 
+                        //             ()=>t.style.transform = `translate(${f_r}px, ${o_y}px) scale(${transformScale})`);
+                        //     } else {
+                        //         // top -> bottom -> default
+                        //         e_r(oy, i_o, b_h, ()=>t.style.transform = `translate(${o_x}px, ${f_t}px) scale(${transformScale})`, 
+                        //             ()=>t.style.transform = `translate(${o_x}px, ${f_b}px) scale(${transformScale})`, 
+                        //             ()=>t.style.transform = `translate(${o_x}px, ${o_y}px) scale(${transformScale})`);
+                        //     }
+                        // }
                     }
                 } catch(error) {
                     console.log(error);
@@ -126,12 +126,11 @@ const magnetCurosr = {
                 let t = e.target || e.srcElement,
                     _m = this.mods,
                     _s = this.init?.conf,
-                    s_ = _s.static,
-                    _cp = s_.class.presser,
-                    _ce = s_.class.engager,
-                    cs = _m.methods.class_sw,
-                    me = _m.magnetic.entry;
-                cs(_s.element.follower, _cp);
+                    s_ = _s.static;
+                    // _ce = s_.class.engager,
+                    // cs = _m.methods.class_sw;
+                    // me = _m.magnetic.entry;
+                if (_s.element.follower) _m.methods.class_sw(_s.element.follower, s_.class.presser);
             },
             contacts: function(e, p = null) {
                 e = e || window.event;
@@ -148,16 +147,22 @@ const magnetCurosr = {
                             // exec once before moving
                             const origin_transform = window.getComputedStyle(t).transform;
                             // record originXY before entry(movement) to prevent(moving-target) dubplicate calc
-                            if (origin_transform !== 'none' && !t.classList.contains(s_.class.move)) { //t.style.transform === ''
+                            if (origin_transform !== 'none') { // && !t.classList.contains(s_.class.move) t.style.transform === ''
                                 const matrixValues = origin_transform.match(/matrix\(([^)]+)\)/)[1].split(", ").map(Number);
                                 // const scaleX = matrixValues[0];
                                 // const scaleY = matrixValues[3];
                                 d_.originX = matrixValues[4]; // translateX += matrixValues[4];
                                 d_.originY = matrixValues[5]; // translateY += matrixValues[5];
                                 console.debug(t, origin_transform);
+                            } else {
+                                // 关键：确保初始无 transform 的元素 origin 归零
+                                d_.originX = 0;
+                                d_.originY = 0;
+                                console.warn('clear origin')
                             }
                             // movement begain..
                             _m.entry.apply(this, [e, t]);
+                            // !!!BUG: if t.remove() will not exec exits!!!
                             if (!t.onmouseleave) t.onmouseleave = (e)=> _m.exits.apply(this, [e, t]);
                             // fix exits bug (in-pressing-out-in-up, out-pressing-in-up) by add class
                             // (alternated class) for pressing.call() mouse-up remove presser
@@ -181,8 +186,8 @@ const magnetCurosr = {
                     enter_y = e.clientY,
                     // half of size/scale for offsets
                     scale_t = 2, //scale decrease times
-                    scale_ox = (t.offsetWidth / 2) / scale_t,
-                    scale_oy = (t.offsetHeight / 2) / scale_t,
+                    scale_ox = (t.offsetWidth / scale_t) / scale_t,
+                    scale_oy = (t.offsetHeight / scale_t) / scale_t,
                     range_x = parseInt((enter_x - rect.left) / scale_t), //t.offsetLeft
                     range_y = parseInt((enter_y - rect.top) / scale_t), //t.offsetTop
                     // +enter_* for movement substraction
@@ -206,14 +211,14 @@ const magnetCurosr = {
     __proto__: {
         init: function(user_conf = {}) {
             try {
-                const CUR = magnetCurosr,
+                const CUR = magnetCursor,
                       INT = CUR.init;
                 // rewrite user-conf.
                 let that = this;
                 if(Object.getPrototypeOf(that) !== INT.prototype){ //that.__proto__
                     that = INT.prototype;
                     console.warn('keyword "new" is recommended for initiate, current pointed:', this);
-                    // throw new Error('"new" generator magnetCurosr init required.');
+                    // throw new Error('"new" generator magnetCursor init required.');
                 }
                 Object.defineProperty(that, '_conf', {
                     // value: that._rewriter.call(that, user_conf),
@@ -224,31 +229,32 @@ const magnetCurosr = {
                 // initiate dom..
                 CUR.dom.initiate();
                 // dispatch events..
-                const _warpper = user_conf.element.follower,
+                const _follower = user_conf.element.follower,
                       _s = user_conf.static,
                       _e = CUR.dom.elements[1],
                       _m = CUR.mods.behavior;
                 let _w_width = 0,
                     _w_offset = 0;
-                if (_warpper) {
-                    document.body.appendChild(_warpper);
-                    _w_width = _warpper.offsetWidth;
+                if (_follower) {
+                    document.body.appendChild(_follower);
+                    _w_width = _follower.offsetWidth;
                     _w_offset = _w_width - (_w_width / 1.8);
-                    document.onmouseenter = ()=>_warpper.classList.remove(_s.class.hider, _s.class.presser);
-                    document.onmouseleave = ()=>_warpper.classList.add(_s.class.hider);
+                    document.onmouseenter = ()=>_follower.classList.remove(_s.class.hider, _s.class.presser);
+                    document.onmouseleave = ()=>_follower.classList.add(_s.class.hider);
                     document.onmousedown = document.onmouseup = (e)=>_m.pressing.call(CUR, e);
-                    document.onmousemove = function(e) {
-                        const offset_x = e.clientX,
-                              offset_y = e.clientY;
-                        _m.movement.apply(CUR, [e, _e.spot, _s.scale.origin, offset_x, offset_y, _w_offset]);
-                        _m.movement.apply(CUR, [e, _e.spots, _s.scale.followed, offset_x, offset_y, _w_offset]);
-                        _m.contacts.apply(CUR, [e, this]);
-                    };
                 }
                 document.onmousemove = function(e) {
                     _m.contacts.apply(CUR, [e, this]);
+                    // follower
+                    if (_follower) {
+                        const offset_x = e.clientX,
+                              offset_y = e.clientY;
+                        let step = e.target.nodeName == 'A' ||　e.target.parentNode.nodeName == 'A' ? 2 : 1;
+                        _m.movement.apply(CUR, [e, _e.spot, _s.scale.origin * step, offset_x, offset_y, _w_offset]);
+                        _m.movement.apply(CUR, [e, _e.spots, _s.scale.followed * step, offset_x, offset_y, _w_offset]);
+                    }
                 };
-                console.log('magnetCurosr initiated.', CUR);
+                console.log('magnetCursor initiated.', CUR);
             } catch (error) {
                 console.log(error);
             }
@@ -256,7 +262,7 @@ const magnetCurosr = {
     }
 };
 
-Object.defineProperties(magnetCurosr.init.prototype, {
+Object.defineProperties(magnetCursor.init.prototype, {
     _singleton_conf: {
         value: function(){
             let private_presets = {
@@ -300,4 +306,4 @@ Object.defineProperties(magnetCurosr.init.prototype, {
     },
 });
 
-export { magnetCurosr };
+export { magnetCursor };
