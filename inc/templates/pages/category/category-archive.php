@@ -285,23 +285,30 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                     for($i=0; $i<$posts_count; $i++) {
                         $each_posts = $cur_posts[$i];
                         $prev_posts = $i>0 ? $cur_posts[$i-1] : $cur_posts[$i]; //$i>1 ? $cur_posts[$i-1] : false;
-                        $this_post = get_post($each_posts->ID);
+                        $this_pid = $each_posts->ID;
+                        $this_post = get_post($this_pid);
                         $prev_post = get_post($prev_posts->ID);
                         $this_cats = get_the_category($this_post);
                         preg_match('/\d{2}-\d{2} /', $this_post->post_date, $this_date);
                         preg_match('/\d{2}-\d{2} /', $prev_post->post_date, $prev_date);
-                        // print_r($each_posts->ID);
+                        // print_r($this_pid);
                         $this_article = $this_cats[0]->slug==$news_temp->slug ? " article" : false;
-                        $unique_date = $this_date[0]!=$prev_date[0] || $each_posts->ID==$cur_posts[0]->ID ? '<div class="timeline">'.$this_date[0].'</div>' : '';
+                        $unique_date = $this_date[0]!=$prev_date[0] || $this_pid==$cur_posts[0]->ID ? '<div class="timeline">'.$this_date[0].'</div>' : '';
                         // print_r($this_cats);
                         $output_content .= '<li>' . $unique_date . '<a class="link' . $this_article . '" href="' . get_the_permalink($this_post) . '" target="_blank">' . $this_post->post_title . '<sup>';
-                        $output_cat = '';
-                        foreach ($this_cats as $this_cat) {
-                            $output_cat .= '<span id="'.$this_cat->term_id.'">'.$this_cat->name.'</span>';
-                        }
-                        // $cats = get_article_category();
-                        // $output_cat .= $cats ? '<span id="'.$this_cat->term_id.'">'.$this_cat->name.'</span>' : '<span id="Uncategorized">Uncategorized</span>';
-                        $output_content .= $output_cat.'</sup></a></li>';
+                        // $output_cat = '';
+                        // foreach ($this_cats as $this_cat) {
+                        //     $output_cat .= '<span id="'.$this_cat->term_id.'">'.$this_cat->name.'</span>';
+                        // }
+                        $output_cat = get_article_category($this_pid)->name;
+                        $comments_count = $this_post->comment_count; //get_comments_number($this_pid);
+                        // $comments_count = get_comments(array(
+                        //     'post_id' => $this_pid,
+                        //     // 'status'  => 'approve', // approved only
+                        //     'count'  => true,
+                        //     'parent'  => 0  // top comments only
+                        // ));
+                        $output_content .= $output_cat.'（'.$comments_count.'）</sup></a></li>';
                     };
                     // $output .= 
                     $output_object->content = '<ul class="list_'.$cur_year.'">' . $output_content . '</ul>';
@@ -388,7 +395,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                     let fragment = document.createDocumentFragment();
                     res.forEach(item=> {
                         let temp = document.createElement("LI");
-                        temp.innerHTML = `${item.date}<a class="link${item.mark}" href="${item.link}" target="_blank">${item.title}<sup>${item.cat}</sup></a>`;
+                        temp.innerHTML = `${item.date}<a class="link${item.mark}" href="${item.link}" target="_blank">${item.title}<sup>${item.cat}（${item.comment_count}）</sup></a>`;
                         fragment.appendChild(temp);
                     });
                     load_box.appendChild(fragment);

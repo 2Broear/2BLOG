@@ -116,7 +116,7 @@
             pointer-events: none;
         }
         .inside_of_block nav.main-nav ul li a {font-weight: bold;}
-        .additional.metabox li p {font-weight: normal;opacity: .75;}
+        .additional.metabox li p {font-weight: normal;/*opacity: .75;*/}
         body.dark #supports em.warmhole {filter: invert(1);}
         details > * {margin-left: 20px!important;}
         details > summary {margin: auto!important;}

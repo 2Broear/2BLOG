@@ -39,9 +39,15 @@
                                 <a href="<?php the_permalink(); ?>" target="_blank">
                                     <em><?php the_title(); ?></em>
                                     <?php 
-                                        if($post->comment_count>=25){
+                                        $comments_all = get_comments(array(
+                                            'post_id' => $post->ID,
+                                            'count'  => true,
+                                            'parent'  => 0  // top comments only
+                                        ));
+                                        // print_r($comments_all);
+                                        if ($comments_all >= 15) { //$post->comment_count
                                             echo '<sup id="hot">Hot</sup>';
-                                        }elseif($left_count<=3){
+                                        } elseif ($left_count <= 3) {
                                             if(date('Ym',strtotime($post->post_date))==$current_month) echo '<sup id="new">new</sup>';
                                         }
                                     ?>

@@ -58,7 +58,7 @@ body.dark .wp_comments:hover{background:var(--preset-3a)!important}
 .news-article-inside #news-article-head{width:100%;height:auto;clear:both}
 .news-article-inside #news-article-head.article-ltIcon-active::before{border-top-color:var(--theme-color) !important}
 .news-article-inside #news-article-head::before{content:'';width:0;height:0;display:block;position:absolute;border-right:25px solid transparent;/*border-top:25px solid var(--theme-color);*/}
-#news-article-head h1{font-weight:500;line-height:52px;padding:7% 3%;margin-top:auto;font-size:2.35rem;}
+#news-article-head h1{font-weight:500;padding:7% 3%;margin-top:auto;font-size:2.35rem;/*line-height:52px;*/}
 .news-article-head-tools{width:100%;height:auto;padding:18px 0 0 0;display:inline-block}
 .tools-inside-block{padding:0 15px;clear:both}
 .news-article-head-tools span{margin:0 5px;float:right;width:auto;height:26px;position:relative;border:1px solid var(--preset-s);box-sizing:border-box;border-radius:5px;cursor:pointer;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
@@ -119,7 +119,7 @@ body.dark .wp_comments:hover{background:var(--preset-3a)!important}
 .article-copyright-notice{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .article-copyright-notice a{color:var(--theme-color);padding:0 3px}
 .article-copyright-notice a:hover{text-decoration:underline}
-#news-article-head_tail{width:100%;display:flex;flex-flow:row nowrap;justify-content:space-between;text-align:left;font-size:var(--min-size);padding:5px 10px;color:var(--preset-9);border-top:1px solid;border-bottom:1px solid;border-color:var(--preset-s);box-sizing:border-box;}
+#news-article-head_tail{width:100%;display:flex;flex-flow:row nowrap;justify-content:space-between;text-align:left;font-size:var(--min-size);padding:5px 10px;color:var(--preset-6);border-top:1px solid;border-bottom:1px solid;border-color:var(--preset-s);box-sizing:border-box;}
 #news-article-head_tail ul{margin:0;list-style-type:none;display:flex;justify-content:space-evenly;flex-flow:row nowrap;white-space:nowrap}
 #news-article-head_tail ul li{padding-left: 25px;/*letter-spacing: 1px*/}
 #news-article-head_tail ul li i{position:relative;right:3px;font-size:var(--min-size)}

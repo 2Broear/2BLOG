@@ -4,6 +4,9 @@
 **  @2026
 **
 **/
+.share .liked span#like em {
+    background-position-x: -478px !important;
+}
 .empty_card {
     padding: 10% 0 0;
 }
@@ -80,7 +83,9 @@ body.dark .news-article-container .v .vlist .children:hover {
 .additional .sub-additional {
     padding-right: 25px;
 }
-
+.recommendation:active #recommend-inside .recommend-newsImg div a#rel {
+    transform: scale(0.95);
+}
 .recommendation #recommend-inside .recommend-newsImg div a#rel {
     background: var(--preset-2b);
     border-color: var(--preset-6a);
@@ -137,7 +142,7 @@ body.dark .news-article-window {
     font-family: serif;
     font-size: 3rem;
 }
-.bg h1 {
+.bg h1 a {
     text-shadow: 5px 0px 20px color-mix(in oklab, var(--theme-color) 50%, transparent);
     /*filter: none;*/
 }

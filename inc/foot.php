@@ -143,12 +143,13 @@
         const iframe = document.getElementById('panorama');
         if (iframe && iframe instanceof HTMLElement) {
             // iframe.frameborder = 'no';
-            setTimeout(window.queueMicrotask(()=> {
-                iframe.width = '100%';
-                iframe.height = '100%';
-                iframe.src = iframe.dataset.src; //'https://node.2broear.com/'; //indexs.html
-            }), 0);
-            ;
+            setTimeout(()=> {
+                window.queueMicrotask(()=> {
+                    iframe.width = '100%';
+                    iframe.height = '100%';
+                    iframe.src = iframe.dataset.src; //'https://node.2broear.com/'; //indexs.html
+                })
+            }, 0);
         }
     // }
 <?php
@@ -226,7 +227,7 @@
                 "type": type,
                 _ajax_nonce: t.dataset.nonce,
             }, true);
-            send_ajax_request("GET", url, params, function(res){
+            send_ajax_request("GET", url, params, function(res) {
                     t.innerText = type===type_acg ? "" : "加载更多";
                     t.classList.remove(load_clss, dis_class);  // add-opts for archive (enable click)
                     var posts_array = JSON.parse(res),

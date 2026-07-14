@@ -14,11 +14,11 @@
         adsense_shortcode('adsense_list_context');
 ?>
     <div class="share" style="<?php if(!$comment_sw) echo 'margin-top:15px'; ?>">
-        <a id="dislike" class="magnetics" title="有点东西（Like）" href="javascript:;" data-action="like" data-id="<?php echo $pid=get_the_ID(); ?>" data-nonce="<?php echo wp_create_nonce($pid."_post_like_ajax_nonce"); ?>" class="<?php if(isset($_COOKIE['post_liked_'.$post_ID])) echo 'liked';?>" <?php if(!$comment_sw) echo 'onclick="postLike(this)"'; ?>>
-            <!--<div class="user"><small>本文海星⭐️不？要不点个赞👍再走，这样还能留个名~</small><div id="list"></div></div> -->
+        <a id="dislike" class="magnetics<?php $pid=get_the_ID();$liked = has_user_liked_post($pid, get_user_identifier($pid));if ($liked) echo ' liked';?>" title="<?php echo $liked ? '没有东西（Dislike）' : '有点东西（Like）' ?>" href="javascript:;" data-action="like" data-id="<?php echo $pid; ?>" data-nonce="<?php echo wp_create_nonce('post_like_' . $pid); ?>" class="" <?php if(!$comment_sw) echo 'onclick="postLike(this)"'; ?>>
+            <?php if (!$liked) echo '<div class="user"><small>看官留步~~本文海星⭐️不？要不点个赞👍再走！</small><div id="list"></div></div>';//$liked ? '您已点赞👍' : '本文海星⭐️不？要不点个赞👍再走，这样还能留个名~'; ?>
             <span id="like" class="count magnetic">
                 <i id="counter"><?php $like=get_post_meta($post_ID,'post_liked',true);echo $like ? $like : '0'; ?></i>
-                <em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -478px 4px"></em>
+                <em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -404px 4px"></em>
             </span>
         </a>
         <a id="qq" class="disabled" title="分享QQ" href="https://connect.qq.com/widget/shareqq/index.html?<?php echo $para_str = 'url='.get_permalink().'&p='.custom_excerpt(50, true).'&title='.get_the_title().'&summary='.custom_excerpt(100, true).'&pics='.get_postimg(); ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
@@ -97,7 +97,8 @@
     </script>
 <?php
     }
-    if(comments_open() || is_category()&&$post->comment_status=="open"){ //$post->comment_status=="open"
+    $comment_allowed = comments_open() || is_category()&&$post->comment_status=="open";
+    if ($comment_allowed) { //$post->comment_status=="open"
         $user_name = array_key_exists("comment_author_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_" . COOKIEHASH] : false;
         $user_mail = array_key_exists("comment_author_email_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_email_" . COOKIEHASH] : false;
         $user_link = array_key_exists("comment_author_url_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_url_" . COOKIEHASH] : false;
@@ -121,23 +122,53 @@
         if (is_single()) {
 ?>
             <script type="text/javascript">
-                function postLike(t){
-                    if(t&&t.classList&&t.classList.contains('liked')){
-                        alert("您已经点过赞了!");
-                        return;
-                    };
-                    t.classList.add('liked');
-                    send_ajax_request("get", "<?php echo admin_url('admin-ajax.php'); ?>", 
-                        parse_ajax_parameter({
-                            "action": "post_like",
-                            "um_id": t.dataset.id,
-                            _ajax_nonce: t.dataset.nonce,
-                            // "um_action": t.dataset.action,
-                        }, true), function(res){
-                            document.querySelector('.count #counter').innerText = res;
+                function postLike(button) {
+                    const isLiked = button.classList.contains('liked');
+                    const action = isLiked ? 'unlike' : 'like';
+                    const postId = button.dataset.id;
+                    const nonce = button.dataset.nonce;
+                
+                    // 发送前禁用按钮防连点
+                    button.disabled = true;
+                
+                    const formData = new FormData();
+                    formData.append('action', 'post_like');
+                    formData.append('post_id', postId);
+                    formData.append('like_action', action);
+                    formData.append('_ajax_nonce', nonce);
+                
+                    fetch('<?php echo admin_url("admin-ajax.php"); ?>', {
+                        method: 'POST',
+                        body: formData,
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // 更新计数
+                            const tips = button.querySelector('.user');
+                            const counter = document.querySelector('#counter');
+                            if (counter) counter.innerText = data.data.count;
+                
+                            // 切换按钮样式
+                            if (data.data.action === 'liked') {
+                                button.classList.add('liked');
+                                button.title = '没有东西（Dislike）';
+                                if (tips) tips.remove();
+                            } else {
+                                button.classList.remove('liked');
+                                button.title = '有点东西（Like）';
+                            }
+                        } else {
+                            alert(data.data || '操作失败');
                         }
-                    );
-                };
+                    })
+                    .catch(error => {
+                        alert('网络错误，请重试');
+                    })
+                    .finally(() => {
+                        button.disabled = false;
+                    });
+                }
             </script>
 <?php 
         };
@@ -207,7 +238,6 @@
                         <div class="vcontrol">
                             <div class="col col-80 text-right">
                                 <button type="button" id="repushBtn" class="vsubmit vbtn" style="display:none"> 重新提交 </button>
-                                <!-- magnetic pushBtn bug:: adoptNode require re-init magnet.js -->
                                 <button id="pushBtn" type="submit" class="submit_btn vsubmit vbtn magnetic" value="<?php echo $text_submit; ?>" data-pid="<?php echo $post_ID; ?>" data-cid="0" data-nonce="<?php echo wp_create_nonce( 'comment_dynamic_' ); //wp_create_nonce( 'comment_form' ); ?>" />回复</button>
                                 <?php //cancel_comment_reply_link('取消回复'); ?>
                             </div>
@@ -271,146 +301,150 @@
             </div>
             <div class="vlist" id="comments">
             <?php
-                function custom_comment($comment, $args, $depth) {
-                    global $lazysrc, $admin_email;
-                    $GLOBALS['comment'] = $comment; 
-                    $approved = $comment->comment_approved == "1";
-                    // $tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
-                    // $id = get_comment_ID();
-                    $comment_author = $comment->comment_author;
-                    $comment_ID = $comment->comment_ID;
-                    $is_ai_comment = get_comment_meta( $comment_ID, '_2ber_ai_reply', true ) || get_comment_meta( $comment_ID, '_2ber_ai_processing', true );
-                    // apply ai reply status
-                    ajax_ai_reply_status($comment);
-                    $is_ai_pending = $comment->two_ber_ai_pending;
-            ?>
-                    <div class="vcard magnetics<?php echo $is_ai_comment && !$is_ai_pending ? ' ai' : ''; ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $comment_ID; ?>" data-ai-pending="<?php echo $is_ai_pending ?>">
-                        <a class="noslide" rel="nofollow" href="<?php comment_author_url(); ?>" target="_blank">
-                            <?php 
-                                if (get_option('show_avatars')) {
-                                    $email = get_comment_author_email();
-                                    echo '<img class="vimg" '.$lazysrc.'="'.match_mail_avatar($email).'" width=50 height=50 alt="user_avatar" />';
-                                    // unset($lazysrc);
-                                }
-                            ?>
-                        </a>
-                        <div class="vh" rootid="comment-<?php echo $comment_ID; ?>">
-                            <div class="vhead">
-                                <a class="vnick" rel="nofollow" href="<?php comment_author_url(); ?>" target="_blank">
-                                    <em><?php comment_author(); ?></em>
-                                </a>
-                                <?php
-                                    if ($is_ai_comment && !$is_ai_pending) {
-                                        echo '<span class="vsys vai">AI Comment #' . $comment_ID . '</span>';
-                                    } else {
-                                        if (get_comment_author_email() == $admin_email) echo '<span class="vsys vadmin">admin</span>';
-                                        $userAgent = get_userAgent_info($comment->comment_agent);
-                                        echo $approved ? '<span class="vsys vagent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing">Auditing</span>';
-                                    }
-                                ?>
-                            </div>
-                            <div class="vmeta">
-                                <span class="vtime"><?php echo get_comment_time('Y-m-d'); ?></span>
-                                <span class="vedited"></span>
+                if ($comment_count == 0) {
+                    echo '<p class="no_comment" style="text-align: center;padding: 15px 0;">👋 还没人评论，来抢沙发吗？</p>';
+                } else {
+                    function custom_comment($comment, $args, $depth) {
+                        global $lazysrc, $admin_email;
+                        $GLOBALS['comment'] = $comment; 
+                        $approved = $comment->comment_approved == "1";
+                        // $tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
+                        // $id = get_comment_ID();
+                        $comment_author = $comment->comment_author;
+                        $comment_ID = $comment->comment_ID;
+                        $is_ai_comment = get_comment_meta( $comment_ID, '_2ber_ai_reply', true ) || get_comment_meta( $comment_ID, '_2ber_ai_processing', true );
+                        // apply ai reply status
+                        ajax_ai_reply_status($comment);
+                        $is_ai_pending = $comment->two_ber_ai_pending;
+                    ?>
+                        <div class="vcard magnetics<?php echo $is_ai_comment && !$is_ai_pending ? ' ai' : ''; ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $comment_ID; ?>" data-ai-pending="<?php echo $is_ai_pending ?>">
+                            <a class="noslide" rel="nofollow" href="<?php comment_author_url(); ?>" target="_blank">
                                 <?php 
-                                    if ($approved) {
-                                        if (get_option('site_ajax_comment_switcher')) {
-                                            global $post;
-                                            $tips = $is_ai_comment ? '追问AI无需@' : '回复ta的评论';
-                                            echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$comment_ID.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$comment_ID.'" data-respondelement="respond" data-nonce="'.wp_create_nonce( 'wp_rest' ).'" data-replyto="'.$comment_author.'" title="'.$tips.'" aria-label="正在回复给：@'.$comment_author.'">回复</a>';
-                                            // unset($post);
-                                        } else {
-                                            echo comment_reply_link(array_merge($args, array(
-                                                'reply_text' => '回复',
-                                                'depth' => $depth, 
-                                                'max_depth' => $args['max_depth']
-                                            )));
-                                        }
+                                    if (get_option('show_avatars')) {
+                                        $email = get_comment_author_email();
+                                        echo '<img class="vimg" '.$lazysrc.'="'.match_mail_avatar($email).'" width=50 height=50 alt="user_avatar" />';
+                                        // unset($lazysrc);
                                     }
                                 ?>
-                            </div>
-                            <div class="vcontent">
-                                <?php
-                                    $content = $comment->comment_content; //strip_tags($comment->comment_content);
-                                    $parent = $comment->comment_parent;
-                                    if (!$approved) $content = '<small style="opacity:.5">[ 等待评论审核，通过正常显示。 ]</small>';
-                                    if ($parent > 0) $content = '<a href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
-                                    echo $content; //'<p>'.$content.'</p>'; //comment_text();
-                                ?>
-                            </div>
-                        </div>
-                    </div>
-            <?php
-                    if (!get_option('site_ajax_comment_switcher') && $is_ai_comment && $is_ai_pending) {
-            ?>
-                    <ul class="children extend">
-                        <div class="vcard magnetics ai" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $comment_ID; ?>" data-ai-pending="">
-                            <a class="noslide" rel="nofollow" href="" target="_blank">
-                            <?php if (get_option('show_avatars')) echo '<img class="vimg" '.$lazysrc.'="'.match_mail_avatar('ai@2broear.com').'" width=50 height=50 alt="user_avatar" />'; ?>
+                            </a>
                             <div class="vh" rootid="comment-<?php echo $comment_ID; ?>">
                                 <div class="vhead">
-                                    <a class="vnick" rel="nofollow" href="" target="_blank">
-                                        <em>2BER</em>
+                                    <a class="vnick" rel="nofollow" href="<?php comment_author_url(); ?>" target="_blank">
+                                        <em><?php comment_author(); ?></em>
                                     </a>
-                                    <span class="vsys vai">AI Comment #<?php echo $comment_ID; ?></span>
-                                    <span class="vsys useragent"> Comment Preview </span>
+                                    <?php
+                                        if ($is_ai_comment && !$is_ai_pending) {
+                                            echo '<span class="vsys vai">AI Comment #' . $comment_ID . '</span>';
+                                        } else {
+                                            if (get_comment_author_email() == $admin_email) echo '<span class="vsys vadmin">admin</span>';
+                                            $userAgent = get_userAgent_info($comment->comment_agent);
+                                            echo $approved ? '<span class="vsys vagent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing">Auditing</span>';
+                                        }
+                                    ?>
                                 </div>
                                 <div class="vmeta">
                                     <span class="vtime"><?php echo get_comment_time('Y-m-d'); ?></span>
                                     <span class="vedited"></span>
+                                    <?php 
+                                        if ($approved) {
+                                            if (get_option('site_ajax_comment_switcher')) {
+                                                global $post;
+                                                $tips = $is_ai_comment ? '追问AI无需@' : '回复ta的评论';
+                                                echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$comment_ID.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$comment_ID.'" data-respondelement="respond" data-nonce="'.wp_create_nonce( 'wp_rest' ).'" data-replyto="'.$comment_author.'" title="'.$tips.'" aria-label="正在回复给：@'.$comment_author.'">回复</a>';
+                                                // unset($post);
+                                            } else {
+                                                echo comment_reply_link(array_merge($args, array(
+                                                    'reply_text' => '回复',
+                                                    'depth' => $depth, 
+                                                    'max_depth' => $args['max_depth']
+                                                )));
+                                            }
+                                        }
+                                    ?>
                                 </div>
                                 <div class="vcontent">
-                                    <a href="#comment-<?php echo $comment_ID; ?>">@<?php echo $comment_author; ?></a> , <p>Standby, AI is now responsing your request..<sup> （Come back later） </sup></p>
+                                    <?php
+                                        $content = $comment->comment_content; //strip_tags($comment->comment_content);
+                                        $parent = $comment->comment_parent;
+                                        if (!$approved) $content = '<small style="opacity:.5">[ 等待评论审核，通过正常显示。 ]</small>';
+                                        if ($parent > 0) $content = '<a href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
+                                        echo $content; //'<p>'.$content.'</p>'; //comment_text();
+                                    ?>
                                 </div>
                             </div>
                         </div>
-                    </ul>
-            <?php
-                    }
-                };
-                if ($wp_ajax_comment && $wp_ajax_comment_paginate) {
-                    // print_r($comments);
-                    foreach ($comments as $each) {
-                        if($each->comment_parent != 0){
-                            return;
-                        }
-                        wp_comments_template($each);
-                        // 遍历子评论列表 https://wp-kama.com/function/WP_Comment::get_children
-                        $child_comment = $each->get_children(array(
-                            'hierarchical' => 'threaded',
-                            'order'        => 'ASC', // fixed ASC on ajax_paginate $comment_order
-                            'orderby' => 'comment_date_gmt',
-                            // 'status'       => 'approve',
-                            // 'default_comments_page' => 'newest', //get_option('default_comments_page')
-                        ));
-                        $child_count = count($child_comment);
-                        if ($child_count >= 1) {
-                            $child_counts = get_descendant_comment_count($each->comment_ID);
-                            $max_overview = 3;
-                            $child_overview = $child_counts > $max_overview; // all included children count
-                            $overview_mask = $child_overview ? ' overview' : '';
-                            $overview_button = $child_overview ? ' <button class="vbtn extend_addon magnetic" style="">展开 '. $child_counts - $max_overview .' 条评论</button>' : '';
-                            echo '<ul class="children'. $overview_mask .'" data-cpid="'.$each->comment_ID.'">'; //'<div class="vquote">'; //
-                                wp_child_comments_loop($each);
-                            echo $overview_button . '</ul>'; //'</div>'; //
+                    <?php
+                        if (!get_option('site_ajax_comment_switcher') && $is_ai_comment && $is_ai_pending) {
+                    ?>
+                        <ul class="children extend">
+                            <div class="vcard magnetics ai" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $comment_ID; ?>" data-ai-pending="">
+                                <a class="noslide" rel="nofollow" href="" target="_blank">
+                                <?php if (get_option('show_avatars')) echo '<img class="vimg" '.$lazysrc.'="'.match_mail_avatar('ai@2broear.com').'" width=50 height=50 alt="user_avatar" />'; ?>
+                                <div class="vh" rootid="comment-<?php echo $comment_ID; ?>">
+                                    <div class="vhead">
+                                        <a class="vnick" rel="nofollow" href="" target="_blank">
+                                            <em>2BER</em>
+                                        </a>
+                                        <span class="vsys vai">AI Comment #<?php echo $comment_ID; ?></span>
+                                        <span class="vsys useragent"> Comment Preview </span>
+                                    </div>
+                                    <div class="vmeta">
+                                        <span class="vtime"><?php echo get_comment_time('Y-m-d'); ?></span>
+                                        <span class="vedited"></span>
+                                    </div>
+                                    <div class="vcontent">
+                                        <a href="#comment-<?php echo $comment_ID; ?>">@<?php echo $comment_author; ?></a> , <p>Standby, AI is now responsing your request..<sup> （Come back later） </sup></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </ul>
+                    <?php
                         }
                     }
-                } else {
-                    $wp_comment_args = array(
-                    	'walker'            => null,
-                    	'max_depth'         => '',
-                    	'style'             => '',
-                    	'callback'          => 'custom_comment',
-                    	'end-callback'      => null,
-                    	'type'              => 'all',
-                    	'reply_text'        => 'Reply',
-                    	'page'              => '',
-                    	'per_page'          => $per_page,  //$per_page caused $w_comments err
-                    	'avatar_size'       => 50,
-                    	'reverse_top_level' => null,  //set null for panel settings
-                    	'reverse_children'  => null
-                    );
-                    wp_list_comments($wp_comment_args);
+                    if ($wp_ajax_comment && $wp_ajax_comment_paginate) {
+                        // print_r($comments);
+                        foreach ($comments as $each) {
+                            if($each->comment_parent != 0){
+                                return;
+                            }
+                            wp_comments_template($each);
+                            // 遍历子评论列表 https://wp-kama.com/function/WP_Comment::get_children
+                            $child_comment = $each->get_children(array(
+                                'hierarchical' => 'threaded',
+                                'order'        => 'ASC', // fixed ASC on ajax_paginate $comment_order
+                                'orderby' => 'comment_date_gmt',
+                                // 'status'       => 'approve',
+                                // 'default_comments_page' => 'newest', //get_option('default_comments_page')
+                            ));
+                            $child_count = count($child_comment);
+                            if ($child_count >= 1) {
+                                $child_counts = get_descendant_comment_count($each->comment_ID);
+                                $max_overview = 3;
+                                $child_overview = $child_counts > $max_overview; // all included children count
+                                $overview_mask = $child_overview ? ' overview' : '';
+                                $overview_button = $child_overview ? ' <button class="vbtn extend_addon magnetic" style="">展开 '. $child_counts - $max_overview .' 条评论</button>' : '';
+                                echo '<ul class="children'. $overview_mask .'" data-cpid="'.$each->comment_ID.'">'; //'<div class="vquote">'; //
+                                    wp_child_comments_loop($each);
+                                echo $overview_button . '</ul>'; //'</div>'; //
+                            }
+                        }
+                    } else {
+                        $wp_comment_args = array(
+                        	'walker'            => null,
+                        	'max_depth'         => '',
+                        	'style'             => '',
+                        	'callback'          => 'custom_comment',
+                        	'end-callback'      => null,
+                        	'type'              => 'all',
+                        	'reply_text'        => 'Reply',
+                        	'page'              => '',
+                        	'per_page'          => $per_page,  //$per_page caused $w_comments err
+                        	'avatar_size'       => 50,
+                        	'reverse_top_level' => null,  //set null for panel settings
+                        	'reverse_children'  => null
+                        );
+                        wp_list_comments($wp_comment_args);
+                    }
                 }
             ?>
             </div>
@@ -1391,9 +1425,11 @@
                                                 "cf-turnstile-response": that.verify?.value, //t.dataset.token,
                                                 'comment_nonce': t.dataset.nonce,
                                             }, true), function(res, result) {
+                                                const no_comment = that.vlist.querySelector('.no_comment');
                                                 const responseId = result.responseURL.match(/comment_id=(\d+)/);
                                                 let container = document.createElement('div');
                                                 let reply_comment_id = responseId && responseId[1] ? responseId[1] : 0;
+                                                if (no_comment) no_comment.remove();
                                                 // console.log(responseId, reply_comment_id)
                                                 function appendComment(comment, ai_comments = false) {
                                                     const inside_child_reply = getParByCls(t, 'children'),
@@ -1639,7 +1675,7 @@
         </div>
     <?php
         }
-    }else{
+    } else {
         echo '<p class="disabled_comment">* 抱歉，由于某些原因已关闭页面评论</p>';
     }
     unset($post);
