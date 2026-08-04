@@ -4,6 +4,17 @@
 **  @2026
 **
 **/
+figure.wp-block-gallery {
+    flex-flow: row;
+}
+figure.wp-block-gallery > figure {
+    width: 100%;
+    margin: 5px;
+}
+
+.load button {
+    color: var(--preset-6a);
+}
 .share .liked span#like em {
     background-position-x: -478px !important;
 }
@@ -17,22 +28,6 @@
 /*body.dark .news-article-container .v .vlist .vcard:hover,*/
 body.dark .news-article-container .v .vlist .children:hover {
     background: var(--preset-3a);
-}
-.v .vlist .vcard .vhead .vsys.vai {
-    display: inline-block!important;
-}
-.v .vlist .children:hover {
-    border-color: var(--preset-e)!important;
-}
-.v .vlist .children {
-    border: 1px solid transparent;
-    font-size: inherit;
-    margin-left: 5%!important;
-}
-.v .vlist .children .children {
-    margin-left: 0!important;
-    padding: 0;
-    box-shadow: none;
 }
 .pageSwitcher.dev a:focus {
     box-shadow: none!important;
@@ -112,6 +107,14 @@ body.dark .news-article-container .v .vlist .children:hover {
 }
 /**
 **
+** @weblog
+**
+**/
+.weblog-tree-box .tree-box-content p {
+    font-size: var(--min-size-rem);
+}
+/**
+**
 ** @new
 **
 **/
@@ -135,6 +138,17 @@ body.dark .news-article-container .v .vlist .children:hover {
 ** articles
 **
 **/
+blockquote strong {
+    text-decoration: none!important;
+}
+.content > p {
+    margin: 25px auto;
+}
+.content p strong {
+    text-decoration: underline wavy;
+    text-decoration-color: var(--theme-color);
+    text-underline-offset: 5px;
+}
 body.dark .news-article-window {
     color: var(--preset-c);
 }
@@ -143,12 +157,16 @@ body.dark .news-article-window {
     font-size: 3rem;
 }
 .bg h1 a {
-    text-shadow: 5px 0px 20px color-mix(in oklab, var(--theme-color) 50%, transparent);
+    text-shadow: 2px 4px 0px color-mix(in oklab, var(--theme-color) 50%, transparent);
     /*filter: none;*/
 }
+blockquote {
+    padding-left: 15px;
+}
 blockquote.wp-block-quote p {
-    color: var(--preset-5a);
+    /*color: var(--preset-5a);*/
     font-family: serif;
+    margin-bottom: 15px;
 }
 body.dark blockquote.wp-block-quote p {
     color: var(--preset-9)!important;

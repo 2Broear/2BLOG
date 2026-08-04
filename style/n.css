@@ -352,8 +352,8 @@ article .infos span#slider {
 	bottom: -1px;
 	right: 0;
 }
-.win-content article del{
-	color: var(--preset-c);
+.win-content article del {
+	/*color: var(--preset-c);*/
 }
 .win-content article span#normal.great {
 	border-color:var(--preset-okay);

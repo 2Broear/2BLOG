@@ -3565,7 +3565,8 @@ body.dark .v .vlist .vcard .vhead .vadmin {
     border-color: transparent!important;
 }
 .v .vlist .vcard .vhead .vsys {
-    color: var(--preset-5a)!important;
+    color: var(--preset-5a);
+    /*color: var(--preset-5a)!important;*/
     background: transparent!important;
     opacity: .58;
 }

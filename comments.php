@@ -9,90 +9,111 @@
     $ai_powered = get_option('site_chatgpt_switcher');
     $ai_comment = $ai_powered && get_option('site_chatgpt_ai_comments');
     $words_typer = $ai_powered && get_option('site_chatgpt_type_sw');
-    $shuffle_typer = get_option('site_chatgpt_type_shuffle', 'false');
+    $shuffle_typer = false; //get_option('site_chatgpt_type_shuffle', 'false');
     if (is_single()) {
         adsense_shortcode('adsense_list_context');
 ?>
-    <div class="share" style="<?php if(!$comment_sw) echo 'margin-top:15px'; ?>">
-        <a id="dislike" class="magnetics<?php $pid=get_the_ID();$liked = has_user_liked_post($pid, get_user_identifier($pid));if ($liked) echo ' liked';?>" title="<?php echo $liked ? '没有东西（Dislike）' : '有点东西（Like）' ?>" href="javascript:;" data-action="like" data-id="<?php echo $pid; ?>" data-nonce="<?php echo wp_create_nonce('post_like_' . $pid); ?>" class="" <?php if(!$comment_sw) echo 'onclick="postLike(this)"'; ?>>
+    <div class="share" style="<?php //if(!$comment_sw) echo 'margin-top:15px'; ?>">
+        <a id="dislike" class="magnetics<?php $pid=get_the_ID();$liked = has_user_liked_post($pid, get_user_identifier($pid));if ($liked) echo ' liked';?>" title="<?php echo $liked ? '没啥东西（Dislike）' : '有点东西（Like）' ?>" href="javascript:;" data-action="like" data-id="<?php echo $pid; ?>" data-nonce="<?php echo wp_create_nonce('post_like_' . $pid); ?>" class="" <?php if(!$comment_sw) echo 'onclick="postLike(this)"'; ?>>
             <?php if (!$liked) echo '<div class="user"><small>看官留步~~本文海星⭐️不？要不点个赞👍再走！</small><div id="list"></div></div>';//$liked ? '您已点赞👍' : '本文海星⭐️不？要不点个赞👍再走，这样还能留个名~'; ?>
             <span id="like" class="count magnetic">
                 <i id="counter"><?php $like=get_post_meta($post_ID,'post_liked',true);echo $like ? $like : '0'; ?></i>
                 <em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -404px 4px"></em>
             </span>
         </a>
-        <a id="qq" class="disabled" title="分享QQ" href="https://connect.qq.com/widget/shareqq/index.html?<?php echo $para_str = 'url='.get_permalink().'&p='.custom_excerpt(50, true).'&title='.get_the_title().'&summary='.custom_excerpt(100, true).'&pics='.get_postimg(); ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
+        <a id="qq" class="_disabled" title="分享QQ" href="https://connect.qq.com/widget/shareqq/index.html?<?php echo $para_str = 'url='.get_permalink().'&p='.custom_excerpt(50, true).'&title='.get_the_title().'&summary='.custom_excerpt(100, true).'&pics='.get_postimg(); ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
         <a id="qzone" class="magnetic" title="分享空间（QZone）" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?<?php echo $para_str; ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
         <a id="Poster" class="magnetic" title="图文海报（Poster）"><span id="recall" onclick="getPoster(this)"><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
         <!--<img decoding="async" loading="lazy" data-src="<?php echo $img_cdn; ?>/images/bilibili_wink.webp" alt="bilibili_wink" style="margin: 0 auto;">-->
     </div>
+    <style>
+        body{position: relative;}
+        :root{/*--preset-fa:#fafafa;--preset-e:#eee;--preset-d:#ddd;--preset-c:#ccc;--preset-9:#949494;--preset-8:#888;--preset-6:#666;--preset-4a:#4a4a4a;--preset-3a:#3a3a3a;--preset-2b:#2b2b2b;--radius:10px*/--padding-num:15px;}
+        .captureBox{width:100%;height:100%;}#capture{max-width:300px;min-width:280px;color:var(--preset-2b);text-align:center;border-radius:var(--radius);background:var(--preset-fa);overflow:hidden;font-family:var(--font-ms);position:fixed;top:0;left:0;z-index:-99999;/*transform:scale(2);-webkit-transform:scale(2);*/}#capture header{width:auto;height:auto;margin:0 auto;padding:20px var(--padding-num) 0;background:var(--preset-e);border-top-left-radius:var(--radius);border-top-right-radius:var(--radius)}#capture header img{max-width:100%;min-height:168px;max-height:188px;width:100%;object-fit:cover;border-radius:inherit;background:currentColor;margin:0 auto;display:inherit}#capture aside{text-align:left;padding:25px var(--padding-num) var(--padding-num);box-sizing:border-box;position:relative}#capture aside h3{margin:0;max-width:58%;text-overflow:ellipsis;overflow:hidden;/*max-height:50px*/}#capture aside p{color:var(--preset-6);font-size:0.8rem;font-weight:300;line-height:23px;min-height:36px}#capture aside small{color:var(--preset-c);width:100%;display:inherit;text-align:right;font-size:12px;padding-top:10px}#capture aside small span{margin:auto 5px}#capture aside small span a{color:inherit;}#capture aside #qrcode{width:100px;height:100px;background:var(--preset-fa);padding:10px;box-sizing:inherit;position:absolute;top:-50px;right:30px;box-shadow:rgb(0 0 0 / 0.18) 0px 5px 20px 0px}#capture aside #qrcode img{width:100%;height:100%}#capture footer{color:var(--preset-c);font-size:12px;padding:15px 0;border-top:1px solid var(--preset-e)}#html2img::before{width:200%;height:2px}#html2img::after{width:2px;height:150%}#html2img{/*padding:var(--padding-num);border:2px solid red;*/box-sizing:border-box;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);-webkit-transform:translate(-50%,-50%);z-index:99999}#mask,#html2img::before,#html2img::after{content:'';/*background:red;*/position:absolute;top:inherit;left:inherit;transform:inherit;-webkit-transform:inherit;z-index:-1}.poster{display:none}.poster.active{display:block}.poster.active #mask{width:100%;height:100%;background: rgb(0 0 0 / 36%);top:0;left:0;z-index: 9999;/*backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);*/}#html2canvas{max-width:100%;max-height:100%;/*transform:translate(0,-0.5px)*/}#html2canvas img#loading{height:auto;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);-webkit-transform:translate(-50%,-50%)}#html2canvas img{max-width:100%;border-radius:inherit;display:inherit}#html2canvas #loadbox{min-width:280px;max-width:300px;min-height:388px;max-height:412px;background:var(--preset-fa);box-shadow:rgb(0 0 0 / 0.18) 0px 5px 20px 0px;border-radius: var(--radius);position:relative}#loadbox h3{color:var(--preset-fa);font-size: 1rem;line-height:66px;margin:0 auto;width:100%;background:var(--preset-3a);background:linear-gradient(to right, var(--preset-2b), var(--preset-3a));border-top-left-radius:var(--radius);border-top-right-radius:var(--radius);position:absolute;top:0}#loadbox img#loading{top:58%}#loadbox #cancel:hover{transform:rotate(-90deg);-webkit-transform:rotate(90deg);background:var(--theme-color)}#loadbox #cancel{position: absolute;top: -22px;right: -22px;z-index: 1;background: var(--preset-3a);border: 4px solid var(--preset-e);border-radius: 50%;padding: 20px;cursor:pointer;transition:transform .35s ease}span#cancel:before{transform:translate(-50%,-50%) rotate(45deg)}span#cancel::after{transform:translate(-50%,-50%) rotate(-45deg)}span#cancel:before,span#cancel:after{content:"";width:52%;height:4px;background:var(--preset-fa);position:inherit;top:50%;left:50%}#loadbox #poster{border-radius:inherit;display:block;position:inherit}
+        #capture header em{display: block;width: 100%;min-height:168px;max-height:188px;border-radius:inherit;}
+    </style>
     <script>
         function poster_sw() {
             const poster = document.querySelector(".poster");
             poster.classList && poster.classList.contains('active') ? poster.classList.remove('active') : poster.classList.add('active');
         };
         function getPoster(t) {
-            if(document.querySelector("#capture")) {
+            // 防重复点击
+            if (document.querySelector("#capture")) {
                 poster_sw();
                 return;
             }
-            t.parentNode.classList.add("disabled");  // incase multi click (first generating only)
-            send_ajax_request("GET", "<?php echo $src_cdn.'/plugin/html2canvas.php'; ?>", 
-                parse_ajax_parameter({
-                    "title": "<?php echo urlencode(get_the_title()); ?>",
-                    "content": "<?php echo urlencode(custom_excerpt(50, true)); ?>",
-                    "tags": '<?php echo urlencode(get_the_tag_list('',' ','')); ?>',
-                    "author": "<?php echo urlencode(get_option('site_nick')); ?>",
-                    "date": "<?php the_time('d-m-Y'); ?>",
-                    "image": "<?php echo urlencode(get_postimg(0,$pid,true)); ?>", //.'?fixed_cors_str'
-                    "loading": "<?php custom_cdn_src('img'); ?>/images/loading_3_color_tp.png",
-                }, true), function(res){
-                    if(!res) throw new Error('signature error.'); //if(sign_.err) return;
-					// generate poster QRCode (async)
-					return new Promise(function(resolve,reject){
-                        let _tp = t.parentNode,
-                            div = document.createElement('DIV');
-                        // _tp.classList.add("disabled");  // incase multi click (first generating only)
-    					div.innerHTML += res;  //在valine环境直接追加到body会导致点赞元素层级错误（重绘性能问题）
-    					document.body.appendChild(div);
-                	    asyncLoad("<?php echo $src_cdn; ?>/js/qrcode/qrcode.min.js", function(){
-                    		let url = location.href;
-                    		var qrcode = new QRCode(document.getElementById("qrcode"), {
-                    			text: url,
-                    			width: 100,
-                    			height: 100,
-                    			colorDark : "#000000",
-                    			colorLight : "#ffffff",
-                    			correctLevel : QRCode.CorrectLevel.L
-                    		});
-                	        qrcode ? resolve(_tp) : reject('qrcode loading err.');
-                	    });
-					}).then(function(res){
-                	    asyncLoad('<?php echo $src_cdn; ?>/js/html2canvas/html2canvas.min.js', function(){
-                	       // console.log('now loading html2canvas..')
-                    		html2canvas(document.querySelector('#capture'),{
-                    		    useCORS: true,
-                    		    allowTaint: true,
-                    		    scrollX: 0,
-                    		    scrollY: 0,
-                    		    backgroundColor: null
-                    	    }).then(canvas => {
-                    	        const newImg = document.createElement("img");
-                                canvas.toBlob(function(blob){
-                        			newImg.src = URL.createObjectURL(blob);
-                        			document.getElementById('poster').appendChild(newImg); //innerHTML += imgDom;
-                                },"image/png",1);
-                                res.classList.remove("disabled");  // remove click restrict
-				                console.log('html2canvas done.');
-                    		});
-                	    });
-					}).catch(function(err){
-					    console.log(err);
-					});
-                }, function(err){
-                    t.innerText = err+' occured';
-                }
-            );
+            t.parentNode.classList.add("disabled");
+            // 生成 #capture 的 DOM（样式由全局 CSS 控制）
+            const captureHTML = `
+                <div id="capture">
+                    <header>
+                        <em style="background: url('${<?php echo json_encode(get_postimg(0,$pid,true)); ?>}') center center / cover"></em>
+                    </header>
+                    <aside>
+                        <h3>${<?php echo json_encode(get_the_title()); ?>}</h3>
+                        <p>${<?php echo json_encode(custom_excerpt(58, true)); ?>}</p>
+                        <small>
+                            <span contenteditable="true">
+                                ${<?php echo json_encode(get_the_tag_list('',' ','', $pid)); ?> || '<b>' + <?php echo json_encode(get_option('site_nick')); ?> + '</b>&nbsp;'}
+                            </span>
+                            ${<?php echo json_encode(get_the_time('d-m-Y')); ?>}
+                        </small>
+                        <span id="qrcode"></span>
+                    </aside>
+                    <footer>
+                        ${<?php echo json_encode(get_the_tag_list('',' ','', $pid)); ?> 
+                            ? '<b>SHARING VIA ' + <?php echo json_encode(get_option('site_nick')); ?> + '</b>' 
+                            : '<i>Poster shared in ' + new Date().toLocaleString() + '</i>'}
+                    </footer>
+                </div>
+                <div class="poster active">
+                    <div id="html2img">
+                        <div id="html2canvas">
+                            <div id="loadbox">
+                                <img id="loading" src="<?php custom_cdn_src('img'); ?>/images/loading_3_color_tp.png" />
+                                <h3>正在生成海报，请等待..</h3>
+                                <span id="cancel" onclick="poster_sw()"></span>
+                                <span id="poster"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="mask"></div>
+                </div>`;
+        
+            const div = document.createElement('div');
+            div.innerHTML = captureHTML;
+            document.body.appendChild(div);
+        
+            // 加载 qrcode 并生成
+            asyncLoad("<?php echo $src_cdn; ?>/js/qrcode/qrcode.min.js", function(){
+                new QRCode(document.getElementById("qrcode"), {
+                    text: location.href,
+                    width: 100,
+                    height: 100,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.L
+                });
+                // 生成 canvas
+                asyncLoad('<?php echo $src_cdn; ?>/js/html2canvas/html2canvas.min.js', function(){
+                    html2canvas(document.querySelector('#capture'), {
+                        useCORS: true,
+                        allowTaint: true,
+                        scrollX: 0,
+                        scrollY: 0,
+                        backgroundColor: null
+                    }).then(canvas => {
+                        canvas.toBlob(function(blob){
+                            const newImg = document.createElement("img");
+                            newImg.src = URL.createObjectURL(blob);
+                            document.getElementById('poster').appendChild(newImg);
+                        }, "image/png", 1);
+                        t.parentNode.classList.remove("disabled");
+                        console.log('html2canvas done.');
+                    });
+                });
+            });
         }
     </script>
 <?php
@@ -109,7 +130,7 @@
             $user_mail = $wp_user->user_email; // $_COOKIE["comment_author_email_" . COOKIEHASH];
             $user_link = $wp_user->user_url; // $_COOKIE["comment_author_url_" . COOKIEHASH];
         }
-        $add_tips = get_option('site_comment_autofill') && !$user_logged ? '（输入邮箱可即时更新头像、自动填充用户信息<sup> 若有 </sup>）' : '（您的评论信息会自动保存到浏览器）';
+        $add_tips = get_option('site_comment_autofill') && !$user_logged ? '（输入邮箱即时更新头像，老用户可自动填充信息）' : '（您的评论信息会自动保存到浏览器）';
         if ($comment_sw) {
             $welcome="既来之则留之~ 欢迎在下方留言评论，提交评论后还可以撤销或重新编辑。"; //
         } elseif ($twikoo_sw) {
@@ -152,7 +173,7 @@
                             // 切换按钮样式
                             if (data.data.action === 'liked') {
                                 button.classList.add('liked');
-                                button.title = '没有东西（Dislike）';
+                                button.title = '没啥东西（Dislike）';
                                 if (tips) tips.remove();
                             } else {
                                 button.classList.remove('liked');
@@ -305,7 +326,8 @@
                     echo '<p class="no_comment" style="text-align: center;padding: 15px 0;">👋 还没人评论，来抢沙发吗？</p>';
                 } else {
                     function custom_comment($comment, $args, $depth) {
-                        global $lazysrc, $admin_email;
+                        global $lazysrc; //, $admin_email
+                        $admin_email = get_bloginfo('admin_email');
                         $GLOBALS['comment'] = $comment; 
                         $approved = $comment->comment_approved == "1";
                         // $tag = ( 'div' === $args['style'] ) ? 'div' : 'li';
@@ -313,11 +335,12 @@
                         $comment_author = $comment->comment_author;
                         $comment_ID = $comment->comment_ID;
                         $is_ai_comment = get_comment_meta( $comment_ID, '_2ber_ai_reply', true ) || get_comment_meta( $comment_ID, '_2ber_ai_processing', true );
+                        $is_thoughtful_comment = get_comment_meta( $comment_ID, '_thoughtful_comment', true );
                         // apply ai reply status
                         ajax_ai_reply_status($comment);
                         $is_ai_pending = $comment->two_ber_ai_pending;
                     ?>
-                        <div class="vcard magnetics<?php echo $is_ai_comment && !$is_ai_pending ? ' ai' : ''; ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $comment_ID; ?>" data-ai-pending="<?php echo $is_ai_pending ?>">
+                        <div class="vcard magnetics<?php if ($is_ai_comment && !$is_ai_pending) echo ' ai';if ($is_thoughtful_comment) echo ' thoughtful'; ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $comment_ID; ?>" data-ai-pending="<?php echo $is_ai_pending ?>">
                             <a class="noslide" rel="nofollow" href="<?php comment_author_url(); ?>" target="_blank">
                                 <?php 
                                     if (get_option('show_avatars')) {
@@ -336,9 +359,10 @@
                                         if ($is_ai_comment && !$is_ai_pending) {
                                             echo '<span class="vsys vai">AI Comment #' . $comment_ID . '</span>';
                                         } else {
-                                            if (get_comment_author_email() == $admin_email) echo '<span class="vsys vadmin">admin</span>';
+                                            if ($email == $admin_email) echo '<span class="vsys vadmin">admin</span>';
                                             $userAgent = get_userAgent_info($comment->comment_agent);
                                             echo $approved ? '<span class="vsys vagent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing">Auditing</span>';
+                                            if ($is_thoughtful_comment) echo '<span class="vsys vthoughtful" title="AI Powered by @2BER">✨亮评 #' . $comment_ID . '</span>';
                                         }
                                     ?>
                                 </div>
@@ -349,8 +373,13 @@
                                         if ($approved) {
                                             if (get_option('site_ajax_comment_switcher')) {
                                                 global $post;
-                                                $tips = $is_ai_comment ? '追问AI无需@' : '回复ta的评论';
-                                                echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$comment_ID.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$comment_ID.'" data-respondelement="respond" data-nonce="'.wp_create_nonce( 'wp_rest' ).'" data-replyto="'.$comment_author.'" title="'.$tips.'" aria-label="正在回复给：@'.$comment_author.'">回复</a>';
+                                                $tips = '回复ta的评论';
+                                                $nonce = '';
+                                                if ($is_ai_comment) {
+                                                    $tips = '追问AI无需@';
+                                                    // $nonce = wp_create_nonce( 'wp_rest' );
+                                                }
+                                                echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$comment_ID.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$comment_ID.'" data-respondelement="respond" data-nonce="'.$nonce.'" data-replyto="'.$comment_author.'" title="'.$tips.'" aria-label="正在回复给：@'.$comment_author.'">回复</a>';
                                                 // unset($post);
                                             } else {
                                                 echo comment_reply_link(array_merge($args, array(
@@ -873,9 +902,9 @@
                                   parent = child.comment_parent,
                                   content = child.comment_content,//strip_tags(child.comment_content),
                                   user_agent =  `<span class="vsys useragent">${child._comment_agent.browser+" / "+child._comment_agent.system}</span>`,
-                                  ai_reply = '',
-                                  ai_class = '',
                                   is_ai_reply = child.user_id == 9527,
+                                  is_thoughtful_reply = child._comment_thoughtful != 0,
+                                  ai_class = thoughtful_class = ai_reply = thoughtful_reply = '',
                                   is_admin = email == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
                                   is_auditing = child.comment_approved == '0',
                                   is_approved = is_auditing ? '<span class="auditing vsys">Auditing</span>' : '',
@@ -886,11 +915,14 @@
                                   user_agent = '';
                               }
                               if (is_ai_reply) {
+                                  ai_class = ' ai';
                                   ai_reply = `<span class="vsys vai">AI Comment #${id}</span>`;
                                   user_agent = '';
-                                  ai_class = ' ai';
+                              } else if (is_thoughtful_reply) {
+                                  thoughtful_class = ' thoughtful';
+                                  thoughtful_reply = `<span class="vsys vthoughtful" title="AI Powered by @2BER">✨亮评 #${id}</span>`;
                               }
-                              output += `<div class="vcard magnetics${ai_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0.015" id="comment-${id}"><a class="noslide" rel="nofollow" href="${link}" target="_blank"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent}</div><div class="vmeta"><span class="vtime">${new Date(child.comment_date).toLocaleDateString()}</span><span class="vedited"></span>${replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${child._comment_reply}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
+                              output += `<div class="vcard magnetics${ai_class+thoughtful_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0.015" id="comment-${id}"><a class="noslide" rel="nofollow" href="${link}" target="_blank"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div><div class="vmeta"><span class="vtime">${child.comment_date.slice(0, 10)}</span><span class="vedited"></span>${replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${child._comment_reply}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
                            }
                         }
                         return output;
@@ -1209,29 +1241,34 @@
                                                     overview_button = childs_overview ? `<button class="vbtn extend_addon magnetic" style="">展开 ${childs_counts - childs_limits} 条评论</button>` : '',
                                                     if_child = childs ? `<ul class="children${overview_class}" data-cpid="${id}">${that.childComments(childs) + overview_button}</ul>` : '',
                                                     is_ai_reply = each_comment.user_id == 9527,
-                                                    ai_reply = '',
+                                                    is_thoughtful_reply = each_comment._comment_thoughtful != 0,
+                                                    ai_reply = thoughtful_reply = '',
                                                     is_admin = md5mail == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
                                                     is_auditing = each_comment.comment_approved == '0',
                                                     is_approved = is_auditing ? '<span class="vsys auditing">待审核</span>' : '',
                                                     tips = is_ai_reply ? '追问AI无需@' : '回复ta的评论',
                                                     replytocom = is_auditing ? '' : `<a rel="nofollow" class="vat noslide comment-reply-link" title="${tips}" href="<?php echo $wp_ajax_paginate_only ? '${each_comment._comment_replytocom}' : 'javascript:;'; ?>" data-commentid="${id}" data-postid="<?php echo $post_ID; ?>" data-belowelement="comment-${id}" data-respondelement="respond" data-replyto="${nick}" aria-label="正在回复给：@${nick}">回复</a>`;
+                                                var appendList = document.createElement("div");
+                                                // DO NOT use comment_list.innerHTML, innerHTML will refresh dom list (caused: binded event lose efficacy)
+                                                appendList.id = "comments-"+id;
+                                                // appendList.classList.add('magnetics');
                                                 if (is_auditing) {
                                                     content = '<small style="opacity:.5">[ '+content+' ]</small>'; //${cururl}?replytocom=${id}#respond
                                                     user_agent = '';
                                                 }
                                                 if (is_ai_reply) {
+                                                    appendList.classList.add('ai');
                                                     ai_reply = `<span class="vsys vai">AI Comment #${id}</span>`;
                                                     user_agent = '';
+                                                } else if (is_thoughtful_reply) {
+                                                    appendList.classList.add('thoughtful');
+                                                    thoughtful_reply = `<span class="vsys vthoughtful" title="AI Powered by @2BER">✨亮评 #${id}</span>`;
                                                 }
-                                                var appendList = document.createElement("div");
-                                                // DO NOT use comment_list.innerHTML, innerHTML will refresh dom list (caused: binded event lose efficacy)
-                                                appendList.id = "comments-"+id;
-                                                appendList.classList.add('magnetics');
                                                 appendList.dataset.aiPending = each_comment.two_ber_ai_pending;
                                                 appendList.dataset.magnetScale = '1';
                                                 appendList.dataset.magnetStep = "0.015";
                                                 appendList.classList.add("vcard"); //wp_comments
-                                                appendList.innerHTML += `<a class="noslide" rel="nofollow" href="${link}" target="_blank"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_comment.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow" href="${link}" target="_blank"> <em>${nick}</em> </a> ${ai_reply + is_admin + is_approved + user_agent}</div> <div class="vmeta"> <span class="vtime">${new Date(each_comment.comment_date).toLocaleDateString()}</span> <span class="vedited"></span> ${replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
+                                                appendList.innerHTML += `<a class="noslide" rel="nofollow" href="${link}" target="_blank"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_comment.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow" href="${link}" target="_blank"> <em>${nick}</em> </a> ${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div> <div class="vmeta"> <span class="vtime">${each_comment.comment_date.slice(0, 10)}</span> <span class="vedited"></span> ${replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
                                                 that.vlist.appendChild(appendList);
                                                 that.vlist.innerHTML += if_child;
                                             }
@@ -1475,7 +1512,7 @@
                                                     }
                                                     temp_comment.id = 'comment-' + reply_comment_id;
                                                     temp_comment.className = 'vcard magnetics comment_preview'; //wp_comments
-                                                    temp_comment.innerHTML = `<a class="noslide" rel="nofollow" href="" target="_blank"> <img class="vimg" src="${that.vinfo.querySelector('.avatar img').src}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid=""> <div class="vhead"> <a class="vnick" rel="nofollow" href="" target="_blank"> <em>${a_val}</em> </a> ${comment_info}<span class="vsys useragent"> Comment Preview </span></div> <div class="vmeta"> <span class="vtime">${new Date().toLocaleDateString()}</span> <span class="vedited"></span>${replytocom}</div> <div class="vcontent"> <p>${comment_replyto} ${filter_c_val}</p> </div> </div>`;
+                                                    temp_comment.innerHTML = `<a class="noslide" rel="nofollow" href="" target="_blank"> <img class="vimg" src="${that.vinfo.querySelector('.avatar img').src}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid=""> <div class="vhead"> <a class="vnick" rel="nofollow" href="" target="_blank"> <em>${a_val}</em> </a> ${comment_info}<span class="vsys useragent"> Comment Preview </span></div> <div class="vmeta"> <span class="vtime">${new Date().toLocaleString()}</span> <span class="vedited"></span>${replytocom}</div> <div class="vcontent"> <p>${comment_replyto} ${filter_c_val}</p> </div> </div>`;
                                                     // console.log(temp_comment);
                                                     let comment_nick = temp_comment.querySelector('.vnick em');
                                                     let reply_link = temp_comment.querySelector('.comment-reply-link');
@@ -1562,7 +1599,7 @@
                                                         }
                                                     }, (replied_id)=> {
                                                         ai_comments.querySelector('.vmeta').innerHTML += `<a rel="nofollow" class="vat noslide comment-retry-link" href="javascript:void(0);" data-commentid="${replied_id}" data-postid="${comment_cid}" data-belowelement="comment-${replied_id}" data-respondelement="respond" data-replyto="2BER" aria-label="重试回复给：@2BER" data-nonce="<?php echo wp_create_nonce( 'wp_rest' ); ?>">${that.reply_obj.context.retry}</a>`;
-                                                        standby_context = "Sorry, 2BER AI might busy now.. (You can retry once via Retry-Button on the right)";
+                                                        standby_context = "Sorry, 2BER AI might busy now.. (服务器繁忙，点击右侧按钮可重试)";
                                                         <?php echo $words_typer ? 'words_typer(ai_comments.querySelector(".vcontent p"), standby_context, 25, "' . $shuffle_typer . '");' : 'ai_comments.querySelector(".vcontent p").textContent = standby_context;'; ?>;
                                                     });
                                                 <?php

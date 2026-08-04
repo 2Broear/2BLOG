@@ -30,11 +30,9 @@
 	    .win-content article p {
 	        opacity: 1;
 	    }
-	    /*@media screen and (max-width: 960px) {*/
-     /*       .win-nav {*/
-     /*           width: 100% !important;*/
-     /*       }*/
-     /*   }*/
+	    .win-top h5.workRange b {
+	        text-shadow: 0 0 20px color-mix(in oklab, var(--theme-color) 30%, transparent);
+	    }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">

@@ -759,7 +759,7 @@
                     console.warn('invalid node provided or classList', node);
                     return false;
                 }
-                let blackTags = ['h1','h2','h3','h4','h5','h6','a','s','del','code','mark','details','summary', 'blockquote'],
+                let blackTags = ['h1','h2','h3','h4','h5','h6','a','b','s','strong','del','code','mark','details','summary', 'blockquote'],
                     blackList = c_blackList instanceof Array ? c_blackList : [];
                 for(let i=0;i<blackTags.length;i++){
                     let blackTag = blackTags[i].toUpperCase();

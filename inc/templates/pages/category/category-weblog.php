@@ -48,6 +48,10 @@
         .weblog-tree-all.useMemos .memos-tree-core{
             display: block;
         }
+        .memos-tree-core.v {
+            text-align: center;
+        }
+        
         figure img, figure video {
             width: auto;
             height: auto;
@@ -94,7 +98,7 @@
                     <div style="width:100%;text-align: right;padding: 10px 20px 5px 15px;box-sizing: border-box;">
                         <button class="switch-to-memos lively-click magnetic" data-magnet-scale="" data-magnet-step="" href="javascript:;" title="加载更多">切换 Memos 记录</button>
                     </div>
-                    <div class="memos-tree-core">
+                    <div class="memos-tree-core v">
                         <div class="load">
                             <button class="load-more load-memos magnetic" href="javascript:;" data-click="0">加载更多</button>
                         </div>
@@ -282,6 +286,7 @@
 ?>
         let memosClass = "useMemos",
             memoLoaded = "usedMemos",
+            memoLoading = 'vloading',
             memos_tree = weblog.querySelector('.memos-tree-core'),
             memos_load = memos_tree.querySelector('.load'),
             memos_more = memos_load.querySelector('.load-more'),
@@ -400,7 +405,12 @@
                     ?>
                         if(t.classList && t.classList.contains("load-memos")){
                             memos_params.offset = preset_loads*parseInt(memos_more.dataset.click); // update offsets
-                            memos_fetch(t); // exec fetchs
+                            t.parentNode.classList.add(memoLoading);
+                            t.style.display = 'none';
+                            memos_fetch(t, ()=> {
+                                t.parentNode.classList.remove(memoLoading);
+                                t.style.display = 'inline-block';
+                            }); // exec fetchs
                             break;
                         }
                     <?php
@@ -439,7 +449,7 @@
                                 weblog.classList.add(memosClass);
                                 if(weblog.classList.contains(memoLoaded)) {
                                     t.textContent = memos_ctx;
-                                    console.debug(memoLoaded);
+                                    // console.debug(memoLoaded);
                                     return;
                                 }
                                 // memos_more.dataset.counts = 999;

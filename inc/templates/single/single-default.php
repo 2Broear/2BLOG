@@ -28,18 +28,22 @@
 	        font-family: 'Source Han Serif SC','Source Han Serif','source-han-serif-sc',"Noto Serif",'PT Serif','SongTi SC',serif;
 	    }
 	    .bg h1 {
-	        max-width: 20em;
+	        max-width: 15em;
 	    }
 	    .bg h1 a{
 	        animation-duration: 1.5s;
-            filter: none;
+            /*filter: none;*/
             /*width: 100%;*/
             /*height: 68%;*/
             /*position: absolute;*/
             /*bottom: 0;*/
             /*left: 0;*/
             /*z-index: -1;*/
-            /*filter: url(#x);*/
+            /*text-decoration: underline wavy;*/
+            /*text-decoration-color: var(--theme-color);*/
+            /* text-underline-offset: 3px;*/
+            /*background: linear-gradient(transparent, var(--theme-color)) no-repeat left 97%/0 30%;*/
+            background-size: 100% 38%;
 	    }
 	    figure.wp-block-gallery > figure{
 	        /*min-height: 222px;*/

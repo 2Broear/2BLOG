@@ -162,11 +162,8 @@
             array('title'=>'额外内容', 'for'=>'post_feeling', 'type'=>'text', 'method'=>'textarea', 'options'=>false),
             array('title'=>'文章排序', 'for'=>'post_orderby', 'type'=>'number', 'method'=>false, 'options'=>false),
         );
-        if(in_category($acg_slug, $posts) || $creating_post){
-            // if(in_category('game', $posts)) array_push($preset_arr, array('title'=>'评测得分', 'for'=>'post_rating', 'type'=>'number', 'method'=>false));
-            // else array_push($preset_arr, array('title'=>'推荐内容', 'for'=>'post_rcmd', 'type'=>'checkbox', 'method'=>'checkbox'));
+        if(in_category($acg_slug, $posts) || $creating_post) {
             array_push($preset_arr, array('title'=>'推荐内容', 'for'=>'post_rcmd', 'type'=>'checkbox', 'method'=>'checkbox', 'options'=>false), array('title'=>'评测得分', 'for'=>'post_rating', 'type'=>'number', 'method'=>false, 'options'=>false));
-            // if(get_post_meta($pid)['post_rcmd'][0]) array_push($preset_arr, array('title'=>'推荐评分（GAMES）', 'for'=>'post_rating', 'type'=>'number', 'method'=>false));
         };
         if(in_category($news_slug, $posts)||in_category($note_slug, $posts) || $creating_post){
             array_push($preset_arr, array('title'=>'文章版权', 'for'=>'post_rights', 'type'=>'', 'method'=>'select', 'options'=>["原创","转载","其他"]));
@@ -195,7 +192,7 @@
         }
         switch ($method) {
             case 'textarea':
-                echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><textarea name="'.$for.'" id="'.$for.'" placeholder="文章副标题、文章感想、文章额外内容等信息.." style="width:50%;height:70px">'.$value.'</textarea></td></tr>';
+                echo '<tr><th><label for="'.$for.'">'.$title.'</label></th><td><textarea name="'.$for.'" id="'.$for.'" placeholder="文章副标题、文章感想、文章额外内容等信息.." style="width:88%;height:88px">'.$value.'</textarea></td></tr>';
                 break;
             case 'select':
                 $selects = $json['options'];

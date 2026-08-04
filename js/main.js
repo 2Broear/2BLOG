@@ -446,33 +446,16 @@
           class_down = 'barSetDown',
           class_fixed = 'window-all-get-fixed',
           marginOffset = inform ? inform.offsetHeight+15 : 15,
-          aindex_fn = function(offset=300){
-              if(!aindex) return;
-              var aindexOffset = [];
-                //   Constructor = function(index, offsets){
-                //       this.index = index;
-                //       this.offset = offsets;
-                //   };
-              for(let i=0;i<aindex.dataset.index;i++){
-                  const each_index = document.querySelector('#title-'+i),
-                        each_offset = each_index ? each_index.offsetTop+offset : 0;
-                  aindexOffset.push(each_offset); //new Constructor(i, each_offset)
-              }
-              return aindexOffset;
-          },
-        //   once_fn = function(fn,rt) {
-        //     let called = false;
-        //     return function(){
-        //         if(called) return;
-        //             called = true;
-        //             if(rt){
-        //                 return fn.call(this,...arguments);
-        //             }else{
-        //                 fn.call(this,...arguments);
-        //             }
-        //     };
+        //   aindex_fn = function(offset=300){
+        //       if(!aindex) return;
+        //       var aindexOffset = [];
+        //       for(let i=0;i<aindex.dataset.index;i++){
+        //           const each_index = document.querySelector('#title-'+i),
+        //                 each_offset = each_index ? each_index.offsetTop+offset : 0;
+        //           aindexOffset.push(each_offset); //new Constructor(i, each_offset)
+        //       }
+        //       return aindexOffset;
         //   },
-        //   aindex_once_data = once_fn(aindex_fn,true),
           class_switch = function(el,add,remove,clear){
                 if(!el) return;
                 if(clear){
@@ -514,7 +497,7 @@
     if (site_tool) {
         // scrollTo && article_tool
         site_tool.querySelector(".top").onclick=()=>window.scrollTo(0, 0);
-        site_tool.querySelector(".bottom").onclick=()=>window.scrollTo(0, document.body.offsetHeight); //99999
+        site_tool.querySelector(".bottom").onclick=()=>window.scrollTo(0, document.body.offsetHeight*2); //99999
         // site_tool.querySelector(".top").onclick=()=>window.requestAnimationFrame(function(){window.scrollTo(0,0);});
         // site_tool.querySelector(".bottom").onclick=()=>window.requestAnimationFrame(function(){window.scrollTo(0,99999);});
     }
@@ -583,140 +566,213 @@
         };
     }
     
-    var scroll_throttler = null,
-        scroll_record = 0,
-        scroll_delay = 300,
-        scroll_func = function(){
-            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop,
-                clientHeight = document.body.clientHeight,
-                windowHeight = window.innerHeight,
-    		    page_percent = Math.round((scrollTop/(clientHeight-windowHeight))*100),
-                fixedSidebar = sidebar_window ? header.offsetHeight+(sidebar_ads ? sidebar_ads.offsetHeight + sidebar_margin : 0) : false, //sidebar_ads.offsetHeight+marginOffset
-                headbar_oh = headbar.querySelector('p#np') ? 100 : headbar.offsetHeight,
-                footerDetect = sidebar_window ? footer.querySelector(".footer-detector").offsetTop-(headbar_oh+sidebar_float.offsetHeight) : false;
-            // https://stackoverflow.com/questions/31223341/detecting-scroll-direction
-            scroll_foward = window.pageYOffset;  // Get scroll Value
-            if(scroll_record-scroll_foward<0){
-                // scroll_delay = scrollTop>=header.offsetHeight+window.innerHeight ? 1000 : 0;  //设置滚动节流延迟
-                //下滚超过导航栏执行
-                if(scrollTop>=header.offsetHeight){
-                    class_switch(header,class_up,class_down);  //nav bar
-                    class_switch(headbar,"slide-down",null);
-                    class_switch(progress_ball,"pull-up",null);
-                    if(npost && share && scrollTop>=share.offsetTop){
-                        class_switch(headbar,"next-post",null);  //show next post
-                    }
-                }else{
-                    class_switch(headbar,null,class_up);
+    
+    
+    // ========== 缓存滚动过程中不变的尺寸值 ==========
+    var scroll_record = 0;   // 用于判断滚动方向
+    let scrollCache = {};
+    
+    function updateScrollCache() {
+        const headerH = header.offsetHeight;
+        const headbarOH = headbar.querySelector('p#np') ? 100 : headbar.offsetHeight;
+        scrollCache = {
+            headerH,
+            headbarOH,
+            fixedSidebar: sidebar_window ? headerH + (sidebar_ads ? sidebar_ads.offsetHeight + sidebar_margin : 0) : false,
+            footerDetect: sidebar_window ? footer.querySelector(".footer-detector").offsetTop - (headbarOH + sidebar_float.offsetHeight) : false,
+        };
+    }
+    
+    // ========== 辅助函数：切换 class ==========
+    function toggleClass(el, addClass, removeClass) {
+        if (!el) return;
+        if (addClass) el.classList.add(addClass);
+        if (removeClass) el.classList.remove(removeClass);
+    }
+    
+    // ========== 优化后的滚动执行函数 ==========
+    function scroll_func() {
+        const scrollTop = window.pageYOffset;
+        const docHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const maxScroll = docHeight - windowHeight;// 接近底部时强制 100%
+        let page_percent = maxScroll > 0 ? Math.round((scrollTop / maxScroll) * 100) : 0;
+        if (scrollTop + windowHeight >= docHeight - 2) {
+            page_percent = 100;
+        }
+    
+        // 避免未声明全局变量
+        const scrollForward = window.pageYOffset;
+        // 方向判断（scroll_record 是上一次有效执行时的位置）
+        const scrollingDown = scroll_record - scrollForward < 0;
+    
+        // 从缓存读取
+        let { headerH, headbarOH, fixedSidebar, footerDetect } = scrollCache;
+        if (sidebar_window) {
+            // 动态计算停止点，避免缓存污染
+            fixedSidebar = headerH + (sidebar_ads ? sidebar_ads.offsetHeight + sidebar_margin : 0); //header.offsetHeight
+            footerDetect = footer.querySelector(".footer-detector").offsetTop - 
+                                      (headbarOH + sidebar_float.offsetHeight);
+        }
+        // ----- 处理导航栏与 headbar -----
+        if (scrollingDown) {
+            if (scrollTop >= headerH) {
+                toggleClass(header, class_up, class_down);
+                toggleClass(headbar, "slide-down", null);
+                toggleClass(progress_ball, "pull-up", null);
+                if (npost && share && scrollTop >= share.offsetTop) {
+                    toggleClass(headbar, "next-post", null);
                 }
-                //超过侧边栏执行
-                if(sidebar_window){
-                    if(scrollTop>=fixedSidebar){
-                        class_switch(sidebar_float,class_fixed,null);
-                        sidebar_float.style.width = sidebar_float.parentElement.offsetWidth+"px";
-                    }
-                    //到达底部检测栏执行
-                    if(scrollTop>=footerDetect){
-                        sidebar_float.style.height = sidebar_float.offsetHeight+"px";
-                        class_switch(sidebar_float,"window-all-get-stoped",null);
-                        sidebar_float.parentElement.style.height = "100%";  //fix google ads load bug
-                    }
-                    sidebar_float.style.transform = "";  //始终执行
+            } else {
+                toggleClass(headbar, null, class_up);
+            }
+        } else {
+            // 上滚
+            if (scrollTop <= headerH) {
+                toggleClass(headbar, null, "slide-down");
+                toggleClass(progress_ball, null, "pull-up");
+            }
+            toggleClass(header, class_down, class_up);
+            if (npost && share && scrollTop <= share.offsetTop) {
+                toggleClass(headbar, null, "next-post");
+            }
+        }
+    
+        // ----- 处理侧边栏 -----
+        if (sidebar_window) {
+            if (scrollingDown) {
+                if (scrollTop >= fixedSidebar) {
+                    toggleClass(sidebar_float, class_fixed, null);
+                    sidebar_float.style.width = sidebar_float.parentElement.offsetWidth + "px";
                 }
-            }else{
-                //上滚至导航栏执行
-                if(scrollTop<=header.offsetHeight){
-                    // class_switch(header,class_down,class_up,true);
-                    class_switch(headbar,null,"slide-down");
-                    class_switch(progress_ball,null,"pull-up");
+                if (scrollTop >= footerDetect) {
+                    sidebar_float.style.height = sidebar_float.offsetHeight + "px";
+                    toggleClass(sidebar_float, "window-all-get-stoped", null);
+                    sidebar_float.parentElement.style.height = "100%";
                 }
-                class_switch(header,class_down,class_up);
-                // else{
-                //     class_switch(header,class_down,class_up);
-                // }
-                if(npost && share && scrollTop<=share.offsetTop){
-                    class_switch(headbar,null,"next-post");  //show next post
+                sidebar_float.style.transform = ""; // 下滚时清除 translateY
+            } else {
+                // 上滚
+                if (scrollTop < fixedSidebar) {
+                    toggleClass(sidebar_float, null, class_fixed);
+                    sidebar_float.style.width = "";
                 }
-                if(sidebar_window){
-                    //上滑至侧边栏执行
-                    if(scrollTop<fixedSidebar){
-                        class_switch(sidebar_float,null,class_fixed);
-                        sidebar_float.style.width = "";
-                    }
-                    //上滑小于侧边栏，大于底部栏+导航高度之间执行
-                    sidebar_float.style.transform =  scrollTop>fixedSidebar && scrollTop<footerDetect-header.offsetHeight ? `translateY(${header.offsetHeight}px)` : "";
-                    //上滑过底部栏后执行
-                    if(scrollTop<footerDetect){
-                        sidebar_float.style.height = "";
-                        class_switch(sidebar_float,null,"window-all-get-stoped");
-                    }
+                // 中间区域跟随
+                sidebar_float.style.transform =
+                    scrollTop > fixedSidebar && scrollTop < footerDetect - headerH
+                        ? `translateY(${headerH}px)`
+                        : "";
+                if (scrollTop < footerDetect) {
+                    sidebar_float.style.height = "";
+                    toggleClass(sidebar_float, null, "window-all-get-stoped");
                 }
             }
-            scroll_record = scroll_foward;  // Update scrolled value
-            // Progress ball
-            progress_ball.querySelector(".pagePer strong").setAttribute('data-percent',page_percent);
-            //.dataset.percent = page_percent; // dataset can not Update attr immediately https://qa.1r1g.com/sf/ask/1962219521/
-            // progress_ball.querySelector(".pagePer strong").innerText = page_percent+"%";
-            progress_ball.querySelector(".pagePer i").style.transform = `translateY(${100-page_percent}%)`;
-            progress_wave.classList.add("active");
-            if (progress_bar) {
-                progress_bar.classList.add("active");
-                progress_bar.style.opacity = 1;
-                progress_bar.style.transform = `translateX(${page_percent-100}%)`;
-            }
-            if(scrollTop==0 || scrollTop+windowHeight>=clientHeight){  // 到达顶部（底部）执行
-                progress_wave.classList.remove("active");
-                if (progress_bar) progress_bar.classList.remove("active");
-            }
-            // TOC extends
-            if(!aindex) return;
-            const aindex_li = aindex.querySelectorAll('li'),
-                  aindex_cl = function(el,cl){
-                      for(let i=0,elLen=el.length;i<elLen;i++){
-                          el[i].classList.remove(cl);
-                      }
-                  };
-            new Promise(function(resolve,reject){
-                let aindexOffset = aindex_fn();
-                aindexOffset.length>=1 ? resolve(aindexOffset) : reject(aindexOffset);  // always update(do not call aindex_once_data)
-            }).then(function(res){
-                if(scrollTop<=res[0] || scrollTop>=share.offsetTop){ //-100
-                    aindex_cl(aindex_li,'current')
-                }else{
-                    res.forEach(function(offset, index){
-                        if(scrollTop>=offset){
-                            aindex_cl(aindex_li,'current');  // location.href='title-'+index;
-                            document.querySelector('#t'+index).classList.add('current');
-                        }
-                    });
-                }
-            }).catch(function(err){
-                console.log(err);
-            });
+        }
+    
+        // 更新滚动记录
+        scroll_record = scrollForward;
+    
+        // ----- 进度球和进度条 -----
+        progress_ball.querySelector(".pagePer strong").setAttribute('data-percent', page_percent);
+        progress_ball.querySelector(".pagePer i").style.transform = `translateY(${100 - page_percent}%)`;
+        progress_wave.classList.add("active");
+        if (progress_bar) {
+            progress_bar.classList.add("active");
+            progress_bar.style.opacity = 1;
+            progress_bar.style.transform = `translateX(${page_percent - 100}%)`;
+        }
+        if (scrollTop <= 0 || scrollTop + windowHeight >= docHeight - 1) {
+            progress_wave.classList.remove("active");
+            if (progress_bar) progress_bar.classList.remove("active");
+        }
+    
+        // ----- TOC 高亮 (实时动态版本) -----
+        if (!aindex) return;
+        
+        const aindex_li = aindex.querySelectorAll('li');
+        const removeCurrentClass = () => {
+            aindex_li.forEach(li => li.classList.remove('current'));
         };
         
-    // document.addEventListener('DOMMouseScroll', scroll_func, false);  //DOMMouseScroll  // scroll 滚动+拖拽滚动条代替 wheel 滚动函数
-    if(sidebar_window){
-        window.addEventListener('scroll', scroll_func, true);
-    }else{
-        const scrollLoad = closure_throttle((e)=>scroll_func(), scroll_delay),
-              scrollForRemove = function(event){
-                  let e = event || window.event,
-                      t = e.target || e.srcElement;
-                  if(t!==document) return;
-                  // requestAnimationFrame support
-                  raf_available ? window.requestAnimationFrame(scrollLoad) : scrollLoad();
-              };
-        window.addEventListener('scroll', scrollForRemove, true);
-        // return (function(){
-        //     if(scroll_throttler==null){
-        //         scroll_throttler = setTimeout(function(){
-        //             exec_scroll();
-        //             scroll_throttler = null;  //消除定时器
-        //         }, scroll_delay);
-        //     }
-        // })();
+        // 动态阈值：导航栏高度 + 一点余量（可自行调整）
+        const tocThreshold = header.offsetHeight + 10;
+        
+        let activeIndex = -1;
+        const count = parseInt(aindex.dataset.index, 10) || 0;
+        
+        // 从最后一个标题向前遍历，找到第一个顶部已经接近/越过阈值的标题
+        for (let i = count - 1; i >= 0; i--) {
+            const titleEl = document.getElementById('title-' + i);
+            if (!titleEl) continue;
+        
+            const rectTop = titleEl.getBoundingClientRect().top;
+            if (rectTop <= tocThreshold) {
+                activeIndex = i;
+                break;
+            }
+        }
+        
+        // 边界处理：如果所有标题都在阈值下方（页面还太靠上），清除高亮
+        // 如果滚动到了文章最底部（所有标题都已越过顶部），保留最后一个高亮
+        if (activeIndex === -1) {
+            removeCurrentClass();
+        } else {
+            removeCurrentClass();
+            const tocLink = document.querySelector('#t' + activeIndex);
+            if (tocLink) tocLink.classList.add('current');
+        }
     }
+    
+    // 初始化缓存
+    updateScrollCache();
+    // 窗口大小变化时更新缓存
+    window.addEventListener('resize', updateScrollCache);
+    
+    // 阈值节流
+    const SCROLL_THRESHOLD = sidebar_window ? 20 : 80;
+    let lastUpdateScrollTop = window.pageYOffset;
+    let scrollStopTimer = null;
+    let ticking = false;
+    
+    function handleScroll(e) {
+        if (e && e.target !== document) return;
+    
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const currentScrollTop = window.pageYOffset;
+                const distance = Math.abs(currentScrollTop - lastUpdateScrollTop);
+    
+                // 检查是否到达顶部或底部（允许 2px 误差）
+                const docHeight = document.documentElement.scrollHeight;
+                const windowHeight = window.innerHeight;
+                const atTop = currentScrollTop <= 0;
+                const atBottom = currentScrollTop + windowHeight >= docHeight - 2;
+    
+                // 日常阈值判断
+                if (distance >= SCROLL_THRESHOLD) {
+                    scroll_func();
+                    lastUpdateScrollTop = currentScrollTop;
+                }
+                // 边界情况：到达顶部/底部，且距离上次更新超过 5px，立即强制更新
+                else if ((atTop || atBottom) && distance >= 5) {
+                    scroll_func();
+                    lastUpdateScrollTop = currentScrollTop;
+                }
+    
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }
+    
+    // 首次调用 scroll_func 初始化滚动基准和 header 状态
+    if (lastUpdateScrollTop > 0) {
+        scroll_func();
+        // console.log('default scroll_func')
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    
     
     // moblie ux
     const mobile_nav = document.querySelector('header .nav-wrap'),

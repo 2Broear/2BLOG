@@ -54,7 +54,7 @@
                 return $block_content;
             }
             // 根据不同的块类型使用不同的匹配模式
-            $replacement = '$1 magnetic" data-magnet-scale="1.025" data-magnet-step="0.025"';
+            $replacement = '$1 magnetic" data-magnet-scale="1" data-magnet-step="0.025"';
             if ($block['blockName'] === 'core/image') {
                 // 匹配 figure 元素（wp-block-image）
                 $pattern = '/(<figure[^>]*class="wp-block-image[^"]*)/i';;
@@ -68,14 +68,14 @@
             return $block_content;
         }
         add_filter('render_block', 'custom_core_image_block_attributes', 10, 2);
-        
     }
-function weplugins_customize_paginate_links($link) {
-    error_log('paginate_links filter triggered: ' . $link); // 查看错误日志
-    $link = str_replace('page-numbers', 'custom-page-numbers', $link);
-    return $link;
-}
-add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
+    
+    function weplugins_customize_paginate_links($link) {
+        error_log('paginate_links filter triggered: ' . $link); // 查看错误日志
+        $link = str_replace('page-numbers', 'custom-page-numbers', $link);
+        return $link;
+    }
+    add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
     /*
      *--------------------------------------------------------------------------
      * Cloudflare Turnstile CAPTCHA
@@ -302,6 +302,303 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
         add_action('wp_ajax_check_captcha', 'check_captcha');
         add_action('wp_ajax_nopriv_check_captcha', 'check_captcha');
     }
+
+    /**
+     * 
+     * marker REST API
+     * 
+    * @mark.php reduce,.
+    * wp_options wpdb_query
+    */
+    if (get_option('site_marker_switcher')) {
+        
+        add_action('rest_api_init', function () {
+            // 1. 获取文章所有标记（净化后）
+            register_rest_route('markers/v1', '/post/(?P<post_id>\d+)', [
+                'methods'  => 'GET',
+                'callback' => 'rest_get_markers',
+                'args'     => [
+                    'post_id' => ['required' => true, 'sanitize_callback' => 'absint'],
+                ],
+                'permission_callback' => '__return_true',
+            ]);
+        
+            // 2. 获取某用户在某文章的标记数量（需要 mid）
+            register_rest_route('markers/v1', '/post/(?P<post_id>\d+)/count', [
+                'methods'  => 'GET',
+                'callback' => 'rest_get_marker_count',
+                'args'     => [
+                    'post_id' => ['required' => true, 'sanitize_callback' => 'absint'],
+                    'mid'     => ['required' => true, 'sanitize_callback' => 'sanitize_text_field'],
+                ],
+                'permission_callback' => '__return_true',
+            ]);
+        
+            // 3. 新增标记
+            register_rest_route('markers/v1', '/post/(?P<post_id>\d+)', [
+                'methods'  => 'POST',
+                'callback' => 'rest_add_marker',
+                'args'     => [
+                    'post_id' => ['required' => true, 'sanitize_callback' => 'absint'],
+                ],
+                'permission_callback' => '__return_true',
+            ]);
+        
+            // 4. 删除标记（需验证身份）
+            register_rest_route('markers/v1', '/post/(?P<post_id>\d+)/(?P<rid>[a-zA-Z0-9]+)', [
+                'methods'  => 'DELETE',
+                'callback' => 'rest_delete_marker',
+                'args'     => [
+                    'post_id' => ['required' => true, 'sanitize_callback' => 'absint'],
+                    'rid'     => ['required' => true, 'sanitize_callback' => 'sanitize_text_field'],
+                ],
+                'permission_callback' => '__return_true',
+            ]);
+        
+            // 5. 点赞/取消点赞
+            register_rest_route('markers/v1', '/post/(?P<post_id>\d+)/(?P<rid>[a-zA-Z0-9]+)/like', [
+                'methods'  => 'POST',
+                'callback' => 'rest_toggle_like',
+                'args'     => [
+                    'post_id' => ['required' => true, 'sanitize_callback' => 'absint'],
+                    'rid'     => ['required' => true, 'sanitize_callback' => 'sanitize_text_field'],
+                ],
+                'permission_callback' => '__return_true',
+            ]);
+        
+            // 6. 管理员获取全部数据（净化）
+            register_rest_route('markers/v1', '/admin', [
+                'methods'  => 'GET',
+                'callback' => 'rest_admin_markers',
+                'permission_callback' => function () {
+                    return current_user_can('manage_options');
+                },
+            ]);
+        });
+        
+        // 获取所有标记数据（从 option 中读取）
+        function get_all_markers() {
+            $data = get_option('site_marker_data', []);
+            if (!is_array($data)) $data = [];
+            return $data;
+        }
+        
+        // 保存所有标记数据到 option（带简单并发保护）
+        function save_all_markers($data) {
+            return update_option('site_marker_data', $data, false);
+        }
+        
+        // 净化标记数组（去除敏感字段：mail, ts, ip）
+        function purify_markers(&$markers) {
+            foreach ($markers as $key => $user_markers) {
+                if (!is_array($user_markers)) continue;
+                foreach ($user_markers as $index => $mark) {
+                    if (is_object($mark)) {
+                        unset($mark->mail, $mark->ts, $mark->ip);
+                    }
+                }
+            }
+        }
+        
+        function rest_get_markers(WP_REST_Request $request) {
+            $post_id = $request['post_id'];
+            $key = 'marker-' . $post_id;
+            $all = get_all_markers();
+            $markers = isset($all[$key]) ? $all[$key] : [];
+            
+            // 净化
+            $clean = $markers;
+            purify_markers($clean);
+            
+            return rest_ensure_response($clean);
+        }
+        
+        function rest_get_marker_count(WP_REST_Request $request) {
+            $post_id = $request['post_id'];
+            $mid = $request['mid'];  // 已是 md5(mail)
+            $key = 'marker-' . $post_id;
+            $all = get_all_markers();
+            $count = 0;
+            if (isset($all[$key][$mid])) {
+                $count = count($all[$key][$mid]);
+            }
+            return rest_ensure_response(['count' => $count]);
+        }
+        
+        function rest_add_marker(WP_REST_Request $request) {
+            $post_id = $request['post_id'];
+            $key = 'marker-' . $post_id;
+        
+            // 必填参数
+            $rid  = sanitize_text_field($request->get_param('rid'));
+            $uid  = sanitize_text_field($request->get_param('uid'));
+            $nick = sanitize_text_field($request->get_param('nick'));
+            $mail = sanitize_email($request->get_param('mail'));
+            $text = $request->get_param('text');       // 可为空，原样存储
+            $ts   = $request->get_param('ts');         // 明文时间戳（客户端生成）
+            $note = $request->get_param('note') ?: '';
+            $like = $request->get_param('like');       // 点赞操作时使用
+        
+            if (empty($rid) || empty($uid) || empty($nick) || empty($mail) || empty($ts)) {
+                return new WP_Error('missing_params', '参数不全', ['status' => 400]);
+            }
+        
+            $mid = md5($mail);          // 用户标识（内部使用）
+            $ts_hashed = md5($ts);      // 与旧版一致
+        
+            // 获取所有数据
+            $all = get_all_markers();
+            $markers = isset($all[$key]) ? $all[$key] : [];
+        
+            // 检查重复标记：任何用户已标注过相同 text
+            foreach ($markers as $user_markers) {
+                if (!is_array($user_markers)) continue;
+                foreach ($user_markers as $mark) {
+                    if (!is_object($mark)) continue;
+                    if ($text === $mark->text) {
+                        if ($mail === $mark->mail) {
+                            return new WP_Error('duplicate_own', '您已标注过相同内容', ['status' => 400]);
+                        } else {
+                            // 处理点赞（类似原逻辑）
+                            if ($like) {
+                                // 点赞/取消点赞逻辑——此处仅允许点赞，取消点赞通过专门端点
+                                // 为了兼容原逻辑：如果请求带有 like 参数，且未带 liked，执行点赞
+                                if (!isset($mark->like)) $mark->like = [];
+                                if (!is_array($mark->like)) $mark->like = [];
+                                if (!in_array($like, $mark->like)) {
+                                    $mark->like[] = $like;
+                                    save_all_markers($all);
+                                    return rest_ensure_response(['msg' => '点赞成功', 'code' => 200]);
+                                } else {
+                                    return new WP_Error('already_liked', '您已点过赞', ['status' => 400]);
+                                }
+                            }
+                            return new WP_Error('duplicate_other', '该内容已被其他用户标注', ['status' => 403]);
+                        }
+                    }
+                }
+            }
+        
+            // 构建新标记对象
+            $new_mark = new stdClass();
+            $new_mark->rid  = $rid;
+            $new_mark->uid  = $uid;
+            $new_mark->nick = $nick;
+            $new_mark->mail = $mail;
+            $new_mark->text = $text;
+            if ($note) $new_mark->note = $note;
+            $new_mark->date = date('Y-m-d');
+            $new_mark->ts   = $ts_hashed;
+            $new_mark->ip   = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'];
+            $new_mark->ua   = $_SERVER['HTTP_USER_AGENT'] ?? '';
+            if ($like) $new_mark->like = [$like];  // 初始点赞
+        
+            // 插入到对应用户数组
+            if (!isset($all[$key])) $all[$key] = [];
+            if (!isset($all[$key][$mid])) $all[$key][$mid] = [];
+            $all[$key][$mid][] = $new_mark;
+        
+            save_all_markers($all);
+            return rest_ensure_response(['msg' => '标注成功', 'code' => 200]);
+        }
+        
+        function rest_delete_marker(WP_REST_Request $request) {
+            $post_id = $request['post_id'];
+            $rid = $request['rid'];
+            $key = 'marker-' . $post_id;
+        
+            $mail = sanitize_email($request->get_param('mail'));
+            $ts   = $request->get_param('ts');
+            if (empty($mail) || empty($ts)) {
+                return new WP_Error('missing_params', '身份验证参数不全', ['status' => 400]);
+            }
+            $mid = md5($mail);
+            $ts_hashed = md5($ts);
+        
+            $all = get_all_markers();
+            if (!isset($all[$key])) {
+                return new WP_Error('not_found', '该文章无标记', ['status' => 404]);
+            }
+        
+            $deleted = false;
+            foreach ($all[$key] as $user_key => &$marks) {
+                if (!is_array($marks)) continue;
+                foreach ($marks as $index => $mark) {
+                    if (!is_object($mark)) continue;
+                    if ($mark->rid === $rid && $mark->ts === $ts_hashed && $mark->mail === $mail) {
+                        array_splice($marks, $index, 1);
+                        // 如果用户数组为空，可删除该用户键
+                        if (empty($marks)) unset($all[$key][$user_key]);
+                        $deleted = true;
+                        break 2;
+                    }
+                }
+            }
+        
+            if ($deleted) {
+                save_all_markers($all);
+                return rest_ensure_response(['msg' => '删除成功', 'code' => 200]);
+            }
+            return new WP_Error('not_found', '未找到匹配的标记', ['status' => 404]);
+        }
+        
+        function rest_toggle_like(WP_REST_Request $request) {
+            $post_id = $request['post_id'];
+            $rid = $request['rid'];
+            $key = 'marker-' . $post_id;
+        
+            $mail = sanitize_email($request->get_param('mail'));
+            $ts   = $request->get_param('ts');
+            $like = $request->get_param('like');      // 当前用户 mid
+            $liked = $request->get_param('liked');    // 0=取消，1=点赞
+        
+            if (empty($mail) || empty($ts) || empty($like)) {
+                return new WP_Error('missing_params', '参数不全', ['status' => 400]);
+            }
+            $mid = md5($mail);
+            $ts_hashed = md5($ts);
+        
+            $all = get_all_markers();
+            if (!isset($all[$key])) {
+                return new WP_Error('not_found', '标记不存在', ['status' => 404]);
+            }
+        
+            // 查找目标标记
+            foreach ($all[$key] as $user_key => &$marks) {
+                foreach ($marks as &$mark) {
+                    if (!is_object($mark)) continue;
+                    if ($mark->rid === $rid) {
+                        // 确保 like 数组存在
+                        if (!isset($mark->like)) $mark->like = [];
+                        if (!is_array($mark->like)) $mark->like = [];
+        
+                        if ($liked) {
+                            // 点赞
+                            if (!in_array($like, $mark->like)) {
+                                $mark->like[] = $like;
+                                save_all_markers($all);
+                                return rest_ensure_response(['msg' => '点赞成功', 'code' => 200]);
+                            } else {
+                                return new WP_Error('already_liked', '已点过赞', ['status' => 400]);
+                            }
+                        } else {
+                            // 取消点赞
+                            $mark->like = array_values(array_diff($mark->like, [$like]));
+                            save_all_markers($all);
+                            return rest_ensure_response(['msg' => '取消点赞成功', 'code' => 200]);
+                        }
+                    }
+                }
+            }
+            return new WP_Error('not_found', '未找到标记', ['status' => 404]);
+        }
+        
+        function rest_admin_markers() {
+            $all = get_all_markers();
+            purify_markers($all);
+            return rest_ensure_response($all);
+        }
+    }
     
     /**
      * 
@@ -335,26 +632,485 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
         return $count;
     }
     if (get_option('site_chatgpt_switcher')) {
-        /**
-         * 
-         * AI RSS Feed Conetne desc
-         * 
-        * @param  $content Content of post
-        * @return string
-        */
-        if (get_option('site_chatgpt_ai_summary') && get_option('site_chatgpt_feed_sw')) {
-            $dir = get_option('site_chatgpt_dir') ? get_option('site_chatgpt_dir').'/' : '';
-            include_once get_template_directory() . '/plugin/'.$dir.'gpt_data.php';
-            function ai_content_feed($content) {
-                if (is_feed()) {
-                    global $cached_post;
-                    $prefix = '【AI内容摘要】'; //（原文总计 ' . str_word_count($content) . ' 字数）
-                    return $prefix . get_cached_abstract(true);  // $cached_post from include_once
+        // 挂载文章 chatGPT AI 摘要 mount article chatgpt
+        if (get_option('site_chatgpt_ai_summary')) {
+            
+            // 指定分类文章启用 chatgpt
+            function in_chatgpt_cat($post=null){
+                $chatgpt_cat = false; //canceled for api calling
+                if (!$post) global $post;  // global $post;
+                $chatgpt_array = explode(',', get_option('site_chatgpt_includes'));
+                $chatgpt_array_count = count($chatgpt_array);
+                if ($chatgpt_array_count >= 1) {
+                    for ($i=0;$i<$chatgpt_array_count;$i++) {
+                        if (in_category($chatgpt_array[$i], $post)) {
+                            $chatgpt_cat = true;
+                        }
+                    }
                 }
-                return $content;
+                return $chatgpt_cat;
             }
-            add_filter( "the_content_feed", "ai_content_feed" );
+            
+            // 注意页面缓存 携带过期URL参数
+            function article_ai_abstract($content) {
+                if (!is_single() || !in_chatgpt_cat()) {
+                    return $content;
+                }
+                global $post, $src_cdn;
+                $pid = $post->ID;
+                $model = get_option('site_chatgpt_model', 'OPENAI');
+                $speed = get_option('site_chatgpt_type_speed');
+            
+                // 不管缓存是否存在，一律输出占位 HTML，由前端异步加载
+                if (get_option('site_chatgpt_type_sw') && !get_option('site_chatgpt_type_optimize')) {
+                    // 打字效果模式
+                    return '<blockquote class="chatGPT" status="ai">
+                        <p><b>文章摘要</b><span title="对话模型">' . $model . '</span></p>
+                        <p class="response load">Standby API Responsing..</p>
+                    </blockquote>
+                    <script type="module">
+                        const responser = document.querySelector(".chatGPT .response");
+                        import("' . $src_cdn . '/js/module.js").then((module) =>
+                            fetch("/wp-json/gpt-summary/v1/summary/' . $pid . '")
+                                .then(res => {
+                                    if (res.status === 202) {
+                                        return { summary: "Generating summary, Standby page refresh later." };
+                                    }
+                                    return res.json();
+                                })
+                                .then(data => module.words_typer(responser, data.summary, ' . $speed . ', ""))
+                        );
+                    </script>' . $content;
+                }
+                // // 普通模式（包括无缓存时显示加载文字）
+                $chatgpt_cat = in_chatgpt_cat();
+                $summary = get_post_gpt_summary($pid);
+                if (!$summary) {
+                    $summary = 'Generating summary, Standby page refresh later.';
+                    // 无缓存时，在响应已发回后悄悄安排生成，用户完全无感知
+                    if (!wp_next_scheduled('async_gpt_summary_generation', [$pid])) {
+                        register_shutdown_function(function() use ($pid) {
+                            wp_schedule_single_event(time(), 'async_gpt_summary_generation', [$pid]);
+                        });
+                    }
+                }
+                return '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span title="对话模型">' . $model . '</span></p><p class="response done">'.$summary.'</p></blockquote>' . $content;
+                // return '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span title="对话模型">' . $model . '</span></p><p class="response done">Generating summary, Standby page refresh later.</p></blockquote>
+                //     <script>
+                //         (function() {
+                //             const resp = document.querySelector(".chatGPT .response");
+                //             if (!resp) return;
+                //             fetch("/wp-json/gpt-summary/v1/summary/' . $pid . '")
+                //                 .then(res => {
+                //                     if (res.status === 202) {
+                //                         resp.textContent = "Generating summary, Standby page refresh later.";
+                //                         return null;
+                //                     }
+                //                     return res.json();
+                //                 })
+                //                 .then(data => {
+                //                     if (data && data.summary) {
+                //                         resp.textContent = data.summary;
+                //                         resp.classList.remove("load");
+                //                     }
+                //                 });
+                //         })();
+                //     </script>' . $content;
+            }
+            add_filter('the_content', 'article_ai_abstract', 10);
+            
+            /**
+             * 
+             * GPT 文章摘要 REST API
+             * 
+            * @gpt.php reduce,.
+            * wp_options wpdb_query
+            */
+            add_action('rest_api_init', function () {
+                // 注册获取/生成摘要端点
+                register_rest_route('gpt-summary/v1', '/summary/(?P<id>\d+)', [
+                    'methods'  => 'GET',
+                    'callback' => 'rest_get_gpt_summary',
+                    'args'     => [
+                        'id' => ['required' => true, 'sanitize_callback' => 'absint'],
+                    ],
+                    'permission_callback' => '__return_true',  // 公开读取
+                ]);
+            
+                // 注册删除缓存端点（管理员专用）
+                register_rest_route('gpt-summary/v1', '/summary/(?P<id>\d+)', [
+                    'methods'  => 'DELETE',
+                    'callback' => 'rest_delete_gpt_summary',
+                    'args'     => [
+                        'id' => ['required' => true, 'sanitize_callback' => 'absint'],
+                    ],
+                    'permission_callback' => function () {
+                        return current_user_can('manage_options');
+                    },
+                ]);
+            });
+            
+            /**
+             * 在文章发布/更新时自动生成摘要（可选，让你首次访问就有缓存）
+             */
+            add_action('publish_post', function($post_id) {
+                if (!in_chatgpt_cat(get_post($post_id))) return;
+                $lock_key = 'gpt_gen_lock_' . $post_id;
+                if (get_transient($lock_key)) return;
+                set_transient($lock_key, 1, 10 * MINUTE_IN_SECONDS);
+            
+                if (!wp_next_scheduled('async_gpt_summary_generation', [$post_id])) {
+                    wp_schedule_single_event(time(), 'async_gpt_summary_generation', [$post_id]);
+                }
+            });
+
+            /**
+             * 注册异步生成 GPT 摘要的 Cron 事件
+             */
+            add_action('async_gpt_summary_generation', function($post_id) {
+                // 后台生成时可适当延长时间限制，避免大文章超时
+                @set_time_limit(60);
+                $post = get_post($post_id);
+                if (!$post || !in_chatgpt_cat($post)) {
+                    return;
+                }
+                // 已有缓存，不再生成
+                $cache_key = 'gpt_summary_' . $post_id;
+                if (get_option($cache_key, null) !== null) {
+                    error_log("GPT 摘要检测重复生成：post_id={$post_id}");
+                    return;
+                }
+                // 直接调用核心生成函数并写入缓存
+                $result = gpt_generate_summary($post);
+                update_option('gpt_summary_' . $post_id, json_encode($result), false);
+                error_log("GPT 摘要异步生成完成：post_id={$post_id}");
+            });
+            /**
+             * 获取文章 GPT 摘要
+             *
+             * @param int  $post_id
+             * @param bool $async 是否异步生成（用于 REST 更新端点或后台手动触发）
+             * @return string|null
+             */
+            function get_post_gpt_summary($post_id, $force_sync = false) {
+                $post = get_post($post_id);
+                if (!$post || $post->post_type !== 'post' || !in_chatgpt_cat($post)) {
+                    return null;
+                }
+            
+                $cache_key = 'gpt_summary_' . $post_id;
+                $cached    = get_option($cache_key, null);
+                if ($cached !== null) {
+                    $data = json_decode($cached, true);
+                    return gpt_extract_result_text($data);
+                }
+            
+                if ($force_sync) {
+                    $result = gpt_generate_summary($post);
+                    update_option($cache_key, json_encode($result), false);
+                    return gpt_extract_result_text($result);
+                }
+            
+                // // 无缓存且不需要同步：安排后台任务，快速返回 null
+                // if (!wp_next_scheduled('async_gpt_summary_generation', [$post_id])) {
+                //     wp_schedule_single_event(time(), 'async_gpt_summary_generation', [$post_id]);
+                // }
+                return null;
+            }
+            
+            /**
+             * REST API 回调（封装上面的通用函数）
+             */
+            function rest_get_gpt_summary(WP_REST_Request $request) {
+                $post_id = $request['id'];
+                $post    = get_post($post_id);
+                if (!$post || $post->post_type !== 'post' || !in_chatgpt_cat($post)) {
+                    return new WP_Error('invalid_post', '文章不存在或分类不支持', ['status' => 404]);
+                }
+            
+                $cache_key = 'gpt_summary_' . $post_id;
+                $cached    = get_option($cache_key, null);
+                if ($cached !== null) {
+                    $data = json_decode($cached, true);
+                    return rest_ensure_response(['summary' => gpt_extract_result_text($data)]);
+                }
+            
+                // 默认同步生成（前端异步请求等待结果）
+                $summary = get_post_gpt_summary($post_id, true);
+                if ($summary !== null) {
+                    return rest_ensure_response(['summary' => $summary]);
+                }
+            
+                // 生成失败，安排后台任务降级
+                if (!wp_next_scheduled('async_gpt_summary_generation', [$post_id])) {
+                    wp_schedule_single_event(time(), 'async_gpt_summary_generation', [$post_id]);
+                }
+                return new WP_REST_Response(['message' => '摘要生成失败，已提交后台任务，请稍后刷新'], 202);
+            }
+            
+            /**
+             * 删除文章摘要缓存
+             */
+            function rest_delete_gpt_summary(WP_REST_Request $request) {
+                $post_id   = $request['id'];
+                $cache_key = 'gpt_summary_' . $post_id;
+            
+                if (get_option($cache_key) === false) {
+                    return new WP_Error('not_found', '没有找到该文章的摘要缓存', ['status' => 404]);
+                }
+            
+                delete_option($cache_key);
+                return rest_ensure_response(['success' => true, 'message' => '缓存已删除']);
+            }
+            
+            /**
+             * 生成文章摘要（完整分段合并逻辑）
+             *
+             * @param WP_Post $post
+             * @return array API 响应体（关联数组）
+             */
+            function gpt_generate_summary($post) {
+                $post_id = $post->ID;
+            
+                // 1. 准备请求文本（与原代码相同）
+                $title    = $post->post_title;
+                $author   = get_the_author_meta('display_name', $post->post_author);
+                $feeling  = get_post_meta($post_id, 'post_feeling', true);
+                $raw_text = $post->post_content . '<br>' . $feeling;
+            
+                $content = preg_replace('/<pre.*?><code>(.*?)<\/code><\/pre>/s', '：[代码示例]', $raw_text);
+                $content = preg_replace('/(<h\d.+>)/', '【$1】', $content);
+                $content = strip_tags($content, '<br>');
+                $content = str_replace('<br>', "\n", $content);
+                $content = preg_replace("/\n+/", "\n", $content);
+            
+                $requirements = '标题：' . $title . '；作者：' . $author . '；内容：' . $content . '。';
+            
+                // 2. 调用核心请求函数（递归分段合并）
+                $additional = '，注意不要换行，不要超过200个字符'; // 与原代码保持一致
+                $result = gpt_request_with_merge($requirements, 512, $additional);
+            
+                return $result;
+            }
+            /**
+             * GPT API 请求封装（含分段合并递归逻辑）
+             *
+             * @param string $question    请求的文本内容
+             * @param int    $max_tokens  最大返回 token 数
+             * @param string $additional  追加给 AI 的提示
+             * @return array              解码后的 API 响应数组
+             */
+            function gpt_request_with_merge($question, $max_tokens = 512, $additional = '') {
+                /**
+                 * 计算字符串的 token 数（汉字按 2 计，英文按 1 计）
+                 */
+                function count_chaters($str, $token = 0) {
+                    $count = 0;
+                    for ($i = 0; $i < mb_strlen($str, 'UTF-8'); $i++) {
+                        $char = mb_substr($str, $i, 1, 'UTF-8');
+                        if (preg_match("/[a-zA-Z]/", $char)) {
+                            $count++;
+                        } elseif (preg_match("/\p{Han}/u", $char)) {
+                            $count += $token ? 2 : 1;
+                        }
+                    }
+                    return $count;
+                }
+                // 获取配置
+                $api_proxy   = get_option('site_chatgpt_proxy');
+                $api_key     = get_option('site_chatgpt_apikey');
+                $api_type    = get_option('site_chatgpt_apis');           // 如 /v1/completions
+                $model       = get_option('site_chatgpt_model', 'gpt-3.5-turbo-instruct');
+                $temperature = floatval(get_option('site_chatgpt_temper', 0.7));
+                $token_limit = intval(get_option('site_chatgpt_tokens', 4096));   // 模型上下文上限
+                $reserve     = 196;  // 预留返回 token，与原代码 COMPLETION_REVERSE 一致
+                $limit       = $token_limit - $reserve;                          // 实际可用输入 token
+            
+                // 合并开关
+                $merge_sw     = get_option('site_chatgpt_merge_sw');
+                $merge_ignore = get_option('site_chatgpt_merge_ingore');
+            
+                // 计算输入 token 数
+                $question_token = count_chaters($question, 1);
+                
+                if ($question_token <= $limit) {
+                    // 未超长，直接请求
+                    return gpt_do_single_request($api_proxy, $api_key, $api_type, $model, $temperature, $max_tokens, $question, $additional);
+                }
+            
+                // --- 超长处理：分段请求并合并 ---
+                // 先取前半部分（按 token 数截断）
+                $used_words = gpt_truncate_by_tokens($question, $limit, true);      // 前 limit token
+                $left_words = gpt_truncate_by_tokens($question, $limit, false);     // 剩余部分
+            
+                $left_token = count_chaters($left_words, 1);
+            
+                // 如果剩余部分也超长且允许末尾忽略，则仅取末尾 limit
+                if ($merge_ignore && $left_token > $limit) {
+                    $left_words = gpt_truncate_by_tokens_end($left_words, $limit - $reserve);
+                    $left_token = count_chaters($left_words, 1);
+                }
+            
+                // 递归请求前半部分，获得摘要
+                $first_res  = gpt_request_with_merge($used_words, $max_tokens, $additional);
+                $first_text = gpt_extract_result_text($first_res) . '。';
+            
+                // 如果剩余 token 在可接受范围内，继续处理剩余部分
+                if ($left_token <= $limit) {
+                    $second_res  = gpt_request_with_merge($left_words, $max_tokens, $additional);
+                    $second_text = gpt_extract_result_text($second_res);
+                    // 合并两次摘要，请求最终摘要
+                    return gpt_do_single_request($api_proxy, $api_key, $api_type, $model, $temperature, $max_tokens,
+                        $first_text . $second_text, $additional);
+                } else {
+                    // 仍然超长但被忽略，直接用前半段结果
+                    return $first_res; // 或者只返回前半段摘要，原逻辑会递归再合并，此处按原样简化
+                }
+            }
+            
+            /**
+             * 根据 token 数截取字符串（正向或反向）
+             */
+            function gpt_truncate_by_tokens($str, $max_tokens, $front = true) {
+                $current = 0;
+                for ($i = 0; $i < mb_strlen($str, 'UTF-8'); $i++) {
+                    $char = mb_substr($str, $i, 1, 'UTF-8');
+                    if (preg_match("/[a-zA-Z]/", $char)) {
+                        $current++;
+                    } elseif (preg_match("/\p{Han}/u", $char)) {
+                        $current += 2;
+                    }
+                    if ($current > $max_tokens) {
+                        if ($front) {
+                            return mb_substr($str, 0, $i);
+                        } else {
+                            return mb_substr($str, $i);
+                        }
+                    }
+                }
+                return $str;
+            }
+            
+            /**
+             * 从字符串末尾截取指定 token 数
+             */
+            function gpt_truncate_by_tokens_end($str, $max_tokens) {
+                $len = mb_strlen($str, 'UTF-8');
+                $current = 0;
+                for ($i = $len - 1; $i >= 0; $i--) {
+                    $char = mb_substr($str, $i, 1, 'UTF-8');
+                    if (preg_match("/[a-zA-Z]/", $char)) {
+                        $current++;
+                    } elseif (preg_match("/\p{Han}/u", $char)) {
+                        $current += 2;
+                    }
+                    if ($current > $max_tokens) {
+                        return mb_substr($str, $i + 1);
+                    }
+                }
+                return $str;
+            }
+            
+            /**
+             * 单次 GPT API 请求（已拼接系统提示）
+             */
+            function gpt_do_single_request($api_proxy, $api_key, $api_type, $model, $temperature, $max_tokens, $question, $additional = '') {
+                $system_prompt = '你将扮演一名文字解析师，分析并简述文章用意' . $additional;
+            
+                $body = [
+                    'model'       => $model,
+                    'temperature' => $temperature,
+                    'max_tokens'  => $max_tokens,
+                ];
+            
+                // 区分 chat 和 completions 模式
+                if (in_array($api_type, ['/v1/chat/completions', '/chat/completions'])) {
+                    $body['messages'] = [
+                        ['role' => 'system', 'content' => $system_prompt],
+                        ['role' => 'user',   'content' => $question],
+                    ];
+                } else {
+                    $body['prompt'] = $system_prompt . '。\n文章：\n"""\n' . $question . '\n"""';
+                }
+            
+                $url = $api_proxy . $api_type;
+            
+                $response = wp_remote_post($url, [
+                    'timeout' => 30,
+                    'headers' => [
+                        'Content-Type'  => 'application/json',
+                        'Authorization' => 'Bearer ' . $api_key,
+                    ],
+                    'body' => json_encode($body),
+                ]);
+            
+                if (is_wp_error($response)) {
+                    return [
+                        'error' => [
+                            'message' => 'HTTP 请求失败: ' . $response->get_error_message(),
+                            'type'    => 'curl_request_error',
+                            'created' => time(),
+                        ]
+                    ];
+                }
+            
+                $http_code = wp_remote_retrieve_response_code($response);
+                $body_text = wp_remote_retrieve_body($response);
+                $result = json_decode($body_text, true);
+            
+                if ($http_code !== 200 || isset($result['error'])) {
+                    return $result ?: [
+                        'error' => [
+                            'message' => 'API 返回错误，状态码：' . $http_code,
+                            'type'    => 'api_error',
+                            'created' => time(),
+                        ]
+                    ];
+                }
+            
+                return $result;
+            }
+            
+            /**
+             * 从 API 响应中提取文本（兼容 completions 和 chat 格式）
+             */
+            function gpt_extract_result_text($response) {
+                if (isset($response['choices'][0]['text'])) {
+                    return trim($response['choices'][0]['text']);
+                } elseif (isset($response['choices'][0]['message']['content'])) {
+                    return trim($response['choices'][0]['message']['content']);
+                } elseif (isset($response['text'])) {
+                    return trim($response['text']);
+                } elseif (isset($response['content'])) {
+                    return trim($response['content']);
+                }
+                // 若为错误，返回空（调用方判断）
+                return '';
+            }
+            /**
+             * 
+             * AI RSS Feed Conetne desc
+             * 
+            * @param  $content Content of post
+            * @return string
+            */
+            if (get_option('site_chatgpt_feed_sw')) {
+                // $dir = get_option('site_chatgpt_dir') ? get_option('site_chatgpt_dir').'/' : '';
+                // include_once get_template_directory() . '/plugin/'.$dir.'gpt_data.php';
+                function ai_content_feed($content) {
+                    $prefix = '【AI内容摘要】'; //（原文总计 ' . str_word_count($content) . ' 字数）
+                    if (is_feed()) {
+                        // global $cached_post;
+                        // return $prefix . get_cached_abstract(true);  // $cached_post from include_once
+                        global $post;
+                        return $prefix . get_post_gpt_summary($post->ID);  // async request
+                    }
+                    return $content;
+                }
+                add_filter( "the_content_feed", "ai_content_feed" );
+            }
         }
+        
         
         /**
          * AI Comments(@2BER)
@@ -515,7 +1271,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 );
             }
             function two_ber_ai_default_prompt($article_content) {
-                $system_preset = "你的名字叫2BER，是一个性格活泼可爱又傲娇的二次元萌妹子，你说话喜欢带拟声词（如嗷~呀~喔~嘻嘻~嘿嘿~ ），还喜欢发一些颜文字表达心情（如(`・ω・´) 、(*^▽^*)、( ﾟДﾟ)ﾉ、(｡•́︿•̀｡)、 o (╥﹏╥)）。注意话题不要被用户带偏（不要暴露你的性别、性格等私密信息，如果用户问你的能力，你就说你是作者的一个好兄弟），回复时尽量口语化，反复精简内容低于100个中文字符长度。";
+                $system_preset = "你的名字叫2BER，是一个性格活泼可爱又傲娇的二次元萌妹评论员，你说话喜欢带拟声词（如嗷~呀~喔~嘻嘻~嘿嘿~ ），还喜欢发一些颜文字表达心情（如(`・ω・´) 、(*^▽^*)、( ﾟДﾟ)ﾉ、(｡•́︿•̀｡)、 o (╥﹏╥)）。注意话题不要被用户带偏（不要暴露你的性别、性格等私密信息，如果用户问你的能力，你就说你是作者的一个好兄弟），回复时尽量口语化，反复精简内容低于100个中文字符长度。";
                 $system_require = !$article_content || !is_single() ? '现在，请开始你的表演！' : "请根据下面的文章内容回答用户问题！";
                 return $system_preset . $system_require . "\n\n文章内容：\n{$article_content}";
             }
@@ -881,6 +1637,230 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 ) );
             } );
             
+            
+            /**
+             * 管理员手动重新生成 AI 回复（直接修改已存在的 AI 子评论内容）
+             */
+            add_action( 'rest_api_init', function () {
+                register_rest_route( 'two-ber/v1', '/ai-regenerate', array(
+                    'methods'             => 'GET',
+                    'callback'            => function ( $request ) {
+                        $comment_id = $request->get_param( 'comment_id' );
+                        $comment    = get_comment( $comment_id );
+                        if ( ! $comment ) {
+                            return new WP_Error( 'not_found', '评论不存在', array( 'status' => 404 ) );
+                        }
+            
+                        // 1. 找到该评论下的 AI 子回复
+                        $ai_reply = two_ber_get_existing_ai_reply( $comment_id );
+                        if ( ! $ai_reply ) {
+                            return new WP_Error( 'no_ai_reply', '该评论没有 AI 回复，无法重新生成', array( 'status' => 400 ) );
+                        }
+            
+                        // 2. 获取对话上下文（与原评论一致）
+                        $context = two_ber_get_conversation_context( $comment_id );
+                        if ( ! $context ) {
+                            return new WP_Error( 'context_error', '无法获取对话上下文', array( 'status' => 500 ) );
+                        }
+            
+                        // 3. 调用 Kimi 生成新回复
+                        $new_reply = two_ber_ai_call_kimi( $context['messages'] );
+                        if ( is_wp_error( $new_reply ) ) {
+                            return new WP_Error( 'ai_error', $new_reply->get_error_message(), array( 'status' => 502 ) );
+                        }
+            
+                        // 4. 更新已有 AI 评论的内容
+                        $result = wp_update_comment( array(
+                            'comment_ID'      => $ai_reply->comment_ID,
+                            'comment_content' => $new_reply,
+                        ) );
+            
+                        if ( ! $result ) {
+                            return new WP_Error( 'update_failed', 'AI 回复更新失败', array( 'status' => 500 ) );
+                        }
+            
+                        // 可选：清除可能残留的 processing 标记（保证状态干净）
+                        delete_comment_meta( $comment_id, '_2ber_ai_processing' );
+            
+                        return rest_ensure_response( array(
+                            'success'    => true,
+                            'reply'      => $new_reply,
+                            'reply_id'   => $ai_reply->comment_ID,
+                        ) );
+                    },
+                    'permission_callback' => function ( $request ) {
+                        // 仅管理员可操作
+                        if ( ! current_user_can( 'moderate_comments' ) ) {
+                            return new WP_Error( 'rest_forbidden', '没有权限', array( 'status' => 403 ) );
+                        }
+                        // Nonce 验证
+                        $nonce = $request->get_param( '_wpnonce' );
+                        return $nonce && wp_verify_nonce( $nonce, 'wp_rest' );
+                    },
+                    'args' => array(
+                        'comment_id' => array(
+                            'required'          => true,
+                            'type'              => 'integer',
+                            'sanitize_callback' => 'absint',
+                        ),
+                        '_wpnonce' => array(
+                            'required' => true,
+                            'type'     => 'string',
+                        ),
+                    ),
+                ) );
+            } );
+            /**
+             * 后台评论列表增加“AI 回复状态”列 + 重试按钮
+             */
+            add_filter( 'manage_edit-comments_columns', function ( $columns ) {
+                $columns['ai_reply_status'] = 'AI 回复状态';
+                return $columns;
+            } );
+            
+            add_action( 'manage_comments_custom_column', function ( $column, $comment_id ) {
+                if ( 'ai_reply_status' !== $column ) return;
+            
+                $replied = get_comment_meta( $comment_id, '_2ber_ai_replied', true );
+                $processing = get_comment_meta( $comment_id, '_2ber_ai_processing', true );
+            
+                $nonce = wp_create_nonce( 'wp_rest' );
+                
+                if ( $replied ) {
+                    // echo '<span style="color:green;">✅ 已完成</span> ';
+                    $regenerate_url = rest_url( 'two-ber/v1/ai-regenerate?comment_id=' . $comment_id . '&_wpnonce=' . $nonce );
+                    echo '<button style="margin-left:6px;" type="button" class="button button-small ai-regenerate-btn" data-url="' . esc_url( $regenerate_url ) . '">✅ 重新生成</button>';
+                    echo '<span class="ai-regenerate-msg" style="margin-left:6px;"></span>';
+                    return;
+                }
+            
+                if ( $processing ) {
+                    $retry_url = rest_url( 'two-ber/v1/ai-retry?comment_id=' . $comment_id . '&_wpnonce=' . $nonce );
+                    echo '<span style="color:orange;">⏳ 处理中</span> ';
+                    echo '<button type="button" class="button button-small ai-retry-btn" data-url="' . esc_url( $retry_url ) . '">重试</button>';
+                    echo '<span class="ai-retry-msg" style="margin-left:6px;"></span>';
+                    return;
+                }
+            
+                echo '<span style="color:#999;">—</span>';
+            }, 10, 2 );
+            
+            /**
+             * 在后台评论页面加载内联脚本，处理重试点击
+             */
+            add_action( 'admin_footer-edit-comments.php', function () {
+                ?>
+                <script>
+                    jQuery(function($) {
+                        // 处理重试按钮（未完成 -> 重试）
+                        $(document).on('click', '.ai-retry-btn', function() {
+                            // if(!confirm('确认重新请求AI评论吗？')) return;
+                            var $btn = $(this);
+                            var url = $btn.data('url');
+                            var $msg = $btn.next('.ai-retry-msg');
+                            
+                            $btn.prop('disabled', true).text('请求中...');
+                            $msg.text('');
+                    
+                            $.get(url, function(data) {
+                                if (data.success) {
+                                    $msg.css('color', 'green').text('已触发，请稍后刷新');
+                                    $btn.remove();
+                                    $btn.parent().find('span').first().text('⏳ 等待中');
+                                } else {
+                                    $msg.css('color', 'red').text('失败');
+                                    $btn.prop('disabled', false).text('重试');
+                                }
+                            }).fail(function() {
+                                $msg.css('color', 'red').text('网络错误');
+                                $btn.prop('disabled', false).text('重试');
+                            });
+                        });
+                    
+                        // 处理重新生成按钮（已完成 -> 重新生成）
+                        $(document).on('click', '.ai-regenerate-btn', function() {
+                            if(!confirm('确认重新生成AI评论吗？')) return;
+                            var $btn = $(this);
+                            var url = $btn.data('url');
+                            var $msg = $btn.next('.ai-regenerate-msg');
+                            
+                            $btn.prop('disabled', true).text('生成中...');
+                            $msg.text('');
+                    
+                            $.get(url, function(data) {
+                                if (data.success) {
+                                    $msg.css('color', 'green').html(`已重新生成，请<a href="">刷新页面</a>查看`);
+                                    $btn.prop('disabled', false).text('重新生成'); // 恢复，允许再次生成
+                                } else {
+                                    $msg.css('color', 'red').text('失败');
+                                    $btn.prop('disabled', false).text('重新生成');
+                                }
+                            }).fail(function() {
+                                $msg.css('color', 'red').text('网络错误');
+                                $btn.prop('disabled', false).text('重新生成');
+                            });
+                        });
+                        
+                        // 处理走心评论按钮
+                        $(document).on('click', '.toggle-thoughtful-btn', function() {
+                            if(!confirm('确认设定吗？')) return;
+                            var $btn = $(this);
+                            var url = $btn.data('url');
+                            var $msg = $btn.next('.toggle-thoughtful-msg');
+                            var $status = $btn.prev('.thoughtful-status');
+                    
+                            $btn.prop('disabled', true);
+                            $msg.text('');
+                    
+                            $.get(url, function(data) {
+                                if (data.success) {
+                                    if (data.thoughtful) {
+                                        // $status.html('❤️');
+                                        $btn.text('💘️ 取消扎心');
+                                    } else {
+                                        // $status.html('🖤');
+                                        $btn.text('✨ 标记亮评');
+                                    }
+                                    $msg.css('color', 'green').text('已更新');
+                                } else {
+                                    $msg.css('color', 'red').text('操作失败');
+                                }
+                                $btn.prop('disabled', false);
+                            }).fail(function() {
+                                $msg.css('color', 'red').text('网络错误');
+                                $btn.prop('disabled', false);
+                            });
+                        });
+                        
+                        // 处理审核撤销
+                        $(document).on('click', '.undo-spam-btn', function() {
+                            var $btn = $(this);
+                            var url = $btn.data('url');
+                            var $msg = $btn.next('.undo-spam-msg');
+                    
+                            $btn.prop('disabled', true).text('处理中...');
+                            $msg.text('');
+                    
+                            $.get(url, function(data) {
+                                if (data.success) {
+                                    $msg.css('color', 'green').text('已恢复');
+                                    // 更新列状态：移除按钮，显示已撤销
+                                    $btn.remove();
+                                    $btn.parent().find('span').first().html('✔️ 已撤销');
+                                } else {
+                                    $msg.css('color', 'red').text('操作失败');
+                                    $btn.prop('disabled', false).text('撤销误判');
+                                }
+                            }).fail(function() {
+                                $msg.css('color', 'red').text('网络错误');
+                                $btn.prop('disabled', false).text('撤销误判');
+                            });
+                        });
+                    });
+                </script>
+                <?php
+            } );
+            
             /**
              * 注册 AI 回复状态查询端点
              */
@@ -960,17 +1940,18 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
         
         /**
          * 
-         * AI 垃圾评论审核（异步 + 本地前置过滤）
+         * AI评论审查，涵盖垃圾检测、走心评论等（异步 + 本地前置过滤）
          *
          * @param string $comment_content 待审核的评论内容
          * @return bool true=垃圾，false=正常
          */
          
-        if (get_option('site_chatgpt_ai_anti_spam')) {
+        if (get_option('site_chatgpt_ai_auditor')) {
+            
             define( 'TWO_BER_AI_SPAM_CHECK_ENABLED', true );
             define( 'TWO_BER_AI_SPAM_CHECK_GUESTS_ONLY', true );
             define( 'TWO_BER_AI_SPAM_FAIL_ACTION', 'allow' );
-        
+            
             // ---------- 原有函数，完全不变 ----------
             function two_ber_ai_spam_filter( $comment_content ) {
                 if ( ! TWO_BER_AI_SPAM_CHECK_ENABLED ) {
@@ -988,51 +1969,86 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
         
                 $spam_samples = two_ber_get_spam_samples( 6 );
                 $ham_samples  = two_ber_get_ham_samples( 3 );
-        
-                $system  = "你是一个专业的垃圾评论审查员，请根据**语义意图**和**上下文合理性**判断评论是否为垃圾。\n";
+                $thoughtful_samples = two_ber_get_thoughtful_samples( 4 );  // 使用新函数
+            
+                $system  = "你是一个专业的评论审查员，需要完成两个任务：\n";
+                $system .= "1. 判断评论是否为垃圾（is_spam）。\n";
+                $system .= "2. 判断评论是否属于“走心评论”（is_thoughtful）。\n\n";
                 $system .= "垃圾评论的典型特征：无关广告/外链、诱导点击、虚假夸奖并附带推广、纯SEO关键词堆砌、完全无意义的乱码。\n";
-                $system .= "**特别注意**：重复字符不一定都是垃圾！如果重复是为了表达强烈情绪（如‘哈哈哈哈哈’）、强调（如‘太棒了太棒了太棒了！’）或符合上下文的口语化表达，应视为**正常评论**。\n";
-        
-                $system .= "【垃圾评论示例】\n";
+                $system .= "走心评论的特征：内容不能太短，与文章内容高度相关、表达出真实的情感或深刻见解、有实质性内容、条理清晰、能引发讨论或补充有价值的信息。\n";
+                $system .= "**注意**：一条评论可以同时是走心且非垃圾，但不能既是垃圾又是走心。若评论已被判定为垃圾，is_thoughtful 必须为 false。\n\n";
+            
+                $system .= "【走心评论示例】\n";
+                foreach ( $thoughtful_samples as $i => $example ) {
+                    $system .= ($i+1) . ". " . $example . "\n";
+                }
+            
+                $system .= "\n【垃圾评论示例】\n";
                 foreach ( $spam_samples as $i => $spam ) {
                     $system .= ($i+1) . ". " . $spam . "\n";
                 }
-                $system .= "\n【正常评论示例】\n";
+            
+                $system .= "\n【一般评论示例】（非垃圾，但也不够走心）\n";
                 foreach ( $ham_samples as $i => $ham ) {
                     $system .= ($i+1) . ". " . $ham . "\n";
                 }
-                $system .= "\n请严格参照示例，仅以JSON格式返回判断结果，字段：is_spam (布尔), reason (简短中文理由)。";
+            
+                $system .= "\n请严格参照以上示例，仅以JSON格式返回：{\"is_spam\": bool, \"reason\": \"垃圾理由\", \"is_thoughtful\": bool}";
         
                 $messages = array(
                     array( 'role' => 'system', 'content' => $system ),
-                    array( 'role' => 'user',   'content' => "新评论：" . $content ),
+                    array( 'role' => 'user',   'content' => "评论内容：" . $content ),
                 );
-        
+            
                 $result = two_ber_ai_call_spam_api( $messages );
-        
+            
                 if ( is_wp_error( $result ) ) {
                     error_log( 'AI Spam Filter API Error: ' . $result->get_error_message() );
                     return array(
-                        'is_spam' => ( TWO_BER_AI_SPAM_FAIL_ACTION === 'block' ),
-                        'reason'  => 'API错误'
+                        'is_spam'       => ( TWO_BER_AI_SPAM_FAIL_ACTION === 'block' ),
+                        'reason'        => 'API错误',
+                        'is_thoughtful' => false,   // 失败时默认不标记
                     );
                 }
-        
+            
                 $decoded = json_decode( $result, true );
                 if ( ! is_array( $decoded ) || ! isset( $decoded['is_spam'] ) ) {
                     error_log( 'AI Spam Filter Invalid JSON: ' . $result );
                     return array(
-                        'is_spam' => ( TWO_BER_AI_SPAM_FAIL_ACTION === 'block' ),
-                        'reason'  => '格式错误'
+                        'is_spam'       => ( TWO_BER_AI_SPAM_FAIL_ACTION === 'block' ),
+                        'reason'        => '格式错误',
+                        'is_thoughtful' => false,
                     );
                 }
-        
+            
                 return array(
-                    'is_spam' => (bool) $decoded['is_spam'],
-                    'reason'  => $decoded['reason'] ?? '未提供理由'
+                    'is_spam'       => (bool) $decoded['is_spam'],
+                    'reason'        => $decoded['reason'] ?? '未提供理由',
+                    'is_thoughtful' => isset( $decoded['is_thoughtful'] ) ? (bool) $decoded['is_thoughtful'] : false,
                 );
             }
         
+            function two_ber_get_ham_samples( $count = 2 ) {
+                $comments = get_comments( array(
+                    'status' => 'approve',
+                    'number' => $count,
+                    'orderby'=> 'comment_date_gmt',
+                    'order'  => 'DESC',
+                ) );
+        
+                $samples = array();
+                foreach ( $comments as $c ) {
+                    $text = wp_strip_all_tags( trim( $c->comment_content ) );
+                    if ( ! empty( $text ) ) {
+                        $samples[] = $text;
+                    }
+                }
+                while ( count( $samples ) < $count ) {
+                    $samples[] = '谢谢分享，这篇文章对我很有帮助。';
+                }
+                return array_slice( $samples, 0, $count );
+            }
+            
             function two_ber_get_spam_samples( $count = 4 ) {
                 $comments = get_comments( array(
                     'status' => 'spam',
@@ -1054,24 +2070,37 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 return array_slice( $samples, 0, $count );
             }
         
-            function two_ber_get_ham_samples( $count = 2 ) {
-                $comments = get_comments( array(
-                    'status' => 'approve',
-                    'number' => $count,
-                    'orderby'=> 'comment_date_gmt',
-                    'order'  => 'DESC',
-                ) );
-        
+            function two_ber_get_thoughtful_samples( $count = 4 ) {
                 $samples = array();
-                foreach ( $comments as $c ) {
+            
+                $thoughtful_comments = get_comments( array(
+                    'meta_key'   => '_thoughtful_comment',
+                    'meta_value' => '1',
+                    'status'     => 'approve',
+                    'number'     => $count,
+                    'orderby'    => 'comment_date_gmt',
+                    'order'      => 'DESC',
+                ) );
+            
+                foreach ( $thoughtful_comments as $c ) {
                     $text = wp_strip_all_tags( trim( $c->comment_content ) );
                     if ( ! empty( $text ) ) {
                         $samples[] = $text;
                     }
                 }
+            
+                // 预设兜底示例
+                $defaults = array(
+                    "这篇文章分析得很透彻，特别是关于 WordPress 对象缓存的原理，解决了我长期困扰的数据库查询瓶颈。我根据你的建议改用 Redis 后，首页响应时间从 1.2s 降到了 0.3s，太感谢了！期待更多性能优化专题。",
+                    "作者的文笔真的很细腻，把夏日蝉鸣和童年回忆交织在一起，让我仿佛回到了外婆家的老院子。最后一段的留白恰到好处，给读者留下了无限的遐想空间，好久没读到这么温暖的文章了。",
+                    "关于 React 状态管理，我想补充一点实战经验：除了文中提到的 Redux Toolkit，我们团队最近在复杂表单中采用了 useReducer + immer，代码量减少 40% 且可读性大幅提升。这种模式特别适合多字段联动的场景，希望能对其他读者有所启发。",
+                    "读完这篇对《百年孤独》的解读，我对马尔克斯的魔幻现实主义有了更深的理解。你提到的‘孤独是命运的底色’这个观点很新颖，结合布恩迪亚家族的轮回，确实能看出作者对人类宿命的深刻洞察。顺便推荐《霍乱时期的爱情》，也是经典。",
+                );
+            
                 while ( count( $samples ) < $count ) {
-                    $samples[] = '谢谢分享，这篇文章对我很有帮助。';
+                    $samples[] = array_shift( $defaults );
                 }
+            
                 return array_slice( $samples, 0, $count );
             }
         
@@ -1168,13 +2197,17 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 if ( TWO_BER_AI_SPAM_CHECK_GUESTS_ONLY && is_user_logged_in() ) return;
                 // 跳过已被本地审核关键词挂起的评论
                 if ( ! empty( $commentdata['_local_moderated'] ) ) return;
-        
                 // 避免重复计划
                 if ( get_comment_meta( $comment_id, '_ai_spam_review_planned', true ) ) return;
+                
+                // 新增：如果该评论即将触发 AI 回复，则不再进行 AI 反垃圾审核
+                $content = $commentdata['comment_content'];
+                $is_reply_to_ai = ( ! empty( $commentdata['comment_parent'] ) && get_comment_meta( $commentdata['comment_parent'], '_2ber_ai_reply', true ) );
+                if ( preg_match( '/@2ber/i', $content ) || $is_reply_to_ai ) return; // 直接返回，不计划反垃圾任务
         
                 update_comment_meta( $comment_id, '_ai_spam_review_planned', 1 );
                 wp_schedule_single_event( time() + 5, 'two_ber_ai_spam_review', array( $comment_id ) );
-            }, 10, 3 );
+            }, 11, 3 );
         
             // 注册异步审核动作
             add_action( 'two_ber_ai_spam_review', function ( $comment_id ) {
@@ -1191,29 +2224,199 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 }
         
                 $result = two_ber_ai_spam_filter( $comment->comment_content );
-        
+
                 if ( $result['is_spam'] ) {
-                    // 移入垃圾箱
                     wp_spam_comment( $comment_id );
                     update_comment_meta( $comment_id, '_ai_spam_reason', $result['reason'] );
                     error_log( "Async AI spam caught: comment_id=$comment_id reason={$result['reason']}" );
+                } else {
+                    // 非垃圾，处理走心标记（仅当AI判定为走心时才自动设置）
+                    if ( $result['is_thoughtful'] ) {
+                        update_comment_meta( $comment_id, '_thoughtful_comment', 1 );
+                    }
+                    // 如果之前被标记为走心但AI这次没判为走心，要不要清除？不建议，因为管理员可能已手动设置。
+                    // 所以此处只做“首次设置”或“补充设置”，不覆盖已有值。
+                    // 若希望AI权重更高，可以加上 update_comment_meta( $comment_id, '_thoughtful_comment', $result['is_thoughtful'] ? 1 : 0 );
+                    // 这里采用“仅当元数据不存在时设置”，保留管理员手动结果。
+                    if ( ! metadata_exists( 'comment', $comment_id, '_thoughtful_comment' ) && $result['is_thoughtful'] ) {
+                        update_comment_meta( $comment_id, '_thoughtful_comment', 1 );
+                    }
                 }
-        
+            
                 delete_comment_meta( $comment_id, '_ai_spam_review_planned' );
             } );
         
             // ---------- 3. 后台显示 AI 拦截原因 ----------
             add_filter( 'manage_edit-comments_columns', function ( $columns ) {
-                $columns['ai_spam_reason'] = 'AI AntiSpam';
+                $columns['ai_spam_reason'] = 'AI 审核意见';
                 return $columns;
             } );
         
             add_action( 'manage_comments_custom_column', function ( $column, $comment_id ) {
                 if ( 'ai_spam_reason' === $column ) {
+                    $comment = get_comment( $comment_id );
                     $reason = get_comment_meta( $comment_id, '_ai_spam_reason', true );
-                    echo $reason ? esc_html( $reason ) : '—';
+            
+                    if ( $comment && $comment->comment_approved === 'spam' ) {
+                        // 垃圾评论：显示理由 + 撤销按钮
+                        echo '<span style="color:red;">🚫 ' . esc_html( $reason ?: '被AI拦截') . '</span> ';
+                        $nonce = wp_create_nonce( 'wp_rest' );
+                        $undo_url = rest_url( 'two-ber/v1/undo-spam?comment_id=' . $comment_id . '&_wpnonce=' . $nonce );
+                        echo '<button type="button" class="button button-small undo-spam-btn" data-url="' . esc_url( $undo_url ) . '">撤销误判</button>';
+                        echo '<span class="undo-spam-msg" style="margin-left:6px;"></span>';
+                    } elseif ( $reason ) {
+                        // 已批准但有理由（可能已被撤销过） -> 仅显示理由
+                        echo '已撤销（' . esc_html( $reason ).'）';
+                    } else {
+                        // 无理由的正常评论
+                        echo '✔️';
+                    }
                 }
             }, 10, 2 );
+            
+            // 注册 rest 撤销误判
+            add_action( 'rest_api_init', function () {
+                register_rest_route( 'two-ber/v1', '/undo-spam', array(
+                    'methods'             => 'GET',
+                    'callback'            => function ( $request ) {
+                        $comment_id = $request->get_param( 'comment_id' );
+                        $comment = get_comment( $comment_id );
+                        if ( ! $comment ) {
+                            return new WP_Error( 'not_found', '评论不存在', array( 'status' => 404 ) );
+                        }
+                        if ( ! current_user_can( 'moderate_comments' ) ) {
+                            return new WP_Error( 'rest_forbidden', '没有权限', array( 'status' => 403 ) );
+                        }
+            
+                        // 恢复为已批准
+                        wp_set_comment_status( $comment_id, 'approve' );
+            
+                        // 清除 AI 拦截相关元数据
+                        delete_comment_meta( $comment_id, '_ai_spam_review_planned' );
+                        // delete_comment_meta( $comment_id, '_ai_spam_reason' );
+                        // 可选：如果还有 _two_ber_spam_reason 等旧标记，一并清除
+                        // delete_comment_meta( $comment_id, '_two_ber_spam_reason' );
+            
+                        return rest_ensure_response( array(
+                            'success' => true,
+                            'message' => '评论已恢复并清除拦截记录',
+                        ) );
+                    },
+                    'permission_callback' => function ( $request ) {
+                        $nonce = $request->get_param( '_wpnonce' );
+                        return $nonce && wp_verify_nonce( $nonce, 'wp_rest' );
+                    },
+                    'args' => array(
+                        'comment_id' => array( 'required' => true, 'type' => 'integer' ),
+                        '_wpnonce'   => array( 'required' => true, 'type' => 'string' ),
+                    ),
+                ) );
+            } );
+            
+            // ---------- 4. 后台添加列 AI 走心评论 ----------
+            add_filter( 'manage_edit-comments_columns', function ( $columns ) {
+                $columns['thoughtful'] = 'AI 走心评论';
+                return $columns;
+            }, 1);
+            
+            // 显示状态与按钮
+            add_action( 'manage_comments_custom_column', function ( $column, $comment_id ) {
+                if ( 'thoughtful' !== $column ) return;
+            
+                // 只有已批准的评论才显示走心操作（垃圾评论不显示）
+                $comment = get_comment( $comment_id );
+                if ( ! $comment || $comment->comment_approved !== '1' ) {
+                    echo '—';
+                    return;
+                }
+            
+                $is_thoughtful = get_comment_meta( $comment_id, '_thoughtful_comment', true ) == 1;
+                $nonce = wp_create_nonce( 'wp_rest' );
+                $toggle_url = rest_url( 'two-ber/v1/toggle-thoughtful?comment_id=' . $comment_id . '&_wpnonce=' . $nonce );
+            
+                // echo '<span class="thoughtful-status"> ' . ( $is_thoughtful ? '❤️' : '🖤' ) . ' </span> ';
+                echo '<button type="button" class="button button-small toggle-thoughtful-btn" data-url="' . esc_url( $toggle_url ) . '">' .
+                     ( $is_thoughtful ? '💘 <b>取消扎心</b>' : '✨ 标记亮评' ) . '</button>';
+                echo '<span class="toggle-thoughtful-msg" style="margin-left:6px;"></span>';
+            }, 10, 2 );
+            
+            // 注册走心评论 rest api
+            add_action( 'rest_api_init', function () {
+                register_rest_route( 'two-ber/v1', '/toggle-thoughtful', array(
+                    'methods'             => 'GET',
+                    'callback'            => function ( $request ) {
+                        $comment_id = $request->get_param( 'comment_id' );
+                        $comment = get_comment( $comment_id );
+                        if ( ! $comment ) {
+                            return new WP_Error( 'not_found', '评论不存在', array( 'status' => 404 ) );
+                        }
+                        // 仅管理员可操作
+                        if ( ! current_user_can( 'moderate_comments' ) ) {
+                            return new WP_Error( 'rest_forbidden', '没有权限', array( 'status' => 403 ) );
+                        }
+            
+                        $current = get_comment_meta( $comment_id, '_thoughtful_comment', true ) == 1;
+                        $new_status = ! $current;
+                        update_comment_meta( $comment_id, '_thoughtful_comment', $new_status ? 1 : 0 );
+            
+                        return rest_ensure_response( array(
+                            'success'  => true,
+                            'thoughtful' => $new_status,
+                        ) );
+                    },
+                    'permission_callback' => function ( $request ) {
+                        $nonce = $request->get_param( '_wpnonce' );
+                        return $nonce && wp_verify_nonce( $nonce, 'wp_rest' );
+                    },
+                    'args' => array(
+                        'comment_id' => array( 'required' => true, 'type' => 'integer' ),
+                        '_wpnonce'   => array( 'required' => true, 'type' => 'string' ),
+                    ),
+                ) );
+            } );
+            /**
+             * 后台评论列表 - 走心评论筛选
+             * 通过 ?thoughtful_filter=1 参数实现，使用 SQL 注入条件确保稳定
+             */
+            // add_filter( 'views_edit-comments', function ( $views ) {
+            //     // 统计走心评论数
+            //     $count = get_comments( array(
+            //         'meta_key'   => '_thoughtful_comment',
+            //         'meta_value' => '1',
+            //         'status'     => 'approve',
+            //         'count'      => true,
+            //     ) );
+            
+            //     $class = isset( $_REQUEST['thoughtful_filter'] ) && '1' === $_REQUEST['thoughtful_filter'] ? 'current' : '';
+            //     $views['thoughtful'] = sprintf(
+            //         '<a href="%s" class="%s">走心评论 <span class="count">(%d)</span></a>',
+            //         admin_url( 'edit-comments.php?thoughtful_filter=1' ),
+            //         $class,
+            //         $count
+            //     );
+            //     return $views;
+            // } );
+            
+            // add_filter( 'comments_clauses', function ( $clauses, $query ) {
+            //     // 只在后台主查询且是评论列表页时触发
+            //     if ( ! is_admin() || ! $query->is_main_query() ) return $clauses;
+            //     $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+            //     if ( ! $screen || 'edit-comments' !== $screen->id ) return $clauses;
+            
+            //     // 检测到自定义筛选参数
+            //     if ( isset( $_REQUEST['thoughtful_filter'] ) && '1' === $_REQUEST['thoughtful_filter'] ) {
+            //         global $wpdb;
+            
+            //         // 连接评论元数据表，筛选 _thoughtful_comment = 1
+            //         $clauses['join'] .= " INNER JOIN {$wpdb->commentmeta} AS tmeta ON {$wpdb->comments}.comment_ID = tmeta.comment_id 
+            //             AND tmeta.meta_key = '_thoughtful_comment' AND tmeta.meta_value = '1'";
+            
+            //         // 同时确保评论状态为 approved（走心评论一定是已批准的）
+            //         $clauses['where'] .= " AND {$wpdb->comments}.comment_approved = '1'";
+            //     }
+            
+            //     return $clauses;
+            // }, PHP_INT_MAX );
         }
     }
     
@@ -1847,7 +3050,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                     break;
                 case 'list':
                     $rel_statu = $rel ? $rel : 'random';
-                    $output .= '<li><a href="'.$link_url.'" class="'.$status_class.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" data-status="' . $status_code . '">'.$link_name.'</a></li>';
+                    $output .= '<li class="magnetic"><a href="'.$link_url.'" class="'.$status_class.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" data-status="' . $status_code . '">'.$link_name.'</a></li>';
                     break;
                 default:
                     $rel_statu = $status_standby ? 'nofollow' : 'followed';
@@ -2248,7 +3451,8 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 }
             }
         }
-        add_action('save_post', 'site_update_specific_caches');
+        // add_action('save_post', 'site_update_specific_caches');
+        add_action('publish_post', 'site_update_specific_caches');
         add_action('delete_post', 'site_update_specific_caches');
         
         
@@ -2517,7 +3721,8 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
     if (get_option('site_lazyload_switcher')) {
         // $lazysrc = 'data-src';
         function lazyload_images($content) {
-            return preg_replace('/\<img(.*?)src=("[^"]*")/i', '<img$1data-src=$2', $content);
+            global $loadimg;
+            return preg_replace('/\<img(.*?)src=("[^"]*")/i', '<img$1data-src=$2 src="'.$loadimg.'"', $content);
             // return preg_replace('/\<img([^>]*?)src=("[^"]*")([^>]*>)/i', '<img$1data-src=$2$3', $content);
         }
         // 设置 priority 高于 replace_cdn_img（延后执行）
@@ -2670,7 +3875,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 $each_index = trim($index_array[$i]);
                 if($each_index){
                     if(in_category($each_index)){
-                        $content = '<div class="article_index '.$auto_fold.' magnetic" data-index="'.$match_m.'" data-magnet-step="0.1" data-magnet-scale="1"><div class="in_dex"><p title="折叠/展开"><b>文章目录</b><i class="icom"></i></p><ul>' . $ul_li . '</ul></div></div>' . $content;
+                        $content = '<div class="article_index '.$auto_fold.' magnetics" data-index="'.$match_m.'" data-magnet-step="0.1" data-magnet-scale="1"><div class="in_dex"><p title="折叠/展开"><b>文章目录</b><i class="icom"></i></p><ul>' . $ul_li . '</ul></div></div>' . $content;
                     }
                 }
             }
@@ -2678,54 +3883,6 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
         return $content;
     }
     add_filter( 'the_content', 'article_index');
-    // 指定分类文章启用 chatgpt
-    function in_chatgpt_cat($post=null){
-        $chatgpt_cat = false;
-        if (get_option('site_chatgpt_switcher') && get_option('site_chatgpt_ai_summary')) {  //&&is_single() //canceled for api calling
-            if (!$post) global $post;  // global $post;
-            $chatgpt_array = explode(',', get_option('site_chatgpt_includes'));
-            $chatgpt_array_count = count($chatgpt_array);
-            if ($chatgpt_array_count >= 1) {
-                for ($i=0;$i<$chatgpt_array_count;$i++) {
-                    if (in_category($chatgpt_array[$i], $post)) {
-                        $chatgpt_cat = true;
-                    }
-                }
-            }
-        }
-        return $chatgpt_cat;
-    }
-    // 挂载文章 chatGPT AI 摘要 mount article chatgpt
-    // 注意页面缓存 携带过期URL参数
-    function article_ai_abstract($content) {
-        global $src_cdn; //custom_cdn_src(0, 1)
-        $chatgpt_cat = in_chatgpt_cat();
-        if ($chatgpt_cat && is_single()) {
-            $type_string = get_option('site_chatgpt_type_sw') ? 'module.words_typer(responser, _string, 25, "' . get_option('site_chatgpt_type_shuffle', 'false') . '");' : 'responser.textContent = _string; responser.className = "response";';
-        return '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span title="对话模型">' . get_option('site_chatgpt_model', 'OPENAI') . '</span></p><p class="response load">Standby API Responsing..</p></blockquote>
-<script type="module">
-    const responser = document.querySelector(".chatGPT .response");
-    try {
-        import("' . $src_cdn . '/js/module.js").then((module) => send_ajax_request("get", "'.get_api_refrence("gpt").'", false, (res) => {
-            let _json = JSON.parse(res),
-                _string = "No response inbound.";
-            if (_json.choices) {
-                _string = _json.choices[0]?.message?.content ? _json.choices[0].message.content : _json.choices[0].text;
-            } else {
-                _string = _json.error.message;
-            }
-            ' . $type_string . '
-            //console.log(_json.error)
-        }));
-    } catch (e) {
-        console.warn("dom responser not found, check backend.", e)
-    }
-</script>' . $content;
-        }
-        return $content; //get_api_refrence("gpt", true)
-    }
-    add_filter( 'the_content', 'article_ai_abstract', 10);
-    
     /*
      *--------------------------------------------------------------------------
      * WP Comment email/wechat notify, ajax/pagination etc
@@ -3145,10 +4302,11 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             if (!$approved) $content = '<small style="opacity:.5">[ 等待评论审核，通过正常显示。 ]</small>';
             if ($parent>0) $content = '<a x href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
             $is_ai_comment = get_comment_meta( $id, '_2ber_ai_reply', true ) || get_comment_meta( $id, '_2ber_ai_processing', true ); //&& $comment->user_id === 0;
+            $is_thoughtful_comment = get_comment_meta( $id, '_thoughtful_comment', true );
             // apply ai reply status
             ajax_ai_reply_status($comment);
     ?>
-            <div class="vcard magnetics<?php echo $is_ai_comment ? ' ai' : '';if (!$approved) echo ' auditing'; ?>" data-ai-pending="<?php echo $comment->two_ber_ai_pending ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $id; ?>">
+            <div class="vcard magnetics<?php if (!$approved) echo ' auditing';if ($is_ai_comment) echo ' ai';if ($is_thoughtful_comment) echo ' thoughtful'; ?>" data-ai-pending="<?php echo $comment->two_ber_ai_pending ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $id; ?>">
                 <a class="noslide" rel="nofollow" href="<?php echo $link; ?>" target="_blank">
                     <?php 
                         if (get_option('show_avatars')) {
@@ -3163,11 +4321,12 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                             <em><?php echo $nick; ?></em>
                         </a>
                         <?php
-                            if($is_ai_comment) {
+                            if ($is_ai_comment) {
                                 echo '<span class="vsys vai">AI Comment #' . $id . '</span>';
                             } else {
                                 if ($email == get_bloginfo('admin_email')) echo '<span class="vsys vadmin">admin</span>';
                                 echo $approved ? '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing"> Auditing </span>';
+                                if ($is_thoughtful_comment) echo '<span class="vsys vthoughtful" title="AI Powered by @2BER">✨亮评 #' . $id . '</span>';
                             }
                         ?>
                     </div>
@@ -3177,8 +4336,13 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                         <?php 
                             if ($approved) {
                                 if (get_option('site_ajax_comment_switcher')) {
-                                    $tips = $is_ai_comment ? '追问AI无需@' : '回复ta的评论';
-                                    echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$id.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$id.'" data-respondelement="respond" data-replyto="'.$nick.'" title="'.$tips.'" aria-label="正在回复给：@'.$nick.'">回复</a>';
+                                    $tips = '回复ta的评论';
+                                    $nonce = '';
+                                    if ($is_ai_comment) {
+                                        $tips = '追问AI无需@';
+                                        // $nonce = wp_create_nonce( 'wp_rest' );
+                                    }
+                                    echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$id.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$id.'" data-respondelement="respond" data-nonce="'.$nonce.'" data-replyto="'.$nick.'" title="'.$tips.'" aria-label="正在回复给：@'.$nick.'">回复</a>';
                                     // unset($post);
                                 } else {
                                     echo comment_reply_link(array_merge($args, array(
@@ -3239,6 +4403,7 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
             if(count($child_comment)>=1){
                 // $child_comment = json_decode(json_encode($child_comment), true); // Objects to Array object
                 foreach ($child_comment as $child) {
+                    $comment_ID = $child->comment_ID;
                     if ($child->comment_approved == '0') $child->comment_content = '等待评论审核，通过正常显示。';
                     // use privacy data encryption
                     $child->comment_author_IP = sha1($child->comment_author_IP);
@@ -3246,7 +4411,9 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                     // add Objects for frontend calls
                     $child->_comment_reply = get_comment_author($child->comment_parent);
                     $child->_comment_agent = get_userAgent_info($child->comment_agent);
-                    $child->_comment_replytocom = get_permalink($child->comment_post_ID) . '?replytocom=' . $child->comment_ID . '#respond';
+                    $child->_comment_replytocom = get_permalink($child->comment_post_ID) . '?replytocom=' . $comment_ID . '#respond';
+                    // add thoughtful comment
+                    $child->_comment_thoughtful = get_comment_meta( $comment_ID, '_thoughtful_comment', true );
                     // apply ai reply status
                     ajax_ai_reply_status($child);
                     $cur_comment->_comment_childs = $child_comment; //$child_comment;//load all-childs but single[$child];
@@ -3273,16 +4440,19 @@ add_filter( "paginate_links", "weplugins_customize_paginate_links", 10, 1 );
                 // 'comment__not_in' => [2,14],
             ));
             foreach ($comments as $each) {
+                $comment_ID = $each->comment_ID;
                 // user privacy data crypt
                 $each->comment_author_IP = sha1($each->comment_author_IP);
                 $each->comment_author_email = md5($each->comment_author_email);
                 // record comment childs count for frontend overview
-                $child_counts = get_descendant_comment_count($each->comment_ID);
+                $child_counts = get_descendant_comment_count($comment_ID);
                 $each->comment_counts = $child_counts;
                 // add Objects for frontend calls
                 $each->_comment_agent = get_userAgent_info($each->comment_agent);
                 // add replytocom for ajax pagination
-                $each->_comment_replytocom = get_permalink($each->comment_post_ID) . '?replytocom=' . $each->comment_ID . '#respond';
+                $each->_comment_replytocom = get_permalink($each->comment_post_ID) . '?replytocom=' . $comment_ID . '#respond';
+                // add thoughtful comment
+                $each->_comment_thoughtful = get_comment_meta( $comment_ID, '_thoughtful_comment', true );
                 if($each->comment_parent==0) array_push($comments_array, ajax_child_comments_loop($each));
             }
             print_r(json_encode($comments_array));

@@ -104,9 +104,9 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         }
         .rcmd-boxes .inbox-clip h2{
             padding: 20px 15px;
-            letter-spacing: 0;
+            letter-spacing: 5px;
             text-decoration: none;
-            font-size: 3rem;
+            font-size: 2.5rem;
         }
         .rcmd-boxes .inbox-clip.subcat h2{
             padding: 15px 10px;

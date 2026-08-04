@@ -2,7 +2,7 @@
     global $src_cdn;
 ?>
 <div class="noise-bgs"></div>
-<script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
+<script src="<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/main.js?v=<?php //echo get_theme_info(); ?>"></script>
 <script type="text/javascript">
     console.info("<?php echo get_num_queries().'次查询，耗时'.timer_stop(0).'秒。'; ?>");
     // 自动执行一次以更正缓存(after load main.js)
@@ -143,13 +143,11 @@
         const iframe = document.getElementById('panorama');
         if (iframe && iframe instanceof HTMLElement) {
             // iframe.frameborder = 'no';
-            setTimeout(()=> {
-                window.queueMicrotask(()=> {
-                    iframe.width = '100%';
-                    iframe.height = '100%';
-                    iframe.src = iframe.dataset.src; //'https://node.2broear.com/'; //indexs.html
-                })
-            }, 0);
+            setTimeout(window.queueMicrotask(()=> {
+                iframe.width = '100%';
+                iframe.height = '100%';
+                iframe.src = iframe.dataset.src; //'https://node.2broear.com/'; //indexs.html
+            }), 0);
         }
     // }
 <?php
@@ -193,6 +191,7 @@
         function load_ajax_posts(t,type,limit,callback,action=false,url=false,params=false){
             const type_acg = "acg",
                   dis_class = "disabled",
+                  load_cls = 'vloading',
                   load_clss = 'loading',
                   load_done = type===type_acg ? "" : "已加载全部";
             if (t.classList.contains(load_clss) || t.classList.contains(dis_class)) {
@@ -214,6 +213,8 @@
                 return;
             }
             clicks++;
+            // t.parentNode.classList.add(load_cls);
+            // t.style.display = 'none';
             t.innerText = type===type_acg ? "Loading.." : "加载中..";
             t.classList.add(load_clss, dis_class);  // add-opts archive (disable click)
             t.setAttribute('data-click', clicks);
@@ -229,6 +230,8 @@
             }, true);
             send_ajax_request("GET", url, params, function(res) {
                     t.innerText = type===type_acg ? "" : "加载更多";
+                    // t.parentNode.classList.remove(load_cls);
+                    // t.style.display = 'inline-block';
                     t.classList.remove(load_clss, dis_class);  // add-opts for archive (enable click)
                     var posts_array = JSON.parse(res),
                         posts_count = posts_array.length,

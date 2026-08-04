@@ -719,7 +719,7 @@
         register_setting( 'baw-settings-group', 'site_chatgpt_switcher' );
             register_setting( 'baw-settings-group', 'site_chatgpt_ai_summary' );
             register_setting( 'baw-settings-group', 'site_chatgpt_ai_comments' );
-            register_setting( 'baw-settings-group', 'site_chatgpt_ai_anti_spam' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_ai_auditor' );
             register_setting( 'baw-settings-group', 'site_chatgpt_includes' );
             register_setting( 'baw-settings-group', 'site_chatgpt_temper' );
             register_setting( 'baw-settings-group', 'site_chatgpt_tokens' );
@@ -733,7 +733,9 @@
             register_setting( 'baw-settings-group', 'site_chatgpt_auth' );
             register_setting( 'baw-settings-group', 'site_chatgpt_dir' );
             register_setting( 'baw-settings-group', 'site_chatgpt_type_sw' );
-                register_setting( 'baw-settings-group', 'site_chatgpt_type_shuffle' );
+                register_setting( 'baw-settings-group', 'site_chatgpt_type_optimize' );
+                // register_setting( 'baw-settings-group', 'site_chatgpt_type_shuffle' );
+                register_setting( 'baw-settings-group', 'site_chatgpt_type_speed' );
             register_setting( 'baw-settings-group', 'site_chatgpt_feed_sw' );
             register_setting( 'baw-settings-group', 'site_chatgpt_desc_sw' );
             // register_setting( 'baw-settings-group', 'site_chatgpt_require' );
@@ -1798,7 +1800,7 @@
                                             array('name'=>'浅色', 'value'=>'light'),
                                             array('name'=>'深色', 'value'=>'dark'),
                                         );
-                                        echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_fixed_label">开启后可全站（包括后台）保持指定主题显示模式（注：此项将忽略系统自动切换，并同时禁用手动切换主题功能</p><select name="'.$opt.'" id="'.$opt.'"><option value=""> 默认 </option>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_fixed_label">开启后可全站（包括后台）保持指定主题显示模式（注：此项将忽略系统自动切换，并同时禁用手动切换主题功能</p><select name="'.$opt.'" id="'.$opt.'"><option value=""> 自动 </option>';
                                             foreach ($arrobj as $arr){
                                                 $val = $arr['value'];
                                                 echo '<option value="'.$val.'"';if(get_option($opt)==$val)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
@@ -2004,6 +2006,7 @@
                                     array('name'=>'Gravatar', 'href'=>'//gravatar.com/'),
                                     array('name'=>'V2EX', 'href'=>'//cdn.v2ex.com/'),
                                     array('name'=>'Cravatar', 'href'=>'//cravatar.cn/'),
+                                    array('name'=>'Weavatar', 'href'=>'//weavatar.com/'),
                                     array('name'=>'Geekzu', 'href'=>'//sdn.geekzu.org/'),
                                     array('name'=>'LOLI', 'href'=>'//gravatar.loli.net/'),
                                     array('name'=>'SEP', 'href'=>'//cdn.sep.cc/'),
@@ -3347,22 +3350,22 @@
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                    <th scope="row">— AI Auditor<sup>Audit</sup></th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_ai_auditor';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启评论区AI内容审查，支持反垃圾、走心评论等（使用AI摘要相同TOKEN模型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AI Auditor</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
                                 <th scope="row">— AI Summary<sup>POST</sup></th>
                                 <td>
                                     <?php
                                         $opt = 'site_chatgpt_ai_summary';
                                         $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">开启文章AI总结，可选开启页面</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AI Summary</b></label>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                    <th scope="row">— AI Spamer<sup>ANTI</sup></th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_chatgpt_ai_anti_spam';
-                                        $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启评论区AI垃圾评论审核（使用AI摘要相同TOKEN模型</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AI AntiSpam</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -3476,32 +3479,83 @@
                                         $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">本地已缓存文章摘要数据，勾选后<ins> 提交保存 </ins>以显示记录（倒序，默认最近10条）<b>。点击文章ID可删除对应记录（不可逆）</b>，<ins>悬浮文章ID</ins> 可查看文章标题及摘要</p><p>删除文章摘要记录后，<u><i>重新访问文章以更新摘要</i></u></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Cached Posts</b></label>';
                                         if (get_option($opt)) {
-                                            // global $cached_post;
-                                            if (!$cached_post) {
-                                                include(get_template_directory() . '/plugin/'.get_option('site_chatgpt_dir').'/gpt_data.php');
-                                            }
-                                            $res_cls_obj = json_decode(json_encode(array_reverse($cached_post)));
-                                            $echo_count = 0;
-                                            $echo_limit = 10;
+                                        // 获取最近 10 条摘要缓存
+                                        global $wpdb;
+                                        $results = $wpdb->get_results(
+                                            "SELECT option_name, option_value 
+                                             FROM $wpdb->options 
+                                             WHERE option_name LIKE 'gpt_summary_%' 
+                                             ORDER BY option_id DESC 
+                                             LIMIT 10"
+                                        );
+                                        // print_r($results);
+                                        if (!empty($results)) {
                                             echo '<ul class="cached_post_list">';
-                                            foreach ($res_cls_obj as $cached_pid => $cached_post){
-                                                $echo_count++;
-                                                $text_res = api_get_resultText($cached_post);
-                                                if(!$text_res){
-                                                    $text_res = $cached_pid.' => NULL';
+                                            foreach ($results as $row) {
+                                                $post_id = (int) str_replace('gpt_summary_', '', $row->option_name);
+                                                if (!$post_id) {
+                                                    continue;
                                                 }
-                                                $cached_post_content = preg_replace('/.*\n/','', $text_res);
-                                                $cached_post_pid = preg_replace('/[^0-9]/', '', $cached_pid);
-                                                $cached_post_title = get_the_title($cached_post_pid);
-                                                echo '<li data-id="'.$cached_post_pid.'" data-content="'.str_replace('"',"'",$cached_post_content).'" title="'.$cached_post_title.'"></li>';
-                                                if($echo_count>=$echo_limit) break;
+                                                $data    = json_decode($row->option_value, true);
+                                                $text    = gpt_extract_result_text($data);  // 复用现有的提取函数
+                                                if (empty($text)) {
+                                                    $text = $post_id . ' => NULL';
+                                                }
+                                                // 取第一行显示（原有逻辑）
+                                                $content_line = preg_replace('/\n.*/', '', $text);
+                                                $post_title   = get_the_title($post_id) ?: '未知文章';
+                                                echo '<li data-id="' . $post_id . '" data-content="' . esc_attr(str_replace('"', "'", $content_line)) . '" title="' . esc_attr($post_title) . '"></li>';
                                             }
                                             echo '</ul>';
-                                    ?>
-                                            <script>const cached_posts=document.querySelector('.cached_post_list');cached_posts.onclick=(e)=>{e=e||window.event;let t=e.target||e.srcElement;if(!t)return;while(t!=cached_posts){if(t.nodeName.toUpperCase()==='LI'){const cached_pid=t.dataset.id,cached_title=t.title;if(confirm('确认删除（更新）：'+cached_title+' 摘要内容？')){return new Promise(function(resolve,reject){var ajax=new XMLHttpRequest();ajax.open('get',"<?php echo get_stylesheet_directory_uri().'/plugin/'.get_option('site_chatgpt_dir').'/gpt.php?pid='; ?>"+cached_pid+"&del=1");ajax.onreadystatechange=function(){if(this.readyState!=4)return;if(this.status==200){resolve();t.remove();if(this.responseText==404) alert('此记录先前已被清除（可能刷新过快，尝试重新刷新）');}else{reject(this.status)}};ajax.withCredentials=true;ajax.send()}).catch(function(err){console.log(err)})}else{console.log(cached_pid+' canceled.')}break}else{t=t.parentNode}}}</script>
-                                    <?php
+                                        } else {
+                                            echo '<p>暂无摘要缓存。</p>';
                                         }
                                     ?>
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            const list = document.querySelector('.cached_post_list');
+                                            if (!list) return;
+                                        
+                                            list.addEventListener('click', function(e) {
+                                                e = e || window.event;
+                                                let target = e.target || e.srcElement;
+                                                while (target && target !== list) {
+                                                    if (target.nodeName.toUpperCase() === 'LI') {
+                                                        const postId = target.dataset.id;
+                                                        const title  = target.title;
+                                                        if (confirm('确认删除（更新）：' + title + ' 的摘要内容？')) {
+                                                            // 调用 REST API 删除
+                                                            fetch('/wp-json/gpt-summary/v1/summary/' + postId, {
+                                                                method: 'DELETE',
+                                                                headers: {
+                                                                    'X-WP-Nonce': '<?php echo wp_create_nonce("wp_rest"); ?>'
+                                                                }
+                                                            })
+                                                            .then(response => {
+                                                                if (response.status === 200) {
+                                                                    target.remove();
+                                                                } else if (response.status === 404) {
+                                                                    alert('此记录先前已被清除（可能刷新过快，尝试重新刷新）');
+                                                                    target.remove(); // 也移除
+                                                                } else {
+                                                                    alert('删除失败，状态码：' + response.status);
+                                                                }
+                                                            })
+                                                            .catch(err => {
+                                                                console.error(err);
+                                                                alert('请求失败，请重试！' + err.message);
+                                                            });
+                                                        }
+                                                        break;
+                                                    }
+                                                    target = target.parentNode;
+                                                }
+                                            });
+                                        });
+                                    </script>
+                                <?php
+                                    }
+                                ?>
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
@@ -3527,7 +3581,7 @@
                                     <?php
                                         $opt = 'site_chatgpt_feed_sw';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">使用文章AI摘要填充 rss 页面 feed 内容（启用此项可减少页面缓存数据调用</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AI RSS</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">使用文章AI摘要填充 rss 页面 feed 内容（启用此项可减少页面缓存数据调用，但可能会破坏RSS阅读体验，慎用</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">AI RSS</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -3547,17 +3601,39 @@
                                     <?php
                                         $opt = 'site_chatgpt_type_sw';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">使用打字机效果填充摘要文本，可能的 CLS 影响</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">TypeWriter</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">使用打字机效果填充摘要文本，可能的 CLS 影响（关闭后首次加载摘要将阻塞性能</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">TypeWriter</b></label>';
                                     ?>
                                 </td>
                             </tr>
                             <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
-                                <th scope="row">— 混淆打字文本</th>
+                                <th scope="row">— 打字机体验优化</th>
                                 <td>
                                     <?php
-                                        $opt = 'site_chatgpt_type_shuffle';
+                                        $opt = 'site_chatgpt_type_optimize';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">一次性加载混淆文本，避免频繁更新页面造成 CLS 性能影响</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">ShuffleWords</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">优化全站打字机使用体验，可能会关闭部分打字机效果以减少干扰</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">TypeOptimize</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <!--<tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">-->
+                            <!--    <th scope="row">— 混淆打字文本</th>-->
+                            <!--    <td>-->
+                                    <?php
+                                        // $opt = 'site_chatgpt_type_shuffle';
+                                        // $status = check_status($opt);
+                                        // echo '<label for="'.$opt.'"><p class="description" id="">一次性加载混淆文本，避免频繁更新页面造成 CLS 性能影响</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">ShuffleWords</b></label>';
+                                    ?>
+                            <!--    </td>-->
+                            <!--</tr>-->
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 打字机速度</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_type_speed';
+                                        $value = get_option($opt);
+                                        $preset = 25;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<label for="'.$opt.'"><p class="description" id="">打字速度，默认25ms</p><input type="number" max="1000" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/></label>';
                                     ?>
                                 </td>
                             </tr>

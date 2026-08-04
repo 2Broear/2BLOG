@@ -334,7 +334,7 @@
                       </div>
                       <div class="recommend-newsContent">
                         <span class="content-core entry-content">
-                            <p><?php echo wp_trim_words(get_the_excerpt(), 250); //custom_excerpt(150); ?></p>
+                            <p><?php echo custom_excerpt(150); //wp_trim_words(get_the_excerpt(), 250); // ?></p>
                         </span>
                         <span class="content-tail">
                           <aside class="personal_stand">
@@ -391,7 +391,7 @@
                 }
                 if (in_array($friends, $cardnav_array)) {
             ?>
-                <div id="news-window">
+                <div id="news-window" class="magnetics">
                     <span class='resource-windows-top'>
                         <span class='resource-windows-top_inside'></span>
                         <h3>随机 · 链</h3>
@@ -403,7 +403,7 @@
                                 <script type="text/javascript"> //addAscending createdAt
                                     new AV.Query("link").addDescending("updatedAt").equalTo('mark','friends').find().then(result=>{
                                         for (let i=0,resLen=<?php echo $site_per_posts; ?>; i<resLen;i++) {
-                                            document.querySelector(".special_display").innerHTML += `<li><a href="${result[i].attributes.link}" class="inbox-aside" target="_blank" rel="randlink">${result[i].attributes.name}</a></li>`;
+                                            document.querySelector(".special_display").innerHTML += `<li class="magnetic"><a href="${result[i].attributes.link}" class="inbox-aside" target="_blank" rel="randlink">${result[i].attributes.name}</a></li>`;
                                         };
                                     })
                                 </script>
@@ -411,7 +411,7 @@
                             } else {
                                 $ranklink = get_site_bookmarks(get_option('site_list_links_category'), 'rand', 'ASC', $rand_count);
                                 $ranklinks = get_site_links($ranklink, 'list'); //, true
-                                echo empty($ranklink) ? '<li><a href="">' . $ranklinks . '</a></li>' : $ranklinks;
+                                echo empty($ranklink) ? '<li class="magnetic"><a href="">' . $ranklinks . '</a></li>' : $ranklinks;
                             }
                         ?>
                     </ul>
