@@ -39,6 +39,7 @@
                 echo '<div class="typed">' . $cat_text . '<span id="typed"></span></div>';
             ?> 
             </h5>
+            <?php if (get_option('site_comment_barrage')) echo do_shortcode('[comment_barrage row=8 pid='.$post->ID.']'); ?>
         </div>
 		<div class="content-all-windows" style="padding-top:0;">
             <?php 

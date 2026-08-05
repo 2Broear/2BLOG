@@ -602,9 +602,288 @@
     
     /**
      * 
+     * 新增通用评论配置（精选评论、评论弹幕等）
+     *
+     */
+    function comment_strip_tags($content = '') {
+        $content = preg_replace_callback('/<img\s+[^>]*>/i', function($matches) {
+            $tag = $matches[0];
+            // 检查是否包含 id="draw" 或 id='draw'
+            if (preg_match('/\bid\s*=\s*["\']draw["\']/i', $tag)) {
+                return ' [ Canvas Image ] ';
+            } elseif (preg_match('/\balt\s*=\s*["\']emoji["\']/i', $tag)) {
+                return ' [ Emoji Image ] ';
+            } else {
+                return ' [ Custom Image ] ';
+            }
+        }, $content);
+        
+        return wp_strip_all_tags($content); //
+    }
+    
+    //后台添加列走心评论
+    add_filter( 'manage_edit-comments_columns', function ( $columns ) {
+        $columns['thoughtful'] = '精选评论';
+        return $columns;
+    }, 1);
+    
+    // 显示状态与按钮
+    add_action( 'manage_comments_custom_column', function ( $column, $comment_id ) {
+        if ( 'thoughtful' !== $column ) return;
+    
+        // 只有已批准的评论才显示走心操作（垃圾评论不显示）
+        $comment = get_comment( $comment_id );
+        if ( ! $comment || $comment->comment_approved !== '1' ) {
+            echo '—';
+            return;
+        }
+    
+        $is_thoughtful = get_comment_meta( $comment_id, '_thoughtful_comment', true ) == 1;
+        $nonce = wp_create_nonce( 'wp_rest' );
+        $toggle_url = rest_url( 'two-ber/v1/toggle-thoughtful?comment_id=' . $comment_id . '&_wpnonce=' . $nonce );
+    
+        // echo '<span class="thoughtful-status"> ' . ( $is_thoughtful ? '❤️' : '🖤' ) . ' </span> ';
+        echo '<button type="button" class="button button-small toggle-thoughtful-btn" data-url="' . esc_url( $toggle_url ) . '">' .
+             ( $is_thoughtful ? '💘 <b>取消扎心</b>' : '✨ 标记亮评' ) . '</button>';
+        echo '<span class="toggle-thoughtful-msg" style="margin-left:6px;"></span>';
+    }, 10, 2 );
+    
+    // 注册走心评论 rest api
+    add_action( 'rest_api_init', function () {
+        register_rest_route( 'two-ber/v1', '/toggle-thoughtful', array(
+            'methods'             => 'GET',
+            'callback'            => function ( $request ) {
+                $comment_id = $request->get_param( 'comment_id' );
+                $comment = get_comment( $comment_id );
+                if ( ! $comment ) {
+                    return new WP_Error( 'not_found', '评论不存在', array( 'status' => 404 ) );
+                }
+                // 仅管理员可操作
+                if ( ! current_user_can( 'moderate_comments' ) ) {
+                    return new WP_Error( 'rest_forbidden', '没有权限', array( 'status' => 403 ) );
+                }
+    
+                $current = get_comment_meta( $comment_id, '_thoughtful_comment', true ) == 1;
+                $new_status = ! $current;
+                update_comment_meta( $comment_id, '_thoughtful_comment', $new_status ? 1 : 0 );
+                // remvoe barrage imme
+                delete_transient( 'comment_barrage_ids_thoughtful' );
+                delete_transient( 'comment_barrage_ids_all' );
+    
+                return rest_ensure_response( array(
+                    'success'  => true,
+                    'thoughtful' => $new_status,
+                ) );
+            },
+            'permission_callback' => function ( $request ) {
+                $nonce = $request->get_param( '_wpnonce' );
+                return $nonce && wp_verify_nonce( $nonce, 'wp_rest' );
+            },
+            'args' => array(
+                'comment_id' => array( 'required' => true, 'type' => 'integer' ),
+                '_wpnonce'   => array( 'required' => true, 'type' => 'string' ),
+            ),
+        ) );
+    } );
+    /**
+     * 在后台评论页面加载内联脚本，处理重试点击
+     */
+    add_action( 'admin_footer-edit-comments.php', function () {
+        ?>
+        <script>
+            jQuery(function($) {
+                // 处理走心评论按钮
+                $(document).on('click', '.toggle-thoughtful-btn', function() {
+                    if(!confirm('确认设定吗？')) return;
+                    var $btn = $(this);
+                    var url = $btn.data('url');
+                    var $msg = $btn.next('.toggle-thoughtful-msg');
+                    var $status = $btn.prev('.thoughtful-status');
+            
+                    $btn.prop('disabled', true);
+                    $msg.text('');
+            
+                    $.get(url, function(data) {
+                        if (data.success) {
+                            if (data.thoughtful) {
+                                // $status.html('❤️');
+                                $btn.text('💘️ 取消扎心');
+                            } else {
+                                // $status.html('🖤');
+                                $btn.text('✨ 标记亮评');
+                            }
+                            $msg.css('color', 'green').text('已更新');
+                        } else {
+                            $msg.css('color', 'red').text('操作失败');
+                        }
+                        $btn.prop('disabled', false);
+                    }).fail(function() {
+                        $msg.css('color', 'red').text('网络错误');
+                        $btn.prop('disabled', false);
+                    });
+                });
+            });
+        </script>
+        <?php
+    } );
+    
+    /**
+     * 后台评论列表 - 走心评论筛选
+     * 通过 ?thoughtful_filter=1 参数实现，使用 SQL 注入条件确保稳定
+     */
+    // add_filter( 'views_edit-comments', function ( $views ) {
+    //     // 统计走心评论数
+    //     $count = get_comments( array(
+    //         'meta_key'   => '_thoughtful_comment',
+    //         'meta_value' => '1',
+    //         'status'     => 'approve',
+    //         'count'      => true,
+    //     ) );
+    
+    //     $class = isset( $_REQUEST['thoughtful_filter'] ) && '1' === $_REQUEST['thoughtful_filter'] ? 'current' : '';
+    //     $views['thoughtful'] = sprintf(
+    //         '<a href="%s" class="%s">走心评论 <span class="count">(%d)</span></a>',
+    //         admin_url( 'edit-comments.php?thoughtful_filter=1' ),
+    //         $class,
+    //         $count
+    //     );
+    //     return $views;
+    // } );
+    
+    // add_filter( 'comments_clauses', function ( $clauses, $query ) {
+    //     // 只在后台主查询且是评论列表页时触发
+    //     if ( ! is_admin() || ! $query->is_main_query() ) return $clauses;
+    //     $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+    //     if ( ! $screen || 'edit-comments' !== $screen->id ) return $clauses;
+    
+    //     // 检测到自定义筛选参数
+    //     if ( isset( $_REQUEST['thoughtful_filter'] ) && '1' === $_REQUEST['thoughtful_filter'] ) {
+    //         global $wpdb;
+    
+    //         // 连接评论元数据表，筛选 _thoughtful_comment = 1
+    //         $clauses['join'] .= " INNER JOIN {$wpdb->commentmeta} AS tmeta ON {$wpdb->comments}.comment_ID = tmeta.comment_id 
+    //             AND tmeta.meta_key = '_thoughtful_comment' AND tmeta.meta_value = '1'";
+    
+    //         // 同时确保评论状态为 approved（走心评论一定是已批准的）
+    //         $clauses['where'] .= " AND {$wpdb->comments}.comment_approved = '1'";
+    //     }
+    
+    //     return $clauses;
+    // }, PHP_INT_MAX );
+    
+    /**
+     * 评论弹幕 API
+     * GET /wp-json/two-ber/v1/comment-barrage
+     */
+    
+    // 注册弹幕端点，支持可选 post_id 参数
+    add_action( 'rest_api_init', function () {
+        register_rest_route( 'two-ber/v1', '/comment-barrage', array(
+            'methods'             => 'GET',
+            'callback'            => 'two_ber_comment_barrage',
+            'permission_callback' => '__return_true',
+            'args'                => array(
+                'post_id' => array(
+                    'type'              => 'integer',
+                    'default'           => 0,
+                    'sanitize_callback' => 'absint',
+                ),
+            ),
+        ) );
+    } );
+    
+    function two_ber_comment_barrage( $request ) {
+        $post_id = $request->get_param( 'post_id' ); // 0 表示未指定（全站）
+    
+        $is_thoughtful = get_option( 'site_chatgpt_ai_auditor' );
+        $mode = $is_thoughtful ? 'thoughtful' : 'all';
+        // 缓存键加入 post_id
+        $ids_cache_key = 'comment_barrage_ids_' . $mode . '_' . $post_id;
+    
+        $comment_ids = get_transient( $ids_cache_key );
+        if ( false === $comment_ids ) {
+            $args = array(
+                'status'     => 'approve',
+                'fields'     => 'ids',
+                'number'     => 1000,
+            );
+    
+            if ( $post_id > 0 ) {
+                $args['post_id'] = $post_id;
+            }
+    
+            if ( $is_thoughtful ) {
+                $args['meta_key']   = '_thoughtful_comment';
+                $args['meta_value'] = '1';
+            }
+    
+            $comment_ids = get_comments( $args );
+            set_transient( $ids_cache_key, $comment_ids, HOUR_IN_SECONDS );
+        }
+    
+        $total = count( $comment_ids );
+        if ( $total === 0 ) {
+            return rest_ensure_response( [] );
+        }
+    
+        $number = min( 50, $total );
+        $random_keys = array_rand( $comment_ids, $number );
+        if ( ! is_array( $random_keys ) ) {
+            $random_keys = array( $random_keys );
+        }
+        $selected_ids = array_map( function( $key ) use ( $comment_ids ) {
+            return $comment_ids[ $key ];
+        }, $random_keys );
+    
+        $query_args = array(
+            'comment__in' => $selected_ids,
+            'status'      => 'approve',
+        );
+        if ( $post_id > 0 ) {
+            $query_args['post_id'] = $post_id; // 再次限定，虽然 IDs 已限定但保持一致性
+        }
+    
+        $comments = get_comments( $query_args );
+    
+        $data = array();
+        foreach ( $comments as $comment ) {
+            $content = comment_strip_tags($comment->comment_content);
+            
+            if ( mb_strlen( $content ) > 300 ) {
+                $content = mb_substr( $content, 0, 300 ) . '…';
+            }
+    
+            $item = array(
+                'id'            => $comment->comment_ID,
+                'author'        => $comment->comment_author,
+                'avatar'        => function_exists( 'match_mail_avatar' )
+                    ? match_mail_avatar( $comment->comment_author_email )
+                    : get_avatar_url( $comment->comment_author_email, array( 'size' => 32 ) ),
+                'content'       => $content,
+                'post_title'    => get_the_title( $comment->comment_post_ID ),
+                'post_url'      => get_permalink( $comment->comment_post_ID ),
+                'parent_author' => null,
+            );
+    
+            if ( $comment->comment_parent ) {
+                $parent = get_comment( $comment->comment_parent );
+                if ( $parent && $parent->comment_author ) {
+                    $item['parent_author'] = $parent->comment_author;
+                }
+            }
+    
+            $data[] = $item;
+        }
+    
+        return rest_ensure_response( $data );
+    }
+    
+    /**
+     * 
      * AI Etc
      * 
     */
+    
     function get_descendant_comment_count( $comment_id ) {
         $count = 0;
         $queue = [ $comment_id ];  // 待处理的父评论 ID
@@ -631,6 +910,7 @@
         
         return $count;
     }
+    
     if (get_option('site_chatgpt_switcher')) {
         // 挂载文章 chatGPT AI 摘要 mount article chatgpt
         if (get_option('site_chatgpt_ai_summary')) {
@@ -1714,7 +1994,7 @@
              * 后台评论列表增加“AI 回复状态”列 + 重试按钮
              */
             add_filter( 'manage_edit-comments_columns', function ( $columns ) {
-                $columns['ai_reply_status'] = 'AI 回复状态';
+                $columns['ai_reply_status'] = 'AI 评论状态';
                 return $columns;
             } );
             
@@ -1798,37 +2078,6 @@
                             }).fail(function() {
                                 $msg.css('color', 'red').text('网络错误');
                                 $btn.prop('disabled', false).text('重新生成');
-                            });
-                        });
-                        
-                        // 处理走心评论按钮
-                        $(document).on('click', '.toggle-thoughtful-btn', function() {
-                            if(!confirm('确认设定吗？')) return;
-                            var $btn = $(this);
-                            var url = $btn.data('url');
-                            var $msg = $btn.next('.toggle-thoughtful-msg');
-                            var $status = $btn.prev('.thoughtful-status');
-                    
-                            $btn.prop('disabled', true);
-                            $msg.text('');
-                    
-                            $.get(url, function(data) {
-                                if (data.success) {
-                                    if (data.thoughtful) {
-                                        // $status.html('❤️');
-                                        $btn.text('💘️ 取消扎心');
-                                    } else {
-                                        // $status.html('🖤');
-                                        $btn.text('✨ 标记亮评');
-                                    }
-                                    $msg.css('color', 'green').text('已更新');
-                                } else {
-                                    $msg.css('color', 'red').text('操作失败');
-                                }
-                                $btn.prop('disabled', false);
-                            }).fail(function() {
-                                $msg.css('color', 'red').text('网络错误');
-                                $btn.prop('disabled', false);
                             });
                         });
                         
@@ -1945,7 +2194,7 @@
          * @param string $comment_content 待审核的评论内容
          * @return bool true=垃圾，false=正常
          */
-         
+        
         if (get_option('site_chatgpt_ai_auditor')) {
             
             define( 'TWO_BER_AI_SPAM_CHECK_ENABLED', true );
@@ -2313,110 +2562,6 @@
                 ) );
             } );
             
-            // ---------- 4. 后台添加列 AI 走心评论 ----------
-            add_filter( 'manage_edit-comments_columns', function ( $columns ) {
-                $columns['thoughtful'] = 'AI 走心评论';
-                return $columns;
-            }, 1);
-            
-            // 显示状态与按钮
-            add_action( 'manage_comments_custom_column', function ( $column, $comment_id ) {
-                if ( 'thoughtful' !== $column ) return;
-            
-                // 只有已批准的评论才显示走心操作（垃圾评论不显示）
-                $comment = get_comment( $comment_id );
-                if ( ! $comment || $comment->comment_approved !== '1' ) {
-                    echo '—';
-                    return;
-                }
-            
-                $is_thoughtful = get_comment_meta( $comment_id, '_thoughtful_comment', true ) == 1;
-                $nonce = wp_create_nonce( 'wp_rest' );
-                $toggle_url = rest_url( 'two-ber/v1/toggle-thoughtful?comment_id=' . $comment_id . '&_wpnonce=' . $nonce );
-            
-                // echo '<span class="thoughtful-status"> ' . ( $is_thoughtful ? '❤️' : '🖤' ) . ' </span> ';
-                echo '<button type="button" class="button button-small toggle-thoughtful-btn" data-url="' . esc_url( $toggle_url ) . '">' .
-                     ( $is_thoughtful ? '💘 <b>取消扎心</b>' : '✨ 标记亮评' ) . '</button>';
-                echo '<span class="toggle-thoughtful-msg" style="margin-left:6px;"></span>';
-            }, 10, 2 );
-            
-            // 注册走心评论 rest api
-            add_action( 'rest_api_init', function () {
-                register_rest_route( 'two-ber/v1', '/toggle-thoughtful', array(
-                    'methods'             => 'GET',
-                    'callback'            => function ( $request ) {
-                        $comment_id = $request->get_param( 'comment_id' );
-                        $comment = get_comment( $comment_id );
-                        if ( ! $comment ) {
-                            return new WP_Error( 'not_found', '评论不存在', array( 'status' => 404 ) );
-                        }
-                        // 仅管理员可操作
-                        if ( ! current_user_can( 'moderate_comments' ) ) {
-                            return new WP_Error( 'rest_forbidden', '没有权限', array( 'status' => 403 ) );
-                        }
-            
-                        $current = get_comment_meta( $comment_id, '_thoughtful_comment', true ) == 1;
-                        $new_status = ! $current;
-                        update_comment_meta( $comment_id, '_thoughtful_comment', $new_status ? 1 : 0 );
-            
-                        return rest_ensure_response( array(
-                            'success'  => true,
-                            'thoughtful' => $new_status,
-                        ) );
-                    },
-                    'permission_callback' => function ( $request ) {
-                        $nonce = $request->get_param( '_wpnonce' );
-                        return $nonce && wp_verify_nonce( $nonce, 'wp_rest' );
-                    },
-                    'args' => array(
-                        'comment_id' => array( 'required' => true, 'type' => 'integer' ),
-                        '_wpnonce'   => array( 'required' => true, 'type' => 'string' ),
-                    ),
-                ) );
-            } );
-            /**
-             * 后台评论列表 - 走心评论筛选
-             * 通过 ?thoughtful_filter=1 参数实现，使用 SQL 注入条件确保稳定
-             */
-            // add_filter( 'views_edit-comments', function ( $views ) {
-            //     // 统计走心评论数
-            //     $count = get_comments( array(
-            //         'meta_key'   => '_thoughtful_comment',
-            //         'meta_value' => '1',
-            //         'status'     => 'approve',
-            //         'count'      => true,
-            //     ) );
-            
-            //     $class = isset( $_REQUEST['thoughtful_filter'] ) && '1' === $_REQUEST['thoughtful_filter'] ? 'current' : '';
-            //     $views['thoughtful'] = sprintf(
-            //         '<a href="%s" class="%s">走心评论 <span class="count">(%d)</span></a>',
-            //         admin_url( 'edit-comments.php?thoughtful_filter=1' ),
-            //         $class,
-            //         $count
-            //     );
-            //     return $views;
-            // } );
-            
-            // add_filter( 'comments_clauses', function ( $clauses, $query ) {
-            //     // 只在后台主查询且是评论列表页时触发
-            //     if ( ! is_admin() || ! $query->is_main_query() ) return $clauses;
-            //     $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-            //     if ( ! $screen || 'edit-comments' !== $screen->id ) return $clauses;
-            
-            //     // 检测到自定义筛选参数
-            //     if ( isset( $_REQUEST['thoughtful_filter'] ) && '1' === $_REQUEST['thoughtful_filter'] ) {
-            //         global $wpdb;
-            
-            //         // 连接评论元数据表，筛选 _thoughtful_comment = 1
-            //         $clauses['join'] .= " INNER JOIN {$wpdb->commentmeta} AS tmeta ON {$wpdb->comments}.comment_ID = tmeta.comment_id 
-            //             AND tmeta.meta_key = '_thoughtful_comment' AND tmeta.meta_value = '1'";
-            
-            //         // 同时确保评论状态为 approved（走心评论一定是已批准的）
-            //         $clauses['where'] .= " AND {$wpdb->comments}.comment_approved = '1'";
-            //     }
-            
-            //     return $clauses;
-            // }, PHP_INT_MAX );
         }
     }
     

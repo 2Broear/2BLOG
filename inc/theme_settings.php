@@ -810,6 +810,7 @@
         // }      
         register_setting( 'baw-settings-group', 'site_leancloud_switcher' );
         register_setting( 'baw-settings-group', 'site_third_comments' );
+            register_setting( 'baw-settings-group', 'site_comment_barrage' );
             register_setting( 'baw-settings-group', 'site_comment_autofill' );
             register_setting( 'baw-settings-group', 'site_comment_blacklists' );
             register_setting( 'baw-settings-group', 'site_comment_blockoutside' );
@@ -2442,6 +2443,16 @@
                                         $opt = 'site_comment_autofill';
                                         $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">开启后当用户输入邮箱后，即时更新用户 gravatar 头像，若该用户已有留言还可自动填充该用户其他信息</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">自动填充</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $wordpress_statu; ?>">
+                                <th scope="row">— 评论弹幕</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_comment_barrage';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后可使用短代码<code> [comment_barrage count=50 thoughtful=true] </code>唤起评论弹幕，若启用AI走心评论，则调用走心评论弹幕</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">评论弹幕</b></label>';
                                     ?>
                                 </td>
                             </tr>

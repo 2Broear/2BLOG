@@ -1,4 +1,220 @@
 <?php
+    // 评论弹幕
+    if (get_option('site_comment_barrage')) {
+        add_shortcode('comment_barrage', 'custom_comment_barrage_shortcode');
+        function custom_comment_barrage_shortcode($atts) {
+            $count = isset($atts['count']) ? $atts['count'] : 50;
+            $post_id = isset($atts['pid']) ? $atts['pid'] : 0;
+            $row = isset($atts['row']) ? $atts['row'] : 10;
+            $thoughtful = isset($atts['thoughtful']) ? $atts['thoughtful'] : false;
+            return '
+<div id="comment-barrage-container"></div>
+<style>
+#comment-barrage-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    max-height: 88%;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.barrage-item {
+    position: absolute;
+    white-space: nowrap;
+    font-size: var(--min-size);
+    background: var(--preset-4b);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    pointer-events: auto;
+    cursor: default;
+    animation-name: barrageMove;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    z-index: 1;
+    opacity: 1;
+    transition: background 0.2s;
+    user-select: none;
+    animation-duration: var(--duration);
+}
+
+.barrage-item:hover {
+    background: var(--preset-2b);
+    animation-play-state: paused !important;
+    z-index: 9999 !important;
+}
+
+#comment-barrage-container.slow-others .barrage-item:not(:hover) {
+    /*animation-play-state: paused !important;*/
+}
+
+.barrage-item img {
+    width: 20px; height: 20px;
+    vertical-align: middle;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+.barrage-item a:hover {
+    color: var(--theme-color)
+}
+.barrage-item a {
+    display: inline-block;
+    max-width: 50em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: text-top;
+    color: inherit;
+    opacity: .75;
+}
+
+.barrage-item .post-link-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-80%);
+    /*background: #333;*/
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 12px;
+    z-index: 10;
+    pointer-events: auto;
+}
+.barrage-item:hover {
+    /*opacity: 1;*/
+    z-index: 999;
+}
+.barrage-item:hover .post-link-tooltip {
+    display: block;
+}
+
+@keyframes barrageMove {
+    from { 
+        transform: translateX(100vw); 
+        /*opacity: 1;*/
+    } to  { 
+        transform: translateX(-100%);
+        /*opacity: 0.5;*/
+    }
+}
+</style>
+<script>
+(function() {
+    const container = document.getElementById("comment-barrage-container");
+    const API_URL = "/wp-json/two-ber/v1/comment-barrage?post_id='.$post_id.'";
+    const MAX_VISIBLE = 20;          // 同屏最大弹幕数
+    const TRACK_COUNT = '.$row.';          // 轨道数
+    let pendingItems = [];
+    let activeCount = 0;
+    let trackOccupied = new Array(TRACK_COUNT).fill(false);
+    let isFetching = false;
+    let allDone = false;
+
+    // 找一个空闲轨道索引，若全占用则返回 -1
+    function findFreeTrack() {
+        for (let i = 0; i < TRACK_COUNT; i++) {
+            if (!trackOccupied[i]) return i;
+        }
+        return -1;
+    }
+
+    function spawnBarrage(item) {
+        const trackIndex = findFreeTrack();
+        if (trackIndex === -1) {
+            // 所有轨道繁忙，100ms后重试
+            setTimeout(() => spawnBarrage(item), 100);
+            return;
+        }
+
+        // 标记轨道占用
+        trackOccupied[trackIndex] = true;
+        activeCount++;
+
+        const el = document.createElement("div");
+        el.className = "barrage-item";
+
+        // 垂直位置
+        const base = (100 / TRACK_COUNT) * trackIndex;
+        const offset = Math.random() * 4;
+        el.style.top = (base + offset) + "%";
+
+        // 动画时长 15~25 秒
+        const duration = 10 + Math.random() * 10;
+        el.style.setProperty("--duration", duration + "s");
+        el.title = `该评论来自：${item.post_title}`;
+
+        let html = `<img src="${item.avatar}" alt=""> <strong>${item.author}</strong>：<a href="${item.post_url}#comment-${item.id || 0}" target="_blank" title="${item.content}">`;
+        if (item.parent_author) html += `@${item.parent_author}，`;
+        html += `${item.content}</a>`; /*<span class="post-link-tooltip">
+            ${item.post_title}</span>*/
+
+        el.innerHTML = html;
+
+        // 动画结束：释放轨道，补充新弹幕
+        el.addEventListener("animationend", () => {
+            el.remove();
+            trackOccupied[trackIndex] = false;
+            activeCount--;
+            replenish();
+        });
+
+        // 悬停暂停其他弹幕
+        el.addEventListener("pointerenter", () => {
+            container.classList.add("slow-others");
+        });
+        el.addEventListener("pointerleave", () => {
+            container.classList.remove("slow-others");
+        });
+
+        container.appendChild(el);
+        // 播放下一个弹幕前短暂延迟，避免瞬间充满
+        setTimeout(replenish, 200);
+    }
+
+    function replenish() {
+        // 当屏幕未满且有待播项，并且有空闲轨道时，播放下一项
+        while (pendingItems.length > 0 && activeCount < MAX_VISIBLE && findFreeTrack() !== -1) {
+            const item = pendingItems.shift();
+            spawnBarrage(item);
+        }
+        // 全部播完且无活跃弹幕，请求新数据
+        if (pendingItems.length === 0 && activeCount === 0 && allDone) {
+            allDone = false;
+            setTimeout(fetchData, 2000);
+        }
+    }
+
+    function createItems(data) {
+        const items = data.slice(0, 50);
+        if (!items.length) return;
+        pendingItems = items;
+        allDone = true;
+        replenish();
+    }
+
+    function fetchData() {
+        if (isFetching) return;
+        isFetching = true;
+        fetch(API_URL)
+            .then(res => res.json())
+            .then(data => createItems(data))
+            .catch(() => {})
+            .finally(() => { isFetching = false; });
+    }
+
+    fetchData();
+})();
+</script>';
+        }
+    }
     // 谷歌 Adsense 广告简码
     if (get_option('site_ads_switcher')) {
         function custom_adsense_sidebar_square_shortcode($atts) {
