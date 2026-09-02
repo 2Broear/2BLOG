@@ -84,7 +84,7 @@
                                                 $lazyhold = '';
                                                 $loadimg = $postimg;
                                             }
-                                            if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img magnetic"><a href="'.get_the_permalink().'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.get_the_title().'" /></a></span>'; //get_postimg() || 
+                                            if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img magnetic" data-magnet-step="0.15"><a href="'.get_the_permalink().'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.get_the_title().'" /></a></span>'; //get_postimg() || 
                                         ?>
                                         <div class="news-inside-content" style="<?php //echo $hasimg_style; ?>">
                                             <h2 class="entry-title">

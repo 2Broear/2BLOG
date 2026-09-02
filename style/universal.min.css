@@ -1684,7 +1684,7 @@ body.dark .wp_comments .vinfo span{
     /* text-align: center!important; */
 }
 mark:hover{
-    color: var(--theme-color);
+    /*color: var(--theme-color);*/
     background-color: transparent!important;
 }
 

@@ -76,6 +76,9 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
         * @property --counter-num
         * @overwrite animation
         **/
+        .win-top .counter {
+            z-index: 9;
+        }
         .win-top .counter h2 {
             /*animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);*/
             /*-webkit-animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);*/
@@ -119,7 +122,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                             $blink = get_option('site_animated_counting_switcher') ? ' blink' : false;
                             foreach ($archive_yearly as $archive){
                                 $counts = $archive['count'];
-                                $output .= '<div class="'.$blink.' magnetic" data-magnet-scale="1.15" data-count="'.$counts.'"><a href="'.$archive['link'].'" rel="nofollow"><b>'.$archive['title'].'</b><h1 data-count="'.$counts.'" style="--data-count:'.$counts.'"></h1><p>篇发布记录</p></a></div>'; //'.$counts.'<sup>+</sup>
+                                $output .= '<div class="'.$blink.' magnetics" data-magnet-scale="1.15" data-count="'.$counts.'"><a href="'.$archive['link'].'" rel="nofollow"><b>'.$archive['title'].'</b><h1 data-count="'.$counts.'" style="--data-count:'.$counts.'"></h1><p>篇发布记录</p></a></div>'; //'.$counts.'<sup>+</sup>
                             }
                             if($output_sw) update_option('site_archive_count_cache', wp_kses_post($output));
                             // unset($archive_yearly);
@@ -129,6 +132,12 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                     the_archive_stats(); 
                 ?>
             </div>
+            <?php 
+                if (get_option('site_comment_barrage')) {
+                    $use_tag_barrage = 1;
+                    echo do_shortcode('[comment_barrage row=6 max speed pid cid tag='.$use_tag_barrage.' thoughtful ai excludes]');
+                }
+            ?>
         </div>
         <div class="archive-tree">
             <div class="cs-tree">
@@ -276,7 +285,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                         $output_stats = '<div class="data-info"><span class="stat_'.$cur_year.' stats">📈📉统计：<b><a href="'.esc_url(home_url('/?s&cid='.$news_temp_id.'&year='.$cur_year)).'" target="_blank">'.$news_temp_name.'</a></b> '.$news_count.'篇、 <b><a href="'.esc_url(home_url('/?s&cid='.$note_temp_id.'&year='.$cur_year)).'" target="_blank">'.$note_temp_name.'</a></b> '.$note_count.'篇、 <b><a href="'.esc_url(home_url('/?s&cid='.$blog_temp_id.'&year='.$cur_year)).'" target="_blank">'.$blog_temp_name.'</a></b> '.$blog_count.'篇、 <b>其他类型</b> '.$rest_count.'篇。</span></div>';
                     }
                     // SAME COMPARE AS $found $limit
-                    $load_btns = $posts_count>=$async_loads ? '<sup class="call lively-click-115" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="'.wp_create_nonce($cur_year."_posts_ajax_nonce").'">加载更多</sup>' : '<sup class="call disabled" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="disabled">已全部载入</sup>';
+                    $load_btns = $posts_count>=$async_loads ? '<sup class="call lively-click-115" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'/'.$pids_count.'" data-counts="'.$pids_count.'" data-nonce="'.wp_create_nonce($cur_year."_posts_ajax_nonce").'">加载更多</sup>' : '<sup class="call disabled" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'/'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="disabled">已全部载入</sup>';
                     $load_icon = $curYear==$cur_year ? ' 🚀 ' : ' 📁 ';
                     // $output .= 
                     $output_object->title = $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$load_icon.$load_btns.'</h2>' . $output_stats : '<h2>' . $cur_year . ' 年度发布</h2>' . $output_stats; //wp_kses_post($output_title);

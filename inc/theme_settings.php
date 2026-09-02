@@ -2452,7 +2452,7 @@
                                     <?php
                                         $opt = 'site_comment_barrage';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后可使用短代码<code> [comment_barrage count=50 thoughtful=true] </code>唤起评论弹幕，若启用AI走心评论，则调用走心评论弹幕</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">评论弹幕</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后可使用短代码唤起评论弹幕<code> [comment_barrage row=6 max=15 speed=25 pid=0 cid=0 tag=0 thoughtful=0 ai=0] </code><br/>支持自定义弹幕行数、屏幕最多显示弹幕数、弹幕速度、指定文章评论弹幕、指定分类弹幕、启用 Tag 弹幕、启用AI走心评论弹幕、屏蔽ai评论等</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">评论弹幕</b></label>';
                                     ?>
                                 </td>
                             </tr>

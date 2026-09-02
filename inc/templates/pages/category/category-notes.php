@@ -22,6 +22,7 @@
 	    .win-top h5 {
 	        font-weight: 800;
 	        /*filter: url(#x);*/
+	        z-index: 9;
 	    }
 	    article .info span.valine-comment-count:before {
 	        margin-right: 3px;
@@ -51,6 +52,12 @@
     ?>
 	<!--<span id="fixed" style="background:inherit"></span>-->
 	<h5 class="workRange wow fadeInUp magnetics" data-wow-delay="0.2s"><b> <?php $cat_desc = get_category($cat)->category_description;echo $cat_desc ? $cat_desc : '好记性，不如烂键盘。'; ?></b><!--<strong>烂键盘</strong>--> </h5>
+    <?php 
+        if (get_option('site_comment_barrage')) {
+            // global $post;
+            echo do_shortcode('[comment_barrage row=6 max speed pid cid='.$cat.' tag thoughtful ai excludes="'.md5(get_bloginfo('admin_email')).'"]');
+        }
+    ?>
 </div>
 <div class="content-all-windows">
 	<div class="win-nav-content">

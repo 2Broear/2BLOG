@@ -57,6 +57,12 @@
                 margin-top: 15px;
             }
         }
+        
+        #comment-barrage-container {
+            position: fixed!important;
+            z-index: 0!important;
+            max-height: 75%;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -66,6 +72,7 @@
             <?php get_header(); ?>
         </nav>
     </header>
+    <?php //if (get_option('site_comment_barrage')) echo do_shortcode('[comment_barrage row=6 max=12 speed pid='.$post->ID.' thoughtful ai]'); ?>
     <div class="content-all-windows">
         <div class="news-article-window<?php $sidebar = !array_key_exists('sidebar_status',$_COOKIE) ? 1 : $_COOKIE['sidebar_status']; echo !$sidebar ? " fullview" : ""; 
         ?>">
@@ -75,7 +82,7 @@
                     <div id="news-article-head">
                         <div class="news-article-head-tools">
                             <div class="tools-inside-block">
-                                <?php if(get_option('site_not_ai_switcher')) echo '<span class="magnetic"><a href="//notbyai.fyi" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);padding:5px"></a></span>'; ?>
+                                <?php if(get_option('site_not_ai_switcher')) echo '<span class="magnetics"><a href="//notbyai.fyi" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);padding:5px"></a></span>'; ?>
                                 <span id="full-view" class="magnetics" title="满屏切换" style="<?php echo !$sidebar ? 'pointer-events:none;opacity:.5;' : false; ?>">
                                     <em><?php echo $sidebar  ? "全屏阅读" : "展开边栏"; ?></em>
                                 </span>

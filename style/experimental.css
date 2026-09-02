@@ -4,6 +4,56 @@
 **  @2026
 **
 **/
+body.dark .archive-tree ul li a {
+    opacity: .75;
+}
+body.dark .archive-tree ul li a.article {
+    opacity: 1;
+}
+body.dark .win-top:after,
+body.dark .content-all {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='8' height='8' fill='none' stroke='rgb(255 255 255 / 0.1)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+}
+.win-top:after,
+.content-all {
+    /*background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='8' height='8' fill='none' stroke='rgb(0 0 0 / 0.1)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");*/
+    background-size: 12px 12px;
+}
+
+/*body.dark .v .vlist .vcard:hover {*/
+/*    background-image: radial-gradient(var(--preset-3a) 1px, var(--preset-2b) 1px)!important;*/
+/*    background-size: 10px 10px!important;*/
+/*}*/
+/*.v .vlist .vcard:hover {*/
+/*    background-image: radial-gradient(var(--preset-e) 1px, var(--preset-f) 1px)!important;*/
+/*    background-size: 10px 10px!important;*/
+/*}*/
+.v .vlist .vcard .vh .vsys.vthoughtful,
+.v .vlist .vcard .vh .vspam {
+    cursor: help;
+}
+.v .vlist .vcard.auditing:after,
+.v .vlist .vcard.spam:after,
+.v .vlist .vcard.ai:after {
+    content: "🤖";
+    clear: both;
+    display: block;
+    position: absolute;
+    /* top: 50%; */
+    right: 2%;
+    top: 0;
+    /* transform: translate(0, -50%); */
+    font-size: 5rem;
+    opacity: .15;
+    mask: -webkit-linear-gradient(-90deg, currentColor -20%, transparent 80%);
+}
+.v .vlist .vcard.spam:after {
+    content: "🤡"!important;
+}
+.v .vlist .vcard.auditing:after {
+    content: "⏳"!important;
+}
+
 figure.wp-block-gallery {
     flex-flow: row;
 }
@@ -21,8 +71,12 @@ figure.wp-block-gallery > figure {
 .empty_card {
     padding: 10% 0 0;
 }
+
 .ibox.quotes a {
     color: var(--preset-5a);
+}
+.ibox.quotes .iboxes .content p {
+    margin: 10px auto;
 }
 
 /*body.dark .news-article-container .v .vlist .vcard:hover,*/
@@ -86,9 +140,9 @@ body.dark .news-article-container .v .vlist .children:hover {
     border-color: var(--preset-6a);
 }
 .recommendation #recommend-inside:hover > .recommend-newsImg div a#rel {
-    color: var(--preset-5a);
+    /*color: var(--preset-5a);*/
     background: transparent;
-    border-color: var(--mirror-end);
+    border-color: var(--mirror-start);
     font-size: 1rem;
     line-height: 50px;
     margin: 20px auto;
@@ -110,8 +164,12 @@ body.dark .news-article-container .v .vlist .children:hover {
 ** @weblog
 **
 **/
+.weblog-tree-box .tree-box-content {
+    max-height: 66vh;
+    overflow-y: auto;
+}
 .weblog-tree-box .tree-box-content p {
-    font-size: var(--min-size-rem);
+    /*font-size: var(--min-size-rem);*/
 }
 /**
 **
@@ -198,4 +256,40 @@ body.dark .v .vlist .vcard .vcontent {
 }
 .v .vlist .vcard .vcontent {
     color: var(--preset-6);
+}
+.v .vlist .vcard .vcontent span#ai {
+    color: mediumpurple;
+    padding: 2px 4px;
+    border-radius: var(--radius);
+    --color-mix: color-mix(in oklab, currentColor 10%, transparent);
+    background: linear-gradient(90deg, transparent, var(--color-mix), transparent);
+    cursor: help;
+    /* font-style: italic; */
+    /*font-weight: bold;*/
+    /* font-size: var(--min-size); */
+    font-family: monospace;
+}
+/**
+**
+** @barrage comments
+**
+**/
+.content {
+    position: relative;
+}
+.win-top:hover em.digital_mask {
+    z-index: 1;
+}
+.win-top em.digital_mask {
+    z-index: 2;
+}
+
+/**
+**
+** @footer icons
+**
+**/
+.footer-contact-left ul a span#icon-rss i::before {
+    content: '\ea9b';
+    font-size: 17px;
 }

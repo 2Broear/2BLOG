@@ -3,18 +3,39 @@
     if (get_option('site_comment_barrage')) {
         add_shortcode('comment_barrage', 'custom_comment_barrage_shortcode');
         function custom_comment_barrage_shortcode($atts) {
-            $count = isset($atts['count']) ? $atts['count'] : 50;
-            $post_id = isset($atts['pid']) ? $atts['pid'] : 0;
+            // $count = isset($atts['count']) ? $atts['count'] : 50;
             $row = isset($atts['row']) ? $atts['row'] : 10;
-            $thoughtful = isset($atts['thoughtful']) ? $atts['thoughtful'] : false;
+            $min = isset($atts['min']) ? $atts['min'] : 5;
+            $max = isset($atts['max']) ? $atts['max'] : 20;
+            $speed = isset($atts['speed']) ? $atts['speed'] : 15;
+            $cat_id = isset($atts['cid']) ? $atts['cid'] : 0;
+            $post_id = isset($atts['pid']) ? $atts['pid'] : 0;
+            // $post_only = isset($atts['post']) ? $atts['post'] : false;
+            $tag_barrage = isset($atts['tag']) ? $atts['tag'] : 0;
+            $excludes = isset($atts['excludes']) ? $atts['excludes'] : '';
+            $thoughtful = isset($atts['thoughtful']) ? $atts['thoughtful'] : 0;
+            $ai_comments = isset($atts['ai']) ? 0 : 1;
+            // if ($post_only && is_single()) {
+            //     global $post;
+            //     $post_id = $post->ID;
+            // }
             return '
 <div id="comment-barrage-container"></div>
 <style>
+#comment-barrage-container::before {
+    /*content: "";*/
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: rgb(255 255 255 / 25%);
+    z-index: 3;
+}
 #comment-barrage-container {
     position: absolute;
     width: 100%;
-    height: 100%;
-    max-height: 88%;
+    height: 88%;
     transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;
@@ -22,14 +43,30 @@
     z-index: 1;
     overflow: hidden;
 }
+body.dark #comment-barrage-container.tag .barrage-item {
+    color: var(--preset-c);
+}
+#comment-barrage-container.tag .barrage-item {
+    color: var(--preset-5a);
+    padding: 4px 15px 5px;
+    mask: none;
+}
+#comment-barrage-container.tag .barrage-item i {
+    opacity: .75;
+}
 
+body.dark .barrage-item {
+    color: var(--preset-f);
+    background: linear-gradient(45deg, var(--preset-2b), transparent);
+    box-shadow: var(--preset-f) 1px 2.2px 1px -1.8px inset, transparent -1px -2.2px 1px -1.8px inset;
+    border-color: transparent;
+}
 .barrage-item {
     position: absolute;
     white-space: nowrap;
     font-size: var(--min-size);
-    background: var(--preset-4b);
-    color: #fff;
-    padding: 6px 12px;
+    color: var(--preset-2b);
+    padding: 4px 16px 4px 4px;
     border-radius: 20px;
     pointer-events: auto;
     cursor: default;
@@ -39,37 +76,59 @@
     animation-fill-mode: forwards;
     z-index: 1;
     opacity: 1;
-    transition: background 0.2s;
     user-select: none;
     animation-duration: var(--duration);
+    /*
+    transition: background 0.2s;
+    background: var(--preset-4b);
+    box-shadow: rgba(0,0,0,0.12) 0 1px 18px;
+    */
+    border: 1px solid var(--preset-e);
+    background: linear-gradient(45deg, var(--preset-f), transparent);
+    backdrop-filter: blur(10px) saturate(1);
+    mask: linear-gradient(45deg, var(--preset-2b) 66%, transparent 88%);
+    mask: -webkit-linear-gradient(0deg, var(--preset-2b) 66%, transparent 88%);
 }
 
 .barrage-item:hover {
-    background: var(--preset-2b);
+    /*background: var(--preset-2b);*/
     animation-play-state: paused !important;
+    opacity: 1!important;
     z-index: 9999 !important;
+    mask: none;
 }
 
 #comment-barrage-container.slow-others .barrage-item:not(:hover) {
     /*animation-play-state: paused !important;*/
 }
 
-.barrage-item img {
-    width: 20px; height: 20px;
+.barrage-item img,
+.barrage-item a,
+.barrage-item strong {
     vertical-align: middle;
-    border-radius: 50%;
-    margin-right: 6px;
+}
+.barrage-item img {
+    width: 25px;
+    height: 25px;
+    display: inline-block!important;
+    border-radius: 50%!important;
+    margin: 0 2px 0 0!important;
+    border: 2px solid var(--preset-2bs);
 }
 .barrage-item a:hover {
-    color: var(--theme-color)
+    text-decoration: underline;
+    /*color: var(--theme-color);
+    font-weight: bold;
+    text-decoration: none;*/
 }
 .barrage-item a {
     display: inline-block;
     max-width: 50em;
     overflow: hidden;
     text-overflow: ellipsis;
-    vertical-align: text-top;
     color: inherit;
+}
+.barrage-item a#content {
     opacity: .75;
 }
 
@@ -109,95 +168,147 @@
 <script>
 (function() {
     const container = document.getElementById("comment-barrage-container");
-    const API_URL = "/wp-json/two-ber/v1/comment-barrage?post_id='.$post_id.'";
-    const MAX_VISIBLE = 20;          // 同屏最大弹幕数
-    const TRACK_COUNT = '.$row.';          // 轨道数
+    const API_URL = "/wp-json/two-ber/v1/comment-barrage?post_id='.$post_id.'&cid='.$cat_id.'&tag='.$tag_barrage.'&thoughtful='.$thoughtful.'&excludes='.$excludes.'";
+    const MAX_VISIBLE = '.$max.';
+    const TRACK_COUNT = '.$row.';
+    const MIN_BARRAGE = '.$min.';
     let pendingItems = [];
     let activeCount = 0;
-    let trackOccupied = new Array(TRACK_COUNT).fill(false);
+    let trackNextAvailable = new Array(TRACK_COUNT).fill(0);
+    let scheduleTimer = null;
     let isFetching = false;
     let allDone = false;
+    let hasPreloaded = false;       // 防止重复预加载
 
-    // 找一个空闲轨道索引，若全占用则返回 -1
-    function findFreeTrack() {
+    '.($tag_barrage ? "container.classList.add('tag');" : '').'
+    function getEarliestTrack() {
+        let minTime = Infinity;
+        let minIndex = 0;
         for (let i = 0; i < TRACK_COUNT; i++) {
-            if (!trackOccupied[i]) return i;
+            if (trackNextAvailable[i] < minTime) {
+                minTime = trackNextAvailable[i];
+                minIndex = i;
+            }
         }
-        return -1;
+        const now = Date.now();
+        const wait = Math.max(0, minTime - now);
+        return { index: minIndex, wait: wait };
     }
 
-    function spawnBarrage(item) {
-        const trackIndex = findFreeTrack();
-        if (trackIndex === -1) {
-            // 所有轨道繁忙，100ms后重试
-            setTimeout(() => spawnBarrage(item), 100);
-            return;
-        }
+    function scheduleNext() {
+        if (pendingItems.length === 0) return;
+        if (activeCount >= MAX_VISIBLE) return;
+    
+        const { index, wait } = getEarliestTrack();
+        if (scheduleTimer) clearTimeout(scheduleTimer);
+        scheduleTimer = setTimeout(() => {
+            scheduleTimer = null;
+            // 从队列中取出有效项（跳过 AI 评论）
+            let item = null;
+            while (pendingItems.length > 0) {
+                const candidate = pendingItems.shift();
+                if ('.$ai_comments.' && candidate._ai_comment) {
+                    continue; // 丢弃 AI 评论
+                }
+                item = candidate;
+                break;
+            }
+            if (item) {
+                spawnBarrage(item, index);
+            } else {
+                // 队列已空或全部被过滤，重新尝试调度（稍后 fetch 会补充）
+                scheduleNext();
+            }
+        }, wait);
+    }
 
-        // 标记轨道占用
-        trackOccupied[trackIndex] = true;
+    function spawnBarrage(item, trackIndex) {
+        trackNextAvailable[trackIndex] = Infinity;
         activeCount++;
-
+    
         const el = document.createElement("div");
         el.className = "barrage-item";
-
-        // 垂直位置
+    
         const base = (100 / TRACK_COUNT) * trackIndex;
         const offset = Math.random() * 4;
         el.style.top = (base + offset) + "%";
-
-        // 动画时长 15~25 秒
-        const duration = 10 + Math.random() * 10;
+    
+        // ========== 快速弹幕设置 ==========
+        const FAST_PROBABILITY = 0.03;                // 3% 概率
+        const isFast = Math.random() < FAST_PROBABILITY;
+        
+        let duration;
+        if (isFast) {
+            duration = 2 + Math.random() * 3;          // 快速弹幕持续时间 2~5 秒
+            el.classList.add("barrage-fast");          // 可选：添加特殊样式
+        } else {
+            duration = '.$speed.' + Math.random() * 10; // 正常速度
+        }
+        
         el.style.setProperty("--duration", duration + "s");
-        el.title = `该评论来自：${item.post_title}`;
-
-        let html = `<img src="${item.avatar}" alt=""> <strong>${item.author}</strong>：<a href="${item.post_url}#comment-${item.id || 0}" target="_blank" title="${item.content}">`;
+        // ================================
+        '.($tag_barrage ? 'let html = `<a href="${item.link}" target="_blank"><i>tag</i> <strong>#${item.name}</strong></a>`' : '
+        el.title = `${item.content}\n\n——该评论取自《${item.post_title}》，发布于 ${item.date}`;
+        let html = `<a href="${item.author_url}" target="_blank"><img src="${item.avatar}" alt=""> <strong>${item.author}</strong>：</a><a id="content" href="${item.post_url}#comment-${item.id || 0}" target="_self">`;
         if (item.parent_author) html += `@${item.parent_author}，`;
-        html += `${item.content}</a>`; /*<span class="post-link-tooltip">
-            ${item.post_title}</span>*/
-
+        html += `${item.content}</a>`;').'
+    
         el.innerHTML = html;
-
-        // 动画结束：释放轨道，补充新弹幕
+        container.appendChild(el);
+    
+        const width = el.offsetWidth;
+        const viewWidth = window.innerWidth;
+        const visibleProgress = width / (viewWidth + width);
+        const visibleDelay = duration * visibleProgress * 1000;
+    
+        const now = Date.now();
+        const randomGap = 1000 + Math.random() * 2000;
+        
+        // 快速弹幕释放轨道更快
+        if (isFast) {
+            trackNextAvailable[trackIndex] = now + visibleDelay + 500; // 仅等待 0.5 秒
+        } else {
+            trackNextAvailable[trackIndex] = now + visibleDelay + randomGap;
+        }
+    
+        el.addEventListener("pointerenter", () => {
+            // container.classList.add("slow-others");
+            // el.style.background = "rgba(0, 0, 0, 0.9)";
+            el.style.zIndex = "9999";
+        });
+    
+        el.addEventListener("pointerleave", () => {
+            // container.classList.remove("slow-others");
+            // el.style.background = "";
+            el.style.zIndex = "";
+        });
+    
         el.addEventListener("animationend", () => {
             el.remove();
-            trackOccupied[trackIndex] = false;
             activeCount--;
-            replenish();
+            scheduleNext();
+            if (pendingItems.length === 0 && activeCount === 0 && allDone) {
+                allDone = false;
+                hasPreloaded = false;
+                setTimeout(fetchData, 1000);
+            }
         });
-
-        // 悬停暂停其他弹幕
-        el.addEventListener("pointerenter", () => {
-            container.classList.add("slow-others");
-        });
-        el.addEventListener("pointerleave", () => {
-            container.classList.remove("slow-others");
-        });
-
-        container.appendChild(el);
-        // 播放下一个弹幕前短暂延迟，避免瞬间充满
-        setTimeout(replenish, 200);
-    }
-
-    function replenish() {
-        // 当屏幕未满且有待播项，并且有空闲轨道时，播放下一项
-        while (pendingItems.length > 0 && activeCount < MAX_VISIBLE && findFreeTrack() !== -1) {
-            const item = pendingItems.shift();
-            spawnBarrage(item);
-        }
-        // 全部播完且无活跃弹幕，请求新数据
-        if (pendingItems.length === 0 && activeCount === 0 && allDone) {
-            allDone = false;
+    
+        if (pendingItems.length === 0 && allDone && !isFetching && !hasPreloaded) {
+            hasPreloaded = true;
             setTimeout(fetchData, 2000);
         }
+    
+        scheduleNext();
     }
 
     function createItems(data) {
         const items = data.slice(0, 50);
-        if (!items.length) return;
-        pendingItems = items;
+        if (!items.length || items.length <= MIN_BARRAGE) return;
+        pendingItems = pendingItems.concat(items);
         allDone = true;
-        replenish();
+        hasPreloaded = false;      // 新数据到达，重置预加载标志
+        scheduleNext();
     }
 
     function fetchData() {

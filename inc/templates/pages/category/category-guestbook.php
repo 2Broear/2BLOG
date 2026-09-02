@@ -11,7 +11,11 @@
     <style>
         #reverse_rotate {direction: rtl;unicode-bidi: bidi-override;transform:rotate(180deg);display: inline-block;}
         .content-all-windows {display: block!important;}
-        .win-top h5 {font-family: "Playfair Display",宋体 , serif!important;}
+        .win-top h5 {
+            font-family: "Playfair Display",宋体 , serif!important;
+            position: relative;
+            z-index: 9;
+        }
         #vcomments {padding:0!important;}
         .typed-cursor {color: white; background: transparent;}
     </style>
@@ -39,7 +43,7 @@
                 echo '<div class="typed">' . $cat_text . '<span id="typed"></span></div>';
             ?> 
             </h5>
-            <?php if (get_option('site_comment_barrage')) echo do_shortcode('[comment_barrage row=8 pid='.$post->ID.']'); ?>
+            <?php if (get_option('site_comment_barrage')) echo do_shortcode('[comment_barrage row=6 max speed pid thoughtful ai excludes="'.md5(get_bloginfo('admin_email')).'"]');//'.$post->ID.' ?>
         </div>
 		<div class="content-all-windows" style="padding-top:0;">
             <?php 

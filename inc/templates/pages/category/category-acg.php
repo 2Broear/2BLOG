@@ -207,6 +207,9 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         * @property --counter-num
         * @overwrite animation
         **/
+        .win-top .counter {
+            z-index: 9;
+        }
         .win-top .counter h2 {
             animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);
             -webkit-animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);
@@ -261,6 +264,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                             global $cat, $cats, $preset;
                             $preslug = $preset->slug;
                             $output = '';
+                            $cat_count = 0;
                             if(!empty($cats) && current_slug()==$preslug){
                                 $output_sw = false;
                                 if(get_option('site_cache_switcher')){
@@ -278,7 +282,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                                         $cat_num = $cat_count;
                                         $dataCls = '';
                                         if($datadance){
-                                            $dataCls = ' blink magnetic';
+                                            $dataCls = ' blink magnetics';
                                             $cat_num = '0';
                                         }
                                         $output .= '<div class="'.$cat_slug.$dataCls.'" data-magnet-scale="1.25" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2 style="--data-count:'.$cat_count.'" data-count="'.$cat_count.'"><sup>+</sup></h2><p>'.$the_cat->name.' / <small>'.strtoupper($cat_slug).'</small></p></a></div>'; //'.$cat_num.'
@@ -296,6 +300,12 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                     }
                 ?>
             </div>
+            <?php 
+                if (get_option('site_comment_barrage')) {
+                    global $post;
+                    echo do_shortcode('[comment_barrage row=6 max speed pid cid='.$cat.' thoughtful ai excludes]'); //='.$post->ID.'
+                }
+            ?>
         </div>
         <div class="content-all-windows">
             <div class="rcmd-boxes flexboxes">

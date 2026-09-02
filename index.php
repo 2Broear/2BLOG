@@ -55,6 +55,7 @@
 <html lang="zh-CN">
 <head>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/main.min.css?v=<?php echo get_theme_info(); ?>" />
+     <!--<link rel="webmention" href="https://webmention.io/blog.2broear.com/webmention" />-->
     <?php get_head(); ?>
     <style>
         #banner-prev,
@@ -595,6 +596,7 @@
                         </li>
                     <?php
                         }
+                        // if (get_option('site_comment_barrage')) echo do_shortcode('[comment_barrage row pid]');
                     ?>
                     </ul>
                     <?php 

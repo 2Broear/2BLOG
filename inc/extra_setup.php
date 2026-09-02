@@ -647,7 +647,6 @@
              ( $is_thoughtful ? '💘 <b>取消扎心</b>' : '✨ 标记亮评' ) . '</button>';
         echo '<span class="toggle-thoughtful-msg" style="margin-left:6px;"></span>';
     }, 10, 2 );
-    
     // 注册走心评论 rest api
     add_action( 'rest_api_init', function () {
         register_rest_route( 'two-ber/v1', '/toggle-thoughtful', array(
@@ -666,9 +665,8 @@
                 $current = get_comment_meta( $comment_id, '_thoughtful_comment', true ) == 1;
                 $new_status = ! $current;
                 update_comment_meta( $comment_id, '_thoughtful_comment', $new_status ? 1 : 0 );
-                // remvoe barrage imme
-                delete_transient( 'comment_barrage_ids_thoughtful' );
-                delete_transient( 'comment_barrage_ids_all' );
+                // 清除弹幕缓存，使更改立即生效
+                clear_comment_barrage_cache();
     
                 return rest_ensure_response( array(
                     'success'  => true,
@@ -775,40 +773,121 @@
      * 评论弹幕 API
      * GET /wp-json/two-ber/v1/comment-barrage
      */
-    
-    // 注册弹幕端点，支持可选 post_id 参数
+    $comment_barrage_max = 50;
     add_action( 'rest_api_init', function () {
         register_rest_route( 'two-ber/v1', '/comment-barrage', array(
             'methods'             => 'GET',
             'callback'            => 'two_ber_comment_barrage',
             'permission_callback' => '__return_true',
             'args'                => array(
-                'post_id' => array(
+                'post_id'   => array(
                     'type'              => 'integer',
                     'default'           => 0,
                     'sanitize_callback' => 'absint',
+                ),
+                'cid'       => array(   // 分类 ID（仅标签模式或评论模式均可使用）
+                    'type'              => 'integer',
+                    'default'           => 0,
+                    'sanitize_callback' => 'absint',
+                ),
+                'tag'       => array(   // 开关：1 返回标签，0 返回评论
+                    'type'              => 'integer',
+                    'default'           => 0,
+                    'sanitize_callback' => 'absint',
+                ),
+                'thoughtful' => array(
+                    'type'              => 'integer',
+                    'default'           => null,
+                    'sanitize_callback' => function ( $value ) {
+                        if ( $value === '' ) return null;
+                        return in_array( (int) $value, array(0, 1) ) ? (int) $value : null;
+                    },
+                ),
+                'excludes' => array(
+                    'type'              => 'string',
+                    'default'           => '',
+                    'sanitize_callback' => 'sanitize_text_field',
                 ),
             ),
         ) );
     } );
     
     function two_ber_comment_barrage( $request ) {
-        $post_id = $request->get_param( 'post_id' ); // 0 表示未指定（全站）
+        $post_id    = $request->get_param( 'post_id' );
+        $cid        = $request->get_param( 'cid' );
+        $tag_switch = $request->get_param( 'tag' );
+        $thoughtful = $request->get_param( 'thoughtful' );
+        $excludes_raw = $request->get_param( 'excludes' );
     
-        $is_thoughtful = get_option( 'site_chatgpt_ai_auditor' );
+        // ========== 标签模式 ==========
+        if ( $tag_switch == 1 ) {
+            return two_ber_get_tag_barrage( $post_id, $cid );
+        }
+    
+        // ========== 评论模式 ==========
+        // 解析排除邮箱 MD5 列表
+        $excludes_list = array();
+        if ( ! empty( $excludes_raw ) ) {
+            $parts = explode( ',', $excludes_raw );
+            foreach ( $parts as $part ) {
+                $md5 = strtolower( trim( $part ) );
+                if ( strlen( $md5 ) === 32 && ctype_xdigit( $md5 ) ) {
+                    $excludes_list[] = $md5;
+                }
+            }
+        }
+    
+        if ( is_null( $thoughtful ) ) {
+            $is_thoughtful = get_option( 'site_chatgpt_ai_auditor' );
+        } else {
+            $is_thoughtful = (bool) $thoughtful;
+        }
+    
         $mode = $is_thoughtful ? 'thoughtful' : 'all';
-        // 缓存键加入 post_id
-        $ids_cache_key = 'comment_barrage_ids_' . $mode . '_' . $post_id;
+    
+        // ---------- 处理分类范围 ----------
+        $post_ids_filter = null; // null 表示不限制分类
+    
+        if ( $cid > 0 ) {
+            $cat_post_ids = get_posts( array(
+                'category'    => $cid,
+                'fields'      => 'ids',
+                'numberposts' => -1,
+                'post_status' => 'publish',
+            ) );
+            if ( empty( $cat_post_ids ) ) {
+                // 分类下没有文章，直接返回空
+                return rest_ensure_response( [] );
+            }
+            $post_ids_filter = $cat_post_ids;
+    
+            // 如果同时指定了具体文章，检查它是否在该分类中
+            if ( $post_id > 0 ) {
+                if ( ! in_array( $post_id, $post_ids_filter ) ) {
+                    return rest_ensure_response( [] );
+                }
+                // 文章在分类内，仅保留该文章（精确匹配）
+                $post_ids_filter = array( $post_id );
+            }
+        }
+    
+        // 缓存键加入 cid 和 post_ids_filter 哈希
+        $filter_hash = $post_ids_filter ? md5( implode( ',', $post_ids_filter ) ) : 'nocat';
+        $exclude_hash = md5( implode( ',', $excludes_list ) );
+        $ids_cache_key = 'comment_barrage_ids_' . $mode . '_' . $post_id . '_' . $cid . '_' . ( is_null( $thoughtful ) ? 'auto' : 'manual' ) . '_exclude_' . $exclude_hash . '_cat_' . $filter_hash;
     
         $comment_ids = get_transient( $ids_cache_key );
         if ( false === $comment_ids ) {
             $args = array(
-                'status'     => 'approve',
-                'fields'     => 'ids',
-                'number'     => 1000,
+                'status' => 'approve',
+                'fields' => 'ids',
+                'number' => 1000,
             );
     
-            if ( $post_id > 0 ) {
+            // 设置文章范围
+            if ( null !== $post_ids_filter ) {
+                $args['post__in'] = $post_ids_filter;
+            } elseif ( $post_id > 0 ) {
                 $args['post_id'] = $post_id;
             }
     
@@ -817,7 +896,26 @@
                 $args['meta_value'] = '1';
             }
     
-            $comment_ids = get_comments( $args );
+            $all_ids = get_comments( $args );
+    
+            // 排除邮箱
+            if ( ! empty( $excludes_list ) && ! empty( $all_ids ) ) {
+                $comments_for_email = get_comments( array(
+                    'comment__in' => $all_ids,
+                    'fields'      => array( 'comment_ID', 'comment_author_email' ),
+                ) );
+                $filtered_ids = array();
+                foreach ( $comments_for_email as $c ) {
+                    $email_md5 = md5( strtolower( trim( $c->comment_author_email ) ) );
+                    if ( ! in_array( $email_md5, $excludes_list ) ) {
+                        $filtered_ids[] = $c->comment_ID;
+                    }
+                }
+                $comment_ids = $filtered_ids;
+            } else {
+                $comment_ids = $all_ids;
+            }
+    
             set_transient( $ids_cache_key, $comment_ids, HOUR_IN_SECONDS );
         }
     
@@ -825,8 +923,10 @@
         if ( $total === 0 ) {
             return rest_ensure_response( [] );
         }
-    
-        $number = min( 50, $total );
+        
+        global $comment_barrage_max;
+        $number = min( $comment_barrage_max, $total );
+        
         $random_keys = array_rand( $comment_ids, $number );
         if ( ! is_array( $random_keys ) ) {
             $random_keys = array( $random_keys );
@@ -835,34 +935,31 @@
             return $comment_ids[ $key ];
         }, $random_keys );
     
-        $query_args = array(
+        $comments = get_comments( array(
             'comment__in' => $selected_ids,
             'status'      => 'approve',
-        );
-        if ( $post_id > 0 ) {
-            $query_args['post_id'] = $post_id; // 再次限定，虽然 IDs 已限定但保持一致性
-        }
-    
-        $comments = get_comments( $query_args );
+        ) );
     
         $data = array();
         foreach ( $comments as $comment ) {
-            $content = comment_strip_tags($comment->comment_content);
-            
+            $content = comment_strip_tags( $comment->comment_content );
             if ( mb_strlen( $content ) > 300 ) {
                 $content = mb_substr( $content, 0, 300 ) . '…';
             }
-    
+            $comment_id = $comment->comment_ID;
             $item = array(
-                'id'            => $comment->comment_ID,
+                'id'            => $comment_id,
                 'author'        => $comment->comment_author,
+                'author_url'    => $comment->comment_author_url,
                 'avatar'        => function_exists( 'match_mail_avatar' )
                     ? match_mail_avatar( $comment->comment_author_email )
                     : get_avatar_url( $comment->comment_author_email, array( 'size' => 32 ) ),
                 'content'       => $content,
+                'date'          => $comment->comment_date,
                 'post_title'    => get_the_title( $comment->comment_post_ID ),
                 'post_url'      => get_permalink( $comment->comment_post_ID ),
                 'parent_author' => null,
+                '_ai_comment'   => get_comment_meta( $comment_id, '_2ber_ai_reply', true ) || get_comment_meta( $comment_id, '_2ber_ai_processing', true ),
             );
     
             if ( $comment->comment_parent ) {
@@ -876,6 +973,114 @@
         }
     
         return rest_ensure_response( $data );
+    }
+    
+    /**
+     * 获取标签弹幕数据（开关 tag=1 时调用）
+     *
+     * @param int $post_id 可选，指定文章
+     * @param int $cid     可选，指定分类
+     * @return WP_REST_Response
+     */
+    function two_ber_get_tag_barrage( $post_id = 0, $cid = 0 ) {
+        // 确定文章 ID 集合
+        $post_ids = null; // null 代表全站
+    
+        if ( $cid > 0 ) {
+            $cat_post_ids = get_posts( array(
+                'category'    => $cid,
+                'fields'      => 'ids',
+                'numberposts' => -1,
+                'post_status' => 'publish',
+            ) );
+            $post_ids = $cat_post_ids;
+        }
+    
+        if ( $post_id > 0 ) {
+            if ( null !== $post_ids ) {
+                if ( ! in_array( $post_id, $post_ids ) ) {
+                    return rest_ensure_response( [] );
+                }
+                $post_ids = array( $post_id );
+            } else {
+                $post_ids = array( $post_id );
+            }
+        }
+    
+        // 缓存键（基于筛选范围）
+        $cache_key = 'comment_barrage_tags_all_' . $cid . '_' . ( $post_id > 0 ? $post_id : 'all' );
+        $all_tags = get_transient( $cache_key );
+    
+        if ( false === $all_tags ) {
+            // 获取全部标签（不分页，但限定最多 500 个防止极端情况）
+            $args = array(
+                'taxonomy'   => 'post_tag',
+                'hide_empty' => true,
+                'number'     => 500,
+            );
+    
+            if ( null !== $post_ids ) {
+                if ( empty( $post_ids ) ) {
+                    return rest_ensure_response( [] );
+                }
+                $args['object_ids'] = $post_ids;
+            }
+    
+            $tags = get_terms( $args );
+    
+            if ( is_wp_error( $tags ) || empty( $tags ) ) {
+                $all_tags = array();
+            } else {
+                $all_tags = array();
+                foreach ( $tags as $tag ) {
+                    $all_tags[] = array(
+                        'term_id' => $tag->term_id,
+                        'name'    => $tag->name,
+                        'slug'    => $tag->slug,
+                        'link'    => get_term_link( $tag ),
+                        'count'   => $tag->count,
+                    );
+                }
+            }
+    
+            set_transient( $cache_key, $all_tags, HOUR_IN_SECONDS );
+        }
+    
+        if ( empty( $all_tags ) ) {
+            return rest_ensure_response( [] );
+        }
+    
+        // 随机选取 50 个（如果不足 50 个则全部返回，但顺序随机）
+        global $comment_barrage_max;
+        if ( count( $all_tags ) > $comment_barrage_max ) {
+            $keys = array_rand( $all_tags, $comment_barrage_max );
+            if ( ! is_array( $keys ) ) {
+                $keys = array( $keys );
+            }
+            $selected = array();
+            foreach ( $keys as $key ) {
+                $selected[] = $all_tags[ $key ];
+            }
+            return rest_ensure_response( $selected );
+        } else {
+            shuffle( $all_tags );
+            return rest_ensure_response( $all_tags );
+        }
+    }
+    
+    /**
+     * 清除所有 comment-barrage 相关的 transient 缓存
+     */
+    add_action( 'update_option_site_chatgpt_ai_auditor', 'clear_comment_barrage_cache' );
+    function clear_comment_barrage_cache() {
+        global $wpdb;
+        $wpdb->query(
+            "DELETE FROM {$wpdb->options} 
+             WHERE option_name LIKE '_transient_comment_barrage_ids_%' 
+                OR option_name LIKE '_transient_timeout_comment_barrage_ids_%'
+                OR option_name LIKE '_transient_comment_barrage_tags_%' 
+                OR option_name LIKE '_transient_timeout_comment_barrage_tags_%'"
+        );
     }
     
     /**
@@ -910,6 +1115,80 @@
         
         return $count;
     }
+    
+    //禁用远程管理文件 xmlrpc.php 防爆破
+    if(get_option('site_xmlrpc_switcher')) add_filter('xmlrpc_enabled', '__return_false');
+    
+    // // 默认评论前置@（调用时插入文本）// 评论添加@（提交时写入数据库）https://www.ludou.org/wordpress-comment-reply-add-at.html
+    // function wp_comment_at($comment_text, $comment=''){
+    //     $parent = $comment->comment_parent;
+    //     if($parent>0) $comment_text = '<a href="#comment-' . $parent . '">@'. get_comment_author($parent) . '</a> , ' . $comment_text;
+    //     return $comment_text;
+    // }
+    // add_filter('comment_text' , 'wp_comment_at', 20, 2);
+    /**
+     * 判断当前访客是否可以查看一条未审核的评论
+     *
+     * 只有具备管理评论权限的用户（如管理员、编辑）或评论作者本人可以查看，
+     * 其他访客不可见。
+     *
+     * @param WP_Comment|int $comment 评论对象或评论 ID
+     * @return bool 是否允许查看
+     */
+    function can_view_unapproved_comment( $comment ) {
+        // 如果传入的是 ID，则获取评论对象
+        if ( is_numeric( $comment ) ) {
+            $comment = get_comment( $comment );
+        }
+    
+        // 如果评论不存在或已审核通过，直接返回 true（已审核的评论所有人可见）
+        if ( ! $comment || $comment->comment_approved == '1' ) {
+            return true;
+        }
+    
+        // 管理员或具备管理评论权限的用户始终可以查看
+        if ( current_user_can( 'moderate_comments' ) ) {
+            return true;
+        }
+    
+        // 获取当前用户和评论者信息
+        $current_user = wp_get_current_user();
+        $commenter    = wp_get_current_commenter();
+    
+        // 判断当前访客是否是这条评论的作者
+        // 情况1：登录用户，且评论的 user_id 与当前用户 ID 匹配
+        if ( $comment->user_id && $current_user->ID == $comment->user_id ) {
+            return true;
+        }
+    
+        // 情况2：匿名访客，但 cookie 中的邮箱与评论作者邮箱一致
+        if ( ! empty( $commenter['comment_author_email'] ) && strtolower( $commenter['comment_author_email'] ) == strtolower( $comment->comment_author_email ) ) {
+            return true;
+        }
+    
+        // 其他情况不允许查看
+        return false;
+    }
+    // 默认评论前置@（调用时插入文本）// 评论添加@（提交时写入数据库）https://www.ludou.org/wordpress-comment-reply-add-at.html
+    function wp_comment_at( $comment_text, $comment = null ) {
+        if ( ! $comment ) {
+            return $comment_text;
+        }
+        // if ( $comment->comment_approved != '1') {
+        //     // 如果评论未审核且当前访客无权查看，则不输出任何内容
+        //     return can_view_unapproved_comment( $comment ) ? '<small style="opacity:.5;display:block;"> [ 等待评论审核，通过正常显示。] </small>' . $comment_text : '';
+        // }
+        $parent_id = (int) $comment->comment_parent;
+        if ( $parent_id > 0 ) {
+            $parent_comment = get_comment( $parent_id );
+            if ( $parent_comment && ! empty( $parent_comment->comment_author ) ) {
+                $at_link = '<a href="#comment-' . $parent_id . '">@' . esc_html( $parent_comment->comment_author ) . '</a>, ';
+                $comment_text = $at_link . $comment_text;
+            }
+        }
+        return $comment_text;
+    }
+    add_filter( 'comment_text', 'wp_comment_at', 20, 2 );
     
     if (get_option('site_chatgpt_switcher')) {
         // 挂载文章 chatGPT AI 摘要 mount article chatgpt
@@ -1399,6 +1678,13 @@
          * 当评论中包含 @2BER 时，用 Kimi API 生成回复并作为子评论发布
          */
         if (get_option('site_chatgpt_ai_comments')) {
+            
+            // 特殊@tag（wp_comment_at之前执行）
+            function special_ai_tag( $content, $comment = null ) {
+                return preg_replace( '/@2ber/i', '<span id="ai" title="AI Powered">@2BER</span>', $content );
+            }
+            add_filter('comment_text', 'special_ai_tag', 19, 2);
+            
             // ========== 配置项 ==========
             define( 'TWO_BER_AI_API_KEY', get_option('site_chatgpt_apikey') );  // 替换为真实 Key
             define( 'TWO_BER_AI_MODEL', get_option('site_chatgpt_model') );     // Kimi 模型，可按需调整
@@ -2185,6 +2471,7 @@
                     ),
                 ) );
             } );
+            
         }
         
         /**
@@ -2480,16 +2767,18 @@
                     error_log( "Async AI spam caught: comment_id=$comment_id reason={$result['reason']}" );
                 } else {
                     // 非垃圾，处理走心标记（仅当AI判定为走心时才自动设置）
+                    $should_clear = false;
                     if ( $result['is_thoughtful'] ) {
                         update_comment_meta( $comment_id, '_thoughtful_comment', 1 );
+                        $should_clear = true;
                     }
-                    // 如果之前被标记为走心但AI这次没判为走心，要不要清除？不建议，因为管理员可能已手动设置。
-                    // 所以此处只做“首次设置”或“补充设置”，不覆盖已有值。
-                    // 若希望AI权重更高，可以加上 update_comment_meta( $comment_id, '_thoughtful_comment', $result['is_thoughtful'] ? 1 : 0 );
                     // 这里采用“仅当元数据不存在时设置”，保留管理员手动结果。
                     if ( ! metadata_exists( 'comment', $comment_id, '_thoughtful_comment' ) && $result['is_thoughtful'] ) {
                         update_comment_meta( $comment_id, '_thoughtful_comment', 1 );
+                        $should_clear = true;
                     }
+                    // 清除弹幕缓存，使更改立即生效
+                    if ( $should_clear ) clear_comment_barrage_cache();
                 }
             
                 delete_comment_meta( $comment_id, '_ai_spam_review_planned' );
@@ -3090,7 +3379,7 @@
     
         global $lazysrc, $loadimg;
         $output = '';
-        $rss_limit = $category === 'standard' || $category === 'technical' ? 2 : 1;
+        $rss_limit = $category === 'standard' ? 2 : 1; // || $category === 'technical'
     
         // ★ 修改点：用 REST API 地址替换旧的 get_plugin_refrence
         $rss_api = rest_url('rss-feeds/v1/category/' . $category . '?limit=' . $rss_limit); //get_plugin_refrence('rss', true, true) . "cat=$category&limit=$rss_limit"; //get_api_refrence('rss')
@@ -3199,7 +3488,7 @@
                     break;
                 default:
                     $rel_statu = $status_standby ? 'nofollow' : 'followed';
-                    $output .= '<a href="'.$link_url.'" class="'.$status_class.' magnetics" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" data-status="' . $status_code . '" data-magnet-scale="1.15" data-magnet-step="0.75">'.$link_name.'</a>';
+                    $output .= '<a href="'.$link_url.'" class="'.$status_class.' magnetics" data-magnet-scale="1" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" data-status="' . $status_code . '" data-magnet-scale="1.15" data-magnet-step="0.75">'.$link_name.'</a>';
                     break;
             }
         }
@@ -3323,7 +3612,7 @@
                             <article class="<?php if($post_orderby>1) echo 'topset icom'; ?> news-window wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
                                 <div class="news-window-inside">
                                     <?php
-                                        if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img magnetics"><a href="'.get_the_permalink().'"><img class="lazy" '.$lazyhold.' src="'.$loadimg.'" /></a></span>';
+                                        if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img magnetic" data-magnet-step="0.15"><a href="'.get_the_permalink().'"><img class="lazy" '.$lazyhold.' src="'.$loadimg.'" /></a></span>';
                                     ?>
                                     <div class="news-inside-content">
                                         <h2 class="entry-title">
@@ -3875,6 +4164,7 @@
         // replace comments images url
         add_filter('comment_text' , 'lazyload_images', 20, 2);
     }
+    
     // 站点logo
     function site_logo($darkmode = false) {
         if (get_option('site_logo_switcher')) {
@@ -4193,7 +4483,7 @@
     
     // 修复后台评论管理页面img标签为data-src问题
     // add_filter( 'get_comment_text', 'fix_comment_img_data_src', 20, 1 );
-    add_filter( 'comment_text', 'fix_comment_img_data_src', 20, 1 );
+    add_filter('comment_text', 'fix_comment_img_data_src', 20, 1);
     function fix_comment_img_data_src( $comment_text, $comment = null ) {
         // 仅在后台管理界面生效
         if ( ! is_admin() ) {
@@ -4444,14 +4734,22 @@
             $approved = $comment->comment_approved == '1';
             $content = $comment->comment_content; //esc_html();// //strip_tags(); XSS Secure Issues!!!
             $parent = $comment->comment_parent;
-            if (!$approved) $content = '<small style="opacity:.5">[ 等待评论审核，通过正常显示。 ]</small>';
-            if ($parent>0) $content = '<a x href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
+            // if (!$approved) $content = '<small style="opacity:.5">[ 等待评论审核，通过正常显示。 ]</small>';
+            // if ($parent>0) $content = '<a href="#comment-'.$parent.'">@'. get_comment_author($parent) . '</a> , ' . $content;
             $is_ai_comment = get_comment_meta( $id, '_2ber_ai_reply', true ) || get_comment_meta( $id, '_2ber_ai_processing', true ); //&& $comment->user_id === 0;
             $is_thoughtful_comment = get_comment_meta( $id, '_thoughtful_comment', true );
+            $is_ai_spam = get_comment_meta( $id, '_ai_spam_reason', true );
             // apply ai reply status
             ajax_ai_reply_status($comment);
+            if ( !$approved ) {
+                // 如果评论未审核且当前访客无权查看，则不输出任何内容
+                if (!can_view_unapproved_comment( $comment )) {
+                    return;
+                }
+                $comment->comment_content = '<small style="opacity:.5;display:block;"> [ 等待评论审核，通过正常显示。] </small>' . $comment->comment_content;
+            }
     ?>
-            <div class="vcard magnetics<?php if (!$approved) echo ' auditing';if ($is_ai_comment) echo ' ai';if ($is_thoughtful_comment) echo ' thoughtful'; ?>" data-ai-pending="<?php echo $comment->two_ber_ai_pending ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $id; ?>">
+            <div class="vcard magnetics<?php if (!$approved) echo ' auditing';if ($is_ai_comment) echo ' ai';if ($is_thoughtful_comment) echo ' thoughtful';if ($is_ai_spam) echo ' spam'; ?>" data-ai-pending="<?php echo $comment->two_ber_ai_pending ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $id; ?>">
                 <a class="noslide" rel="nofollow" href="<?php echo $link; ?>" target="_blank">
                     <?php 
                         if (get_option('show_avatars')) {
@@ -4470,15 +4768,15 @@
                                 echo '<span class="vsys vai">AI Comment #' . $id . '</span>';
                             } else {
                                 if ($email == get_bloginfo('admin_email')) echo '<span class="vsys vadmin">admin</span>';
-                                echo $approved ? '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing"> Auditing </span>';
+                                echo $approved ? '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing"> 待审核 </span>';
                                 if ($is_thoughtful_comment) echo '<span class="vsys vthoughtful" title="AI Powered by @2BER">✨亮评 #' . $id . '</span>';
                             }
                         ?>
                     </div>
                     <div class="vmeta">
                         <span class="vtime"><?php echo date('Y-m-d', strtotime($comment->comment_date)); ?></span>
-                        <span class="vedited"></span>
                         <?php 
+                            if ($is_ai_spam) echo '<span class="vedited vspam" title="'.$is_ai_spam.'">AI Spam-ed</span>';
                             if ($approved) {
                                 if (get_option('site_ajax_comment_switcher')) {
                                     $tips = '回复ta的评论';
@@ -4487,7 +4785,8 @@
                                         $tips = '追问AI无需@';
                                         // $nonce = wp_create_nonce( 'wp_rest' );
                                     }
-                                    echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$id.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$id.'" data-respondelement="respond" data-nonce="'.$nonce.'" data-replyto="'.$nick.'" title="'.$tips.'" aria-label="正在回复给：@'.$nick.'">回复</a>';
+                                    $comment_allowed = comments_open() || is_category()&&$post->comment_status=="open";
+                                    if ($comment_allowed) echo '<a rel="nofollow" class="vat noslide comment-reply-link" href="javascript:void(0);" data-commentid="'.$id.'" data-postid="'.$post->ID.'" data-belowelement="comment-'.$id.'" data-respondelement="respond" data-nonce="'.$nonce.'" data-replyto="'.$nick.'" title="'.$tips.'" aria-label="正在回复给：@'.$nick.'">回复</a>';
                                     // unset($post);
                                 } else {
                                     echo comment_reply_link(array_merge($args, array(
@@ -4500,7 +4799,7 @@
                         ?>
                     </div>
                     <div class="vcontent">
-                        <?php echo $content; //'<p>'.$content.'</p>'; //comment_text();?>
+                        <?php echo apply_filters( 'comment_text', $comment->comment_content, $comment ); //'<p>'.$content.'</p>'; //comment_text();?>
                     </div>
                     <?php
                         // // 层层嵌套
@@ -4545,11 +4844,18 @@
                 //   'order_clause' => 'comment_parent'
                 // )
             ));
-            if(count($child_comment)>=1){
+            if (count($child_comment) >= 1) {
                 // $child_comment = json_decode(json_encode($child_comment), true); // Objects to Array object
                 foreach ($child_comment as $child) {
                     $comment_ID = $child->comment_ID;
-                    if ($child->comment_approved == '0') $child->comment_content = '等待评论审核，通过正常显示。';
+                    if ( $child->comment_approved != '1') {
+                        // 如果评论未审核且当前访客无权查看，则不输出任何内容
+                        if (!can_view_unapproved_comment( $child )) {
+                            continue;
+                        }
+                        $child->_comment_auditing = true;
+                        $child->comment_content = '<small style="opacity:.5;display:block;">[ 等待评论审核，通过正常显示。 ]</small>' . $child->comment_content;
+                    }
                     // use privacy data encryption
                     $child->comment_author_IP = sha1($child->comment_author_IP);
                     $child->comment_author_email = md5($child->comment_author_email);
@@ -4559,6 +4865,7 @@
                     $child->_comment_replytocom = get_permalink($child->comment_post_ID) . '?replytocom=' . $comment_ID . '#respond';
                     // add thoughtful comment
                     $child->_comment_thoughtful = get_comment_meta( $comment_ID, '_thoughtful_comment', true );
+                    $child->_comment_spam = get_comment_meta( $comment_ID, '_ai_spam_reason', true );
                     // apply ai reply status
                     ajax_ai_reply_status($child);
                     $cur_comment->_comment_childs = $child_comment; //$child_comment;//load all-childs but single[$child];
@@ -4598,6 +4905,7 @@
                 $each->_comment_replytocom = get_permalink($each->comment_post_ID) . '?replytocom=' . $comment_ID . '#respond';
                 // add thoughtful comment
                 $each->_comment_thoughtful = get_comment_meta( $comment_ID, '_thoughtful_comment', true );
+                $each->_comment_spam = get_comment_meta( $comment_ID, '_ai_spam_reason', true );
                 if($each->comment_parent==0) array_push($comments_array, ajax_child_comments_loop($each));
             }
             print_r(json_encode($comments_array));

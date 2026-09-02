@@ -5,6 +5,7 @@
 .v .vlist .vcard .vhead {
     white-space: nowrap;
 }
+.v .vlist .vcard.spam:after,
 .v .vlist .vcard.thoughtful:after {
     content: "💘️";
     clear: both;
@@ -17,6 +18,9 @@
     font-size: 5rem;
     opacity: .15;
     mask: -webkit-linear-gradient(-90deg, currentColor -20%, transparent 80%);
+}
+.v .vlist .vcard.spam:after {
+    content: "🤡";
 }
 .tk-content blockquote:after,
 .v .vlist .vcard blockquote:after {
@@ -57,6 +61,7 @@ body.dark .v .vlist .vcard .vh .vsys.vthoughtful {
 .v .vlist .vcard .vh .vsys.vadmin {
     display: inline-block;
 }
+.v .vlist .vcard .vh .vsys.auditing,
 .v .vlist .vcard .vh .vsys.vthoughtful,
 .v .vlist .vcard .vh .vsys.vai {
     font-family: monospace;
