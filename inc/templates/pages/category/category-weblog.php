@@ -112,7 +112,7 @@
                     $weblog_slug = get_cat_by_template('weblog','slug'); //current_slug();
                     $async_array = explode(',', get_option('site_async_includes'));
                     $use_async = $async_sw ? in_array($weblog_slug, $async_array) : false;
-                    $async_loads = $async_sw&&$use_async ? get_option("site_async_weblog") : 15;
+                    $async_loads = $async_sw&&$use_async ? get_option("site_async_weblog") : get_option('site_per_posts', 10);
                     $baas = get_option('site_leancloud_switcher') && strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false; //in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')))
                     $log_single_sw = get_option('site_single_switcher');
                     if($log_single_sw){
@@ -132,6 +132,7 @@
                             ),
                             'paged' => $current_page,  //current paged
                             'posts_per_page' => $async_loads,  //use left_query counts
+                            // 'post_status' => 'publish'
                         )));
                         // Empty card if null reponsed
                         if(!$log_query->have_posts()) echo '<div class="empty_card magnetic"><i class="icomoon icom icon-'.current_slug().'" data-t="'.current_slug(true).'"></i><h1><b>空空如也~</b> </h1></div>';  //<b>'.current_slug(true).'</b> 

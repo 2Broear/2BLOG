@@ -21,7 +21,7 @@ header{height:154px;margin-bottom:auto}
 #news-more_info p{letter-spacing:2px;font-size:var(--min-size);text-align:center;color:var(--preset-s);margin:0}
 .news-window.topset:after{
     content: "\e91b";
-    font-size: 9rem;
+    font-size: 10rem;
     color: var(--theme-color);
     opacity: .15;
     position: absolute;

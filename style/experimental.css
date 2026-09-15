@@ -1,9 +1,32 @@
+@font-face{font-family:Corpta;src:url('../fonts/corpta-demo/Corpta DEMO.otf')}
+@font-face{font-family:Reano;src:url('../fonts/reano-font/ReanoRegular-nA09J.ttf')}
 /**
 **
 **  Experimental UI
 **  @2026
 **
 **/
+.top-bar-tips span#doc-progress-bar {
+    background: linear-gradient(90deg, transparent, var(--theme-color), transparent);
+}
+footer .footer-all .container {
+    position: relative;
+}
+body.dark .content-all header::before {
+    background: radial-gradient(transparent -18%, var(--preset-2b) 88%);
+}
+.content-all header::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    display: block;
+    /*background: radial-gradient(circle, var(--mirror-start) 0%, transparent 50%, var(--mirror) 88%);*/
+    background: radial-gradient(transparent 18%, var(--mirror) 88%);
+    position: fixed!important;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
 body.dark .archive-tree ul li a {
     opacity: .75;
 }
@@ -13,11 +36,18 @@ body.dark .archive-tree ul li a.article {
 body.dark .win-top:after,
 body.dark .content-all {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='8' height='8' fill='none' stroke='rgb(255 255 255 / 0.1)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+    background-size: 20px 20px;
 }
 .win-top:after,
 .content-all {
     /*background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='8' height='8' fill='none' stroke='rgb(0 0 0 / 0.1)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");*/
-    background-size: 12px 12px;
+    /*background-size: 12px 12px;*/
+}
+.win-top:after {
+    width: 150%;
+    height: 100px;
+    left: -25%;
+    bottom: -85px;
 }
 
 /*body.dark .v .vlist .vcard:hover {*/
@@ -52,6 +82,9 @@ body.dark .content-all {
 }
 .v .vlist .vcard.auditing:after {
     content: "⏳"!important;
+}
+.v .vlist .vcard .vh .vedited {
+    text-decoration: underline;
 }
 
 figure.wp-block-gallery {
@@ -179,6 +212,10 @@ body.dark .news-article-container .v .vlist .children:hover {
 #news-article-head h1 {
     font-size: 2.5rem;
 }
+.news-window.topset:after{
+    bottom: 0;
+    right: 0;
+}
 /**
 **
 ** @notes
@@ -244,7 +281,7 @@ body.dark blockquote.wp-block-quote p {
 ** blog contrast fixes
 **
 **/
-/*body.dark .win-content article h3,*/
+body.dark .win-content article h3,
 body.dark .win-content article h2 {
     color: var(--preset-f);
 }
@@ -274,6 +311,7 @@ body.dark .v .vlist .vcard .vcontent {
 ** @barrage comments
 **
 **/
+.wp_comment_count,
 .content {
     position: relative;
 }
@@ -292,4 +330,249 @@ body.dark .v .vlist .vcard .vcontent {
 .footer-contact-left ul a span#icon-rss i::before {
     content: '\ea9b';
     font-size: 17px;
+}
+
+/**
+**
+** @footer Marquee ETC
+**
+**/
+.footer-detector::before {
+    background: linear-gradient(90deg, transparent, currentColor);
+}
+.footer-detector::after {
+    background: linear-gradient(90deg, var(--theme-color), transparent);
+}
+
+#supports-txt {
+    max-width: none;
+    overflow: visible;
+}
+#supports-txt i {
+    font-size: 2.5rem;
+    margin: auto 50px;
+    padding-top: 4px;
+    /*line-height: normal;*/
+    font-family: Corpta, fantasy, fangsong;
+    text-transform: uppercase;
+    vertical-align: middle;
+    letter-spacing: normal;
+    display: inline-block;
+    position: relative;
+    white-space: nowrap;
+}
+#supports-txt .marquee-content:last-of-type > i:nth-child(even),
+#supports-txt i:last-child,
+#supports-txt i:nth-child(odd) {
+    /*color: var(--preset-link);*/
+    opacity: .5;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1px;
+}
+#supports-txt .marquee-content:last-of-type > i:nth-child(odd) {
+    /*color: var(--preset-link);*/
+    opacity: 1;
+    -webkit-text-fill-color: currentColor;
+    -webkit-text-stroke: 0;
+}
+#supports-txt i::before,
+#supports-txt i::after {
+    content: '';
+    width: 10px;
+    height: 100%;
+    display: inherit;
+    position: absolute;
+    top: 0;
+    right: -65px;
+    /*background: var(--preset-6a);*/
+    background: currentColor;
+    opacity: .15;
+    transform: skew(-16deg);
+}
+#supports-txt i::before {
+    right: -45px;
+}
+#supports-txt i:last-child::before,
+#supports-txt i:last-child::after {
+    /*content: none;*/
+}
+#supports-txt i:last-child {
+    /*margin-right: auto;*/
+}
+
+#footer-support-board::after,
+#footer-support-board::before {
+    content: '';
+    width: 33%;
+    height: 100%;
+    background: red;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    opacity: .15;
+    transform: skewX(-17deg);
+    filter: blur(100px);
+    animation-duration: 9s;
+    animation-delay: 0s;
+    animation-timing-function: step-end;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+}
+#footer-support-board::after {
+    left: auto;
+    right: 0;
+    background: blue;
+}
+body.dark #footer-support-board::before {
+    animation-name: alarmLamp_bar_before;
+}
+body.dark #footer-support-board::after {
+    animation-name: alarmLamp_bar_after;
+}
+@keyframes alarmLamp_bar_before {
+    /* ===== 模式1：经典交错闪（红色闪6次，占30%） ===== */
+    /* 红色闪6次，每次间隔1.67% */
+    0%, 1.67%, 3.34%, 5.01%, 6.68%, 8.35% { opacity: 1; }
+    0.835%, 2.505%, 4.175%, 5.845%, 7.515%, 9.185% { opacity: 0.15; }
+    /* 红色保持熄灭，让蓝色闪 */
+    10%, 30% { opacity: 0.15; }
+
+    /* ===== 模式2：双脉冲爆闪（红蓝同步闪12次，占50%） ===== */
+    /* 从30%开始，每次闪灭间隔0.83% */
+    30% { opacity: 1; }                         /* 第1次闪 */
+    30.83% { opacity: 0.15; }                    /* 第1次灭 */
+    31.66% { opacity: 1; }                      /* 第2次闪 */
+    32.49% { opacity: 0.15; }                    /* 第2次灭 */
+    33.32% { opacity: 1; }                      /* 第3次闪 */
+    34.15% { opacity: 0.15; }                    /* 第3次灭 */
+    34.98% { opacity: 1; }                      /* 第4次闪 */
+    35.81% { opacity: 0.15; }                    /* 第4次灭 */
+    36.64% { opacity: 1; }                      /* 第5次闪 */
+    37.47% { opacity: 0.15; }                    /* 第5次灭 */
+    38.30% { opacity: 1; }                      /* 第6次闪 */
+    39.13% { opacity: 0.15; }                    /* 第6次灭 */
+    39.96% { opacity: 1; }                      /* 第7次闪 */
+    40.79% { opacity: 0.15; }                    /* 第7次灭 */
+    41.62% { opacity: 1; }                      /* 第8次闪 */
+    42.45% { opacity: 0.15; }                    /* 第8次灭 */
+    43.28% { opacity: 1; }                      /* 第9次闪 */
+    44.11% { opacity: 0.15; }                    /* 第9次灭 */
+    44.94% { opacity: 1; }                      /* 第10次闪 */
+    45.77% { opacity: 0.15; }                    /* 第10次灭 */
+    46.60% { opacity: 1; }                      /* 第11次闪 */
+    47.43% { opacity: 0.15; }                    /* 第11次灭 */
+    48.26% { opacity: 1; }                      /* 第12次闪 */
+    49.09% { opacity: 0.15; }                    /* 第12次灭 */
+    /* 长灭到模式3（49.09%~66.67%） */
+    49.09%, 66.67% { opacity: 0.15; }
+
+    /* ===== 模式3：原始急速交替（完全保持原样，66.67%~100%） ===== */
+    66.67% { opacity: 0.15; }
+    68% { opacity: 0.15; }
+    69.33% { opacity: 0.15; }
+    70.67% { opacity: 0.15; }
+    72% { opacity: 0.15; }
+    73.33% { opacity: 0.15; }
+    74.67% { opacity: 0.15; }
+    76% { opacity: 0.15; }
+
+    67.33% { opacity: 1; }
+    68.67% { opacity: 1; }
+    70% { opacity: 1; }
+    71.33% { opacity: 1; }
+    72.67% { opacity: 1; }
+    74% { opacity: 1; }
+    75.33% { opacity: 1; }
+
+    83.33% { opacity: 0.15; }
+
+    86.67% { opacity: 1; }
+    87.33% { opacity: 1; }
+
+    87% { opacity: 0.15; }
+
+    90% { opacity: 0.15; }
+    93.67% { opacity: 0.15; }
+    96.67% { opacity: 0.15; }
+
+    93.33% { opacity: 1; }
+    94% { opacity: 1; }
+    100% { opacity: 1; }
+}
+
+@keyframes alarmLamp_bar_after {
+    /* ===== 模式1：经典交错闪（蓝色闪6次，占30%） ===== */
+    0%, 10% { opacity: 0.15; }
+    11.67% { opacity: 1; }                      /* 第1次闪 */
+    12.505% { opacity: 0.15; }                   /* 第1次灭 */
+    13.34% { opacity: 1; }                      /* 第2次闪 */
+    14.175% { opacity: 0.15; }                   /* 第2次灭 */
+    15.01% { opacity: 1; }                      /* 第3次闪 */
+    15.845% { opacity: 0.15; }                   /* 第3次灭 */
+    16.68% { opacity: 1; }                      /* 第4次闪 */
+    17.515% { opacity: 0.15; }                   /* 第4次灭 */
+    18.35% { opacity: 1; }                      /* 第5次闪 */
+    19.185% { opacity: 0.15; }                   /* 第5次灭 */
+    20.02% { opacity: 1; }                      /* 第6次闪 */
+    20.855% { opacity: 0.15; }                   /* 第6次灭 */
+    30% { opacity: 0.15; }
+
+    /* ===== 模式2：双脉冲爆闪（蓝红同步闪12次，占50%） ===== */
+    30% { opacity: 1; }
+    30.83% { opacity: 0.15; }
+    31.66% { opacity: 1; }
+    32.49% { opacity: 0.15; }
+    33.32% { opacity: 1; }
+    34.15% { opacity: 0.15; }
+    34.98% { opacity: 1; }
+    35.81% { opacity: 0.15; }
+    36.64% { opacity: 1; }
+    37.47% { opacity: 0.15; }
+    38.30% { opacity: 1; }
+    39.13% { opacity: 0.15; }
+    39.96% { opacity: 1; }
+    40.79% { opacity: 0.15; }
+    41.62% { opacity: 1; }
+    42.45% { opacity: 0.15; }
+    43.28% { opacity: 1; }
+    44.11% { opacity: 0.15; }
+    44.94% { opacity: 1; }
+    45.77% { opacity: 0.15; }
+    46.60% { opacity: 1; }
+    47.43% { opacity: 0.15; }
+    48.26% { opacity: 1; }
+    49.09% { opacity: 0.15; }
+    49.09%, 66.67% { opacity: 0.15; }
+
+    /* ===== 模式3：原始急速交替（蓝色，完全保持原样） ===== */
+    66.67% { opacity: 0.15; }
+    76% { opacity: 0.15; }
+    77.33% { opacity: 0.15; }
+    78.67% { opacity: 0.15; }
+    79.67% { opacity: 0.15; }
+    80.67% { opacity: 0.15; }
+    82% { opacity: 0.15; }
+    83.33% { opacity: 0.15; }
+    84.67% { opacity: 0.15; }
+    86% { opacity: 0.15; }
+    86.67% { opacity: 0.15; }
+    90.33% { opacity: 0.15; }
+    93.33% { opacity: 0.15; }
+    97% { opacity: 0.15; }
+    100% { opacity: 0.15; }
+
+    76.67% { opacity: 1; }
+    78% { opacity: 1; }
+    79.33% { opacity: 1; }
+    80% { opacity: 1; }
+    81.33% { opacity: 1; }
+    82.67% { opacity: 1; }
+    84% { opacity: 1; }
+    85.33% { opacity: 1; }
+    90% { opacity: 1; }
+    90.67% { opacity: 1; }
+    96.67% { opacity: 1; }
+    97.33% { opacity: 1; }
 }

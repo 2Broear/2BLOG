@@ -435,14 +435,14 @@
                                             if ($email == $admin_email) echo '<span class="vsys vadmin">admin</span>';
                                             $userAgent = get_userAgent_info($comment->comment_agent);
                                             echo $approved ? '<span class="vsys vagent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing">待审核</span>';
-                                            if ($is_thoughtful_comment) echo '<span class="vsys vthoughtful" title="AI Powered by @2BER">✨亮评 #' . $comment_ID . '</span>';
+                                            if ($is_thoughtful_comment) echo '<span class="vsys vthoughtful" title="AI Powered @2BER">✨亮评 #' . $comment_ID . '</span>';
                                         }
                                     ?>
                                 </div>
                                 <div class="vmeta">
                                     <span class="vtime"><?php echo get_comment_time('Y-m-d'); ?></span>
                                     <?php 
-                                        if ($is_ai_spam) echo '<span class="vedited vspam" title="'.$is_ai_spam.'">AI Spam-ed</span>';
+                                        if ($is_ai_spam) echo '<span class="vedited vspam" title="'.$is_ai_spam.'">AI spam-ed</span>';
                                         if ($approved) {
                                             if (get_option('site_ajax_comment_switcher')) {
                                                 global $post;
@@ -513,13 +513,13 @@
                     	'per_page'          => $per_page,  //$per_page caused $w_comments err
                     	'avatar_size'       => 50,
                     	'reverse_top_level' => null,  //set null for panel settings
-                    	'reverse_children'  => null
+                    	'reverse_children'  => null //true
                     );
                     $comments = get_comments(array(
             			'post_id' => $post_ID,
             			'status' => 'all', //Change this to the type of comments to be displayed
                         'order'   => 'ASC', //$comment_order
-                        'orderby' => 'comment_date_gmt',
+                        'orderby' => 'comment_date',
             		));
                     wp_list_comments($wp_comment_args, $comments);
                 }
@@ -862,7 +862,7 @@
                 
                 toggleSwitch: function(target = null, btn = null, _text = '', text_ = '', callback) {
                     if (!target || !btn) return;
-                    if (btn.style.display === 'block') {
+                    if (null !== btn.offsetParent) {  //btn.style.display === 'block'
                         btn.style.display = 'none';
                         if (_text) target.textContent = target.title = _text;
                     } else {
@@ -957,7 +957,7 @@
                               is_thoughtful_reply = child._comment_thoughtful != 0,
                               ai_class = thoughtful_class = ai_reply = thoughtful_reply = '',
                               spam_class = is_ai_spam ? ' spam' : '',
-                              ai_spam = is_ai_spam ? `<span class="vedited vspam" title="${is_ai_spam}">AI Spam-ed</span>` : '',
+                              ai_spam = is_ai_spam ? `<span class="vedited vspam" title="${is_ai_spam}">AI spam-ed</span>` : '',
                               is_admin = email == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
                               is_auditing = child.comment_approved == '0',
                               is_approved = is_auditing ? '<span class="auditing vsys">待审核</span>' : '',
@@ -973,7 +973,7 @@
                               user_agent = '';
                           } else if (is_thoughtful_reply) {
                               thoughtful_class = ' thoughtful';
-                              thoughtful_reply = `<span class="vsys vthoughtful" title="AI Powered by @2BER">✨亮评 #${id}</span>`;
+                              thoughtful_reply = `<span class="vsys vthoughtful" title="AI Powered @2BER">✨亮评 #${id}</span>`;
                           }
                           output += `<div class="vcard magnetics${ai_class+thoughtful_class+spam_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0.015" id="comment-${id}"><a class="noslide" rel="nofollow" href="${link}" target="_blank"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div><div class="vmeta"><span class="vtime">${child.comment_date.slice(0, 10)}</span>${ai_spam + replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${child._comment_reply}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
                        }
@@ -1299,7 +1299,7 @@
                                                 is_ai_spam = each_comment._comment_spam,
                                                 is_ai_reply = each_comment.user_id == 9527,
                                                 is_thoughtful_reply = each_comment._comment_thoughtful != 0,
-                                                ai_spam = is_ai_spam ? `<span class="vedited vspam" title="${is_ai_spam}">AI Spam-ed</span>` : '',
+                                                ai_spam = is_ai_spam ? `<span class="vedited vspam" title="${is_ai_spam}">AI spam-ed</span>` : '',
                                                 ai_reply = thoughtful_reply = '',
                                                 is_admin = md5mail == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
                                                 is_auditing = each_comment.comment_approved == '0',
@@ -1320,7 +1320,7 @@
                                                 user_agent = '';
                                             } else if (is_thoughtful_reply) {
                                                 appendList.classList.add('thoughtful');
-                                                thoughtful_reply = `<span class="vsys vthoughtful" title="AI Powered by @2BER">✨亮评 #${id}</span>`;
+                                                thoughtful_reply = `<span class="vsys vthoughtful" title="AI Powered @2BER">✨亮评 #${id}</span>`;
                                             }
                                             if (is_ai_spam) appendList.classList.add('spam');
                                             appendList.dataset.aiPending = each_comment.two_ber_ai_pending;

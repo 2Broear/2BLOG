@@ -645,7 +645,7 @@
         // echo '<span class="thoughtful-status"> ' . ( $is_thoughtful ? '❤️' : '🖤' ) . ' </span> ';
         echo '<button type="button" class="button button-small toggle-thoughtful-btn" data-url="' . esc_url( $toggle_url ) . '">' .
              ( $is_thoughtful ? '💘 <b>取消扎心</b>' : '✨ 标记亮评' ) . '</button>';
-        echo '<span class="toggle-thoughtful-msg" style="margin-left:6px;"></span>';
+        echo '<span class="toggle-thoughtful-msg" style="margin-left:6px;"></span><style>img{max-width:100px;vertical-align: middle;}img[alt="emoji"]{max-width:50px;}</style>';
     }, 10, 2 );
     // 注册走心评论 rest api
     add_action( 'rest_api_init', function () {
@@ -1689,6 +1689,7 @@
             define( 'TWO_BER_AI_API_KEY', get_option('site_chatgpt_apikey') );  // 替换为真实 Key
             define( 'TWO_BER_AI_MODEL', get_option('site_chatgpt_model') );     // Kimi 模型，可按需调整
             define( 'TWO_BER_AI_MAX_REPLIES_PER_PARENT', 5 );  // 每个父评论下 AI 回复最大数量
+            define( 'TWO_BER_AI_TIMEOUT', 60 );  // 请求超时限制
             /**
              * 向上查找评论的根评论（顶级评论）
              */
@@ -2018,7 +2019,9 @@
             
                 // 如果 API 调用失败，记录错误并清理标记
                 if ( is_wp_error( $reply_content ) ) {
-                    error_log( '2BER AI Reply Error: ' . $reply_content->get_error_message() );
+                    $error_msg = $reply_content->get_error_message();
+                    error_log( '2BER AI Reply Error: ' . $error_msg );
+                    update_comment_meta( $comment_id, '_2ber_ai_error', $error_msg );
                     delete_comment_meta( $comment_id, '_2ber_ai_processing' );
                     return;
                 }
@@ -2035,6 +2038,8 @@
                     update_comment_meta( $comment_id, '_2ber_ai_replied', 1 );
                     // 给 AI 回复本身打上标记，防止其再次触发 @2BER 逻辑
                     update_comment_meta( $ai_comment_id, '_2ber_ai_reply', 1 );
+                    // 清除错误
+                    delete_comment_meta( $comment_id, '_2ber_ai_error' );
                 }
             
                 // 清除处理中标记
@@ -2050,15 +2055,16 @@
             function two_ber_ai_call_kimi( $messages ) {
                 $api_key = TWO_BER_AI_API_KEY;
                 $url = get_option('site_chatgpt_proxy') . get_option('site_chatgpt_apis');
+                $temperature = TWO_BER_AI_MODEL === 'kimi-k3' ? 1 : floatval( get_option( 'site_chatgpt_temper', 0.3 ) );
             
                 $body = array(
                     'model'       => TWO_BER_AI_MODEL,
                     'messages'    => $messages,
-                    'temperature' => 0.3,
+                    'temperature' => $temperature,
                 );
             
                 $args = array(
-                    'timeout'     => 30,
+                    'timeout'     => TWO_BER_AI_TIMEOUT,
                     'headers'     => array(
                         'Authorization' => 'Bearer ' . $api_key,
                         'Content-Type'  => 'application/json',
@@ -2293,7 +2299,6 @@
                 $nonce = wp_create_nonce( 'wp_rest' );
                 
                 if ( $replied ) {
-                    // echo '<span style="color:green;">✅ 已完成</span> ';
                     $regenerate_url = rest_url( 'two-ber/v1/ai-regenerate?comment_id=' . $comment_id . '&_wpnonce=' . $nonce );
                     echo '<button style="margin-left:6px;" type="button" class="button button-small ai-regenerate-btn" data-url="' . esc_url( $regenerate_url ) . '">✅ 重新生成</button>';
                     echo '<span class="ai-regenerate-msg" style="margin-left:6px;"></span>';
@@ -2446,9 +2451,14 @@
                 }
             
                 // 3. 未触发或失败
-                return rest_ensure_response( array(
-                    'status' => 'none',
-                ) );
+                $error = get_comment_meta( $comment_id, '_2ber_ai_error', true );
+                if ( $error ) {
+                    return rest_ensure_response( array(
+                        'status' => 'error',
+                        'reason' => $error,
+                    ) );
+                }
+                return rest_ensure_response( array( 'status' => 'none' ) );
             }
             /**
              * 在评论 REST API 响应中注册自定义字段 two_ber_ai_pending
@@ -2643,16 +2653,17 @@
             function two_ber_ai_call_spam_api( $messages ) {
                 $api_key = TWO_BER_AI_API_KEY;
                 $url = get_option('site_chatgpt_proxy') . get_option('site_chatgpt_apis');
+                $temperature = TWO_BER_AI_MODEL === 'kimi-k3' ? 1 : floatval( get_option( 'site_chatgpt_temper', 0.3 ) );
         
                 $body = array(
                     'model'       => TWO_BER_AI_MODEL,
                     'messages'    => $messages,
-                    'temperature' => 0.1,
+                    'temperature' => $temperature,
                     'max_completion_tokens'  => 150,
                 );
         
                 $args = array(
-                    'timeout'     => 15,
+                    'timeout'     => TWO_BER_AI_TIMEOUT / 2,
                     'headers'     => array(
                         'Authorization' => 'Bearer ' . $api_key,
                         'Content-Type'  => 'application/json',
@@ -4769,14 +4780,14 @@
                             } else {
                                 if ($email == get_bloginfo('admin_email')) echo '<span class="vsys vadmin">admin</span>';
                                 echo $approved ? '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing"> 待审核 </span>';
-                                if ($is_thoughtful_comment) echo '<span class="vsys vthoughtful" title="AI Powered by @2BER">✨亮评 #' . $id . '</span>';
+                                if ($is_thoughtful_comment) echo '<span class="vsys vthoughtful" title="AI Powered @2BER">✨亮评 #' . $id . '</span>';
                             }
                         ?>
                     </div>
                     <div class="vmeta">
                         <span class="vtime"><?php echo date('Y-m-d', strtotime($comment->comment_date)); ?></span>
                         <?php 
-                            if ($is_ai_spam) echo '<span class="vedited vspam" title="'.$is_ai_spam.'">AI Spam-ed</span>';
+                            if ($is_ai_spam) echo '<span class="vedited vspam" title="'.$is_ai_spam.'">AI spam-ed</span>';
                             if ($approved) {
                                 if (get_option('site_ajax_comment_switcher')) {
                                     $tips = '回复ta的评论';

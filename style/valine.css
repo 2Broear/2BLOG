@@ -42,8 +42,11 @@
     font-size: inherit;
     margin-left: 5%!important;
 }
-.v .vlist .children .children {
+.v .vlist .children .children .children {
     margin-left: 0!important;
+}
+.v .vlist .children .children {
+    /*margin-left: 0!important;*/
     padding: 0;
     box-shadow: none;
     border: none;

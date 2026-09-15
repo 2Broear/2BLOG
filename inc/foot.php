@@ -2,7 +2,7 @@
     global $src_cdn;
 ?>
 <div class="noise-bgs"></div>
-<script src="<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/js/main.js?v=<?php //echo get_theme_info(); ?>"></script>
+<script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
 <script type="text/javascript">
     console.info("<?php echo get_num_queries().'次查询，耗时'.timer_stop(0).'秒。'; ?>");
     // 自动执行一次以更正缓存(after load main.js)
@@ -497,12 +497,12 @@
                         e.preventDefault();
                         const wheelDelta = e.deltaY;
                         let currentPos = slideBox.scrollLeft;
-                        currentPos += wheelDelta * 5;
+                        currentPos += wheelDelta * 8;
                         // console.log(currentPos);
                         // if (currentPos == 0) // limites
                         // if (wheelDelta < 0) // scroll up
                         slideBox.scrollTo(currentPos, 0);
-                    }, 360, true));
+                    }, 168, true));
                 }
         <?php
             }

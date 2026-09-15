@@ -492,8 +492,14 @@ body.dark .barrage-item {
         }
         return '<div class="ibox quotes"><div class="iboxes magnetic" data-magnet-scale="1" data-magnet-step="0.05"><img src="'.get_postimg(0,$pid,true).'" alt="'.$title.'"><h3><a href="'.get_the_permalink($pid).'" target="_blank">'.$title.'</a></h3><div class="content"><p>'.$excerpt.'</p></div><mark>'.$avatar.' '.$author.' '.get_the_time('d/m/Y', $pid).' '.get_tag_list($pid, 1, "/").' | '.getPostViews($pid).' views.</mark></div></div>';
     }
+    function custom_imrss_shortcode($atts){
+        $key = isset($atts['key']) ? $atts['key'] : '';
+        $scope = isset($atts['scope']) ? $atts['scope'] : 'topics'; //topics-rss
+        return '<iframe src="https://imrss.com/widget.php?key='.$key.'&amp;mode=timeline&amp;scope='.$scope.'" loading="lazy" style="width:100%;border:0;min-height:600px;display:block;margin:0 auto" scrolling="no" title="imrss 订阅"></iframe><script src="https://imrss.com/frame.js?v=20260903b" async></script>';
+    }
     
     // 注册短代码
+    add_shortcode('custom_imrss', 'custom_imrss_shortcode');
     add_shortcode('custom_video', 'custom_video_shortcode');
     add_shortcode('netease_embed', 'custom_netease_shortcode');
     add_shortcode('bilibili_embed', 'custom_bilibili_shortcode');

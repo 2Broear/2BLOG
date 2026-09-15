@@ -30,6 +30,9 @@
         /*.news-window:nth-child(even) .news-window-img a {*/
         /*    padding: 0;*/
         /*}*/
+        .news-window:nth-child(odd) span.news-window-img {
+            min-width: 18%;
+        }
         .news-window:nth-child(even) h2.entry-title {
             font-size: 1rem;
         }
@@ -74,7 +77,7 @@
                                 $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                                 $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                         ?>
-                                <article class="<?php if($post_orderby>1) echo 'topset icom'; ?> news-window wow magnetics" data-magnet-scale="1" data-magnet-step="0.025" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
+                                <article class="news-window wow magnetics<?php if($post_orderby>1) echo ' topset icom'; ?>" data-magnet-scale="1" data-magnet-step="0.025" data-wow-delay="0.1s">
                                     <div class="news-window-inside">
                                         <?php
                                             $postimg = get_postimg();
@@ -86,7 +89,7 @@
                                             }
                                             if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img magnetic" data-magnet-step="0.15"><a href="'.get_the_permalink().'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.get_the_title().'" /></a></span>'; //get_postimg() || 
                                         ?>
-                                        <div class="news-inside-content" style="<?php //echo $hasimg_style; ?>">
+                                        <div class="news-inside-content">
                                             <h2 class="entry-title">
                                                 <a href="<?php the_permalink() ?>" title="<?php the_title() ?>"><?php the_title() ?></a>
                                             </h2>

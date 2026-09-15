@@ -162,6 +162,7 @@
         }
         .body-basically .Introduce {
             color: var(--preset-4a);
+            padding: 0 15px;
         }
         .about_blocks li.intro_right .mbit .mbit_range li.active span em:before {
             /*opacity: 1;*/

@@ -1,4 +1,104 @@
 <?php
+    if (get_option('site_chatgpt_switcher') && get_option('site_chatgpt_ai_summary')) {
+        /**
+        * 在文章列表添加 "AI摘要" 列
+        */
+        add_filter('manage_posts_columns', function($columns) {
+            $columns['gpt_summary'] = 'AI 摘要';
+            return $columns;
+        }, 10, 2);
+        
+        /**
+        * 输出列内容
+        */
+        add_action('manage_posts_custom_column', function($column, $post_id) {
+            if ($column !== 'gpt_summary') return;
+        
+            $post = get_post($post_id);
+            if (!in_chatgpt_cat($post)) {
+                echo '<span style="color:#999;">—</span>';
+                return;
+            }
+        
+            $cache_key = 'gpt_summary_' . $post_id;
+            $cached    = get_option($cache_key, null);
+            $summary   = '';
+        
+            if ($cached !== null) {
+                $data = json_decode($cached, true);
+                $summary = gpt_extract_result_text($data);
+            }
+        
+            $has_cache = !empty($summary);
+        
+            echo '<div class="gpt-summary-cell" data-post-id="' . $post_id . '" style="max-width:420px;">';
+        
+            // 摘要内容展示
+            if ($has_cache) {
+                echo '<div class="gpt-summary-text" title="' . esc_attr($summary) . '" style="font-size:12px;margin-bottom:4px;max-height: 5em;overflow: hidden;">' . esc_html($summary) . '</div>';
+            } else {
+                // echo '<div class="gpt-summary-text" style="color:#999;">暂无摘要</div>';
+            }
+        
+            // 状态 + 按钮
+            echo '<a href="javascript:;" class="gpt-regen button button-small" data-post-id="' . $post_id . '">'
+                . ($has_cache ? '重新生成' : '生成摘要')
+                . '</a>';
+            echo '<span class="gpt-spinner spinner" style="float:none;margin-left:4px;"></span>';
+            echo '</div>';
+        }, 10, 2);
+        /**
+         * 在 edit.php 加载列交互脚本
+         */
+        add_action('admin_footer-edit.php', function() {
+            $screen = get_current_screen();
+            if (!$screen || $screen->post_type !== 'post') return;
+    ?>
+            <script>
+            jQuery(function($) {
+                $('<style>.gpt-summary-cell .spinner{visibility:hidden;}.gpt-summary-cell.loading .spinner{visibility:visible;}</style>').appendTo('head');
+        
+                $(document).on('click', '.gpt-regen', function(e) {
+                    if(!confirm('确认生成AI摘要吗？')) return;
+                    e.preventDefault();
+                    var $btn = $(this);
+                    var postId = $btn.data('post-id');
+                    var $cell = $btn.closest('.gpt-summary-cell');
+                    var $text = $cell.find('.gpt-summary-text');
+        
+                    if ($btn.hasClass('disabled')) return;
+                    $btn.addClass('disabled').text('生成中…');
+                    $cell.addClass('loading');
+        
+                    $.ajax({
+                        url: '/wp-json/gpt-summary/v1/summary/' + postId + '?force=1',
+                        method: 'GET',
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('X-WP-Nonce', '<?php echo wp_create_nonce('wp_rest'); ?>');
+                        }
+                    }).done(function(res) {
+                        if (res && res.summary) {
+                            $text.text(res.summary).css('color', '#444').attr('title', res.summary);
+                            $btn.text('重新生成').removeClass('disabled');
+                        } else {
+                            $text.text('生成失败').css('color', '#dc3232');
+                            $btn.text('重试').removeClass('disabled');
+                        }
+                    }).fail(function(xhr) {
+                        var msg = '请求失败';
+                        if (xhr.responseJSON && xhr.responseJSON.message) msg = xhr.responseJSON.message;
+                        $text.text(msg).css('color', '#dc3232');
+                        $btn.text('重试').removeClass('disabled');
+                    }).always(function() {
+                        $cell.removeClass('loading');
+                    });
+                });
+            });
+            </script>
+    <?php
+        });
+    }
+
     /*
      https://developer.wordpress.org/reference/hooks/admin_enqueue_scripts/
      load script/style to set exists column_value in column_input
@@ -36,22 +136,62 @@
     }
     // preview custom_column-value
     add_action('manage_posts_custom_column', 'wpse_3531_display_seo_columns', 10, 2);
-    function wpse_3531_display_seo_columns($column_name, $post_id){
+    function wpse_3531_display_seo_columns($column_name, $post_id) {
+        $post_meta = get_post_meta($post_id);
         if ('post_orderby' == $column_name) {
-            echo get_post_meta($post_id) ? get_post_meta($post_id, 'post_orderby', true) : '0（edit required）';
+            $post_orderby = get_post_meta($post_id, 'post_orderby', true);
+            echo $post_meta ? ($post_orderby<1 || $post_orderby>1 ? "<b style='color:red';>$post_orderby</b>" : $post_orderby) : '0（edit required）'; //（置顶）
         }
         global $edit_acg_posts;
         if ($edit_acg_posts) {
             if('post_rcmd' == $column_name){
                 $check = '';
-                if(get_post_meta($post_id)) $check = get_post_meta($post_id, 'post_rcmd', true) ? 'checked' : '';
+                if($post_meta) $check = get_post_meta($post_id, 'post_rcmd', true) ? 'checked' : '';
                 echo $check;
             }
             if('post_rating' == $column_name){
-                echo get_post_meta($post_id) ? get_post_meta($post_id, 'post_rating', true) : '';
+                echo $post_meta ? get_post_meta($post_id, 'post_rating', true) : '';
             }
         }
     }
+    /**
+     * 3. 让“排序”列可点击排序
+     */
+    add_filter( 'manage_edit-post_sortable_columns', 'wpse_3531_sortable_columns' );
+    function wpse_3531_sortable_columns( $columns ) {
+        $columns['post_orderby'] = 'post_orderby';
+        return $columns;
+    }
+    
+    /**
+     * 4. 处理排序逻辑：把 orderby=post_orderby 转成 meta 值排序
+     */
+    add_action( 'pre_get_posts', 'wpse_3531_orderby_meta' );
+    function wpse_3531_orderby_meta( $query ) {
+        // 只在后台文章列表主查询生效
+        if ( ! is_admin() || ! $query->is_main_query() ) {
+            return;
+        }
+    
+        // 仅在 post 列表页
+        global $pagenow;
+        if ( 'edit.php' !== $pagenow ) {
+            return;
+        }
+    
+        // 如果用户点击了“排序”列
+        if ( 'post_orderby' === $query->get( 'orderby' ) ) {
+            $query->set( 'meta_key', 'post_orderby' );
+            $query->set( 'orderby', 'meta_value_num' ); // 按数值排序
+            // order 参数由 WordPress 自动从 URL 的 order=asc/desc 读取，无需手动设置
+            return;
+        }
+    
+        // 默认情况：让没有 post_orderby 的文章也显示出来（避免 meta_key 过滤掉它们）
+        // 如果你希望默认列表也按 post_orderby 排序，可以在这里加默认排序
+        // 否则保持默认（日期排序），不加任何设置即可
+    }
+
     // Add our text to the quick edit box
     add_action('quick_edit_custom_box', 'on_quick_edit_custom_box', 10, 2);
     function on_quick_edit_custom_box($column_name, $post_type){

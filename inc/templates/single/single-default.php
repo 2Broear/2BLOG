@@ -44,6 +44,7 @@
             /* text-underline-offset: 3px;*/
             /*background: linear-gradient(transparent, var(--theme-color)) no-repeat left 97%/0 30%;*/
             background-size: 100% 38%;
+            /*background-size: 100% 52%;*/
 	    }
 	    figure.wp-block-gallery > figure{
 	        /*min-height: 222px;*/
@@ -64,7 +65,7 @@
 	    .win-content {
 	        background: linear-gradient(90deg, var(--mirror-start) 0, var(--mirror-end));
             background: -webkit-linear-gradient(150deg, var(--mirror-start) 0, var(--mirror-end));
-            max-width: 1024px;
+            /*max-width: 1024px;*/
             /*** !Perfomance Issue  ***/
 	        /*background: rgb(255 255 255 / 95%);*/
             /*backdrop-filter: blur(15px);*/

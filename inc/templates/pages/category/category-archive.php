@@ -83,6 +83,9 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
             /*animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);*/
             /*-webkit-animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);*/
         }
+        .win-top .counter h1 {
+            -webkit-text-stroke: 1.75px;
+        }
         .win-top .counter h1 sup {
             opacity: .5;
             position: absolute;
@@ -340,9 +343,10 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                             // print_r($archive_years);
                             foreach ($archive_years as $output_year) {
                                 $output_data = get_option('site_archive_' . $output_year . '_cache');
+                                // print_r('site_archive_' . $output_year . '_cache');
                                 $output_data = json_decode($output_data); //, true
                                 if (!$output_data) {
-                                    // 注意EO缓存！Refresh updates
+                                    // 注意EO / memcached缓存！Refresh updates
                                     echo '<div class="fade-item"><div class="data-info"><h2>' . $output_year . ' 年度发布 🔁</h2><span class="stat_'.$output_year.' stats">📈📉统计：<b>Updated data for ' . $output_year . ' (<a href="javascript:void(0);" onclick="window.location.reload()">Refresh updates..</a>)</b></span></div>';
                                     update_archive_year($output_year, $output_sw);
                                     echo '</div>';

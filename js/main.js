@@ -605,7 +605,10 @@
         const scrollForward = window.pageYOffset;
         // 方向判断（scroll_record 是上一次有效执行时的位置）
         const scrollingDown = scroll_record - scrollForward < 0;
-    
+        // 顶部、底部边界检测：已经到达页面底部时，强制显示 header
+        const atTop = scrollTop <= 0;
+        const atBottom = scrollTop + windowHeight >= docHeight - 2;
+        
         // 从缓存读取
         let { headerH, headbarOH, fixedSidebar, footerDetect } = scrollCache;
         if (sidebar_window) {
@@ -614,8 +617,17 @@
             footerDetect = footer.querySelector(".footer-detector").offsetTop - 
                                       (headbarOH + sidebar_float.offsetHeight);
         }
+        // ----- 进度球和进度条 -----
+        toggleClass(progress_wave, "active");
+        toggleClass(progress_bar, "active");
         // ----- 处理导航栏与 headbar -----
-        if (scrollingDown) {
+        if (atBottom) {
+            // 强制展开 header 并关闭所有进度动效
+            toggleClass(header, class_down, class_up);
+            toggleClass(progress_bar, null, "active");
+            toggleClass(progress_wave, null, "active");
+        } else if (scrollingDown) {
+            // 下滚逻辑（原样保留）
             if (scrollTop >= headerH) {
                 toggleClass(header, class_up, class_down);
                 toggleClass(headbar, "slide-down", null);
@@ -627,12 +639,15 @@
                 toggleClass(headbar, null, class_up);
             }
         } else {
-            // 上滚
+            // 上滚逻辑（原样保留）
             if (scrollTop <= headerH) {
                 toggleClass(headbar, null, "slide-down");
                 toggleClass(progress_ball, null, "pull-up");
+                toggleClass(header, null, class_down);  // 禁用 class_down
+                toggleClass(header, null, class_up);
+            } else {
+                toggleClass(header, class_down, class_up);
             }
-            toggleClass(header, class_down, class_up);
             if (npost && share && scrollTop <= share.offsetTop) {
                 toggleClass(headbar, null, "next-post");
             }
@@ -675,15 +690,13 @@
         // ----- 进度球和进度条 -----
         progress_ball.querySelector(".pagePer strong").setAttribute('data-percent', page_percent);
         progress_ball.querySelector(".pagePer i").style.transform = `translateY(${100 - page_percent}%)`;
-        progress_wave.classList.add("active");
         if (progress_bar) {
-            progress_bar.classList.add("active");
             progress_bar.style.opacity = 1;
             progress_bar.style.transform = `translateX(${page_percent - 100}%)`;
         }
         if (scrollTop <= 0 || scrollTop + windowHeight >= docHeight - 1) {
-            progress_wave.classList.remove("active");
-            if (progress_bar) progress_bar.classList.remove("active");
+            toggleClass(progress_wave, null, "active");
+            toggleClass(progress_bar, null, "active");
         }
     
         // ----- TOC 高亮 (实时动态版本) -----
@@ -691,7 +704,7 @@
         
         const aindex_li = aindex.querySelectorAll('li');
         const removeCurrentClass = () => {
-            aindex_li.forEach(li => li.classList.remove('current'));
+            aindex_li.forEach(li => toggleClass(li, null, "current"));
         };
         
         // 动态阈值：导航栏高度 + 一点余量（可自行调整）
@@ -719,7 +732,7 @@
         } else {
             removeCurrentClass();
             const tocLink = document.querySelector('#t' + activeIndex);
-            if (tocLink) tocLink.classList.add('current');
+            if (tocLink) toggleClass(tocLink, "current");
         }
     }
     

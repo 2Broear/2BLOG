@@ -9,6 +9,11 @@
 <head>
 	<link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/notes.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
+    <style>
+        .win-top h5 {
+            z-index: 2;
+        }
+    </style>
 </head>
 <body class="<?php theme_mode(); ?>">
 <div class="content-all">
