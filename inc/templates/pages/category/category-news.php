@@ -16,6 +16,11 @@
         body.dark .news-window:nth-child(odd) .news-window-inside{
             background: none;
         }
+        .news-window:nth-child(odd).magnetic.glow:after,
+        .news-window:nth-child(odd).magnetic.glow:before {
+            content: none;
+        }
+        
         .news-window:nth-child(even) span.news-window-img {
             position: initial;
         }
@@ -77,7 +82,7 @@
                                 $post_feeling = get_post_meta($post->ID, "post_feeling", true);
                                 $post_orderby = get_post_meta($post->ID, "post_orderby", true);
                         ?>
-                                <article class="news-window wow magnetics<?php if($post_orderby>1) echo ' topset icom'; ?>" data-magnet-scale="1" data-magnet-step="0.025" data-wow-delay="0.1s">
+                                <article class="news-window wow magnetic glow<?php if($post_orderby>1) echo ' topset icom'; ?>" data-magnet-scale="1" data-magnet-step="0" data-wow-delay="0.1s">
                                     <div class="news-window-inside">
                                         <?php
                                             $postimg = get_postimg();
@@ -87,7 +92,7 @@
                                                 $lazyhold = '';
                                                 $loadimg = $postimg;
                                             }
-                                            if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img magnetic" data-magnet-step="0.15"><a href="'.get_the_permalink().'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.get_the_title().'" /></a></span>'; //get_postimg() || 
+                                            if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img magnetic glows" data-magnet-step="0.15"><a href="'.get_the_permalink().'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.get_the_title().'" /></a></span>'; //get_postimg() || 
                                         ?>
                                         <div class="news-inside-content">
                                             <h2 class="entry-title">

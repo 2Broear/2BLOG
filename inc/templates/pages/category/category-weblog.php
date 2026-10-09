@@ -100,7 +100,7 @@
                     </div>
                     <div class="memos-tree-core v">
                         <div class="load">
-                            <button class="load-more load-memos magnetic" href="javascript:;" data-click="0">加载更多</button>
+                            <button class="load-more load-memos magnetic glow" href="javascript:;" data-click="0">加载更多</button>
                         </div>
                     </div>
             <?php
@@ -151,7 +151,7 @@
                                     </span>
                                     <span id="weblog-circle"></span>
                                 </div>
-                                <div class="weblog-tree-core-r magnetics" data-magnet-scale="1" data-magnet-step="0.05">
+                                <div class="weblog-tree-core-r magnetic glow" data-magnet-scale="1" data-magnet-step="0">
                                     <!--<a class="anchor"></a>-->
                                     <div id="<?php echo 'pid_'.get_the_ID() ?>" class="weblog-tree-box">
                                         <div class="tree-box-title">
@@ -263,7 +263,7 @@
                             index = res.attributes.index,
                             dates = res.attributes.dates,
                             today = res.attributes.today;
-                        loadContent.innerHTML += '<div class="weblog-tree-core-record i'+index+'" data-type="'+type+'"><div class="weblog-tree-core-l"><span id="weblog-timeline" data-year="'+today.y+'" data-month="'+today.m+'" data-day="'+today.d+'">'+dates+'</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r magnetics" data-magnet-scale="1" data-magnet-step="0.05"><div class="weblog-tree-box"><div class="tree-box-title"><h3 id="'+res.id+'" class="<?php echo $reply_quote; ?>">'+title+'</h3></div><div class="tree-box-content"><span id="core-info"><p>'+main+'</p></span><span id="other-info"><h4> Ps. </h4><p>'+ps+'</p><p id="sub">'+dates+'</p></span></div></div></div></div>';
+                        loadContent.innerHTML += '<div class="weblog-tree-core-record i'+index+'" data-type="'+type+'"><div class="weblog-tree-core-l"><span id="weblog-timeline" data-year="'+today.y+'" data-month="'+today.m+'" data-day="'+today.d+'">'+dates+'</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r magnetic glow" data-magnet-scale="1" data-magnet-step="0"><div class="weblog-tree-box"><div class="tree-box-title"><h3 id="'+res.id+'" class="<?php echo $reply_quote; ?>">'+title+'</h3></div><div class="tree-box-content"><span id="core-info"><p>'+main+'</p></span><span id="other-info"><h4> Ps. </h4><p>'+ps+'</p><p id="sub">'+dates+'</p></span></div></div></div></div>';
                         // loadcore.appendChild(loadContent);
                         loadcore.insertBefore(loadContent, loadbox);
                     }
@@ -344,7 +344,7 @@
                             container.appendChild(fragments);
                             resourceList = container.outerHTML;
                         }
-                        temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline"><a href="javascript:;">${item.creatorName}</a> - ${ts2date(item.createdTs, false)}</span></div><div class="weblog-tree-core-r magnetics" data-magnet-scale="1" data-magnet-step="0.05"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${item.content} ${resourceList}</span><p id="sub"><sup style="float:right;">最后编辑于 ${ts2date(item.updatedTs)}</sup></p></div></div></div>`;
+                        temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline"><a href="javascript:;">${item.creatorName}</a> - ${ts2date(item.createdTs, false)}</span></div><div class="weblog-tree-core-r magnetic glow" data-magnet-scale="1" data-magnet-step="0"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-content"><span id="core-info">${item.content} ${resourceList}</span><p id="sub"><sup style="float:right;">最后编辑于 ${ts2date(item.updatedTs)}</sup></p></div></div></div>`;
                         fragment.appendChild(temp);
                     });
                     memos_tree.insertBefore(fragment, memos_load);
@@ -425,7 +425,7 @@
                                     tags = item.tag ? " - "+item.tag : "";
                                 temp.id = "pid_"+item.id;
                                 temp.classList.add("weblog-tree-core-record");
-                                temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${item.date} ${tags}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r magnetics" data-magnet-scale="1" data-magnet-step="0.05"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-title"><a href="javascript:;" target="_self"><h3 class="<?php echo $reply_quote; ?>">${item.title}</h3></a></div><div class="tree-box-content"><span id="core-info">${item.content}</span><span id="other-info"><h4> Ps. </h4><p class="feeling">${item.subtitle}</p></span><p id="sub">${item.date} ${tags}</p></div></div></div>`;
+                                temp.innerHTML = `<div class="weblog-tree-core-l"><span id="weblog-timeline">${item.date} ${tags}</span><span id="weblog-circle"></span></div><div class="weblog-tree-core-r magnetic glow" data-magnet-scale="1" data-magnet-step="0"><div id="${item.id}" class="weblog-tree-box"><div class="tree-box-title"><a href="javascript:;" target="_self"><h3 class="<?php echo $reply_quote; ?>">${item.title}</h3></a></div><div class="tree-box-content"><span id="core-info">${item.content}</span><span id="other-info"><h4> Ps. </h4><p class="feeling">${item.subtitle}</p></span><p id="sub">${item.date} ${tags}</p></div></div></div>`;
                                 fragment.appendChild(temp);
                             });
                             document.querySelector('.weblog-tree-core').insertBefore(fragment, load_box);

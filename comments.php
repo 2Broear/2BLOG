@@ -47,7 +47,7 @@
     }
     $comment_allowed = comments_open() || is_category()&&$post->comment_status=="open";
     $comments_number = get_comments_number();
-    if ($comments_number > 0) {
+    if ($comments_number >= 0) {
 ?>
     <div class="main">
         <span id="respond">
@@ -246,7 +246,7 @@
             }
             if ($comment_allowed) {
         ?>
-            <div class="vwrap magnetics" data-magnet-scale="1" data-magnet-step="0.015">
+            <div class="vwrap magnetics" data-magnet-scale="1" data-magnet-step="0">
                 <form action="<?php echo esc_url(home_url('/')); ?>wp-comments-post.php" method="post" style="height: auto;border-radius: inherit;">
                     <div class="vheader item3">
                         <div class="avatar">
@@ -284,7 +284,7 @@
                                 echo '<span class="vsubmits vbtns" rel="nofollow" id="cancel-comment-reply-link" class="cancel-comment-reply-link" href="javascript:void(0);" style="display:' . $reply_states .';"> ' . $reply_context . '</span>';
                             ?>
                             <span class="painting-btn" title="CANVAS 画图面板">「 涂鸦画板 」</span>
-                            <span class="vemoji-btn">关闭表情</span>
+                            <!--<span class="vemoji-btn">关闭表情</span>-->
                             <span class="vpreview-btn"></span>
                             <?php
                                 $emojis_obj = new stdClass();
@@ -299,7 +299,7 @@
                         <div class="vcontrol">
                             <div class="col col-80 text-right">
                                 <button type="button" id="repushBtn" class="vsubmit vbtn" style="display:none"> 重新提交 </button>
-                                <button id="pushBtn" type="submit" class="submit_btn vsubmit vbtn magnetic" value="<?php echo $text_submit; ?>" data-pid="<?php echo $post_ID; ?>" data-cid="0" data-nonce="<?php echo wp_create_nonce( 'comment_dynamic_' ); //wp_create_nonce( 'comment_form' ); ?>" />回复</button>
+                                <button id="pushBtn" type="submit" class="submit_btn vsubmit vbtn magnetic glow" value="<?php echo $text_submit; ?>" data-pid="<?php echo $post_ID; ?>" data-cid="0" data-nonce="<?php echo wp_create_nonce( 'comment_dynamic_' ); //wp_create_nonce( 'comment_form' ); ?>" />回复</button>
                                 <?php //cancel_comment_reply_link('取消回复'); ?>
                             </div>
                         </div>
@@ -383,7 +383,7 @@
                             $max_overview = 3;
                             $child_overview = $child_counts > $max_overview; // all included children count
                             $overview_mask = $child_overview ? ' overview' : '';
-                            $overview_button = $child_overview ? ' <button class="vbtn extend_addon magnetic" style="">展开 '. $child_counts - $max_overview .' 条评论</button>' : '';
+                            $overview_button = $child_overview ? ' <button class="vbtn extend_addon magnetic glow" style="">展开 '. $child_counts - $max_overview .' 条评论</button>' : '';
                             echo '<ul class="children'. $overview_mask .'" data-cpid="'.$each->comment_ID.'">'; //'<div class="vquote">'; //
                                 wp_child_comments_loop($each);
                             echo $overview_button . '</ul>'; //'</div>'; //
@@ -412,9 +412,16 @@
                             }
                             $comment->comment_content = '<small style="opacity:.5;display:block;"> [ 等待评论审核，通过正常显示。] </small>' . $comment->comment_content;
                         }
+                        $comment_user_info = get_comment_full_info($comment->comment_author_email);
+                        $comment_user_title = sprintf(
+                            'Ta 在本站共 %d 条评论（首次 %s；最近 %s）',
+                            $comment_user_info['comment_count'],
+                            $comment_user_info['first_comment_date'] ?: '未知',
+                            $comment_user_info['last_comment_date'] ?: '未知'
+                        );
                     ?>
-                        <div class="vcard magnetics<?php if ($is_ai_comment && !$is_ai_pending) echo ' ai';if ($is_thoughtful_comment) echo ' thoughtful';if ($is_ai_spam) echo ' spam'; ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $comment_ID; ?>" data-ai-pending="<?php echo $is_ai_pending ?>">
-                            <a class="noslide" rel="nofollow" href="<?php comment_author_url(); ?>" target="_blank">
+                        <div class="vcard magnetic glow<?php if ($is_ai_comment && !$is_ai_pending) echo ' ai';if ($is_thoughtful_comment) echo ' thoughtful';if ($is_ai_spam) echo ' spam'; ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $comment_ID; ?>" data-ai-pending="<?php echo $is_ai_pending ?>">
+                            <a class="noslide avatar" rel="nofollow" href="<?php comment_author_url(); ?>" target="_blank" title="<?php echo $comment_user_title; ?>">
                                 <?php 
                                     if (get_option('show_avatars')) {
                                         $email = get_comment_author_email();
@@ -442,7 +449,7 @@
                                 <div class="vmeta">
                                     <span class="vtime"><?php echo get_comment_time('Y-m-d'); ?></span>
                                     <?php 
-                                        if ($is_ai_spam) echo '<span class="vedited vspam" title="'.$is_ai_spam.'">AI spam-ed</span>';
+                                        if ($is_ai_spam) echo '<span class="vedited vspam" title="@2BER：'.$is_ai_spam.'">AI Spam</span>';
                                         if ($approved) {
                                             if (get_option('site_ajax_comment_switcher')) {
                                                 global $post;
@@ -479,7 +486,7 @@
                     ?>
                         <ul class="children extend">
                             <div class="vcard magnetics ai" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $comment_ID; ?>" data-ai-pending="">
-                                <a class="noslide" rel="nofollow" href="" target="_blank">
+                                <a class="noslide avatar" rel="nofollow" href="" target="_blank">
                                 <?php if (get_option('show_avatars')) echo '<img class="vimg" '.$lazysrc.'="'.match_mail_avatar('ai@2broear.com').'" width=50 height=50 alt="user_avatar" />'; ?>
                                 <div class="vh" rootid="comment-<?php echo $comment_ID; ?>">
                                     <div class="vhead">
@@ -537,7 +544,7 @@
                         $load_class = $load_class . ' disabled';
                         $text_loadmore = '已加载全部评论';
                     }
-                    echo '<a href="javascript:;" class="' . $load_class . ' noslide magnetic" data-click="0" data-load="'.$comment_count.'" data-counts="'.$comments_all.'" data-nonce="'.wp_create_nonce($post_ID."_comment_ajax_nonce").'">'.$text_loadmore.'</a>';
+                    echo '<a href="javascript:;" class="' . $load_class . ' noslide magnetic glow" data-click="0" data-load="'.$comment_count.'" data-counts="'.$comments_all.'" data-nonce="'.wp_create_nonce($post_ID."_comment_ajax_nonce").'">'.$text_loadmore.'</a>';
                 } else {
                     // 上一页评论
                     function get_previous_comments_html( $label = '' ) {
@@ -552,7 +559,7 @@
                         if ( empty( $label ) ) {
                             $label = __( '&laquo; Older Comments' );
                         }
-                        return '<span><a class="loadmore noslide wp magnetic" href="' . esc_url( get_comments_pagenum_link( $prevpage ) ) . '" ' . apply_filters( 'previous_comments_link_attributes', '' ) . '><i class="icom"></i>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '</a></span>';
+                        return '<span><a class="loadmore noslide wp magnetic glow" href="' . esc_url( get_comments_pagenum_link( $prevpage ) ) . '" ' . apply_filters( 'previous_comments_link_attributes', '' ) . '><i class="icom"></i>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '</a></span>';
                     }
                     // 下一页评论
                     function get_next_comments_html( $label = '', $max_page = 0 ) {
@@ -578,7 +585,7 @@
                         if ( empty( $label ) ) {
                             $label = __( 'Newer Comments &raquo;' );
                         }
-                        return '<span><a class="loadmore noslide wp magnetic" href="' . esc_url( get_comments_pagenum_link( $nextpage, $max_page ) ) . '" ' . apply_filters( 'next_comments_link_attributes', '' ) . '>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '<i class="icom left"></i></a></span>';
+                        return '<span><a class="loadmore noslide wp magnetic glow" href="' . esc_url( get_comments_pagenum_link( $nextpage, $max_page ) ) . '" ' . apply_filters( 'next_comments_link_attributes', '' ) . '>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '<i class="icom left"></i></a></span>';
                     }
                     echo get_previous_comments_html("PREV COMMENTS");
                     echo get_next_comments_html("NEXT COMMENTS");
@@ -952,12 +959,13 @@
                               parent = child.comment_parent,
                               content = child.comment_content,//strip_tags(child.comment_content),
                               user_agent =  `<span class="vsys useragent">${child._comment_agent.browser+" / "+child._comment_agent.system}</span>`,
+                              user_info = child._comment_userinfo,
                               is_ai_spam = child._comment_spam,
                               is_ai_reply = child.user_id == 9527,
                               is_thoughtful_reply = child._comment_thoughtful != 0,
                               ai_class = thoughtful_class = ai_reply = thoughtful_reply = '',
                               spam_class = is_ai_spam ? ' spam' : '',
-                              ai_spam = is_ai_spam ? `<span class="vedited vspam" title="${is_ai_spam}">AI spam-ed</span>` : '',
+                              ai_spam = is_ai_spam ? `<span class="vedited vspam" title="@2BER：${is_ai_spam}">AI Spam</span>` : '',
                               is_admin = email == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
                               is_auditing = child.comment_approved == '0',
                               is_approved = is_auditing ? '<span class="auditing vsys">待审核</span>' : '',
@@ -975,7 +983,7 @@
                               thoughtful_class = ' thoughtful';
                               thoughtful_reply = `<span class="vsys vthoughtful" title="AI Powered @2BER">✨亮评 #${id}</span>`;
                           }
-                          output += `<div class="vcard magnetics${ai_class+thoughtful_class+spam_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0.015" id="comment-${id}"><a class="noslide" rel="nofollow" href="${link}" target="_blank"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div><div class="vmeta"><span class="vtime">${child.comment_date.slice(0, 10)}</span>${ai_spam + replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${child._comment_reply}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
+                          output += `<div class="vcard magnetic glow${ai_class+thoughtful_class+spam_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0.015" id="comment-${id}"><a class="noslide avatar" rel="nofollow" href="${link}" target="_blank" title="Ta 在本站共 ${user_info.comment_count} 条评论（首次 ${user_info.first_comment_date}；最近 ${user_info.last_comment_date}）"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div><div class="vmeta"><span class="vtime">${child.comment_date.slice(0, 10)}</span>${ai_spam + replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${child._comment_reply}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
                        }
                     }
                     return output;
@@ -1046,7 +1054,7 @@
                     if ($ai_comment) {
             ?>
                     // filter ai-reply comments
-                    function handle_ai_comments(comment_id, process, callback, busy, max = 15, attempts = 0) {
+                    function handle_ai_comments(comment_id, process, callback, busy, max = 30, attempts = 0) {
                         // send_ajax_request("get", `/wp-json/two-ber/v1/ai-reply-status?comment_id=${comment_id}`, false, (data)=> {
                         fetch(`/wp-json/two-ber/v1/ai-reply-status?comment_id=${comment_id}`)
                         .then(res => res.json())
@@ -1065,6 +1073,8 @@
                                 }, 2000);
                             } else if (data.status === 'completed') {
                                 console.log(data);
+                            } else if (data.status === 'error') {
+                                alert(data.reason);
                             }
                         });
                     }
@@ -1222,10 +1232,11 @@
                                     that.reply_obj.context.emojis_<?php echo $emojis_default[0]; ?>
                                 ));
                                 break;
-                            case t.classList.contains('vemoji-btn'):
-                                const vemojis = that.vwrap.querySelector('.vemojis');
-                                that.toggleSwitch(t, vemojis, that.reply_obj.context.emojis_on, that.reply_obj.context.emojis_off);
-                                break;
+                            // // bug on switch ESwitch-btn when emojis closed;
+                            // case t.classList.contains('vemoji-btn'):
+                            //     const vemojis = that.vwrap.querySelector('.vemojis');
+                            //     that.toggleSwitch(t, vemojis, that.reply_obj.context.emojis_on, that.reply_obj.context.emojis_off);
+                            //     break;
                             case t.classList.contains('painting-btn'):
                                 const canvas = that.vwrap.querySelector('.canvas_paint_board');
                                 that.toggleSwitch(t, canvas, that.reply_obj.context.canvas_on, that.reply_obj.context.canvas_off, ()=> {
@@ -1289,17 +1300,18 @@
                                                 md5mail = each_comment.comment_author_email,
                                                 childs = each_comment._comment_childs,
                                                 user_agent = `<span class="vsys useragent">${each_comment._comment_agent.browser+" / "+each_comment._comment_agent.system}</span>`,
+                                                user_info = each_comment._comment_userinfo,
                                                 content = each_comment.comment_content,//strip_tags(each_comment.comment_content),
                                                 childs_limits = 3,
                                                 childs_counts = each_comment.comment_counts,  // marked for overview limits
                                                 childs_overview = childs_counts > childs_limits,
                                                 overview_class = childs_overview ? ' overview' : '',
-                                                overview_button = childs_overview ? `<button class="vbtn extend_addon magnetic" style="">展开 ${childs_counts - childs_limits} 条评论</button>` : '',
+                                                overview_button = childs_overview ? `<button class="vbtn extend_addon magnetic glow" style="">展开 ${childs_counts - childs_limits} 条评论</button>` : '',
                                                 if_child = childs ? `<ul class="children${overview_class}" data-cpid="${id}">${that.childComments(childs) + overview_button}</ul>` : '',
                                                 is_ai_spam = each_comment._comment_spam,
                                                 is_ai_reply = each_comment.user_id == 9527,
                                                 is_thoughtful_reply = each_comment._comment_thoughtful != 0,
-                                                ai_spam = is_ai_spam ? `<span class="vedited vspam" title="${is_ai_spam}">AI spam-ed</span>` : '',
+                                                ai_spam = is_ai_spam ? `<span class="vedited vspam" title="@2BER：${is_ai_spam}">AI Spam</span>` : '',
                                                 ai_reply = thoughtful_reply = '',
                                                 is_admin = md5mail == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
                                                 is_auditing = each_comment.comment_approved == '0',
@@ -1325,9 +1337,9 @@
                                             if (is_ai_spam) appendList.classList.add('spam');
                                             appendList.dataset.aiPending = each_comment.two_ber_ai_pending;
                                             appendList.dataset.magnetScale = '1';
-                                            appendList.dataset.magnetStep = "0.015";
-                                            appendList.classList.add("vcard"); //wp_comments
-                                            appendList.innerHTML += `<a class="noslide" rel="nofollow" href="${link}" target="_blank"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_comment.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow" href="${link}" target="_blank"> <em>${nick}</em> </a> ${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div> <div class="vmeta"> <span class="vtime">${each_comment.comment_date.slice(0, 10)}</span>${ai_spam + replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
+                                            appendList.dataset.magnetStep = "0";
+                                            appendList.classList.add("vcard", 'magnetic', 'glow'); //wp_comments
+                                            appendList.innerHTML += `<a class="noslide avatar" rel="nofollow" href="${link}" target="_blank" title="Ta 在本站共 ${user_info.comment_count} 条评论（首次 ${user_info.first_comment_date}；最近 ${user_info.last_comment_date}）"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_comment.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow" href="${link}" target="_blank"> <em>${nick}</em> </a> ${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div> <div class="vmeta"> <span class="vtime">${each_comment.comment_date.slice(0, 10)}</span>${ai_spam + replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
                                             that.vlist.appendChild(appendList);
                                             that.vlist.innerHTML += if_child;
                                         }
@@ -1417,6 +1429,9 @@
                                                 <?php echo $output_success; ?>
                                                 // enable normal-reply (update replied commentid)
                                                 enableLink('comment-reply-link', that.reply_obj.context.reply, data);
+                                            } else if (data.status === 'error') {
+                                                <?php echo $output_failure = $words_typer ? 'words_typer(vcontent, data.reason, 25, "' . $shuffle_typer . '");' : 'vcontent.textContent = data.reason;'; ?>
+                                                enableLink();  // enable retry
                                             } else if (data.status === 'none') {
                                                 <?php echo $output_failure = $words_typer ? 'words_typer(vcontent, failure_context, 25, "' . $shuffle_typer . '");' : 'vcontent.textContent = failure_context;'; ?>
                                                 enableLink();  // enable retry
@@ -1570,8 +1585,8 @@
                                                     if (admin_md5mail=="<?php echo md5($user_mail); ?>") comment_info =  '<span class="vsys vadmin">admin</span>';
                                                 }
                                                 temp_comment.id = 'comment-' + reply_comment_id;
-                                                temp_comment.className = 'vcard magnetics comment_preview'; //wp_comments
-                                                temp_comment.innerHTML = `<a class="noslide" rel="nofollow" href="" target="_blank"> <img class="vimg" src="${that.vinfo.querySelector('.avatar img').src}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid=""> <div class="vhead"> <a class="vnick" rel="nofollow" href="" target="_blank"> <em>${a_val}</em> </a> ${comment_info}<span class="vsys useragent"> Comment Preview </span></div> <div class="vmeta"> <span class="vtime">${new Date().toLocaleString()}</span>${replytocom}</div> <div class="vcontent"> <p>${comment_replyto} ${filter_c_val}</p> </div> </div>`;
+                                                temp_comment.className = 'vcard magnetic glow comment_preview'; //wp_comments
+                                                temp_comment.innerHTML = `<a class="noslide avatar" rel="nofollow" href="" target="_blank"> <img class="vimg" src="${that.vinfo.querySelector('.avatar img').src}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid=""> <div class="vhead"> <a class="vnick" rel="nofollow" href="" target="_blank"> <em>${a_val}</em> </a> ${comment_info}<span class="vsys useragent"> Comment Preview </span></div> <div class="vmeta"> <span class="vtime">${new Date().toLocaleString()}</span>${replytocom}</div> <div class="vcontent"> <p>${comment_replyto} ${filter_c_val}</p> </div> </div>`;
                                                 // console.log(temp_comment);
                                                 let comment_nick = temp_comment.querySelector('.vnick em');
                                                 let reply_link = temp_comment.querySelector('.comment-reply-link');
@@ -1606,12 +1621,10 @@
                                                         return;
                                                     }
                                                     if (data.status === 'none') {
-                                                        data = JSON.stringify(data);
-                                                        console.warn(data);
-                                                        if (ai_comments) {
-                                                            ai_comments.querySelector(".vcontent p").textContent = data;
-                                                            // ai_comments.remove();
-                                                        }
+                                                        if (ai_comments) ai_comments.querySelector(".vcontent p").textContent = JSON.stringify(data);
+                                                        return;
+                                                    } else if (data.status === 'error') {
+                                                        if (ai_comments) ai_comments.querySelector(".vcontent p").textContent = data.reason;
                                                         return;
                                                     }
                                                     if (!ai_comments) {

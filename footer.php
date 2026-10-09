@@ -588,7 +588,7 @@
                 </div>
                 <div class="top magnetic" title="返回顶部" data-magnet-scale="1.05" data-magnet-step="0.5"><em>顶</em></div>
                 <div class="bottom magnetic" title="跳至顶部" data-magnet-scale="1.05" data-magnet-step="0.5"><em>底</em></div>
-                <div class="pagePer<?php echo $theme_class; ?> magnetic" title="<?php echo $theme_titles; ?>" onclick="<?php echo $theme_events; ?>" data-magnet-scale="1.1" data-magnet-step="0.75" style="transform: translate(-50%,-50%);">
+                <div class="pagePer<?php echo $theme_class; ?> magnetic glow" title="<?php echo $theme_titles; ?>" onclick="<?php echo $theme_events; ?>" data-magnet-scale="1.1" data-magnet-step="0.25" style="transform: translate(-50%,-50%);">
                     <strong data-percent="0"></strong>
                     <i style>
                         <span class="wave"></span>

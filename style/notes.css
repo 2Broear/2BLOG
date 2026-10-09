@@ -12,7 +12,7 @@
 .win-top h5:before{content:'';display:inherit;width: 38%;height: 36%;background-color: var(--theme-color);position:absolute;right: 0;bottom: 0;z-index:-1;}
 .win-nav{width:23.5%;height:auto;float:left;position:relative;top:-98px;z-index:9;}
 .win-nav .nav-fixes{width:100%;height:auto;position:relative;transition:margin .45s cubic-bezier(0,0.84,0.25,1)}
-.win-nav .nav-header{width:100%;height:auto;padding:15px 0 0;box-sizing:border-box;position:relative;background-color:var(--preset-f);box-shadow:rgba(0,0,0,0.05) 10px 10px 20px;border-radius:var(--radius);z-index:9;/*background:url('https://img.2broear.com/pixel/4.jpg') center center /cover;overflow:hidden;*/}
+.win-nav .nav-header{width:100%;height:auto;padding:35px 0 0;box-sizing:border-box;position:relative;background-color:var(--preset-f);box-shadow:rgba(0,0,0,0.05) 10px 10px 20px;border-radius:var(--radius);z-index:9;/*background:url('https://img.2broear.com/pixel/4.jpg') center center /cover;overflow:hidden;*/}
 body.dark .win-nav .nav-header div:before {background: var(--preset-3b);}
 .win-nav .nav-header div:before{content:'';width:100%;height:10%;position:absolute;top:-6%;left:0;clip-path:ellipse(55% 100% at 50% 100%);background: var(--preset-f);}
 .win-nav .nav-header div{position:relative;z-index:3;background-color:var(--preset-f);padding:10% 15px 15%;border: 1px solid #fff!important;

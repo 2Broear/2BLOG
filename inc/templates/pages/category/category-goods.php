@@ -30,7 +30,6 @@
             left: 50%;
             transform: translate(-50%, -50%);
             /*border-radius: calc(var(--radius)*2);*/
-            z-index: 9;
         }
         iframe#exhibition {
             max-height: 80%;

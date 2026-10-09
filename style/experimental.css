@@ -6,48 +6,85 @@
 **  @2026
 **
 **/
-.top-bar-tips span#doc-progress-bar {
-    background: linear-gradient(90deg, transparent, var(--theme-color), transparent);
+
+/*body.dark .magnetic.glow:before {*/
+/*    background: transparent;*/
+/*}*/
+
+/*.v .vlist .children.overview .extend_addon:hover,*/
+/*.pageSwitcher.dev a:hover {*/
+/*    border-color: transparent;*/
+/*}*/
+
+.tips-switch .tipsbox .tips.slide-down p {
+    max-width: 100%;
+    /*color: var(--preset-c);*/
+    /*text-align: center;*/
 }
+.scroll-inform,
+.main-content,
+.content-all-windows,
+.weblog-tree-all,
+.archive-tree,
+.download_boxes,
+.ranks,
+iframe#map,
+.exhibition,
 footer .footer-all .container {
     position: relative;
+    z-index: 2;
 }
-body.dark .content-all header::before {
+body.dark .win-top {
+    z-index: auto;
+}
+/*body.dark .content-all footer.mask::before,*/
+body.dark .content-all footer::before {
     background: radial-gradient(transparent -18%, var(--preset-2b) 88%);
 }
-.content-all header::before {
+/*.content-all footer.mask::before,*/
+.content-all footer::before {
     content: '';
     width: 100%;
     height: 100%;
     display: block;
-    /*background: radial-gradient(circle, var(--mirror-start) 0%, transparent 50%, var(--mirror) 88%);*/
-    background: radial-gradient(transparent 18%, var(--mirror) 88%);
+    background: radial-gradient(transparent 38%, var(--mirror) 88%);
     position: fixed!important;
     top: 0;
     left: 0;
     z-index: 0;
 }
-body.dark .archive-tree ul li a {
-    opacity: .75;
-}
-body.dark .archive-tree ul li a.article {
-    opacity: 1;
-}
 body.dark .win-top:after,
 body.dark .content-all {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='8' height='8' fill='none' stroke='rgb(255 255 255 / 0.1)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='8' height='8' fill='none' stroke='rgb(255 255 255 / 0.15)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
     background-size: 20px 20px;
+    /*background-image: radial-gradient(transparent -18%, var(--preset-2b) 88%), url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='8' height='8' fill='none' stroke='rgb(255 255 255 / 0.15)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");*/
+    /*background-size: 100% 100vh, 20px 20px;*/
 }
 .win-top:after,
 .content-all {
-    /*background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='8' height='8' fill='none' stroke='rgb(0 0 0 / 0.1)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");*/
-    /*background-size: 12px 12px;*/
+    /*background-image: radial-gradient(transparent 18%, var(--mirror) 88%), radial-gradient(var(--preset-e) 1px, var(--preset-fa) 1px);*/
+    /*background-size: 100% 100vh, 10px 10px;*/
+    /*background-position: center center, 0 0;*/
+    /*background-repeat: no-repeat, repeat;*/
+    /*background-attachment: fixed, scroll;*/
 }
 .win-top:after {
     width: 150%;
     height: 100px;
     left: -25%;
     bottom: -85px;
+}
+mark:hover {
+    color: var(--theme-color);
+}
+.top-bar-tips span#doc-progress-bar {
+    background: linear-gradient(90deg, transparent, var(--theme-color), transparent);
+}
+body.dark .archive-tree ul li a {
+    opacity: .75;
+}
+body.dark .archive-tree ul li a.article {
+    opacity: 1;
 }
 
 /*body.dark .v .vlist .vcard:hover {*/
@@ -58,10 +95,29 @@ body.dark .content-all {
 /*    background-image: radial-gradient(var(--preset-e) 1px, var(--preset-f) 1px)!important;*/
 /*    background-size: 10px 10px!important;*/
 /*}*/
+.v a.avatar:hover::after {
+    opacity: 1;
+}
+.v a.avatar:after {
+    content: attr(title);
+    max-width: 52%;
+    color: var(--preset-5a);
+    font-size: var(--min-size);
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    right: 5px;
+    opacity: 0;
+    transition: opacity .15s ease;
+    mask: linear-gradient(left, var(--preset-f) 80%, transparent 100%);
+    mask: -webkit-linear-gradient(left, var(--preset-f) 80%, transparent 100%);
+}
+/*.v .vlist .vcard .vimg,*/
 .v .vlist .vcard .vh .vsys.vthoughtful,
 .v .vlist .vcard .vh .vspam {
     cursor: help;
 }
+.v .vlist .vcard.thoughtful:after,
 .v .vlist .vcard.auditing:after,
 .v .vlist .vcard.spam:after,
 .v .vlist .vcard.ai:after {
@@ -76,6 +132,8 @@ body.dark .content-all {
     font-size: 5rem;
     opacity: .15;
     mask: -webkit-linear-gradient(-90deg, currentColor -20%, transparent 80%);
+    background: none!important;
+    left: auto !important;
 }
 .v .vlist .vcard.spam:after {
     content: "🤡"!important;
@@ -115,6 +173,9 @@ figure.wp-block-gallery > figure {
 /*body.dark .news-article-container .v .vlist .vcard:hover,*/
 body.dark .news-article-container .v .vlist .children:hover {
     background: var(--preset-3a);
+}
+.v .vlist .children {
+    max-width: 90%;
 }
 .pageSwitcher.dev a:focus {
     box-shadow: none!important;
@@ -216,6 +277,9 @@ body.dark .news-article-container .v .vlist .children:hover {
     bottom: 0;
     right: 0;
 }
+#news-tail_info {
+    border-top-style: dashed;
+}
 /**
 **
 ** @notes
@@ -227,6 +291,34 @@ body.dark .news-article-container .v .vlist .children:hover {
 .win-content article h1 {
     font-size: 1.5rem;
     font-family: serif;
+}
+/**
+**
+** 2bfriends
+**
+**/
+.friends-boxes .deals.tech .inbox .inbox-headside {
+    width: 66%!important;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    mask: -webkit-linear-gradient(right, var(--preset-f) 0%, transparent 100%);
+    opacity: .58;
+}
+.friends-boxes .deals.tech .inbox .inbox-headside img {
+    border-radius: 0;
+    object-fit: cover;
+}
+.friends-boxes .deals.tech .inbox .inbox-inside a.inbox-aside {
+    margin: 0 auto!important;
+    padding: 25px 15px;
+}
+.friends-boxes .deals.tech .inbox .inbox-inside.aside ol {
+    margin: 12% auto;
+}
+.friends-boxes .deals.tech .inbox .inbox-inside {
+    border-width: 2px!important;
 }
 /**
 **
@@ -351,7 +443,7 @@ body.dark .v .vlist .vcard .vcontent {
 #supports-txt i {
     font-size: 2.5rem;
     margin: auto 50px;
-    padding-top: 4px;
+    padding: 4px 0 0;
     /*line-height: normal;*/
     font-family: Corpta, fantasy, fangsong;
     text-transform: uppercase;

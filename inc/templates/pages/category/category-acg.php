@@ -48,7 +48,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
             $loadimg = $postimg;
         }
         $href = $post_source ? $post_source : ($acg_single_sw ? "javascript:;" : get_the_permalink());
-        $output .= '<div class="inbox flexboxes magnetic" data-magnet-scale="1.25" data-magnet-step="" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /></a><span class="author">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(52,true).'</p></span>';
+        $output .= '<div class="inbox flexboxes magnetic glow" data-magnet-scale="1.25" data-magnet-step="0.15" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /></a><span class="author">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(52,true).'</p></span>';
         if($post_rcmd){
             $rcmd_title = 'Personal Recommends';
             $rcmd_class = '';
@@ -83,7 +83,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
             $posts_count = $acg_query->post_count;  //count($acg_query->posts) //mailto:'.get_bloginfo("admin_email").' 发送邮件，荐你所见
             $disable_statu = $posts_count==$all_count ? ' disabled' : false; //>=
             // 注意EO缓存！load-more data-nonce
-            $output .= '<div class="inbox more flexboxes magnetic'.$disable_statu.'"><div class="inbox-more flexboxes"><a class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cid.'" data-nonce="'.wp_create_nonce($slug."_posts_ajax_nonce").'" data-cat="'.strtoupper($slug).'" title="加载更多 '.$the_cat->name.'"></a></div></div>';
+            $output .= '<div class="inbox more flexboxes magnetic glow'.$disable_statu.'" data-magnet-scale="1" data-magnet-step="0"><div class="inbox-more flexboxes"><a class="load-more" href="javascript:;" data-counts="'.$all_count.'" data-load="'.$posts_count.'" data-click="0" data-cid="'.$cid.'" data-nonce="'.wp_create_nonce($slug."_posts_ajax_nonce").'" data-cat="'.strtoupper($slug).'" title="加载更多 '.$the_cat->name.'"></a></div></div>';
             // unset($cid, $slug, $all_count, $posts_count, $disable_statu);
         }
     }
@@ -285,7 +285,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                                             $dataCls = ' blink magnetics';
                                             $cat_num = '0';
                                         }
-                                        $output .= '<div class="'.$cat_slug.$dataCls.'" data-magnet-scale="1.25" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2 style="--data-count:'.$cat_count.'" data-count="'.$cat_count.'"><sup>+</sup></h2><p>'.$the_cat->name.' / <small>'.strtoupper($cat_slug).'</small></p></a></div>'; //'.$cat_num.'
+                                        $output .= '<div class="'.$cat_slug.$dataCls.'" data-magnet-scale="1" data-magnet-step="0.15" data-count="'.$cat_count.'"><a href="'.get_category_link($the_cat->term_id).'" rel="nofollow"><h2 style="--data-count:'.$cat_count.'" data-count="'.$cat_count.'"><sup>+</sup></h2><p>'.$the_cat->name.' / <small>'.strtoupper($cat_slug).'</small></p></a></div>'; //'.$cat_num.'
                                     }
                                     if($output_sw) update_option('site_acg_stats_cache', wp_kses_post($output));
                                 }
@@ -420,8 +420,9 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                         extra_str = "",
                         post_rating = item.rating;
                     temp.id = "pid_"+item.id;
-                    temp.classList.add("inbox", "flexboxes", 'magnetic');
+                    temp.classList.add("inbox", "flexboxes", 'magnetic', 'glow');
                     temp.dataset.magnetScale = 1.25;
+                    temp.dataset.magnetStep = 0.15;
                     if(item.rcmd){
                         const both_class = post_rating ? " both" : "",
                               rcmd_title = post_rating ? 'GOLD Recommendation' : 'Personal Recommends'

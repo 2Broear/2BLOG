@@ -622,8 +622,9 @@
         toggleClass(progress_bar, "active");
         // ----- 处理导航栏与 headbar -----
         if (atBottom) {
-            // 强制展开 header 并关闭所有进度动效
+            // 强制展开 header/progress_ball 并关闭所有进度动效
             toggleClass(header, class_down, class_up);
+            toggleClass(progress_ball, "pull-up", null);
             toggleClass(progress_bar, null, "active");
             toggleClass(progress_wave, null, "active");
         } else if (scrollingDown) {

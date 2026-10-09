@@ -33,9 +33,10 @@
             $limit = $limit ? $limit : get_option('posts_per_page');
             $query_array = $cid ? array('cat' => $cid, 'meta_key' => 'post_orderby', 'posts_per_page' => $limit, 'orderby' => $orderby) : array('cat' => $cid, 'posts_per_page' => $limit, 'order' => 'DESC', 'orderby' => $orderby);
             $left_query = new WP_Query(array_filter($query_array));
+            $magnetic_glow = $detail ? '' : ' glow';
             while ($left_query->have_posts()):
                 $left_query->the_post();
-                $topset = get_post_meta($post->ID, "post_orderby", true)>1 ? 'topset' : false;
+                $topset = get_post_meta($post->ID, "post_orderby", true)>1 ? 'topset ' : false;
                 $title = $detail ? trim(get_the_title()).' -（'.get_post_meta($post->ID, "post_feeling", true).'）<sup>'.$post->post_date.'</sup>' : trim(get_the_title());
                 // print_r(get_category($cid)->parent);
                 $cid = !get_category($cid)->errors ? $cid : 1; //php8
@@ -44,7 +45,7 @@
                 $post_cat = get_the_category($post->ID);
                 $loc_id = $par_slug==$acg_slug ? $post_cat[0]->slug : 'pid_'.get_the_ID(); //$post_cat[0]->parent==0 ? $post_cat[1]->slug : $post_cat[0]->slug;
                 $pre_link = $specific_link || !$acg_single_sw ? '<a href="'.get_the_permalink().'" title="'.$title.'" target="_blank">' : '<a href="'.get_category_link($cid).'#'.$loc_id.'" target="_self" rel="nofollow">';
-                $output .= '<li class="'.$topset.' magnetic">'.$pre_link . $title . '</a></li>';
+                $output .= '<li class="'.$topset.'magnetic'.$magnetic_glow.'">'.$pre_link . $title . '</a></li>';
             endwhile;
             wp_reset_query();  // 重置 wp 查询（每次查询后都需重置，否则将影响后续代码查询逻辑）
             if($output_sw) update_option($cache, $output); //wp_kses_post($output) caused parse issue
@@ -295,7 +296,7 @@
             </div>
         </div>
         <!-- 右 -->
-        <div class="recommendation wow fadeInUp hfeed magnetics" data-magnet-scale="1" data-magnet-step="0.05" data-wow-delay="0.2s">
+        <div class="recommendation wow fadeInUp hfeed magnetic glow" data-magnet-scale="1" data-magnet-step="0" data-wow-delay="0.2s">
             <?php
                 $rcmd_cat = get_option('site_rcmdside_cid');
                 $rcmd_arr = array(
@@ -358,7 +359,7 @@
             foreach ($cardnav_array as $cardnav) {
                 $card_term = get_category_by_slug($cardnav) ? get_category_by_slug($cardnav) : get_category(1);  // 1 for UNCATEGORIZED
                 if ($cardnav) {  //incase end with ";"
-                    echo '<span class="'.$cardnav.' magnetic"><a href="'.get_category_link($card_term->term_id).'"> <b>' . $card_term->name . '</b><i class="icom icon-'.$cardnav.'"></i></a></span>';
+                    echo '<span class="'.$cardnav.' magnetic glow" data-magnet-scale="1" data-magnet-step="0.05"><a href="'.get_category_link($card_term->term_id).'"> <b>' . $card_term->name . '</b><i class="icom icon-'.$cardnav.'"></i></a></span>';
                 }
             }
         ?>
@@ -588,7 +589,7 @@
                                             echo $output_string;
                                             return;
                                         }
-                                        echo '<p id="hitokoto" class="magnetic"> NO Tags Found.  </p>'; //<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"></span>
+                                        echo '<p id="hitokoto" class="magnetic"> NO Tags.  </p>'; //<span id="acg-content-area" style="background: url(//api.uuz.bid/random/?image) center /cover"></span><span id="acg-content-area-txt"></span>
                                     }
                                     the_tag_clouds('span'); 
                                 ?>

@@ -25,10 +25,6 @@
             width: 100%;
             height: 100%;
         }
-        iframe#map {
-            position: relative;
-            z-index: 9;
-        }
     </style>
 </head>
 <body class="<?php echo $default_theme; ?>">

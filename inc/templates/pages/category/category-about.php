@@ -132,7 +132,7 @@
         .wp-block-table table tr td {
             text-align: center;
             padding: 15px 35px;
-            border: 1px solid rgb(200 200 200 / 35%);
+            border: 1px solid rgb(200 200 200 / 20%);
         }
         .wp-block-table table tr td img {
             /*max-width: 36%;*/
@@ -159,6 +159,7 @@
         };
         body.dark .In-core-head .user_info{
             background: linear-gradient(90deg,var(--preset-3a) 0%,var(--preset-3b) 100%);
+            z-index: 9;
         }
         .body-basically .Introduce {
             color: var(--preset-4a);
@@ -194,7 +195,7 @@
         <div class="Introduce-window" style="width: 100%;">
             <div class="Introduce-core">
                 <div class="In-core-head">
-                    <div class="about_blocks magnetic" data-magnet-scale="1.015" data-magnet-step="0.015">
+                    <div class="about_blocks magnetic glow" data-magnet-scale="1" data-magnet-step="0.015">
                         <ul>
                             <li class="intro_left">
                                 <div class="profile">
@@ -236,7 +237,7 @@
                                 <div class="mbit" data-mbit="<?php echo isset($mbit_array_result[1]) ? $mbit_array_result[1] : 'MBTI';//strtoupper(); ?>">
                                     <div class="mbit_intro">
                                         <p> MBTI 16 Personalities<!--<sup> (Oct 21, 2022) </sup>--> </p>
-                                        <a class="magnetic" href="https://www.16personalities.com/<?php echo $mbit_abbr; ?>" style="color:#33a474;" target="_blank" title="more about <?php echo $mbit_abbr; ?>"><b><?php echo $mbit_abbr . '-' . $mbit_split[1]; ?></b></a>
+                                        <a class="magnetic glow" href="https://www.16personalities.com/<?php echo $mbit_abbr; ?>" style="color:#33a474;" target="_blank" title="more about <?php echo $mbit_abbr; ?>"><b><?php echo $mbit_abbr . '-' . $mbit_split[1]; ?></b></a>
                                     </div>
                                     <ol class="mbit_range">
                                         <?php

@@ -265,18 +265,24 @@ class MagneticEffect {
     const config = this.config;
     const o_x = ox - oc;
     const o_y = oy - oc;
-
+    // 鼠标相对 target 左上角的坐标：左上角 → (0, 0)
+    const rect = target.getBoundingClientRect();
+    const relX = e.clientX - rect.left; //e.offsetX
+    const relY = e.clientY - rect.top; //e.offsetY
+    const relMin = Math.min(rect.width, rect.height) * 1.5;
+    const relMax = Math.max(rect.width, rect.height) / 2;
+    
     if (useMagnetic && config.magnetic) {
       let step = target.dataset.magnetStep;
       let targetScale = target.dataset.magnetScale;
       step = step && !isNaN(step) ? parseFloat(step) : config.magneticStep;
       targetScale = targetScale && !isNaN(targetScale) ? parseFloat(targetScale) : scale;
-
+    
       const translateX = (e.clientX - o_x) * step + originX;
       const translateY = (e.clientY - o_y) * step + originY;
-      target.style.transform = `translate(${+translateX.toFixed(2)}px, ${+translateY.toFixed(2)}px) scale(${targetScale})`;
+      target.style.cssText += `transform: translate(${+translateX.toFixed(2)}px, ${+translateY.toFixed(2)}px) scale(${targetScale});--glow-x: ${relX}px;--glow-y: ${relY}px;--glow-max: ${relMax}px;--glow-min: ${relMin}px;`;
     } else {
-      target.style.transform = `translate(${o_x}px, ${o_y}px) scale(${scale})`;
+      target.style.cssText += `transform: translate(${o_x}px, ${o_y}px) scale(${scale});--glow-x: ${relX}px;--glow-y: ${relY}px;--glow-max: ${relMax}px;--glow-min: ${relMin}px;`;
     }
   }
 

@@ -99,6 +99,9 @@
 	    /*#comment-barrage-container .barrage-item {*/
 	    /*    opacity: .75;*/
 	    /*}*/
+	    /*.win-top {*/
+	    /*    z-index: 3;*/
+	    /*}*/
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -144,7 +147,7 @@
                 </div>
             </div>
         </div>
-        <footer>
+        <footer class="masks">
             <?php get_footer(); ?>
         </footer>
     </div>

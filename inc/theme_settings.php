@@ -229,7 +229,7 @@
         add_menu_page(__('2BLOG - RSS 订阅聚合'), __('RSS 友链订阅'), 'read', $GLOBALS['RSS_PAGE_NAME'], 'add_options_submenu_rss', 'dashicons-rss');  // 创建新的顶级菜单
     }
     function the_panel_theme() {
-        if (!get_option('site_darkmode_switcher')) return;
+        // if (!get_option('site_darkmode_switcher')) return;
         $fixed_theme = get_option('site_darkmode_fixed');
         if ($fixed_theme) {
             echo $fixed_theme;
@@ -367,9 +367,12 @@
                 /*transition: transform .35s cubic-bezier(0.68, -0.55, 0.27, 1.55)!important;*/
             }
             .wrap.dark {
-                /*background-image: radial-gradient(rgb(23 34 46) 1px, rgb(10, 20, 28) 1px);*/
                 background-color: rgb(10, 20, 28);
-                background-image: radial-gradient(rgb(23 34 46) 1px, transparent 1px), radial-gradient(rgb(23 34 46) 1px, transparent 1px);
+                background-image: radial-gradient(transparent -18%, rgb(14, 22, 30) 88%), radial-gradient(rgb(28, 41, 52) 1px, rgb(10, 20, 28) 1px);
+                background-size: 100% 100vh, 10px 10px;
+                background-position: center center, 0 0;
+                background-repeat: no-repeat, repeat;
+                background-attachment: fixed, scroll;
             }
             .wrap.dark h1 b {
                 color: transparent;
@@ -424,8 +427,8 @@
                 /*background-image: radial-gradient(#eee 1px, #fafafa 1px);*/
                 /*background-size: 10px 10px;*/
                 background-color: #fafafa;
-                background-image: radial-gradient(#eee 1px, transparent 1px), radial-gradient(#eee 1px, transparent 1px);
-                background-size: 12px 12px;
+                background: radial-gradient(transparent 18%, #f5f7f9 88%), radial-gradient(#ddd 1px, #fff 1px);
+                background-size: 100% 100%, 10px 10px;
                 background-position: 0 0, 6px 6px;
                 padding-bottom: 5%;
                 margin: auto;
@@ -544,7 +547,7 @@
                                 $rest_update_url = rest_url('rss-feeds/v1/category/' . $link_slug . '/update');
                                 $nonce = wp_create_nonce('wp_rest'); // REST API 需要 nonce（若已登录 cookie 认证可省略，但为了安全建议加上）
                                 ?>
-                                <p style="text-align:right;margin-bottom:35px;">
+                                <p style="text-align:right;margin-bottom:35px;position:relative;">
                                     <?php echo esc_html($caches_name); ?> (<?php echo esc_html($output_date); ?>)
                                     <a href="javascript:;" 
                                        class="reloadFeeds" 
@@ -664,6 +667,8 @@
         // if(get_option('site_search_style_switcher')){
             register_setting( 'baw-settings-group', 'site_search_includes' );
         // }
+        register_setting( 'baw-settings-group', 'site_imrss_switcher' );
+            register_setting( 'baw-settings-group', 'site_imrss_key' );
         register_setting( 'baw-settings-group', 'site_indexes_switcher' );
         // if(get_option('site_indexes_switcher')){
             register_setting( 'baw-settings-group', 'site_indexes_includes' );
@@ -711,6 +716,7 @@
         register_setting( 'baw-settings-group', 'site_animated_typing_switcher' );
             register_setting( 'baw-settings-group', 'site_animated_typing_includes' );
         register_setting( 'baw-settings-group', 'site_magnetic_effect_switcher' );
+            register_setting( 'baw-settings-group', 'site_magnetic_glow_switcher' );
         
         register_setting( 'baw-settings-group', 'site_memos_switcher' );
             register_setting( 'baw-settings-group', 'site_memos_apikey' );
@@ -736,6 +742,7 @@
                 register_setting( 'baw-settings-group', 'site_chatgpt_type_optimize' );
                 // register_setting( 'baw-settings-group', 'site_chatgpt_type_shuffle' );
                 register_setting( 'baw-settings-group', 'site_chatgpt_type_speed' );
+            register_setting( 'baw-settings-group', 'site_chatgpt_think_sw' );
             register_setting( 'baw-settings-group', 'site_chatgpt_feed_sw' );
             register_setting( 'baw-settings-group', 'site_chatgpt_desc_sw' );
             // register_setting( 'baw-settings-group', 'site_chatgpt_require' );
@@ -1076,7 +1083,7 @@
             ul.cached_post_list li:hover{opacity:.75;/*border-color:transparent;text-decoration:underline;border-style:dashed;background:whitesmoke;*/}
             /*ul.cached_post_list li:hover::before{content:attr(data-title)}*/
             /*ul.cached_post_list li:hover::after{content:'×';width:15px;height:15px;position:absolute;top:5px;right:5px;border:1px solid;border-radius:50%;line-height:14px;background:whitesmoke}*/
-            ul.cached_post_list li:hover::before{content:attr(title);content:'重新摘要';font-size:small;}
+            ul.cached_post_list li:hover::before{content:attr(title);content:'删除摘要';font-size:small;}
             ul.cached_post_list li:hover::after{display:block}
             ul.cached_post_list li:before{
                 content:attr(data-id);
@@ -1127,7 +1134,26 @@
             .wrap.dark {
                 /*background-image: radial-gradient(rgb(23 34 46) 1px, rgb(10, 20, 28) 1px);*/
                 background-color: rgb(10, 20, 28);
-                background-image: radial-gradient(rgb(23 34 46) 1px, transparent 1px), radial-gradient(rgb(23 34 46) 1px, transparent 1px);
+                background-image: radial-gradient(transparent -18%, rgb(14, 22, 30) 88%), url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='8' height='8' fill='none' stroke='rgb(255 255 255 / 0.15)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+                background-size: 100% 100vh, 20px 20px;
+                background-position: center center, 0 0;
+                background-repeat: no-repeat, repeat;
+                /*background-attachment: fixed, scroll;*/
+                background-attachment: fixed;
+            }
+            .wrap.dark::before {
+                background: radial-gradient(transparent -18%, rgb(14, 22, 30) 88%);
+            }
+            .wrap::before {
+                content: '';
+                width: 100%;
+                height: 100%;
+                display: block;
+                background: radial-gradient(transparent 18%, #fff 88%);
+                position: fixed!important;
+                top: 0;
+                left: 0;
+                z-index: 0;
             }
             .wrap.dark .switchTab {
                 color: #ccc;
@@ -1225,8 +1251,8 @@
                 /*background-image: radial-gradient(#eee 1px, #fafafa 1px);*/
                 /*background-size: 10px 10px;*/
                 background-color: #fafafa;
-                background-image: radial-gradient(#eee 1px, transparent 1px), radial-gradient(#eee 1px, transparent 1px);
-                background-size: 12px 12px;
+                background: radial-gradient(transparent 18%, #f5f7f9 88%), radial-gradient(#ddd 1px, #fff 1px);
+                background-size: 100% 100%, 10px 10px;
                 background-position: 0 0, 6px 6px;
                 padding-bottom: 5%;
                 /* fix of background-flicker on darkmode */
@@ -1473,7 +1499,7 @@
                 </filter>
             </defs>
         </svg>
-        <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;"><b>2BLOG</b> 主题预设 <b>&#60;<span style="color:var(--panel-theme);text-shadow: -10px 0 30px currentColor;">&#47;</span>&#62;</b><p style="letter-spacing:normal;margin-bottom:auto;opacity:.75;"> 第三方 LeanCloud 数据储存服务将于 2027 停服，相关设置将停用<sup> （此主题需<ins>开发经验</ins>） </sup> </p></h1>
+        <h1 style="text-align: center;font-size: 3rem!important;font-weight:100;letter-spacing:2px;padding: 35px 0!important;text-shadow:1px 1px 0 white;position:relative;"><b>2BLOG</b> 主题预设 <b>&#60;<span style="color:var(--panel-theme);text-shadow: -10px 0 30px currentColor;">&#47;</span>&#62;</b><p style="letter-spacing:normal;margin-bottom:auto;opacity:.75;"> 第三方 LeanCloud 数据储存服务将于 2027 停服，相关设置将停用<sup> （此主题需<ins>开发经验</ins>） </sup> </p></h1>
         <!--<hr/>-->
         <div class="switchTab">
             <ul>
@@ -1748,8 +1774,26 @@
                     <?php
                         // }
                     ?>
+                    <tr valign="top" class="">
+                        <th scope="row">显示模式<sup>ThemeMode</sup></th>
+                        <td>
+                            <?php
+                                $opt = 'site_darkmode_fixed';
+                                $arrobj = array(
+                                    array('name'=>'浅色', 'value'=>'light'),
+                                    array('name'=>'深色', 'value'=>'dark'),
+                                );
+                                echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_fixed_label">开启后可全站（包括后台）保持指定主题显示模式（注：此项将忽略系统自动切换，并同时禁用手动切换主题功能</p><select name="'.$opt.'" id="'.$opt.'"><option value=""> 自动 </option>';
+                                    foreach ($arrobj as $arr){
+                                        $val = $arr['value'];
+                                        echo '<option value="'.$val.'"';if(get_option($opt)==$val)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
+                                    }
+                                echo '</select></label>';
+                            ?>
+                        </td>
+                    </tr>
                     <tr valign="top">
-                        <th scope="row">深色模式</th>
+                        <th scope="row">深色模式<sup>TimePeriod</sup></th>
                         <td>
                             <?php
                                 $opt = 'site_darkmode_switcher';
@@ -1763,7 +1807,7 @@
                                 }else{
                                     $status = $value ? "checked" : "check";
                                 };
-                                echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_switcher_label">开启后将根据时段自动切换主题（默认晚17至早9<br />⚠️注意：主题默认支持根据系统配置自动设置主题深浅色（同时支持手动切换）。此项启用时，将按照此处<b>配置的深浅色时段</b>自动配置显示模式<br />（若当前系统为深色模式，此时切换系统为浅色将无法自动生效，因为此处权配置显示时段重高于系统默认配置</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">DarkMode</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_switcher_label">开启后将根据时段自动切换主题（默认晚17至早9<br />⚠️注意：主题默认支持根据系统配置自动设置主题深浅色（同时支持手动切换）。此项启用时，将按照此处<b>配置的深浅色时段</b>自动配置显示模式<br />（若当前系统为深色模式，此时切换系统为浅色将无法自动生效，因为此处权配置显示时段重高于系统默认配置</p>⚠️此项未来可能废弃，使用主题模式替代<p></p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">DarkMode</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -1791,24 +1835,6 @@
                                         $preset = 9;  //默认关闭（时）间
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
                                         echo '<p class="description" id="site_darkmode_end_label">关闭时间（大于1点小于12点</p><input type="number" min="1" max="12" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
-                                    ?>
-                                </td>
-                            </tr>
-                            <tr valign="top" class="child_option dynamic_opts <?php echo $darkmode; ?>">
-                                <th scope="row">— 固定模式<sup>FixedTheme</sup></th>
-                                <td>
-                                    <?php
-                                        $opt = 'site_darkmode_fixed';
-                                        $arrobj = array(
-                                            array('name'=>'浅色', 'value'=>'light'),
-                                            array('name'=>'深色', 'value'=>'dark'),
-                                        );
-                                        echo '<label for="'.$opt.'"><p class="description" id="site_darkmode_fixed_label">开启后可全站（包括后台）保持指定主题显示模式（注：此项将忽略系统自动切换，并同时禁用手动切换主题功能</p><select name="'.$opt.'" id="'.$opt.'"><option value=""> 自动 </option>';
-                                            foreach ($arrobj as $arr){
-                                                $val = $arr['value'];
-                                                echo '<option value="'.$val.'"';if(get_option($opt)==$val)echo('selected="selected"');echo '>'.$arr['name'].'</option>';
-                                            }
-                                        echo '</select></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -2444,7 +2470,7 @@
                                     <?php
                                         $opt = 'site_comment_autofill';
                                         $status = check_status($opt);
-                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后当用户输入邮箱后，即时更新用户 gravatar 头像，若该用户已有留言还可自动填充该用户其他信息</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">自动填充</b></label>';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">开启后当用户输入邮箱后，即时更新用户 gravatar 头像，若该用户已有留言还可自动填充该用户其他信息（开启后支持hover时显示该用户首次/最近评论时间</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">自动填充</b></label>';
                                     ?>
                                 </td>
                             </tr>
@@ -2810,7 +2836,7 @@
                             <?php
                                 $opt = 'site_experimental_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">试验性（全站）UI/UE 内容（开启后可体验最新页面样式内容</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Experimental</b></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">试验性（全站）UI/UE 内容（开启后可体验最新页面交互/样式内容</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Experimental</b></label>';
                             ?>
                         </td>
                     </tr>
@@ -2898,7 +2924,27 @@
                                 </td>
                             </tr>
                     <tr valign="top" class="">
-                        <th scope="row">文章 TOC 目录</th>
+                        <th scope="row">文章 - 公共话题</th>
+                        <td>
+                            <?php
+                                $opt = 'site_imrss_switcher';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="site_inform_switcher_label">开启文章页 IMRSS 公共话题讨论区（同步显示文章/笔记页面，关闭时使用短代码嵌入页面需手动指定key</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">IMRSS</b></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo get_option('site_imrss_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— Key</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_imrss_key';
+                                        $value = get_option($opt);
+                                        echo '<p class="description" id="">IMRSS 后台提供的 key</p><input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text" placeholder="IMRSS KEY" value="' . $value . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <tr valign="top" class="">
+                        <th scope="row">文章 - TOC 目录</th>
                         <td>
                             <?php
                                 $opt = 'site_indexes_switcher';
@@ -3430,7 +3476,7 @@
                                         $value = get_option($opt);
                                         $models = ['gpt-3.5-turbo','text-davinci-003','Curie', 'kimi-k2.6','kimi-k2.7-code','kimi-k3','deepseek-chat','deepseek-coder'];
                                         if(!$value) update_option($opt, $models[0]);else $preset=$value;  //auto update option to default if unset
-                                        echo '<label for="'.$opt.'"><p class="description" id="">可选 AI 对话模型，默认使用 gpt-3.5-turbo，<a href="https://openai.com/pricing" target="_blank">价格参考</a>，可选 Deepseek 系列模型，<a href="https://api-docs.deepseek.com/zh-cn/quick_start/pricing" target="_blank">价格参考</a>，可选 kimi 系列模型，<a href="https://platform.moonshot.cn/docs/pricing/chat" target="_blank">价格参考</a>（注意 Moonshot 已下线，kimi-k3需要设置Temper为`1`</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
+                                        echo '<label for="'.$opt.'"><p class="description" id="">可选 AI 对话模型，默认使用 gpt-3.5-turbo，<a href="https://openai.com/pricing" target="_blank">价格参考</a>，可选 Deepseek 系列模型，<a href="https://api-docs.deepseek.com/zh-cn/quick_start/pricing" target="_blank">价格参考</a>，可选 kimi 系列模型，<a href="https://platform.moonshot.cn/docs/pricing/chat" target="_blank">价格参考</a>注意 Moonshot 已下线<br/>（启用 kimi-k2.6/k2.7/k3 模型需设置temper为`0.6`</p><select name="'.$opt.'" id="'.$opt.'" class="select_options">';
                                             foreach ($models as $mod){
                                                 echo '<option value="'.$mod.'"';
                                                 if($value==$mod) echo('selected="selected"');
@@ -3460,7 +3506,17 @@
                                         $value = get_option($opt);
                                         $preset = 0.8;  //默认填充数据
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">返回内容随机程度（最小0.0，默认0.8</p><input type="number" min="0.0" max="" step="0.1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        echo '<p class="description" id="site_bar_pixiv_label">返回内容随机程度（最小0.0，默认0.8，KIMI K系0.6</p><input type="number" min="0.0" max="" step="0.1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $chatgpt; ?>">
+                                <th scope="row">— 思考模式</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_chatgpt_think_sw';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="">自定义开启/关闭思考模式，KIMI K2.*模型支持，K3默认开启（启用此项可能消耗更多token，并延长AI响应时间</p><p>* 经研究考虑，此项仅控制文章摘要模型，AI评论及审核模型不参与思考模式</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <b class="'.$status.'">Thinking Mode</b></label>'; //temper会默认使用值`1`，不影响其他模型temper值，
                                     ?>
                                 </td>
                             </tr>
@@ -3875,10 +3931,20 @@ goodsData = [
                             <?php
                                 $opt = 'site_magnetic_effect_switcher';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">开启PC页面元素“磁吸”效果，可使用<code> magnetic </code>类名启用自定义元素（全局启用区域：导航metaBox、页面底部Title、左上角Logo、右下角进度球</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:darkcyan" class="btn">磁吸元素</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="site_pixiv_switcher_label">开启PC页面元素“磁吸”效果，可使用<code> magnetic </code>类名手动自定义元素（全局启用区域：导航metaBox、页面底部Title、左上角Logo、右下角进度球</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:darkcyan" class="btn">磁吸元素</span></label>';
                             ?>
                         </td>
                     </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $magnetic = get_option('site_magnetic_effect_switcher') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 边缘流光 </th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_magnetic_glow_switcher';
+                                        $status = check_status($opt);
+                                        echo '<label for="'.$opt.'"><p class="description" id="site_foreverblog_wormhole_label">开启后磁吸元素启用边缘流光效果（可使用<code> glow </code>类名手动自定义 magnetic 元素</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /><b class="'.$status.'">GlowEffect</b></label>'; 
+                                    ?>
+                                </td>
+                            </tr>
                     <tr valign="top">
                         <th scope="row">动画 - 滚动加载</th>
                         <td>

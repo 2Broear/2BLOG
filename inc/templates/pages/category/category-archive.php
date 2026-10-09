@@ -84,11 +84,14 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
             /*-webkit-animation: counts 3s forwards cubic-bezier(1, 0, 0, 1);*/
         }
         .win-top .counter h1 {
-            -webkit-text-stroke: 1.75px;
+            -webkit-text-stroke: 1.25px;
         }
         .win-top .counter h1 sup {
             opacity: .5;
             position: absolute;
+        }
+        body.dark .archive-tree h2 {
+            color: var(--preset-c);
         }
     </style>
 </head>

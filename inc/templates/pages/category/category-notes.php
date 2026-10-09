@@ -13,6 +13,7 @@
 	    .content-all-windows {
             overflow-y: inherit;
             padding: 0 15px;
+            z-index: 3;
         }
         .win-nav {
             min-width: 25.5%;
@@ -34,6 +35,12 @@
 	    .win-top h5.workRange b {
 	        text-shadow: 0 0 20px color-mix(in oklab, var(--theme-color) 30%, transparent);
 	    }
+        body.dark .content-all footer::before {
+            z-index: 0;
+        }
+        .content-all footer::before {
+            z-index: -1;
+        }
     </style>
 </head>
 <body class="<?php theme_mode(); ?>">
@@ -62,7 +69,7 @@
 <div class="content-all-windows">
 	<div class="win-nav-content">
 		<div class="win-nav">
-			<div class="nav-header workRange wow fadeInUp magnetics" data-magnet-step="0.05" style="background: url(<?php echo get_option('site_bgimg'); ?>) center center / cover">
+			<div class="nav-header workRange wow fadeInUp magnetic glow" data-magnet-scale="1" data-magnet-step="0" style="background: url(<?php echo get_option('site_bgimg'); ?>) center center / cover">
 				<span>
 					<a href="/" target="_blank" style="border-radius: inherit;display: block">
 					    <?php echo '<img '.$lazysrc.'="'.get_option('site_avatar').'" alt="'.get_bloginfo('name').'" />'; ?>
@@ -93,7 +100,7 @@
                                         $catss = get_categories(meta_query_categories($the_cat_id, 'ASC', 'seo_order'));
                                         $deepth = !empty($catss) ? $deepth++ : $deepth; //$level = !empty($catss) ? $deepth++ : $deepth;
                                         $choosen = $the_cat_id==$cat || cat_is_ancestor_of($the_cat_id, $cat) || in_category($the_cat_id)&&is_single() ? "choosen" : "";
-                                        echo '<li class="cat_'.$the_cat_id.' level_'.$deepth.' magnetic"><a href="'.get_category_link($the_cat).'" id="'.$the_cat->slug.'" class="'.$choosen.'">'.$the_cat->name.'</a>';
+                                        echo '<li class="cat_'.$the_cat_id.' level_'.$deepth.' magnetic glow" data-magnet-scale="1" data-magnet-step="0.025"><a href="'.get_category_link($the_cat).'" id="'.$the_cat->slug.'" class="'.$choosen.'">'.$the_cat->name.'</a>';
                                         if(!empty($catss)){
                                             echo '<div class="sub-root"><ol>';
                                             sub_recursive_navigator($catss, $deepth);

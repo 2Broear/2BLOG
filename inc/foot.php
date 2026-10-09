@@ -1,5 +1,55 @@
 <?php
-    global $src_cdn;
+    global $src_cdn, $cat;
+    $news_temp_id = get_cat_by_template('news','term_id');
+    $note_temp_id = get_cat_by_template('notes','term_id');
+    $acg_temp_id = get_cat_by_template('acg','term_id');
+    $archive_temp = get_cat_by_template('archive','term_id');
+?>
+    <style>
+    <?php
+        if ($cat == $archive_temp || $cat == $acg_temp_id || cat_is_ancestor_of($acg_temp_id, $cat)) echo '.win-top {z-index: 3;}';
+        if (get_option('site_magnetic_glow_switcher')) echo '
+        .magnetic.glow:hover::after,
+        .magnetic.glow:hover::before {
+            opacity: .35!important;
+        }
+        .magnetic.glow:after,
+        .magnetic.glow:before {
+            content: "";
+            position: absolute!important;
+            top: 0!important;
+            right: 0!important;
+            bottom: 0!important;
+            left: 0!important;
+            z-index: 20;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .15s ease;
+        }
+        .magnetic.glow:before {
+            background: radial-gradient(circle var(--glow-min) at var(--glow-x) var(--glow-y), rgb(255 255 255 / 25%), transparent 50%);
+            filter: blur(55px);
+        }
+        .magnetic.glow:after {
+            padding: 1.25px;
+            border-radius: inherit;
+            background: radial-gradient(circle var(--glow-max) at var(--glow-x) var(--glow-y), var(--preset-f) 0%,var(--mirror-start) 26%, var(--mirror-end) 52%, transparent 84%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+        .magnetic.glow {
+            overflow: hidden!important;
+        }
+        .additional.metabox ol,
+        .links-more {
+            overflow: visible!important;
+        }
+        .additional.metaboxes ol{
+            overflow: hidden!important;
+        }';
+    ?>
+    </style>
 ?>
 <div class="noise-bgs"></div>
 <script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
@@ -8,6 +58,7 @@
     // 自动执行一次以更正缓存(after load main.js)
     // document.body.className = '';  // reset to default(timezone) mode to clear EOCaches
     <?php
+        // if (get_option('site_darkmode_switcher'))
         $fixed_theme = get_option('site_darkmode_fixed');
         if ($fixed_theme) {
             echo 'console.log(`theme_mode[fixed] hold-color-scheme: ' . $fixed_theme . '..`);';
@@ -22,13 +73,9 @@
             };
     <?php
         }
-        global $cat;
         $vdo_poster_sw = get_option('site_video_poster_switcher');
         $datadance = get_option('site_animated_counting_switcher');
-        $news_temp_id = get_cat_by_template('news','term_id');
-        $note_temp_id = get_cat_by_template('notes','term_id');
-        $acg_temp_id = get_cat_by_template('acg','term_id');
-        if(is_single()){
+        if (is_single()) {
             if(in_category($news_temp_id) || in_category($note_temp_id)){
                 if($vdo_poster_sw) echo 'setupVideoPoster(3);'; // 截取设置当前页面所有视频 poster
     ?>
@@ -92,14 +139,14 @@
     <?php
             }
         }
-        if($cat){
+        if ($cat) {
             switch ($cat) {
                 case get_cat_by_template('privacy','term_id'):
                     if($vdo_poster_sw) echo 'setupVideoPoster(1);'; // 截取设置当前页面所有视频 poster
                     break;
+                case $archive_temp:
                 case $acg_temp_id:
                 case cat_is_ancestor_of($acg_temp_id, $cat):
-                case get_cat_by_template('archive','term_id'):
                     if($datadance) {
     ?>
                         if (window.CSS.registerProperty) {

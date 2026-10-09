@@ -44,7 +44,7 @@
             echo '<a href="javascript:;" class="gpt-regen button button-small" data-post-id="' . $post_id . '">'
                 . ($has_cache ? '重新生成' : '生成摘要')
                 . '</a>';
-            echo '<span class="gpt-spinner spinner" style="float:none;margin-left:4px;"></span>';
+            echo '<span class="gpt-spinner spinner" style="float:none;margin:auto 4px auto;"></span>';
             echo '</div>';
         }, 10, 2);
         /**
@@ -71,8 +71,8 @@
                     $cell.addClass('loading');
         
                     $.ajax({
-                        url: '/wp-json/gpt-summary/v1/summary/' + postId + '?force=1',
-                        method: 'GET',
+                        url: '/wp-json/gpt-summary/v1/summary/' + postId + '/regenerate',
+                        method: 'POST',
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('X-WP-Nonce', '<?php echo wp_create_nonce('wp_rest'); ?>');
                         }

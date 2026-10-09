@@ -2706,7 +2706,7 @@ footer a:hover {
     border-width: 3px;
 }
 .inside-functions .box div.dark.disabled {
-    opacity: .5;
+    opacity: .75;
 }
 .inside-functions .box div.dark.disabled {
     pointer-events: auto!important;

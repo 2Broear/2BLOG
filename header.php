@@ -64,7 +64,7 @@
                         $metaimg_array = explode(',', get_option('site_metanav_image'));
                         $metaCls = in_array($the_cat_slug, $metaimg_array) ? "metaboxes" : "";  // must else for each-loop //strpos(get_option('site_metanav_image'), $the_cat_slug)!==false
                         //METABOX RICH INFO
-                        echo $mobile ? '<ul class="links-mores '.$metaCls.'">' : '<div class="additional metabox '.$metaCls.'"><ol class="links-more magnetic" data-magnet-scale="" data-magnet-step="0.15">';
+                        echo $mobile ? '<ul class="links-mores '.$metaCls.'">' : '<div class="additional metabox '.$metaCls.'"><ol class="links-more magnetic glow" data-magnet-scale="" data-magnet-step="0.15">';
                         foreach($catss as $the_cats){
                             $the_cats_id = $the_cats->term_id;
                             $the_cats_par = $the_cats->category_parent;
@@ -106,7 +106,7 @@
                         }
                         echo $mobile ? "</ul>" : "</ol></div>";
                     } else {  //elseif($the_cat_slug!=$metaArray[$i]){
-                        echo $mobile ? '<ul class="links-mores">' : '<div class="additional"><ol class="links-more magnetic" data-magnet-scale="" data-magnet-step="0.15">';
+                        echo $mobile ? '<ul class="links-mores">' : '<div class="additional"><ol class="links-more magnetic glow" data-magnet-scale="" data-magnet-step="0.15">';
                         foreach($catss as $the_cats){
                             $the_cats_id = $the_cats->term_id;
                             $catsss = get_categories(meta_query_categories($the_cats_id));
@@ -201,7 +201,7 @@
                 </div>
             </div>
         </div>
-        <?php if (get_option('site_progress_bar_switcher')) echo '<span id="doc-progress-bar"></span>'; ?>
+        <?php if (get_option('site_progress_tip_switcher')) echo '<span id="doc-progress-bar"></span>'; ?>
     </div>
     <div class="main-header-all">
         <div class="block_of_down_element">

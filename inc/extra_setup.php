@@ -54,7 +54,7 @@
                 return $block_content;
             }
             // 根据不同的块类型使用不同的匹配模式
-            $replacement = '$1 magnetic" data-magnet-scale="1" data-magnet-step="0.025"';
+            $replacement = '$1 magnetic glow" data-magnet-scale="1" data-magnet-step="0"';
             if ($block['blockName'] === 'core/image') {
                 // 匹配 figure 元素（wp-block-image）
                 $pattern = '/(<figure[^>]*class="wp-block-image[^"]*)/i';;
@@ -1224,7 +1224,7 @@
                 if (get_option('site_chatgpt_type_sw') && !get_option('site_chatgpt_type_optimize')) {
                     // 打字效果模式
                     return '<blockquote class="chatGPT" status="ai">
-                        <p><b>文章摘要</b><span title="对话模型">' . $model . '</span></p>
+                        <p><b>文章摘要</b><span title="当前 AI 模型">' . $model . '</span></p>
                         <p class="response load">Standby API Responsing..</p>
                     </blockquote>
                     <script type="module">
@@ -1232,6 +1232,9 @@
                         import("' . $src_cdn . '/js/module.js").then((module) =>
                             fetch("/wp-json/gpt-summary/v1/summary/' . $pid . '")
                                 .then(res => {
+                                    if (res.error) {
+                                        return { summary: res.message };
+                                    }
                                     if (res.status === 202) {
                                         return { summary: "Generating summary, Standby page refresh later." };
                                     }
@@ -1245,7 +1248,7 @@
                 $chatgpt_cat = in_chatgpt_cat();
                 $summary = get_post_gpt_summary($pid);
                 if (!$summary) {
-                    $summary = 'Generating summary, Standby page refresh later.';
+                    $summary = 'Generating summary, Standby page refresh later.2';
                     // 无缓存时，在响应已发回后悄悄安排生成，用户完全无感知
                     if (!wp_next_scheduled('async_gpt_summary_generation', [$pid])) {
                         register_shutdown_function(function() use ($pid) {
@@ -1254,27 +1257,6 @@
                     }
                 }
                 return '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span title="对话模型">' . $model . '</span></p><p class="response done">'.$summary.'</p></blockquote>' . $content;
-                // return '<blockquote class="chatGPT" status="'.$chatgpt_cat.'"><p><b>文章摘要</b><span title="对话模型">' . $model . '</span></p><p class="response done">Generating summary, Standby page refresh later.</p></blockquote>
-                //     <script>
-                //         (function() {
-                //             const resp = document.querySelector(".chatGPT .response");
-                //             if (!resp) return;
-                //             fetch("/wp-json/gpt-summary/v1/summary/' . $pid . '")
-                //                 .then(res => {
-                //                     if (res.status === 202) {
-                //                         resp.textContent = "Generating summary, Standby page refresh later.";
-                //                         return null;
-                //                     }
-                //                     return res.json();
-                //                 })
-                //                 .then(data => {
-                //                     if (data && data.summary) {
-                //                         resp.textContent = data.summary;
-                //                         resp.classList.remove("load");
-                //                     }
-                //                 });
-                //         })();
-                //     </script>' . $content;
             }
             add_filter('the_content', 'article_ai_abstract', 10);
             
@@ -1286,17 +1268,29 @@
             * wp_options wpdb_query
             */
             add_action('rest_api_init', function () {
-                // 注册获取/生成摘要端点
+                                // 读摘要（公开，GET）
                 register_rest_route('gpt-summary/v1', '/summary/(?P<id>\d+)', [
                     'methods'  => 'GET',
                     'callback' => 'rest_get_gpt_summary',
                     'args'     => [
                         'id' => ['required' => true, 'sanitize_callback' => 'absint'],
                     ],
-                    'permission_callback' => '__return_true',  // 公开读取
+                    'permission_callback' => '__return_true',
                 ]);
-            
-                // 注册删除缓存端点（管理员专用）
+                
+                // 重新生成摘要（管理员，POST）
+                register_rest_route('gpt-summary/v1', '/summary/(?P<id>\d+)/regenerate', [
+                    'methods'  => 'POST',
+                    'callback' => 'rest_regenerate_gpt_summary',
+                    'args'     => [
+                        'id' => ['required' => true, 'sanitize_callback' => 'absint'],
+                    ],
+                    'permission_callback' => function () {
+                        return current_user_can('manage_options');
+                    },
+                ]);
+                
+                // 删除缓存（管理员，DELETE）
                 register_rest_route('gpt-summary/v1', '/summary/(?P<id>\d+)', [
                     'methods'  => 'DELETE',
                     'callback' => 'rest_delete_gpt_summary',
@@ -1359,24 +1353,57 @@
             
                 $cache_key = 'gpt_summary_' . $post_id;
                 $cached    = get_option($cache_key, null);
-                if ($cached !== null) {
-                    $data = json_decode($cached, true);
-                    return gpt_extract_result_text($data);
-                }
             
+                // 强制同步：无论缓存如何都重新生成
                 if ($force_sync) {
+                    if ($cached !== null) {
+                        delete_option($cache_key);
+                    }
                     $result = gpt_generate_summary($post);
                     update_option($cache_key, json_encode($result), false);
+                    // // 如果是错误状态，返回 null，让调用方根据缓存判断
+                    // if (is_array($result) && isset($result['error'])) {
+                    //     return null;
+                    // }
                     return gpt_extract_result_text($result);
                 }
             
-                // // 无缓存且不需要同步：安排后台任务，快速返回 null
+                // 普通模式：有缓存时区分 error 与正常
+                if ($cached !== null) {
+                    $data = json_decode($cached, true);
+                    // if (is_array($data) && isset($data['error'])) {
+                    //     return null;  // 让调用方决定是否重试
+                    // }
+                    return gpt_extract_result_text($data);
+                }
+            
+                // 无缓存且未强制：返回 null（由调用方决定安排后台任务）
                 // if (!wp_next_scheduled('async_gpt_summary_generation', [$post_id])) {
                 //     wp_schedule_single_event(time(), 'async_gpt_summary_generation', [$post_id]);
                 // }
                 return null;
             }
+            /**
+             * 检查摘要缓存是否为 error 状态
+             */
+            function gpt_summary_is_error($cached) {
+                if ($cached === null) {
+                    return false;
+                }
+                $data = json_decode($cached, true);
+                return is_array($data) && isset($data['error']);
+            }
             
+            /**
+             * 从缓存中提取错误信息
+             */
+            function gpt_summary_get_error($cached) {
+                $data = json_decode($cached, true);
+                if (is_array($data) && isset($data['error']['message'])) {
+                    return $data['error']['message'];
+                }
+                return '未知错误';
+            }
             /**
              * REST API 回调（封装上面的通用函数）
              */
@@ -1389,24 +1416,65 @@
             
                 $cache_key = 'gpt_summary_' . $post_id;
                 $cached    = get_option($cache_key, null);
+            
+                // 1. 有缓存：区分正常摘要与错误状态
                 if ($cached !== null) {
+                    if (gpt_summary_is_error($cached)) {
+                        // 缓存的是错误，返回 200 + 明确错误信息，前端好处理
+                        return rest_ensure_response([
+                            'error'   => true,
+                            'message' => gpt_summary_get_error($cached),
+                        ]);
+                    }
                     $data = json_decode($cached, true);
                     return rest_ensure_response(['summary' => gpt_extract_result_text($data)]);
                 }
             
-                // 默认同步生成（前端异步请求等待结果）
+                // 2. 无缓存：同步生成
                 $summary = get_post_gpt_summary($post_id, true);
-                if ($summary !== null) {
-                    return rest_ensure_response(['summary' => $summary]);
+            
+                // 如果同步生成返回的仍是错误对象，直接响应错误
+                if ($summary === null || $summary === '') {
+                    // 判断是否刚写入的是错误缓存
+                    $fresh = get_option($cache_key, null);
+                    if (gpt_summary_is_error($fresh)) {
+                        return rest_ensure_response([
+                            'error'   => true,
+                            'message' => gpt_summary_get_error($fresh),
+                        ]);
+                    }
+            
+                    // 3. 生成失败（无缓存）：安排后台任务降级
+                    if (!wp_next_scheduled('async_gpt_summary_generation', [$post_id])) {
+                        wp_schedule_single_event(time(), 'async_gpt_summary_generation', [$post_id]);
+                    }
+                    return new WP_REST_Response(['message' => '摘要生成失败，已提交后台任务，请稍后刷新'], 202);
                 }
             
-                // 生成失败，安排后台任务降级
-                if (!wp_next_scheduled('async_gpt_summary_generation', [$post_id])) {
-                    wp_schedule_single_event(time(), 'async_gpt_summary_generation', [$post_id]);
-                }
-                return new WP_REST_Response(['message' => '摘要生成失败，已提交后台任务，请稍后刷新'], 202);
+                // 4. 成功：返回摘要
+                return rest_ensure_response(['summary' => $summary]);
             }
             
+            /**
+             * 重新生成文章摘要
+             */
+            function rest_regenerate_gpt_summary(WP_REST_Request $request) {
+                $post_id = $request['id'];
+                $post    = get_post($post_id);
+                if (!$post || $post->post_type !== 'post' || !in_chatgpt_cat($post)) {
+                    return new WP_Error('invalid_post', '文章不存在或分类不支持', ['status' => 404]);
+                }
+            
+                // 删除旧缓存，强制重新生成
+                delete_option('gpt_summary_' . $post_id);
+            
+                $summary = get_post_gpt_summary($post_id, true);
+                if ($summary === null) {
+                    return new WP_Error('generation_failed', '生成失败', ['status' => 500]);
+                }
+            
+                return rest_ensure_response(['summary' => $summary]);
+            }
             /**
              * 删除文章摘要缓存
              */
@@ -1421,7 +1489,6 @@
                 delete_option($cache_key);
                 return rest_ensure_response(['success' => true, 'message' => '缓存已删除']);
             }
-            
             /**
              * 生成文章摘要（完整分段合并逻辑）
              *
@@ -1447,7 +1514,8 @@
             
                 // 2. 调用核心请求函数（递归分段合并）
                 $additional = '，注意不要换行，不要超过200个字符'; // 与原代码保持一致
-                $result = gpt_request_with_merge($requirements, 512, $additional);
+                $token_limit = intval(get_option('site_chatgpt_tokens', 4096));   // 模型上下文上限
+                $result = gpt_request_with_merge($requirements, $token_limit, $additional);
             
                 return $result;
             }
@@ -1461,19 +1529,32 @@
              */
             function gpt_request_with_merge($question, $max_tokens = 512, $additional = '') {
                 /**
-                 * 计算字符串的 token 数（汉字按 2 计，英文按 1 计）
+                 * 计算字符串的 token 估算值
+                 * 汉字按 1.5 计（Kimi 实际分词约 1~1.5 token/字）
+                 * 英文、数字、标点按 1 计
+                 *
+                 * @param string $str
+                 * @param bool   $token  兼容旧参数：true 时汉字按 2 计（保守估算）
+                 * @return int
                  */
-                function count_chaters($str, $token = 0) {
+                function count_chaters( $str, $token = false ) {
                     $count = 0;
-                    for ($i = 0; $i < mb_strlen($str, 'UTF-8'); $i++) {
-                        $char = mb_substr($str, $i, 1, 'UTF-8');
-                        if (preg_match("/[a-zA-Z]/", $char)) {
-                            $count++;
-                        } elseif (preg_match("/\p{Han}/u", $char)) {
-                            $count += $token ? 2 : 1;
+                    $len = mb_strlen( $str, 'UTF-8' );
+                
+                    for ( $i = 0; $i < $len; $i++ ) {
+                        $char = mb_substr( $str, $i, 1, 'UTF-8' );
+                
+                        // 汉字：按 1.5 计（保守用 2）
+                        if ( preg_match( '/\p{Han}/u', $char ) ) {
+                            $count += $token ? 2 : 1.5;
+                            continue;
                         }
+                
+                        // 其他所有字符（字母、数字、标点、空格、emoji 等）按 1 计
+                        $count++;
                     }
-                    return $count;
+                
+                    return (int) ceil( $count );
                 }
                 // 获取配置
                 $api_proxy   = get_option('site_chatgpt_proxy');
@@ -1482,7 +1563,7 @@
                 $model       = get_option('site_chatgpt_model', 'gpt-3.5-turbo-instruct');
                 $temperature = floatval(get_option('site_chatgpt_temper', 0.7));
                 $token_limit = intval(get_option('site_chatgpt_tokens', 4096));   // 模型上下文上限
-                $reserve     = 196;  // 预留返回 token，与原代码 COMPLETION_REVERSE 一致
+                $reserve     = 1024;  // 196预留返回 token，与原代码 COMPLETION_REVERSE 一致
                 $limit       = $token_limit - $reserve;                          // 实际可用输入 token
             
                 // 合并开关
@@ -1574,12 +1655,29 @@
              * 单次 GPT API 请求（已拼接系统提示）
              */
             function gpt_do_single_request($api_proxy, $api_key, $api_type, $model, $temperature, $max_tokens, $question, $additional = '') {
-                $system_prompt = '你将扮演一名文字解析师，分析并简述文章用意' . $additional;
+                // ========== 请求节流：保证任意两次 API 调用间隔 ≥ 1.2 秒 ==========
+                static $last_request_time = 0;
+                $min_interval = 1.2; // 秒
+                $now = microtime(true);
+                $elapsed = $now - $last_request_time;
+                if ( $last_request_time > 0 && $elapsed < $min_interval ) {
+                    usleep( (int) ( ( $min_interval - $elapsed ) * 1000000 ) );
+                }
+                $last_request_time = microtime(true);
+                // ================================================================
+            
+                $system_prompt = '你将扮演一名文章解析师，分析并简述文章用意' . $additional;
+                $think_mode = array( 'type' => 'disabled' );
+                if (get_option('site_chatgpt_think_sw')) {
+                    $think_mode = array( 'type' => 'enabled' );
+                    $temperature = 1;
+                }
             
                 $body = [
                     'model'       => $model,
                     'temperature' => $temperature,
                     'max_tokens'  => $max_tokens,
+                    'thinking'    => $think_mode,
                 ];
             
                 // 区分 chat 和 completions 模式
@@ -1634,16 +1732,20 @@
              * 从 API 响应中提取文本（兼容 completions 和 chat 格式）
              */
             function gpt_extract_result_text($response) {
+                if (isset($response['error'])) {
+                    return json_encode($response['error']);  // $response['error']['message'] ?? '未知错误';
+                }
                 if (isset($response['choices'][0]['text'])) {
                     return trim($response['choices'][0]['text']);
                 } elseif (isset($response['choices'][0]['message']['content'])) {
-                    return trim($response['choices'][0]['message']['content']);
+                    $content = trim($response['choices'][0]['message']['content']);
+                    return $content === '' ? 'Empty content..' : $content;
                 } elseif (isset($response['text'])) {
                     return trim($response['text']);
                 } elseif (isset($response['content'])) {
                     return trim($response['content']);
                 }
-                // 若为错误，返回空（调用方判断）
+                // 若为错误，让调用方决定是否重试
                 return '';
             }
             /**
@@ -1690,6 +1792,7 @@
             define( 'TWO_BER_AI_MODEL', get_option('site_chatgpt_model') );     // Kimi 模型，可按需调整
             define( 'TWO_BER_AI_MAX_REPLIES_PER_PARENT', 5 );  // 每个父评论下 AI 回复最大数量
             define( 'TWO_BER_AI_TIMEOUT', 60 );  // 请求超时限制
+            // define( 'TWO_BER_AI_THINK_MODE', get_option('site_chatgpt_think_sw') );  // 思考模式
             /**
              * 向上查找评论的根评论（顶级评论）
              */
@@ -2056,11 +2159,19 @@
                 $api_key = TWO_BER_AI_API_KEY;
                 $url = get_option('site_chatgpt_proxy') . get_option('site_chatgpt_apis');
                 $temperature = TWO_BER_AI_MODEL === 'kimi-k3' ? 1 : floatval( get_option( 'site_chatgpt_temper', 0.3 ) );
+                $token_limit = intval(get_option('site_chatgpt_tokens', 4096));   // 模型上下文上限
+                $think_mode = array( 'type' => 'disabled' );
+                // if (TWO_BER_AI_THINK_MODE) {
+                //     $think_mode = array( 'type' => 'enabled' );
+                //     $temperature = 1;
+                // }
             
                 $body = array(
                     'model'       => TWO_BER_AI_MODEL,
                     'messages'    => $messages,
                     'temperature' => $temperature,
+                    'max_tokens'  => $token_limit,   // 或更大，如 4096
+                    'thinking'    => $think_mode,  // 思考模式
                 );
             
                 $args = array(
@@ -2499,7 +2610,7 @@
             define( 'TWO_BER_AI_SPAM_FAIL_ACTION', 'allow' );
             
             // ---------- 原有函数，完全不变 ----------
-            function two_ber_ai_spam_filter( $comment_content ) {
+            function two_ber_ai_spam_filter( $comment_content, $comment_author, $comment_author_url ) {
                 if ( ! TWO_BER_AI_SPAM_CHECK_ENABLED ) {
                     return array( 'is_spam' => false, 'reason' => '' );
                 }
@@ -2520,7 +2631,7 @@
                 $system  = "你是一个专业的评论审查员，需要完成两个任务：\n";
                 $system .= "1. 判断评论是否为垃圾（is_spam）。\n";
                 $system .= "2. 判断评论是否属于“走心评论”（is_thoughtful）。\n\n";
-                $system .= "垃圾评论的典型特征：无关广告/外链、诱导点击、虚假夸奖并附带推广、纯SEO关键词堆砌、完全无意义的乱码。\n";
+                $system .= "垃圾评论的典型特征：无关广告/外链、诱导点击、虚假夸奖并附带推广、纯SEO关键词堆砌、完全无意义的乱码。正文看起来无害，并不能证明这是一条正常评论。如果昵称或者网站明显用于推广，也应该作为重要判断依据。\n";
                 $system .= "走心评论的特征：内容不能太短，与文章内容高度相关、表达出真实的情感或深刻见解、有实质性内容、条理清晰、能引发讨论或补充有价值的信息。\n";
                 $system .= "**注意**：一条评论可以同时是走心且非垃圾，但不能既是垃圾又是走心。若评论已被判定为垃圾，is_thoughtful 必须为 false。\n\n";
             
@@ -2543,7 +2654,7 @@
         
                 $messages = array(
                     array( 'role' => 'system', 'content' => $system ),
-                    array( 'role' => 'user',   'content' => "评论内容：" . $content ),
+                    array( 'role' => 'user',   'content' => "昵称：$comment_author；网站：$comment_author_url；评论内容：$content" ),
                 );
             
                 $result = two_ber_ai_call_spam_api( $messages );
@@ -2654,12 +2765,19 @@
                 $api_key = TWO_BER_AI_API_KEY;
                 $url = get_option('site_chatgpt_proxy') . get_option('site_chatgpt_apis');
                 $temperature = TWO_BER_AI_MODEL === 'kimi-k3' ? 1 : floatval( get_option( 'site_chatgpt_temper', 0.3 ) );
+                $token_limit = intval(get_option('site_chatgpt_tokens', 4096));   // 模型上下文上限
+                $think_mode = array( 'type' => 'disabled' );
+                // if (TWO_BER_AI_THINK_MODE) {
+                //     $think_mode = array( 'type' => 'enabled' );
+                //     $temperature = 1;
+                // }
         
                 $body = array(
                     'model'       => TWO_BER_AI_MODEL,
                     'messages'    => $messages,
                     'temperature' => $temperature,
-                    'max_completion_tokens'  => 150,
+                    'max_tokens'  => $token_limit, //max_completion_tokens 512
+                    'thinking'    => $think_mode,  // 思考模式
                 );
         
                 $args = array(
@@ -2770,7 +2888,7 @@
                     return;
                 }
         
-                $result = two_ber_ai_spam_filter( $comment->comment_content );
+                $result = two_ber_ai_spam_filter( $comment->comment_content, $comment->comment_author, $comment->comment_author_url );
 
                 if ( $result['is_spam'] ) {
                     wp_spam_comment( $comment_id );
@@ -3485,21 +3603,21 @@
                 case 'full':
                     $avatar_statu = $status_standby ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$loadimg.'" alt="'.$link_name.'" draggable="false">';
                     $rel_statu = $rel ? $rel : 'friends';
-                    $output .= '<div class="inbox flexboxes magnetic '.$status_class.' '.$sex.'" data-magnet-scale="" data-magnet-step="0.15"><div class="inbox-inside flexboxes"><a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'" data-status="' . $status_code . '"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impression.'</div>' . $rss_feeds;
+                    $output .= '<div class="inbox flexboxes magnetic glow '.$status_class.' '.$sex.'" data-magnet-scale="0.9" data-magnet-step="0.15"><div class="inbox-inside flexboxes"><a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'" data-status="' . $status_code . '"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impression.'</div>' . $rss_feeds;
                     $output .= '</div>';
                     break;
                 case 'half':
                     $rel_statu = $rel ? $rel : 'recommends';
-                    $output .= '<div class="inbox magnetic '.$status_class.' '.$sex.'"><div class="inbox-inside flexboxes" data-magnet-scale="" data-magnet-step="0.15">'.$impression.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'" data-status="' . $status_code . '"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div>' . $rss_feeds;
+                    $output .= '<div class="inbox magnetic glow '.$status_class.' '.$sex.'" data-magnet-scale="0.9" data-magnet-step="0.15"><div class="inbox-inside flexboxes">'.$impression.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'" data-status="' . $status_code . '"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div>' . $rss_feeds;
                     $output .= '</div>';
                     break;
                 case 'list':
                     $rel_statu = $rel ? $rel : 'random';
-                    $output .= '<li class="magnetic"><a href="'.$link_url.'" class="'.$status_class.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" data-status="' . $status_code . '">'.$link_name.'</a></li>';
+                    $output .= '<li class="magnetic glow" data-magnet-scale="0.9" data-magnet-step="0.15"><a href="'.$link_url.'" class="'.$status_class.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" data-status="' . $status_code . '">'.$link_name.'</a></li>';
                     break;
                 default:
                     $rel_statu = $status_standby ? 'nofollow' : 'followed';
-                    $output .= '<a href="'.$link_url.'" class="'.$status_class.' magnetics" data-magnet-scale="1" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" data-status="' . $status_code . '" data-magnet-scale="1.15" data-magnet-step="0.75">'.$link_name.'</a>';
+                    $output .= '<a href="'.$link_url.'" class="'.$status_class.' magnetics" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" data-status="' . $status_code . '" data-magnet-scale="1.15" data-magnet-step="0.75">'.$link_name.'</a>';
                     break;
             }
         }
@@ -3575,6 +3693,21 @@
                             opacity: .15;
                             pointer-events: none;
                         }
+                        .news-window:nth-child(even) span.news-window-img {
+                            position: initial;
+                        }
+                        .news-window:nth-child(even) span.news-window-img::after{
+                            background: linear-gradient(45deg, rgba(255,255,255,1) 18%, transparent 66%, rgba(255,255,255,1) 88%);
+                            background: -webkit-linear-gradient(45deg, rgba(255,255,255,1) 18%, transparent 66%, rgba(255,255,255,1) 88%);
+                        }
+                        body.dark .news-window:nth-child(even) span.news-window-img::after{
+                            background: linear-gradient(45deg, var(--preset-2b) 18%, rgba(48, 48, 48, 0.15) 66%, var(--preset-2a) 88%);
+                            background: -webkit-linear-gradient(45deg, var(--preset-2b) 18%, rgba(0, 0, 0, 0.15) 66%, var(--preset-2a) 88%);
+                        }
+                        .news-window:nth-child(odd).magnetic.glow:after,
+                        .news-window:nth-child(odd).magnetic.glow:before {
+                            content: none;
+                        }
                 	</style>
             <?php
                 }
@@ -3620,10 +3753,17 @@
                     }else{
                         if(in_category($news_slug)){
             ?>
-                            <article class="<?php if($post_orderby>1) echo 'topset icom'; ?> news-window wow" data-wow-delay="0.1s" post-orderby="<?php echo $post_orderby; ?>">
+                            <article class="news-window wow magnetic glow<?php if($post_orderby>1) echo ' topset icom'; ?>" data-magnet-scale="1" data-magnet-step="0.025" data-wow-delay="0.1s">
                                 <div class="news-window-inside">
                                     <?php
-                                        if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img magnetic" data-magnet-step="0.15"><a href="'.get_the_permalink().'"><img class="lazy" '.$lazyhold.' src="'.$loadimg.'" /></a></span>';
+                                        $postimg = get_postimg();
+                                        if ($lazysrc != 'src') {
+                                            $lazyhold = 'data-src="'.$postimg.'"';
+                                        } else {
+                                            $lazyhold = '';
+                                            $loadimg = $postimg;
+                                        }
+                                        if(has_post_thumbnail() || get_option('site_default_postimg_switcher')) echo '<span class="news-window-img magnetic glows" data-magnet-step="0.15"><a href="'.get_the_permalink().'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.get_the_title().'" /></a></span>'; //get_postimg() || 
                                     ?>
                                     <div class="news-inside-content">
                                         <h2 class="entry-title">
@@ -3635,10 +3775,13 @@
                                         </span>
                                         <div id="news-tail_info">
                                             <ul class="post-info">
-                                                <li class="tags author"><?php echo get_tag_list($post->ID); ?></li>
-                                                <li title="讨论人数">
+                                                <li class="tags author">
+                                                    <?php echo get_tag_list($post->ID); ?>
+                                                </li>
+                                                <li title="评论数量">
                                                     <?php 
-                                                        $count = get_option('site_third_comments') ? 0 : $post->comment_count;
+                                                        $third_cmt = get_option('site_third_comments');
+                                                        $count = $third_cmt !== 'Wordpress' ? 0 : $post->comment_count;
                                                         echo '<span class="valine-comment-count icom" data-xid="'.parse_url(get_the_permalink(), PHP_URL_PATH).'">'.$count.'</span>';
                                                     ?>
                                                 </li>
@@ -3673,7 +3816,6 @@
                                         <div class="tree-box-content">
                                             <span id="core-info">
                                                 <?php 
-                                                    // echo get_the_content();//custom_excerpt(200); 
                                                     echo apply_filters('the_content', get_the_content());
                                                 ?>
                                             </span>
@@ -3715,23 +3857,24 @@
                         } else {
                             // results doen't match in_category template, like pages..
             ?>
-                            <article class="<?php if($post_orderby>1) echo 'topset'; ?> cat-<?php echo $post->ID ?>">
+                            <article class="<?php if($post_orderby>1) echo 'topset '; ?>cat-<?php echo $post->ID ?> magnetics" data-magnet-scale="1" data-magnet-step="0.015">
                                 <h1>
                                     <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
-                                    <?php if($post_rights&&$post_rights!="原创") echo '<sup>'.get_post_meta($post->ID, "post_rights", true).'</sup>'; ?>
+                                    <?php 
+                                        if($post_orderby>1) echo '<sup>置顶</sup>';
+                                        if($post_rights&&$post_rights!="原创") echo '<sup>'.$post_rights.'</sup>';
+                                    ?>
                                 </h1>
                                 <p><?php custom_excerpt(150); ?></p>
                                 <div class="info">
                                     <span class="classify" id="">
                                         <i class="icom"></i>
                                         <?php 
-                                            $cats = get_the_category();
-                                            foreach ($cats as $cat){
-                                                if($cat->slug!=$notes_slug) echo '<em>'.$cat->name.'</em> ';  //leave a blank at the end of em
-                                            }
+                                            $cats = get_article_category();
+                                            echo $cats ? '<em> #'.$cats->name.' </em>' : '<em>Uncategorized</em>'; // 输出 child_cat 的名称
                                         ?>
                                     </span>
-                                    <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"> <?php echo $post->comment_count; ?></span>
+                                    <span class="valine-comment-count icom" data-xid="<?php echo parse_url(get_the_permalink(), PHP_URL_PATH) ?>"><?php echo $post->comment_count; ?></span>
                                     <span class="date"><?php the_time("d-m-Y"); ?></span>
                                     <span id="slider"></span>
                                 </div>
@@ -4125,7 +4268,7 @@
     */
     // 动态主题模式
     function theme_mode($returns = false) {
-        if (!get_option('site_darkmode_switcher')) return;
+        // if (!get_option('site_darkmode_switcher')) return;
         // wp-panel fixed theme(1st priority)
         $fixed_theme = get_option('site_darkmode_fixed');
         if ($fixed_theme) {
@@ -4162,6 +4305,31 @@
         if ($returns) return $theme_mode;
         echo $theme_mode;
     }
+    
+    //IMRSS 话题插件
+    if ( get_option( 'site_imrss_switcher' ) ) {
+        
+        if ( ! function_exists( 'imrss_widget' ) ) {
+            function imrss_widget( $content ) {
+                // 1. 仅限单篇
+                if ( ! is_single() ) {
+                    return $content;
+                }
+                // 2. 检测文章原本有没有写这个短代码
+                if ( strpos( $content, '[custom_imrss' ) !== false ) {
+                    return $content; 
+                }
+                // 3. 如果没写，就在末尾追加完整的短代码并执行
+                $shortcode = '[custom_imrss key=' . get_option( 'site_imrss_key' ) . ' scope theme]';
+                
+                // 使用 do_shortcode 执行它，并拼接到内容末尾
+                return $content . do_shortcode( $shortcode );
+            }
+        }
+    
+        add_filter( 'the_content', 'imrss_widget', 10 );
+    }
+    
     //lazyload 图懒加载
     if (get_option('site_lazyload_switcher')) {
         // $lazysrc = 'data-src';
@@ -4321,7 +4489,7 @@
                 $each_index = trim($index_array[$i]);
                 if($each_index){
                     if(in_category($each_index)){
-                        $content = '<div class="article_index '.$auto_fold.' magnetics" data-index="'.$match_m.'" data-magnet-step="0.1" data-magnet-scale="1"><div class="in_dex"><p title="折叠/展开"><b>文章目录</b><i class="icom"></i></p><ul>' . $ul_li . '</ul></div></div>' . $content;
+                        $content = '<div class="article_index '.$auto_fold.' magnetics" data-index="'.$match_m.'"><div class="in_dex magnetic glow" data-magnet-step="0.1" data-magnet-scale="1"><p title="折叠/展开"><b>文章目录</b><i class="icom"></i></p><ul>' . $ul_li . '</ul></div></div>' . $content;
                     }
                 }
             }
@@ -4620,67 +4788,59 @@
                 'permission_callback' => '__return_true',
             ]);
         });
+        /**
+         * 根据邮箱返回评论者汇总信息（核心函数）
+         *
+         * @param string $email
+         * @return array
+         */
+        function get_comment_full_info($email) {
+            if (!is_email($email)) {
+                return [
+                    'name' => '', 'url' => '', 'avatar_url' => '',
+                    'comment_count' => 0, 'first_comment_date' => '', 'last_comment_date' => '',
+                ];
+            }
         
+            global $wpdb;
+        
+            // 最新非空昵称
+            $name_row = $wpdb->get_row($wpdb->prepare(
+                "SELECT comment_author FROM $wpdb->comments
+                 WHERE comment_author_email = %s AND comment_approved = '1' AND comment_author != ''
+                 ORDER BY comment_date DESC LIMIT 1", $email));
+        
+            // 最新非空网址
+            $url_row = $wpdb->get_row($wpdb->prepare(
+                "SELECT comment_author_url FROM $wpdb->comments
+                 WHERE comment_author_email = %s AND comment_approved = '1' AND comment_author_url != ''
+                 ORDER BY comment_date DESC LIMIT 1", $email));
+        
+            // 评论数 + 首次/最后时间
+            $stats = $wpdb->get_row($wpdb->prepare(
+                "SELECT COUNT(*) AS comment_count,
+                        MIN(comment_date) AS first_comment_date,
+                        MAX(comment_date) AS last_comment_date
+                 FROM $wpdb->comments
+                 WHERE comment_author_email = %s AND comment_approved = '1'", $email));
+        
+            $mirror = get_option('site_avatar_mirror', 'https://cravatar.cn/');
+        
+            return [
+                'name'               => $name_row ? $name_row->comment_author : '',
+                'url'                => $url_row ? $url_row->comment_author_url : '',
+                'avatar_url'         => $mirror . 'avatar/' . md5($email) . '?d=retro&s=100',
+                'comment_count'      => (int) $stats->comment_count,
+                'first_comment_date' => $stats->first_comment_date ?: '',
+                'last_comment_date'  => $stats->last_comment_date ?: '',
+            ];
+        }
         /**
          * 根据邮箱返回完整评论者信息：昵称、网址、头像、评论次数、首次/最后评论时间
          */
         function rest_get_comment_full_info(WP_REST_Request $request) {
-            global $wpdb;
-            $email = $request->get_param('email');
-        
-            // 1. 取最新的非空昵称
-            $name_row = $wpdb->get_row(
-                $wpdb->prepare(
-                    "SELECT comment_author 
-                     FROM $wpdb->comments 
-                     WHERE comment_author_email = %s 
-                       AND comment_approved = '1' 
-                       AND comment_author != '' 
-                     ORDER BY comment_date DESC 
-                     LIMIT 1",
-                    $email
-                )
-            );
-        
-            // 2. 取最新的非空网址
-            $url_row = $wpdb->get_row(
-                $wpdb->prepare(
-                    "SELECT comment_author_url 
-                     FROM $wpdb->comments 
-                     WHERE comment_author_email = %s 
-                       AND comment_approved = '1' 
-                       AND comment_author_url != '' 
-                     ORDER BY comment_date DESC 
-                     LIMIT 1",
-                    $email
-                )
-            );
-        
-            // 3. 一次性统计评论数、首次/最后评论时间
-            $stats = $wpdb->get_row(
-                $wpdb->prepare(
-                    "SELECT COUNT(*) AS comment_count,
-                            MIN(comment_date) AS first_comment_date,
-                            MAX(comment_date) AS last_comment_date
-                     FROM $wpdb->comments 
-                     WHERE comment_author_email = %s 
-                       AND comment_approved = '1'",
-                    $email
-                )
-            );
-        
-            // 4. 生成头像 URL
-            $mirror = get_option('site_avatar_mirror', 'https://cravatar.cn/');
-            $avatar_url = $mirror . 'avatar/' . md5($email) . '?d=retro&s=100';
-        
-            return rest_ensure_response([
-                'name'               => $name_row ? $name_row->comment_author : '',
-                'url'                => $url_row ? $url_row->comment_author_url : '',
-                'avatar_url'         => $avatar_url,
-                'comment_count'      => (int) $stats->comment_count,
-                'first_comment_date' => $stats->first_comment_date ?: '',
-                'last_comment_date'  => $stats->last_comment_date ?: '',
-            ]);
+            $email = strtolower($request->get_param('email'));
+            return rest_ensure_response(get_comment_full_info($email));
         }
         
         /**
@@ -4759,9 +4919,16 @@
                 }
                 $comment->comment_content = '<small style="opacity:.5;display:block;"> [ 等待评论审核，通过正常显示。] </small>' . $comment->comment_content;
             }
+            $comment_user_info = get_comment_full_info($comment->comment_author_email);
+            $comment_user_title = sprintf(
+                'Ta 在本站共 %d 条评论（首次 %s；最近 %s）',
+                $comment_user_info['comment_count'],
+                $comment_user_info['first_comment_date'] ?: '未知',
+                $comment_user_info['last_comment_date'] ?: '未知'
+            );
     ?>
-            <div class="vcard magnetics<?php if (!$approved) echo ' auditing';if ($is_ai_comment) echo ' ai';if ($is_thoughtful_comment) echo ' thoughtful';if ($is_ai_spam) echo ' spam'; ?>" data-ai-pending="<?php echo $comment->two_ber_ai_pending ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $id; ?>">
-                <a class="noslide" rel="nofollow" href="<?php echo $link; ?>" target="_blank">
+            <div class="vcard magnetic glow<?php if (!$approved) echo ' auditing';if ($is_ai_comment) echo ' ai';if ($is_thoughtful_comment) echo ' thoughtful';if ($is_ai_spam) echo ' spam'; ?>" data-ai-pending="<?php echo $comment->two_ber_ai_pending ?>" data-magnet-scale="1" data-magnet-step="0" id="comment-<?php echo $id; ?>">
+                <a class="noslide avatar" rel="nofollow" href="<?php echo $link; ?>" target="_blank" title="<?php echo $comment_user_title; ?>">
                     <?php 
                         if (get_option('show_avatars')) {
                             echo '<img class="vimg" '.$lazysrc.'="'.match_mail_avatar($email).'" width=50 height=50 alt="user_avatar" />';
@@ -4771,7 +4938,7 @@
                 </a>
                 <div class="vh" rootid="comment-<?php echo $id; ?>">
                     <div class="vhead">
-                        <a class="vnick" rel="nofollow" href="<?php echo $link; ?>" target="_blank">
+                        <a class="vnick" rel="nofollow" href="<?php echo $link; ?>" target="_blank" title="<?php //echo $comment_user_title; ?>">
                             <em><?php echo $nick; ?></em>
                         </a>
                         <?php
@@ -4787,7 +4954,7 @@
                     <div class="vmeta">
                         <span class="vtime"><?php echo date('Y-m-d', strtotime($comment->comment_date)); ?></span>
                         <?php 
-                            if ($is_ai_spam) echo '<span class="vedited vspam" title="'.$is_ai_spam.'">AI spam-ed</span>';
+                            if ($is_ai_spam) echo '<span class="vedited vspam" title="@2BER：'.$is_ai_spam.'">AI Spam</span>';
                             if ($approved) {
                                 if (get_option('site_ajax_comment_switcher')) {
                                     $tips = '回复ta的评论';
@@ -4867,9 +5034,12 @@
                         $child->_comment_auditing = true;
                         $child->comment_content = '<small style="opacity:.5;display:block;">[ 等待评论审核，通过正常显示。 ]</small>' . $child->comment_content;
                     }
+                    // add comment user info
+                    $comment_user_email = $child->comment_author_email;
+                    $child->_comment_userinfo = get_comment_full_info($comment_user_email);
                     // use privacy data encryption
+                    $child->comment_author_email = md5($comment_user_email);
                     $child->comment_author_IP = sha1($child->comment_author_IP);
-                    $child->comment_author_email = md5($child->comment_author_email);
                     // add Objects for frontend calls
                     $child->_comment_reply = get_comment_author($child->comment_parent);
                     $child->_comment_agent = get_userAgent_info($child->comment_agent);
@@ -4904,9 +5074,12 @@
             ));
             foreach ($comments as $each) {
                 $comment_ID = $each->comment_ID;
+                // add comment user info
+                $comment_user_email = $each->comment_author_email;
+                $each->_comment_userinfo = get_comment_full_info($comment_user_email);
                 // user privacy data crypt
+                $each->comment_author_email = md5($comment_user_email);
                 $each->comment_author_IP = sha1($each->comment_author_IP);
-                $each->comment_author_email = md5($each->comment_author_email);
                 // record comment childs count for frontend overview
                 $child_counts = get_descendant_comment_count($comment_ID);
                 $each->comment_counts = $child_counts;
