@@ -21,9 +21,9 @@
                 <em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -404px 4px"></em>
             </span>
         </a>
-        <a id="qq" class="magnetic _disabled" title="分享QQ" href="https://connect.qq.com/widget/shareqq/index.html?<?php echo $para_str = 'url='.get_permalink().'&p='.custom_excerpt(50, true).'&title='.get_the_title().'&summary='.custom_excerpt(100, true).'&pics='.get_postimg(); ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
-        <a id="qzone" class="magnetic" title="分享空间（QZone）" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?<?php echo $para_str; ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
-        <a id="Poster" class="magnetic" title="图文海报（Poster）"><span id="recall" onclick="getPoster(this)"><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
+        <a id="qq" class="magnetic glow disableds" title="分享QQ" href="https://connect.qq.com/widget/shareqq/index.html?<?php echo $para_str = 'url='.get_permalink().'&p='.custom_excerpt(50, true).'&title='.get_the_title().'&summary='.custom_excerpt(100, true).'&pics='.get_postimg(); ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -9px 4px"></em></span></a>
+        <a id="qzone" class="magnetic glow" title="分享空间（QZone）" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?<?php echo $para_str; ?>" target="_blank"><span><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -88px 4px"></em></span></a>
+        <a id="Poster" class="magnetic glow" title="图文海报（Poster）"><span id="recall" onclick="getPoster(this)"><em style="background:url(<?php echo $img_cdn; ?>/images/shareico.png) no-repeat -245px 4px"></em></span></a>
         <!--<img decoding="async" loading="lazy" data-src="<?php echo $bilibili_wink = $img_cdn . '/images/bilibili_wink.webp'; ?>" alt="bilibili_wink" style="margin: -15px auto auto;opacity:.75;">-->
     </div>
 <?php
@@ -47,7 +47,7 @@
     }
     $comment_allowed = comments_open() || is_category()&&$post->comment_status=="open";
     $comments_number = get_comments_number();
-    if ($comments_number >= 0) {
+    if ($comments_number >= 0 && $comment_allowed) {
 ?>
     <div class="main">
         <span id="respond">
@@ -240,11 +240,11 @@
     <div id="vcomments" class="v">
         <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/valine.css?v=<?php echo get_theme_info(); ?>" />
         <?php 
-            if ($cf_turnstile_wordpress) {
-                echo '<div id="widget-container"></div>';
-                the_cf_turnstile();
-            }
             if ($comment_allowed) {
+                if ($cf_turnstile_wordpress) {
+                    echo '<div id="widget-container"></div>';
+                    the_cf_turnstile();
+                }
         ?>
             <div class="vwrap magnetics" data-magnet-scale="1" data-magnet-step="0">
                 <form action="<?php echo esc_url(home_url('/')); ?>wp-comments-post.php" method="post" style="height: auto;border-radius: inherit;">
@@ -412,16 +412,18 @@
                             }
                             $comment->comment_content = '<small style="opacity:.5;display:block;"> [ 等待评论审核，通过正常显示。] </small>' . $comment->comment_content;
                         }
-                        $comment_user_info = get_comment_full_info($comment->comment_author_email);
+                        $comment_user_info = get_comment_full_info($comment->comment_author_email); //'', $comment->comment_author_url
+                        $comment_user_outdated = $comment_user_info['url_outdated'];
                         $comment_user_title = sprintf(
-                            'Ta 在本站共 %d 条评论（首次 %s；最近 %s）',
+                            'Ta 在本站共 %d 条评论（首次 %s；最近 %s）%s',
                             $comment_user_info['comment_count'],
                             $comment_user_info['first_comment_date'] ?: '未知',
-                            $comment_user_info['last_comment_date'] ?: '未知'
+                            $comment_user_info['last_comment_date'] ?: '未知',
+                            !empty($comment_user_outdated) ? '（长期无互动链接可能已失效）' : ''
                         );
                     ?>
-                        <div class="vcard magnetic glow<?php if ($is_ai_comment && !$is_ai_pending) echo ' ai';if ($is_thoughtful_comment) echo ' thoughtful';if ($is_ai_spam) echo ' spam'; ?>" data-magnet-scale="1" data-magnet-step="0.015" id="comment-<?php echo $comment_ID; ?>" data-ai-pending="<?php echo $is_ai_pending ?>">
-                            <a class="noslide avatar" rel="nofollow" href="<?php comment_author_url(); ?>" target="_blank" title="<?php echo $comment_user_title; ?>">
+                        <div class="vcard magnetic glow<?php if ($is_ai_comment && !$is_ai_pending) echo ' ai';if ($is_thoughtful_comment) echo ' thoughtful';if ($is_ai_spam) echo ' spam'; ?>" data-magnet-scale="1" data-magnet-step="0" id="comment-<?php echo $comment_ID; ?>" data-ai-pending="<?php echo $is_ai_pending ?>">
+                            <a class="noslide avatar" rel="nofollow crossorigin" href="<?php echo $comment_author_url = get_comment_author_url(); //normalize_comment_url(get_comment_author_url(), true); ?>" target="_blank" title="<?php echo $comment_user_title; ?>" data-outdated="<?php echo $comment_user_outdated; ?>">
                                 <?php 
                                     if (get_option('show_avatars')) {
                                         $email = get_comment_author_email();
@@ -432,7 +434,7 @@
                             </a>
                             <div class="vh" rootid="comment-<?php echo $comment_ID; ?>">
                                 <div class="vhead">
-                                    <a class="vnick" rel="nofollow" href="<?php comment_author_url(); ?>" target="_blank">
+                                    <a class="vnick" rel="nofollow crossorigin" href="<?php echo $comment_author_url; ?>" target="_blank" data-outdated="<?php echo $comment_user_outdated; ?>">
                                         <em><?php comment_author(); ?></em>
                                     </a>
                                     <?php
@@ -544,7 +546,7 @@
                         $load_class = $load_class . ' disabled';
                         $text_loadmore = '已加载全部评论';
                     }
-                    echo '<a href="javascript:;" class="' . $load_class . ' noslide magnetic glow" data-click="0" data-load="'.$comment_count.'" data-counts="'.$comments_all.'" data-nonce="'.wp_create_nonce($post_ID."_comment_ajax_nonce").'">'.$text_loadmore.'</a>';
+                    echo '<a href="javascript:;" class="' . $load_class . ' noslide magnetic glow" data-magnet-scale="1" data-magnet-step="0.15" data-click="0" data-load="'.$comment_count.'" data-counts="'.$comments_all.'" data-nonce="'.wp_create_nonce($post_ID."_comment_ajax_nonce").'">'.$text_loadmore.'</a>';
                 } else {
                     // 上一页评论
                     function get_previous_comments_html( $label = '' ) {
@@ -559,7 +561,7 @@
                         if ( empty( $label ) ) {
                             $label = __( '&laquo; Older Comments' );
                         }
-                        return '<span><a class="loadmore noslide wp magnetic glow" href="' . esc_url( get_comments_pagenum_link( $prevpage ) ) . '" ' . apply_filters( 'previous_comments_link_attributes', '' ) . '><i class="icom"></i>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '</a></span>';
+                        return '<span><a class="loadmore noslide wp magnetic glow" data-magnet-scale="1" data-magnet-step="0.15" href="' . esc_url( get_comments_pagenum_link( $prevpage ) ) . '" ' . apply_filters( 'previous_comments_link_attributes', '' ) . '><i class="icom"></i>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '</a></span>';
                     }
                     // 下一页评论
                     function get_next_comments_html( $label = '', $max_page = 0 ) {
@@ -639,7 +641,7 @@
                         comment_submit: '提交中..',
                         comment_loaded: '已加载全部评论',
                         turnstile_error: '重置 turnstile 发生错误！',
-                        turnstile_waitting: '请先完成 turnstile 验证！',
+                        turnstile_waitting: '请先完成或等待 turnstile 验证后评论！',
                         invalid_comment: '评论填写有误！',
                         invalid_nickname: '昵称填写有误！',
                         invalid_email: '邮箱格式有误！',
@@ -960,6 +962,7 @@
                               content = child.comment_content,//strip_tags(child.comment_content),
                               user_agent =  `<span class="vsys useragent">${child._comment_agent.browser+" / "+child._comment_agent.system}</span>`,
                               user_info = child._comment_userinfo,
+                              user_outdated = user_info.url_outdated ? 1 : '',
                               is_ai_spam = child._comment_spam,
                               is_ai_reply = child.user_id == 9527,
                               is_thoughtful_reply = child._comment_thoughtful != 0,
@@ -983,7 +986,7 @@
                               thoughtful_class = ' thoughtful';
                               thoughtful_reply = `<span class="vsys vthoughtful" title="AI Powered @2BER">✨亮评 #${id}</span>`;
                           }
-                          output += `<div class="vcard magnetic glow${ai_class+thoughtful_class+spam_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0.015" id="comment-${id}"><a class="noslide avatar" rel="nofollow" href="${link}" target="_blank" title="Ta 在本站共 ${user_info.comment_count} 条评论（首次 ${user_info.first_comment_date}；最近 ${user_info.last_comment_date}）"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow" href="${link}" target="_blank"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div><div class="vmeta"><span class="vtime">${child.comment_date.slice(0, 10)}</span>${ai_spam + replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${child._comment_reply}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
+                          output += `<div class="vcard magnetic glow${ai_class+thoughtful_class+spam_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0" id="comment-${id}"><a class="noslide avatar" rel="nofollow crossorigin" href="${link}" target="_blank" title="Ta 在本站共 ${user_info.comment_count} 条评论（首次 ${user_info.first_comment_date}；最近 ${user_info.last_comment_date}）${user_info.url_outdated ? '（长期无互动链接可能已失效）' : ''}" data-outdated="${user_outdated}"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow crossorigin" href="${link}" target="_blank" data-outdated="${user_outdated}"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div><div class="vmeta"><span class="vtime">${child.comment_date.slice(0, 10)}</span>${ai_spam + replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${child._comment_reply}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
                        }
                     }
                     return output;
@@ -1301,6 +1304,7 @@
                                                 childs = each_comment._comment_childs,
                                                 user_agent = `<span class="vsys useragent">${each_comment._comment_agent.browser+" / "+each_comment._comment_agent.system}</span>`,
                                                 user_info = each_comment._comment_userinfo,
+                                                user_outdated = user_info.url_outdated ? 1 : '',
                                                 content = each_comment.comment_content,//strip_tags(each_comment.comment_content),
                                                 childs_limits = 3,
                                                 childs_counts = each_comment.comment_counts,  // marked for overview limits
@@ -1339,7 +1343,7 @@
                                             appendList.dataset.magnetScale = '1';
                                             appendList.dataset.magnetStep = "0";
                                             appendList.classList.add("vcard", 'magnetic', 'glow'); //wp_comments
-                                            appendList.innerHTML += `<a class="noslide avatar" rel="nofollow" href="${link}" target="_blank" title="Ta 在本站共 ${user_info.comment_count} 条评论（首次 ${user_info.first_comment_date}；最近 ${user_info.last_comment_date}）"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_comment.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow" href="${link}" target="_blank"> <em>${nick}</em> </a> ${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div> <div class="vmeta"> <span class="vtime">${each_comment.comment_date.slice(0, 10)}</span>${ai_spam + replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
+                                            appendList.innerHTML += `<a class="noslide avatar" rel="nofollow crossorigin" href="${link}" target="_blank" title="Ta 在本站共 ${user_info.comment_count} 条评论（首次 ${user_info.first_comment_date}；最近 ${user_info.last_comment_date}）${user_info.url_outdated ? '（长期无互动链接可能已失效）' : ''}" data-outdated="${user_outdated}"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_comment.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow crossorigin" href="${link}" target="_blank" data-outdated="${user_outdated}"> <em>${nick}</em> </a> ${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div> <div class="vmeta"> <span class="vtime">${each_comment.comment_date.slice(0, 10)}</span>${ai_spam + replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
                                             that.vlist.appendChild(appendList);
                                             that.vlist.innerHTML += if_child;
                                         }
@@ -1586,6 +1590,8 @@
                                                 }
                                                 temp_comment.id = 'comment-' + reply_comment_id;
                                                 temp_comment.className = 'vcard magnetic glow comment_preview'; //wp_comments
+                                                temp_comment.dataset.magnetScale = 1;
+                                                temp_comment.dataset.magnetStep = 0;
                                                 temp_comment.innerHTML = `<a class="noslide avatar" rel="nofollow" href="" target="_blank"> <img class="vimg" src="${that.vinfo.querySelector('.avatar img').src}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid=""> <div class="vhead"> <a class="vnick" rel="nofollow" href="" target="_blank"> <em>${a_val}</em> </a> ${comment_info}<span class="vsys useragent"> Comment Preview </span></div> <div class="vmeta"> <span class="vtime">${new Date().toLocaleString()}</span>${replytocom}</div> <div class="vcontent"> <p>${comment_replyto} ${filter_c_val}</p> </div> </div>`;
                                                 // console.log(temp_comment);
                                                 let comment_nick = temp_comment.querySelector('.vnick em');

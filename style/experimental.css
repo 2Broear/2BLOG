@@ -6,7 +6,27 @@
 **  @2026
 **
 **/
+.friends-boxes .deals .inbox span.ssl.http {
+    background: var(--preset-caution);
+}
 
+.wp-block-table table tr:nth-child(even) {
+    background: var(--mirror-start);
+}
+.wp-block-image a {
+    display: block;
+}
+a[rel~="crossorigin"] * {
+    /*pointer-events: none;*/
+    /*position: relative;*/
+    /*z-index: -1;*/
+}
+.share a {
+    border-radius: 50%!important;
+}
+.share span {
+    display: block;
+}
 /*body.dark .magnetic.glow:before {*/
 /*    background: transparent;*/
 /*}*/
@@ -95,12 +115,18 @@ body.dark .archive-tree ul li a.article {
 /*    background-image: radial-gradient(var(--preset-e) 1px, var(--preset-f) 1px)!important;*/
 /*    background-size: 10px 10px!important;*/
 /*}*/
+.v .vlist .vcard .vh .vwrap {
+    z-index: 9;
+}
 .v a.avatar:hover::after {
-    opacity: 1;
+    opacity: .75;
 }
 .v a.avatar:after {
     content: attr(title);
-    max-width: 52%;
+    max-width: 33em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: var(--preset-5a);
     font-size: var(--min-size);
     pointer-events: none;
@@ -273,10 +299,6 @@ body.dark .news-article-container .v .vlist .children:hover {
 #news-article-head h1 {
     font-size: 2.5rem;
 }
-.news-window.topset:after{
-    bottom: 0;
-    right: 0;
-}
 #news-tail_info {
     border-top-style: dashed;
 }
@@ -297,6 +319,9 @@ body.dark .news-article-container .v .vlist .children:hover {
 ** 2bfriends
 **
 **/
+.friends-boxes .deals .inbox .inbox-inside {
+    border-width: 2px!important;
+}
 .friends-boxes .deals.tech .inbox .inbox-headside {
     width: 66%!important;
     position: absolute;
@@ -330,6 +355,7 @@ blockquote strong {
 }
 .content > p {
     margin: 25px auto;
+    opacity: .9;
 }
 .content p strong {
     text-decoration: underline wavy;
@@ -348,15 +374,19 @@ body.dark .news-article-window {
     /*filter: none;*/
 }
 blockquote {
-    padding-left: 15px;
+    padding-left: 10px;
+}
+body.dark blockquote.wp-block-quote p {
+    color: var(--preset-9)!important;
 }
 blockquote.wp-block-quote p {
     /*color: var(--preset-5a);*/
     font-family: serif;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
-body.dark blockquote.wp-block-quote p {
-    color: var(--preset-9)!important;
+blockquote.wp-block-quote p:last-of-type {
+    margin-bottom: auto;
+    /*line-height: normal;*/
 }
 /**
 **

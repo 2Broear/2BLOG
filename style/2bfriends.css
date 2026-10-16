@@ -374,7 +374,7 @@
 	background: var(--preset-f);
 	box-shadow: rgba(0,0,0,0.08) 0 0 12px;
 	border-radius:var(--radius);
-	border: 1px solid #fff!important;
+	border: 2px solid #fff!important;
     box-sizing: border-box;
 	transition: transform .35s ease;
     background: linear-gradient(180deg, var(--mirror-start) 0, var(--mirror-end))!important;

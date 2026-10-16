@@ -195,7 +195,7 @@
         <div class="Introduce-window" style="width: 100%;">
             <div class="Introduce-core">
                 <div class="In-core-head">
-                    <div class="about_blocks magnetic glow" data-magnet-scale="1" data-magnet-step="0.015">
+                    <div class="about_blocks magnetic glow" data-magnet-scale="1" data-magnet-step="0">
                         <ul>
                             <li class="intro_left">
                                 <div class="profile">

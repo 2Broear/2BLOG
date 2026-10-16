@@ -758,6 +758,9 @@
             register_setting( 'baw-settings-group', 'site_async_archive' );
         register_setting( 'baw-settings-group', 'site_async_archive_stats' );
         register_setting( 'baw-settings-group', 'site_async_archive_contributions' );
+        register_setting( 'baw-settings-group', 'site_urls_auditing' );
+            register_setting( 'baw-settings-group', 'site_urls_auditing_interval' );
+            register_setting( 'baw-settings-group', 'site_urls_auditing_category' );
         
         register_setting( 'baw-settings-group', 'site_countdown_switcher' );
             register_setting( 'baw-settings-group', 'site_countdown_date' );
@@ -1775,7 +1778,7 @@
                         // }
                     ?>
                     <tr valign="top" class="">
-                        <th scope="row">显示模式<sup>ThemeMode</sup></th>
+                        <th scope="row">显示模式<sup>FixedTheme</sup></th>
                         <td>
                             <?php
                                 $opt = 'site_darkmode_fixed';
@@ -4032,12 +4035,12 @@ goodsData = [
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">友链 - 状态检测</th>
+                        <th scope="row">友链 - 状态检测<sup>Revoke</sup></th>
                         <td>
                             <?php
                                 $opt = 'site_links_code_state';
                                 $status = check_status($opt);
-                                echo '<label for="'.$opt.'"><p class="description" id="">开启后定期检测并显示友链状态，可选开启指定分类，若检测站点返回 400+ 错误将自动将该友链设置为 standby 不可访问状态（此项将消耗大量时间，默认每日6点更新</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:darkgreen" class="btn">友链状态</span></label>';
+                                echo '<label for="'.$opt.'"><p class="description" id="">开启后定期检测并显示友链状态，可选开启指定分类，若检测站点返回 400+ 错误将自动将该友链设置为 standby 不可访问状态（此项将消耗大量时间，默认每日6点更新</p><p>此项暂停使用，可使用下方外链审查开启站外链接状态检测</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:darkgreen" class="btn">友链状态</span></label>';
                             ?>
                         </td>
                     </tr>
@@ -4069,6 +4072,49 @@ goodsData = [
                                         $opt = 'site_links_rss_alive_state';
                                         $status = check_status($opt);
                                         echo '<label for="'.$opt.'"><p class="description" id="">检测并显示友链RSS活性状态，超过 2 年未更新将被标记“待除草”状态（此项为 A 测，存在数据差异，不建议开启</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' disabled /> <b style="color:gray">ALIVE STATES</b></label>';
+                                    ?>
+                                </td>
+                            </tr>
+                    <tr valign="top">
+                        <th scope="row">外链 - 跳转审查</th>
+                        <td>
+                            <?php
+                                $opt = 'site_urls_auditing';
+                                $status = check_status($opt);
+                                echo '<label for="'.$opt.'"><p class="description" id="">点击评论链接以 弹窗形式 规避审查（开启后所有评论区链接、友链页面链接以及排行页面链接会实行跳转限制</p><input type="checkbox" name="'.$opt.'" id="'.$opt.'"'.$status.' /> <span style="color:greenyellow" class="btn">外链审查</span></label>';
+                            ?>
+                        </td>
+                    </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $urls_auditing = get_option('site_urls_auditing') ? 'dynamic_optshow' : false; ?>">
+                                <th scope="row">— 互动间隔</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_urls_auditing_interval';
+                                        $value = get_option($opt);
+                                        $preset = 12;  //默认填充数据
+                                        if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
+                                        echo '<p class="description" id="site_bar_pixiv_label">外链最后评论互动距离当前时间，最大间隔月数（超过则链接可能失效并标记跳转审查，默认12</p><input type="number" max="" min="1" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr valign="top" class="child_option dynamic_opts <?php echo $urls_auditing; ?>">
+                                <th scope="row">— 检测分类（友链）</th>
+                                <td>
+                                    <?php
+                                        $opt = 'site_urls_auditing_category';  //unique str
+                                        $value = get_option($opt);
+                                        echo '<p class="description" id="">指定检测友链分类状态，使用逗号“ , ”分隔</p><div class="checkbox">';
+                                        $exist_array = explode(',',trim($value));  // NO "," Array
+                                        $links_array = get_links_category();
+                                        if ($links_array) {
+                                            foreach ($links_array as $link_category) {
+                                                if (!$link_category) continue;
+                                                $link_slug = $link_category->slug;
+                                                $checking = in_array($link_slug, $exist_array) ? 'checked' : '';
+                                                echo '<input id="'.$opt.'_'.$link_slug.'" type="checkbox" value="'.$link_slug.'" '.$checking.' /><label for="'.$opt.'_'.$link_slug.'">'.$link_category->name.'</label>';
+                                            }
+                                        }
+                                        echo '<input type="text" name="'.$opt.'" id="'.$opt.'" class="regular-text array-text" readonly value="' . $value . '" placeholder="请选择"/></div>';
                                     ?>
                                 </td>
                             </tr>

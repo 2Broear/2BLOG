@@ -19,14 +19,14 @@ header{height:154px;margin-bottom:auto}
 #news-more_info:hover{box-shadow:rgba(0,0,0,0.12) 0 1px 6px;background-color:var(--theme-color) !important}
 #news-more_info a{display:inline-block}
 #news-more_info p{letter-spacing:2px;font-size:var(--min-size);text-align:center;color:var(--preset-s);margin:0}
-.news-window.topset:after{
+.news-window.topset .news-window-inside:after{
     content: "\e91b";
     font-size: 10rem;
     color: var(--theme-color);
     opacity: .15;
     position: absolute;
-    bottom: -25px;
-    right: -15px;
+    bottom: 0;
+    right: 0;
     z-index: 1;
 }
 /*.news-window.topset .news-window-img{border-color: var(--theme-color);}*/

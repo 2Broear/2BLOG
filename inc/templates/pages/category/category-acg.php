@@ -48,7 +48,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
             $loadimg = $postimg;
         }
         $href = $post_source ? $post_source : ($acg_single_sw ? "javascript:;" : get_the_permalink());
-        $output .= '<div class="inbox flexboxes magnetic glow" data-magnet-scale="1.25" data-magnet-step="0.15" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /></a><span class="author">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(52,true).'</p></span>';
+        $output .= '<div class="inbox flexboxes magnetic glow" data-magnet-scale="1.25" data-magnet-step="0.15" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /></a><span class="author" title="'.$post_feeling.'">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(52,true).'</p></span>';
         if($post_rcmd){
             $rcmd_title = 'Personal Recommends';
             $rcmd_class = '';
@@ -106,7 +106,8 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
             padding: 20px 15px;
             letter-spacing: 5px;
             text-decoration: none;
-            font-size: 2.5rem;
+            font-size: 3rem!important;
+            filter: url(#x);
         }
         .rcmd-boxes .inbox-clip.subcat h2{
             padding: 15px 10px;
@@ -132,6 +133,11 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
             /*display: none;*/
             opacity: .15;
             pointer-events: none;
+        }
+        .rcmd-boxes .info .inbox .inbox-headside span.author {
+            max-width: 88%;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .rcmd-boxes .info .inbox .inbox-headside img {
             border-radius: var(--radius);
@@ -431,7 +437,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                     }else{
                         extra_str = post_rating ? '<div class="game-ratings ign"><div class="ign hexagon" title="IGN High Grades"><h3>'+post_rating+'</h3></div></div>' : '';
                     }
-                    temp.innerHTML = `<div class="inbox-headside flexboxes"><a href="${item.link || 'javascript:void(0);'}" target="_self"><img src="${item.poster}" alt="${item.subtitle}" crossorigin="Anonymous"></a><span class="author">${item.subtitle}</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="${item.link || 'javascript:void(0);'}" target="_self">${item.title}</a></h4></span><span class="lowside-description"><p>${item.excerpt.substr(0,52)}..</p></span>${extra_str}</div>`; //<img class="bg" src="${item.poster}">
+                    temp.innerHTML = `<div class="inbox-headside flexboxes"><a href="${item.link || 'javascript:void(0);'}" target="_self"><img src="${item.poster}" alt="${item.subtitle}" crossorigin="Anonymous"></a><span class="author" title="${item.subtitle}">${item.subtitle}</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="${item.link || 'javascript:void(0);'}" target="_self">${item.title}</a></h4></span><span class="lowside-description"><p>${item.excerpt.substr(0,52)}..</p></span>${extra_str}</div>`; //<img class="bg" src="${item.poster}">
                     fragment.appendChild(temp);
                     // setup ajax-load images blur-color
                     if(item.poster) {

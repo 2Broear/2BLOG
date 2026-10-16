@@ -1191,7 +1191,7 @@ audio{width:300px;height:32px}
 .news-content-right-download ol li{text-align:justify;border-bottom:1px dashed var(--preset-s);transition:padding .35s ease;white-space:nowrap}
 .news-content-right-download ol li a{display:block;max-width:100%;font-size:0.8rem;color:inherit;line-height:37px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .news-content-right-download ol li:hover{padding-left:10px}
-.news-content-right-download ol li:hover>a{/*text-decoration:underline;*/color:var(--theme-color);}
+.news-content-right-download ol li:hover>a{color:var(--theme-color)!important;/*text-decoration:underline;*/}
 .news-content-right-recommend:hover{box-shadow:rgba(0,0,0,0.03) 0 1px 3px}
 .news-content-right-recommend{width:100%;height:auto;border-radius:var(--radius);overflow:hidden;transition:.3s ease;transition-property:background,box-shadow;/*margin-bottom:15px;*/}
 .topic-blocker{float:left;width:100%}
@@ -1788,7 +1788,7 @@ body.dark .ibox.quotes .iboxes::before{
 .share a {color:var(--preset-6);display:inline-block;margin:15px;position:relative;}
 .share span:hover {background:currentColor}
 .share span:hover::before{width:100%;height:100%}
-.share span {width:50px;height:50px;display:inherit;border:2px solid;padding:5px;margin:0 auto;border-radius:50%;transition:all .15s ease;position:relative;cursor:pointer;}
+.share span {width:50px;height:50px;display:block;border:2px solid;padding:5px;margin:0 auto;border-radius:50%;transition:all .15s ease;position:relative;cursor:pointer;}
 .share #dislike span.zan::after,
 .share #dislike span.zan em {background-position:-404px 4px!important}
 .share #dislike span.zan{
@@ -3244,13 +3244,13 @@ header form:active,
 /*.In-core-head .profile:active,*/
 /*.win-top h1:active,*/
 /*.win-top h5:active,*/
+/*.acg_window-content-inside_right .tags:active,*/
+/*.friends-boxes .deals .inboxSliderCard:active,*/
 header>nav#tipson .top-bar-tips a:active,
 .main-root:active,
 .pageSwitcher:active,
 .recommendation:active,
 .article_index .in_dex:active,
-.friends-boxes .deals .inboxSliderCard:active,
-.acg_window-content-inside_right .tags:active,
 .acg_window-content-inside_left-list:active,
 .additional ol:active,
 .news-window:active,
@@ -3363,6 +3363,7 @@ a.markable .tools .toolInside span:active,
 /*.v .vlist .vcard .vhead .vnick,*/
 /*.footer-detector,*/
 /*.news-article-head-tools span,*/
+/*.friends-boxes .deals .inboxSliderCard,*/
 .mobile-vision span,
 .slider-menu_header .slider-logo span,
 .slider-menu-inside i,
@@ -3407,7 +3408,6 @@ a.markable .tools .toolInside span:active,
 .body-basically .Introduce p a,
 .ibox .iboxes,
 .friends-boxes .deals .inbox,
-.friends-boxes .deals .inboxSliderCard,
 .friends-boxes .deals .inboxSliderCard .slideBox a,
 .download_boxes .dld_box .dld_box_wrap,
 .article_index .in_dex,

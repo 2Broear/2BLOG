@@ -22,16 +22,6 @@
             return '
 <div id="comment-barrage-container"></div>
 <style>
-#comment-barrage-container::before {
-    /*content: "";*/
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    background: rgb(255 255 255 / 25%);
-    z-index: 3;
-}
 #comment-barrage-container {
     position: absolute;
     width: 100%;
@@ -443,12 +433,12 @@ body.dark .barrage-item {
     function custom_imgbox_shortcode($atts, $content = null) {
         $img = isset($atts['img']) ? $atts['img'] : '';
         $title = isset($atts['title']) ? $atts['title'] : 'No Text';
-        return '<div class="ibox"><div class="iboxes magnetic glow" data-magnet-scale="1" data-magnet-step="0.05"><img src="'.$img.'" alt="'.$title.'" decoding="async"><mark>'.$title.'</mark></div></div>';
+        return '<div class="ibox"><div class="iboxes magnetic glow" data-magnet-scale="1" data-magnet-step="0"><img src="'.$img.'" alt="'.$title.'" decoding="async"><mark>'.$title.'</mark></div></div>';
     }
     function custom_sidebar_ad_shortcode($atts){
         $sup = isset($atts['sup']) ? $atts['sup'] : '中意此款主题吗';
         $title = isset($atts['title']) ? $atts['title'] : '';
-        $sub = isset($atts['sub']) ? $atts['sub'] : '现在体验<b> BETA </b>版';
+        $sub = isset($atts['sub']) ? $atts['sub'] : '现在体验<b> BETA </b>版!';
         $src= isset($atts['src']) ? $atts['src'] : 'https://github.com/2Broear/2BLOG';
         $img = isset($atts['img']) ? $atts['img'] : 'https://img.2broear.com/2022/08/2BLOG-rainbow666.jpg';
         return '<div class="countdown-box" style="margin-bottom: 15px"><a href="'.$src.'" target="_blank" title="'.$title.'"><div id="countdown" class="countdowns" style="background-image:url('.$img.')"><p class="title">'.$sup.'</p><div class="time"><span class="timesup">'.$title.'</span></div><p class="today" style="text-decoration: underline;">'.$sub.'</p></div><sup id="ads">ads</sup></a></div>';
@@ -490,14 +480,14 @@ body.dark .barrage-item {
             $icon = get_option('site_avatar') ? get_option('site_avatar') : get_site_icon_url();
             $avatar = '<em style="background:url('.$icon.') center center /cover;width: 23px;height: 23px;border-radius: 50%;display: inline-block;vertical-align: middle;"></em>';
         }
-        return '<div class="ibox quotes"><div class="iboxes magnetic glow" data-magnet-scale="1" data-magnet-step="0.05"><img src="'.get_postimg(0,$pid,true).'" alt="'.$title.'"><h3><a href="'.get_the_permalink($pid).'" target="_blank">'.$title.'</a></h3><div class="content"><p>'.$excerpt.'</p></div><mark>'.$avatar.' '.$author.' '.get_the_time('d/m/Y', $pid).' '.get_tag_list($pid, 1, "/").' | '.getPostViews($pid).' views.</mark></div></div>';
+        return '<div class="ibox quotes"><div class="iboxes magnetic glow" data-magnet-scale="1" data-magnet-step="0"><img src="'.get_postimg(0,$pid,true).'" alt="'.$title.'"><h3><a href="'.get_the_permalink($pid).'" target="_blank">'.$title.'</a></h3><div class="content"><p>'.$excerpt.'</p></div><mark>'.$avatar.' '.$author.' '.get_the_time('d/m/Y', $pid).' '.get_tag_list($pid, 1, "/").' | '.getPostViews($pid).' views.</mark></div></div>';
     }
     // if (get_option('site_imrss_switcher'))
     function custom_imrss_shortcode($atts){
         $key = isset($atts['key']) ? $atts['key'] : get_option('site_imrss_key');
         $scope = isset($atts['scope']) ? $atts['scope'] : 'topics'; //topics-rss
         $theme = isset($atts['theme']) ? $atts['theme'] : (theme_mode(true) === 'dark' ? 'night' : 'day');
-        return '<span id="normal" class=""><h3>博友圈 · 公共话题</h3></span><details class="wp-block-details is-layout-flow wp-block-details-is-layout-flow" ><summary>查看本期 <strong>IMRSS</strong> 话题</summary><br/><iframe src="https://imrss.com/widget.php?key='.$key.'&amp;mode=timeline&amp;scope='.$scope.'&theme='.$theme.'" loading="lazy" style="width:100%;border:0;min-height:600px;display:block;margin:0 auto!important" scrolling="no" title="imrss 订阅"></iframe><script src="https://imrss.com/frame.js?v=20260903b" async></script></details>'; //topic.php
+        return '<span id="normal" class=""><h3>博友圈 · 公共话题</h3></span><details class="wp-block-details is-layout-flow wp-block-details-is-layout-flow" ><summary><small>看看这期 <strong>IMRSS</strong> 又在聊什么</small></summary><br/><iframe src="https://imrss.com/widget.php?key='.$key.'&amp;mode=timeline&amp;scope='.$scope.'&theme='.$theme.'" loading="lazy" style="width:100%;border:0;min-height:600px;display:block;margin:0 auto!important" scrolling="no" title="imrss 订阅"></iframe><script src="https://imrss.com/frame.js?v=20260903b" async></script></details>'; //topic.php
     }
     
     // 注册短代码

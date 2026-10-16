@@ -18,7 +18,7 @@
         .win-nav {
             min-width: 25.5%;
             /*width: 30.5%;*/
-            margin-right: 15px;
+            margin-right: 25px;
         }
 	    .win-top h5 {
 	        font-weight: 800;
@@ -40,6 +40,10 @@
         }
         .content-all footer::before {
             z-index: -1;
+        }
+        .main-root ul li:nth-child(odd).magnetic.glow::before,
+        .main-root ul li:nth-child(odd).magnetic.glow::after {
+            content: none;
         }
     </style>
 </head>

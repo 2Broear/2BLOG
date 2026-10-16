@@ -114,7 +114,10 @@
             </header>
             <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>
             <h1><a href="javascript:;" rel="nofollow"><?php the_title(); ?></a><!--<span></span>--></h1>
-            <?php if (get_option('site_comment_barrage')) echo do_shortcode('[comment_barrage row=6 max=12 speed pid='.$post->ID.' thoughtful ai excludes]'); ?>
+            <?php 
+                // issue: white-block onload page
+                if (get_option('site_comment_barrage')) echo do_shortcode('[comment_barrage row=6 max=12 speed pid='.$post->ID.' thoughtful ai excludes]');
+            ?>
         </div>
         <div class="content-all-windows">
             <div class="win-nav-content">

@@ -60,7 +60,7 @@
                     color: var(--preset-5a);
                     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='8' height='8' fill='none' stroke='rgb(255 255 255 / 0.1)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
                     background-size: 15px 15px;
-                    animation: <?php echo $support_counts * 3; ?>s linear 0s infinite normal none running gridFlow;
+                    animation: <?php echo $support_counts * 2; ?>s linear 0s infinite normal none running gridFlow;
                 }
 @keyframes alarmLamp_bar_before {
     /* ===== 模式1：经典交错闪（红色闪6次，占30%） ===== */
@@ -495,14 +495,14 @@
                     <?php
                         }else{
                             $sitelink = get_site_bookmarks('sitelink', 'rand', 'DESC');
-                            $sitelinks = get_site_links($sitelink);
+                            $sitelinks = get_site_links($sitelink, '', true);
                             if (empty($sitelink)) {
     	                        echo '<a id="more" href="javascript:;">' . $sitelinks . '</a>';
                             } else {
-                                echo get_site_links($sitelink);
+                                echo $sitelinks;
             	                $use_temp = get_template_bind_cat('category-2bfriends.php');
             	                $temp_link = !$use_temp->errors ? get_category_link($use_temp->term_id) : 'javascript:;';
-        	                    echo '<a id="more" href="'.$temp_link.'" title="更多" target="_blank">  更多 </a>';
+        	                    echo '<a id="more" href="'.$temp_link.'" title="更多" target="_blank" rel="" data-outdated="">  更多 </a>';
                             }
                         }
                     ?>
@@ -575,11 +575,13 @@
                     $theme_event = 'darkmode()';
                     $theme_events = 'automode(true)';
                     if ($fixed_theme) {
-                        $static_text = '已禁用（已启用 ' . $fixed_theme . ' 常驻）';
-                        $theme_class = ' disabled';
+                        $static_text = '🚫已禁用（当前 ' . $fixed_theme . ' 常驻）';
                         $theme_title = $theme_title . $static_text;
                         $theme_titles = $theme_titles . $static_text;
-                        $theme_event = $theme_events = '';
+                        $theme_class = ' disableds';
+                        // $theme_event = $theme_events = ''; // switch automode without cookies 
+                        $theme_event = $theme_events;
+                        $theme_events = '';
                     }
                 ?>
                 <div class="dark<?php echo $theme_class; ?> magnetic" title="<?php echo $theme_title; ?>" onclick="<?php echo $theme_event; ?>" data-magnet-scale="1.05" data-magnet-step="0.5">

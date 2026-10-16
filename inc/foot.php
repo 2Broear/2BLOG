@@ -5,52 +5,75 @@
     $acg_temp_id = get_cat_by_template('acg','term_id');
     $archive_temp = get_cat_by_template('archive','term_id');
 ?>
-    <style>
-    <?php
-        if ($cat == $archive_temp || $cat == $acg_temp_id || cat_is_ancestor_of($acg_temp_id, $cat)) echo '.win-top {z-index: 3;}';
-        if (get_option('site_magnetic_glow_switcher')) echo '
-        .magnetic.glow:hover::after,
-        .magnetic.glow:hover::before {
-            opacity: .35!important;
-        }
-        .magnetic.glow:after,
-        .magnetic.glow:before {
-            content: "";
-            position: absolute!important;
-            top: 0!important;
-            right: 0!important;
-            bottom: 0!important;
-            left: 0!important;
-            z-index: 20;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity .15s ease;
-        }
-        .magnetic.glow:before {
-            background: radial-gradient(circle var(--glow-min) at var(--glow-x) var(--glow-y), rgb(255 255 255 / 25%), transparent 50%);
-            filter: blur(55px);
-        }
-        .magnetic.glow:after {
-            padding: 1.25px;
-            border-radius: inherit;
-            background: radial-gradient(circle var(--glow-max) at var(--glow-x) var(--glow-y), var(--preset-f) 0%,var(--mirror-start) 26%, var(--mirror-end) 52%, transparent 84%);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-        }
-        .magnetic.glow {
-            overflow: hidden!important;
-        }
-        .additional.metabox ol,
-        .links-more {
-            overflow: visible!important;
-        }
-        .additional.metaboxes ol{
-            overflow: hidden!important;
-        }';
-    ?>
-    </style>
+<style>
+<?php
+    if ($cat == $archive_temp || $cat == $acg_temp_id || cat_is_ancestor_of($acg_temp_id, $cat)) echo '.win-top {z-index: 3;}';
+    if (get_option('site_magnetic_glow_switcher')) echo '
+    body.dark .magnetic.glow:hover::after,
+    body.dark .magnetic.glow:hover::before {
+        opacity: .35!important;
+    }
+    .magnetic.glow:hover::after,
+    .magnetic.glow:hover::before {
+        opacity: .55!important;
+    }
+    .magnetic.glow:after,
+    .magnetic.glow:before {
+        content: "";
+        position: absolute!important;
+        top: 0!important;
+        right: 0!important;
+        bottom: 0!important;
+        left: 0!important;
+        z-index: 20;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity .15s ease;
+    }
+    /*body.dark .magnetic.glow:before {
+        background: radial-gradient(circle var(--glow-min) at var(--glow-x) var(--glow-y), rgb(255 255 255 / 25%), transparent 50%);
+    }
+    body.dark .magnetic.glow:after {
+        background: radial-gradient(circle var(--glow-max) at var(--glow-x) var(--glow-y), var(--preset-f) 0%,var(--mirror-start) 26%, var(--mirror-end) 52%, transparent 84%);
+    }*/
+    .magnetic.glow:before {
+        background: radial-gradient(circle var(--glow-min) at var(--glow-x) var(--glow-y), rgb(255 255 255 / 35%), transparent 50%);
+        filter: blur(50px);
+    }
+    .magnetic.glow:after {
+        padding: 1.25px;
+        border-radius: inherit;
+        background: radial-gradient(circle var(--glow-max) at var(--glow-x) var(--glow-y), var(--preset-f) 0%,var(--mirror-start) 26%, var(--mirror-end) 52%, transparent 84%);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+    }
+    .magnetic.glow {
+        border-radius: var(--radius);
+        overflow: hidden!important;
+    }
+    .links-more.magnetic.glow,
+    .links-more {
+        overflow: visible!important;
+    }
+    /*.win-content article.news-window.magnetic.glow:hover::after,*/
+    figure.wp-block-image.magnetic.glow:hover::after,
+    .rcmd-boxes .info .inbox.magnetic.glow:hover::after,
+    .inside-functions .box .pagePer.magnetic.glow:hover::after,
+    .Fresh-ImgBoxs span.magnetic.glow:hover::after,
+    .share a.magnetic.glow:hover::after {opacity: .85!important;}
+    
+    /*body.dark .news-window:nth-child(even):after,
+    .rcmd-boxes .info .inbox:after,
+    figure.wp-block-image:after,
+    .inside-functions .box .pagePer:after,*/
+    .countdown-box:after,
+    .Fresh-ImgBoxs span:after,
+    .recommendation:after,
+    .share a:after,
+    .win-nav .nav-header:after {padding: 1.85px!important;}';
 ?>
+</style>
 <div class="noise-bgs"></div>
 <script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
 <script type="text/javascript">
@@ -58,6 +81,26 @@
     // 自动执行一次以更正缓存(after load main.js)
     // document.body.className = '';  // reset to default(timezone) mode to clear EOCaches
     <?php
+        if (get_option('site_urls_auditing')) {
+    ?>
+            // 外链审查（评论区）
+            bindEventClick(document.querySelector('.content-all'), '', function(t, e) {
+                // console.log(t)
+                if (t.nodeName !== 'A') return; // || !t.classList
+                if (t.rel && t.rel.match('crossorigin')) {
+                    const target_url = t.href;
+                    if (!t.dataset.outdated || target_url === window.location.origin + '/') {
+                        return;
+                    }
+                    e.preventDefault();  // 立即阻止默认跳转
+                    e.stopPropagation(); // 可选：阻止冒泡，避免父级其他处理
+                    if (confirm(`请确认前往 [ ${target_url} ] （外链可能无法保证安全性）`)) {
+                        window.open(target_url, '_blank');
+                    }
+                }
+            });
+    <?php
+        }
         // if (get_option('site_darkmode_switcher'))
         $fixed_theme = get_option('site_darkmode_fixed');
         if ($fixed_theme) {
@@ -70,7 +113,7 @@
                 console.log(`theme_mode[manual] switch-color-scheme: ${theme_mode}..`);
             } else {
                 automode();
-            };
+            }
     <?php
         }
         $vdo_poster_sw = get_option('site_video_poster_switcher');

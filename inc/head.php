@@ -198,25 +198,61 @@
                 }, delay);
             };
         }
-        function bindEventClick(parent, ids, callback, events = 'onclick'){
+        // function bindEventClick(parent, ids, callback, events = 'onclick'){
+        //     if (!parent) {
+        //         console.warn('bindEventClick failed on node: ', parent);
+        //         return;
+        //     }
+        //     parent[events] = (e)=> {
+        //         e = e || window.event;
+        //         let t = e.target || e.srcElement;
+        //         // if (!t) return;
+        //         while (t && t != parent) {
+        //             if(!ids || ids == "") {
+        //                 callback(t,e);
+        //                 break;
+        //             }
+        //             if(t.id && t.id===ids || t.classList && t.classList.contains(ids) || t.nodeName.toUpperCase()===ids.toUpperCase()){
+        //                 // callback?.();
+        //                 if(callback&&typeof callback==='function') callback(t,e); //callback(t) || callback(t); // callback.apply(this, ...arguments);
+        //                 break;
+        //             }
+        //             t = t.parentNode;
+        //         }
+        //     };
+        // }
+        function bindEventClick(parent, ids, callback, events = 'onclick') {
             if (!parent) {
                 console.warn('bindEventClick failed on node: ', parent);
                 return;
             }
-            parent[events] = (e)=> {
+            parent[events] = (e) => {
                 e = e || window.event;
                 let t = e.target || e.srcElement;
-                // if (!t) return;
-                while (t && t != parent) {
-                    if(!ids || ids == "") {
-                        callback(t,e);
+        
+                while (t && t !== parent) {
+                    // 空 ids：把当前节点交给回调，回调返回 truthy 表示"已处理，停止遍历"
+                    if (!ids || ids === '') {
+                        const handled = callback(t, e);
+                        if (handled) break;
+                        t = t.parentNode;
+                        continue;
+                    }
+        
+                    // 指定 ids：做匹配
+                    const matched =
+                        (t.id && t.id === ids) ||
+                        (t.classList && t.classList.contains(ids)) ||
+                        (t.nodeName && t.nodeName.toUpperCase() === ids.toUpperCase());
+        
+                    if (matched) {
+                        if (callback && typeof callback === 'function') {
+                            const handled = callback(t, e);
+                            if (handled) break;
+                        }
                         break;
                     }
-                    if(t.id && t.id===ids || t.classList && t.classList.contains(ids) || t.nodeName.toUpperCase()===ids.toUpperCase()){
-                        // callback?.();
-                        if(callback&&typeof callback==='function') callback(t,e); //callback(t) || callback(t); // callback.apply(this, ...arguments);
-                        break;
-                    }
+        
                     t = t.parentNode;
                 }
             };
@@ -233,7 +269,19 @@
             // if (getCookie('theme_manual')) return;
             const colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
             function handleColorSchemeChange(e) {
-                // ✅ 新增：如果当前是手动模式，忽略系统主题变化
+                <?php
+                    // ✅ 新增：如果当前是手固定式，切换主题但不记录cookie
+                    if (get_option('site_darkmode_fixed')) {
+                ?>
+                        // let theme_mode = getCookie('theme_mode');
+                        // theme_mode = theme_mode && theme_mode === 'dark' ? 'light' : 'dark';
+                        document.body.className = document.body.classList.contains('dark') ? 'light' : 'dark'; //theme_mode;
+                        console.log('theme_mode[fixed] switch-color-scheme: ' + document.body.className);
+                        return;
+                <?php
+                    }
+                ?>
+                // 果当前是手动模式，忽略系统主题变化
                 if (!manual && +getCookie('theme_manual')) {
                     console.log('theme_mode[auto] ignored because manual mode is active');
                     return;
@@ -250,22 +298,22 @@
                 } else {
                     delCookie('theme_mode_prefers');  // del-record for php cookie init
                     // 默认调用内部主题判定规则/系统不支持
-            <?php
-                if (get_option('site_darkmode_switcher')) {
-            ?>
-                    const start = <?php echo get_option('site_darkmode_start',17); ?>,
-                          end = <?php echo get_option('site_darkmode_end',9); ?>;
-                    let date = new Date(),
-                        hour = date.getHours();
-                    hour >= end && hour < start || hour==end && date.getMinutes() >= 0 && date.getSeconds() >= 0 ? setCookie('theme_mode','light') : setCookie('theme_mode','dark');
-            <?php
-                } else {
-            ?>
-                    setCookie('theme_mode','light');
-            <?php
-                }
-            ?>
-                    const theme_mode = getCookie('theme_mode');
+                <?php
+                    if (get_option('site_darkmode_switcher')) {
+                ?>
+                        const start = <?php echo get_option('site_darkmode_start',17); ?>,
+                              end = <?php echo get_option('site_darkmode_end',9); ?>;
+                        let date = new Date(),
+                            hour = date.getHours();
+                        hour >= end && hour < start || hour==end && date.getMinutes() >= 0 && date.getSeconds() >= 0 ? setCookie('theme_mode','light') : setCookie('theme_mode','dark');
+                <?php
+                    } else {
+                ?>
+                        setCookie('theme_mode','light');
+                <?php
+                    }
+                ?>
+                    theme_mode = getCookie('theme_mode');
                     document.body.className = theme_mode;
                     console.log('theme_mode[auto] switch-color-scheme: ' + theme_mode);
                 }
@@ -290,9 +338,9 @@
         		script.onload = script.onreadystatechange = null;
         	};
         };
-    <?php
+<?php
         if (get_option('site_progress_bar_switcher')) {
-    ?>
+?>
         asyncLoad("<?php echo $src_cdn; ?>/js/nprogress.js", function(){
     	    NProgress.start();
     	    const NProgressLoaded = function(){
@@ -301,9 +349,9 @@
     	    }
         	window.addEventListener('load', NProgressLoaded, true);
         });
-    <?php
+<?php
         }
-    ?>
+?>
     </script>
 <?php
     if(get_option('site_leancloud_switcher')){ //DO NOT use "defer" in script

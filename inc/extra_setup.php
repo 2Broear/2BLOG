@@ -54,7 +54,7 @@
                 return $block_content;
             }
             // 根据不同的块类型使用不同的匹配模式
-            $replacement = '$1 magnetic glow" data-magnet-scale="1" data-magnet-step="0"';
+            $replacement = '$1 magnetic glow" data-magnet-scale="1" data-magnet-step="0.015"';
             if ($block['blockName'] === 'core/image') {
                 // 匹配 figure 元素（wp-block-image）
                 $pattern = '/(<figure[^>]*class="wp-block-image[^"]*)/i';;
@@ -211,7 +211,7 @@
          */
         function the_cf_turnstile() {
     ?>
-            <style>.cf-turnstile.hide{display:none;}.cf-turnstile{margin-top:15px;}#widget-container{width:100%;}</style>
+            <style>.cf-turnstile.hide{display:none;}.cf-turnstile{margin-top:15px;}body.dark #widget-container:before, body.dark #widget-container:after{content:'';width: 100%;height: 100%;display: block;background: var(--preset-3a);position: absolute;top: 0;left: 0;opacity: .5;pointer-events: none;}body.dark #widget-container:after{padding: 5px;box-sizing: border-box;background: var(--preset-2b);opacity: .75;border-radius: calc(var(--radius) /2);-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite: xor;mask-composite: exclude;}body.dark #widget-container:hover::before{opacity: 0;}body.dark #widget-container:hover{opacity: 1;}body.dark #widget-container{opacity: .75;}#widget-container{width:100%;max-height: 65px;position: relative;}</style>
             <!--<script defer async src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>-->
             <script defer async src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad"></script>
             <script>
@@ -3484,27 +3484,27 @@
         return null; // 未找到返回 null
     }
     // 返回友链指定分类 html
-    function get_site_links($links, $types = '', $rsscat = '', $status = false, $category = 'standard') {
+    function get_site_links($links, $types = '', $rsscat = '', $category = 'standard', $status = false) {
         if (!$links) return 'unreachable links provide';
     
-        // ---------- 活性检测：2 年未更新标记为“待除草” ----------
-        $over2yearsNoUpdateRssList = array();
-        if ($rsscat && is_string($rsscat)) {
-            $rss_data = get_rss_data_by_cat($rsscat, true);
-            if ($rss_data && !empty($rss_data)) {
-                $blacklist = ['0000-00-00', '1970-01-01'];
-                foreach ($rss_data as $data) {
-                    if (!isset($data->date)) continue;
-                    $dateString = $data->date;
-                    $givenDate = new DateTime($dateString);
-                    $currentDate = new DateTime();
-                    $interval = $currentDate->diff($givenDate);
-                    if ($interval->y >= 2 && !in_array($dateString, $blacklist)) {
-                        $over2yearsNoUpdateRssList[] = $data->rss;
-                    }
-                }
-            }
-        }
+        // // ---------- 活性检测：多年未更新标记为“待除草” ----------
+        // $over2yearsNoUpdateRssList = array();
+        // if ($rsscat && is_string($rsscat)) {
+        //     $rss_data = get_rss_data_by_cat($rsscat, true);
+        //     if ($rss_data && !empty($rss_data)) {
+        //         $blacklist = ['0000-00-00', '1970-01-01'];
+        //         foreach ($rss_data as $data) {
+        //             if (!isset($data->date)) continue;
+        //             $dateString = $data->date;
+        //             $givenDate = new DateTime($dateString);
+        //             $currentDate = new DateTime();
+        //             $interval = $currentDate->diff($givenDate);
+        //             if ($interval->y >= 2 && !in_array($dateString, $blacklist)) {
+        //                 $over2yearsNoUpdateRssList[] = $data->rss;
+        //             }
+        //         }
+        //     }
+        // }
     
         global $lazysrc, $loadimg;
         $output = '';
@@ -3549,14 +3549,6 @@
                 $loadimg = $avatar;
             }
     
-            // 活性标记
-            if (in_array($link_rss, $over2yearsNoUpdateRssList)) $impression = '<span class="ssl http"> 待除草 </span>';
-    
-            // 站点可访问状态
-            $status_code = $status ? get_url_status_by_curl($link_url, true) : 200;
-            $status_class = !$link_accessable || $status_code >= 400 ? 'standby ' . $status_code : 'ok';
-            $status_standby = $status_class === 'standby';
-    
             // ---------- RSS 卡片 ----------
             $rss_feeds = '';
             if ($link_rss && $rss_card) {
@@ -3599,25 +3591,47 @@
             }
     
             // ---------- HTML 输出（不变） ----------
+            $status_code = 200;
+            $status_class = 'ok';
+            $link_user_outdated = get_option('site_urls_auditing') ? 1 : '';
+            if ($rsscat && $link_accessable) {
+                // 活跃标记
+                $link_user_info = get_comment_full_info('', $link_url);
+                $link_user_outdated = $link_user_info['url_outdated'];
+                if ($link_user_outdated) {
+                    // 长期无互动
+                    $impression = '<span class="ssl http"> Observe </span>'; // || in_array($link_rss, $over2yearsNoUpdateRssList)
+                } else {
+                    // 无任何互动
+                    $link_user_comments = $link_user_info['comment_count'];
+                    if ($link_user_comments == 0) $link_user_outdated = 1;
+                }
+                // print_r($link_user_info);
+        
+                // 站点可访问状态
+                if ($status) $status_code = get_url_status_by_curl($link_url, true);
+                if (!$link_accessable || $status_code >= 400) $status_class = 'standby ';
+            }
+            $status_standby = $status_class === 'standby';
             switch ($types) {
                 case 'full':
                     $avatar_statu = $status_standby ? '<img alt="近期访问出现问题" data-err="true" draggable="false">' : '<img '.$lazyhold.' src="'.$loadimg.'" alt="'.$link_name.'" draggable="false">';
                     $rel_statu = $rel ? $rel : 'friends';
-                    $output .= '<div class="inbox flexboxes magnetic glow '.$status_class.' '.$sex.'" data-magnet-scale="0.9" data-magnet-step="0.15"><div class="inbox-inside flexboxes"><a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'" data-status="' . $status_code . '"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impression.'</div>' . $rss_feeds;
+                    $output .= '<div class="inbox flexboxes magnetic glow '.$status_class.' '.$sex.'" data-magnet-scale="0.9" data-magnet-step="0.15"><div class="inbox-inside flexboxes"><a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.' crossorigin" title="'.$link_desc.'" data-status="' . $status_code . '" data-outdated="'.$link_user_outdated.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a><div class="inbox-headside flexboxes">'.$avatar_statu.'</div>'.$impression.'</div>' . $rss_feeds;
                     $output .= '</div>';
                     break;
                 case 'half':
                     $rel_statu = $rel ? $rel : 'recommends';
-                    $output .= '<div class="inbox magnetic glow '.$status_class.' '.$sex.'" data-magnet-scale="0.9" data-magnet-step="0.15"><div class="inbox-inside flexboxes">'.$impression.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.'" title="'.$link_desc.'" data-status="' . $status_code . '"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div>' . $rss_feeds;
+                    $output .= '<div class="inbox magnetic glow '.$status_class.' '.$sex.'" data-magnet-scale="0.9" data-magnet-step="0.15"><div class="inbox-inside flexboxes">'.$impression.'<a href="'.$link_url.'" class="inbox-aside" target="'.$target.'" rel="'.$rel_statu.' crossorigin" title="'.$link_desc.'" data-status="' . $status_code . '" data-outdated="'.$link_user_outdated.'"><span class="lowside-title"><h4>'.$link_name.'</h4></span>'.$link_descs.'</a></div>' . $rss_feeds;
                     $output .= '</div>';
                     break;
                 case 'list':
                     $rel_statu = $rel ? $rel : 'random';
-                    $output .= '<li class="magnetic glow" data-magnet-scale="0.9" data-magnet-step="0.15"><a href="'.$link_url.'" class="'.$status_class.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" data-status="' . $status_code . '">'.$link_name.'</a></li>';
+                    $output .= '<li class="magnetic glow" data-magnet-scale="0.9" data-magnet-step="0.15"><a href="'.$link_url.'" class="'.$status_class.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.' crossorigin" data-status="' . $status_code . '" data-outdated="'.$link_user_outdated.'">'.$link_name.'</a></li>';
                     break;
                 default:
                     $rel_statu = $status_standby ? 'nofollow' : 'followed';
-                    $output .= '<a href="'.$link_url.'" class="'.$status_class.' magnetics" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.'" data-status="' . $status_code . '" data-magnet-scale="1.15" data-magnet-step="0.75">'.$link_name.'</a>';
+                    $output .= '<a href="'.$link_url.'" class="'.$status_class.' magnetics" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.' crossorigin" data-status="' . $status_code . '" data-magnet-scale="1.15" data-magnet-step="0.75" data-outdated="'.$link_user_outdated.'">'.$link_name.'</a>';
                     break;
             }
         }
@@ -3753,7 +3767,7 @@
                     }else{
                         if(in_category($news_slug)){
             ?>
-                            <article class="news-window wow magnetic glow<?php if($post_orderby>1) echo ' topset icom'; ?>" data-magnet-scale="1" data-magnet-step="0.025" data-wow-delay="0.1s">
+                            <article class="news-window wow magnetic glow<?php if($post_orderby>1) echo ' topset icom'; ?>" data-magnet-scale="1" data-magnet-step="0" data-wow-delay="0.1s">
                                 <div class="news-window-inside">
                                     <?php
                                         $postimg = get_postimg();
@@ -3806,7 +3820,7 @@
                                     </span>
                                     <span id="weblog-circle"></span>
                                 </div>
-                                <div class="weblog-tree-core-r magnetics" data-magnet-scale="1" data-magnet-step="0.05">
+                                <div class="weblog-tree-core-r magnetic glow" data-magnet-scale="1" data-magnet-step="0">
                                     <div class="weblog-tree-box">
                                         <div class="tree-box-title">
                                             <a href="<?php the_permalink() ?>" id="<?php the_title(); ?>" target="_self">
@@ -3833,7 +3847,7 @@
             ?>
                             <div class="rcmd-boxes flexboxes">
                                 <div class="info anime flexboxes">
-                                    <div class="inbox flexboxes magnetics" data-magnet-scale="1.25" data-magnet-step="">
+                                    <div class="inbox flexboxes magnetic glow" data-magnet-scale="1.25" data-magnet-step="0.15">
                                         <div class="inbox-headside flexboxes">
                                             <a href="<?php the_permalink(); ?>">
                                                 <?php
@@ -3857,7 +3871,7 @@
                         } else {
                             // results doen't match in_category template, like pages..
             ?>
-                            <article class="<?php if($post_orderby>1) echo 'topset '; ?>cat-<?php echo $post->ID ?> magnetics" data-magnet-scale="1" data-magnet-step="0.015">
+                            <article class="<?php if($post_orderby>1) echo 'topset '; ?>cat-<?php echo $post->ID ?> magnetic glows" data-magnet-scale="1" data-magnet-step="0">
                                 <h1>
                                     <a href="<?php the_permalink() ?>" target="_blank"><?php the_title() ?></a>
                                     <?php 
@@ -4344,6 +4358,16 @@
         add_filter('comment_text' , 'lazyload_images', 20, 2);
     }
     
+    //外链审查
+    if ( get_option( 'site_urls_auditing' ) ) {
+        function urls_auditing( $content ) {
+            // 给所有 <a 标签强行加 data-outdated 和 rel（如果已有 rel，会变成双 rel）
+            $content = preg_replace( '/<a\s/i', '<a data-outdated="1" rel="crossorigin" ', $content );
+            return $content;
+        }
+        add_filter( 'comment_text', 'urls_auditing', 20, 2 );
+    }
+    
     // 站点logo
     function site_logo($darkmode = false) {
         if (get_option('site_logo_switcher')) {
@@ -4489,7 +4513,7 @@
                 $each_index = trim($index_array[$i]);
                 if($each_index){
                     if(in_category($each_index)){
-                        $content = '<div class="article_index '.$auto_fold.' magnetics" data-index="'.$match_m.'"><div class="in_dex magnetic glow" data-magnet-step="0.1" data-magnet-scale="1"><p title="折叠/展开"><b>文章目录</b><i class="icom"></i></p><ul>' . $ul_li . '</ul></div></div>' . $content;
+                        $content = '<div class="article_index '.$auto_fold.'" data-index="'.$match_m.'"><div class="in_dex magnetic glow" data-magnet-step="0.1" data-magnet-scale="1"><p title="折叠/展开"><b>文章目录</b><i class="icom"></i></p><ul>' . $ul_li . '</ul></div></div>' . $content;
                     }
                 }
             }
@@ -4737,6 +4761,25 @@
     }
  
     //*****  WordPress Comments Setup etc (comment ajx reply/paginate)  *****//
+    /**
+     * 归一化 URL：提取主机名，去掉协议、www.、末尾斜杠
+     */
+    function normalize_comment_url($url, $fix = false) {
+        if (empty($url)) return '';
+    
+        // 若没有协议则补一个，方便 parse_url 解析
+        if (strpos($url, '//') === false) {
+            $url = 'http://' . $url;
+        }
+    
+        $host = parse_url($url, PHP_URL_HOST);
+        if (!$host) return '';
+    
+        $host = strtolower($host);
+        $host = preg_replace('/^www\./i', '', $host);
+    
+        return $fix ? 'https://' . $host : $host;
+    }
     
     // ai reply logics // 正在处理且尚未有回复 → true
     function ajax_ai_reply_status($comment) {
@@ -4768,6 +4811,10 @@
                             return is_email($value);
                         },
                     ],
+                    'url' => [
+                        'required'          => false,
+                        'sanitize_callback' => 'esc_url_raw',
+                    ],
                 ],
                 'permission_callback' => '__return_true',
             ]);
@@ -4789,32 +4836,58 @@
             ]);
         });
         /**
-         * 根据邮箱返回评论者汇总信息（核心函数）
+         * 根据邮箱或 URL 返回评论者汇总信息（核心函数）
          *
-         * @param string $email
+         * @param string $email  邮箱（主查询条件）
+         * @param string $url    可选的 URL，用于模糊匹配 comment_author_url
          * @return array
          */
-        function get_comment_full_info($email) {
-            if (!is_email($email)) {
-                return [
-                    'name' => '', 'url' => '', 'avatar_url' => '',
-                    'comment_count' => 0, 'first_comment_date' => '', 'last_comment_date' => '',
-                ];
-            }
+        function get_comment_full_info($email, $url = '') {
+            // 默认结构
+            $default = [
+                'name'               => '',
+                'url'                => '',
+                'avatar_url'         => '',
+                'comment_count'      => 0,
+                'first_comment_date' => '',
+                'last_comment_date'  => '',
+                'url_outdated'       => 0,
+            ];
         
             global $wpdb;
+        
+            // ---------- 构造查询条件 ----------
+            // 优先使用 email，其次 url 模糊匹配
+            if (is_email($email)) {
+                $where       = "comment_author_email = %s";
+                $where_value = $email;
+            } elseif (!empty($url)) {
+                $norm = normalize_comment_url($url);
+                if ($norm === '') {
+                    return $default;
+                }
+                // 用域名做粗筛，LIKE 只匹配域名部分，兼容带/不带协议和斜杠的情况
+                $where       = "comment_author_url LIKE %s";
+                $where_value = '%' . $wpdb->esc_like($norm) . '%';
+            } else {
+                return $default;   // 两个参数都无效
+            }
         
             // 最新非空昵称
             $name_row = $wpdb->get_row($wpdb->prepare(
                 "SELECT comment_author FROM $wpdb->comments
-                 WHERE comment_author_email = %s AND comment_approved = '1' AND comment_author != ''
-                 ORDER BY comment_date DESC LIMIT 1", $email));
+                 WHERE $where AND comment_approved = '1' AND comment_author != ''
+                 ORDER BY comment_date DESC LIMIT 1",
+                $where_value
+            ));
         
             // 最新非空网址
             $url_row = $wpdb->get_row($wpdb->prepare(
                 "SELECT comment_author_url FROM $wpdb->comments
-                 WHERE comment_author_email = %s AND comment_approved = '1' AND comment_author_url != ''
-                 ORDER BY comment_date DESC LIMIT 1", $email));
+                 WHERE $where AND comment_approved = '1' AND comment_author_url != ''
+                 ORDER BY comment_date DESC LIMIT 1",
+                $where_value
+            ));
         
             // 评论数 + 首次/最后时间
             $stats = $wpdb->get_row($wpdb->prepare(
@@ -4822,19 +4895,41 @@
                         MIN(comment_date) AS first_comment_date,
                         MAX(comment_date) AS last_comment_date
                  FROM $wpdb->comments
-                 WHERE comment_author_email = %s AND comment_approved = '1'", $email));
+                 WHERE $where AND comment_approved = '1'",
+                $where_value
+            ));
+        
+            if (!$stats || (int) $stats->comment_count === 0) {
+                return $default;
+            }
+        
+            // 判断最近一次评论是否超过指定月数
+            $url_outdated = false;
+            if (!empty($stats->last_comment_date)) {
+                $last_ts  = strtotime($stats->last_comment_date);
+                $interval = (int) get_option('site_urls_auditing_interval', 12);
+                if ($interval < 1) $interval = 12;
+                if ($last_ts && (time() - $last_ts) > $interval * 30 * DAY_IN_SECONDS) {
+                    $url_outdated = true;
+                }
+            }
         
             $mirror = get_option('site_avatar_mirror', 'https://cravatar.cn/');
+        
+            // 头像仍优先基于邮箱；若邮箱为空则基于 url 生成一个稳定 hash
+            $avatar_seed = is_email($email) ? $email : $url;
         
             return [
                 'name'               => $name_row ? $name_row->comment_author : '',
                 'url'                => $url_row ? $url_row->comment_author_url : '',
-                'avatar_url'         => $mirror . 'avatar/' . md5($email) . '?d=retro&s=100',
+                'avatar_url'         => $mirror . 'avatar/' . md5($avatar_seed) . '?d=retro&s=100',
                 'comment_count'      => (int) $stats->comment_count,
                 'first_comment_date' => $stats->first_comment_date ?: '',
                 'last_comment_date'  => $stats->last_comment_date ?: '',
+                'url_outdated'       => $url_outdated,
             ];
         }
+        
         /**
          * 根据邮箱返回完整评论者信息：昵称、网址、头像、评论次数、首次/最后评论时间
          */
@@ -4919,16 +5014,18 @@
                 }
                 $comment->comment_content = '<small style="opacity:.5;display:block;"> [ 等待评论审核，通过正常显示。] </small>' . $comment->comment_content;
             }
-            $comment_user_info = get_comment_full_info($comment->comment_author_email);
+            $comment_user_info = get_comment_full_info($email); //'', $link
+            $comment_user_outdated = $comment_user_info['url_outdated'];
             $comment_user_title = sprintf(
-                'Ta 在本站共 %d 条评论（首次 %s；最近 %s）',
+                'Ta 在本站共 %d 条评论（首次 %s；最近 %s）%s',
                 $comment_user_info['comment_count'],
                 $comment_user_info['first_comment_date'] ?: '未知',
-                $comment_user_info['last_comment_date'] ?: '未知'
+                $comment_user_info['last_comment_date'] ?: '未知',
+                !empty($comment_user_outdated) ? '（长期无互动链接可能已失效）' : ''
             );
     ?>
             <div class="vcard magnetic glow<?php if (!$approved) echo ' auditing';if ($is_ai_comment) echo ' ai';if ($is_thoughtful_comment) echo ' thoughtful';if ($is_ai_spam) echo ' spam'; ?>" data-ai-pending="<?php echo $comment->two_ber_ai_pending ?>" data-magnet-scale="1" data-magnet-step="0" id="comment-<?php echo $id; ?>">
-                <a class="noslide avatar" rel="nofollow" href="<?php echo $link; ?>" target="_blank" title="<?php echo $comment_user_title; ?>">
+                <a class="noslide avatar" rel="nofollow crossorigin" href="<?php echo $link; ?>" target="_blank" title="<?php echo $comment_user_title; ?>"  data-outdated="<?php echo $comment_user_outdated; ?>">
                     <?php 
                         if (get_option('show_avatars')) {
                             echo '<img class="vimg" '.$lazysrc.'="'.match_mail_avatar($email).'" width=50 height=50 alt="user_avatar" />';
@@ -4938,7 +5035,7 @@
                 </a>
                 <div class="vh" rootid="comment-<?php echo $id; ?>">
                     <div class="vhead">
-                        <a class="vnick" rel="nofollow" href="<?php echo $link; ?>" target="_blank" title="<?php //echo $comment_user_title; ?>">
+                        <a class="vnick" rel="nofollow crossorigin" href="<?php echo $link; ?>" target="_blank" title="<?php //echo $comment_user_title; ?>"  data-outdated="<?php echo $comment_user_outdated; ?>">
                             <em><?php echo $nick; ?></em>
                         </a>
                         <?php
@@ -5036,7 +5133,7 @@
                     }
                     // add comment user info
                     $comment_user_email = $child->comment_author_email;
-                    $child->_comment_userinfo = get_comment_full_info($comment_user_email);
+                    $child->_comment_userinfo = get_comment_full_info('', $child->comment_author_url);
                     // use privacy data encryption
                     $child->comment_author_email = md5($comment_user_email);
                     $child->comment_author_IP = sha1($child->comment_author_IP);
@@ -5076,7 +5173,7 @@
                 $comment_ID = $each->comment_ID;
                 // add comment user info
                 $comment_user_email = $each->comment_author_email;
-                $each->_comment_userinfo = get_comment_full_info($comment_user_email);
+                $each->_comment_userinfo = get_comment_full_info('', $each->comment_author_url);
                 // user privacy data crypt
                 $each->comment_author_email = md5($comment_user_email);
                 $each->comment_author_IP = sha1($each->comment_author_IP);

@@ -16,8 +16,8 @@
         body.dark .news-window:nth-child(odd) .news-window-inside{
             background: none;
         }
-        .news-window:nth-child(odd).magnetic.glow:after,
-        .news-window:nth-child(odd).magnetic.glow:before {
+        .news-window:nth-child(odd).magnetic.glow::after,
+        .news-window:nth-child(odd).magnetic.glow::before {
             content: none;
         }
         
