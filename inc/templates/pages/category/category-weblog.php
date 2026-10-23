@@ -5,7 +5,7 @@
  */
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="<?php echo $theme_mode = theme_mode(true); ?>">
 <head>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/weblog.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
@@ -64,6 +64,7 @@
         /*}*/
         .weblog-tree-box .tree-box-content {
             color: var(--preset-6);
+            padding: 10px 15px;
         }
         .tk-content blockquote,
         .vcontent blockquote {
@@ -71,7 +72,7 @@
         }
     </style>
 </head>
-<body class="<?php theme_mode(); ?>">
+<body class="<?php echo $theme_mode; ?>">
     <div class="content-all">
         <div class="win-tops bg" style="background:url() center center /cover ">
             <header>
@@ -96,7 +97,7 @@
                 if($memos_sw) {
             ?>
                     <div style="width:100%;text-align: right;padding: 10px 20px 5px 15px;box-sizing: border-box;">
-                        <button class="switch-to-memos lively-click magnetic" data-magnet-scale="" data-magnet-step="" href="javascript:;" title="加载更多">切换 Memos 记录</button>
+                        <button class="switch-to-memos lively-clicks magnetics" data-magnet-scale="" data-magnet-step="" href="javascript:;" title="加载更多">切换 Memos 记录</button>
                     </div>
                     <div class="memos-tree-core v">
                         <div class="load">
@@ -170,8 +171,8 @@
                                         <div class="tree-box-content">
                                             <span id="core-info">
                                                 <?php 
-                                                    // echo get_the_content();//custom_excerpt(200); 
-                                                    echo apply_filters('the_content', get_the_content());
+                                                    echo get_the_content(); //custom_excerpt(200); 
+                                                    // echo apply_filters('the_content', get_the_content());
                                                 ?>
                                             </span>
                                             <?php

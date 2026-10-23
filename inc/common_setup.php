@@ -246,7 +246,7 @@
     };
     // 过滤文章内容 CDN 路径（新增 video 开关）
     if ($cdn_switch) {
-        add_filter('the_content', 'replace_cdn_img', 9);
+        add_filter('the_content', 'replace_cdn_img', 9); //, 9
         function replace_cdn_img($content) {
             global $images_cdn, $upload_url, $videos_cdn_arr;
             // return str_replace('="'.$upload_url, '="'.$images_cdn, $content);

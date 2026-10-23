@@ -68,11 +68,6 @@ body.dark .barrage-item {
     opacity: 1;
     user-select: none;
     animation-duration: var(--duration);
-    /*
-    transition: background 0.2s;
-    background: var(--preset-4b);
-    box-shadow: rgba(0,0,0,0.12) 0 1px 18px;
-    */
     border: 1px solid var(--preset-e);
     background: linear-gradient(45deg, var(--preset-f), transparent);
     backdrop-filter: blur(10px) saturate(1);
@@ -156,163 +151,165 @@ body.dark .barrage-item {
 }
 </style>
 <script>
-(function() {
-    const container = document.getElementById("comment-barrage-container");
-    const API_URL = "/wp-json/two-ber/v1/comment-barrage?post_id='.$post_id.'&cid='.$cat_id.'&tag='.$tag_barrage.'&thoughtful='.$thoughtful.'&excludes='.$excludes.'";
-    const MAX_VISIBLE = '.$max.';
-    const TRACK_COUNT = '.$row.';
-    const MIN_BARRAGE = '.$min.';
-    let pendingItems = [];
-    let activeCount = 0;
-    let trackNextAvailable = new Array(TRACK_COUNT).fill(0);
-    let scheduleTimer = null;
-    let isFetching = false;
-    let allDone = false;
-    let hasPreloaded = false;       // 防止重复预加载
-
-    '.($tag_barrage ? "container.classList.add('tag');" : '').'
-    function getEarliestTrack() {
-        let minTime = Infinity;
-        let minIndex = 0;
-        for (let i = 0; i < TRACK_COUNT; i++) {
-            if (trackNextAvailable[i] < minTime) {
-                minTime = trackNextAvailable[i];
-                minIndex = i;
-            }
-        }
-        const now = Date.now();
-        const wait = Math.max(0, minTime - now);
-        return { index: minIndex, wait: wait };
-    }
-
-    function scheduleNext() {
-        if (pendingItems.length === 0) return;
-        if (activeCount >= MAX_VISIBLE) return;
+window.onload = function() {
+    (function() {
+        const container = document.getElementById("comment-barrage-container");
+        const API_URL = "/wp-json/two-ber/v1/comment-barrage?post_id='.$post_id.'&cid='.$cat_id.'&tag='.$tag_barrage.'&thoughtful='.$thoughtful.'&excludes='.$excludes.'";
+        const MAX_VISIBLE = '.$max.';
+        const TRACK_COUNT = '.$row.';
+        const MIN_BARRAGE = '.$min.';
+        let pendingItems = [];
+        let activeCount = 0;
+        let trackNextAvailable = new Array(TRACK_COUNT).fill(0);
+        let scheduleTimer = null;
+        let isFetching = false;
+        let allDone = false;
+        let hasPreloaded = false;       // 防止重复预加载
     
-        const { index, wait } = getEarliestTrack();
-        if (scheduleTimer) clearTimeout(scheduleTimer);
-        scheduleTimer = setTimeout(() => {
-            scheduleTimer = null;
-            // 从队列中取出有效项（跳过 AI 评论）
-            let item = null;
-            while (pendingItems.length > 0) {
-                const candidate = pendingItems.shift();
-                if ('.$ai_comments.' && candidate._ai_comment) {
-                    continue; // 丢弃 AI 评论
+        '.($tag_barrage ? "container.classList.add('tag');" : '').'
+        function getEarliestTrack() {
+            let minTime = Infinity;
+            let minIndex = 0;
+            for (let i = 0; i < TRACK_COUNT; i++) {
+                if (trackNextAvailable[i] < minTime) {
+                    minTime = trackNextAvailable[i];
+                    minIndex = i;
                 }
-                item = candidate;
-                break;
             }
-            if (item) {
-                spawnBarrage(item, index);
+            const now = Date.now();
+            const wait = Math.max(0, minTime - now);
+            return { index: minIndex, wait: wait };
+        }
+    
+        function scheduleNext() {
+            if (pendingItems.length === 0) return;
+            if (activeCount >= MAX_VISIBLE) return;
+        
+            const { index, wait } = getEarliestTrack();
+            if (scheduleTimer) clearTimeout(scheduleTimer);
+            scheduleTimer = setTimeout(() => {
+                scheduleTimer = null;
+                // 从队列中取出有效项（跳过 AI 评论）
+                let item = null;
+                while (pendingItems.length > 0) {
+                    const candidate = pendingItems.shift();
+                    if ('.$ai_comments.' && candidate._ai_comment) {
+                        continue; // 丢弃 AI 评论
+                    }
+                    item = candidate;
+                    break;
+                }
+                if (item) {
+                    spawnBarrage(item, index);
+                } else {
+                    // 队列已空或全部被过滤，重新尝试调度（稍后 fetch 会补充）
+                    scheduleNext();
+                }
+            }, wait);
+        }
+    
+        function spawnBarrage(item, trackIndex) {
+            trackNextAvailable[trackIndex] = Infinity;
+            activeCount++;
+        
+            const el = document.createElement("div");
+            el.className = "barrage-item";
+        
+            const base = (100 / TRACK_COUNT) * trackIndex;
+            const offset = Math.random() * 4;
+            el.style.top = (base + offset) + "%";
+        
+            // ========== 快速弹幕设置 ==========
+            const FAST_PROBABILITY = 0.03;                // 3% 概率
+            const isFast = Math.random() < FAST_PROBABILITY;
+            
+            let duration;
+            if (isFast) {
+                duration = 2 + Math.random() * 3;          // 快速弹幕持续时间 2~5 秒
+                el.classList.add("barrage-fast");          // 可选：添加特殊样式
             } else {
-                // 队列已空或全部被过滤，重新尝试调度（稍后 fetch 会补充）
+                duration = '.$speed.' + Math.random() * 10; // 正常速度
+            }
+            
+            el.style.setProperty("--duration", duration + "s");
+            // ================================
+            '.($tag_barrage ? 'let html = `<a href="${item.link}" target="_blank"><i>tag</i> <strong>#${item.name}</strong></a>`' : '
+            el.title = `${item.content}\n\n——该评论取自《${item.post_title}》发布于 ${item.date}`;
+            let html = `<a href="${item.author_url}" target="_blank"><img src="${item.avatar}" alt=""> <strong>${item.author}</strong>：</a><a id="content" href="${item.post_url}#comment-${item.id || 0}" target="_self">`;
+            if (item.parent_author) html += `@${item.parent_author}，`;
+            html += `${item.content}</a>`;').'
+        
+            el.innerHTML = html;
+            container.appendChild(el);
+        
+            const width = el.offsetWidth;
+            const viewWidth = window.innerWidth;
+            const visibleProgress = width / (viewWidth + width);
+            const visibleDelay = duration * visibleProgress * 1000;
+        
+            const now = Date.now();
+            const randomGap = 1000 + Math.random() * 2000;
+            
+            // 快速弹幕释放轨道更快
+            if (isFast) {
+                trackNextAvailable[trackIndex] = now + visibleDelay + 500; // 仅等待 0.5 秒
+            } else {
+                trackNextAvailable[trackIndex] = now + visibleDelay + randomGap;
+            }
+        
+            el.addEventListener("pointerenter", () => {
+                // container.classList.add("slow-others");
+                // el.style.background = "rgba(0, 0, 0, 0.9)";
+                el.style.zIndex = "9999";
+            });
+        
+            el.addEventListener("pointerleave", () => {
+                // container.classList.remove("slow-others");
+                // el.style.background = "";
+                el.style.zIndex = "";
+            });
+        
+            el.addEventListener("animationend", () => {
+                el.remove();
+                activeCount--;
                 scheduleNext();
+                if (pendingItems.length === 0 && activeCount === 0 && allDone) {
+                    allDone = false;
+                    hasPreloaded = false;
+                    setTimeout(fetchData, 1000);
+                }
+            });
+        
+            if (pendingItems.length === 0 && allDone && !isFetching && !hasPreloaded) {
+                hasPreloaded = true;
+                setTimeout(fetchData, 2000);
             }
-        }, wait);
-    }
-
-    function spawnBarrage(item, trackIndex) {
-        trackNextAvailable[trackIndex] = Infinity;
-        activeCount++;
-    
-        const el = document.createElement("div");
-        el.className = "barrage-item";
-    
-        const base = (100 / TRACK_COUNT) * trackIndex;
-        const offset = Math.random() * 4;
-        el.style.top = (base + offset) + "%";
-    
-        // ========== 快速弹幕设置 ==========
-        const FAST_PROBABILITY = 0.03;                // 3% 概率
-        const isFast = Math.random() < FAST_PROBABILITY;
         
-        let duration;
-        if (isFast) {
-            duration = 2 + Math.random() * 3;          // 快速弹幕持续时间 2~5 秒
-            el.classList.add("barrage-fast");          // 可选：添加特殊样式
-        } else {
-            duration = '.$speed.' + Math.random() * 10; // 正常速度
-        }
-        
-        el.style.setProperty("--duration", duration + "s");
-        // ================================
-        '.($tag_barrage ? 'let html = `<a href="${item.link}" target="_blank"><i>tag</i> <strong>#${item.name}</strong></a>`' : '
-        el.title = `${item.content}\n\n——该评论取自《${item.post_title}》发布于 ${item.date}`;
-        let html = `<a href="${item.author_url}" target="_blank"><img src="${item.avatar}" alt=""> <strong>${item.author}</strong>：</a><a id="content" href="${item.post_url}#comment-${item.id || 0}" target="_self">`;
-        if (item.parent_author) html += `@${item.parent_author}，`;
-        html += `${item.content}</a>`;').'
-    
-        el.innerHTML = html;
-        container.appendChild(el);
-    
-        const width = el.offsetWidth;
-        const viewWidth = window.innerWidth;
-        const visibleProgress = width / (viewWidth + width);
-        const visibleDelay = duration * visibleProgress * 1000;
-    
-        const now = Date.now();
-        const randomGap = 1000 + Math.random() * 2000;
-        
-        // 快速弹幕释放轨道更快
-        if (isFast) {
-            trackNextAvailable[trackIndex] = now + visibleDelay + 500; // 仅等待 0.5 秒
-        } else {
-            trackNextAvailable[trackIndex] = now + visibleDelay + randomGap;
-        }
-    
-        el.addEventListener("pointerenter", () => {
-            // container.classList.add("slow-others");
-            // el.style.background = "rgba(0, 0, 0, 0.9)";
-            el.style.zIndex = "9999";
-        });
-    
-        el.addEventListener("pointerleave", () => {
-            // container.classList.remove("slow-others");
-            // el.style.background = "";
-            el.style.zIndex = "";
-        });
-    
-        el.addEventListener("animationend", () => {
-            el.remove();
-            activeCount--;
             scheduleNext();
-            if (pendingItems.length === 0 && activeCount === 0 && allDone) {
-                allDone = false;
-                hasPreloaded = false;
-                setTimeout(fetchData, 1000);
-            }
-        });
-    
-        if (pendingItems.length === 0 && allDone && !isFetching && !hasPreloaded) {
-            hasPreloaded = true;
-            setTimeout(fetchData, 2000);
         }
     
-        scheduleNext();
-    }
-
-    function createItems(data) {
-        const items = data.slice(0, 50);
-        if (!items.length || items.length <= MIN_BARRAGE) return;
-        pendingItems = pendingItems.concat(items);
-        allDone = true;
-        hasPreloaded = false;      // 新数据到达，重置预加载标志
-        scheduleNext();
-    }
-
-    function fetchData() {
-        if (isFetching) return;
-        isFetching = true;
-        fetch(API_URL)
-            .then(res => res.json())
-            .then(data => createItems(data))
-            .catch(() => {})
-            .finally(() => { isFetching = false; });
-    }
-
-    fetchData();
-})();
+        function createItems(data) {
+            const items = data.slice(0, 50);
+            if (!items.length || items.length <= MIN_BARRAGE) return;
+            pendingItems = pendingItems.concat(items);
+            allDone = true;
+            hasPreloaded = false;      // 新数据到达，重置预加载标志
+            scheduleNext();
+        }
+    
+        function fetchData() {
+            if (isFetching) return;
+            isFetching = true;
+            fetch(API_URL)
+                .then(res => res.json())
+                .then(data => createItems(data))
+                .catch(() => {})
+                .finally(() => { isFetching = false; });
+        }
+    
+        fetchData();
+    })();
+}
 </script>';
         }
     }
@@ -433,7 +430,7 @@ body.dark .barrage-item {
     function custom_imgbox_shortcode($atts, $content = null) {
         $img = isset($atts['img']) ? $atts['img'] : '';
         $title = isset($atts['title']) ? $atts['title'] : 'No Text';
-        return '<div class="ibox"><div class="iboxes magnetic glow" data-magnet-scale="1" data-magnet-step="0"><img src="'.$img.'" alt="'.$title.'" decoding="async"><mark>'.$title.'</mark></div></div>';
+        return '<div class="ibox"><div class="iboxes magnetic glow" data-magnet-scale="1" data-magnet-step="0.025"><img src="'.$img.'" alt="'.$title.'" decoding="async"><mark>'.$title.'</mark></div></div>';
     }
     function custom_sidebar_ad_shortcode($atts){
         $sup = isset($atts['sup']) ? $atts['sup'] : '中意此款主题吗';
@@ -480,7 +477,7 @@ body.dark .barrage-item {
             $icon = get_option('site_avatar') ? get_option('site_avatar') : get_site_icon_url();
             $avatar = '<em style="background:url('.$icon.') center center /cover;width: 23px;height: 23px;border-radius: 50%;display: inline-block;vertical-align: middle;"></em>';
         }
-        return '<div class="ibox quotes"><div class="iboxes magnetic glow" data-magnet-scale="1" data-magnet-step="0"><img src="'.get_postimg(0,$pid,true).'" alt="'.$title.'"><h3><a href="'.get_the_permalink($pid).'" target="_blank">'.$title.'</a></h3><div class="content"><p>'.$excerpt.'</p></div><mark>'.$avatar.' '.$author.' '.get_the_time('d/m/Y', $pid).' '.get_tag_list($pid, 1, "/").' | '.getPostViews($pid).' views.</mark></div></div>';
+        return '<div class="ibox quotes"><div class="iboxes magnetics glow" data-magnet-scale="1" data-magnet-step="0"><img src="'.get_postimg(0,$pid,true).'" alt="'.$title.'"><h3><a href="'.get_the_permalink($pid).'" target="_blank">'.$title.'</a></h3><div class="content"><p>'.$excerpt.'</p></div><mark>'.$avatar.' '.$author.' '.get_the_time('d/m/Y', $pid).' '.get_tag_list($pid, 1, "/").' | '.getPostViews($pid).' views.</mark></div></div>';
     }
     // if (get_option('site_imrss_switcher'))
     function custom_imrss_shortcode($atts){

@@ -54,7 +54,7 @@
                 return $block_content;
             }
             // 根据不同的块类型使用不同的匹配模式
-            $replacement = '$1 magnetic glow" data-magnet-scale="1" data-magnet-step="0.015"';
+            $replacement = '$1 magnetic glow" data-magnet-scale="1" data-magnet-step="0"';
             if ($block['blockName'] === 'core/image') {
                 // 匹配 figure 元素（wp-block-image）
                 $pattern = '/(<figure[^>]*class="wp-block-image[^"]*)/i';;
@@ -71,7 +71,7 @@
     }
     
     function weplugins_customize_paginate_links($link) {
-        error_log('paginate_links filter triggered: ' . $link); // 查看错误日志
+        // error_log('paginate_links filter triggered: ' . $link); // 查看错误日志
         $link = str_replace('page-numbers', 'custom-page-numbers', $link);
         return $link;
     }
@@ -631,9 +631,9 @@
     add_action( 'manage_comments_custom_column', function ( $column, $comment_id ) {
         if ( 'thoughtful' !== $column ) return;
     
-        // 只有已批准的评论才显示走心操作（垃圾评论不显示）
+        // 只有已批准的评论才显示走心操作（垃圾评论不显示，AI评论误判显示）
         $comment = get_comment( $comment_id );
-        if ( ! $comment || $comment->comment_approved !== '1' ) {
+        if ( ! $comment ) { // || $comment->comment_approved !== '1'
             echo '—';
             return;
         }
@@ -2610,7 +2610,7 @@
             define( 'TWO_BER_AI_SPAM_FAIL_ACTION', 'allow' );
             
             // ---------- 原有函数，完全不变 ----------
-            function two_ber_ai_spam_filter( $comment_content, $comment_author, $comment_author_url ) {
+            function two_ber_ai_spam_filter( $comment_content, $comment_author, $comment_author_url = '' ) {
                 if ( ! TWO_BER_AI_SPAM_CHECK_ENABLED ) {
                     return array( 'is_spam' => false, 'reason' => '' );
                 }
@@ -2628,33 +2628,48 @@
                 $ham_samples  = two_ber_get_ham_samples( 3 );
                 $thoughtful_samples = two_ber_get_thoughtful_samples( 4 );  // 使用新函数
             
+                // 构建系统提示词
                 $system  = "你是一个专业的评论审查员，需要完成两个任务：\n";
                 $system .= "1. 判断评论是否为垃圾（is_spam）。\n";
                 $system .= "2. 判断评论是否属于“走心评论”（is_thoughtful）。\n\n";
-                $system .= "垃圾评论的典型特征：无关广告/外链、诱导点击、虚假夸奖并附带推广、纯SEO关键词堆砌、完全无意义的乱码。正文看起来无害，并不能证明这是一条正常评论。如果昵称或者网站明显用于推广，也应该作为重要判断依据。\n";
-                $system .= "走心评论的特征：内容不能太短，与文章内容高度相关、表达出真实的情感或深刻见解、有实质性内容、条理清晰、能引发讨论或补充有价值的信息。\n";
-                $system .= "**注意**：一条评论可以同时是走心且非垃圾，但不能既是垃圾又是走心。若评论已被判定为垃圾，is_thoughtful 必须为 false。\n\n";
-            
+    
+                $system .= "【垃圾评论特征（is_spam = true）】\n";
+                $system .= "- 包含无关广告、外链诱骗、诱导点击、SEO关键词堆砌。\n";
+                $system .= "- 虚假夸奖且明显附带商业推广，或纯表情/无意义乱码。\n";
+                $system .= "- 昵称或网站名称明显是垃圾广告（如：加微信、代开发票等），但如果是正常的个人博客或昵称，即使带有链接也不算垃圾。\n";
+                $system .= "- 完全脱离文章内容的机器灌水。**注意**：大段、条理清晰的评论不一定是AI生成的垃圾；但如果内容空洞、全是套话、明显是机器生成的SEO文，则视为垃圾。\n\n";
+    
+                $system .= "【走心评论特征（is_thoughtful = true）】\n";
+                $system .= "- 字数不能太短（能表达完整意思）。\n";
+                $system .= "- 与文章内容高度相关，表达真实情感、深刻见解或具体补充。\n";
+                $system .= "- 条理清晰、有实质性观点、能引发讨论。\n";
+                $system .= "- **关键点**：真实人类的长篇评论往往带有个人经验、主观感受或口语化表达。如果内容丰富且有价值，不应因为‘格式规整’或‘疑似AI生成’就将其判定为垃圾。\n\n";
+    
+                $system .= "**核心逻辑**：\n";
+                $system .= "1. 一条评论可以同时是走心且非垃圾（最常见），但不能既是垃圾又是走心（如果是垃圾，is_thoughtful 强制为 false）。\n";
+                $system .= "2. 宁可漏杀，不可错杀。如果无法确认是机器生成的垃圾，倾向于判定为非垃圾。\n\n";
+    
                 $system .= "【走心评论示例】\n";
                 foreach ( $thoughtful_samples as $i => $example ) {
                     $system .= ($i+1) . ". " . $example . "\n";
                 }
-            
+    
                 $system .= "\n【垃圾评论示例】\n";
                 foreach ( $spam_samples as $i => $spam ) {
                     $system .= ($i+1) . ". " . $spam . "\n";
                 }
-            
+    
                 $system .= "\n【一般评论示例】（非垃圾，但也不够走心）\n";
                 foreach ( $ham_samples as $i => $ham ) {
                     $system .= ($i+1) . ". " . $ham . "\n";
                 }
-            
-                $system .= "\n请严格参照以上示例，仅以JSON格式返回：{\"is_spam\": bool, \"reason\": \"垃圾理由\", \"is_thoughtful\": bool}";
+    
+                // $system .= "\n请严格参照以上示例，仅以JSON格式返回：{\"is_spam\": bool, \"reason\": \"垃圾理由\", \"is_thoughtful\": bool}";
+                $system .= "\n请严格参照以上示例，仅以纯JSON格式返回，不要使用任何Markdown代码块包裹。格式：{\"is_spam\": bool, \"reason\": \"垃圾理由\", \"is_thoughtful\": bool}";
         
                 $messages = array(
                     array( 'role' => 'system', 'content' => $system ),
-                    array( 'role' => 'user',   'content' => "昵称：$comment_author；网站：$comment_author_url；评论内容：$content" ),
+                    array( 'role' => 'user',   'content' => "昵称：{$comment_author}；网站：{$comment_author_url}；评论内容：{$content}" ),
                 );
             
                 $result = two_ber_ai_call_spam_api( $messages );
@@ -2668,7 +2683,17 @@
                     );
                 }
             
-                $decoded = json_decode( $result, true );
+                // ========== 新增：清洗 Markdown 标记 ==========
+                $json_str = trim( $result );
+                $json_str = preg_replace( '/^```(?:json)?\s*/i', '', $json_str );
+                $json_str = preg_replace( '/\s*```$/', '', $json_str );
+                if ( preg_match( '/\{.*\}/s', $json_str, $matches ) ) {
+                    $json_str = $matches[0];
+                }
+    
+                $decoded = json_decode( $json_str, true );
+                // ============================================
+                
                 if ( ! is_array( $decoded ) || ! isset( $decoded['is_spam'] ) ) {
                     error_log( 'AI Spam Filter Invalid JSON: ' . $result );
                     return array(
@@ -2818,7 +2843,7 @@
                         if ( empty( $key ) ) continue;
                         $pattern = '/\b' . preg_quote( $key, '/' ) . '\b/i';
                         if ( preg_match( $pattern, $content ) ) {
-                            wp_die( '您的评论被系统识别为垃圾信息，如有误判请联系管理员。', '评论拦截', array( 'response' => 403 ) );
+                            wp_die( '您的评论被系统关键词匹配为垃圾信息，如有误判请联系管理员。', '评论拦截', array( 'response' => 403 ) );
                         }
                     }
                 }
@@ -3484,7 +3509,7 @@
         return null; // 未找到返回 null
     }
     // 返回友链指定分类 html
-    function get_site_links($links, $types = '', $rsscat = '', $category = 'standard', $status = false) {
+    function get_site_links($links, $types = '', $rsscat = '', $category = 'standard', $get_status = false) {
         if (!$links) return 'unreachable links provide';
     
         // // ---------- 活性检测：多年未更新标记为“待除草” ----------
@@ -3598,20 +3623,19 @@
                 // 活跃标记
                 $link_user_info = get_comment_full_info('', $link_url);
                 $link_user_outdated = $link_user_info['url_outdated'];
-                if ($link_user_outdated) {
+                $link_user_comments = $link_user_info['comment_count'];
+                $link_user_inactive = $link_user_comments <= 1;
+                if ($link_user_outdated) { // || $link_user_inactive
                     // 长期无互动
                     $impression = '<span class="ssl http"> Observe </span>'; // || in_array($link_rss, $over2yearsNoUpdateRssList)
                 } else {
-                    // 无任何互动
-                    $link_user_comments = $link_user_info['comment_count'];
-                    if ($link_user_comments == 0) $link_user_outdated = 1;
+                    // 无活跃互动
+                    if ($link_user_inactive) $link_user_outdated = 1;
                 }
-                // print_r($link_user_info);
-        
-                // 站点可访问状态
-                if ($status) $status_code = get_url_status_by_curl($link_url, true);
-                if (!$link_accessable || $status_code >= 400) $status_class = 'standby ';
             }
+            // 站点可访问状态
+            if ($get_status) $status_code = get_url_status_by_curl($link_url, true);
+            if (!$link_accessable || $status_code >= 400) $status_class = 'standby';
             $status_standby = $status_class === 'standby';
             switch ($types) {
                 case 'full':
@@ -3627,7 +3651,7 @@
                     break;
                 case 'list':
                     $rel_statu = $rel ? $rel : 'random';
-                    $output .= '<li class="magnetic glow" data-magnet-scale="0.9" data-magnet-step="0.15"><a href="'.$link_url.'" class="'.$status_class.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.' crossorigin" data-status="' . $status_code . '" data-outdated="'.$link_user_outdated.'">'.$link_name.'</a></li>';
+                    $output .= '<li class="magnetic glow"><a href="'.$link_url.'" class="'.$status_class.'" title="'.$link_desc.'" target="'.$target.'" rel="'.$rel_statu.' crossorigin" data-status="' . $status_code . '" data-outdated="'.$link_user_outdated.'">'.$link_name.'</a></li>'; // data-magnet-scale="0.9" data-magnet-step="0.15"
                     break;
                 default:
                     $rel_statu = $status_standby ? 'nofollow' : 'followed';
@@ -4341,7 +4365,7 @@
             }
         }
     
-        add_filter( 'the_content', 'imrss_widget', 10 );
+        add_filter( 'the_content', 'imrss_widget'); //, 15 
     }
     
     //lazyload 图懒加载
@@ -4353,19 +4377,61 @@
             // return preg_replace('/\<img([^>]*?)src=("[^"]*")([^>]*>)/i', '<img$1data-src=$2$3', $content);
         }
         // 设置 priority 高于 replace_cdn_img（延后执行）
-        add_filter('the_content', 'lazyload_images', 12);
+        add_filter('the_content', 'lazyload_images', 12); //, 12
         // replace comments images url
         add_filter('comment_text' , 'lazyload_images', 20, 2);
     }
     
     //外链审查
     if ( get_option( 'site_urls_auditing' ) ) {
-        function urls_auditing( $content ) {
-            // 给所有 <a 标签强行加 data-outdated 和 rel（如果已有 rel，会变成双 rel）
-            $content = preg_replace( '/<a\s/i', '<a data-outdated="1" rel="crossorigin" ', $content );
-            return $content;
+        function urls_auditing( $content, $is_comment = false ) {
+            // 匹配 <a ... href="xxx" ...> 或 <a ... href='xxx' ...>
+            return preg_replace_callback(
+                '/<a\s+[^>]*href=(["\'])(.*?)\1[^>]*>/i',
+                function( $matches ) use ( $is_comment ) {
+                    $link = $matches[2]; // 提取到的 href 值
+    
+                    $comment_user_info = the_comment_full_info('', $link);
+                    // $info = get_comment_full_info( '', $link );
+                    // $outdated = $info['url_outdated']; //normalize_comment_url($info['url']);
+    
+                    // 在原始 <a> 标签的 > 前插入属性
+                    return str_replace( '>', ' data-outdated="' . $comment_user_info['url_outdated'] . '" rel="crossorigin" title="'.$comment_user_info['tip_outdated'].'">', $matches[0] );
+                },
+                $content
+            );
         }
-        add_filter( 'comment_text', 'urls_auditing', 20, 2 );
+    
+        add_filter( 'the_content', function( $content ) {
+            return urls_auditing( $content, false );
+        }, 8 ); // 尽早执行避免干扰其他 the_content 过滤器
+        
+        // // 开启所有评论内容链接审查
+        // add_filter( 'comment_text', function( $content ) {
+        //     return preg_replace_callback(
+        //         // 正则稍微精简，匹配所有 <a> 标签
+        //         '/<a\s[^>]*>/i',
+        //         function( $matches ) {
+        //             $tag = $matches[0];
+        
+        //             // 1. 如果已经有 rel 属性，直接把它替换为 crossorigin
+        //             if ( preg_match( '/rel=(["\']).*?\1/i', $tag ) ) {
+        //                 $tag = preg_replace( '/rel=(["\']).*?\1/i', 'rel="crossorigin"', $tag );
+        //             } else {
+        //                 // 2. 如果没有 rel 属性，就在标签末尾追加
+        //                 $tag = str_replace( '>', ' rel="crossorigin">', $tag );
+        //             }
+        
+        //             // 3. 追加 data-outdated（确保它只加一次）
+        //             if ( strpos( $tag, 'data-outdated' ) === false ) {
+        //                 $tag = str_replace( '>', ' data-outdated="1">', $tag );
+        //             }
+        
+        //             return $tag;
+        //         },
+        //         $content
+        //     );
+        // }, 20, 2 );
     }
     
     // 站点logo
@@ -4513,14 +4579,14 @@
                 $each_index = trim($index_array[$i]);
                 if($each_index){
                     if(in_category($each_index)){
-                        $content = '<div class="article_index '.$auto_fold.'" data-index="'.$match_m.'"><div class="in_dex magnetic glow" data-magnet-step="0.1" data-magnet-scale="1"><p title="折叠/展开"><b>文章目录</b><i class="icom"></i></p><ul>' . $ul_li . '</ul></div></div>' . $content;
+                        $content = '<div class="article_index '.$auto_fold.'" data-index="'.$match_m.'"><div class="in_dex magnetic glow" data-magnet-step="0" data-magnet-scale="1"><p title="折叠/展开"><b>文章目录</b><i class="icom"></i></p><ul>' . $ul_li . '</ul></div></div>' . $content;
                     }
                 }
             }
         }
         return $content;
     }
-    add_filter( 'the_content', 'article_index');
+    add_filter( 'the_content', 'article_index'); //, 12
     /*
      *--------------------------------------------------------------------------
      * WP Comment email/wechat notify, ajax/pagination etc
@@ -4729,6 +4795,40 @@
     //     if ( str_contains( $commentdata['comment_content'], $blacklist ) ) $approved = 'spam';
     //     return $approved;
     // }, 10, 2);
+    /**
+     * 评论者 URL 入库前自动修正
+     */
+    function fix_comment_author_url( $url ) {
+        if ( empty( $url ) ) {
+            return $url;
+        }
+    
+        $url = trim( $url );
+    
+        // 1. 修复常见的错别字协议（比如 htp://, htps://, htpp:// 等）
+        $url = preg_replace( '/^(ht|htt|htp|httpp|htps)s?:\/\//i', 'https://', $url );
+    
+        // 2. 如果开头没有协议（且不是 mailto/tel 等），默认补全 https://
+        // 匹配是否以 http:// 或 https:// 开头
+        if ( ! preg_match( '/^https?:\/\//i', $url ) ) {
+            // 防止把纯数字、锚点等误伤（虽然评论网址极少出现这种）
+            if ( strpos( $url, '://' ) === false && ! preg_match( '/^(mailto|tel|javascript):/i', $url ) ) {
+                $url = 'https://' . $url;
+            }
+        }
+    
+        // 3. 过滤掉纯错误的字符串（补全协议后，用 filter_var 验证一下合法性）
+        // 如果连 filter_var 都过不了，说明根本不是个有效网址
+        if ( ! filter_var( $url, FILTER_VALIDATE_URL ) ) {
+            return ''; // 或者 return $url; 看你是否想把无效的存进数据库
+        }
+    
+        // 4. 最终转小写协议并去重斜杠（可选，让网址更美观）
+        $url = preg_replace('#^(https?):\/\/+#i', '$1://', $url);
+    
+        return $url;
+    }
+    add_filter( 'pre_comment_author_url', 'fix_comment_author_url' );
     
     // 解决 base64 图片 data: 协议被移除的问题
     add_filter( 'kses_allowed_protocols', 'allow_data_protocol_in_comments' );
@@ -4761,22 +4861,30 @@
     }
  
     //*****  WordPress Comments Setup etc (comment ajx reply/paginate)  *****//
+    
     /**
      * 归一化 URL：提取主机名，去掉协议、www.、末尾斜杠
      */
-    function normalize_comment_url($url, $fix = false) {
-        if (empty($url)) return '';
+    function normalize_comment_url( $url, $fix = false, $strip_subdomain = false ) {
+        if ( empty( $url ) ) return '';
     
-        // 若没有协议则补一个，方便 parse_url 解析
-        if (strpos($url, '//') === false) {
+        // 1. 若没有协议则补一个，方便 parse_url 解析
+        if ( strpos( $url, '//' ) === false ) {
             $url = 'http://' . $url;
         }
     
-        $host = parse_url($url, PHP_URL_HOST);
-        if (!$host) return '';
+        // 2. 解析 host
+        $host = parse_url( $url, PHP_URL_HOST );
+        if ( ! $host ) return '';
     
-        $host = strtolower($host);
-        $host = preg_replace('/^www\./i', '', $host);
+        // 3. 转小写，去掉 www.
+        $host = strtolower( $host );
+        $host = preg_replace( '/^www\./i', '', $host );
+    
+        // 4. 可选：去掉常见的子域名前缀（blog. / m. / wap. 等）
+        if ( $strip_subdomain ) {
+            $host = preg_replace( '/^(blog|m|wap|mobile|www\d*)\./i', '', $host );
+        }
     
         return $fix ? 'https://' . $host : $host;
     }
@@ -4805,7 +4913,7 @@
                 'callback' => 'rest_get_comment_full_info',
                 'args'     => [
                     'email' => [
-                        'required'          => true,
+                        // 'required'          => true,
                         'sanitize_callback' => 'sanitize_email',
                         'validate_callback' => function ($value) {
                             return is_email($value);
@@ -4840,93 +4948,270 @@
          *
          * @param string $email  邮箱（主查询条件）
          * @param string $url    可选的 URL，用于模糊匹配 comment_author_url
+         * @param bool   $cache  是否使用对象缓存
          * @return array
          */
-        function get_comment_full_info($email, $url = '') {
+        function get_comment_full_info( $email, $url = '', $cache = true ) {
+            $mirror = get_option( 'site_avatar_mirror', 'https://gravatar.com/' );
+        
             // 默认结构
             $default = [
                 'name'               => '',
                 'url'                => '',
-                'avatar_url'         => '',
+                'avatar_url'         => $mirror . 'avatar/' . md5( $email ) . '?d=retro&s=100',
                 'comment_count'      => 0,
                 'first_comment_date' => '',
                 'last_comment_date'  => '',
-                'url_outdated'       => 0,
+                'url_outdated'       => '',
+                'url_match'          => 0,
             ];
+            
+            // ---------- 生成缓存 Key ----------
+            $cache_key_parts = [ 'comment_user_info', 'v2' ];
+            if ( is_email( $email ) ) {
+                $cache_key_parts[] = 'email';
+                $cache_key_parts[] = strtolower( $email );
+            } elseif ( ! empty( $url ) ) {
+                $cache_key_parts[] = 'url';
+                $cache_key_parts[] = normalize_comment_url( $url );
+            }
+            $cache_key   = md5( implode( '|', $cache_key_parts ) );
+            $cache_group = 'comment_user_info';
         
-            global $wpdb;
+            // 缓存有效期：邮箱查询 1 小时，URL 查询 10 分钟（因关联邮箱可能随时增加）
+            $cache_ttl = is_email( $email ) ? HOUR_IN_SECONDS : 10 * MINUTE_IN_SECONDS;
         
-            // ---------- 构造查询条件 ----------
-            // 优先使用 email，其次 url 模糊匹配
-            if (is_email($email)) {
-                $where       = "comment_author_email = %s";
-                $where_value = $email;
-            } elseif (!empty($url)) {
-                $norm = normalize_comment_url($url);
-                if ($norm === '') {
-                    return $default;
+            if ( $cache ) {
+                // 尝试读取缓存
+                $cached_info = wp_cache_get( $cache_key, $cache_group );
+                if ( false !== $cached_info ) {
+                    return $cached_info;
                 }
-                // 用域名做粗筛，LIKE 只匹配域名部分，兼容带/不带协议和斜杠的情况
-                $where       = "comment_author_url LIKE %s";
-                $where_value = '%' . $wpdb->esc_like($norm) . '%';
-            } else {
-                return $default;   // 两个参数都无效
             }
         
+            // 🌟 核心新增：如果 interval <= 0，直接短路返回，不再查库
+            $interval = (int) get_option( 'site_urls_auditing_interval', 12 );
+            if ( $interval < 1 ) {
+                $default['url_outdated'] = 1; // 强制标记为过时
+                
+                if ( $cache ) {
+                    wp_cache_set( $cache_key, $default, $cache_group, $cache_ttl );
+                }
+                return $default;
+            }
+            
+            global $wpdb;
+        
+            // ---------- 构造主查询条件 ----------
+            if ( is_email( $email ) ) {
+                $where       = "comment_author_email = %s";
+                $where_value = $email;
+        
+            } elseif ( ! empty( $url ) ) {
+                $norm = normalize_comment_url( $url );
+                if ( $norm === '' ) {
+                    if ( $cache ) wp_cache_set( $cache_key, $default, $cache_group, $cache_ttl );
+                    return $default;
+                }
+        
+                // 🌟 关键改进：先通过 URL 找出关联的邮箱列表
+                $emails = $wpdb->get_col( $wpdb->prepare(
+                    "SELECT DISTINCT comment_author_email
+                     FROM $wpdb->comments
+                     WHERE comment_author_url LIKE %s
+                       AND comment_approved = '1'
+                       AND comment_author_email != ''",
+                    '%' . $wpdb->esc_like( $norm ) . '%'
+                ) );
+        
+                if ( ! empty( $emails ) ) {
+                    // 用邮箱列表做 IN 查询，覆盖该用户没填 URL 的评论
+                    $in_placeholders = implode( ',', array_fill( 0, count( $emails ), '%s' ) );
+                    $where       = "comment_author_email IN ($in_placeholders)";
+                    $where_value = $emails;
+                } else {
+                    // 没有任何邮箱关联该 URL，只能按 URL 查
+                    $where       = "comment_author_url LIKE %s";
+                    $where_value = '%' . $wpdb->esc_like( $norm ) . '%';
+                }
+        
+            } else {
+                return $default;
+            }
+        
+            // 注意：由于 where_value 可能是数组，需用 ...(array) 展开
+            $query_args = is_array( $where_value ) ? $where_value : [ $where_value ];
+        
             // 最新非空昵称
-            $name_row = $wpdb->get_row($wpdb->prepare(
+            $name_row = $wpdb->get_row( $wpdb->prepare(
                 "SELECT comment_author FROM $wpdb->comments
                  WHERE $where AND comment_approved = '1' AND comment_author != ''
                  ORDER BY comment_date DESC LIMIT 1",
-                $where_value
-            ));
+                ...$query_args
+            ) );
         
             // 最新非空网址
-            $url_row = $wpdb->get_row($wpdb->prepare(
+            $url_row = $wpdb->get_row( $wpdb->prepare(
                 "SELECT comment_author_url FROM $wpdb->comments
                  WHERE $where AND comment_approved = '1' AND comment_author_url != ''
                  ORDER BY comment_date DESC LIMIT 1",
-                $where_value
-            ));
+                ...$query_args
+            ) );
         
             // 评论数 + 首次/最后时间
-            $stats = $wpdb->get_row($wpdb->prepare(
+            $stats = $wpdb->get_row( $wpdb->prepare(
                 "SELECT COUNT(*) AS comment_count,
                         MIN(comment_date) AS first_comment_date,
                         MAX(comment_date) AS last_comment_date
                  FROM $wpdb->comments
                  WHERE $where AND comment_approved = '1'",
-                $where_value
-            ));
+                ...$query_args
+            ) );
         
-            if (!$stats || (int) $stats->comment_count === 0) {
+            if ( ! $stats || (int) $stats->comment_count === 0 ) {
+                if ( $cache ) wp_cache_set( $cache_key, $default, $cache_group, $cache_ttl );
                 return $default;
             }
         
-            // 判断最近一次评论是否超过指定月数
+            // ---------- URL 维度的判断 ----------
+            $url_match    = false;
             $url_outdated = false;
-            if (!empty($stats->last_comment_date)) {
-                $last_ts  = strtotime($stats->last_comment_date);
-                $interval = (int) get_option('site_urls_auditing_interval', 12);
-                if ($interval < 1) $interval = 12;
-                if ($last_ts && (time() - $last_ts) > $interval * 30 * DAY_IN_SECONDS) {
-                    $url_outdated = true;
+            $threshold    = $interval * 30 * DAY_IN_SECONDS;
+        
+            // 如果传了邮箱且传了 URL，做精确的 URL 匹配和过时判断
+            if ( is_email( $email ) && ! empty( $url ) ) {
+                $norm_input = normalize_comment_url( $url );
+        
+                $last_url_row = $wpdb->get_row( $wpdb->prepare(
+                    "SELECT comment_author_url, comment_date FROM $wpdb->comments
+                     WHERE comment_author_email = %s
+                       AND comment_author_url != ''
+                       AND comment_approved = '1'
+                     ORDER BY comment_date DESC LIMIT 1",
+                    $email
+                ) );
+        
+                if ( $last_url_row ) {
+                    $norm_db   = normalize_comment_url( $last_url_row->comment_author_url );
+                    $url_match = ( $norm_input === $norm_db );
+        
+                    if ( $url_match ) {
+                        $last_ts = strtotime( $last_url_row->comment_date );
+                        if ( $last_ts && ( time() - $last_ts ) > $threshold ) {
+                            $url_outdated = true;
+                        }
+                    }
+                }
+            } else {
+                // 只传了邮箱或只传了 URL（已转邮箱）的情况，直接按最后评论时间判断
+                if ( ! empty( $stats->last_comment_date ) ) {
+                    $last_ts = strtotime( $stats->last_comment_date );
+                    if ( $last_ts && ( time() - $last_ts ) > $threshold ) {
+                        $url_outdated = true;
+                    }
                 }
             }
         
-            $mirror = get_option('site_avatar_mirror', 'https://cravatar.cn/');
+            // 如果是本站链接，强制不过时
+            if ( $url === '' || normalize_comment_url( $url ) == normalize_comment_url( get_bloginfo( 'url' ) ) ) {
+                $url_outdated = '';
+            }
         
             // 头像仍优先基于邮箱；若邮箱为空则基于 url 生成一个稳定 hash
-            $avatar_seed = is_email($email) ? $email : $url;
+            $avatar_seed = is_email( $email ) ? $email : $url;
         
-            return [
+            // 组装最终结果
+            $result = [
                 'name'               => $name_row ? $name_row->comment_author : '',
                 'url'                => $url_row ? $url_row->comment_author_url : '',
-                'avatar_url'         => $mirror . 'avatar/' . md5($avatar_seed) . '?d=retro&s=100',
+                'avatar_url'         => $mirror . 'avatar/' . md5( $avatar_seed ) . '?d=retro&s=100',
                 'comment_count'      => (int) $stats->comment_count,
                 'first_comment_date' => $stats->first_comment_date ?: '',
                 'last_comment_date'  => $stats->last_comment_date ?: '',
                 'url_outdated'       => $url_outdated,
+                'url_match'          => $url_match,
+            ];
+        
+            if ( $cache ) {
+                wp_cache_set( $cache_key, $result, $cache_group, $cache_ttl );
+            }
+        
+            return $result;
+        }
+        
+        // /**
+        //  * 发布评论后清除对应的缓存，确保统计数据即时更新
+        //  */
+        // add_action( 'comment_post', function( $comment_id, $comment_approved ) {
+        //     if ( $comment_approved !== 1 ) return; // 只处理已通过的评论
+        
+        //     $comment = get_comment( $comment_id );
+        //     if ( ! $comment ) return;
+        
+        //     $email = $comment->comment_author_email;
+        //     $url   = $comment->comment_author_url;
+        
+        //     // 1. 清除该邮箱的缓存
+        //     if ( $email ) {
+        //         $key = md5( implode( '|', [ 'comment_user_info', 'v2', 'email', strtolower( $email ) ] ) );
+        //         wp_cache_delete( $key, 'comment_user_info' );
+        //     }
+        
+        //     // 2. 清除该 URL 的缓存
+        //     if ( $url ) {
+        //         $norm = normalize_comment_url( $url );
+        //         if ( $norm ) {
+        //             $key = md5( implode( '|', [ 'comment_user_info', 'v2', 'url', $norm ] ) );
+        //             wp_cache_delete( $key, 'comment_user_info' );
+        //         }
+        //     }
+        // }, 10, 2 );
+        
+        function the_comment_full_info( $email = '', $link = '' ) {
+            $info = get_comment_full_info( $email, $link );
+        
+            $outdated = $info['url_outdated'];
+            $match    = $info['url_match'];
+        
+            // 日期格式化
+            $first_date = $info['first_comment_date']
+                ? date_i18n( 'Y-m-d', strtotime( $info['first_comment_date'] ) )
+                : '未知';
+            $last_date = $info['last_comment_date']
+                ? date_i18n( 'Y-m-d', strtotime( $info['last_comment_date'] ) )
+                : '未知';
+        
+            // 根据场景决定提示语
+            $outdated_tip = '';
+        
+            if ( ! empty( $email ) && ! empty( $link ) ) {
+                // 场景 A：email + url 同时存在
+                if ( $match && $outdated ) {
+                    $outdated_tip = '（长期无互动链接可能已失效）';
+                } elseif ( ! $match ) {
+                    $outdated_tip = '（用户已更新域名）';
+                    $outdated = 1;
+                }
+            } else {
+                // 场景 B：只传 email 或只传 url
+                if ( ! empty( $email )) {
+                    if ( $outdated ) $outdated_tip = '（长期无互动，链接可能失效）';
+                } else {
+                    if ( $outdated ) $outdated_tip = '（链接太久远，可能已经失效）';
+                }
+            }
+        
+            $title = sprintf(
+                'Ta 在本站共 %d 条评论（首次 %s，最近 %s）%s',
+                $info['comment_count'],
+                $first_date,
+                $last_date,
+                $outdated_tip
+            );
+        
+            return [
+                'tip_outdated'       => $title,
+                'url_outdated'       => $outdated,
             ];
         }
         
@@ -4935,7 +5220,8 @@
          */
         function rest_get_comment_full_info(WP_REST_Request $request) {
             $email = strtolower($request->get_param('email'));
-            return rest_ensure_response(get_comment_full_info($email));
+            $url = strtolower($request->get_param('url'));
+            return rest_ensure_response(get_comment_full_info($email, $url));
         }
         
         /**
@@ -5014,18 +5300,10 @@
                 }
                 $comment->comment_content = '<small style="opacity:.5;display:block;"> [ 等待评论审核，通过正常显示。] </small>' . $comment->comment_content;
             }
-            $comment_user_info = get_comment_full_info($email); //'', $link
-            $comment_user_outdated = $comment_user_info['url_outdated'];
-            $comment_user_title = sprintf(
-                'Ta 在本站共 %d 条评论（首次 %s；最近 %s）%s',
-                $comment_user_info['comment_count'],
-                $comment_user_info['first_comment_date'] ?: '未知',
-                $comment_user_info['last_comment_date'] ?: '未知',
-                !empty($comment_user_outdated) ? '（长期无互动链接可能已失效）' : ''
-            );
+            $comment_user_info = the_comment_full_info($email, $link);
     ?>
             <div class="vcard magnetic glow<?php if (!$approved) echo ' auditing';if ($is_ai_comment) echo ' ai';if ($is_thoughtful_comment) echo ' thoughtful';if ($is_ai_spam) echo ' spam'; ?>" data-ai-pending="<?php echo $comment->two_ber_ai_pending ?>" data-magnet-scale="1" data-magnet-step="0" id="comment-<?php echo $id; ?>">
-                <a class="noslide avatar" rel="nofollow crossorigin" href="<?php echo $link; ?>" target="_blank" title="<?php echo $comment_user_title; ?>"  data-outdated="<?php echo $comment_user_outdated; ?>">
+                <a class="noslide avatar" rel="nofollow crossorigin" href="<?php echo $link; ?>" target="_blank" title="<?php echo $comment_user_info['tip_outdated']; ?>"  data-outdated="<?php echo $comment_user_info['url_outdated']; ?>">
                     <?php 
                         if (get_option('show_avatars')) {
                             echo '<img class="vimg" '.$lazysrc.'="'.match_mail_avatar($email).'" width=50 height=50 alt="user_avatar" />';
@@ -5035,7 +5313,7 @@
                 </a>
                 <div class="vh" rootid="comment-<?php echo $id; ?>">
                     <div class="vhead">
-                        <a class="vnick" rel="nofollow crossorigin" href="<?php echo $link; ?>" target="_blank" title="<?php //echo $comment_user_title; ?>"  data-outdated="<?php echo $comment_user_outdated; ?>">
+                        <a class="vnick" rel="nofollow crossorigin" href="<?php echo $link; ?>" target="_blank" title="<?php //echo $comment_user_title; ?>"  data-outdated="<?php echo $comment_user_info['url_outdated']; ?>">
                             <em><?php echo $nick; ?></em>
                         </a>
                         <?php
@@ -5133,7 +5411,7 @@
                     }
                     // add comment user info
                     $comment_user_email = $child->comment_author_email;
-                    $child->_comment_userinfo = get_comment_full_info('', $child->comment_author_url);
+                    $child->_comment_userinfo = the_comment_full_info($comment_user_email, $child->comment_author_url);
                     // use privacy data encryption
                     $child->comment_author_email = md5($comment_user_email);
                     $child->comment_author_IP = sha1($child->comment_author_IP);
@@ -5173,7 +5451,7 @@
                 $comment_ID = $each->comment_ID;
                 // add comment user info
                 $comment_user_email = $each->comment_author_email;
-                $each->_comment_userinfo = get_comment_full_info('', $each->comment_author_url);
+                $each->_comment_userinfo = the_comment_full_info($comment_user_email, $each->comment_author_url);
                 // user privacy data crypt
                 $each->comment_author_email = md5($comment_user_email);
                 $each->comment_author_IP = sha1($each->comment_author_IP);
@@ -5187,6 +5465,8 @@
                 // add thoughtful comment
                 $each->_comment_thoughtful = get_comment_meta( $comment_ID, '_thoughtful_comment', true );
                 $each->_comment_spam = get_comment_meta( $comment_ID, '_ai_spam_reason', true );
+                // apply comment_text filters
+                $each->comment_content = apply_filters( 'comment_text', $each->comment_content, $each );
                 if($each->comment_parent==0) array_push($comments_array, ajax_child_comments_loop($each));
             }
             print_r(json_encode($comments_array));
@@ -5343,8 +5623,7 @@
         if($shell){
             // https://wp-kama.com/hook/wp_embed_handler_video
             function add_video_attachment_capture($attachment_ID){
-                global $shell; //$current_user, 
-                get_currentuserinfo();
+                global $shell; //$current_user, get_currentuserinfo();
                 function ratio($a, $b){
                     $gcd = function($a, $b) use (&$gcd) {
                         return ($a % $b) ? $gcd($b, $a % $b) : $b;

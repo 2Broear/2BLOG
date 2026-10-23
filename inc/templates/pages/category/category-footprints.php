@@ -10,7 +10,7 @@
     $default_theme = theme_mode(true) ;//get_request_param('theme', theme_mode(true));
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="<?php echo $theme_mode = theme_mode(true); ?>">
 <head>
     <?php get_head(); ?>
     <style>
@@ -27,7 +27,7 @@
         }
     </style>
 </head>
-<body class="<?php echo $default_theme; ?>">
+<body class="<?php echo $theme_mode; ?>">
 <div class="content-all">
     <div class="win-top blur">
         <?php

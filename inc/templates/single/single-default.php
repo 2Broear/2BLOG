@@ -6,7 +6,7 @@
     global $src_cdn, $img_cdn;
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="<?php echo $theme_mode = theme_mode(true); ?>">
 <head>
     <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/n.css?1v=<?php echo get_theme_info(); ?>" />
@@ -104,7 +104,7 @@
 	    /*}*/
     </style>
 </head>
-<body class="<?php theme_mode(); ?>">
+<body class="<?php echo $theme_mode; ?>">
     <div class="content-all">
         <div class="win-top bg" style="background: url(<?php $pid=$post->ID;echo get_postimg(0,$pid,true); ?>) center center /cover;">
             <header>

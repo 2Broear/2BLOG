@@ -246,7 +246,7 @@
 }
 
 .friends-boxes .deals .inbox:hover .inbox-headside img{
-    border-radius: 0;
+    /*border-radius: 0;*/
 }
 .friends-boxes .deals .inbox:hover .inbox-inside{
     width: 100%;

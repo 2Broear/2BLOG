@@ -5,7 +5,7 @@
 */
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="<?php echo $theme_mode = theme_mode(true); ?>">
 <head>
     <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/about.css?v=<?php echo get_theme_info(); ?>" />
@@ -18,7 +18,7 @@
         }
     </style>
 </head>
-<body class="<?php theme_mode(); ?>">
+<body class="<?php echo $theme_mode; ?>">
 <div class="content-all">
     <div class="win-top bg">
         <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>

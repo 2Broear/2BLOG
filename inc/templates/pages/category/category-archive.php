@@ -43,7 +43,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
 }
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="<?php echo $theme_mode = theme_mode(true); ?>">
 <head>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/archive.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
@@ -95,7 +95,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
         }
     </style>
 </head>
-<body class="<?php theme_mode(); ?>">
+<body class="<?php echo $theme_mode; ?>">
     <div class="content-all">
         <div class="win-top bg" style="background:url() center center /cover ">
             <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>

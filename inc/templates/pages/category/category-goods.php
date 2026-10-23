@@ -5,7 +5,7 @@
 */
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="<?php echo $theme_mode = theme_mode(true); ?>">
 <head>
     <?php get_head(); ?>
     <style>
@@ -137,7 +137,7 @@
         }
     </style>
 </head>
-<body class="<?php theme_mode(true); ?>">
+<body class="<?php echo $theme_mode; ?>">
     <div class="content-all">
         <div class="win-top blur">
             <div class="exhibition">

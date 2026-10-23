@@ -2,6 +2,7 @@
     global $src_cdn, $cat;
     $news_temp_id = get_cat_by_template('news','term_id');
     $note_temp_id = get_cat_by_template('notes','term_id');
+    // $weblog_temp_id = get_cat_by_template('weblog','term_id');
     $acg_temp_id = get_cat_by_template('acg','term_id');
     $archive_temp = get_cat_by_template('archive','term_id');
 ?>
@@ -56,8 +57,8 @@
     .links-more {
         overflow: visible!important;
     }
-    /*.win-content article.news-window.magnetic.glow:hover::after,*/
-    figure.wp-block-image.magnetic.glow:hover::after,
+    /*.win-content article.news-window.magnetic.glow:hover::after,
+    figure.wp-block-image.magnetic.glow:hover::after,*/
     .rcmd-boxes .info .inbox.magnetic.glow:hover::after,
     .inside-functions .box .pagePer.magnetic.glow:hover::after,
     .Fresh-ImgBoxs span.magnetic.glow:hover::after,
@@ -84,16 +85,25 @@
         if (get_option('site_urls_auditing')) {
     ?>
             // 外链审查（评论区）
+            const auditingList = ['.vcontent'];  // 1. 定义需要排除的区域类名数组
             bindEventClick(document.querySelector('.content-all'), '', function(t, e) {
-                // console.log(t)
-                if (t.nodeName !== 'A') return; // || !t.classList
-                if (t.rel && t.rel.match('crossorigin')) {
+            
+                // 2. 检查当前点击的元素是否在这些排除区域内
+                const isExcluded = auditingList.some(selector => t.closest(selector));
+            
+                if (t.nodeName !== 'A') return; // 不是 a 标签直接返回
+            
+                // 3. 如果排除了，或者是原生带 crossorigin 的标签，才进入审查逻辑
+                if (t.rel && t.rel.match('crossorigin') || isExcluded) {
                     const target_url = t.href;
-                    if (!t.dataset.outdated || target_url === window.location.origin + '/') {
+                    
+                    if (!t.dataset.outdated && !isExcluded) { 
                         return;
                     }
+                    
                     e.preventDefault();  // 立即阻止默认跳转
                     e.stopPropagation(); // 可选：阻止冒泡，避免父级其他处理
+                    
                     if (confirm(`请确认前往 [ ${target_url} ] （外链可能无法保证安全性）`)) {
                         window.open(target_url, '_blank');
                     }
@@ -119,7 +129,7 @@
         $vdo_poster_sw = get_option('site_video_poster_switcher');
         $datadance = get_option('site_animated_counting_switcher');
         if (is_single()) {
-            if(in_category($news_temp_id) || in_category($note_temp_id)){
+            // if(in_category($news_temp_id) || in_category($note_temp_id)) { // || in_category($weblog_temp_id)
                 if($vdo_poster_sw) echo 'setupVideoPoster(3);'; // 截取设置当前页面所有视频 poster
     ?>
                 //dynamicLoad
@@ -144,7 +154,7 @@
                     fancyImages(document.querySelectorAll(".news-article-container .content img"));
                 });
     <?php
-            }
+            // }
             // marker
             if(get_option('site_marker_switcher')){
     ?>

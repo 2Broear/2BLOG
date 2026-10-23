@@ -14,7 +14,7 @@
     $mbit_avatar = 'https://www.16personalities.com/static/images/personality-types/avatars/email/large/' . $mbit_abbr . '_male.png?v=1';
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="<?php echo $theme_mode = theme_mode(true); ?>">
 <head>
     <?php get_head(); ?>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/about.css?v=<?php echo get_theme_info(); ?>" />
@@ -181,7 +181,7 @@
         }
     </style>
 </head>
-<body class="<?php theme_mode(); ?>">
+<body class="<?php echo $theme_mode; ?>">
 <div class="content-all">
     <header>
         <nav id="tipson" class="ajaxloadon">

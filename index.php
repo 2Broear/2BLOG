@@ -53,7 +53,7 @@
         echo $output;
     };
 ?>
-<html lang="zh-CN">
+<html lang="zh-CN" class="<?php echo $theme_mode = theme_mode(true); ?>">
 <head>
     <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/main.min.css?v=<?php echo get_theme_info(); ?>" />
      <!--<link rel="webmention" href="https://webmention.io/blog.2broear.com/webmention" />-->
@@ -242,7 +242,7 @@
         ?>
     </style>
 </head>
-<body class="<?php theme_mode(); ?>">
+<body class="<?php echo $theme_mode; ?>">
 <div class="content-all">
 <div class="main-content">
 <header>
@@ -412,7 +412,7 @@
                         <?php
                             } else {
                                 $ranklink = get_site_bookmarks(get_option('site_list_links_category'), 'rand', 'ASC', $rand_count);
-                                $ranklinks = get_site_links($ranklink, 'list'); //, true
+                                $ranklinks = get_site_links($ranklink, 'list', true); //, true
                                 echo empty($ranklink) ? '<li class="magnetic"><a href="">' . $ranklinks . '</a></li>' : $ranklinks;
                             }
                         ?>

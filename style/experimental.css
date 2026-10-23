@@ -6,8 +6,15 @@
 **  @2026
 **
 **/
+body.dark,
+html.dark {
+    background: var(--preset-2b);
+}
+
 .friends-boxes .deals .inbox span.ssl.http {
-    background: var(--preset-caution);
+    background: var(--preset-6);
+    font-style: italic;
+    opacity: .35;
 }
 
 .wp-block-table table tr:nth-child(even) {
@@ -123,7 +130,7 @@ body.dark .archive-tree ul li a.article {
 }
 .v a.avatar:after {
     content: attr(title);
-    max-width: 33em;
+    max-width: 30em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -135,8 +142,8 @@ body.dark .archive-tree ul li a.article {
     right: 5px;
     opacity: 0;
     transition: opacity .15s ease;
-    mask: linear-gradient(left, var(--preset-f) 80%, transparent 100%);
-    mask: -webkit-linear-gradient(left, var(--preset-f) 80%, transparent 100%);
+    mask: linear-gradient(left, transparent -10%, var(--preset-f) 50%, transparent 110%);
+    mask: -webkit-linear-gradient(left, transparent -10%, var(--preset-f) 50%, transparent 110%);
 }
 /*.v .vlist .vcard .vimg,*/
 .v .vlist .vcard .vh .vsys.vthoughtful,
@@ -192,8 +199,12 @@ figure.wp-block-gallery > figure {
 .ibox.quotes a {
     color: var(--preset-5a);
 }
+body.dark .ibox.quotes .iboxes .content p {
+    color: var(--preset-c);
+}
 .ibox.quotes .iboxes .content p {
     margin: 10px auto;
+    opacity: 1;
 }
 
 /*body.dark .news-article-container .v .vlist .vcard:hover,*/
@@ -285,10 +296,11 @@ body.dark .news-article-container .v .vlist .children:hover {
 **
 **/
 .weblog-tree-box .tree-box-content {
-    max-height: 66vh;
+    max-height: 58vh;
     overflow-y: auto;
 }
 .weblog-tree-box .tree-box-content p {
+    margin-top: 10px;
     /*font-size: var(--min-size-rem);*/
 }
 /**
@@ -508,7 +520,7 @@ body.dark .v .vlist .vcard .vcontent {
     right: -65px;
     /*background: var(--preset-6a);*/
     background: currentColor;
-    opacity: .15;
+    opacity: .1;
     transform: skew(-16deg);
 }
 #supports-txt i::before {

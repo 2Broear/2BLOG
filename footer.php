@@ -557,7 +557,7 @@
                           echo '<li id="'.$cat_slug.'"><a href="'.get_category_link($cat_term->term_id).'" target="_blank">'.$cat_term->name.'</a></li>';
                       }
                   };
-                  if(get_option('site_map_switcher')) echo '<li id="sitemap"><a href="'.get_bloginfo('siteurl').'/sitemap.xml" target="_blank">站点地图</a></li>';
+                  if(get_option('site_map_switcher')) echo '<li id="sitemap"><a href="' . get_bloginfo('url') . '/sitemap.xml" target="_blank">站点地图</a></li>';
               ?>
               <p style="margin:auto;opacity:.75;font-size:12px;font-style:italic"> WordPress Theme <a href="//github.com/2Broear/2BLOG" style="color:inherit;" target="_blank"><b title="v<?php echo get_theme_info(); ?>">2BLOG</b>™</a>  Made With ❤️ @2022 </p>
           </ul>

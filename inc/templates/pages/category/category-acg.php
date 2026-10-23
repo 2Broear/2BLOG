@@ -48,7 +48,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
             $loadimg = $postimg;
         }
         $href = $post_source ? $post_source : ($acg_single_sw ? "javascript:;" : get_the_permalink());
-        $output .= '<div class="inbox flexboxes magnetic glow" data-magnet-scale="1.25" data-magnet-step="0.15" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /></a><span class="author" title="'.$post_feeling.'">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(52,true).'</p></span>';
+        $output .= '<div class="inbox flexboxes magnetic glow" data-magnet-scale="1.15" data-magnet-step="0.15" id="pid_'.get_the_ID().'"><div class="inbox-headside flexboxes"><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'"><img '.$lazyhold.' src="'.$loadimg.'" alt="'.$post_feeling.'" crossorigin="Anonymous" /></a><span class="author" title="'.$post_feeling.'">'.$post_feeling.'</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="'.$href.'" target="'.$target.'" rel="'.$rel.'">'.get_the_title().'</a></h4></span><span class="lowside-description"><p>'.custom_excerpt(52,true).'</p></span>';
         if($post_rcmd){
             $rcmd_title = 'Personal Recommends';
             $rcmd_class = '';
@@ -92,7 +92,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
 };
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="<?php echo $theme_mode = theme_mode(true); ?>">
 <head>
     <link preload type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/acg.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
@@ -239,7 +239,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         }
     </style>
 </head>
-<body class="<?php theme_mode(); ?>">
+<body class="<?php echo $theme_mode; ?>">
     <div class="content-all">
         <div class="win-top bg" style="background:url() center center /cover ">
             <em class="digital_mask" style="background: url(<?php echo $img_cdn; ?>/images/svg/digital_mask.svg)"></em>

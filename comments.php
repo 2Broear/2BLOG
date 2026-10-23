@@ -33,7 +33,7 @@
     $user_link = array_key_exists("comment_author_url_".COOKIEHASH, $_COOKIE) ? $_COOKIE["comment_author_url_" . COOKIEHASH] : false;
     $user_logged = is_user_logged_in();
     if ($user_logged) {
-        $wp_user = get_currentuserinfo();// global $current_user;// print_r($wp_user);
+        $wp_user = wp_get_current_user(); //get_currentuserinfo();// global $current_user;// print_r($wp_user);
         $user_name = $wp_user->user_nicename; // $_COOKIE["comment_author_" . COOKIEHASH];
         $user_mail = $wp_user->user_email; // $_COOKIE["comment_author_email_" . COOKIEHASH];
         $user_link = $wp_user->user_url; // $_COOKIE["comment_author_url_" . COOKIEHASH];
@@ -86,7 +86,7 @@
                 opacity: .15;
                 mask: radial-gradient(transparent 15%, black 85%);
                 mask: -webkit-radial-gradient(transparent 15%, black 85%);
-                transition: opacity .35s ease;
+                transition: opacity .75s ease;
             }
         </style>
         <script type="text/javascript">
@@ -412,18 +412,10 @@
                             }
                             $comment->comment_content = '<small style="opacity:.5;display:block;"> [ 等待评论审核，通过正常显示。] </small>' . $comment->comment_content;
                         }
-                        $comment_user_info = get_comment_full_info($comment->comment_author_email); //'', $comment->comment_author_url
-                        $comment_user_outdated = $comment_user_info['url_outdated'];
-                        $comment_user_title = sprintf(
-                            'Ta 在本站共 %d 条评论（首次 %s；最近 %s）%s',
-                            $comment_user_info['comment_count'],
-                            $comment_user_info['first_comment_date'] ?: '未知',
-                            $comment_user_info['last_comment_date'] ?: '未知',
-                            !empty($comment_user_outdated) ? '（长期无互动链接可能已失效）' : ''
-                        );
+                        $comment_user_info = the_comment_full_info($comment->comment_author_email, $comment->comment_author_url);
                     ?>
                         <div class="vcard magnetic glow<?php if ($is_ai_comment && !$is_ai_pending) echo ' ai';if ($is_thoughtful_comment) echo ' thoughtful';if ($is_ai_spam) echo ' spam'; ?>" data-magnet-scale="1" data-magnet-step="0" id="comment-<?php echo $comment_ID; ?>" data-ai-pending="<?php echo $is_ai_pending ?>">
-                            <a class="noslide avatar" rel="nofollow crossorigin" href="<?php echo $comment_author_url = get_comment_author_url(); //normalize_comment_url(get_comment_author_url(), true); ?>" target="_blank" title="<?php echo $comment_user_title; ?>" data-outdated="<?php echo $comment_user_outdated; ?>">
+                            <a class="noslide avatar" rel="nofollow crossorigin" href="<?php echo $comment_author_url = get_comment_author_url(); //normalize_comment_url(get_comment_author_url(), true); ?>" target="_blank" title="<?php echo $comment_user_info['tip_outdated']; ?>" data-outdated="<?php echo $comment_user_info['url_outdated']; ?>">
                                 <?php 
                                     if (get_option('show_avatars')) {
                                         $email = get_comment_author_email();
@@ -434,7 +426,7 @@
                             </a>
                             <div class="vh" rootid="comment-<?php echo $comment_ID; ?>">
                                 <div class="vhead">
-                                    <a class="vnick" rel="nofollow crossorigin" href="<?php echo $comment_author_url; ?>" target="_blank" data-outdated="<?php echo $comment_user_outdated; ?>">
+                                    <a class="vnick" rel="nofollow crossorigin" href="<?php echo $comment_author_url; ?>" target="_blank" data-outdated="<?php echo $comment_user_info['url_outdated']; ?>">
                                         <em><?php comment_author(); ?></em>
                                     </a>
                                     <?php
@@ -641,7 +633,7 @@
                         comment_submit: '提交中..',
                         comment_loaded: '已加载全部评论',
                         turnstile_error: '重置 turnstile 发生错误！',
-                        turnstile_waitting: '请先完成或等待 turnstile 验证后评论！',
+                        turnstile_waitting: '请等待或完成 turnstile 验证后评论！',
                         invalid_comment: '评论填写有误！',
                         invalid_nickname: '昵称填写有误！',
                         invalid_email: '邮箱格式有误！',
@@ -986,7 +978,7 @@
                               thoughtful_class = ' thoughtful';
                               thoughtful_reply = `<span class="vsys vthoughtful" title="AI Powered @2BER">✨亮评 #${id}</span>`;
                           }
-                          output += `<div class="vcard magnetic glow${ai_class+thoughtful_class+spam_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0" id="comment-${id}"><a class="noslide avatar" rel="nofollow crossorigin" href="${link}" target="_blank" title="Ta 在本站共 ${user_info.comment_count} 条评论（首次 ${user_info.first_comment_date}；最近 ${user_info.last_comment_date}）${user_info.url_outdated ? '（长期无互动链接可能已失效）' : ''}" data-outdated="${user_outdated}"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow crossorigin" href="${link}" target="_blank" data-outdated="${user_outdated}"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div><div class="vmeta"><span class="vtime">${child.comment_date.slice(0, 10)}</span>${ai_spam + replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${child._comment_reply}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
+                          output += `<div class="vcard magnetic glow${ai_class+thoughtful_class+spam_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0" id="comment-${id}"><a class="noslide avatar" rel="nofollow crossorigin" href="${link}" target="_blank" title="${user_info.tip_outdated}" data-outdated="${user_outdated}"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow crossorigin" href="${link}" target="_blank" data-outdated="${user_outdated}"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div><div class="vmeta"><span class="vtime">${child.comment_date.slice(0, 10)}</span>${ai_spam + replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${child._comment_reply}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
                        }
                     }
                     return output;
@@ -1009,10 +1001,12 @@
                             // console.log(that.dom, email, avatar);
                             that.realtime_fields = that.vinfo;
                             throw new Error('email-field not exist, fallback to preset node..');
-                        };
+                        }
+                        // email.dataset.mail = email.value.toLowerCase();
                         email.onchange = async function(e) {
-                            let mail = this.value;
-                            if(!regex.test(mail)){
+                            let mail = this.value.toLowerCase();
+                            // if (mail === this.dataset.mail) return;
+                            if (!regex.test(mail)) {
                                 console.log('invalid email.');
                                 return;
                             }
@@ -1032,7 +1026,7 @@
                             if (data.url) that.vinfo.querySelector("input[name=url]").value = data.url;
                         
                             // 更新头像
-                            if (data.avatar_url) avatar.src = data.avatar_url;
+                            avatar.src = data.avatar_url; //if (data.avatar_url) 
                         }
                     })();
                 <?php
@@ -1343,7 +1337,7 @@
                                             appendList.dataset.magnetScale = '1';
                                             appendList.dataset.magnetStep = "0";
                                             appendList.classList.add("vcard", 'magnetic', 'glow'); //wp_comments
-                                            appendList.innerHTML += `<a class="noslide avatar" rel="nofollow crossorigin" href="${link}" target="_blank" title="Ta 在本站共 ${user_info.comment_count} 条评论（首次 ${user_info.first_comment_date}；最近 ${user_info.last_comment_date}）${user_info.url_outdated ? '（长期无互动链接可能已失效）' : ''}" data-outdated="${user_outdated}"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_comment.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow crossorigin" href="${link}" target="_blank" data-outdated="${user_outdated}"> <em>${nick}</em> </a> ${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div> <div class="vmeta"> <span class="vtime">${each_comment.comment_date.slice(0, 10)}</span>${ai_spam + replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
+                                            appendList.innerHTML += `<a class="noslide avatar" rel="nofollow crossorigin" href="${link}" target="_blank" title="${user_info.tip_outdated}" data-outdated="${user_outdated}"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_comment.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow crossorigin" href="${link}" target="_blank" data-outdated="${user_outdated}"> <em>${nick}</em> </a> ${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div> <div class="vmeta"> <span class="vtime">${each_comment.comment_date.slice(0, 10)}</span>${ai_spam + replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
                                             that.vlist.appendChild(appendList);
                                             that.vlist.innerHTML += if_child;
                                         }

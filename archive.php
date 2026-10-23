@@ -5,7 +5,7 @@
 */
 ?>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="<?php echo $theme_mode = theme_mode(true); ?>">
 <head>
 	<link type="text/css" rel="stylesheet" href="<?php echo $src_cdn; ?>/style/notes.css?v=<?php echo get_theme_info(); ?>" />
     <?php get_head(); ?>
@@ -15,7 +15,7 @@
         }
     </style>
 </head>
-<body class="<?php theme_mode(); ?>">
+<body class="<?php echo $theme_mode; ?>">
 <div class="content-all">
 <div class="win-top bg" style="background: url() top center /cover">
 	<header>
