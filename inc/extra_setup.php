@@ -5,6 +5,181 @@
      * FUNC
      *--------------------------------------------------------------------------
     */
+    add_filter('smilies', function ($smilies) {
+        return array_merge($smilies, array (
+            ':bren#0:'  => 'bren_smug.webp',
+            ':bren#1:'  => 'bren_smirk.webp',
+            ':bren#2:'  => 'bren_melon.webp',
+            ':bren#3:'  => 'bren_lieflat.webp',
+            ':bren#4:'  => 'bren_speechless.webp',
+            ':bren#5:'  => 'bren_peek.webp',
+            ':bren#6:'  => 'bren_hello.webp',
+            ':bren#7:'  => 'bren_ok.webp',
+            ':bren#8:'  => 'bren_received.webp',
+            ':bren#9:'  => 'bren_like.webp',
+            ':bren#10:' => 'bren_heart.webp',
+            ':bren#11:' => 'bren_cc.webp',
+            ':bren#12:' => 'bren_friendlink.webp',
+            ':bren#13:' => 'bren_rss.webp',
+            ':bren#14:' => 'bren_updated.webp',
+            ':bren#15:' => 'bren_wip.webp',
+            ':bren#16:' => 'bren_newtheme.webp',
+            ':bren#17:' => 'bren_403.webp',
+            ':bren#18:' => 'bren_wormhole.webp',
+            ':bren#19:' => 'bren_renew.webp',
+    
+            // bilibili #00 - #63 → b00.png ~ b63.png
+            ':bilibili#00:' => 'b00.png',
+            ':bilibili#01:' => 'b01.png',
+            ':bilibili#02:' => 'b02.png',
+            ':bilibili#03:' => 'b03.png',
+            ':bilibili#04:' => 'b04.png',
+            ':bilibili#05:' => 'b05.png',
+            ':bilibili#06:' => 'b06.png',
+            ':bilibili#07:' => 'b07.png',
+            ':bilibili#08:' => 'b08.png',
+            ':bilibili#09:' => 'b09.png',
+            ':bilibili#10:' => 'b10.png',
+            ':bilibili#11:' => 'b11.png',
+            ':bilibili#12:' => 'b12.png',
+            ':bilibili#13:' => 'b13.png',
+            ':bilibili#14:' => 'b14.png',
+            ':bilibili#15:' => 'b15.png',
+            ':bilibili#16:' => 'b16.png',
+            ':bilibili#17:' => 'b17.png',
+            ':bilibili#18:' => 'b18.png',
+            ':bilibili#19:' => 'b19.png',
+            ':bilibili#20:' => 'b20.png',
+            ':bilibili#21:' => 'b21.png',
+            ':bilibili#22:' => 'b22.png',
+            ':bilibili#23:' => 'b23.png',
+            ':bilibili#24:' => 'b24.png',
+            ':bilibili#25:' => 'b25.png',
+            ':bilibili#26:' => 'b26.png',
+            ':bilibili#27:' => 'b27.png',
+            ':bilibili#28:' => 'b28.png',
+            ':bilibili#29:' => 'b29.png',
+            ':bilibili#30:' => 'b30.png',
+            ':bilibili#31:' => 'b31.png',
+            ':bilibili#32:' => 'b32.png',
+            ':bilibili#33:' => 'b33.png',
+            ':bilibili#34:' => 'b34.png',
+            ':bilibili#35:' => 'b35.png',
+            ':bilibili#36:' => 'b36.png',
+            ':bilibili#37:' => 'b37.png',
+            ':bilibili#38:' => 'b38.png',
+            ':bilibili#39:' => 'b39.png',
+            ':bilibili#40:' => 'b40.png',
+            ':bilibili#41:' => 'b41.png',
+            ':bilibili#42:' => 'b42.png',
+            ':bilibili#43:' => 'b43.png',
+            ':bilibili#44:' => 'b44.png',
+            ':bilibili#45:' => 'b45.png',
+            ':bilibili#46:' => 'b46.png',
+            ':bilibili#47:' => 'b47.png',
+            ':bilibili#48:' => 'b48.png',
+            ':bilibili#49:' => 'b49.png',
+            ':bilibili#50:' => 'b50.png',
+            ':bilibili#51:' => 'b51.png',
+            ':bilibili#52:' => 'b52.png',
+            ':bilibili#53:' => 'b53.png',
+            ':bilibili#54:' => 'b54.png',
+            ':bilibili#55:' => 'b55.png',
+            ':bilibili#56:' => 'b56.png',
+            ':bilibili#57:' => 'b57.png',
+            ':bilibili#58:' => 'b58.png',
+            ':bilibili#59:' => 'b59.png',
+            ':bilibili#60:' => 'b60.png',
+            ':bilibili#61:' => 'b61.png',
+            ':bilibili#62:' => 'b62.png',
+            ':bilibili#63:' => 'b63.png',
+    
+            // heo #0 - #63 → 0.png ~ 63.png
+            ':heo#0:' => '0.png',
+            ':heo#1:' => '1.png',
+            ':heo#2:' => '2.png',
+            ':heo#3:' => '3.png',
+            ':heo#4:' => '4.png',
+            ':heo#5:' => '5.png',
+            ':heo#6:' => '6.png',
+            ':heo#7:' => '7.png',
+            ':heo#8:' => '8.png',
+            ':heo#9:' => '9.png',
+            ':heo#10:' => '10.png',
+            ':heo#11:' => '11.png',
+            ':heo#12:' => '12.png',
+            ':heo#13:' => '13.png',
+            ':heo#14:' => '14.png',
+            ':heo#15:' => '15.png',
+            ':heo#16:' => '16.png',
+            ':heo#17:' => '17.png',
+            ':heo#18:' => '18.png',
+            ':heo#19:' => '19.png',
+            ':heo#20:' => '20.png',
+            ':heo#21:' => '21.png',
+            ':heo#22:' => '22.png',
+            ':heo#23:' => '23.png',
+            ':heo#24:' => '24.png',
+            ':heo#25:' => '25.png',
+            ':heo#26:' => '26.png',
+            ':heo#27:' => '27.png',
+            ':heo#28:' => '28.png',
+            ':heo#29:' => '29.png',
+            ':heo#30:' => '30.png',
+            ':heo#31:' => '31.png',
+            ':heo#32:' => '32.png',
+            ':heo#33:' => '33.png',
+            ':heo#34:' => '34.png',
+            ':heo#35:' => '35.png',
+            ':heo#36:' => '36.png',
+            ':heo#37:' => '37.png',
+            ':heo#38:' => '38.png',
+            ':heo#39:' => '39.png',
+            ':heo#40:' => '40.png',
+            ':heo#41:' => '41.png',
+            ':heo#42:' => '42.png',
+            ':heo#43:' => '43.png',
+            ':heo#44:' => '44.png',
+            ':heo#45:' => '45.png',
+            ':heo#46:' => '46.png',
+            ':heo#47:' => '47.png',
+            ':heo#48:' => '48.png',
+            ':heo#49:' => '49.png',
+            ':heo#50:' => '50.png',
+            ':heo#51:' => '51.png',
+            ':heo#52:' => '52.png',
+            ':heo#53:' => '53.png',
+            ':heo#54:' => '54.png',
+            ':heo#55:' => '55.png',
+            ':heo#56:' => '56.png',
+            ':heo#57:' => '57.png',
+            ':heo#58:' => '58.png',
+            ':heo#59:' => '59.png',
+            ':heo#60:' => '60.png',
+            ':heo#61:' => '61.png',
+            ':heo#62:' => '62.png',
+            ':heo#63:' => '63.png',
+        ));
+    });
+    
+    add_filter('smilies_src', function ($url, $image) {
+        global $img_cdn;
+        $image_path = $img_cdn . '/images/emojis/';
+        if (strpos($image, 'bren_') === 0) {
+            return 'https://www.foreverblog.cn/stickers/bren/v1/' . $image;
+        }
+        if (preg_match('/^b\d{2}\.png$/', $image)) {
+            // bilibili 表情实际目录
+            return $image_path . '/bilibili/' . $image;
+        }
+        if (preg_match('/^\d{1,2}\.png$/', $image)) {
+            // heo 表情实际目录
+            return $image_path . '/heo/' . $image;
+        }
+        return $url;
+    }, 10, 2);
+    
+    
     function get_theme_array($explode = false, $default_blocks  = '#4285f4, #ea4335, #fbbc05, #34a853') {
         //use hex insted of 'dodgerblue, crimson, orange, limegreen' in case of color-input identify issue
         $theme_blocks = $default_blocks;
@@ -645,7 +820,7 @@
         // echo '<span class="thoughtful-status"> ' . ( $is_thoughtful ? '❤️' : '🖤' ) . ' </span> ';
         echo '<button type="button" class="button button-small toggle-thoughtful-btn" data-url="' . esc_url( $toggle_url ) . '">' .
              ( $is_thoughtful ? '💘 <b>取消扎心</b>' : '✨ 标记亮评' ) . '</button>';
-        echo '<span class="toggle-thoughtful-msg" style="margin-left:6px;"></span><style>img{max-width:100px;vertical-align: middle;}img[alt="emoji"]{max-width:50px;}</style>';
+        echo '<span class="toggle-thoughtful-msg" style="margin-left:6px;"></span><style>img{max-width:100px;vertical-align: middle;}img.wp-smiley,img[alt="emoji"]{width: 50px !important;height: auto !important;max-height: none !important;}</style>';
     }, 10, 2 );
     // 注册走心评论 rest api
     add_action( 'rest_api_init', function () {
@@ -4391,12 +4566,12 @@
                 function( $matches ) use ( $is_comment ) {
                     $link = $matches[2]; // 提取到的 href 值
     
-                    $comment_user_info = the_comment_full_info('', $link);
-                    // $info = get_comment_full_info( '', $link );
-                    // $outdated = $info['url_outdated']; //normalize_comment_url($info['url']);
+                    // $comment_user_info = the_comment_full_info('', $link);
+                    $comment_user_info = get_comment_full_info( '', $link );
+                    $outdated = $comment_user_info['url_outdated'];
     
                     // 在原始 <a> 标签的 > 前插入属性
-                    return str_replace( '>', ' data-outdated="' . $comment_user_info['url_outdated'] . '" rel="crossorigin" title="'.$comment_user_info['tip_outdated'].'">', $matches[0] );
+                    return str_replace( '>', ' data-outdated="' . $outdated . '" rel="crossorigin" title="">', $matches[0] ); //'.$comment_user_info['tip_outdated'].'
                 },
                 $content
             );

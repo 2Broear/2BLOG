@@ -1151,6 +1151,11 @@
     
         // ---------- 浏览器检测（按优先级） ----------
         $browser_patterns = [
+            // 微信内置浏览器（必须放在最前，优先级最高）
+            '/MicroMessenger\/(\d+[\.\d]*)/i' => function( $m ) use ( &$browser, &$browser_version ) {
+                $browser = 'WeChat';
+                $browser_version = $m[1];
+            },
             // 新 Edge (Chromium) - UA 中包含 Edg/xx.x
             '/Edg\/(\d+[\.\d]*)/i' => function( $m ) use ( &$browser, &$browser_version ) {
                 $browser = 'Edge';
@@ -1209,13 +1214,34 @@
     
         // ---------- 操作系统检测 ----------
         $os_patterns = [
+            // ---------- 移动端优先：iOS 必须在 Mac 之前 ----------
+            '/iPhone OS (\d+[\._\d]*)/i' => function( $m ) use ( &$system, &$system_version ) {
+                $system = 'iOS';
+                $system_version = str_replace( '_', '.', $m[1] );
+            },
+            '/iPad.*OS (\d+[\._\d]*)/i' => function( $m ) use ( &$system, &$system_version ) {
+                $system = 'iOS';
+                $system_version = str_replace( '_', '.', $m[1] );
+            },
+            // 兜底：iPhone/iPad 但没匹配到版本号
+            '/iPhone|iPad|iPod/i' => function() use ( &$system ) {
+                if ( $system === 'Unknown' ) {
+                    $system = 'iOS';
+                }
+            },
+        
+            // ---------- Android 也应在 Linux 之前 ----------
+            '/Android[\s\/]?(\d+[\.\d]*)?/i' => function( $m ) use ( &$system, &$system_version ) {
+                $system = 'Android';
+                $system_version = ! empty( $m[1] ) ? $m[1] : '';
+            },
+        
+            // ---------- 桌面端 Windows ----------
             '/Windows NT 11[\.\d]*/i' => function( $m ) use ( &$system, &$system_version ) {
                 $system = 'Windows';
                 $system_version = '11';
             },
             '/Windows NT 10[\.\d]*/i' => function( $m ) use ( &$system, &$system_version ) {
-                // 可在此根据 Build 判断是否 Win11，简单起见统一记为 10/11
-                // 实际情况：Windows 11 的 UA 通常也是 NT 10.0，如需精确区分可结合其他特征。
                 $system = 'Windows';
                 $system_version = '10';
             },
@@ -1243,30 +1269,24 @@
             '/Windows ME/i' => function() use ( &$system ) { $system = 'Windows ME'; },
             '/Windows 98/i' => function() use ( &$system ) { $system = 'Windows 98'; },
             '/Windows 95/i' => function() use ( &$system ) { $system = 'Windows 95'; },
+        
+            // ---------- macOS（必须放在 iOS 之后，并排除 like Mac OS X）----------
             '/Mac OS X 10[\._](\d+)/i' => function( $m ) use ( &$system, &$system_version ) {
                 $system = 'macOS';
                 $system_version = '10.' . $m[1];
             },
-            '/Mac OS X/i' => function() use ( &$system ) {
-                $system = 'Mac OS X';
-            },
             '/Macintosh/i' => function() use ( &$system ) {
                 $system = 'Mac OS';
             },
-            '/Android[\s\/]?(\d+[\.\d]*)?/i' => function( $m ) use ( &$system, &$system_version ) {
-                $system = 'Android';
-                $system_version = ! empty( $m[1] ) ? $m[1] : '';
+            // 兜底的 Mac OS X：只有真正桌面 Mac 才会到这里（iPhone 已被前面 iOS 规则截获）
+            '/Mac OS X/i' => function() use ( &$system ) {
+                if ( $system === 'Unknown' ) {
+                    $system = 'Mac OS X';
+                }
             },
-            '/iPhone OS (\d+[\._\d]*)/i' => function( $m ) use ( &$system, &$system_version ) {
-                $system = 'iOS';
-                $system_version = str_replace( '_', '.', $m[1] );
-            },
-            '/iPad.*OS (\d+[\._\d]*)/i' => function( $m ) use ( &$system, &$system_version ) {
-                $system = 'iOS';
-                $system_version = str_replace( '_', '.', $m[1] );
-            },
+        
+            // ---------- 其它 ----------
             '/Linux/i' => function() use ( &$system ) {
-                // 若前面未命中 Android 等，判断通用 Linux
                 if ( $system === 'Unknown' ) {
                     $system = 'Linux';
                 }

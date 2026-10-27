@@ -288,12 +288,17 @@
                             <span class="vpreview-btn"></span>
                             <?php
                                 $emojis_obj = new stdClass();
-                                $emojis_obj->bilibili = array('bilibili','Bilibili 小电视');
-                                $emojis_obj->heo = array('heo','HEO 表情包');
+                                $emojis_obj->bilibili = array('bilibili','bilibili 小电视');
+                                $emojis_obj->heo = array('heo','Heo 表情包');
+                                $emojis_obj->bren = array('bren','FB 表情包');
                                 $emojis_default = $emojis_obj->bilibili; //heo
-                                $emojis_switch = $emojis_obj->heo; //bilibili
+                                // $emojis_switch = $emojis_obj->heo; //bilibili
                                 // print_r($emojis_obj);
-                                echo '<span class="ESwitch-btn" title="'.$emojis_switch[1].'" style="display:inherit">'.$emojis_switch[1].'</span>';
+                                echo '<span class="ESwitch-btn" title="选择表情包" style="display:inherit;position: relative;"><u>'.$emojis_default[1].'</u><ol class="emoji_list magnetic glow">';
+                                    foreach ($emojis_obj as $emoji) {
+                                        echo '<li class="emoji_sw" data-emoji="'.$emoji[0].'">' . $emoji[1] . '</li>';
+                                    }
+                                echo '</ol></span>';
                             ?>
                         </div>
                         <div class="vcontrol">
@@ -311,15 +316,42 @@
                             <?php
                                 global $lazysrc;
                                 $emojis_counts = 64;
-                                $emojis_src = custom_cdn_src('img', true) . '/images/emojis';
+                                $default_src = custom_cdn_src('img', true) . '/images/emojis';
+                                $bren_files = array(
+                                    0  => 'bren_smug.webp',
+                                    1  => 'bren_smirk.webp',
+                                    2  => 'bren_melon.webp',
+                                    3  => 'bren_lieflat.webp',
+                                    4  => 'bren_speechless.webp',
+                                    5  => 'bren_peek.webp',
+                                    6  => 'bren_hello.webp',
+                                    7  => 'bren_ok.webp',
+                                    8  => 'bren_received.webp',
+                                    9  => 'bren_like.webp',
+                                    10 => 'bren_heart.webp',
+                                    11 => 'bren_cc.webp',
+                                    12 => 'bren_friendlink.webp',
+                                    13 => 'bren_rss.webp',
+                                    14 => 'bren_updated.webp',
+                                    15 => 'bren_wip.webp',
+                                    16 => 'bren_newtheme.webp',
+                                    17 => 'bren_403.webp',
+                                    18 => 'bren_wormhole.webp',
+                                    19 => 'bren_renew.webp',
+                                );
                                 foreach ($emojis_obj as $emoji) {
-                                    $is_bilibili = $emoji[0] === $emojis_obj->bilibili[0];
-                                    $dir_fix = $is_bilibili ? $emojis_obj->bilibili[0] . '/b' : $emoji[0] . '/';
-                                    $display_cls = $emoji[0] === $emojis_default[0] ? 'block' : 'none';
-                                    echo '<div class="emojis '.$emoji[0].'" style="display: '.$display_cls.';">';
+                                    $emoji_name = $emoji[0];
+                                    $is_bilibili = $emoji_name === $emojis_obj->bilibili[0];
+                                    $is_bren = $emoji_name === $emojis_obj->bren[0];
+                                    $emojis_counts = $is_bren ? 20 : 64;
+                                    $emojis_src = $is_bren ? 'https://www.foreverblog.cn/stickers/bren/v1/' : $default_src;
+                                    $dir_fix = $is_bilibili ? $emojis_obj->bilibili[0] . '/b' : $emoji_name . '/';
+                                    $display_cls = $emoji_name === $emojis_default[0] ? 'block' : 'none';
+                                    echo '<div class="emojis '.$emoji_name.'" style="display: '.$display_cls.';">';
                                     for ($i=0; $i<$emojis_counts; $i++) {
                                         if ($is_bilibili) $i = $i < 10 ? '0'.$i : $i;
-                                        echo '<img class="vemoji" ' . $lazysrc . '="' . $emojis_src . '/'.$dir_fix . $i . '.png" alt="h' . $i . '" crossorigin="Anonymous" />';
+                                        $file_name = $is_bren ? $bren_files[$i] : $dir_fix . $i . '.png';
+                                        echo '<img class="vemoji" ' . $lazysrc . '="' . $emojis_src . '/'. $file_name . '" alt="h' . $i . '" data-map=":' . $emoji_name . '#' . $i . ':" />'; // crossorigin="Anonymous"
                                     }
                                     echo '</div>';
                                 }
@@ -645,6 +677,7 @@
                         class_drawing: 'drawing',
                         emojis_bilibili: 'Bilibili 小电视',
                         emojis_heo: 'HEO 表情包',
+                        emojis_bren: 'FB 表情包',
                         emojis_on: '打开表情',
                         emojis_off: '关闭表情',
                         canvas_on: '「 涂鸦画板 」',
@@ -1206,29 +1239,35 @@
                         }
                         
                         switch (true) {
+                            // emojis switch
+                            case t.classList.contains('emoji_sw'):
+                                that.vwrap.querySelectorAll('.emojis').forEach((emoji)=> emoji.style.display = 'none');
+                                that.vwrap.querySelector('.' + t.dataset.emoji).style.display = 'block';
+                                that.vwrap.querySelector('.ESwitch-btn u').textContent = t.textContent;
+                                break;
                             // emojis
-                            case t.classList.contains('vemoji'): //t.nodeName.toUpperCase() == 'IMG'
+                            case t.classList.contains('vemoji'):
                                 let vtext_value = that.vtext.value,
                                     vtext_quote = vtext_value.match(<?php echo $third_cmt == 'Wordpress' ? '/^(.*?)(<blockquote class="vquotes">.*?<\/q><\/blockquote>)/s' :'/^([\s\S]*?)\n([\s\S]*)$/'; ?>);
                                 if (vtext_quote) {
-                                    // console.log(vtext_quote);
                                     that.vtext.value = `${vtext_quote[1]}<img src="${t.src}" alt="emoji" />\n${vtext_quote[2]}`;
                                     let srange = that.vtext.value.indexOf('<?php echo $third_cmt ? '<blockquote class="vquotes">' : '\n';?>') - 1;
                                     that.vtext.setSelectionRange(srange, srange);
                                     that.vtext.focus();
                                 } else {
-                                    that.vtext.value += `<img src="${t.src}" alt="emoji" />`;
+                                    // that.vtext.value += `<img src="${t.src}" alt="emoji" />`;
+                                    that.vtext.value += ` ${t.dataset.map}`;
                                     that.vtext.focus();
                                 }
                                 break;
-                            // vedit ue tools
-                            case t.classList.contains('ESwitch-btn'):
-                                const emojis = that.vwrap.querySelectorAll('.emojis');
-                                emojis.forEach((emoji)=> that.toggleSwitch(t, emoji, 
-                                    that.reply_obj.context.emojis_<?php echo $emojis_switch[0]; ?>, 
-                                    that.reply_obj.context.emojis_<?php echo $emojis_default[0]; ?>
-                                ));
-                                break;
+                            // // vedit ue tools
+                            // case t.classList.contains('ESwitch-btn'):
+                            //     const emojis = that.vwrap.querySelectorAll('.emojis');
+                            //     emojis.forEach((emoji)=> that.toggleSwitch(t, emoji, 
+                            //         that.reply_obj.context.emojis_<?php //echo $emojis_switch[0]; ?>, 
+                            //         that.reply_obj.context.emojis_<?php //echo $emojis_default[0]; ?>
+                            //     ));
+                            //     break;
                             // // bug on switch ESwitch-btn when emojis closed;
                             // case t.classList.contains('vemoji-btn'):
                             //     const vemojis = that.vwrap.querySelector('.vemojis');

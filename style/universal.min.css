@@ -3285,6 +3285,7 @@ details summary:active,
 }
 /*.additional.metaboxes li a:active,*/
 /*.footer-detector:active,*/
+/*.v .vwrap .vedit .vctrl span:active,*/
 .additional li a:active,
 .friends-boxes .deals .inboxSliderCard .slideBox a:active,
 .acg_window-content-inside_left-list li a:active,
@@ -3292,7 +3293,6 @@ details summary:active,
 .friends-boxes .deals .inbox:active,
 .rcmd-boxes .info .inbox:active,
 .v .vlist .vcard .vhead .vnick:active,
-.v .vwrap .vedit .vctrl span:active,
 .v .vbtn:active,
 .stats a:active,
 .lively-click-108:active {

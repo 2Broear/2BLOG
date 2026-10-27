@@ -292,9 +292,9 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                     }
                     // SAME COMPARE AS $found $limit
                     $load_btns = $posts_count>=$async_loads ? '<sup class="call lively-click-115" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'/'.$pids_count.'" data-counts="'.$pids_count.'" data-nonce="'.wp_create_nonce($cur_year."_posts_ajax_nonce").'">加载更多</sup>' : '<sup class="call disabled" data-year="'.$cur_year.'" data-click="0" data-load="'.$posts_count.'/'.$posts_count.'" data-counts="'.$pids_count.'" data-nonce="disabled">已全部载入</sup>';
-                    $load_icon = $curYear==$cur_year ? ' 🚀 ' : ' 📁 ';
+                    $load_icon = $curYear==$cur_year ? ' 年度发布 🚀 ' : ' 年度归档 📁 ';
                     // $output .= 
-                    $output_object->title = $async_sw ? '<h2>' . $cur_year . ' 年度发布'.$load_icon.$load_btns.'</h2>' . $output_stats : '<h2>' . $cur_year . ' 年度发布</h2>' . $output_stats; //wp_kses_post($output_title);
+                    $output_object->title = $async_sw ? '<h2>' . $cur_year . $load_icon.$load_btns.'</h2>' . $output_stats : '<h2>' . $cur_year . ' 年度归档</h2>' . $output_stats; //wp_kses_post($output_title);
                     
                     $output_content = '';
                     for($i=0; $i<$posts_count; $i++) {
