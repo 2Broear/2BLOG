@@ -294,7 +294,7 @@
                                 $emojis_default = $emojis_obj->bilibili; //heo
                                 // $emojis_switch = $emojis_obj->heo; //bilibili
                                 // print_r($emojis_obj);
-                                echo '<span class="ESwitch-btn" title="选择表情包" style="display:inherit;position: relative;"><u>'.$emojis_default[1].'</u><ol class="emoji_list magnetic glow">';
+                                echo '<span class="ESwitch-btn" title="选择表情包" style="display:inherit;position: relative;"><u>'.$emojis_default[1].'</u><ol class="emoji_list magnetic glow" data-magnet-scale="1">';
                                     foreach ($emojis_obj as $emoji) {
                                         echo '<li class="emoji_sw" data-emoji="'.$emoji[0].'">' . $emoji[1] . '</li>';
                                     }
@@ -465,7 +465,8 @@
                                         if ($is_ai_comment && !$is_ai_pending) {
                                             echo '<span class="vsys vai">AI Comment #' . $comment_ID . '</span>';
                                         } else {
-                                            if ($email == $admin_email) echo '<span class="vsys vadmin">admin</span>';
+                                            $is_admin = $email == $admin_email;
+                                            echo $is_admin ? '<span class="vsys vadmin">admin</span>' : '<span class="vsys vlevel" title="综合评级（互动数量/年限）" data-score="'.$comment_user_info['lv_score'].'">' . $comment_user_info['lv_output'] . '</span>';
                                             $userAgent = get_userAgent_info($comment->comment_agent);
                                             echo $approved ? '<span class="vsys vagent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing">待审核</span>';
                                             if ($is_thoughtful_comment) echo '<span class="vsys vthoughtful" title="AI Powered @2BER">✨亮评 #' . $comment_ID . '</span>';
@@ -994,7 +995,7 @@
                               ai_class = thoughtful_class = ai_reply = thoughtful_reply = '',
                               spam_class = is_ai_spam ? ' spam' : '',
                               ai_spam = is_ai_spam ? `<span class="vedited vspam" title="@2BER：${is_ai_spam}">AI Spam</span>` : '',
-                              is_admin = email == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
+                              is_admin = email == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : `<span class="vsys vlevel" title="综合评级（互动数量/年限）" data-score="${user_info.lv_score}">${user_info.lv_output}</span>`,
                               is_auditing = child.comment_approved == '0',
                               is_approved = is_auditing ? '<span class="auditing vsys">待审核</span>' : '',
                               tips = is_ai_reply ? '追问AI无需@' : '回复ta的评论',
@@ -1256,7 +1257,7 @@
                                     that.vtext.focus();
                                 } else {
                                     // that.vtext.value += `<img src="${t.src}" alt="emoji" />`;
-                                    that.vtext.value += ` ${t.dataset.map}`;
+                                    that.vtext.value += ` ${t.dataset.map} `;
                                     that.vtext.focus();
                                 }
                                 break;
@@ -1350,7 +1351,7 @@
                                                 is_thoughtful_reply = each_comment._comment_thoughtful != 0,
                                                 ai_spam = is_ai_spam ? `<span class="vedited vspam" title="@2BER：${is_ai_spam}">AI Spam</span>` : '',
                                                 ai_reply = thoughtful_reply = '',
-                                                is_admin = md5mail == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : '',
+                                                is_admin = md5mail == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : `<span class="vsys vlevel" title="综合评级（互动数量/年限）" data-score="${user_info.lv_score}">${user_info.lv_output}</span>`,
                                                 is_auditing = each_comment.comment_approved == '0',
                                                 is_approved = is_auditing ? '<span class="vsys auditing">待审核</span>' : '',
                                                 tips = is_ai_reply ? '追问AI无需@' : '回复ta的评论',

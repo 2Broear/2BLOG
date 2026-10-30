@@ -3550,7 +3550,8 @@ body.dark .inside-functions .box div.dark svg {
     margin: auto;
 }
 body.dark .v .vlist .vcard .vhead .vsys {
-    color: var(--preset-9)!important;
+    /*color: var(--preset-9)!important;*/
+    opacity: 1;
 }
 body.dark .v .vlist .vcard .vhead .auditing,
 body.dark .v .vlist .vcard .vhead .vadmin {

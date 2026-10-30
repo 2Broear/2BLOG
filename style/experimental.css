@@ -20,7 +20,9 @@ img.wp-smiley[src*="/stickers/bren/"] {
     max-width: none !important;
 }
 .v .vwrap .vedit .vemojis img[src*="/stickers/bren/"] {
+    /*max-width: 88px;*/
     max-width: 82px;
+    /*max-width: 60px;*/
     max-height: none;
 }
 .ESwitch-btn:hover > ol.emoji_list {
@@ -33,9 +35,10 @@ body.dark ol.emoji_list {
     border-color: var(--preset-3a);
 }
 ol.emoji_list {
+    width: auto;
     font-size: var(--min-size)!important;
     white-space: nowrap;
-    padding: 12px 13px!important;
+    padding: 15px 10px!important;
     background: var(--size);
     border: 2px solid white;
     border-radius: var(--radius);
@@ -45,7 +48,7 @@ ol.emoji_list {
     margin: auto!important;
     z-index: 9;
     top: 30px;
-    left: 0;
+    left: -10px;
     opacity: 0;
     pointer-events: none;
 }
@@ -53,6 +56,7 @@ ol.emoji_list li:hover {
     color: var(--theme-color)!important;
 }
 ol.emoji_list li {
+    text-align: right;
     line-height: 23px !important;
     margin-left: 0 !important;
 }
@@ -179,6 +183,26 @@ body.dark .archive-tree ul li a.article {
 /*    background-image: radial-gradient(var(--preset-e) 1px, var(--preset-f) 1px)!important;*/
 /*    background-size: 10px 10px!important;*/
 /*}*/
+.v .vlist .vcard .vhead .vnick {
+    margin-right: .575em!important;
+}
+.v .vlist .vcard .vh .vsys.vadmin {
+    font-family: monospace;
+    font-weight: bold;
+    text-transform: capitalize;
+    opacity: .75 !important;
+}
+/*body.dark .v .vlist .vcard .vhead .vsys.vlevel,*/
+.v .vlist .vcard .vhead .vsys.vlevel {
+    color: var(--preset-link)!important;
+    text-transform: capitalize;
+    cursor: help;
+    font-family: monospace;
+    font-weight: bold;
+    /*padding: 0 .5em;*/
+    display: inline-block;
+    opacity: .75;
+}
 .v .vlist .vcard .vh .vwrap {
     z-index: 9;
 }
@@ -224,6 +248,9 @@ body.dark .archive-tree ul li a.article {
     mask: -webkit-linear-gradient(-90deg, currentColor -20%, transparent 80%);
     background: none!important;
     left: auto !important;
+}
+.v .vlist .vcard.thoughtful:after {
+    content: "✨"!important;
 }
 .v .vlist .vcard.spam:after {
     content: "🤡"!important;
@@ -484,6 +511,9 @@ body.dark .v .vlist .vcard .vcontent {
 }
 .v .vlist .vcard .vcontent {
     color: var(--preset-6);
+}
+.v .vlist .vcard .vcontent p:empty {
+    display: none!important;
 }
 .v .vlist .vcard .vcontent span#ai {
     color: mediumpurple;

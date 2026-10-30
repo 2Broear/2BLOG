@@ -179,7 +179,13 @@
         return $url;
     }, 10, 2);
     
-    
+    // 在表情短码前后补空格（如果紧贴其他字符）
+    add_filter('comment_text', function ($content) {
+        $content = preg_replace('/([^\s])(:(?:bren#\d{1,2}|bilibili#\d{2}|heo#\d{1,2}):)/i', '$1 $2', $content);
+        $content = preg_replace('/(:(?:bren#\d{1,2}|bilibili#\d{2}|heo#\d{1,2}):)([^\s])/i', '$1 $2', $content);
+        return $content;
+    }, 5); // 优先级 5，早于 convert_smilies（通常为 10）
+
     function get_theme_array($explode = false, $default_blocks  = '#4285f4, #ea4335, #fbbc05, #34a853') {
         //use hex insted of 'dodgerblue, crimson, orange, limegreen' in case of color-input identify issue
         $theme_blocks = $default_blocks;
@@ -793,6 +799,9 @@
             }
         }, $content);
         
+        // 再处理尚未转换的短代码（bren / bilibili / heo）
+        $content = preg_replace('/(:(?:bren#\d{1,2}|bilibili#\d{2}|heo#\d{1,2}):)/i', ' [ Emoji $1 ] ', $content);
+        
         return wp_strip_all_tags($content); //
     }
     
@@ -820,7 +829,7 @@
         // echo '<span class="thoughtful-status"> ' . ( $is_thoughtful ? '❤️' : '🖤' ) . ' </span> ';
         echo '<button type="button" class="button button-small toggle-thoughtful-btn" data-url="' . esc_url( $toggle_url ) . '">' .
              ( $is_thoughtful ? '💘 <b>取消扎心</b>' : '✨ 标记亮评' ) . '</button>';
-        echo '<span class="toggle-thoughtful-msg" style="margin-left:6px;"></span><style>img{max-width:100px;vertical-align: middle;}img.wp-smiley,img[alt="emoji"]{width: 50px !important;height: auto !important;max-height: none !important;}</style>';
+        echo '<span class="toggle-thoughtful-msg" style="margin-left:6px;"></span><style>img{max-width:100px;vertical-align: middle;}img.wp-smiley,img[alt="emoji"]{width: 50px !important;height: auto !important;max-height: none !important;vertical-align: middle !important;}</style>';
     }, 10, 2 );
     // 注册走心评论 rest api
     add_action( 'rest_api_init', function () {
@@ -5314,33 +5323,44 @@
             return $result;
         }
         
-        // /**
-        //  * 发布评论后清除对应的缓存，确保统计数据即时更新
-        //  */
-        // add_action( 'comment_post', function( $comment_id, $comment_approved ) {
-        //     if ( $comment_approved !== 1 ) return; // 只处理已通过的评论
+        /**
+         * 评论发布/状态更新时清理相关的用户信息缓存
+         */
+        function clear_comment_user_info_cache( $comment_id ) {
+            $comment = get_comment( $comment_id );
+            if ( ! $comment ) {
+                return;
+            }
         
-        //     $comment = get_comment( $comment_id );
-        //     if ( ! $comment ) return;
+            $email = $comment->comment_author_email;
+            $url   = $comment->comment_author_url;
+            $cache_group = 'comment_user_info';
         
-        //     $email = $comment->comment_author_email;
-        //     $url   = $comment->comment_author_url;
+            // 1. 清除该邮箱的缓存
+            if ( $email ) {
+                $key = md5( implode( '|', [ 'comment_user_info', 'v2', 'email', strtolower( $email ) ] ) );
+                wp_cache_delete( $key, $cache_group );
+            }
         
-        //     // 1. 清除该邮箱的缓存
-        //     if ( $email ) {
-        //         $key = md5( implode( '|', [ 'comment_user_info', 'v2', 'email', strtolower( $email ) ] ) );
-        //         wp_cache_delete( $key, 'comment_user_info' );
-        //     }
+            // 2. 清除该 URL 的缓存
+            if ( $url ) {
+                $norm = normalize_comment_url( $url );
+                if ( $norm ) {
+                    $key = md5( implode( '|', [ 'comment_user_info', 'v2', 'url', $norm ] ) );
+                    wp_cache_delete( $key, $cache_group );
+                }
+            }
+        }
         
-        //     // 2. 清除该 URL 的缓存
-        //     if ( $url ) {
-        //         $norm = normalize_comment_url( $url );
-        //         if ( $norm ) {
-        //             $key = md5( implode( '|', [ 'comment_user_info', 'v2', 'url', $norm ] ) );
-        //             wp_cache_delete( $key, 'comment_user_info' );
-        //         }
-        //     }
-        // }, 10, 2 );
+        // 评论插入数据库时触发（无论是新评论还是修改）
+        add_action( 'wp_insert_comment', 'clear_comment_user_info_cache', 10, 2 );
+        
+        // 评论状态发生变动时触发（比如从待审变成已批准）
+        add_action( 'transition_comment_status', function( $new_status, $old_status, $comment ) {
+            if ( $new_status === 'approved' || $old_status === 'approved' ) {
+                clear_comment_user_info_cache( $comment->comment_ID );
+            }
+        }, 10, 3 );
         
         function the_comment_full_info( $email = '', $link = '' ) {
             $info = get_comment_full_info( $email, $link );
@@ -5383,10 +5403,86 @@
                 $last_date,
                 $outdated_tip
             );
-        
+           
+            // 日期格式化
+            $first_date = $info['first_comment_date']
+                ? date_i18n( 'Y-m-d', strtotime( $info['first_comment_date'] ) )
+                : '未知';
+            
+            // ---------- 计算 lv_output（动态建站年份 + 动态特权判定） ----------
+            $level = 'lv0'; 
+            $comment_count = (int) $info['comment_count'];
+            
+            if ( $comment_count > 1 ) {
+                $score = $comment_count;
+                $years_diff = 0;
+                
+                if ( ! empty( $info['first_comment_date'] ) ) {
+                    $first_ts   = strtotime( $info['first_comment_date'] );
+                    $years_diff = floor( ( time() - $first_ts ) / ( 365 * DAY_IN_SECONDS ) );
+                    
+                    if ( $years_diff > 0 ) {
+                        $score += $years_diff * 5;
+                    }
+                }
+                
+                // 基础积分映射 (lv1 ~ lv7)
+                if ( $score >= 150 ) {
+                    $level = 'lv7'; 
+                } elseif ( $score >= 120 ) {
+                    $level = 'lv6'; 
+                } elseif ( $score >= 80 ) {
+                    $level = 'lv5'; 
+                } elseif ( $score >= 50 ) {
+                    $level = 'lv4'; 
+                } elseif ( $score >= 30 ) {
+                    $level = 'lv3'; 
+                } elseif ( $score >= 10 ) {
+                    $level = 'lv2'; 
+                } else {
+                    $level = 'lv1'; 
+                }
+                
+                // 4. 特权保底机制：骨灰级陪伴（全动态判定）
+                // 当前用户最近一次互动在 1 年内
+                $is_recently_active = false;
+                if ( ! empty( $info['last_comment_date'] ) ) {
+                    $last_ts         = strtotime( $info['last_comment_date'] );
+                    $last_years_diff = floor( ( time() - $last_ts ) / ( 365 * DAY_IN_SECONDS ) );
+                    if ( $last_years_diff < 1 ) {
+                        $is_recently_active = true;
+                    }
+                }
+                
+                if ( $is_recently_active ) {
+                    // 获取建站首评年份 (带缓存)
+                    $site_first_year = wp_cache_get( 'site_first_comment_year', 'comment_user_info' );
+                    if ( false === $site_first_year ) {
+                        global $wpdb;
+                        $oldest_date = $wpdb->get_var( "SELECT MIN(comment_date) FROM $wpdb->comments WHERE comment_approved = '1'" );
+                        $site_first_year = $oldest_date ? (int) date( 'Y', strtotime( $oldest_date ) ) : (int) date( 'Y' );
+                        wp_cache_set( 'site_first_comment_year', $site_first_year, 'comment_user_info', DAY_IN_SECONDS );
+                    }
+                    
+                    // 获取当前用户首评年份
+                    $user_first_year = (int) date( 'Y', strtotime( $info['first_comment_date'] ) );
+                    
+                    // 🌟 动态计算：建站总年限
+                    $site_age_years = (int) date( 'Y' ) - $site_first_year;
+                    
+                    // 判定条件：建站已经至少 3 年（太嫩的站不谈情怀）+ 用户首评年份 <= 建站首评年份（说明是第一批人）
+                    // 或者：用户陪跑时长 >= 5 年且是早期用户
+                    if ( $site_age_years >= 3 && $user_first_year <= $site_first_year ) {
+                        $level = 'lv7+'; // 直接拉满+
+                    }
+                }
+            }
+            
             return [
                 'tip_outdated'       => $title,
                 'url_outdated'       => $outdated,
+                'lv_output'          => $level,
+                'lv_score'           => $score,
             ];
         }
         
@@ -5495,7 +5591,8 @@
                             if ($is_ai_comment) {
                                 echo '<span class="vsys vai">AI Comment #' . $id . '</span>';
                             } else {
-                                if ($email == get_bloginfo('admin_email')) echo '<span class="vsys vadmin">admin</span>';
+                                $is_admin = $email == get_bloginfo('admin_email');
+                                echo $is_admin ? '<span class="vsys vadmin">admin</span>' : '<span class="vsys vlevel" title="综合评级（互动数量/年限）" data-score="'.$comment_user_info['lv_score'].'">' . $comment_user_info['lv_output'] . '</span>';
                                 echo $approved ? '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing"> 待审核 </span>';
                                 if ($is_thoughtful_comment) echo '<span class="vsys vthoughtful" title="AI Powered @2BER">✨亮评 #' . $id . '</span>';
                             }
