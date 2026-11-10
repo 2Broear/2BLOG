@@ -410,7 +410,7 @@
     <?php
         if (get_option('site_magnetic_effect_switcher')) {
     ?>
-        import('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/magnets.js<?php echo get_theme_info(); ?>').then((mod)=> {
+        import('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/magnets.js?v=<?php echo get_theme_info(); ?>').then((mod)=> {
             const { MagneticEffect } = mod;
             const effect = new MagneticEffect({
             // 所有配置都在顶层，驼峰命名
