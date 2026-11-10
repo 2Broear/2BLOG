@@ -69,10 +69,11 @@ body.dark .barrage-item {
     user-select: none;
     animation-duration: var(--duration);
     border: 1px solid var(--preset-e);
-    background: linear-gradient(45deg, var(--preset-f), transparent);
+    background: linear-gradient(45deg, var(--preset-fa), transparent);
     backdrop-filter: blur(10px) saturate(1);
     mask: linear-gradient(45deg, var(--preset-2b) 66%, transparent 88%);
     mask: -webkit-linear-gradient(0deg, var(--preset-2b) 66%, transparent 88%);
+    filter: blur(0);
 }
 
 .barrage-item:hover {
@@ -141,10 +142,15 @@ body.dark .barrage-item {
 }
 
 @keyframes barrageMove {
-    from { 
+    0% { 
         transform: translateX(100vw); 
-        /*opacity: 1;*/
-    } to  { 
+        /*filter: blur(5px);
+        opacity: 1;*/
+    } 
+    5% { 
+        /*filter: blur(0);*/
+    } 
+    100% { 
         transform: translateX(-100%);
         /*opacity: 0.5;*/
     }
@@ -484,7 +490,7 @@ window.onload = function() {
         $key = isset($atts['key']) ? $atts['key'] : get_option('site_imrss_key');
         $scope = isset($atts['scope']) ? $atts['scope'] : 'topics'; //topics-rss
         $theme = isset($atts['theme']) ? $atts['theme'] : (theme_mode(true) === 'dark' ? 'night' : 'day');
-        return '<span id="normal" class=""><h3>博友圈 · 公共话题</h3></span><details class="wp-block-details is-layout-flow wp-block-details-is-layout-flow" ><summary><small>看看这期 <strong>IMRSS</strong> 又在聊什么</small></summary><br/><iframe src="https://imrss.com/widget.php?key='.$key.'&amp;mode=timeline&amp;scope='.$scope.'&theme='.$theme.'" loading="lazy" style="width:100%;border:0;min-height:600px;display:block;margin:0 auto!important" scrolling="no" title="imrss 订阅"></iframe><script src="https://imrss.com/frame.js?v=20260903b" async></script></details>'; //topic.php
+        return '<span id="normal" class=""></span><details class="wp-block-details is-layout-flow wp-block-details-is-layout-flow" ><summary><small><b>公共话题：</b>看看近期 <strong>IMRSS</strong> <u>在讨论什么？</u></small></summary><br/><iframe src="https://imrss.com/widget.php?key='.$key.'&amp;mode=timeline&amp;scope='.$scope.'&theme='.$theme.'" loading="lazy" style="width:100%;border:0;min-height:600px;display:block;margin:0 auto!important" scrolling="no" title="imrss 订阅"></iframe><script src="https://imrss.com/frame.js?v=20260903b" async></script></details>'; //topic.php<h3>博友圈 · 公共话题</h3>
     }
     
     // 注册短代码

@@ -238,7 +238,7 @@
                 </span>
                 <div class="slider-logo">
                     <a href="<?php bloginfo('url') ?>" data-instant style="display: inline-block;" rel="nofollow">
-                        <?php site_logo(true); ?><!--<svg class="svg-symbols" width="115px" height="41px" viewBox="0 0 115 41"></svg>-->
+                        <?php site_logo(); ?><!--<svg class="svg-symbols" width="115px" height="41px" viewBox="0 0 115 41"></svg>-->
                     </a>
                 </div>
             </div>

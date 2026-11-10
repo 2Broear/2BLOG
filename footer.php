@@ -15,6 +15,7 @@
     </div>
     <div class="container">
       <div id="footer-support-board">
+        <div class="marquee-container">
         <div class="marquee-track" id="supports-txt">
             <div class="marquee-content">
                 <?php 
@@ -43,7 +44,6 @@
                 .marquee { width: 100%; overflow: hidden; } 
                 .marquee-track { display: flex; width: max-content; animation: marquee <?php echo $support_counts * 5; ?>s linear infinite; }
                 .marquee-content { display: flex; align-items: center; flex-shrink: 0; /*gap: 50px; padding-right: 50px;*/ }
-                /*.marquee-track:hover { animation-direction: reverse; }*/
                 @keyframes gridFlow {
                     0% {
                         background-position: 0px 0px;
@@ -51,6 +51,21 @@
                     100% {
                         background-position: 100% 100%;
                     }
+                }
+                body.dark .footer-all .marquee-container:before {
+                    background: linear-gradient(90deg, var(--preset-3b) 5%, transparent 40%, transparent 60%, var(--preset-3b) 95%);
+                }
+                .footer-all .marquee-container:before {
+                    content: '';
+                    width: 100%;
+                    height: 100%;
+                    display: block;
+                    background: linear-gradient(90deg, var(--preset-f) 5%, transparent 30%, transparent 70%, var(--preset-f) 95%);
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    z-index: 1;
+                    /*pointer-events: none;*/
                 }
                 .footer-all .container {
                     background: var(--mirror);
@@ -180,6 +195,7 @@
     97.33% { opacity: 1; }
 }
             </style>
+        </div>
         </div>
       </div>
       <div id="footer-contact-way">
@@ -502,7 +518,7 @@
                                 echo $sitelinks;
             	                $use_temp = get_template_bind_cat('category-2bfriends.php');
             	                $temp_link = !$use_temp->errors ? get_category_link($use_temp->term_id) : 'javascript:;';
-        	                    echo '<a id="more" href="'.$temp_link.'" title="更多" target="_blank" rel="" data-outdated="">  更多 </a>';
+        	                    echo '<a id="more" href="'.$temp_link.'" title="更多" target="_self" rel="" data-outdated="">  更多 </a>';
                             }
                         }
                     ?>
@@ -589,7 +605,7 @@
                     <!--<svg id="scale"><circle cx="20" cy="20" r="20" /></svg>-->
                 </div>
                 <div class="top magnetic" title="返回顶部" data-magnet-scale="1.05" data-magnet-step="0.5"><em>顶</em></div>
-                <div class="bottom magnetic" title="跳至顶部" data-magnet-scale="1.05" data-magnet-step="0.5"><em>底</em></div>
+                <div class="bottom magnetic" title="跳至评论" data-magnet-scale="1.05" data-magnet-step="0.5"><em>评</em></div>
                 <div class="pagePer<?php echo $theme_class; ?> magnetic glow" title="<?php echo $theme_titles; ?>" onclick="<?php echo $theme_events; ?>" data-magnet-scale="1.1" data-magnet-step="0.25" style="transform: translate(-50%,-50%);">
                     <strong data-percent="0"></strong>
                     <i style>

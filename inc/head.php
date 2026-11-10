@@ -147,11 +147,13 @@
             0% {
                 transform: scale(.85);
                 transform-origin: top;
-                opacity: 0
+                opacity: 0;
+                filter: blur(25px);
             }
             to {
                 transform: none;
-                opacity: 1
+                opacity: 1;
+                filter: blur(0px);
             }
         }
         @supports (animation-timeline:view()) {

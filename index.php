@@ -74,6 +74,14 @@
         .main-bottom-ta {
             display: block;
         }
+        .Fresh-ImgBoxs {
+            margin: 15px auto 10px;
+        }
+        .resource-windows div,
+        .Fresh-ImgBoxs span {
+            margin: 5px auto auto auto;
+            border-top-right-radius: calc(var(--radius) * 2) !important;
+        }
         .Fresh-ImgBoxs span a {
             font-family: cursive,monospace,serif,fangsong;
             font-size: 2rem;
@@ -131,6 +139,10 @@
         #acg_window-top {
             border-color: transparent;
         }
+        #tech_window-top h2,
+        #acg_window-top h2 {
+            color: var(--preset-5a);
+        }
         #special-img{
             position: absolute;
             top: 0;
@@ -169,8 +181,13 @@
             width: 100%;
             object-fit: cover;
         }
+        .banner .banner-inside {
+            border-radius: inherit;
+        }
         .banner {
-            max-height:250px;
+            /*border-radius: calc(var(--radius) * 2);*/
+            /*max-height:233px;*/
+            /*max-height:250px;*/
             /*margin-bottom: 15px;*/
         }
         .banner video {

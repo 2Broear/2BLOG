@@ -495,9 +495,14 @@
     }
     
     if (site_tool) {
+        const comment_txt = document.getElementById('vcomments');
         // scrollTo && article_tool
-        site_tool.querySelector(".top").onclick=()=>window.scrollTo(0, 0);
-        site_tool.querySelector(".bottom").onclick=()=>window.scrollTo(0, document.body.offsetHeight*2); //99999
+        site_tool.querySelector(".top").onclick = ()=> {
+            window.scrollTo(0, 0)
+        };
+        site_tool.querySelector(".bottom").onclick = ()=> {
+            comment_txt ? window.location.href = '#vcomments' : window.scrollTo(0, document.body.offsetHeight*2);
+        }; //99999
         // site_tool.querySelector(".top").onclick=()=>window.requestAnimationFrame(function(){window.scrollTo(0,0);});
         // site_tool.querySelector(".bottom").onclick=()=>window.requestAnimationFrame(function(){window.scrollTo(0,99999);});
     }
@@ -621,10 +626,15 @@
         toggleClass(progress_wave, "active");
         toggleClass(progress_bar, "active");
         // ----- 处理导航栏与 headbar -----
-        if (atBottom) {
+        if (atTop || atBottom) {
             // 强制展开 header/progress_ball 并关闭所有进度动效
-            toggleClass(header, class_down, class_up);
-            toggleClass(progress_ball, "pull-up", null);
+            if (atBottom) {
+                toggleClass(header, class_down, class_up);
+                toggleClass(progress_ball, "pull-up", null);
+            } else {
+                toggleClass(header, null, class_up);
+                toggleClass(progress_ball, null, "pull-up");
+            }
             toggleClass(progress_bar, null, "active");
             toggleClass(progress_wave, null, "active");
         } else if (scrollingDown) {

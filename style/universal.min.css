@@ -2595,13 +2595,13 @@ body.dark #footer-copyright {
     }
     100% {
         opacity: 0;
-        transform:translateY(-50%);
+        transform:translateY(-25%);
     }
 }
 @keyframes valueSetDown {
     0% {
         opacity: 0;
-        transform:translateY(-50%);
+        transform:translateY(-25%);
     }
     100% {
         opacity: 1;
@@ -3286,13 +3286,13 @@ details summary:active,
 /*.additional.metaboxes li a:active,*/
 /*.footer-detector:active,*/
 /*.v .vwrap .vedit .vctrl span:active,*/
+/*.v .vlist .vcard .vhead .vnick:active,*/
 .additional li a:active,
 .friends-boxes .deals .inboxSliderCard .slideBox a:active,
 .acg_window-content-inside_left-list li a:active,
 .news-content-right-download ol li a:active,
 .friends-boxes .deals .inbox:active,
 .rcmd-boxes .info .inbox:active,
-.v .vlist .vcard .vhead .vnick:active,
 .v .vbtn:active,
 .stats a:active,
 .lively-click-108:active {
@@ -3550,8 +3550,8 @@ body.dark .inside-functions .box div.dark svg {
     margin: auto;
 }
 body.dark .v .vlist .vcard .vhead .vsys {
-    /*color: var(--preset-9)!important;*/
-    opacity: 1;
+    color: var(--preset-9)!important;
+    /*opacity: 1;*/
 }
 body.dark .v .vlist .vcard .vhead .auditing,
 body.dark .v .vlist .vcard .vhead .vadmin {

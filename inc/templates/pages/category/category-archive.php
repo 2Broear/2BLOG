@@ -335,7 +335,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                     }
                 }
                 function the_archive_lists() {
-                    global $caches_sw, $caches_inc, $archive_slug;
+                    global $caches_sw, $caches_inc, $archive_slug, $curYear;
                     // $output = '';// wp_cache_flush();
                     $output_sw = false;
                     if($caches_sw) {
@@ -345,12 +345,13 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                         if ($output_sw && !empty($archive_years)) {
                             // print_r($archive_years);
                             foreach ($archive_years as $output_year) {
+                                $fade_item = $curYear == $output_year ? 'fade-items' : 'fade-item';
                                 $output_data = get_option('site_archive_' . $output_year . '_cache');
                                 // print_r('site_archive_' . $output_year . '_cache');
                                 $output_data = json_decode($output_data); //, true
                                 if (!$output_data) {
                                     // 注意EO / memcached缓存！Refresh updates
-                                    echo '<div class="fade-item"><div class="data-info"><h2>' . $output_year . ' 年度发布 🔁</h2><span class="stat_'.$output_year.' stats">📈📉统计：<b>Updated data for ' . $output_year . ' (<a href="javascript:void(0);" onclick="window.location.reload()">Refresh updates..</a>)</b></span></div>';
+                                    echo '<div class="' . $fade_item . '"><div class="data-info"><h2>' . $output_year . ' 年度发布 🔁</h2><span class="stat_'.$output_year.' stats">📈📉统计：<b>Updated data for ' . $output_year . ' (<a href="javascript:void(0);" onclick="window.location.reload()">Refresh updates..</a>)</b></span></div>';
                                     update_archive_year($output_year, $output_sw);
                                     echo '</div>';
                                     continue;
@@ -362,7 +363,7 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                                 // 贪婪匹配(.*)有效（标识符连接处需?非贪婪匹配）
                                 $output_title = preg_replace('/<sup(.*)data-year=("' . $output_year . '")(.*?)data-nonce=("[^"]*")(.*)<\/sup>/i', '<sup $1data-year=$2$3data-nonce="' . $new_nonce . '"$5</sup>', $output_title);
                                 
-                                echo '<div class="fade-item">' . $output_title . $output_data->content . '</div>';
+                                echo '<div class="' . $fade_item . '">' . $output_title . $output_data->content . '</div>';
                             }
                             return;
                         }
@@ -380,7 +381,8 @@ function get_post_archives($type="yearly", $post_type="post", $limit=""){
                     }
                     // echo wp_kses_post($output);
                     foreach ($output_array as $data_year) {
-                        echo '<div class="fade-item"><div class="data-info lively-click-099">' . $data_year->title . '</div>' . $data_year->content . '</div>';
+                        $fade_item = $curYear == $data_year ? 'fade-items' : 'fade-item';
+                        echo '<div class="' . $fade_item . '"><div class="data-info lively-click-099">' . $data_year->title . '</div>' . $data_year->content . '</div>';
                     }
                 }
                 the_archive_lists();

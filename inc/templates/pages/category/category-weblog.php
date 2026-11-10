@@ -64,7 +64,7 @@
         /*}*/
         .weblog-tree-box .tree-box-content {
             color: var(--preset-6);
-            padding: 10px 15px;
+            padding: 5px 15px;
         }
         .tk-content blockquote,
         .vcontent blockquote {
@@ -113,7 +113,7 @@
                     $weblog_slug = get_cat_by_template('weblog','slug'); //current_slug();
                     $async_array = explode(',', get_option('site_async_includes'));
                     $use_async = $async_sw ? in_array($weblog_slug, $async_array) : false;
-                    $async_loads = $async_sw&&$use_async ? get_option("site_async_weblog") : get_option('site_per_posts', 10);
+                    $async_loads = $async_sw&&$use_async ? get_option("site_async_weblog") : get_option('posts_per_page', 10); //site_per_posts
                     $baas = get_option('site_leancloud_switcher') && strpos(get_option('site_leancloud_category'), basename(__FILE__))!==false; //in_array(basename(__FILE__), explode(',', get_option('site_leancloud_category')))
                     $log_single_sw = get_option('site_single_switcher');
                     if($log_single_sw){

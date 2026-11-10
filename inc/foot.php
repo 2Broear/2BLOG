@@ -410,7 +410,7 @@
     <?php
         if (get_option('site_magnetic_effect_switcher')) {
     ?>
-        import('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/magnets.js<?php //echo get_theme_info(); ?>').then((mod)=> {
+        import('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/magnets.js<?php echo get_theme_info(); ?>').then((mod)=> {
             const { MagneticEffect } = mod;
             const effect = new MagneticEffect({
             // 所有配置都在顶层，驼峰命名
@@ -547,6 +547,7 @@
                     });
                     // observer images
                     lazyImgs.forEach((img)=> {
+                        img.classList.add('loading');
                         visibilityObserver.observe(img, (entry) => {
                             const image = entry.target;
                             const datasrc = image.dataset.src;
@@ -559,14 +560,19 @@
                                 return;
                             }
                             // entry.target.src = entry.isVisible ? datasrc : loadImgSrc;  // BUG of inVisible loadImgSrc
-                            if (entry.isVisible) entry.target.src = datasrc;
-                            <?php //if ($acgpage) echo 'entry.target.onload = ()=> setupBlurColor(entry.target, getParByCls(entry.target, "inbox"));'; ?>
+                            if (entry.isVisible) {
+                                entry.target.src = datasrc;
+                                entry.target.onload = function() {
+                                    <?php if ($acgpage) echo 'setupBlurColor(entry.target, getParByCls(entry.target, "inbox"));'; ?>
+                                    entry.target.classList.remove('loading');
+                                }
+                            }
                         });
                     });
                 }
         <?php
             }
-            if($acgpage || is_search() || is_archive()) {
+            if(is_search() || is_archive()) { //$acgpage || 
         ?>
                 // setupBlurColor all acg imgs
                 const acg_imgs = document.querySelectorAll('.rcmd-boxes .info .inbox .inbox-headside img');

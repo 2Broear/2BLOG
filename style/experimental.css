@@ -1,11 +1,15 @@
 @font-face{font-family:Corpta;src:url('../fonts/corpta-demo/Corpta DEMO.otf')}
-@font-face{font-family:Reano;src:url('../fonts/reano-font/ReanoRegular-nA09J.ttf')}
+/*@font-face{font-family:Reano;src:url('../fonts/reano-font/ReanoRegular-nA09J.ttf')}*/
 /**
 **
 **  Experimental UI
 **  @2026
 **
 **/
+
+body.dark #vcomments canvas {
+    background-color: var(--preset-3a) !important;
+}
 .v .vwrap .vedit .vctrl span:active {
     transform: none!important;
 }
@@ -15,13 +19,18 @@ img.wp-smiley{
     max-height: none !important;
 }
 img.wp-smiley[src*="/stickers/bren/"] {
+    display: inline-block;
+    vertical-align: middle;
     height: 80px !important; 
     max-height: 80px !important; 
     max-width: none !important;
 }
+.win-content article img.wp-smiley {
+    margin: auto 10px;
+}
 .v .vwrap .vedit .vemojis img[src*="/stickers/bren/"] {
     /*max-width: 88px;*/
-    max-width: 82px;
+    max-width: 80px;
     /*max-width: 60px;*/
     max-height: none;
 }
@@ -56,6 +65,7 @@ ol.emoji_list li:hover {
     color: var(--theme-color)!important;
 }
 ol.emoji_list li {
+    color: var(--preset-link);
     text-align: right;
     line-height: 23px !important;
     margin-left: 0 !important;
@@ -141,6 +151,7 @@ body.dark .content-all footer::before {
     left: 0;
     z-index: 0;
 }
+body.dark .slider-menu,
 body.dark .win-top:after,
 body.dark .content-all {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='8' height='8' fill='none' stroke='rgb(255 255 255 / 0.15)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
@@ -190,9 +201,9 @@ body.dark .archive-tree ul li a.article {
     font-family: monospace;
     font-weight: bold;
     text-transform: capitalize;
-    opacity: .75 !important;
+    opacity: .85 !important;
 }
-/*body.dark .v .vlist .vcard .vhead .vsys.vlevel,*/
+body.dark .v .vlist .vcard .vhead .vsys.vlevel,
 .v .vlist .vcard .vhead .vsys.vlevel {
     color: var(--preset-link)!important;
     text-transform: capitalize;
@@ -202,6 +213,9 @@ body.dark .archive-tree ul li a.article {
     /*padding: 0 .5em;*/
     display: inline-block;
     opacity: .75;
+}
+.v .vlist .vcard .vhead .vsys {
+    color: var(--preset-6);
 }
 .v .vlist .vcard .vh .vwrap {
     z-index: 9;
@@ -387,6 +401,9 @@ body.dark .news-article-container .v .vlist .children:hover {
     margin-top: 10px;
     /*font-size: var(--min-size-rem);*/
 }
+.weblog-tree-core-record:hover > .weblog-tree-core-l {
+    margin-right: 3%;
+}
 /**
 **
 ** @new
@@ -415,6 +432,9 @@ body.dark .news-article-container .v .vlist .children:hover {
 ** 2bfriends
 **
 **/
+.friends-boxes .deals .inbox .inbox-aside {
+    margin-right: 5%;
+}
 .friends-boxes .deals .inbox .inbox-inside {
     border-width: 2px!important;
 }
@@ -450,7 +470,7 @@ blockquote strong {
     text-decoration: none!important;
 }
 .content > p {
-    margin: 25px auto;
+    margin: 20px auto;
     opacity: .9;
 }
 .content p strong {
@@ -541,6 +561,8 @@ body.dark .v .vlist .vcard .vcontent {
 }
 .win-top em.digital_mask {
     z-index: 2;
+    backdrop-filter: blur(2px);
+    mask: radial-gradient(circle, transparent 0%, var(--preset-f) 50%);
 }
 
 /**
@@ -796,4 +818,35 @@ body.dark #footer-support-board::after {
     90.67% { opacity: 1; }
     96.67% { opacity: 1; }
     97.33% { opacity: 1; }
+}
+
+/**
+**
+** @filter blur-effects
+**
+**/
+.main-header-all {
+    transition: filter .35s ease;
+}
+/*img.loaded,*/
+img,
+.inside_of_block nav.main-nav ul li:hover>.sub-additional,
+.inside_of_block nav.main-nav ul li:hover>.additional,
+.functions-tool .inside-functions.pull-up,
+.main-header-all.barSetDown {
+    filter: blur(0px);
+} 
+/*img,*/
+img.loading,
+.additional,
+.sub-additional,
+.functions-tool .inside-functions,
+.main-header-all.barSetUp {
+    filter: blur(10px);
+}
+
+.v .vlist .vcard .vquote.overview:before, .v .vlist .children.overview:before {
+    mask: linear-gradient(bottom, var(--preset-f) 60%, transparent 80%);
+    mask: -webkit-linear-gradient(bottom, var(--preset-f) 60%, transparent 80%);
+    /*backdrop-filter: blur(1px);*/
 }

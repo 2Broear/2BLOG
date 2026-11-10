@@ -322,11 +322,12 @@
             @keyframes scale {
                 0% {
                     transform: scale(.85);
-                    transform-origin: top
+                    transform-origin: top;
+                    filter: blur(25px);
                 }
-            
                 to {
-                    transform: none
+                    transform: none;
+                    filter: blur(0);
                 }
             }
             
@@ -1044,11 +1045,12 @@
             @keyframes scale {
                 0% {
                     transform: scale(.85);
-                    transform-origin: top
+                    transform-origin: top;
+                    filter: blur(25px);
                 }
-            
                 to {
-                    transform: none
+                    transform: none;
+                    filter: blur(0);
                 }
             }
             
@@ -3342,7 +3344,7 @@
                             </tr>
                             <?php
                                 $acg_cat = $async_opts[1];
-                                if(isset($acg_cat->slug) && in_array($acg_cat->slug, $async_array)) {
+                                // if(isset($acg_cat->slug) && in_array($acg_cat->slug, $async_array)) {
                             ?>
                                     <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
                                         <?php echo '<th scope="row">— '.$acg_cat->name.' 数量</th>'; ?>
@@ -3357,9 +3359,9 @@
                                         </td>
                                     </tr>
                             <?php
-                                }
+                                // }
                                 $weblog_cat = $async_opts[2];
-                                if(isset($weblog_cat->slug) && in_array($weblog_cat->slug, $async_array)){
+                                // if(isset($weblog_cat->slug) && in_array($weblog_cat->slug, $async_array)){
                             ?>
                                 <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
                                     <?php echo '<th scope="row">— '.$weblog_cat->name.' 数量</th>'; ?>
@@ -3374,9 +3376,9 @@
                                     </td>
                                 </tr>
                             <?php
-                                }
+                                // }
                                 $archive_cat = $async_opts[0];
-                                if(isset($archive_cat->slug) && in_array($archive_cat->slug, $async_array)){
+                                // if(isset($archive_cat->slug) && in_array($archive_cat->slug, $async_array)){
                             ?>
                                 <tr valign="top" class="child_option dynamic_opts <?php echo $async; ?>">
                                     <?php echo '<th scope="row">— '.$archive_cat->name.' 数量</th>'; ?>
@@ -3391,7 +3393,7 @@
                                     </td>
                                 </tr>
                             <?php
-                                }
+                                // }
                             ?>
                     <tr valign="top">
                         <th scope="row"> AI Powered Tools <sup>AI</sup> </th>

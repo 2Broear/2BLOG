@@ -179,12 +179,29 @@
         return $url;
     }, 10, 2);
     
-    // 在表情短码前后补空格（如果紧贴其他字符）
-    add_filter('comment_text', function ($content) {
-        $content = preg_replace('/([^\s])(:(?:bren#\d{1,2}|bilibili#\d{2}|heo#\d{1,2}):)/i', '$1 $2', $content);
-        $content = preg_replace('/(:(?:bren#\d{1,2}|bilibili#\d{2}|heo#\d{1,2}):)([^\s])/i', '$1 $2', $content);
+    /**
+     * 在表情短码前后补空格，确保 WordPress convert_smilies() 能匹配
+     */
+    function fix_smiley_shortcode_spacing($content) {
+        if (empty($content)) {
+            return $content;
+        }
+    
+        $pattern = ':(?:bren#\d{1,2}|bilibili#\d{2}|heo#\d{1,2}):';
+    
+        // 短码前紧贴非空白字符 → 插入空格
+        $content = preg_replace('/([^\s])(' . $pattern . ')/i', '$1 $2', $content);
+    
+        // 短码后紧贴非空白字符 → 插入空格
+        $content = preg_replace('/(' . $pattern . ')([^\s])/i', '$1 $2', $content);
+    
         return $content;
-    }, 5); // 优先级 5，早于 convert_smilies（通常为 10）
+    }
+    // 评论内容：优先级 5，早于 convert_smilies（默认 10）
+    add_filter('comment_text', 'fix_smiley_shortcode_spacing', 5);
+    // 文章正文：同样优先级 5，早于 convert_smilies
+    add_filter('the_content', 'fix_smiley_shortcode_spacing', 5);
+    // add_filter('the_excerpt', 'fix_smiley_shortcode_spacing', 5);
 
     function get_theme_array($explode = false, $default_blocks  = '#4285f4, #ea4335, #fbbc05, #34a853') {
         //use hex insted of 'dodgerblue, crimson, orange, limegreen' in case of color-input identify issue
@@ -783,7 +800,7 @@
     
     /**
      * 
-     * 新增通用评论配置（精选评论、评论弹幕等）
+     * 新增通用评论配置（精选亮评、评论弹幕等）
      *
      */
     function comment_strip_tags($content = '') {
@@ -807,7 +824,7 @@
     
     //后台添加列走心评论
     add_filter( 'manage_edit-comments_columns', function ( $columns ) {
-        $columns['thoughtful'] = '精选评论';
+        $columns['thoughtful'] = '精选亮评';
         return $columns;
     }, 1);
     
@@ -828,8 +845,8 @@
     
         // echo '<span class="thoughtful-status"> ' . ( $is_thoughtful ? '❤️' : '🖤' ) . ' </span> ';
         echo '<button type="button" class="button button-small toggle-thoughtful-btn" data-url="' . esc_url( $toggle_url ) . '">' .
-             ( $is_thoughtful ? '💘 <b>取消扎心</b>' : '✨ 标记亮评' ) . '</button>';
-        echo '<span class="toggle-thoughtful-msg" style="margin-left:6px;"></span><style>img{max-width:100px;vertical-align: middle;}img.wp-smiley,img[alt="emoji"]{width: 50px !important;height: auto !important;max-height: none !important;vertical-align: middle !important;}</style>';
+             ( $is_thoughtful ? '💘 <b>取消亮评</b>' : '✨ 标记亮评' ) . '</button>';
+        echo '<span class="toggle-thoughtful-msg" style="margin-left:6px;"></span><style>img{max-width:100px;vertical-align: middle;}.comment p img,img.wp-smiley,img[alt="emoji"]{width: 50px !important;height: auto !important;max-height: none !important;vertical-align: middle !important;}</style>';
     }, 10, 2 );
     // 注册走心评论 rest api
     add_action( 'rest_api_init', function () {
@@ -889,7 +906,7 @@
                         if (data.success) {
                             if (data.thoughtful) {
                                 // $status.html('❤️');
-                                $btn.text('💘️ 取消扎心');
+                                $btn.text('💘️ 取消亮评');
                             } else {
                                 // $status.html('🖤');
                                 $btn.text('✨ 标记亮评');
@@ -910,48 +927,61 @@
     } );
     
     /**
-     * 后台评论列表 - 走心评论筛选
-     * 通过 ?thoughtful_filter=1 参数实现，使用 SQL 注入条件确保稳定
+     * 后台评论筛选：增加“走心评论”分类
      */
-    // add_filter( 'views_edit-comments', function ( $views ) {
-    //     // 统计走心评论数
-    //     $count = get_comments( array(
-    //         'meta_key'   => '_thoughtful_comment',
-    //         'meta_value' => '1',
-    //         'status'     => 'approve',
-    //         'count'      => true,
-    //     ) );
     
-    //     $class = isset( $_REQUEST['thoughtful_filter'] ) && '1' === $_REQUEST['thoughtful_filter'] ? 'current' : '';
-    //     $views['thoughtful'] = sprintf(
-    //         '<a href="%s" class="%s">走心评论 <span class="count">(%d)</span></a>',
-    //         admin_url( 'edit-comments.php?thoughtful_filter=1' ),
-    //         $class,
-    //         $count
-    //     );
-    //     return $views;
-    // } );
+    // 1. 在评论列表顶部增加“走心评论”链接
+    add_filter( 'views_edit-comments', function ( $views ) {
+        // 统计走心评论数量
+        $count = get_comments( array(
+            'meta_key'   => '_thoughtful_comment',
+            'meta_value' => '1',
+            'status'     => 'approve',
+            'count'      => true,
+        ) );
     
-    // add_filter( 'comments_clauses', function ( $clauses, $query ) {
-    //     // 只在后台主查询且是评论列表页时触发
-    //     if ( ! is_admin() || ! $query->is_main_query() ) return $clauses;
-    //     $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-    //     if ( ! $screen || 'edit-comments' !== $screen->id ) return $clauses;
+        // 判断当前是否处于“走心评论”筛选状态
+        $is_current = ( isset( $_GET['meta_key'] ) && $_GET['meta_key'] === '_thoughtful_comment' );
+        $class = $is_current ? 'current' : '';
     
-    //     // 检测到自定义筛选参数
-    //     if ( isset( $_REQUEST['thoughtful_filter'] ) && '1' === $_REQUEST['thoughtful_filter'] ) {
-    //         global $wpdb;
+        // 构建链接：使用 WP 原生支持的 meta_key 和 meta_value，并限定状态为已批准
+        $url = admin_url( 'edit-comments.php?comment_status=approve&meta_key=_thoughtful_comment&meta_value=1' );
     
-    //         // 连接评论元数据表，筛选 _thoughtful_comment = 1
-    //         $clauses['join'] .= " INNER JOIN {$wpdb->commentmeta} AS tmeta ON {$wpdb->comments}.comment_ID = tmeta.comment_id 
-    //             AND tmeta.meta_key = '_thoughtful_comment' AND tmeta.meta_value = '1'";
+        $views['thoughtful'] = sprintf(
+            '<a href="%s" class="%s">走心评论 <span class="count">(%d)</span></a>',
+            esc_url( $url ),
+            $class,
+            $count
+        );
     
-    //         // 同时确保评论状态为 approved（走心评论一定是已批准的）
-    //         $clauses['where'] .= " AND {$wpdb->comments}.comment_approved = '1'";
-    //     }
+        return $views;
+    } );
     
-    //     return $clauses;
-    // }, PHP_INT_MAX );
+    // 2. 核心：拦截评论查询，确保筛选生效
+    add_action( 'pre_get_comments', function ( $query ) {
+        // 只对后台生效
+        if ( ! is_admin() || ! function_exists( 'get_current_screen' ) ) {
+            return;
+        }
+        
+        // 只针对评论列表页
+        $screen = get_current_screen();
+        if ( ! $screen || 'edit-comments' !== $screen->id ) {
+            return;
+        }
+    
+        // 检测 URL 中是否携带了走心评论的参数
+        if ( isset( $_GET['meta_key'] ) && $_GET['meta_key'] === '_thoughtful_comment' ) {
+            // 强制注入 query_vars，不依赖 $query->is_main_query()
+            $query->query_vars['meta_key']   = '_thoughtful_comment';
+            $query->query_vars['meta_value'] = '1';
+            
+            // 如果当前没指定状态，或者状态是全部，则默认只查已批准的
+            if ( empty( $query->query_vars['status'] ) || $query->query_vars['status'] === 'all' ) {
+                $query->query_vars['status'] = 'approve';
+            }
+        }
+    }, 10 );
     
     /**
      * 评论弹幕 API
@@ -2821,7 +2851,7 @@
                 $system .= "- 包含无关广告、外链诱骗、诱导点击、SEO关键词堆砌。\n";
                 $system .= "- 虚假夸奖且明显附带商业推广，或纯表情/无意义乱码。\n";
                 $system .= "- 昵称或网站名称明显是垃圾广告（如：加微信、代开发票等），但如果是正常的个人博客或昵称，即使带有链接也不算垃圾。\n";
-                $system .= "- 完全脱离文章内容的机器灌水。**注意**：大段、条理清晰的评论不一定是AI生成的垃圾；但如果内容空洞、全是套话、明显是机器生成的SEO文，则视为垃圾。\n\n";
+                $system .= "- 完全脱离文章内容的机器灌水。**注意**：大段、条理清晰的评论不一定是AI生成的垃圾；但如果内容空洞、全是套话、句式太工整了，类似递进像模板套出来的，或者明显是机器生成的SEO文，则视为垃圾。\n\n";
     
                 $system .= "【走心评论特征（is_thoughtful = true）】\n";
                 $system .= "- 字数不能太短（能表达完整意思）。\n";
@@ -3758,6 +3788,22 @@
                 $loadimg = $avatar;
             }
     
+            $link_user_outdated = get_option('site_urls_auditing') ? 1 : '';
+            $check_url_outdated = $rsscat && $link_accessable;
+            if ($check_url_outdated) {
+                // 活跃标记
+                $link_user_info = get_comment_full_info('', $link_url);
+                $link_user_outdated = $link_user_info['url_outdated'];
+                $link_user_comments = $link_user_info['comment_count'];
+                $link_user_inactive = $link_user_comments <= 1;
+                if ($link_user_outdated) { // || $link_user_inactive
+                    // 长期无互动
+                    $impression = '<span class="ssl http"> Observe </span>'; // || in_array($link_rss, $over2yearsNoUpdateRssList)
+                } else {
+                    // 无活跃互动
+                    if ($link_user_inactive) $link_user_outdated = 11;
+                }
+            }
             // ---------- RSS 卡片 ----------
             $rss_feeds = '';
             if ($link_rss && $rss_card) {
@@ -3765,14 +3811,14 @@
                 $rss_val = $link_name;
     
                 // 手动模式：输出前端加载占位符
-                $rss_manual = '<div class="inbox-inside aside"><a id="loadRSSFeeds" data-nick="' . $link_name . '" data-limit="' . $rss_limit . '" data-api="' . esc_url($rss_api . '&key=' . urlencode($rss_key) . '&value=' . urlencode($rss_val)) . '"></a></div>';
+                $rss_manual = '<div class="inbox-inside aside"><a id="loadRSSFeeds" data-nick="' . $link_name . '" data-limit="' . $rss_limit . '" data-api="' . esc_url($rss_api . '&key=' . urlencode($rss_key) . '&value=' . urlencode($rss_val)) . '" data-outdated="'.$link_user_outdated.'"></a></div>';
     
                 if ($rss_card_manual) {
                     $rss_feeds = $rss_manual;
                 } else {
                     // 服务器端预渲染（从缓存中读取）
                     $rss_feeds = '<div class="inbox-inside aside pre loaded">';
-                    $rss_ctrls = '<a id="loadRSSFeeds"></a><i class="BBFontIcons close"></i>';
+                    $rss_ctrls = '<a id="loadRSSFeeds" data-outdated="'.$link_user_outdated.'"></a><i class="BBFontIcons close"></i>';
                     if ($caches_sw && $output_sw && $output_caches) {
                         $output_feeds = searchByKeyValue($output_caches, $rss_key, $rss_val);
                         $feeds_title = isset($output_feeds->title) ? urldecode($output_feeds->title) : '';
@@ -3802,21 +3848,6 @@
             // ---------- HTML 输出（不变） ----------
             $status_code = 200;
             $status_class = 'ok';
-            $link_user_outdated = get_option('site_urls_auditing') ? 1 : '';
-            if ($rsscat && $link_accessable) {
-                // 活跃标记
-                $link_user_info = get_comment_full_info('', $link_url);
-                $link_user_outdated = $link_user_info['url_outdated'];
-                $link_user_comments = $link_user_info['comment_count'];
-                $link_user_inactive = $link_user_comments <= 1;
-                if ($link_user_outdated) { // || $link_user_inactive
-                    // 长期无互动
-                    $impression = '<span class="ssl http"> Observe </span>'; // || in_array($link_rss, $over2yearsNoUpdateRssList)
-                } else {
-                    // 无活跃互动
-                    if ($link_user_inactive) $link_user_outdated = 1;
-                }
-            }
             // 站点可访问状态
             if ($get_status) $status_code = get_url_status_by_curl($link_url, true);
             if (!$link_accessable || $status_code >= 400) $status_class = 'standby';
@@ -5409,7 +5440,7 @@
                 ? date_i18n( 'Y-m-d', strtotime( $info['first_comment_date'] ) )
                 : '未知';
             
-            // ---------- 计算 lv_output（动态建站年份 + 动态特权判定） ----------
+            // ---------- 计算 lv_output（动态建站年份 + 动态特权判定 + +/- 后缀） ----------
             $level = 'lv0'; 
             $comment_count = (int) $info['comment_count'];
             
@@ -5426,7 +5457,7 @@
                     }
                 }
                 
-                // 基础积分映射 (lv1 ~ lv7)
+                // 1. 基础积分映射 (先算出基础等级，不带 +/-)
                 if ( $score >= 150 ) {
                     $level = 'lv7'; 
                 } elseif ( $score >= 120 ) {
@@ -5443,18 +5474,17 @@
                     $level = 'lv1'; 
                 }
                 
-                // 4. 特权保底机制：骨灰级陪伴（全动态判定）
-                // 当前用户最近一次互动在 1 年内
-                $is_recently_active = false;
-                if ( ! empty( $info['last_comment_date'] ) ) {
-                    $last_ts         = strtotime( $info['last_comment_date'] );
-                    $last_years_diff = floor( ( time() - $last_ts ) / ( 365 * DAY_IN_SECONDS ) );
-                    if ( $last_years_diff < 1 ) {
-                        $is_recently_active = true;
-                    }
-                }
+                // // 2. 特权保底机制：骨灰级陪伴（全动态判定）
+                // $is_recently_active = false;
+                // if ( ! empty( $info['last_comment_date'] ) ) {
+                //     $last_ts         = strtotime( $info['last_comment_date'] );
+                //     $last_years_diff = floor( ( time() - $last_ts ) / ( 365 * DAY_IN_SECONDS ) );
+                //     if ( $last_years_diff < 1 ) {
+                //         $is_recently_active = true;
+                //     }
+                // }
                 
-                if ( $is_recently_active ) {
+                // if ( $is_recently_active ) {
                     // 获取建站首评年份 (带缓存)
                     $site_first_year = wp_cache_get( 'site_first_comment_year', 'comment_user_info' );
                     if ( false === $site_first_year ) {
@@ -5464,18 +5494,15 @@
                         wp_cache_set( 'site_first_comment_year', $site_first_year, 'comment_user_info', DAY_IN_SECONDS );
                     }
                     
-                    // 获取当前用户首评年份
                     $user_first_year = (int) date( 'Y', strtotime( $info['first_comment_date'] ) );
+                    $site_age_years  = (int) date( 'Y' ) - $site_first_year;
                     
-                    // 🌟 动态计算：建站总年限
-                    $site_age_years = (int) date( 'Y' ) - $site_first_year;
-                    
-                    // 判定条件：建站已经至少 3 年（太嫩的站不谈情怀）+ 用户首评年份 <= 建站首评年份（说明是第一批人）
-                    // 或者：用户陪跑时长 >= 5 年且是早期用户
                     if ( $site_age_years >= 3 && $user_first_year <= $site_first_year ) {
-                        $level = 'lv7+'; // 直接拉满+
+                        // 判定标准：评论数 <= 15 为潜水(-)，> 15 为活跃(+)
+                        $suffix = ( $comment_count <= 15 ) ? '-' : '+'; //'⁻' : '⁺';
+                        $level  = $level . $suffix;
                     }
-                }
+                // }
             }
             
             return [
@@ -5593,7 +5620,7 @@
                             } else {
                                 $is_admin = $email == get_bloginfo('admin_email');
                                 echo $is_admin ? '<span class="vsys vadmin">admin</span>' : '<span class="vsys vlevel" title="综合评级（互动数量/年限）" data-score="'.$comment_user_info['lv_score'].'">' . $comment_user_info['lv_output'] . '</span>';
-                                echo $approved ? '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing"> 待审核 </span>';
+                                echo $approved ? '<span class="vsys useragent">'.$userAgent['browser'].' / '.$userAgent['system'].' '. $userAgent['system_version'] .'</span>' : '<span class="vsys auditing"> 待审核 </span>'; //$userAgent['browser_version']
                                 if ($is_thoughtful_comment) echo '<span class="vsys vthoughtful" title="AI Powered @2BER">✨亮评 #' . $id . '</span>';
                             }
                         ?>

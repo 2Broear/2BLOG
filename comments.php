@@ -586,7 +586,7 @@
                         if ( empty( $label ) ) {
                             $label = __( '&laquo; Older Comments' );
                         }
-                        return '<span><a class="loadmore noslide wp magnetic glow" data-magnet-scale="1" data-magnet-step="0.15" href="' . esc_url( get_comments_pagenum_link( $prevpage ) ) . '" ' . apply_filters( 'previous_comments_link_attributes', '' ) . '><i class="icom"></i>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '</a></span>';
+                        return '<span><a class="loadmore noslide wp magnetic glow" data-magnet-scale="1" data-magnet-step="0" href="' . esc_url( get_comments_pagenum_link( $prevpage ) ) . '" ' . apply_filters( 'previous_comments_link_attributes', '' ) . '><i class="icom"></i>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '</a></span>';
                     }
                     // 下一页评论
                     function get_next_comments_html( $label = '', $max_page = 0 ) {
@@ -612,7 +612,7 @@
                         if ( empty( $label ) ) {
                             $label = __( 'Newer Comments &raquo;' );
                         }
-                        return '<span><a class="loadmore noslide wp magnetic glow" href="' . esc_url( get_comments_pagenum_link( $nextpage, $max_page ) ) . '" ' . apply_filters( 'next_comments_link_attributes', '' ) . '>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '<i class="icom left"></i></a></span>';
+                        return '<span><a class="loadmore noslide wp magnetic glow" data-magnet-scale="1" data-magnet-step="0" href="' . esc_url( get_comments_pagenum_link( $nextpage, $max_page ) ) . '" ' . apply_filters( 'next_comments_link_attributes', '' ) . '>' . preg_replace( '/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', $label ) . '<i class="icom left"></i></a></span>';
                     }
                     echo get_previous_comments_html("PREV COMMENTS");
                     echo get_next_comments_html("NEXT COMMENTS");
@@ -986,7 +986,7 @@
                               email = child.comment_author_email,
                               parent = child.comment_parent,
                               content = child.comment_content,//strip_tags(child.comment_content),
-                              user_agent =  `<span class="vsys useragent">${child._comment_agent.browser+" / "+child._comment_agent.system}</span>`,
+                              user_agent =  `<span class="vsys useragent">${child._comment_agent.browser} / ${child._comment_agent.system} ${child._comment_agent.system_version}</span>`,
                               user_info = child._comment_userinfo,
                               user_outdated = user_info.url_outdated ? 1 : '',
                               is_ai_spam = child._comment_spam,
@@ -995,7 +995,7 @@
                               ai_class = thoughtful_class = ai_reply = thoughtful_reply = '',
                               spam_class = is_ai_spam ? ' spam' : '',
                               ai_spam = is_ai_spam ? `<span class="vedited vspam" title="@2BER：${is_ai_spam}">AI Spam</span>` : '',
-                              is_admin = email == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : `<span class="vsys vlevel" title="综合评级（互动数量/年限）" data-score="${user_info.lv_score}">${user_info.lv_output}</span>`,
+                              admin_tag = email == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : (is_ai_reply ? '' : `<span class="vsys vlevel" title="综合评级（互动数量/年限）" data-score="${user_info.lv_score}">${user_info.lv_output}</span>`),
                               is_auditing = child.comment_approved == '0',
                               is_approved = is_auditing ? '<span class="auditing vsys">待审核</span>' : '',
                               tips = is_ai_reply ? '追问AI无需@' : '回复ta的评论',
@@ -1012,7 +1012,7 @@
                               thoughtful_class = ' thoughtful';
                               thoughtful_reply = `<span class="vsys vthoughtful" title="AI Powered @2BER">✨亮评 #${id}</span>`;
                           }
-                          output += `<div class="vcard magnetic glow${ai_class+thoughtful_class+spam_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0" id="comment-${id}"><a class="noslide avatar" rel="nofollow crossorigin" href="${link}" target="_blank" title="${user_info.tip_outdated}" data-outdated="${user_outdated}"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow crossorigin" href="${link}" target="_blank" data-outdated="${user_outdated}"><em>${nick}</em></a>${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div><div class="vmeta"><span class="vtime">${child.comment_date.slice(0, 10)}</span>${ai_spam + replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${child._comment_reply}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
+                          output += `<div class="vcard magnetic glow${ai_class+thoughtful_class+spam_class}" data-ai-pending="${child.two_ber_ai_pending}" data-magnet-scale="1" data-magnet-step="0" id="comment-${id}"><a class="noslide avatar" rel="nofollow crossorigin" href="${link}" target="_blank" title="${user_info.tip_outdated}" data-outdated="${user_outdated}"><img class="vimg" src="${avatar_cdn+'avatar/'+email}" width="50" height="50" alt="user_avatar"> </a><div class="vh" rootid="comment-${parent}"><div class="vhead"><a class="vnick" rel="nofollow crossorigin" href="${link}" target="_blank" data-outdated="${user_outdated}"><em>${nick}</em></a>${ai_reply + admin_tag + is_approved + user_agent + thoughtful_reply}</div><div class="vmeta"><span class="vtime">${child.comment_date.slice(0, 10)}</span>${ai_spam + replytocom}</div><div class="vcontent"><p><a href="#comment-${parent}">@${child._comment_reply}</a> , ${content}</p></div></div></div>` + loop(child._comment_childs);
                        }
                     }
                     return output;
@@ -1336,7 +1336,7 @@
                                                 link = each_comment.comment_author_url,
                                                 md5mail = each_comment.comment_author_email,
                                                 childs = each_comment._comment_childs,
-                                                user_agent = `<span class="vsys useragent">${each_comment._comment_agent.browser+" / "+each_comment._comment_agent.system}</span>`,
+                                                user_agent = `<span class="vsys useragent">${each_comment._comment_agent.browser} / ${each_comment._comment_agent.system} ${each_comment._comment_agent.system_version}</span>`,
                                                 user_info = each_comment._comment_userinfo,
                                                 user_outdated = user_info.url_outdated ? 1 : '',
                                                 content = each_comment.comment_content,//strip_tags(each_comment.comment_content),
@@ -1351,7 +1351,7 @@
                                                 is_thoughtful_reply = each_comment._comment_thoughtful != 0,
                                                 ai_spam = is_ai_spam ? `<span class="vedited vspam" title="@2BER：${is_ai_spam}">AI Spam</span>` : '',
                                                 ai_reply = thoughtful_reply = '',
-                                                is_admin = md5mail == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : `<span class="vsys vlevel" title="综合评级（互动数量/年限）" data-score="${user_info.lv_score}">${user_info.lv_output}</span>`,
+                                                admin_tag = md5mail == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : (is_ai_reply ? '' : `<span class="vsys vlevel" title="综合评级（互动数量/年限）" data-score="${user_info.lv_score}">${user_info.lv_output}</span>`),
                                                 is_auditing = each_comment.comment_approved == '0',
                                                 is_approved = is_auditing ? '<span class="vsys auditing">待审核</span>' : '',
                                                 tips = is_ai_reply ? '追问AI无需@' : '回复ta的评论',
@@ -1377,7 +1377,7 @@
                                             appendList.dataset.magnetScale = '1';
                                             appendList.dataset.magnetStep = "0";
                                             appendList.classList.add("vcard", 'magnetic', 'glow'); //wp_comments
-                                            appendList.innerHTML += `<a class="noslide avatar" rel="nofollow crossorigin" href="${link}" target="_blank" title="${user_info.tip_outdated}" data-outdated="${user_outdated}"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_comment.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow crossorigin" href="${link}" target="_blank" data-outdated="${user_outdated}"> <em>${nick}</em> </a> ${ai_reply + is_admin + is_approved + user_agent + thoughtful_reply}</div> <div class="vmeta"> <span class="vtime">${each_comment.comment_date.slice(0, 10)}</span>${ai_spam + replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
+                                            appendList.innerHTML += `<a class="noslide avatar" rel="nofollow crossorigin" href="${link}" target="_blank" title="${user_info.tip_outdated}" data-outdated="${user_outdated}"> <img class="vimg" src="${avatar_cdn+'avatar/'+md5mail}" width="50" height="50" alt="user_avatar"> </a> <div class="vh" rootid="${each_comment.comment_parent}"> <div class="vhead"> <a class="vnick" rel="nofollow crossorigin" href="${link}" target="_blank" data-outdated="${user_outdated}"> <em>${nick}</em> </a> ${ai_reply + admin_tag + is_approved + user_agent + thoughtful_reply}</div> <div class="vmeta"> <span class="vtime">${each_comment.comment_date.slice(0, 10)}</span>${ai_spam + replytocom} </div> <div class="vcontent"> <p>${content}</p> </div> </div>`; //${if_child}
                                             that.vlist.appendChild(appendList);
                                             that.vlist.innerHTML += if_child;
                                         }

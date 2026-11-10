@@ -1054,7 +1054,7 @@
                 }
                 const text_content = mark_node.firstChild.nodeValue;
                 const text_anchor = window.location.href + '#:~:text=' + text_content;
-                comment_box.value = `${text_anchor}\n> ${text_content} ...`;
+                comment_box.value = `${text_anchor}\n<blockquote><q> ${text_content} ...</q></blockquote>`; //\n> 
                 comment_box.setSelectionRange(0, text_anchor.length);
                 comment_box.focus();
                 document.execCommand('copy');

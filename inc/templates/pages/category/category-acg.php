@@ -158,6 +158,9 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         .rcmd-boxes .info .inbox .inbox-headside a {
             margin: 0 auto;
         }
+        .rcmd-boxes .info .inbox .inbox-aside {
+            background: rgb(255 255 255 / 68%);
+        }
         .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon:before,
         .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon:after{
             content: none;
@@ -225,7 +228,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         }
         .rcmd-boxes .info .inbox .inbox-more a {
             border-radius: inherit;
-            border-width: calc(var(--radius) / 3);
+            border-width: calc(var(--radius) / 5);
         }
         .rcmd-boxes .info .inbox .inbox-more a.loading,
         .rcmd-boxes .info .inbox .inbox-more a.disabled {
@@ -259,7 +262,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                     $acg_temp_slug = get_cat_by_template('acg','slug');
                     $async_array = explode(',', get_option('site_async_includes'));
                     $use_async = $async_sw ? in_array($acg_temp_slug, $async_array) : false;
-                    $async_loads = $async_sw&&$use_async ? get_option("site_async_acg", 14) : 999;
+                    $async_loads = $async_sw&&$use_async ? get_option("site_async_acg", 14) : get_option('posts_per_page', 10);
     		        $basename = basename(__FILE__);
                     $preset = get_cat_by_template(str_replace('.php',"",substr($basename,9)));
                     $baas = get_option('site_leancloud_switcher') && strpos(get_option('site_leancloud_category'), $basename)!==false; //in_array($basename, explode(',', get_option('site_leancloud_category')))
@@ -437,15 +440,17 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                     }else{
                         extra_str = post_rating ? '<div class="game-ratings ign"><div class="ign hexagon" title="IGN High Grades"><h3>'+post_rating+'</h3></div></div>' : '';
                     }
-                    temp.innerHTML = `<div class="inbox-headside flexboxes"><a href="${item.link || 'javascript:void(0);'}" target="_self"><img src="${item.poster}" alt="${item.subtitle}" crossorigin="Anonymous"></a><span class="author" title="${item.subtitle}">${item.subtitle}</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="${item.link || 'javascript:void(0);'}" target="_self">${item.title}</a></h4></span><span class="lowside-description"><p>${item.excerpt.substr(0,52)}..</p></span>${extra_str}</div>`; //<img class="bg" src="${item.poster}">
+                    temp.innerHTML = `<div class="inbox-headside flexboxes"><a href="${item.link || 'javascript:void(0);'}" target="_self"><img src="${item.poster}" alt="${item.subtitle}" crossorigin="Anonymous" class="loading"></a><span class="author" title="${item.subtitle}">${item.subtitle}</span></div><div class="inbox-aside"><span class="lowside-title"><h4><a href="${item.link || 'javascript:void(0);'}" target="_self">${item.title}</a></h4></span><span class="lowside-description"><p>${item.excerpt.substr(0,52)}..</p></span>${extra_str}</div>`; //<img class="bg" src="${item.poster}">
                     fragment.appendChild(temp);
                     // setup ajax-load images blur-color
                     if(item.poster) {
                         let tempimg = new Image();
                         tempimg.src = item.poster;
                         tempimg.setAttribute('crossorigin','Anonymous');
-                        tempimg.onload=()=>setupBlurColor(tempimg, temp);
-                        // setupBlurColor(item.poster, temp);
+                        tempimg.onload = ()=> {
+                            setupBlurColor(tempimg, temp);
+                            temp.querySelector('img').classList.remove('loading');
+                        }
                     }
                 });
                 load_box.insertBefore(fragment, load_box.lastElementChild); //lastChild

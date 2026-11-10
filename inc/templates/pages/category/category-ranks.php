@@ -157,19 +157,23 @@ function the_comment_ranks($t1 = '常客', $c1 = '近期访问较频繁的童鞋
             if ($datalen > 13) {
                 $output .= '<h1>' . esc_html($t3) . '</h1><p>' . esc_html($c3) . '</p><ul id="ranked">';
                 $max_t3 = min($datalen, 100);
+                // for ($i = 13; $i < $max_t3; $i++) {
+                //     $user = $rankdata[$i];
+                //     print_r($user->name);
+                // }
                 for ($i = 13; $i < $max_t3; $i++) {
                     $user = $rankdata[$i];
                     $link  = $user->link ?: '';
                     $name  = $user->name ?: '匿名者';
                     if ($name === '2BER') {
-                        break;
+                        continue; //break
                     }
                     // 活跃标记
                     $link_user_outdated = 1;
-                    if ($link) {
-                        $link_user_info = get_comment_full_info('', $link);
-                        $link_user_outdated = $link_user_info['url_outdated'];
-                    }
+                    // if ($link) {
+                    //     $link_user_info = get_comment_full_info('', $link);
+                    //     $link_user_outdated = $link_user_info['url_outdated'];
+                    // }
                     $count = $user->count ?: 0;
                     $output .= '<li><p title="这家伙就留了 ' . $count . ' 条评论！"><a href="' . esc_url($link) . '" target="_blank" rel="crossorigin" data-outdated="'.$link_user_outdated.'">' . esc_html($name) . '</a></p></li>';
                 }
@@ -217,6 +221,9 @@ function the_comment_ranks($t1 = '常客', $c1 = '近期访问较频繁的童鞋
         .ranking #ranked,
         .ranks .ranking p {
             color: inherit;
+        }
+        .ranking #ranked li {
+            opacity: .75;
         }
         .ranking #ranks img {
             min-width: 52px;
