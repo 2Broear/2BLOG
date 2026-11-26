@@ -76,7 +76,7 @@
 ?>
 </style>
 <div class="noise-bgs"></div>
-<script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/main.js?v=<?php echo get_theme_info(); ?>"></script>
+<script src="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/main.js?v=<?php echo $theme_info = get_theme_info(); ?>"></script>
 <script type="text/javascript">
     console.info("<?php echo get_num_queries().'次查询，耗时'.timer_stop(0).'秒。'; ?>");
     // 自动执行一次以更正缓存(after load main.js)
@@ -158,7 +158,7 @@
             // marker
             if(get_option('site_marker_switcher')){
     ?>
-                asyncLoad('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/marker.js', function(){
+                asyncLoad('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/marker.js?v=<?php echo $theme_info; ?>', function(){
                     // use keyword "new" to point to init method.
                     new marker.init({
                         static: {
@@ -371,7 +371,7 @@
     $typing_effects = get_option('site_animated_typing_switcher') && in_array($page_slug, explode(',', get_option('site_animated_typing_includes')));
     if ($typing_effects) {
 ?>
-    asyncLoad('<?php echo $src_cdn; ?>/js/bin/typed.js?v=<?php echo get_theme_info(); ?>x', function() {
+    asyncLoad('<?php echo $src_cdn; ?>/js/bin/typed.js?v=<?php echo $theme_info; ?>x', function() {
         <?php
             switch ($page_slug) {
                 case get_cat_by_template('guestbook', 'slug'):
@@ -410,7 +410,7 @@
     <?php
         if (get_option('site_magnetic_effect_switcher')) {
     ?>
-        import('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/magnets.js?v=<?php echo get_theme_info(); ?>').then((mod)=> {
+        import('<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/js/magnets.js?v=<?php echo $theme_info; ?>').then((mod)=> {
             const { MagneticEffect } = mod;
             const effect = new MagneticEffect({
             // 所有配置都在顶层，驼峰命名
@@ -463,7 +463,7 @@
     <?php
         }
     ?>
-        import("<?php echo $src_cdn; ?>/js/utils.js").then((mod)=> {
+        import("<?php echo $src_cdn; ?>/js/utils.js?v=<?php echo $theme_info; ?>").then((mod)=> {
             const { _EventBus, _Closure, _Basics, VisibilityObserver } = mod;
         <?php
             if (get_option('site_nav_slider_switcher')) {

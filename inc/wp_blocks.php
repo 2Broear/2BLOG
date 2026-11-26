@@ -144,11 +144,11 @@ body.dark .barrage-item {
 @keyframes barrageMove {
     0% { 
         transform: translateX(100vw); 
-        /*filter: blur(5px);
-        opacity: 1;*/
+        filter: blur(5px);
+        /*opacity: 1;*/
     } 
     5% { 
-        /*filter: blur(0);*/
+        filter: blur(0);
     } 
     100% { 
         transform: translateX(-100%);
@@ -158,163 +158,198 @@ body.dark .barrage-item {
 </style>
 <script>
 window.onload = function() {
-    (function() {
-        const container = document.getElementById("comment-barrage-container");
-        const API_URL = "/wp-json/two-ber/v1/comment-barrage?post_id='.$post_id.'&cid='.$cat_id.'&tag='.$tag_barrage.'&thoughtful='.$thoughtful.'&excludes='.$excludes.'";
-        const MAX_VISIBLE = '.$max.';
-        const TRACK_COUNT = '.$row.';
-        const MIN_BARRAGE = '.$min.';
-        let pendingItems = [];
-        let activeCount = 0;
-        let trackNextAvailable = new Array(TRACK_COUNT).fill(0);
-        let scheduleTimer = null;
-        let isFetching = false;
-        let allDone = false;
-        let hasPreloaded = false;       // 防止重复预加载
+    const container = document.getElementById("comment-barrage-container");
+    const API_URL = "/wp-json/two-ber/v1/comment-barrage?post_id='.$post_id.'&cid='.$cat_id.'&tag='.$tag_barrage.'&thoughtful='.$thoughtful.'&excludes='.$excludes.'";
+    const MAX_VISIBLE = '.$max.';
+    const TRACK_COUNT = '.$row.';
+    const MIN_BARRAGE = '.$min.';
+    let pendingItems = [];
+    let activeCount = 0;
+    let trackNextAvailable = new Array(TRACK_COUNT).fill(0);
+    let scheduleTimer = null;
+    let isFetching = false;
+    let allDone = false;
+    let hasPreloaded = false;
+    let isVisible = true;   // 新增：容器/页面是否可见
     
-        '.($tag_barrage ? "container.classList.add('tag');" : '').'
-        function getEarliestTrack() {
-            let minTime = Infinity;
-            let minIndex = 0;
-            for (let i = 0; i < TRACK_COUNT; i++) {
-                if (trackNextAvailable[i] < minTime) {
-                    minTime = trackNextAvailable[i];
-                    minIndex = i;
-                }
+    '.($tag_barrage ? "container.classList.add('tag');" : '').'
+    
+    function getEarliestTrack() {
+        let minTime = Infinity;
+        let minIndex = 0;
+        for (let i = 0; i < TRACK_COUNT; i++) {
+            if (trackNextAvailable[i] < minTime) {
+                minTime = trackNextAvailable[i];
+                minIndex = i;
             }
-            const now = Date.now();
-            const wait = Math.max(0, minTime - now);
-            return { index: minIndex, wait: wait };
         }
+        const now = Date.now();
+        const wait = Math.max(0, minTime - now);
+        return { index: minIndex, wait: wait };
+    }
     
-        function scheduleNext() {
-            if (pendingItems.length === 0) return;
-            if (activeCount >= MAX_VISIBLE) return;
-        
-            const { index, wait } = getEarliestTrack();
-            if (scheduleTimer) clearTimeout(scheduleTimer);
-            scheduleTimer = setTimeout(() => {
-                scheduleTimer = null;
-                // 从队列中取出有效项（跳过 AI 评论）
-                let item = null;
-                while (pendingItems.length > 0) {
-                    const candidate = pendingItems.shift();
-                    if ('.$ai_comments.' && candidate._ai_comment) {
-                        continue; // 丢弃 AI 评论
-                    }
-                    item = candidate;
-                    break;
-                }
-                if (item) {
-                    spawnBarrage(item, index);
-                } else {
-                    // 队列已空或全部被过滤，重新尝试调度（稍后 fetch 会补充）
-                    scheduleNext();
-                }
-            }, wait);
-        }
+    function scheduleNext() {
+        if (!isVisible) return;                 // 不可见不调度
+        if (pendingItems.length === 0) return;
+        if (activeCount >= MAX_VISIBLE) return;
     
-        function spawnBarrage(item, trackIndex) {
-            trackNextAvailable[trackIndex] = Infinity;
-            activeCount++;
-        
-            const el = document.createElement("div");
-            el.className = "barrage-item";
-        
-            const base = (100 / TRACK_COUNT) * trackIndex;
-            const offset = Math.random() * 4;
-            el.style.top = (base + offset) + "%";
-        
-            // ========== 快速弹幕设置 ==========
-            const FAST_PROBABILITY = 0.03;                // 3% 概率
-            const isFast = Math.random() < FAST_PROBABILITY;
-            
-            let duration;
-            if (isFast) {
-                duration = 2 + Math.random() * 3;          // 快速弹幕持续时间 2~5 秒
-                el.classList.add("barrage-fast");          // 可选：添加特殊样式
-            } else {
-                duration = '.$speed.' + Math.random() * 10; // 正常速度
+        const { index, wait } = getEarliestTrack();
+        if (scheduleTimer) clearTimeout(scheduleTimer);
+        scheduleTimer = setTimeout(() => {
+            scheduleTimer = null;
+            if (!isVisible) return;             // 触发时再确认一次
+            let item = null;
+            while (pendingItems.length > 0) {
+                const candidate = pendingItems.shift();
+                if ('.$ai_comments.' && candidate._ai_comment) continue;
+                item = candidate;
+                break;
             }
-            
-            el.style.setProperty("--duration", duration + "s");
-            // ================================
-            '.($tag_barrage ? 'let html = `<a href="${item.link}" target="_blank"><i>tag</i> <strong>#${item.name}</strong></a>`' : '
-            el.title = `${item.content}\n\n——该评论取自《${item.post_title}》发布于 ${item.date}`;
-            let html = `<a href="${item.author_url}" target="_blank"><img src="${item.avatar}" alt=""> <strong>${item.author}</strong>：</a><a id="content" href="${item.post_url}#comment-${item.id || 0}" target="_self">`;
-            if (item.parent_author) html += `@${item.parent_author}，`;
-            html += `${item.content}</a>`;').'
-        
-            el.innerHTML = html;
-            container.appendChild(el);
-        
-            const width = el.offsetWidth;
-            const viewWidth = window.innerWidth;
-            const visibleProgress = width / (viewWidth + width);
-            const visibleDelay = duration * visibleProgress * 1000;
-        
-            const now = Date.now();
-            const randomGap = 1000 + Math.random() * 2000;
-            
-            // 快速弹幕释放轨道更快
-            if (isFast) {
-                trackNextAvailable[trackIndex] = now + visibleDelay + 500; // 仅等待 0.5 秒
+            if (item) {
+                spawnBarrage(item, index);
             } else {
-                trackNextAvailable[trackIndex] = now + visibleDelay + randomGap;
-            }
-        
-            el.addEventListener("pointerenter", () => {
-                // container.classList.add("slow-others");
-                // el.style.background = "rgba(0, 0, 0, 0.9)";
-                el.style.zIndex = "9999";
-            });
-        
-            el.addEventListener("pointerleave", () => {
-                // container.classList.remove("slow-others");
-                // el.style.background = "";
-                el.style.zIndex = "";
-            });
-        
-            el.addEventListener("animationend", () => {
-                el.remove();
-                activeCount--;
                 scheduleNext();
-                if (pendingItems.length === 0 && activeCount === 0 && allDone) {
-                    allDone = false;
-                    hasPreloaded = false;
-                    setTimeout(fetchData, 1000);
-                }
-            });
-        
-            if (pendingItems.length === 0 && allDone && !isFetching && !hasPreloaded) {
-                hasPreloaded = true;
-                setTimeout(fetchData, 2000);
             }
-        
+        }, wait);
+    }
+    
+    function spawnBarrage(item, trackIndex) {
+        if (!isVisible) {                       // 兜底：暂停瞬间不 spawn
+            pendingItems.unshift(item);
+            return;
+        }
+    
+        trackNextAvailable[trackIndex] = Infinity;
+        activeCount++;
+    
+        const el = document.createElement("div");
+        el.className = "barrage-item";
+    
+        const base = (100 / TRACK_COUNT) * trackIndex;
+        const offset = Math.random() * 4;
+        el.style.top = (base + offset) + "%";
+    
+        const FAST_PROBABILITY = 0.03;
+        const isFast = Math.random() < FAST_PROBABILITY;
+    
+        let duration;
+        if (isFast) {
+            duration = 2 + Math.random() * 3;
+            el.classList.add("barrage-fast");
+        } else {
+            duration = '.$speed.' + Math.random() * 10;
+        }
+    
+        el.style.setProperty("--duration", duration + "s");
+    
+        '.($tag_barrage ? 'let html = `<a href="${item.link}" target="_blank"><i>tag</i> <strong>#${item.name}</strong></a>`' : '
+        el.title = `${item.content}\n\n——该评论取自《${item.post_title}》发布于 ${item.date}`;
+        let html = `<a href="${item.author_url}" target="_blank"><img src="${item.avatar}" alt=""> <strong>${item.author}</strong>：</a><a id="content" href="${item.post_url}#comment-${item.id || 0}" target="_self">`;
+        if (item.parent_author) html += `@${item.parent_author}，`;
+        html += `${item.content}</a>`;').'
+    
+        el.innerHTML = html;
+        container.appendChild(el);
+    
+        const width = el.offsetWidth;
+        const viewWidth = window.innerWidth;
+        const visibleProgress = width / (viewWidth + width);
+        const visibleDelay = duration * visibleProgress * 1000;
+    
+        const now = Date.now();
+        const randomGap = 1000 + Math.random() * 2000;
+    
+        if (isFast) {
+            trackNextAvailable[trackIndex] = now + visibleDelay + 500;
+        } else {
+            trackNextAvailable[trackIndex] = now + visibleDelay + randomGap;
+        }
+    
+        el.addEventListener("pointerenter", () => { el.style.zIndex = "9999"; });
+        el.addEventListener("pointerleave", () => { el.style.zIndex = ""; });
+    
+        el.addEventListener("animationend", () => {
+            el.remove();
+            activeCount--;
+            scheduleNext();
+            if (pendingItems.length === 0 && activeCount === 0 && allDone) {
+                allDone = false;
+                hasPreloaded = false;
+                setTimeout(fetchData, 1000);
+            }
+        });
+    
+        if (pendingItems.length === 0 && allDone && !isFetching && !hasPreloaded) {
+            hasPreloaded = true;
+            setTimeout(fetchData, 2000);
+        }
+    
+        scheduleNext();
+    }
+    
+    function createItems(data) {
+        const items = data.slice(0, 50);
+        if (!items.length || items.length <= MIN_BARRAGE) return;
+        pendingItems = pendingItems.concat(items);
+        allDone = true;
+        hasPreloaded = false;
+        scheduleNext();
+    }
+    
+    function fetchData() {
+        if (isFetching) return;
+        isFetching = true;
+        fetch(API_URL)
+            .then(res => res.json())
+            .then(data => createItems(data))
+            .catch(() => {})
+            .finally(() => { isFetching = false; });
+    }
+    
+    // ========== 可见性监听（核心） ==========
+    const visibilityObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const visible = entry.isIntersecting;
+            if (visible === isVisible) return;
+            isVisible = visible;
+    
+            if (isVisible) {
+                // 恢复：继续动画 + 重新调度
+                container.querySelectorAll(".barrage-item").forEach(el => {
+                    el.style.animationPlayState = "running";
+                });
+                scheduleNext();
+            } else {
+                // 隐藏：清掉待调度定时器 + 暂停现有动画
+                if (scheduleTimer) {
+                    clearTimeout(scheduleTimer);
+                    scheduleTimer = null;
+                }
+                container.querySelectorAll(".barrage-item").forEach(el => {
+                    el.style.animationPlayState = "paused";
+                });
+            }
+        });
+    }, { threshold: 0 });
+    
+    visibilityObserver.observe(container);
+    
+    // 标签页切换兜底（后台标签页 IntersectionObserver 不触发，但动画仍在耗能）
+    document.addEventListener("visibilitychange", () => {
+        const visible = document.visibilityState === "visible" && isVisible;
+        if (document.visibilityState === "hidden") {
+            container.querySelectorAll(".barrage-item").forEach(el => {
+                el.style.animationPlayState = "paused";
+            });
+        } else {
+            container.querySelectorAll(".barrage-item").forEach(el => {
+                el.style.animationPlayState = "running";
+            });
             scheduleNext();
         }
+    });
     
-        function createItems(data) {
-            const items = data.slice(0, 50);
-            if (!items.length || items.length <= MIN_BARRAGE) return;
-            pendingItems = pendingItems.concat(items);
-            allDone = true;
-            hasPreloaded = false;      // 新数据到达，重置预加载标志
-            scheduleNext();
-        }
-    
-        function fetchData() {
-            if (isFetching) return;
-            isFetching = true;
-            fetch(API_URL)
-                .then(res => res.json())
-                .then(data => createItems(data))
-                .catch(() => {})
-                .finally(() => { isFetching = false; });
-        }
-    
-        fetchData();
-    })();
+    fetchData();
 }
 </script>';
         }

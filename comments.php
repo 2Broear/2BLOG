@@ -387,7 +387,8 @@
             ));
             $comment_count = count($comments);
             if (!$comment_allowed) echo '<p class="disabled_comment" style="font-family:serif">===== 由于某些原因已关闭页面评论 =====</p>';
-            if ($comments_number > 0) echo '<div class="wp_comment_count"><strong id="count">'.$comments_number.'</strong> 条评论</div>';
+            // if ($comments_number > 0) 
+            echo '<div class="wp_comment_count"><strong id="count">'.$comments_number.'</strong> 条评论</div>';
         ?>
         <div class="vlist" id="comments" <?php if (!$comment_allowed) echo 'style="opacity:.75;"'; ?>>
         <?php
@@ -476,7 +477,7 @@
                                 <div class="vmeta">
                                     <span class="vtime"><?php echo get_comment_time('Y-m-d'); ?></span>
                                     <?php 
-                                        if ($is_ai_spam) echo '<span class="vedited vspam" title="@2BER：'.$is_ai_spam.'">AI Spam</span>';
+                                        if ($is_ai_spam) echo '<span class="vedited vspam" title="@2BER：'.$is_ai_spam.'">Spam</span>';
                                         if ($approved) {
                                             if (get_option('site_ajax_comment_switcher')) {
                                                 global $post;
@@ -994,7 +995,7 @@
                               is_thoughtful_reply = child._comment_thoughtful != 0,
                               ai_class = thoughtful_class = ai_reply = thoughtful_reply = '',
                               spam_class = is_ai_spam ? ' spam' : '',
-                              ai_spam = is_ai_spam ? `<span class="vedited vspam" title="@2BER：${is_ai_spam}">AI Spam</span>` : '',
+                              ai_spam = is_ai_spam ? `<span class="vedited vspam" title="@2BER：${is_ai_spam}">Spam</span>` : '',
                               admin_tag = email == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : (is_ai_reply ? '' : `<span class="vsys vlevel" title="综合评级（互动数量/年限）" data-score="${user_info.lv_score}">${user_info.lv_output}</span>`),
                               is_auditing = child.comment_approved == '0',
                               is_approved = is_auditing ? '<span class="auditing vsys">待审核</span>' : '',
@@ -1349,7 +1350,7 @@
                                                 is_ai_spam = each_comment._comment_spam,
                                                 is_ai_reply = each_comment.user_id == 9527,
                                                 is_thoughtful_reply = each_comment._comment_thoughtful != 0,
-                                                ai_spam = is_ai_spam ? `<span class="vedited vspam" title="@2BER：${is_ai_spam}">AI Spam</span>` : '',
+                                                ai_spam = is_ai_spam ? `<span class="vedited vspam" title="@2BER：${is_ai_spam}">Spam</span>` : '',
                                                 ai_reply = thoughtful_reply = '',
                                                 admin_tag = md5mail == admin_md5mail ? '<span class="vsys vadmin">admin</span>' : (is_ai_reply ? '' : `<span class="vsys vlevel" title="综合评级（互动数量/年限）" data-score="${user_info.lv_score}">${user_info.lv_output}</span>`),
                                                 is_auditing = each_comment.comment_approved == '0',
@@ -1604,7 +1605,8 @@
                                                         that.vlist.insertBefore(comment, that.vlist.firstElementChild);
                                                     }
                                                     //update comment_count at level-0 submit
-                                                    that.vcount.innerHTML = `<strong id="count"> ${(parseInt(that.vcount.innerText)+1)}</strong> ${that.reply_obj.context.comment_counter}`;
+                                                    let vcounts = that.vcount ? parseInt(that.vcount.innerText) : 0;
+                                                    if (vcounts) that.vcount.innerHTML = `<strong id="count"> ${(vcounts+1)}</strong> ${that.reply_obj.context.comment_counter}`;
                                                 }
                                             }
                                             function handleComment() {

@@ -102,6 +102,25 @@
 	    /*.win-top {*/
 	    /*    z-index: 3;*/
 	    /*}*/
+	    .win-content article table {
+            min-width: 58%;
+            /*max-width: 88%;*/
+            width: auto;
+	    }
+	    .win-content article table tr th {
+	        line-height: 3em;
+	    }
+	    body.dark .win-content article table td {
+            border-color: var(--preset-4b);
+	    }
+	    .win-content article table td {
+            font-size: var(--min-size-rem);
+            border-color: var(--preset-e);
+	    }
+	    .win-content article h2 {
+	        margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+	    }
     </style>
 </head>
 <body class="<?php echo $theme_mode; ?>">
@@ -129,7 +148,7 @@
                             </span>
                             <span id="view"><?php setPostViews($pid);echo getPostViews($pid); ?>°C </span>
                             <span id="date"><i class="icom"></i> <?php the_time('d-m-Y'); ?> </span>
-                            <?php if(get_option('site_not_ai_switcher')) global $img_cdn;echo '<span><a href="//notbyai.fyi" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);margin: auto 5px;border-radius: 0;"></a></span>'; ?>
+                            <?php if(get_option('site_not_ai_switcher') && get_post_meta($pid, "post_rights", true) != 'AI创作') global $img_cdn;echo '<span><a href="//notbyai.fyi" target="_blank" rel="nofollow"><img src="'.$img_cdn.'/images/svg/not-by-ai.svg" alt="notbyai" style="height: 15px;filter:invert(0.5);margin: auto 5px;border-radius: 0;"></a></span>'; ?>
                             <span id="slider"></span>
                         </div>
                         <sup>最近更新于：<?php echo $post->post_modified; ?></sup>

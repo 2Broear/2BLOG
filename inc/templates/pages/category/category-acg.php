@@ -104,7 +104,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         }
         .rcmd-boxes .inbox-clip h2{
             padding: 20px 15px;
-            letter-spacing: 5px;
+            letter-spacing: 10px;
             text-decoration: none;
             font-size: 3rem!important;
             filter: url(#x);
@@ -146,7 +146,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         .rcmd-boxes .info .inbox,
         .rcmd-boxes .info .inbox .inbox-headside img {
             /*transform: none;*/
-            will-change: initial;
+            will-change: auto;
         }
         .rcmd-boxes .info .inbox .inbox-headside a,
         .rcmd-boxes .info .inbox .inbox-headside img {
@@ -160,6 +160,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
         }
         .rcmd-boxes .info .inbox .inbox-aside {
             background: rgb(255 255 255 / 68%);
+            /*backdrop-filter: none;*/
         }
         .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon:before,
         .rcmd-boxes .info .inbox .inbox-aside .game-ratings .hexagon:after{
@@ -448,7 +449,7 @@ function get_acg_posts($the_cat, $pre_cat=false, $limit=99){
                         tempimg.src = item.poster;
                         tempimg.setAttribute('crossorigin','Anonymous');
                         tempimg.onload = ()=> {
-                            setupBlurColor(tempimg, temp);
+                            setupBlurColor(tempimg, temp); // set blur in memory-created onload images
                             temp.querySelector('img').classList.remove('loading');
                         }
                     }

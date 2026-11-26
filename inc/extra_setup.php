@@ -5,6 +5,17 @@
      * FUNC
      *--------------------------------------------------------------------------
     */
+    // disable in-site  ping-back comment notification
+    add_action( 'pre_ping', function ( &$links ) {
+        $home = home_url();
+        foreach ( $links as $key => $link ) {
+            if ( 0 === strpos( $link, $home ) ) {
+                unset( $links[ $key ] );
+            }
+        }
+    } );
+    
+    // enable wp-smiley emojis
     add_filter('smilies', function ($smilies) {
         return array_merge($smilies, array (
             ':bren#0:'  => 'bren_smug.webp',
@@ -409,7 +420,7 @@
          */
         function the_cf_turnstile() {
     ?>
-            <style>.cf-turnstile.hide{display:none;}.cf-turnstile{margin-top:15px;}body.dark #widget-container:before, body.dark #widget-container:after{content:'';width: 100%;height: 100%;display: block;background: var(--preset-3a);position: absolute;top: 0;left: 0;opacity: .5;pointer-events: none;}body.dark #widget-container:after{padding: 5px;box-sizing: border-box;background: var(--preset-2b);opacity: .75;border-radius: calc(var(--radius) /2);-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite: xor;mask-composite: exclude;}body.dark #widget-container:hover::before{opacity: 0;}body.dark #widget-container:hover{opacity: 1;}body.dark #widget-container{opacity: .75;}#widget-container{width:100%;max-height: 65px;position: relative;}</style>
+            <style>.cf-turnstile.hide{display:none;}.cf-turnstile{margin-top:15px;}body.dark #widget-container:before, body.dark #widget-container:after{content:'';width: 100%;height: 100%;display: block;background: var(--preset-3a);position: absolute;top: 0;left: 0;opacity: .5;pointer-events: none;}body.dark #widget-container:after{padding: 5px;box-sizing: border-box;background: var(--preset-2b);opacity: .75;border-radius: calc(var(--radius) /2);-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite: xor;mask-composite: exclude;}body.dark #widget-container:hover{opacity: 1;}body.dark #widget-container{opacity: .75;}#widget-container{width:100%;max-height: 65px;position: relative;}</style>
             <!--<script defer async src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>-->
             <script defer async src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad"></script>
             <script>
@@ -845,7 +856,7 @@
     
         // echo '<span class="thoughtful-status"> ' . ( $is_thoughtful ? '❤️' : '🖤' ) . ' </span> ';
         echo '<button type="button" class="button button-small toggle-thoughtful-btn" data-url="' . esc_url( $toggle_url ) . '">' .
-             ( $is_thoughtful ? '💘 <b>取消亮评</b>' : '✨ 标记亮评' ) . '</button>';
+             ( $is_thoughtful ? '💘 <b>取消选评</b>' : '✨ 标记亮评' ) . '</button>';
         echo '<span class="toggle-thoughtful-msg" style="margin-left:6px;"></span><style>img{max-width:100px;vertical-align: middle;}.comment p img,img.wp-smiley,img[alt="emoji"]{width: 50px !important;height: auto !important;max-height: none !important;vertical-align: middle !important;}</style>';
     }, 10, 2 );
     // 注册走心评论 rest api
@@ -906,7 +917,7 @@
                         if (data.success) {
                             if (data.thoughtful) {
                                 // $status.html('❤️');
-                                $btn.text('💘️ 取消亮评');
+                                $btn.text('💘️ 取消选评');
                             } else {
                                 // $status.html('🖤');
                                 $btn.text('✨ 标记亮评');
@@ -948,7 +959,7 @@
         $url = admin_url( 'edit-comments.php?comment_status=approve&meta_key=_thoughtful_comment&meta_value=1' );
     
         $views['thoughtful'] = sprintf(
-            '<a href="%s" class="%s">走心评论 <span class="count">(%d)</span></a>',
+            '<a href="%s" class="%s">精选亮评 <span class="count">(%d)</span></a>',
             esc_url( $url ),
             $class,
             $count
@@ -2004,7 +2015,7 @@
             // ========== 配置项 ==========
             define( 'TWO_BER_AI_API_KEY', get_option('site_chatgpt_apikey') );  // 替换为真实 Key
             define( 'TWO_BER_AI_MODEL', get_option('site_chatgpt_model') );     // Kimi 模型，可按需调整
-            define( 'TWO_BER_AI_MAX_REPLIES_PER_PARENT', 5 );  // 每个父评论下 AI 回复最大数量
+            define( 'TWO_BER_AI_MAX_REPLIES_PER_PARENT', 10 );  // 每个父评论下 AI 回复最大数量
             define( 'TWO_BER_AI_TIMEOUT', 60 );  // 请求超时限制
             // define( 'TWO_BER_AI_THINK_MODE', get_option('site_chatgpt_think_sw') );  // 思考模式
             /**
@@ -3172,7 +3183,7 @@
                         echo '<span class="undo-spam-msg" style="margin-left:6px;"></span>';
                     } elseif ( $reason ) {
                         // 已批准但有理由（可能已被撤销过） -> 仅显示理由
-                        echo '已撤销（' . esc_html( $reason ).'）';
+                        echo '<b>已撤销</b><small>（' . esc_html( $reason ).'）</small>';
                     } else {
                         // 无理由的正常评论
                         echo '✔️';
@@ -3909,21 +3920,22 @@
                         .win-top h5 span:before{content:'';display:inherit;width:88%;height:36%;background-color:var(--theme-color);position:absolute;left:15px;bottom:1px;z-index:-1}
                         .win-top h5 span{position:relative;background:inherit;color:white;font-weight:bolder;max-width: 10em;overflow: hidden;text-overflow: ellipsis;display: inline-block;vertical-align:middle}
                         .win-top h5 b{font-family:var(--font-ms);font-weight:bolder;color:var(--preset-f);/*padding:0 10px;vertical-align:text-top;*/}
-                        .win-content article{max-width:88%;margin-top:auto}
-                        .win-content article.news-window{padding:0;margin-bottom:25px;/*border:1px solid rgb(100 100 100 / 10%);*/}
-                        .win-content article .info span{margin-left:10px}
-                        .win-content article .info span#slider{margin:auto}
-                	    .news-window-img{max-width:15%}
+                        .win-content article {max-width:88%;margin-top:auto}
+                        .win-content article.news-window {padding:0;margin-bottom:25px;/*border:1px solid rgb(100 100 100 / 10%);*/}
+                        .win-content article .info span {margin-left:10px}
+                        .win-content article .info span#slider {margin:auto}
+                	    .news-window-img {max-width:18%}
+                	    .news-window:nth-child(odd) span.news-window-img {min-width: 18%;}
                         .news-window-img a{
                             width: 100%;
                             height: 100%;
                         }
-                        .news-window-img img{
+                        .news-window-img img {
                             object-fit: cover;
                             min-height: 123px;
                         }
-                	    .rcmd-boxes{width:19%;display:inline-block;vertical-align:middle}
-                	    .empty_card h1{max-width: 88%;overflow: hidden;text-overflow: ellipsis;display: block;margin: 25px auto;}
+                	    .rcmd-boxes {width:19%;display:inline-block;vertical-align:middle}
+                	    .empty_card h1 {max-width: 88%;overflow: hidden;text-overflow: ellipsis;display: block;margin: 25px auto;}
                 	    .rcmd-boxes .info .inbox{max-width:none;margin: 5px}
                 	    .main h2{font-weight: 600;font-size:1.25rem};
                         #core-info p{padding:0}
@@ -5628,7 +5640,7 @@
                     <div class="vmeta">
                         <span class="vtime"><?php echo date('Y-m-d', strtotime($comment->comment_date)); ?></span>
                         <?php 
-                            if ($is_ai_spam) echo '<span class="vedited vspam" title="@2BER：'.$is_ai_spam.'">AI Spam</span>';
+                            if ($is_ai_spam) echo '<span class="vedited vspam" title="@2BER：'.$is_ai_spam.'">Spam</span>';
                             if ($approved) {
                                 if (get_option('site_ajax_comment_switcher')) {
                                     $tips = '回复ta的评论';

@@ -322,11 +322,12 @@
             @keyframes scale {
                 0% {
                     transform: scale(.85);
-                    transform-origin: top;
-                    filter: blur(25px);
+                    opacity: 0;
+                    filter: blur(5px);
                 }
                 to {
                     transform: none;
+                    opacity: 1;
                     filter: blur(0);
                 }
             }
@@ -335,9 +336,10 @@
                 .formtable > .feeds {
                     animation: scale 1s;
                     transform: none;
+                    transform-origin: top;
                     animation-timeline: view(block);
                     animation-range: cover 0 30%;
-                    /*will-change: transform;*/
+                    will-change: transform, opacity, filter;
                 }
             }
             /**
@@ -1045,11 +1047,12 @@
             @keyframes scale {
                 0% {
                     transform: scale(.85);
-                    transform-origin: top;
-                    filter: blur(25px);
+                    opacity: 0;
+                    filter: blur(15px);
                 }
                 to {
                     transform: none;
+                    opacity: 1;
                     filter: blur(0);
                 }
             }
@@ -1058,9 +1061,10 @@
                 table > tbody > tr {
                     animation: scale 1s;
                     transform: none;
+                    transform-origin: top;
                     animation-timeline: view(block);
                     animation-range: cover 0 30%;
-                    /*will-change: transform;*/
+                    will-change: transform, opacity, filter;
                 }
             }
         p.description code{font-size:small;font-family: monospace;border-radius: 5px;margin:auto 5px;padding:5px 0;}textarea.codeblock{height:233px}textarea{min-width:50%;min-height:88px;overscroll-behavior:contain;}.child_option th{text-indent:3em;opacity: .75;font-size:smaller!important}.child_option td{background:linear-gradient(90deg,rgba(255, 255, 255, 0) 0%, #fff 100%);background:-webkit-linear-gradient(0deg,rgba(255, 255, 255, 0) 0%, #fff 100%);border-right:1px solid #e9e9e9;}.child_option td b{font-size:12px;font-style:inherit;}.btn{border: 1px solid;padding: 2px 8px;border-radius: 25px;border-top-left-radius:0;font-size: smaller;font-weight:bold;background:white;font-weight:900;background:-webkit-linear-gradient(-90deg,rgba(255, 255, 255, 0) 55%, currentColor 255%);background:linear-gradient(180deg,rgba(255, 255, 255, 0) 25%, currentColor 255%);}label:hover input[type=checkbox]{box-shadow:0 0 15px #2271b1;}input[type=checkbox]{margin:-1px 3px 0 0;}input[type=checkbox] + b.closed{/*opacity:.75;*/}input[type=checkbox]{vertical-align:middle!important;}input[type=checkbox] + b.checked{opacity:1;}.submit{text-align:center!important;padding:0;margin-top:35px!important}.submit input{padding: 5px 35px!important;border-radius: 25px!important;border: none!important;box-shadow:0 0 0 5px rgba(34, 113, 177, 0.15)}b{font-weight:900!important;font-style:italic;letter-spacing:normal;}input[type=color]{width:220px;height:20px;cursor:pointer;box-shadow:0 0 20px var(--panel-theme);padding: 3px 6px!important;background:transparent;border-color:transparent;/*border-top-right-radius: 15px!important;*/}h1{padding:35px 0 15px!important;font-size:2rem!important;text-align:center;letter-spacing:2px}h1 p.en{margin: 5px auto auto;opacity: .5;font-size: 10px;letter-spacing:normal}h1 b.num{color: white;background: black;border:2px solid black;letter-spacing: normal;margin-right:10px;padding:0 10px 3px;box-shadow:-5px -5px 0 rgb(0 0 0 / 10%);border-radius: 20px;border-top-right-radius: 0;border-bottom-left-radius: 0;}p.description{font-size:small;}table{margin:0 auto!important;max-width:95%}.form-table tr.dynamic_opts{display:none}.form-table tr.dynamic_optshow{display:table-row!important}.form-table tr.disabled{opacity:.75;pointer-events:none}.form-table tr:hover > th{padding: 15px 0 15px 35px;color: var(--panel-theme)!important;}.form-table tr:hover > th sup{color:var(--panel-theme)}.form-table tr:hover > td{background:inherit;padding: 15px 25px 15px 0;}.form-table tr:hover{border-left-color:var(--panel-theme);box-sizing: border-box;background: linear-gradient(90deg, #f5f7f9 0, #fff);background: -webkit-linear-gradient(0deg, #f5f7f9 0, #fff);background:white;}.form-table tr{}.form-table tr:hover{box-shadow:0 0 20px rgb(0 0 0 / 5%);}.form-table tr{padding: 0 15px;border:2px solid transparent;/*border-bottom:1px solid #e9e9e9;*/border-left:3px solid transparent;border-radius: 18px;position: relative;z-index: 1;}.form-table th{padding:15px 25px;vertical-align:middle!important;transition:padding .15s ease;}.form-table th sup#tips{border: 0;padding: 0;text-decoration: overline;opacity: .75;}.form-table th sup{border: 1px solid;padding: 1px 5px 2px;margin-left: 7px;border-radius: 5px;font-size: 10px;cursor:help;}.form-table label{display:block;-webkit-user-select:none;cursor:pointer;}.form-table td{text-align:right;transition: padding .35s ease;border-radius:inherit;border-top-left-radius: 0;border-bottom-left-radius: 0;}/*.form-table tr:last-child{border-bottom:none}*/.form-table td input.array-text{box-shadow:0 0 15px #a0d5ff;margin:15px 0 0 auto;display:block;/*border:2px solid*/}.form-table td del{opacity:.5}.form-table td p{font-size:smaller;margin-top:0!important;margin-bottom:10px!important;/*font-weight:200;*/}p.submit{position:relative;}p.submit:first-child{position:fixed;top:115px;right:-180px;transform:translateX(-50px);z-index:9;transition:transform .75s cubic-bezier(0.68, -0.55, 0.27, 1.35);}p.submit:first-child input:hover{box-shadow: rgb(0 0 0 / 10%) 0 0 20px;color:var(--panel-theme);border: 2px solid #fff!important;box-sizing: border-box;background: linear-gradient(90deg, rgb(245 247 249 / 100%) 0, rgb(255 255 255 / 100%));padding-left:25px!important;}p.submit:first-child input{font-weight:bold;padding-left:20px!important;transition:padding .35s ease;background:white;box-shadow:0 0 20px 0px var(--panel-theme);border:2px solid var(--panel-theme)!important;background:rgb(10, 20, 28);/*border-top-left-radius: 0 !important;*/}p.submit:first-child input:focus{color:white;background:var(--panel-theme);box-shadow:0 0 0 1px #fff, 0 0 0 3px transparent;/*border-color:black!important*/}.upload_preview.img{vertical-align: middle;width:55px;height:55px;margin: auto;}#upload_banner_button{margin:10px auto;/*margin:10px;*/}.upload_preview_list em{margin-left:10px!important}.upload_preview_list em,.upload_preview_list video{margin:auto auto 10px 10px;width:115px!important;height:55px!important;}.upload_preview.bgm{object-fit:cover;}.upload_preview.bgm,.upload_preview_list em,.upload_preview.bg{height:55px;width:100px;vertical-align:middle;border-radius:5px;display:inline-block;}
@@ -1625,21 +1629,44 @@
                                     <?php
                                         $opt = 'site_logo_svg';
                                         $value = get_option($opt);
-                                        $preset = '<svg height=35px style="enable-background:new 0 0 115 35" version=1.1 viewBox="0 0 115 35" width=115px xmlns=http://www.w3.org/2000/svg xmlns:xlink=http://www.w3.org/1999/xlink>
-	<style>
-		body.dark .st0 { fill: var(--preset-s); }
-		.st0 { fill:var(--preset-5a); }
-		.st1{ fill:var(--theme-color); }
-	</style>
-	<polyline class=st0 id=y_2_ points="109.8,0 79.2,35 72.4,35 103,0 " />
-	<polygon class=st1 id=ty_2_ points="79.2,0 72.4,0 76.8,5.1 81.3,10.3 88.1,10.3 " />
-	<rect class=st0 height=35 id=t_2_ width=5.1 x=54.6 y=0 />
-	<polygon class=st1 id=xt_1_ points="33.7,10.3 26.9,10.3 31.3,5.1 35.8,0 42.7,0 " />
-	<polyline class=st0 id=x_4_ points="5.2,0 35.8,35 42.6,35 12,0 " />
-	<polygon class=st0 id=x_3_ points="12,35 5.2,35 9.7,29.9 14.2,24.8 21,24.8 " />
+                                        $preset = '<svg height="35px" viewBox="0 0 115 35" width="115px" xmlns="http://www.w3.org/2000/svg">
+<style>
+  .g { stroke: var(--preset-5a, #5a5a5a); color: var(--preset-5a, #5a5a5a); }
+  .b { stroke: var(--theme-color, #eb6844); color: var(--theme-color, #eb6844); }
+  body.dark .g {
+    stroke: var(--preset-s, whitesmoke);
+    color: var(--preset-s, whitesmoke);
+  }
+  path {
+    fill: currentColor;
+    stroke: transparent;
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: var(--len);
+    stroke-dashoffset: var(--len);
+    animation:
+      draw var(--dur) cubic-bezier(.7,0,.25,1) forwards,
+      fill 1.5s cubic-bezier(.4,0,.6,1) var(--fd) forwards,
+      stroke-fade 1s ease calc(var(--fd) + .5s) forwards;
+  }
+  @keyframes draw  { to { stroke-dashoffset: 0; } }
+  @keyframes fill { to { fill: currentColor; } }
+  @keyframes stroke-fade { to { stroke: transparent; } }
+  @supports (animation-name: draw) { path { fill: transparent;stroke: transparent;} }
+</style>
+<!-- X -->
+<path class="g" style="--len:106.58;--dur:1.6s;--fd:1.75s" d="M5.2,0 L35.8,35 L42.6,35 L12,0 Z"/>
+<path class="g" style="--len:40.81;--dur:1.8s;--fd:1.75s" d="M12,35 L5.2,35 L9.7,29.9 L14.2,24.8 L21,24.8 Z"/>
+<!-- T -->
+<path class="g" style="--len:80.2;--dur:1.6s;--fd:1.75s" d="M54.6,0 L59.7,0 L59.7,35 L54.6,35 Z"/>
+<path class="b" style="--len:40.99;--dur:2.3s;--fd:1.85s" d="M33.7,10.3 L26.9,10.3 L31.3,5.1 L35.8,0 L42.7,0 Z"/>
+<!-- Y -->
+<path class="g" style="--len:106.58;--dur:1.6s;--fd:1.75s" d="M109.8,0 L79.2,35 L72.4,35 L103,0 Z"/>
+<path class="b" style="--len:40.82;--dur:2.8s;--fd:1.85s" d="M79.2,0 L72.4,0 L76.8,5.1 L81.3,10.3 L88.1,10.3 Z"/>
 </svg>';
                                         if(!$value) update_option($opt, $preset);else $preset=$value;
-                                        echo '<p class="description" id="site_logo_svg_label">站点 LOGO 矢量代码（注：开启任意图片LOGO后此项失效，可使用<code> body.dark </code>或<code> prefers-color-scheme </code>自适应深色样式</p><textarea name="'.$opt.'" id="'.$opt.'" rows="8" placeholder="此项始终存在默认值">'.$preset.'</textarea>';
+                                        echo '<p class="description" id="site_logo_svg_label">站点 LOGO 矢量代码（注：开启任意图片LOGO后此项失效，可使用<code> body.dark </code>或<code> prefers-color-scheme </code>自适应深色样式（*支持svg动画</p><textarea name="'.$opt.'" id="'.$opt.'" rows="8" placeholder="此项始终存在默认值">'.$preset.'</textarea>';
                                     ?>
                                 </td>
                             </tr>
@@ -2040,12 +2067,12 @@
                                 $preset = '//cravatar.cn/';
                                 $arrobj = array(
                                     array('name'=>'Gravatar', 'href'=>'//gravatar.com/'),
-                                    array('name'=>'V2EX', 'href'=>'//cdn.v2ex.com/'),
+                                    array('name'=>'V2EX', 'href'=>'//cdn.v2ex.co/gr'),
                                     array('name'=>'Cravatar', 'href'=>'//cravatar.cn/'),
                                     array('name'=>'Weavatar', 'href'=>'//weavatar.com/'),
-                                    array('name'=>'Geekzu', 'href'=>'//sdn.geekzu.org/'),
-                                    array('name'=>'LOLI', 'href'=>'//gravatar.loli.net/'),
+                                    // array('name'=>'Geekzu', 'href'=>'//sdn.geekzu.org/'),
                                     array('name'=>'SEP', 'href'=>'//cdn.sep.cc/'),
+                                    array('name'=>'LOLI', 'href'=>'//gravatar.loli.net/'),
                                     array('name'=>'2Bavatar', 'href'=>'//gravatar.2broear.com/'),
                                 );
                                 // $md5mail = md5("wapuu@wordpress.example"); //get_bloginfo('admin_email')
@@ -3501,7 +3528,7 @@
                                         $value = get_option($opt);
                                         $preset = 4096;  //默认填充数据
                                         if(!$value) update_option($opt, $preset);else $preset=$value;  //auto update option to default if unset
-                                        echo '<p class="description" id="site_bar_pixiv_label">限制消耗 token 总数，openAI 限制中文请求字符 token*2：请求 prompt 最大限制 4096，默认实际可用 3700+ prompt_token，余下 392 字符为 completion_token 响应预设占位，估算可返回150中文字符左右。（默认4096，预留（减少）196</p><input type="number" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
+                                        echo '<p class="description" id="site_bar_pixiv_label">限制消耗 token 总数，openAI 限制中文请求字符 token*2：请求 prompt 最大限制 4096，默认实际可用 3700+ prompt_token，余下 392 字符为 completion_token 响应预设占位，估算可返回150中文字符左右。（默认4096，预留（减少）196，注：文章太长可能导致500 Internal Error</p><input type="number" name="'.$opt.'" id="'.$opt.'" class="small-text" value="' . $preset . '"/>';
                                     ?>
                                 </td>
                             </tr>

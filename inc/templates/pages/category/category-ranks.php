@@ -94,7 +94,7 @@ function the_comment_ranks($t1 = '常客', $c1 = '近期访问较频繁的童鞋
             };
     
             // ---------- 开始构建 HTML ----------
-            $output .= '<div class="fade-item"><h1>' . esc_html($t1) . '</h1><p>' . esc_html($c1) . '</p><ul id="rankest">';
+            $output .= '<div class="fade-items"><h1>' . esc_html($t1) . '</h1><p>' . esc_html($c1) . '</p><ul id="rankest">';
     
             $loopmax = 3; // t1 显示前 3 名
             $range_max = $get_range_max($rankdata, $loopmax);
@@ -211,6 +211,7 @@ function the_comment_ranks($t1 = '常客', $c1 = '近期访问较频繁的童鞋
         .ranking ul li span#avatar::before{
             width: auto;
             padding: 0 5px;
+            z-index: 1;
         }
         .ranking ul li span#range em span.wave{
             overflow: hidden;

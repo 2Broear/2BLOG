@@ -32,11 +32,11 @@
     <meta name="msapplication-TileColor" content="<?php echo $theme; ?>" />
     <meta name="msapplication-TileImage" content="<?php echo get_site_favico(); ?>" />
     <link rel="shortcut icon" href="<?php echo get_site_favico(); ?>"/>
-    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/style/universal.min.css?v=<?php echo get_theme_info(); ?>" />
+    <link type="text/css" rel="stylesheet" href="<?php echo $src_cdn;//custom_cdn_src(0,1);// ?>/style/universal.min.css?v=<?php echo $theme_info = get_theme_info(); ?>" />
 <?php 
     if (get_option('site_experimental_switcher')) {
 ?>
-    <link type="text/css" rel="stylesheet" href="<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/style/experimental.css" />
+    <link type="text/css" rel="stylesheet" href="<?php echo custom_cdn_src(0,1);//$src_cdn;// ?>/style/experimental.css<?php //echo '?v=' . $theme_info; ?>" />
     <style>
         html, body {
             font: normal 16px/normal system-ui,"Microsoft YaHei","微软雅黑","Microsoft JhengHei","Hiragino Sans GB","WenQuanYi Micro Hei",Arial,Helvetica,Lucida Grande,Tahoma,sans-serif;
@@ -146,11 +146,10 @@
         @keyframes scale-view {
             0% {
                 transform: scale(.85);
-                transform-origin: top;
                 opacity: 0;
                 filter: blur(25px);
             }
-            to {
+            100% {
                 transform: none;
                 opacity: 1;
                 filter: blur(0px);
@@ -168,9 +167,10 @@
             .vlist > .vcard {
                 animation: scale-view 1s;
                 transform: none;
+                transform-origin: top;
                 animation-timeline: view(block);
                 animation-range: cover 0 30%;
-                /*will-change: transform;*/
+                will-change: transform, opacity;
             }
             .vlist > .vcard,
             .rcmd-boxes .fade-item,

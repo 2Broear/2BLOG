@@ -2879,7 +2879,7 @@ body.dark .recommendation #recommend-inside .recommend-newsImg div a#rel {
     border: 1px solid var(--preset-6);
     backdrop-filter: blur(14px);
     margin: 18px auto;
-    max-width: 14em;
+    max-width: 13em;
     line-height: 36px;
     border-radius: 50px;
     transition: all .55s cubic-bezier(0.68, -0.55, 0.27, 1.55);

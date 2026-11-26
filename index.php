@@ -441,7 +441,7 @@
         </div>
     </div>
     <!--<div class="main-middle-allpart"></div>-->
-    <div class="main-bottom-allpart">
+    <div class="main-bottom-allpart fade-items">
         <!-- 左文窗 ，右图-->
         <div class="main-bottom-ta">
         <?php

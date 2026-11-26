@@ -294,8 +294,8 @@
         global $post, $pagenow; //!!!in_category lose efficacy if $post unreachable!!!
         $posts = $posts ? $posts : $post; // $pid = $pid ? $pid : $post->ID;
         $acg_slug =  get_cat_by_template('acg','slug');
-        $news_slug =  get_cat_by_template('news','slug');
-        $note_slug =  get_cat_by_template('notes','slug');
+        // $news_slug =  get_cat_by_template('news','slug');
+        // $note_slug =  get_cat_by_template('notes','slug');
         $creating_post = in_array($pagenow, array('post-new.php'));
         $pid = $posts->ID;
         $preset_arr = array(
@@ -305,12 +305,12 @@
         if(in_category($acg_slug, $posts) || $creating_post) {
             array_push($preset_arr, array('title'=>'推荐内容', 'for'=>'post_rcmd', 'type'=>'checkbox', 'method'=>'checkbox', 'options'=>false), array('title'=>'评测得分', 'for'=>'post_rating', 'type'=>'number', 'method'=>false, 'options'=>false));
         };
-        if(in_category($news_slug, $posts)||in_category($note_slug, $posts) || $creating_post){
-            array_push($preset_arr, array('title'=>'文章版权', 'for'=>'post_rights', 'type'=>'', 'method'=>'select', 'options'=>["原创","转载","其他"]));
+        // if(in_category($news_slug, $posts)||in_category($note_slug, $posts) || $creating_post){
+            array_push($preset_arr, array('title'=>'文章版权', 'for'=>'post_rights', 'type'=>'', 'method'=>'select', 'options'=>["原创","转载","AI创作"]));
             $post_meta = get_post_meta($pid);
             $post_rights = $post_meta&&array_key_exists('post_rights',$post_meta) ? $post_meta['post_rights'][0] : false;
             if($post_rights&&$post_rights!='原创') array_push($preset_arr, array('title'=>'文章来源', 'for'=>'post_source', 'type'=>'text', 'method'=>false, 'options'=>false));
-        };
+        // };
         return $preset_arr;
     }
     function postMetas($meta,$json){
@@ -327,8 +327,8 @@
             $value = $meta[$for][0];
         }elseif($for=='post_orderby'){
             $value = 1;
-            global $post;
-            update_post_meta($post->ID, $for, $value);
+            // global $post;
+            // update_post_meta($post->ID, $for, $value);
         }
         switch ($method) {
             case 'textarea':
